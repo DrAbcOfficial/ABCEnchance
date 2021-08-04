@@ -1,6 +1,5 @@
 #include <metahook.h>
 #include "cl_entity.h"
-#include "cvardef.h"
 #include "exportfuncs.h"
 #include "mathlib.h"
 #include "com_model.h"
@@ -9,6 +8,7 @@
 cl_refHookfunc_t gHookFuncs;
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
+cl_cvars_t gCVars;
 PVOID g_dwEngineBase;
 DWORD g_dwEngineSize;
 DWORD g_dwEngineBuildnum;
@@ -51,6 +51,8 @@ void InstallHook()
 
 void HUD_Init(void)
 {
+	gCVars.pBloodSpriteSpeed = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pBloodSpriteNumber = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_number", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gExportfuncs.HUD_Init();
 }
 
@@ -90,7 +92,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 		up[1] = right[1] = forward[1] = 0.0f;
 		up[2] = right[2] = forward[2] = 1.0f;
 
-		for (i = 0; i < 32; i++)
+		for (i = 0; i < gCVars.pBloodSpriteNumber->value; i++)
 		{
 			VectorCopy(org, offset);
 			VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * size, right, offset);
@@ -119,9 +121,9 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 
 			VectorScale(dir, gEngfuncs.pfnRandomFloat(8.0f * size, 20.0f * size), pTemp->entity.baseline.origin);
 
-			pTemp->entity.baseline.origin[0] += gEngfuncs.pfnRandomFloat(4.0f, 128.0f) * (size);
-			pTemp->entity.baseline.origin[1] += gEngfuncs.pfnRandomFloat(4.0f, 128.0f) * (size / 2);
-			pTemp->entity.baseline.origin[2] += gEngfuncs.pfnRandomFloat(4.0f, 128.0f) * (size / 4);
+			pTemp->entity.baseline.origin[0] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pBloodSpriteSpeed->value) * (size);
+			pTemp->entity.baseline.origin[1] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 2);
+			pTemp->entity.baseline.origin[2] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 4);
 		}
 	}
 }

@@ -1,4 +1,6 @@
 #include <metahook.h>
+#include "cvardef.h"
+
 typedef struct
 {
 	void		(*R_Blood)					(float* org, float* dir, int pcolor, int speed);
@@ -6,10 +8,16 @@ typedef struct
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
 }cl_refHookfunc_t;
+typedef struct 
+{
+	cvar_t* pBloodSpriteSpeed = NULL;
+	cvar_t* pBloodSpriteNumber = NULL;
+}cl_cvars_t;
 
 extern cl_refHookfunc_t gHookFuncs;
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
+extern cl_cvars_t gCVars;
 extern PVOID g_dwEngineBase;
 extern DWORD g_dwEngineSize;
 extern DWORD g_dwEngineBuildnum;;
