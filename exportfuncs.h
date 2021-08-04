@@ -5,6 +5,10 @@ typedef struct
 {
 	void		(*R_Blood)					(float* org, float* dir, int pcolor, int speed);
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
+	void		(*R_Explosion)				(float* pos, int model, float scale, float framerate, int flags);
+	void		(*R_RicochetSprite)			(float* pos, struct model_s* pmodel, float duration, float scale);
+	void		(*R_SparkEffect)				(float* pos, int count, int velocityMin, int velocityMax);
+
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
 }cl_refHookfunc_t;
@@ -12,6 +16,9 @@ typedef struct
 {
 	cvar_t* pBloodSpriteSpeed = NULL;
 	cvar_t* pBloodSpriteNumber = NULL;
+	cvar_t* pExpSmokeNumber = NULL;
+	cvar_t* pExpSmokeSpeed = NULL;
+	cvar_t* pRicochetNumber = NULL;
 }cl_cvars_t;
 
 extern cl_refHookfunc_t gHookFuncs;
@@ -31,6 +38,9 @@ void HUD_Init(void);
 
 void R_Blood(float* org, float* dir, int pcolor, int speed);
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
+void R_Explosion(float* pos, int model, float scale, float framerate, int flags);
+void R_RicochetSprite (float* pos, struct model_s* pmodel, float duration, float scale);
+void R_SparkEffect (float* pos, int count, int velocityMin, int velocityMax);
 
 #define clamp(num, a, b) max(min(num, b),a)
 

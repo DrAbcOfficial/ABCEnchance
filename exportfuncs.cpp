@@ -34,6 +34,7 @@ void FillDelegate()
 {
 	Fill_DelegateFunc(CL_TempEntAllocHigh);
 	Fill_DelegateFunc(CL_TempEntAlloc);
+	Fill_DelegateFunc(R_SparkEffect);
 }
 
 void FillAddress()
@@ -47,18 +48,60 @@ void InstallHook()
 {
 	Fill_InlineEfxHook(R_Blood);
 	Fill_InlineEfxHook(R_BloodSprite);
+	Fill_InlineEfxHook(R_Explosion);
+	Fill_InlineEfxHook(R_RicochetSprite);
 }
 
 void HUD_Init(void)
 {
 	gCVars.pBloodSpriteSpeed = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pBloodSpriteNumber = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_number", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pBloodSpriteNumber = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_num", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pExpSmokeNumber = gEngfuncs.pfnRegisterVariable("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gExportfuncs.HUD_Init();
 }
+void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale)
+{
+	//gHookFuncs.R_SparkEffect(pos, (int)gCVars.pRicochetNumber->value, 4, 32);
+	gHookFuncs.R_RicochetSprite(pos, pmodel, duration, scale);
+}
+void R_Explosion(float* pos, int model, float scale, float framerate, int flags)
+{
+	int	i;
+	vec3_t	offset, dir;
+	vec3_t	forward, right, up;
+	for (int i = 0; i < gCVars.pExpSmokeNumber->value; i++)
+	{
+		VectorCopy(pos, offset);
+		VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * scale, right, offset);
+		VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * scale, up, offset);
 
+		TEMPENTITY* pTemp = gHookFuncs.CL_TempEntAllocHigh(pos, NULL);
+		if (!pTemp)
+			return;
+		pTemp->flags = FTENT_COLLIDEWORLD | FTENT_SLOWGRAVITY | FTENT_SMOKETRAIL | FTENT_NOMODEL;
+		pTemp->die = gEngfuncs.GetClientTime() + 5;
+		pTemp->entity.angles[2] = gEngfuncs.pfnRandomLong(0, 360);
+		pTemp->bounceFactor = 0;
+
+		srand((unsigned int)gEngfuncs.GetClientTime() * i - i);
+		dir[0] = forward[0] + rand() / double(RAND_MAX) * 2 - 1;
+		srand((unsigned int)gEngfuncs.GetClientTime() * i + i);
+		dir[1] = forward[1] + rand() / double(RAND_MAX) * 2 - 1;
+		dir[2] = forward[2];
+
+		VectorScale(dir, gEngfuncs.pfnRandomFloat(8.0f * scale, 20.0f * scale), pTemp->entity.baseline.origin);
+		pTemp->entity.baseline.origin[0] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pExpSmokeSpeed->value) * (scale);
+		pTemp->entity.baseline.origin[1] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pExpSmokeSpeed->value) * (scale / 2);
+		pTemp->entity.baseline.origin[2] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pExpSmokeSpeed->value) * (scale / 4);
+	}
+	gHookFuncs.R_Explosion(pos, model, scale, framerate, flags);
+}
 void R_Blood(float* org, float* dir, int pcolor, int speed)
 {
-	gHookFuncs.R_Blood(org, dir, pcolor, speed * 10);
+	//Todo::´´½¨Ê±ì­Ñª
+	gHookFuncs.R_Blood(org, dir, pcolor, speed);
 }
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size)
 {
