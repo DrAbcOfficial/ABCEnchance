@@ -63,6 +63,7 @@ void HUD_Init(void)
 }
 void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale)
 {
+	//stack overflow
 	//gHookFuncs.R_SparkEffect(pos, (int)gCVars.pRicochetNumber->value, 4, 32);
 	gHookFuncs.R_RicochetSprite(pos, pmodel, duration, scale);
 }
