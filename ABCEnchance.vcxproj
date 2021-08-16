@@ -107,7 +107,6 @@
     <ClCompile Include="..\..\HLSDK\common\interface.cpp" />
     <ClCompile Include="exportfuncs.cpp" />
     <ClCompile Include="mathlib.cpp" />
-    <ClCompile Include="playertitle.cpp" />
     <ClCompile Include="plugins.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -116,9 +115,7 @@
     <ClInclude Include="exportfuncs.h" />
     <ClInclude Include="mathlib.h" />
     <ClInclude Include="palette.h" />
-    <ClInclude Include="playertitle.h" />
     <ClInclude Include="plugins.h" />
-    <ClInclude Include="VGUI_local.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -27,9 +27,6 @@
     <ClCompile Include="mathlib.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="playertitle.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -48,12 +45,6 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="palette.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="playertitle.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI_local.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>

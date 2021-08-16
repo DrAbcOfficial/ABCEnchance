@@ -7,7 +7,7 @@ metahook_api_t *g_pMetaHookAPI;
 mh_enginesave_t *g_pMetaSave;
 IFileSystem *g_pFileSystem;
 
-HINSTANCE g_hInstance, g_hThisModule, g_hEngineModule;
+HINSTANCE g_hInstance, g_hThisModule;
 
 PVOID g_dwEngineTextBase;
 DWORD g_dwEngineTextSize;
@@ -17,8 +17,6 @@ PVOID g_dwEngineRdataBase;
 DWORD g_dwEngineRdataSize;
 
 int g_iEngineType;
-PVOID g_dwClientBase;
-DWORD g_dwClientSize;
 
 void IPluginsV3::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave)
 {
@@ -55,26 +53,12 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	g_dwClientBase = (PVOID)GetModuleHandleA("client.dll");
 	g_dwClientSize = g_pMetaHookAPI->GetModuleSize((HMODULE)g_dwClientBase);
 
-
-	//PlayerTitle
-	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
-
-	if (pfnClientCreateInterface && pfnClientCreateInterface("SCClientDLL001", 0))
-	{
-#define SC_GETCLIENTCOLOR_SIG "\x8B\x4C\x24\x04\x85\xC9\x2A\x2A\x6B\xC1\x58"
-		{
-			gHookFuncs.GetClientColor = (decltype(gHookFuncs.GetClientColor))
-				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_GETCLIENTCOLOR_SIG, Sig_Length(SC_GETCLIENTCOLOR_SIG));
-			Sig_FuncNotFound(GetClientColor);
-		}
-	}
-
-	
 	FillDelegate();
 	FillAddress();
 	InstallHook();
 	
 	pExportFunc->HUD_Init = HUD_Init;
+	pExportFunc->HUD_Redraw = HUD_Redraw;
 }
 
 void IPluginsV3::ExitGame(int iResult)
