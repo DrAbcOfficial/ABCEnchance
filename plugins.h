@@ -1,4 +1,4 @@
-#pragma once
+#include <metahook.h>
 
 class IFileSystem;
 

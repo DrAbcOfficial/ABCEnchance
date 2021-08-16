@@ -55,6 +55,20 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	g_dwClientBase = (PVOID)GetModuleHandleA("client.dll");
 	g_dwClientSize = g_pMetaHookAPI->GetModuleSize((HMODULE)g_dwClientBase);
 
+
+	//PlayerTitle
+	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
+
+	if (pfnClientCreateInterface && pfnClientCreateInterface("SCClientDLL001", 0))
+	{
+#define SC_GETCLIENTCOLOR_SIG "\x8B\x4C\x24\x04\x85\xC9\x2A\x2A\x6B\xC1\x58"
+		{
+			gHookFuncs.GetClientColor = (decltype(gHookFuncs.GetClientColor))
+				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_GETCLIENTCOLOR_SIG, Sig_Length(SC_GETCLIENTCOLOR_SIG));
+			Sig_FuncNotFound(GetClientColor);
+		}
+	}
+
 	
 	FillDelegate();
 	FillAddress();

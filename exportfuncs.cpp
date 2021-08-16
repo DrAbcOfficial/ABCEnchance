@@ -4,6 +4,8 @@
 #include "mathlib.h"
 #include "com_model.h"
 #include "palette.h"
+#include "VGUI_local.h"
+#include "plugins.h"
 
 cl_refHookfunc_t gHookFuncs;
 cl_enginefunc_t gEngfuncs;
@@ -35,6 +37,7 @@ void FillDelegate()
 	Fill_DelegateFunc(CL_TempEntAllocHigh);
 	Fill_DelegateFunc(CL_TempEntAlloc);
 	Fill_DelegateFunc(R_SparkEffect);
+	Fill_DelegateFunc(R_BloodStream);
 }
 
 void FillAddress()
@@ -54,6 +57,36 @@ void InstallHook()
 
 void HUD_Init(void)
 {
+	gScreenInfo.iSize = sizeof(SCREENINFO_s);
+	gEngfuncs.pfnGetScreenInfo(&gScreenInfo);
+
+	HINTERFACEMODULE hVGUI2 = (HINTERFACEMODULE)GetModuleHandle("vgui2.dll");
+	if (hVGUI2)
+	{
+		CreateInterfaceFn fnVGUI2CreateInterface = Sys_GetFactory(hVGUI2);
+		g_pScheme = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, NULL);
+		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, NULL);
+	}
+	pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, NULL);
+
+	g_pScheme->LoadSchemeFromFile("gfx/abc/ABCEnchance.res", "ABCEnchance");
+	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
+	if (pScheme)
+	{
+		m_hFont = pScheme->GetFont("MainShitFont", true);
+	}
+	else
+	{
+		pScheme = g_pScheme->GetIScheme(g_pScheme->GetDefaultScheme());
+		if (pScheme)
+		{
+			m_hFont = pScheme->GetFont("Legacy_CreditsFont", true);
+			if (!m_hFont)
+				m_hFont = pScheme->GetFont("CreditsFont", true);
+		}
+	}
+
+	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("abc_playertitle", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pBloodSpriteSpeed = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pBloodSpriteNumber = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_num", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pExpSmokeNumber = gEngfuncs.pfnRegisterVariable("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
@@ -119,6 +152,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 		vec3_t	forward, right, up;
 
 		colorindex = clamp(colorindex, 0, 256);
+
 		pTemp->entity.curstate.scale = gEngfuncs.pfnRandomFloat((size / 25.0f), (size / 35.0f));
 		pTemp->flags = FTENT_SPRANIMATE;
 
@@ -169,5 +203,10 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 			pTemp->entity.baseline.origin[1] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 2);
 			pTemp->entity.baseline.origin[2] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 4);
 		}
+		vec3_t nOrg;
+		nOrg[0] = org[0];
+		nOrg[1] = org[1];
+		nOrg[2] = org[2];
+		gHookFuncs.R_BloodStream(org, dir, colorindex, gEngfuncs.pfnRandomLong(4, gCVars.pBloodSpriteSpeed->value));
 	}
 }

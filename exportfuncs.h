@@ -7,7 +7,9 @@ typedef struct
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
 	void		(*R_Explosion)				(float* pos, int model, float scale, float framerate, int flags);
 	void		(*R_RicochetSprite)			(float* pos, struct model_s* pmodel, float duration, float scale);
-	void		(*R_SparkEffect)				(float* pos, int count, int velocityMin, int velocityMax);
+	void		(*R_SparkEffect)			(float* pos, int count, int velocityMin, int velocityMax);
+	void		(*R_BloodStream)			(float* org, float* dir, int pcolor, int speed);
+	float*		(*GetClientColor)			(int clientIndex);
 
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
@@ -19,6 +21,8 @@ typedef struct
 	cvar_t* pExpSmokeNumber = NULL;
 	cvar_t* pExpSmokeSpeed = NULL;
 	cvar_t* pRicochetNumber = NULL;
+	cvar_t* pPlayerTitle = NULL;
+
 }cl_cvars_t;
 
 extern cl_refHookfunc_t gHookFuncs;
@@ -46,7 +50,7 @@ void R_SparkEffect (float* pos, int count, int velocityMin, int velocityMax);
 
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
 #define Sig_NotFound(name) Sys_ErrorEx("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
-#define Sig_FuncNotFound(name) if(!gRefFuncs.name) Sig_NotFound(name)
+#define Sig_FuncNotFound(name) if(!gHookFuncs.name) Sig_NotFound(name)
 #define Sig_AddrNotFound(name) if(!addr) Sig_NotFound(name)
 #define Sig_AddrFoundOrFill(name) Sig_AddrNotFound(name) else name = (decltype(name))addr;
 
