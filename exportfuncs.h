@@ -24,7 +24,14 @@ typedef struct
 	cvar_t* pExpSmokeNumber = NULL;
 	cvar_t* pExpSmokeSpeed = NULL;
 	cvar_t* pRicochetNumber = NULL;
+
 	cvar_t* pPlayerTitle = NULL;
+
+	cvar_t* pDynamicCrossHair = NULL;
+	cvar_t* pDynamicCrossHairL = NULL;
+	cvar_t* pDynamicCrossHairW = NULL;
+	cvar_t* pDynamicCrossHairO = NULL;
+	cvar_t* pDynamicCrossHairM = NULL;
 
 }cl_cvars_t;
 
@@ -55,6 +62,7 @@ void InstallHook();
 
 void HUD_Init(void);
 int HUD_Redraw(float time, int intermission);
+void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);
 
 void R_Blood(float* org, float* dir, int pcolor, int speed);
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size);

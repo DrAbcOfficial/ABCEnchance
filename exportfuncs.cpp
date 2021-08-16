@@ -34,103 +34,7 @@ vgui::IScheme* pScheme;
 
 SCREENINFO_s gScreenInfo;
 
-void Sys_ErrorEx(const char *fmt, ...)
-{
-	char msg[4096] = { 0 };
-
-	va_list argptr;
-
-	va_start(argptr, fmt);
-	_vsnprintf(msg, sizeof(msg), fmt, argptr);
-	va_end(argptr);
-
-	if (gEngfuncs.pfnClientCmd)
-		gEngfuncs.pfnClientCmd("escape\n");
-
-	MessageBox(NULL, msg, "Fatal Error", MB_ICONERROR);
-	TerminateProcess((HANDLE)(-1), 0);
-}
-
-void FillDelegate()
-{
-	Fill_DelegateFunc(CL_TempEntAllocHigh);
-	Fill_DelegateFunc(CL_TempEntAlloc);
-	Fill_DelegateFunc(R_SparkEffect);
-	Fill_DelegateFunc(R_BloodStream);
-}
-
-void FillAddress()
-{
-	//PlayerTitle
-	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
-
-	if (pfnClientCreateInterface && pfnClientCreateInterface("SCClientDLL001", 0))
-	{
-#define SC_GETCLIENTCOLOR_SIG "\x8B\x4C\x24\x04\x85\xC9\x2A\x2A\x6B\xC1\x58"
-		{
-			gHookFuncs.GetClientColor = (decltype(gHookFuncs.GetClientColor))
-				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_GETCLIENTCOLOR_SIG, Sig_Length(SC_GETCLIENTCOLOR_SIG));
-			Sig_FuncNotFound(GetClientColor);
-		}
-	}
-	//DWORD addr = (DWORD)Search_Pattern("\x6A\x03\x6A\x01\xE8\x2A\x2A\x2A\x2A\x8B\x15");
-	//Sig_AddrNotFound("Palatte Addr");
-	//gHookFuncs.host_basepal = (word*)*(DWORD*)addr;
-}
-
-void InstallHook() 
-{
-	Fill_InlineEfxHook(R_Blood);
-	Fill_InlineEfxHook(R_BloodSprite);
-	Fill_InlineEfxHook(R_Explosion);
-	Fill_InlineEfxHook(R_RicochetSprite);
-}
-
-void HUD_Init(void)
-{
-	gScreenInfo.iSize = sizeof(SCREENINFO_s);
-	gEngfuncs.pfnGetScreenInfo(&gScreenInfo);
-
-	HINTERFACEMODULE hVGUI2 = (HINTERFACEMODULE)GetModuleHandle("vgui2.dll");
-	if (hVGUI2)
-	{
-		CreateInterfaceFn fnVGUI2CreateInterface = Sys_GetFactory(hVGUI2);
-		g_pScheme = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, NULL);
-		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, NULL);
-	}
-	pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, NULL);
-
-	g_pScheme->LoadSchemeFromFile("gfx/abc/ABCEnchance.res", "ABCEnchance");
-	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
-	if (pScheme)
-	{
-		m_hFont = pScheme->GetFont("MainShitFont", true);
-	}
-	else
-	{
-		pScheme = g_pScheme->GetIScheme(g_pScheme->GetDefaultScheme());
-		if (pScheme)
-		{
-			m_hFont = pScheme->GetFont("Legacy_CreditsFont", true);
-			if (!m_hFont)
-				m_hFont = pScheme->GetFont("CreditsFont", true);
-		}
-	}
-
-	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("abc_playertitle", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pBloodSpriteSpeed = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pBloodSpriteNumber = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_num", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pExpSmokeNumber = gEngfuncs.pfnRegisterVariable("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gExportfuncs.HUD_Init();
-}
-
-int HUD_Redraw(float time, int intermission)
-{
-	DrawPlayerTitle();
-	return gExportfuncs.HUD_Redraw(time, intermission);
-}
+const clientdata_t* pClientData;
 
 //EFFECT
 void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale)
@@ -497,3 +401,137 @@ void DrawPlayerTitle()
 }
 
 //CROSSHAIR
+void RedrawCorssHair()
+{
+	if (gCVars.pDynamicCrossHair->value > 0)
+	{
+		int iCenterX = gScreenInfo.iWidth / 2;
+		int iCenterY = gScreenInfo.iHeight / 2;
+		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+		int iOffset = gCVars.pDynamicCrossHairO->value;
+
+		int iDrift = (fabs(pClientData->punchangle[0]) + fabs(pClientData->punchangle[1])) * 5 * gCVars.pDynamicCrossHairM->value;
+		int r = 255, g = 255, b = 255, a = 200;
+		//вС
+		gEngfuncs.pfnFillRGBA(iCenterX - iDrift - iOffset - gCVars.pDynamicCrossHairL->value, iCenterY, gCVars.pDynamicCrossHairL->value, gCVars.pDynamicCrossHairW->value,r,g,b,a);
+		//ио
+		gEngfuncs.pfnFillRGBA(iCenterX, iCenterY - iDrift - iOffset - gCVars.pDynamicCrossHairL->value, gCVars.pDynamicCrossHairW->value, gCVars.pDynamicCrossHairL->value, r, g, b, a);
+		//ср
+		gEngfuncs.pfnFillRGBA(iCenterX + iDrift + iOffset, iCenterY, gCVars.pDynamicCrossHairL->value, gCVars.pDynamicCrossHairW->value,r,g,b,a);
+		//об
+		gEngfuncs.pfnFillRGBA(iCenterX, iCenterY + iDrift + iOffset, gCVars.pDynamicCrossHairW->value, gCVars.pDynamicCrossHairL->value, r, g, b, a);
+	}
+}
+
+//FINAL SHIT
+void Sys_ErrorEx(const char* fmt, ...)
+{
+	char msg[4096] = { 0 };
+
+	va_list argptr;
+
+	va_start(argptr, fmt);
+	_vsnprintf(msg, sizeof(msg), fmt, argptr);
+	va_end(argptr);
+
+	if (gEngfuncs.pfnClientCmd)
+		gEngfuncs.pfnClientCmd("escape\n");
+
+	MessageBox(NULL, msg, "Fatal Error", MB_ICONERROR);
+	TerminateProcess((HANDLE)(-1), 0);
+}
+
+void FillDelegate()
+{
+	Fill_DelegateFunc(CL_TempEntAllocHigh);
+	Fill_DelegateFunc(CL_TempEntAlloc);
+	Fill_DelegateFunc(R_SparkEffect);
+	Fill_DelegateFunc(R_BloodStream);
+}
+
+void FillAddress()
+{
+	//PlayerTitle
+	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
+
+	if (pfnClientCreateInterface && pfnClientCreateInterface("SCClientDLL001", 0))
+	{
+#define SC_GETCLIENTCOLOR_SIG "\x8B\x4C\x24\x04\x85\xC9\x2A\x2A\x6B\xC1\x58"
+		{
+			gHookFuncs.GetClientColor = (decltype(gHookFuncs.GetClientColor))
+				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_GETCLIENTCOLOR_SIG, Sig_Length(SC_GETCLIENTCOLOR_SIG));
+			Sig_FuncNotFound(GetClientColor);
+		}
+	}
+	//DWORD addr = (DWORD)Search_Pattern("\x6A\x03\x6A\x01\xE8\x2A\x2A\x2A\x2A\x8B\x15");
+	//Sig_AddrNotFound("Palatte Addr");
+	//gHookFuncs.host_basepal = (word*)*(DWORD*)addr;
+}
+
+void InstallHook()
+{
+	Fill_InlineEfxHook(R_Blood);
+	Fill_InlineEfxHook(R_BloodSprite);
+	Fill_InlineEfxHook(R_Explosion);
+	Fill_InlineEfxHook(R_RicochetSprite);
+}
+
+void HUD_Init(void)
+{
+	gScreenInfo.iSize = sizeof(SCREENINFO_s);
+	gEngfuncs.pfnGetScreenInfo(&gScreenInfo);
+
+	HINTERFACEMODULE hVGUI2 = (HINTERFACEMODULE)GetModuleHandle("vgui2.dll");
+	if (hVGUI2)
+	{
+		CreateInterfaceFn fnVGUI2CreateInterface = Sys_GetFactory(hVGUI2);
+		g_pScheme = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, NULL);
+		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, NULL);
+	}
+	pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, NULL);
+
+	g_pScheme->LoadSchemeFromFile("gfx/abc/ABCEnchance.res", "ABCEnchance");
+	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
+	if (pScheme)
+	{
+		m_hFont = pScheme->GetFont("MainShitFont", true);
+	}
+	else
+	{
+		pScheme = g_pScheme->GetIScheme(g_pScheme->GetDefaultScheme());
+		if (pScheme)
+		{
+			m_hFont = pScheme->GetFont("Legacy_CreditsFont", true);
+			if (!m_hFont)
+				m_hFont = pScheme->GetFont("CreditsFont", true);
+		}
+	}
+
+	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("abc_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicCrossHair = gEngfuncs.pfnRegisterVariable("abc_crosshair", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicCrossHairL = gEngfuncs.pfnRegisterVariable("abc_crosshair_length", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicCrossHairW = gEngfuncs.pfnRegisterVariable("abc_crosshair_width", "4", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicCrossHairO = gEngfuncs.pfnRegisterVariable("abc_crosshair_offset", "64", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicCrossHairM = gEngfuncs.pfnRegisterVariable("abc_crosshair_multiple", "4", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pBloodSpriteSpeed = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pBloodSpriteNumber = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_num", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pExpSmokeNumber = gEngfuncs.pfnRegisterVariable("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+
+	gExportfuncs.HUD_Init();
+}
+
+int HUD_Redraw(float time, int intermission)
+{
+	DrawPlayerTitle();
+	RedrawCorssHair();
+	return gExportfuncs.HUD_Redraw(time, intermission);
+}
+
+
+void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client)
+{
+	pClientData = client;
+	gExportfuncs.HUD_TxferLocalOverrides(state, client);
+}

@@ -59,6 +59,7 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	
 	pExportFunc->HUD_Init = HUD_Init;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
+	pExportFunc->HUD_TxferLocalOverrides = HUD_TxferLocalOverrides;
 }
 
 void IPluginsV3::ExitGame(int iResult)
