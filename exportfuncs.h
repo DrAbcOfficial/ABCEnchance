@@ -12,7 +12,9 @@ typedef struct
 	void		(*R_RicochetSprite)			(float* pos, struct model_s* pmodel, float duration, float scale);
 	void		(*R_SparkEffect)			(float* pos, int count, int velocityMin, int velocityMax);
 	void		(*R_BloodStream)			(float* org, float* dir, int pcolor, int speed);
-	float* (*GetClientColor)			(int clientIndex);
+	float*		(*GetClientColor)			(int clientIndex);
+
+	void		(*VectorScale)				(float* pucnangle1, float scale, float* pucnangle2);
 
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
@@ -32,6 +34,14 @@ typedef struct
 	cvar_t* pDynamicCrossHairW = NULL;
 	cvar_t* pDynamicCrossHairO = NULL;
 	cvar_t* pDynamicCrossHairM = NULL;
+	cvar_t* pDynamicCrossHairA = NULL;
+	cvar_t* pDynamicCrossHairCR = NULL;
+	cvar_t* pDynamicCrossHairCG = NULL;
+	cvar_t* pDynamicCrossHairCB = NULL;
+	cvar_t* pDynamicCrossHairOTD = NULL;
+	cvar_t* pDynamicCrossHairOTDW = NULL;
+	cvar_t* pDynamicCrossHairT = NULL;
+	cvar_t* pDynamicCrossHairD = NULL;
 
 }cl_cvars_t;
 
