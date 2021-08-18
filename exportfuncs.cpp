@@ -204,6 +204,12 @@ void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m
 }
 int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui::HFont m_hFont)
 {
+	if (r > 1.0)
+		r /= 255;
+	if (g > 1.0)
+		g /= 255;
+	if (b > 1.0)
+		b /= 255;
 	int i;
 	int iOriginalX;
 	int iTotalLines;
@@ -479,6 +485,9 @@ void RedrawCorssHair()
 //HUD
 void DrawHealthArmorHUD()
 {
+	if (gCVars.pDynamicHUD <= 0)
+		return;
+
 #define HUD_INIT_DECAY_ALPHA 128
 	float iSizeStep = gScreenInfo.iWidth / 3 / HUD_INIT_DECAY_ALPHA;
 	float i = 0, nowX = 0;
@@ -490,7 +499,7 @@ void DrawHealthArmorHUD()
 		nowX += iSizeStep;
 	}
 	//»æÖÆÑªÁ¿Í¼±ê
-	int sprIndex = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
+	//int sprIndex = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
 	int iStartX = gScreenInfo.iWidth / 48;
 	int iIconSize = flBackGroundHeight * 0.667;
 	int iTextWidth = flBackGroundHeight;
@@ -500,9 +509,8 @@ void DrawHealthArmorHUD()
 	int iElementGap = flBackGroundHeight * 0.2;
 	int iHealth = pHUDHealth->m_iHealth;
 	int iBattery = pHUDBattery->m_iBat;
-	int iBatteryMax = pHUDBattery->m_iBatMax;
+	int r = gCVars.pDynamicHUDCR->value, g = gCVars.pDynamicHUDCG->value, b = gCVars.pDynamicHUDCB->value, a = gCVars.pDynamicHUDCA->value;
 	vgui::HFont hFont = pScheme->GetFont("HUDShitFont", true);
-
 	//HP ICON
 	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iIconSize)/2, iIconSize, iIconSize, 255, 255, 255, 255);
 
@@ -513,24 +521,25 @@ void DrawHealthArmorHUD()
 	int iSzWidth = 0;
 	GetStringSize(wideName, &iSzWidth, NULL, hFont);
 	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
-	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, 0, 1.0, 0, hFont);
+	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, hFont);
 	iStartX += iSzWidth + iElementGap;
 
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, 0, 128, 0, 255);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iHealth / 100)), iBarWidth, 0, 255, 0, 255);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, r/2, g/2, b/2, a);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iHealth / 100)), iBarWidth, r, g, b, a);
 	iStartX += iBarLength + iElementGap * 4;
 
 	//AP
 	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iIconSize) / 2, iIconSize, iIconSize, 255, 255, 255, 255);
+
 	itoa(iBattery, numberString, 10);
 	pLocalize->ConvertANSIToUnicode(numberString, wideName, sizeof(wideName));
 	GetStringSize(wideName, &iSzWidth, NULL, hFont);
 	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
-	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, 0, 1.0, 0, hFont);
+	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, hFont);
 	iStartX += iSzWidth + iElementGap;
 
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, 0, 128, 0, 255);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iBattery / iBatteryMax)), iBarWidth, 0, 255, 0, 255);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, r/2, g/2, b/2, a);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iBattery / 100)), iBarWidth, r, g, b, a);
 	iStartX += iBarLength + iElementGap * 2;
 
 
@@ -627,6 +636,12 @@ void HUD_Init(void)
 	gCVars.pDynamicCrossHairOTDW = gEngfuncs.pfnRegisterVariable("cl_crosshair_outline", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairT = gEngfuncs.pfnRegisterVariable("cl_crosshair_t", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairD = gEngfuncs.pfnRegisterVariable("cl_crosshairdot", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+
+	gCVars.pDynamicHUD = gEngfuncs.pfnRegisterVariable("cl_hud_csgo", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicHUDCR = gEngfuncs.pfnRegisterVariable("cl_hud_color_r", "245", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicHUDCG = gEngfuncs.pfnRegisterVariable("cl_hud_color_g", "230", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicHUDCB = gEngfuncs.pfnRegisterVariable("cl_hud_color_b", "195", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicHUDCA = gEngfuncs.pfnRegisterVariable("cl_hud_color_a", "255", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pBloodSpriteSpeed = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pBloodSpriteNumber = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_num", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);

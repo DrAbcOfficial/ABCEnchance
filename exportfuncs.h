@@ -42,6 +42,12 @@ typedef struct
 	cvar_t* pDynamicCrossHairOTDW = NULL;
 	cvar_t* pDynamicCrossHairT = NULL;
 	cvar_t* pDynamicCrossHairD = NULL;
+	
+	cvar_t* pDynamicHUD = NULL;
+	cvar_t* pDynamicHUDCR = NULL;
+	cvar_t* pDynamicHUDCG = NULL;
+	cvar_t* pDynamicHUDCB = NULL;
+	cvar_t* pDynamicHUDCA = NULL;
 
 }cl_cvars_t;
 
