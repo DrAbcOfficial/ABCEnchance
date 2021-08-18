@@ -13,6 +13,10 @@
 #include <VGUI/ISurface.h>
 #include <VGUI/ILocalize.h>
 
+#include <triangleapi.h>
+
+#include "hud.h"
+
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 cl_refHookfunc_t gHookFuncs;
@@ -29,7 +33,6 @@ vgui::ISchemeManager* g_pScheme;
 vgui::ISurface* pSurface;
 vgui::ILocalize* pLocalize;
 
-vgui::HFont m_hFont;
 vgui::IScheme* pScheme;
 
 SCREENINFO_s gScreenInfo;
@@ -94,15 +97,16 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 		int	i;
 		vec3_t	offset, dir;
 		vec3_t	forward, right, up;
+		int nColor = colorindex;
 
-		colorindex = clamp(colorindex, 0, 256);
+		nColor = clamp(nColor, 0, 256);
 
 		pTemp->entity.curstate.scale = gEngfuncs.pfnRandomFloat((size / 25.0f), (size / 35.0f));
 		pTemp->flags = FTENT_SPRANIMATE;
 
-		pTemp->entity.curstate.rendercolor.r = base_palette1[colorindex].r;
-		pTemp->entity.curstate.rendercolor.g = base_palette1[colorindex].g;
-		pTemp->entity.curstate.rendercolor.b = base_palette1[colorindex].b;
+		pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r;
+		pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g;
+		pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b;
 		pTemp->entity.curstate.framerate = pModel->numframes * 10; //1s
 		// play the whole thing once
 		pTemp->die = gEngfuncs.GetClientTime() + (pModel->numframes / pTemp->entity.curstate.framerate);
@@ -126,9 +130,9 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 
 			pTemp->flags = FTENT_COLLIDEWORLD | FTENT_SLOWGRAVITY;
 			pTemp->entity.curstate.scale = gEngfuncs.pfnRandomFloat((size / 25.0f), (size / 35.0f));
-			pTemp->entity.curstate.rendercolor.r = base_palette1[colorindex].r;
-			pTemp->entity.curstate.rendercolor.g = base_palette1[colorindex].g;
-			pTemp->entity.curstate.rendercolor.b = base_palette1[colorindex].b;
+			pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r;
+			pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g;
+			pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b;
 			pTemp->entity.curstate.frame = gEngfuncs.pfnRandomLong(0, pModel->numframes - 1);
 			pTemp->die = gEngfuncs.GetClientTime() + gEngfuncs.pfnRandomFloat(1.0f, 3.0f);
 
@@ -151,20 +155,20 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 		nOrg[0] = org[0];
 		nOrg[1] = org[1];
 		nOrg[2] = org[2];
-		gHookFuncs.R_BloodStream(org, dir, colorindex, gEngfuncs.pfnRandomLong(4, gCVars.pBloodSpriteSpeed->value));
+		gHookFuncs.R_BloodStream(nOrg, dir, nColor == 247 ? 70 : nColor, gEngfuncs.pfnRandomLong(4, gCVars.pBloodSpriteSpeed->value));
 	}
 }
 
 
 //PLAYER TITLE
-int GetHudFontHeight(void)
+int GetHudFontHeight(vgui::HFont m_hFont)
 {
 	if (!m_hFont)
 		return 0;
 
 	return pSurface->GetFontTall(m_hFont);
 }
-void GetStringSize(const wchar_t* string, int* width, int* height)
+void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m_hFont)
 {
 	int i;
 	int len;
@@ -192,10 +196,10 @@ void GetStringSize(const wchar_t* string, int* width, int* height)
 
 	if (height)
 	{
-		*height = GetHudFontHeight();
+		*height = GetHudFontHeight(m_hFont);
 	}
 }
-int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b)
+int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui::HFont m_hFont)
 {
 	int i;
 	int iOriginalX;
@@ -257,7 +261,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b)
 
 		line[iTempCount] = 0;
 
-		GetStringSize(line, &iWidth, &iHeight);
+		GetStringSize(line, &iWidth, &iHeight, m_hFont);
 
 		if (bHorzCenter)
 			x = (gScreenInfo.iWidth - iWidth) / 2;
@@ -300,9 +304,9 @@ void DrawPlayerTitle()
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		float* localColor = gHookFuncs.GetClientColor(local->index);
 
-		float dx = 0;
-		float dy = 0;
-		float dz = 0;
+		float dx, dy, dz;
+		vec3_t vecHUD;
+		vec3_t vecOrg;
 		//水平夹角
 		float levelAngle = 0;
 		//俯仰角
@@ -320,19 +324,21 @@ void DrawPlayerTitle()
 		for (int i = 1; i <= 32; i++)
 		{
 			cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i);
-			if (!entity || !entity->player || !entity->model || entity == local)
-				continue;
 
+			if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->player || !entity->model || entity == local)
+				continue;
 			//计算我和目标的相对偏移
 			dx = entity->curstate.origin[0] - local->curstate.origin[0];
 			dy = entity->curstate.origin[1] - local->curstate.origin[1];
-			dz = entity->curstate.origin[2] - local->curstate.origin[2] - 50;
-
+			dz = entity->curstate.origin[2] - local->curstate.origin[2];
 			float fDistance = sqrt(pow(dx, 2) + pow(dy, 2));
 			float* color = gHookFuncs.GetClientColor(i);
-
 			if (fDistance >= 2048 || color != localColor)
 				continue;
+
+			vecOrg[0] = entity->curstate.origin[0];
+			vecOrg[1] = entity->curstate.origin[1];
+			vecOrg[2] = entity->curstate.origin[2] + 56;
 
 			levelAngle = vecView[1];
 			elevation = vecView[0];
@@ -378,23 +384,22 @@ void DrawPlayerTitle()
 			//视角俯仰夹角
 			fPlayerAngle_z = asin(dz / (sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2)))) * RADIAN_PER_DEGREE;
 			fPaintAngle_z = elevation - fPlayerAngle_z;
+
+			gEngfuncs.pTriAPI->WorldToScreen(vecOrg, vecHUD);
+			vecHUD[0] = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
+			vecHUD[1] = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
 			if (fPaintAngle_xy > -45 && fPaintAngle_xy < 45 && fPaintAngle_z > -45 && fPaintAngle_z < 45)
 			{
-				DWORD dwLeft_x;
-				DWORD dwLeft_y;
-				float fPaintPoint = gScreenInfo.iWidth * (tan(fPaintAngle_xy * DEGREE_PER_RADIAN) + 1) / 2;
-				dwLeft_x = fPaintPoint - (5000 / (100 + fDistance) + 5);
-				//俯仰
-				float fPaintSx = gScreenInfo.iHeight * (tan(53.0 * DEGREE_PER_RADIAN) * tan(fPaintAngle_z * DEGREE_PER_RADIAN) * 10 / 11 + 1) / 2;
-				dwLeft_y = fPaintSx + (30000 / fDistance) * (fPaintAngle_z / 100);
-
 				hud_player_info_t playerinfo = { 0 };
 				gEngfuncs.pfnGetPlayerInfo(i, &playerinfo);
 				if (playerinfo.name)
 				{
 					wchar_t wideName[MAX_PLAYER_NAME_LENGTH];
 					pLocalize->ConvertANSIToUnicode(playerinfo.name, wideName, sizeof(wideName));
-					DrawVGUI2String(wideName, dwLeft_x, dwLeft_y, color[0], color[1], color[2]);
+					int iSzWidth = 0;
+					vgui::HFont hFont = pScheme->GetFont("MainShitFont", true);
+					GetStringSize(wideName, &iSzWidth, NULL, hFont);
+					DrawVGUI2String(wideName, vecHUD[0] - iSzWidth / 2, vecHUD[1], color[0], color[1], color[2], hFont);
 				}
 			}
 		}
@@ -404,25 +409,24 @@ void DrawPlayerTitle()
 //CROSSHAIR
 void R_VectorScale(float* pucnangle1, float scale, float* pucnangle2)
 {
-	pClientEVPunchAngles = pucnangle1;
 	gHookFuncs.VectorScale(pucnangle1, scale, pucnangle2);
+	pClientEVPunchAngles = pucnangle1;
 }
 void RedrawCorssHair()
 {
 	if (gCVars.pDynamicCrossHair->value > 0)
 	{
+		if (pClientData->health <= 0)
+			return;
+		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		int iCenterX = gScreenInfo.iWidth / 2;
 		int iCenterY = gScreenInfo.iHeight / 2;
-		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		int iOffset = gCVars.pDynamicCrossHairO->value;
-
-
 		int iDrift = fabs(pClientEVPunchAngles[0]) + fabs(pClientEVPunchAngles[1]);
 		if (iDrift <= 0)
 			iDrift = fabs(pClientData->punchangle[0]) + fabs(pClientData->punchangle[1]);
 		iDrift = iDrift * 5 * gCVars.pDynamicCrossHairM->value;
 		int r = gCVars.pDynamicCrossHairCR->value, g = gCVars.pDynamicCrossHairCG->value, b = gCVars.pDynamicCrossHairCB->value, a = gCVars.pDynamicCrossHairA->value;
-
 		int iWidth = gCVars.pDynamicCrossHairW->value;
 		int iLength = gCVars.pDynamicCrossHairL->value;
 		int iWidthOffset = iWidth / 2;
@@ -432,27 +436,27 @@ void RedrawCorssHair()
 		{
 			int iOutLineWidth = gCVars.pDynamicCrossHairOTDW->value;
 			//左
-			gEngfuncs.pfnFillRGBA(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 255, 255, 255, a);
-			gEngfuncs.pfnFillRGBA(iCenterX - iFinalOffset, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 255, 255, 255, a);
-			gEngfuncs.pfnFillRGBA(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iLength + 2 * iOutLineWidth, iOutLineWidth, 255, 255, 255, a);
-			gEngfuncs.pfnFillRGBA(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY + iWidthOffset, iLength + 2 * iOutLineWidth, iOutLineWidth, 255, 255, 255, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iLength + 2 * iOutLineWidth, iOutLineWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY + iWidthOffset, iLength + 2 * iOutLineWidth, iOutLineWidth, 0, 0, 0, a);
 			//上
 			if (!gCVars.pDynamicCrossHairT->value) {
-				gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY - iFinalOffset - iLength - iOutLineWidth, iWidth, iOutLineWidth, 255, 255, 255, a);
-				gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY - iFinalOffset, iWidth, iOutLineWidth, 255, 255, 255, a);
-				gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset - iOutLineWidth, iCenterY - iFinalOffset - iLength - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 255, 255, 255, a);
-				gEngfuncs.pfnFillRGBA(iCenterX + iWidthOffset, iCenterY - iFinalOffset - iLength - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 255, 255, 255, a);
+				gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset, iCenterY - iFinalOffset - iLength - iOutLineWidth, iWidth, iOutLineWidth, 0, 0, 0, a);
+				gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset, iCenterY - iFinalOffset, iWidth, iOutLineWidth, 0, 0, 0, a);
+				gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset - iOutLineWidth, iCenterY - iFinalOffset - iLength - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 0, 0, 0, a);
+				gEngfuncs.pfnFillRGBABlend(iCenterX + iWidthOffset, iCenterY - iFinalOffset - iLength - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 0, 0, 0, a);
 			}
 			//右
-			gEngfuncs.pfnFillRGBA(iCenterX + iFinalOffset + iLength, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 255, 255, 255, a);
-			gEngfuncs.pfnFillRGBA(iCenterX + iFinalOffset - iOutLineWidth, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 255, 255, 255, a);
-			gEngfuncs.pfnFillRGBA(iCenterX + iFinalOffset - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iLength + 2 * iOutLineWidth, iOutLineWidth, 255, 255, 255, a);
-			gEngfuncs.pfnFillRGBA(iCenterX + iFinalOffset - iOutLineWidth, iCenterY + iWidthOffset, iLength + 2 * iOutLineWidth, iOutLineWidth, 255, 255, 255, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset + iLength, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset - iOutLineWidth, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iLength + 2 * iOutLineWidth, iOutLineWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset - iOutLineWidth, iCenterY + iWidthOffset, iLength + 2 * iOutLineWidth, iOutLineWidth, 0, 0, 0, a);
 			//下
-			gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset + iLength, iWidth, iOutLineWidth, 255, 255, 255, a);
-			gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset - iOutLineWidth, iWidth, iOutLineWidth, 255, 255, 255, a);
-			gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset - iOutLineWidth, iCenterY + iFinalOffset - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 255, 255, 255, a);
-			gEngfuncs.pfnFillRGBA(iCenterX + iWidthOffset, iCenterY + iFinalOffset - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 255, 255, 255, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset, iCenterY + iFinalOffset + iLength, iWidth, iOutLineWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset, iCenterY + iFinalOffset - iOutLineWidth, iWidth, iOutLineWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset - iOutLineWidth, iCenterY + iFinalOffset - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX + iWidthOffset, iCenterY + iFinalOffset - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 0, 0, 0, a);
 		}
 		//中心
 		if (gCVars.pDynamicCrossHairD->value)
@@ -467,6 +471,75 @@ void RedrawCorssHair()
 		//下
 		gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset, iWidth, iLength, r, g, b, a);
 	}
+}
+
+//HUD
+int* m_pBattery = 0;
+void __fastcall HUDBatteryDraw(void* pthis, int idummy, int param_1)
+{
+	m_pBattery = (int*)(param_1 + 0x24);
+}
+void DrawHealthArmorHUD()
+{
+#define HUD_INIT_DECAY_ALPHA 128
+	float iSizeStep = gScreenInfo.iWidth / 3 / HUD_INIT_DECAY_ALPHA;
+	float i = 0, nowX = 0;
+	float flBackGroundY = gScreenInfo.iHeight * 0.95;
+	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
+	for (i = HUD_INIT_DECAY_ALPHA; i > 0.0f; i--)
+	{
+		gEngfuncs.pfnFillRGBABlend(nowX, flBackGroundY, iSizeStep, flBackGroundHeight, 53, 51, 48, i);
+		nowX += iSizeStep;
+	}
+	//绘制血量图标
+	int sprIndex = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
+	int iStartX = gScreenInfo.iWidth / 48;
+	int iIconSize = flBackGroundHeight * 0.667;
+	int iTextWidth = flBackGroundHeight;
+	int iTextHeight = flBackGroundHeight * 0.667;
+	int iBarLength = flBackGroundHeight * 2;
+	int iBarWidth = flBackGroundHeight * 0.334;
+	int iElementGap = flBackGroundHeight * 0.2;
+	int iHealth = (int)pClientData->health;
+	int iBattery = 0;
+	if(m_pBattery)
+		iBattery = *m_pBattery;
+	vgui::HFont hFont = pScheme->GetFont("HUDShitFont", true);
+
+	//HP ICON
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iIconSize)/2, iIconSize, iIconSize, 255, 255, 255, 255);
+
+	char numberString[16];
+	itoa(iHealth, numberString, 10);
+	wchar_t wideName[8];
+	pLocalize->ConvertANSIToUnicode(numberString, wideName, sizeof(wideName));
+	int iSzWidth = 0;
+	GetStringSize(wideName, &iSzWidth, NULL, hFont);
+	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
+	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, 0, 1.0, 0, hFont);
+	iStartX += iSzWidth + iElementGap;
+
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, 0, 128, 0, 255);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iHealth / 100)), iBarWidth, 0, 255, 0, 255);
+	iStartX += iBarLength + iElementGap * 4;
+
+	//AP
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iIconSize) / 2, iIconSize, iIconSize, 255, 255, 255, 255);
+	itoa(iBattery, numberString, 10);
+	pLocalize->ConvertANSIToUnicode(numberString, wideName, sizeof(wideName));
+	GetStringSize(wideName, &iSzWidth, NULL, hFont);
+	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
+	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, 0, 1.0, 0, hFont);
+	iStartX += iSzWidth + iElementGap;
+
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, 0, 128, 0, 255);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iBattery / 100)), iBarWidth, 0, 255, 0, 255);
+	iStartX += iBarLength + iElementGap * 2;
+
+
+	//wrect_t wrecSpr = { 0,0,0,0 };
+	//gEngfuncs.pfnSPR_Set(sprIndex, 255, 255, 255);
+	//gEngfuncs.pfnSPR_DrawAdditive(0, gScreenInfo.iWidth / 32, flBackGroundY + flBackGroundHeight / 6, &wrecSpr);
 }
 
 //FINAL SHIT
@@ -514,10 +587,13 @@ void FillAddress()
 				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_VECTORSCALE_SIG, Sig_Length(R_VECTORSCALE_SIG));
 			Sig_FuncNotFound(VectorScale);
 		}
+#define R_BATTERY_DRAW_SIG "\x83\xEC\x28\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x44\x24\x24\xF6\x05\x2A\x2A\x2A\x2A\x28\x57\x8B\xF9\x2A\x2A\x2A\x2A\x00\x00"
+		{
+			gHookFuncs.HUDBatteryDraw = (decltype(gHookFuncs.HUDBatteryDraw))
+				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_BATTERY_DRAW_SIG, Sig_Length(R_BATTERY_DRAW_SIG));
+			Sig_FuncNotFound(HUDBatteryDraw);
+		}
 	}
-	//DWORD addr = (DWORD)Search_Pattern("\x6A\x03\x6A\x01\xE8\x2A\x2A\x2A\x2A\x8B\x15");
-	//Sig_AddrNotFound("Palatte Addr");
-	//gHookFuncs.host_basepal = (word*)*(DWORD*)addr;
 }
 
 void InstallHook()
@@ -528,6 +604,7 @@ void InstallHook()
 	Fill_InlineEfxHook(R_RicochetSprite);
 
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.VectorScale, R_VectorScale, (void**)&gHookFuncs.VectorScale);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.HUDBatteryDraw, HUDBatteryDraw, (void**)&gHookFuncs.HUDBatteryDraw);
 }
 
 void HUD_Init(void)
@@ -544,23 +621,8 @@ void HUD_Init(void)
 	}
 	pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, NULL);
 
-	g_pScheme->LoadSchemeFromFile("gfx/abc/ABCEnchance.res", "ABCEnchance");
+	g_pScheme->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
-	if (pScheme)
-	{
-		m_hFont = pScheme->GetFont("MainShitFont", true);
-	}
-	else
-	{
-		pScheme = g_pScheme->GetIScheme(g_pScheme->GetDefaultScheme());
-		if (pScheme)
-		{
-			m_hFont = pScheme->GetFont("Legacy_CreditsFont", true);
-			if (!m_hFont)
-				m_hFont = pScheme->GetFont("CreditsFont", true);
-		}
-	}
-
 	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("cl_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pDynamicCrossHair = gEngfuncs.pfnRegisterVariable("cl_dynamiccrosshair", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
@@ -588,8 +650,21 @@ void HUD_Init(void)
 
 int HUD_Redraw(float time, int intermission)
 {
+	DWORD dwAddress = (DWORD)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
+	if (dwAddress)
+	{
+		static DWORD pHUD = *(DWORD*)(dwAddress + 0x1);
+		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(pHUD + 0x0));
+		while (pHudList)
+		{
+			if (dynamic_cast<CHudBattery*>(pHudList->p) != NULL || dynamic_cast<CHudHealth*>(pHudList->p) != NULL)
+				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			pHudList = pHudList->pNext;
+		}
+	}
 	DrawPlayerTitle();
 	RedrawCorssHair();
+	DrawHealthArmorHUD();
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
 

@@ -47,5 +47,8 @@
     <ClInclude Include="palette.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="hud.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

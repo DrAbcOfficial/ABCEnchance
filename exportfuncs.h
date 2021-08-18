@@ -15,6 +15,7 @@ typedef struct
 	float*		(*GetClientColor)			(int clientIndex);
 
 	void		(*VectorScale)				(float* pucnangle1, float scale, float* pucnangle2);
+	void		(__fastcall* HUDBatteryDraw)(void* pthis, int idummy, int param_1);
 
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
