@@ -15,7 +15,6 @@ typedef struct
 	float*		(*GetClientColor)			(int clientIndex);
 
 	void		(*VectorScale)				(float* pucnangle1, float scale, float* pucnangle2);
-	void		(__fastcall* HUDBatteryDraw)(void* pthis, int idummy, int param_1);
 
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
@@ -85,7 +84,7 @@ void R_RicochetSprite (float* pos, struct model_s* pmodel, float duration, float
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
 #define Sig_NotFound(name) Sys_ErrorEx("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
 #define Sig_FuncNotFound(name) if(!gHookFuncs.name) Sig_NotFound(name)
-#define Sig_AddrNotFound(name) if(!addr) Sig_NotFound(name)
+#define Sig_AddrNotFound(name) if(!name) Sig_NotFound(name)
 #define Sig_AddrFoundOrFill(name) Sig_AddrNotFound(name) else name = (decltype(name))addr;
 
 #define Sig_Length(a) (sizeof(a)-1)

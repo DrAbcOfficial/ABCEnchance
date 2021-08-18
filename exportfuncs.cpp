@@ -40,6 +40,9 @@ SCREENINFO_s gScreenInfo;
 const clientdata_t* pClientData;
 float* pClientEVPunchAngles;
 
+CHudBattery* pHUDBattery;
+CHudHealth* pHUDHealth;
+
 //EFFECT
 void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale)
 {
@@ -474,11 +477,6 @@ void RedrawCorssHair()
 }
 
 //HUD
-int* m_pBattery = 0;
-void __fastcall HUDBatteryDraw(void* pthis, int idummy, int param_1)
-{
-	m_pBattery = (int*)(param_1 + 0x24);
-}
 void DrawHealthArmorHUD()
 {
 #define HUD_INIT_DECAY_ALPHA 128
@@ -500,10 +498,9 @@ void DrawHealthArmorHUD()
 	int iBarLength = flBackGroundHeight * 2;
 	int iBarWidth = flBackGroundHeight * 0.334;
 	int iElementGap = flBackGroundHeight * 0.2;
-	int iHealth = (int)pClientData->health;
-	int iBattery = 0;
-	if(m_pBattery)
-		iBattery = *m_pBattery;
+	int iHealth = pHUDHealth->m_iHealth;
+	int iBattery = pHUDBattery->m_iBat;
+	int iBatteryMax = pHUDBattery->m_iBatMax;
 	vgui::HFont hFont = pScheme->GetFont("HUDShitFont", true);
 
 	//HP ICON
@@ -533,7 +530,7 @@ void DrawHealthArmorHUD()
 	iStartX += iSzWidth + iElementGap;
 
 	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, 0, 128, 0, 255);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iBattery / 100)), iBarWidth, 0, 255, 0, 255);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iBattery / iBatteryMax)), iBarWidth, 0, 255, 0, 255);
 	iStartX += iBarLength + iElementGap * 2;
 
 
@@ -572,7 +569,6 @@ void FillAddress()
 {
 	//PlayerTitle
 	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
-
 	if (pfnClientCreateInterface && pfnClientCreateInterface("SCClientDLL001", 0))
 	{
 #define SC_GETCLIENTCOLOR_SIG "\x8B\x4C\x24\x04\x85\xC9\x2A\x2A\x6B\xC1\x58"
@@ -587,12 +583,6 @@ void FillAddress()
 				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_VECTORSCALE_SIG, Sig_Length(R_VECTORSCALE_SIG));
 			Sig_FuncNotFound(VectorScale);
 		}
-#define R_BATTERY_DRAW_SIG "\x83\xEC\x28\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x44\x24\x24\xF6\x05\x2A\x2A\x2A\x2A\x28\x57\x8B\xF9\x2A\x2A\x2A\x2A\x00\x00"
-		{
-			gHookFuncs.HUDBatteryDraw = (decltype(gHookFuncs.HUDBatteryDraw))
-				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_BATTERY_DRAW_SIG, Sig_Length(R_BATTERY_DRAW_SIG));
-			Sig_FuncNotFound(HUDBatteryDraw);
-		}
 	}
 }
 
@@ -604,7 +594,6 @@ void InstallHook()
 	Fill_InlineEfxHook(R_RicochetSprite);
 
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.VectorScale, R_VectorScale, (void**)&gHookFuncs.VectorScale);
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.HUDBatteryDraw, HUDBatteryDraw, (void**)&gHookFuncs.HUDBatteryDraw);
 }
 
 void HUD_Init(void)
@@ -657,8 +646,16 @@ int HUD_Redraw(float time, int intermission)
 		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(pHUD + 0x0));
 		while (pHudList)
 		{
-			if (dynamic_cast<CHudBattery*>(pHudList->p) != NULL || dynamic_cast<CHudHealth*>(pHudList->p) != NULL)
+			if (dynamic_cast<CHudBattery*>(pHudList->p) != NULL)
+			{
+				pHUDBattery = dynamic_cast<CHudBattery*>(pHudList->p);
 				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			}
+			else if (dynamic_cast<CHudHealth*>(pHudList->p) != NULL)
+			{
+				pHUDHealth = dynamic_cast<CHudHealth*>(pHudList->p);
+				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			}
 			pHudList = pHudList->pNext;
 		}
 	}

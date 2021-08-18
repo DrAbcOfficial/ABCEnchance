@@ -90,7 +90,7 @@ public:
 	int Draw(float flTime);
 	int MsgFunc_Battery(const char* pszName, int iSize, void* pbuf);
 
-private:
+
 	HSPRITE m_hSprite1;
 	HSPRITE m_hSprite2;
 	wrect_t* m_prc1;
@@ -202,7 +202,6 @@ public:
 	void GetPainColor(int& r, int& g, int& b);
 	float m_fFade;
 
-private:
 	HSPRITE m_hSprite;
 	HSPRITE m_hDamage;
 
