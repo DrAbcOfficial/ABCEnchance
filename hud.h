@@ -20,6 +20,34 @@
 // CHud handles the message, calculation, and drawing the HUD
 //
 
+typedef struct {
+	int iHealthIcon;
+	int iArmorIconNull;
+	int iArmorIconFull;
+
+	float BackGroundAlpha = 128;
+	float StartX = 48;
+	float IconSize = 0.5;
+	float TextWidth = 1;
+	float TextHeight = 0.667;
+	float BarLength = 2;
+	float BarWidth = 0.334;
+	float ElementGap = 0.2;
+	float BackGroundY = 0.95;
+	float BackGroundLength = 3;
+
+	Color HealthIconColor;
+	Color HealthBarColor;
+	Color HealthTextColor;
+	Color ArmorIconColor;
+	Color ArmorBarColor;
+	Color ArmorTextColor;
+	Color BackGroundColor;
+
+	vgui::HFont HUDFont;
+	vgui::HFont HUDBigFont;
+} cl_CustomVars;
+
 
 #define RGB_YELLOWISH 0x00FFA000 //255,160,0
 #define RGB_REDISH 0x00FF1010 //255,160,0

@@ -15,6 +15,7 @@
 
 #include <triangleapi.h>
 
+#include <Color.h>
 #include "hud.h"
 
 cl_enginefunc_t gEngfuncs;
@@ -483,69 +484,124 @@ void RedrawCorssHair()
 }
 
 //HUD
+cl_CustomVars pHudSetting;
+void InitHealthArmorHUDSprIcon()
+{
+	pHudSetting.iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
+	pHudSetting.iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
+	pHudSetting.iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
+
+	pHudSetting.StartX = atof(pScheme->GetResourceString("HealthArmor.StartX"));
+	pHudSetting.IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
+	pHudSetting.TextWidth = atof(pScheme->GetResourceString("HealthArmor.TextWidth"));
+	pHudSetting.IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
+	pHudSetting.BarLength = atof(pScheme->GetResourceString("HealthArmor.BarLength"));
+	pHudSetting.BarWidth = atof(pScheme->GetResourceString("HealthArmor.BarWidth"));
+	pHudSetting.ElementGap = atof(pScheme->GetResourceString("HealthArmor.ElementGap"));
+	pHudSetting.BackGroundY = atof(pScheme->GetResourceString("HealthArmor.BackGroundY"));
+	pHudSetting.BackGroundLength = atof(pScheme->GetResourceString("HealthArmor.BackGroundLength"));
+	pHudSetting.BackGroundAlpha = atof(pScheme->GetResourceString("HealthArmor.BackGroundAlpha"));
+
+	Color defaultColor = Color(245,230,195,255);
+	pHudSetting.HealthIconColor = pScheme->GetColor("HealthArmor.HealthIconColor", defaultColor);
+	pHudSetting.HealthBarColor = pScheme->GetColor("HealthArmor.HealthBarColor", defaultColor);
+	pHudSetting.HealthTextColor = pScheme->GetColor("HealthArmor.HealthTextColor", defaultColor);
+	pHudSetting.ArmorIconColor = pScheme->GetColor("HealthArmor.ArmorIconColor", defaultColor);
+	pHudSetting.ArmorBarColor = pScheme->GetColor("HealthArmor.ArmorBarColor", defaultColor);
+	pHudSetting.ArmorTextColor = pScheme->GetColor("HealthArmor.ArmorTextColor", defaultColor);
+	pHudSetting.BackGroundColor = pScheme->GetColor("HealthArmor.BackGroundColor", defaultColor);
+
+	pHudSetting.HUDFont = pScheme->GetFont("HUDShitFont", true);
+	pHudSetting.HUDBigFont = pScheme->GetFont("HUDShitFont", true);
+}
+void DrawSPRIcon(int SprHandle, float x, float y, float w, float h, int r, int g, int b, int a)
+{
+	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), 0);
+	gEngfuncs.pTriAPI->RenderMode(kRenderTransAdd);
+	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
+	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
+	gEngfuncs.pTriAPI->Color4ub(r, g, b, a);
+	gEngfuncs.pTriAPI->Brightness(1);
+	gEngfuncs.pTriAPI->TexCoord2f(0, 0);
+	gEngfuncs.pTriAPI->Vertex3f(x, y, 0);
+	gEngfuncs.pTriAPI->Brightness(1);
+	gEngfuncs.pTriAPI->TexCoord2f(0, 1);
+	gEngfuncs.pTriAPI->Vertex3f(x, y + h, 0);
+	gEngfuncs.pTriAPI->Brightness(1);
+	gEngfuncs.pTriAPI->TexCoord2f(1, 1);
+	gEngfuncs.pTriAPI->Vertex3f(x + w, y + h, 0);
+	gEngfuncs.pTriAPI->Brightness(1);
+	gEngfuncs.pTriAPI->TexCoord2f(1, 0);
+	gEngfuncs.pTriAPI->Vertex3f(x + w, y,0);
+	gEngfuncs.pTriAPI->End();
+	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
+}
 void DrawHealthArmorHUD()
 {
 	if (gCVars.pDynamicHUD <= 0)
 		return;
-
-#define HUD_INIT_DECAY_ALPHA 128
-	float iSizeStep = gScreenInfo.iWidth / 3 / HUD_INIT_DECAY_ALPHA;
+	int r, g, b, a;
+	float iSizeStep = (float)gScreenInfo.iWidth / 3 / pHudSetting.BackGroundAlpha;
 	float i = 0, nowX = 0;
-	float flBackGroundY = gScreenInfo.iHeight * 0.95;
+	float flBackGroundY = gScreenInfo.iHeight * pHudSetting.BackGroundY;
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
-	for (i = HUD_INIT_DECAY_ALPHA; i > 0.0f; i--)
+	pHudSetting.BackGroundColor.GetColor(r, g, b, a);
+	for (i = pHudSetting.BackGroundAlpha; i > 0.0f; i--)
 	{
-		gEngfuncs.pfnFillRGBABlend(nowX, flBackGroundY, iSizeStep, flBackGroundHeight, 53, 51, 48, i);
+		gEngfuncs.pfnFillRGBABlend(nowX, flBackGroundY, iSizeStep, flBackGroundHeight, r, g, b, i);
 		nowX += iSizeStep;
 	}
-	//»æÖÆÑªÁ¿Í¼±ê
-	//int sprIndex = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
-	int iStartX = gScreenInfo.iWidth / 48;
-	int iIconSize = flBackGroundHeight * 0.667;
-	int iTextWidth = flBackGroundHeight;
-	int iTextHeight = flBackGroundHeight * 0.667;
-	int iBarLength = flBackGroundHeight * 2;
-	int iBarWidth = flBackGroundHeight * 0.334;
-	int iElementGap = flBackGroundHeight * 0.2;
+	int iStartX = gScreenInfo.iWidth / pHudSetting.StartX;
+	int iIconSize = flBackGroundHeight * pHudSetting.IconSize;
+	int iTextWidth = flBackGroundHeight * pHudSetting.TextWidth;
+	int iTextHeight = flBackGroundHeight * pHudSetting.TextHeight;
+	int iBarLength = flBackGroundHeight * pHudSetting.BarLength;
+	int iBarWidth = flBackGroundHeight * pHudSetting.BarWidth;
+	int iElementGap = flBackGroundHeight * pHudSetting.ElementGap;
 	int iHealth = pHUDHealth->m_iHealth;
 	int iBattery = pHUDBattery->m_iBat;
-	int r = gCVars.pDynamicHUDCR->value, g = gCVars.pDynamicHUDCG->value, b = gCVars.pDynamicHUDCB->value, a = gCVars.pDynamicHUDCA->value;
-	vgui::HFont hFont = pScheme->GetFont("HUDShitFont", true);
 	//HP ICON
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iIconSize)/2, iIconSize, iIconSize, 255, 255, 255, 255);
+	if(!pHudSetting.iHealthIcon)
+		pHudSetting.iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
+	pHudSetting.HealthIconColor.GetColor(r, g, b, a);
+	DrawSPRIcon(pHudSetting.iHealthIcon, iStartX, flBackGroundY + (flBackGroundHeight - iIconSize) / 2, iIconSize, iIconSize,r, g, b, a);
 
 	char numberString[16];
 	itoa(iHealth, numberString, 10);
 	wchar_t wideName[8];
 	pLocalize->ConvertANSIToUnicode(numberString, wideName, sizeof(wideName));
 	int iSzWidth = 0;
-	GetStringSize(wideName, &iSzWidth, NULL, hFont);
+	GetStringSize(wideName, &iSzWidth, NULL, pHudSetting.HUDFont);
 	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
-	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, hFont);
+	pHudSetting.HealthTextColor.GetColor(r, g, b, a);
+	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, pHudSetting.HUDFont);
 	iStartX += iSzWidth + iElementGap;
 
+	pHudSetting.HealthBarColor.GetColor(r, g, b, a);
 	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, r/2, g/2, b/2, a);
 	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iHealth / 100)), iBarWidth, r, g, b, a);
 	iStartX += iBarLength + iElementGap * 4;
 
 	//AP
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iIconSize) / 2, iIconSize, iIconSize, 255, 255, 255, 255);
+	if (!pHudSetting.iArmorIconNull || !pHudSetting.iArmorIconFull)
+		pHudSetting.iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
+	if (!pHudSetting.iArmorIconFull)
+		pHudSetting.iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
+	pHudSetting.ArmorIconColor.GetColor(r, g, b, a);
+	DrawSPRIcon(iBattery > 0 ? pHudSetting.iArmorIconFull : pHudSetting.iArmorIconNull, iStartX, flBackGroundY + (flBackGroundHeight - iIconSize) / 2, iIconSize, iIconSize, r, g, b, a);
 
 	itoa(iBattery, numberString, 10);
 	pLocalize->ConvertANSIToUnicode(numberString, wideName, sizeof(wideName));
-	GetStringSize(wideName, &iSzWidth, NULL, hFont);
+	GetStringSize(wideName, &iSzWidth, NULL, pHudSetting.HUDFont);
 	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
-	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, hFont);
+	pHudSetting.ArmorTextColor.GetColor(r, g, b, a);
+	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, pHudSetting.HUDFont);
 	iStartX += iSzWidth + iElementGap;
 
+	pHudSetting.ArmorBarColor.GetColor(r, g, b, a);
 	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, r/2, g/2, b/2, a);
 	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iBattery / 100)), iBarWidth, r, g, b, a);
 	iStartX += iBarLength + iElementGap * 2;
-
-
-	//wrect_t wrecSpr = { 0,0,0,0 };
-	//gEngfuncs.pfnSPR_Set(sprIndex, 255, 255, 255);
-	//gEngfuncs.pfnSPR_DrawAdditive(0, gScreenInfo.iWidth / 32, flBackGroundY + flBackGroundHeight / 6, &wrecSpr);
 }
 
 //FINAL SHIT
@@ -638,16 +694,14 @@ void HUD_Init(void)
 	gCVars.pDynamicCrossHairD = gEngfuncs.pfnRegisterVariable("cl_crosshairdot", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pDynamicHUD = gEngfuncs.pfnRegisterVariable("cl_hud_csgo", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicHUDCR = gEngfuncs.pfnRegisterVariable("cl_hud_color_r", "245", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicHUDCG = gEngfuncs.pfnRegisterVariable("cl_hud_color_g", "230", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicHUDCB = gEngfuncs.pfnRegisterVariable("cl_hud_color_b", "195", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicHUDCA = gEngfuncs.pfnRegisterVariable("cl_hud_color_a", "255", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pBloodSpriteSpeed = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pBloodSpriteNumber = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_num", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pExpSmokeNumber = gEngfuncs.pfnRegisterVariable("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+
+	InitHealthArmorHUDSprIcon();
 
 	gExportfuncs.HUD_Init();
 }
