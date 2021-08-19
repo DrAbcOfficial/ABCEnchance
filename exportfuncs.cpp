@@ -470,7 +470,7 @@ void RedrawCorssHair()
 
 //HUD
 cl_CustomVars pHudSetting;
-void InitHealthArmorHUDSprIcon()
+void HealthArmorHUDNewMap()
 {
 	pHudSetting.iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
 	pHudSetting.iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
@@ -591,6 +591,11 @@ void DrawHealthArmorHUD()
 }
 
 //FINAL SHIT
+void R_NewMap(void)
+{
+	gHookFuncs.R_NewMap();
+	HealthArmorHUDNewMap();
+}
 void Sys_ErrorEx(const char* fmt, ...)
 {
 	char msg[4096] = { 0 };
@@ -618,7 +623,16 @@ void FillDelegate()
 
 void FillAddress()
 {
-	//PlayerTitle
+	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
+	if (engineFactory && engineFactory("EngineSurface007", NULL))
+	{
+#define R_NEWMAP_SIG "\x55\x8B\xEC\x51\xC7\x45\xFC\x00\x00\x00\x00\xEB\x2A\x8B\x45\xFC\x83\xC0\x01\x89\x45\xFC\x81\x7D\xFC\x00\x01\x00\x00"
+		{
+			gHookFuncs.R_NewMap = (decltype(gHookFuncs.R_NewMap))
+				g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, R_NEWMAP_SIG, Sig_Length(R_NEWMAP_SIG));
+			Sig_FuncNotFound(R_NewMap);
+		}
+	}
 	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
 	if (pfnClientCreateInterface && pfnClientCreateInterface("SCClientDLL001", 0))
 	{
@@ -645,6 +659,7 @@ void InstallHook()
 	Fill_InlineEfxHook(R_RicochetSprite);
 
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.VectorScale, R_VectorScale, (void**)&gHookFuncs.VectorScale);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_NewMap, R_NewMap, (void**)&gHookFuncs.R_NewMap);
 }
 
 void HUD_Init(void)
@@ -663,9 +678,11 @@ void HUD_Init(void)
 
 	g_pScheme->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
+
+
 	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("cl_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
-	gCVars.pDynamicCrossHair = gEngfuncs.pfnRegisterVariable("cl_dynamiccrosshair", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicCrossHair = gEngfuncs.pfnRegisterVariable("cl_crosshair", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairL = gEngfuncs.pfnRegisterVariable("cl_crosshairsize", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairW = gEngfuncs.pfnRegisterVariable("cl_crosshairthickness", "2", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairO = gEngfuncs.pfnRegisterVariable("cl_crosshairgap", "16", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
@@ -686,8 +703,6 @@ void HUD_Init(void)
 	gCVars.pExpSmokeNumber = gEngfuncs.pfnRegisterVariable("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-
-	InitHealthArmorHUDSprIcon();
 
 	gExportfuncs.HUD_Init();
 }

@@ -15,6 +15,7 @@ typedef struct
 	float*		(*GetClientColor)			(int clientIndex);
 
 	void		(*VectorScale)				(float* pucnangle1, float scale, float* pucnangle2);
+	void		(*R_NewMap)					(void);
 
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
@@ -80,6 +81,7 @@ void R_Blood(float* org, float* dir, int pcolor, int speed);
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
 void R_Explosion(float* pos, int model, float scale, float framerate, int flags);
 void R_RicochetSprite (float* pos, struct model_s* pmodel, float duration, float scale);
+void R_NewMap(void);
 
 #define clamp(num, a, b) max(min(num, b),a)
 
