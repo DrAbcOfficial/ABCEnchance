@@ -478,9 +478,11 @@ void RedrawCorssHair()
 cl_CustomVars pHudSetting;
 void HealthArmorHUDNewMap()
 {
+	pHudSetting.flPainIndicatorKeepTime = 0;
 	pHudSetting.iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
 	pHudSetting.iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
 	pHudSetting.iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
+	pHudSetting.iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
 
 	pHudSetting.StartX = atof(pScheme->GetResourceString("HealthArmor.StartX"));
 	pHudSetting.IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
@@ -527,9 +529,83 @@ void DrawSPRIcon(int SprHandle, float x, float y, float w, float h, int r, int g
 	gEngfuncs.pTriAPI->End();
 	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
 }
+void DrawSPRIconPos(int SprHandle, vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int r, int g, int b, int a)
+{
+	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), 0);
+	gEngfuncs.pTriAPI->RenderMode(kRenderTransAdd);
+	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
+	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
+	gEngfuncs.pTriAPI->Color4ub(r, g, b, a);
+	gEngfuncs.pTriAPI->Brightness(1);
+	gEngfuncs.pTriAPI->TexCoord2f(0, 0);
+	gEngfuncs.pTriAPI->Vertex3f(p1[0], p1[1], 0);
+	gEngfuncs.pTriAPI->Brightness(1);
+	gEngfuncs.pTriAPI->TexCoord2f(0, 1);
+	gEngfuncs.pTriAPI->Vertex3f(p2[0], p2[1], 0);
+	gEngfuncs.pTriAPI->Brightness(1);
+	gEngfuncs.pTriAPI->TexCoord2f(1, 1);
+	gEngfuncs.pTriAPI->Vertex3f(p3[0], p3[1], 0);
+	gEngfuncs.pTriAPI->Brightness(1);
+	gEngfuncs.pTriAPI->TexCoord2f(1, 0);
+	gEngfuncs.pTriAPI->Vertex3f(p4[0], p4[1], 0);
+	gEngfuncs.pTriAPI->End();
+	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
+}
 void __fastcall R_CalcDamageDirection(void* pThis, int dummy, int x, float y, float z)
 {
-	
+	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+	vec3_t vecCalc;
+	vecCalc[0] = (float)x - local->curstate.origin[0];
+	vecCalc[1] = y - local->curstate.origin[1];
+	vecCalc[2] = z - local->curstate.origin[2];
+	vec3_t vecAngles;
+	VectorAngles(vecCalc, vecAngles);
+	float yaw = vecAngles[1] - local->curstate.angles[1];
+	//以屏幕中心为坐标轴的坐标系
+	float sprWidth = gScreenInfo.iHeight * 0.1667;
+	float y1 = gScreenInfo.iHeight / 4;
+	float y2 = y1 + sprWidth;
+	/*  旋转变换
+	*                ^
+	*                |y
+	*           A----------B
+	*           |    |     |
+	*           C----------D
+	*                |
+	*  --------------+----------------->x
+	*/
+	vec2_t vecA, vecB, vecC, vecD;
+	vecA[0] = -sprWidth * cos(yaw) + y2 * sin(yaw);
+	vecA[1] = sprWidth * sin(yaw) + y2 * cos(yaw);
+	vecB[0] = sprWidth * cos(yaw) + y2 * sin(yaw);
+	vecB[1] = -sprWidth * sin(yaw) + y2 * cos(yaw);
+	vecC[0] = -sprWidth * cos(yaw) + y1 * sin(yaw);
+	vecC[1] = sprWidth * sin(yaw) + y1 * cos(yaw);
+	vecD[0] = sprWidth * cos(yaw) + y1 * sin(yaw);
+	vecD[1] = -sprWidth * sin(yaw) + y1 * cos(yaw);
+	//变换为OpenGL屏幕坐标
+	int halfWidth = gScreenInfo.iWidth / 2;
+	int halfHeight = gScreenInfo.iHeight / 2;
+	vecA[0] += halfWidth;
+	vecA[1] = halfHeight - vecA[1];
+	vecB[0] += halfWidth;
+	vecB[1] = halfHeight - vecB[1];
+	vecC[0] += halfWidth;
+	vecC[1] = halfHeight - vecC[1];
+	vecD[0] += halfWidth;
+	vecD[1] = halfHeight - vecD[1];
+
+	Vector2Copy(vecA, pHudSetting.vecPainIndicatorA);
+	Vector2Copy(vecB, pHudSetting.vecPainIndicatorB);
+	Vector2Copy(vecC, pHudSetting.vecPainIndicatorC);
+	Vector2Copy(vecD, pHudSetting.vecPainIndicatorD);
+	pHudSetting.flPainIndicatorKeepTime = gEngfuncs.GetClientTime() + 3.0f;
+}
+void DrawPainIndicator(float time)
+{
+	float intermission = pHudSetting.flPainIndicatorKeepTime - time;
+	if (intermission >= 0)
+		DrawSPRIconPos(pHudSetting.iPainIndicator, pHudSetting.vecPainIndicatorA, pHudSetting.vecPainIndicatorC, pHudSetting.vecPainIndicatorD, pHudSetting.vecPainIndicatorB, 255, 0, 0, 255 * (intermission/3.0f));
 }
 void DrawHealthArmorHUD()
 {
@@ -761,6 +837,7 @@ int HUD_Redraw(float time, int intermission)
 	DrawPlayerTitle();
 	RedrawCorssHair();
 	DrawHealthArmorHUD();
+	DrawPainIndicator(time);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
 

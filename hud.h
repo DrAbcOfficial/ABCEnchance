@@ -29,6 +29,14 @@ typedef struct {
 	int iHealthIcon;
 	int iArmorIconNull;
 	int iArmorIconFull;
+	int iPainIndicator;
+	
+	float flPainIndicatorKeepTime = 0;
+	vec2_t vecPainIndicatorA;
+	vec2_t vecPainIndicatorB;
+	vec2_t vecPainIndicatorC;
+	vec2_t vecPainIndicatorD;
+
 
 	float BackGroundAlpha = 128;
 	float StartX = 48;
