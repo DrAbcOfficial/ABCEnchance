@@ -426,6 +426,12 @@ void RedrawCorssHair()
 	{
 		if (pClientData->health <= 0)
 			return;
+		if (gCVars.pDynamicCrossHairAH->value > 0)
+		{
+			int def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
+			if (def_fov != pClientData->fov)
+				return;
+		}
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		int iCenterX = gScreenInfo.iWidth / 2;
 		int iCenterY = gScreenInfo.iHeight / 2;
@@ -521,11 +527,16 @@ void DrawSPRIcon(int SprHandle, float x, float y, float w, float h, int r, int g
 	gEngfuncs.pTriAPI->End();
 	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
 }
+void __fastcall R_CalcDamageDirection(void* pThis, int dummy, int x, float y, float z)
+{
+	
+}
 void DrawHealthArmorHUD()
 {
 	if (gCVars.pDynamicHUD <= 0)
 		return;
-
+	if (pClientData->health <= 0)
+		return;
 	int r, g, b, a;
 	float iSizeStep = (float)gScreenInfo.iWidth / 3 / pHudSetting.BackGroundAlpha;
 	float i = 0, nowX = 0;
@@ -648,6 +659,12 @@ void FillAddress()
 				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_VECTORSCALE_SIG, Sig_Length(R_VECTORSCALE_SIG));
 			Sig_FuncNotFound(VectorScale);
 		}
+#define R_CALCDAMAGE_DIRECTION_SIG "\x55\x8B\xEC\x83\xE4\xF8\xF3\x0F\x10\x65\x08\x83\xEC\x44\xF3\x0F\x10\x55\x10\x0F\x57\xC0\xF3\x0F\x10\x5D\x0C"
+		{
+			gHookFuncs.R_CalcDamageDirection = (decltype(gHookFuncs.R_CalcDamageDirection))
+				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_CALCDAMAGE_DIRECTION_SIG, Sig_Length(R_CALCDAMAGE_DIRECTION_SIG));
+			Sig_FuncNotFound(R_CalcDamageDirection);
+		}
 	}
 }
 
@@ -660,6 +677,7 @@ void InstallHook()
 
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.VectorScale, R_VectorScale, (void**)&gHookFuncs.VectorScale);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_NewMap, R_NewMap, (void**)&gHookFuncs.R_NewMap);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_CalcDamageDirection, R_CalcDamageDirection, (void**)&gHookFuncs.R_CalcDamageDirection);
 }
 
 void HUD_Init(void)
@@ -683,6 +701,7 @@ void HUD_Init(void)
 	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("cl_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pDynamicCrossHair = gEngfuncs.pfnRegisterVariable("cl_crosshair", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicCrossHairAH = gEngfuncs.pfnRegisterVariable("cl_crosshairautohide", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairL = gEngfuncs.pfnRegisterVariable("cl_crosshairsize", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairW = gEngfuncs.pfnRegisterVariable("cl_crosshairthickness", "2", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairO = gEngfuncs.pfnRegisterVariable("cl_crosshairgap", "16", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);

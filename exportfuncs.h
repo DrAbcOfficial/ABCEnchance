@@ -16,6 +16,7 @@ typedef struct
 
 	void		(*VectorScale)				(float* pucnangle1, float scale, float* pucnangle2);
 	void		(*R_NewMap)					(void);
+	void		(__fastcall* R_CalcDamageDirection)(void* pthis, int dummy, int x, float y, float z);
 
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
@@ -31,6 +32,7 @@ typedef struct
 	cvar_t* pPlayerTitle = NULL;
 
 	cvar_t* pDynamicCrossHair = NULL;
+	cvar_t* pDynamicCrossHairAH = NULL;
 	cvar_t* pDynamicCrossHairL = NULL;
 	cvar_t* pDynamicCrossHairW = NULL;
 	cvar_t* pDynamicCrossHairO = NULL;
