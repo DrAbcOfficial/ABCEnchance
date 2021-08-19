@@ -41,9 +41,7 @@ SCREENINFO_s gScreenInfo;
 const clientdata_t* pClientData;
 float* pClientEVPunchAngles;
 
-CHudBattery* pHUDBattery;
-CHudHealth* pHUDHealth;
-
+cl_hookedHUD pHookedHUD;
 //EFFECT
 void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale)
 {
@@ -540,6 +538,7 @@ void DrawHealthArmorHUD()
 {
 	if (gCVars.pDynamicHUD <= 0)
 		return;
+
 	int r, g, b, a;
 	float iSizeStep = (float)gScreenInfo.iWidth / 3 / pHudSetting.BackGroundAlpha;
 	float i = 0, nowX = 0;
@@ -558,8 +557,8 @@ void DrawHealthArmorHUD()
 	int iBarLength = flBackGroundHeight * pHudSetting.BarLength;
 	int iBarWidth = flBackGroundHeight * pHudSetting.BarWidth;
 	int iElementGap = flBackGroundHeight * pHudSetting.ElementGap;
-	int iHealth = pHUDHealth->m_iHealth;
-	int iBattery = pHUDBattery->m_iBat;
+	int iHealth = pHookedHUD.pHUDHealth->m_iHealth;
+	int iBattery = pHookedHUD.pHUDBattery->m_iBat;
 	//HP ICON
 	if(!pHudSetting.iHealthIcon)
 		pHudSetting.iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
@@ -717,13 +716,23 @@ int HUD_Redraw(float time, int intermission)
 		{
 			if (dynamic_cast<CHudBattery*>(pHudList->p) != NULL)
 			{
-				pHUDBattery = dynamic_cast<CHudBattery*>(pHudList->p);
+				pHookedHUD.pHUDBattery = dynamic_cast<CHudBattery*>(pHudList->p);
 				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			}
 			else if (dynamic_cast<CHudHealth*>(pHudList->p) != NULL)
 			{
-				pHUDHealth = dynamic_cast<CHudHealth*>(pHudList->p);
+				pHookedHUD.pHUDHealth = dynamic_cast<CHudHealth*>(pHudList->p);
 				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			}
+			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != NULL)
+			{
+				pHookedHUD.pHUDAmmo = dynamic_cast<CHudAmmo*>(pHudList->p);
+				//pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			}
+			else if (dynamic_cast<CHudAmmoSecondary*>(pHudList->p) != NULL)
+			{
+				pHookedHUD.pHudAmmoSecondary = dynamic_cast<CHudAmmoSecondary*>(pHudList->p);
+				//pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			}
 			pHudList = pHudList->pNext;
 		}

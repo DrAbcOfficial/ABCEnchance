@@ -53,5 +53,8 @@
     <ClInclude Include="Color.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="ammo.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
