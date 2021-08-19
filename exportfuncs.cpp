@@ -444,27 +444,14 @@ void RedrawCorssHair()
 		{
 			int iOutLineWidth = gCVars.pDynamicCrossHairOTDW->value;
 			//左
-			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 0, 0, 0, a);
-			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 0, 0, 0, a);
-			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iLength + 2 * iOutLineWidth, iOutLineWidth, 0, 0, 0, a);
-			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY + iWidthOffset, iLength + 2 * iOutLineWidth, iOutLineWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iOutLineWidth * 2 + iLength, iOutLineWidth * 2 + iWidth, 0, 0, 0, a);
 			//上
-			if (!gCVars.pDynamicCrossHairT->value) {
-				gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset, iCenterY - iFinalOffset - iLength - iOutLineWidth, iWidth, iOutLineWidth, 0, 0, 0, a);
-				gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset, iCenterY - iFinalOffset, iWidth, iOutLineWidth, 0, 0, 0, a);
-				gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset - iOutLineWidth, iCenterY - iFinalOffset - iLength - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 0, 0, 0, a);
-				gEngfuncs.pfnFillRGBABlend(iCenterX + iWidthOffset, iCenterY - iFinalOffset - iLength - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 0, 0, 0, a);
-			}
+			if (!gCVars.pDynamicCrossHairT->value)
+				gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset - iOutLineWidth, iCenterY - iFinalOffset - iLength - iOutLineWidth, iOutLineWidth * 2 + iWidth, iOutLineWidth * 2 + iLength, 0, 0, 0, a);
 			//右
-			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset + iLength, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 0, 0, 0, a);
-			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset - iOutLineWidth, iCenterY - iWidthOffset, iOutLineWidth, iWidth, 0, 0, 0, a);
-			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iLength + 2 * iOutLineWidth, iOutLineWidth, 0, 0, 0, a);
-			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset - iOutLineWidth, iCenterY + iWidthOffset, iLength + 2 * iOutLineWidth, iOutLineWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iOutLineWidth * 2 + iLength, iOutLineWidth * 2 + iWidth, 0, 0, 0, a);
 			//下
-			gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset, iCenterY + iFinalOffset + iLength, iWidth, iOutLineWidth, 0, 0, 0, a);
-			gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset, iCenterY + iFinalOffset - iOutLineWidth, iWidth, iOutLineWidth, 0, 0, 0, a);
-			gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset - iOutLineWidth, iCenterY + iFinalOffset - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 0, 0, 0, a);
-			gEngfuncs.pfnFillRGBABlend(iCenterX + iWidthOffset, iCenterY + iFinalOffset - iOutLineWidth, iOutLineWidth, iLength + 2 * iOutLineWidth, 0, 0, 0, a);
+			gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset - iOutLineWidth, iCenterY + iFinalOffset - iOutLineWidth, iOutLineWidth * 2 + iWidth, iOutLineWidth * 2 + iLength, 0, 0, 0, a);
 		}
 		//中心
 		if (gCVars.pDynamicCrossHairD->value)
