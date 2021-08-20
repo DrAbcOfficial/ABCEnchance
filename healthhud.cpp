@@ -87,11 +87,12 @@ int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudArmorHealth::Init(void)
+void CHudArmorHealth::Init(void)
 {
 	HOOK_MESSAGE(Health);
 	HOOK_MESSAGE(Damage);
 	HOOK_MESSAGE(Battery);
+
 	m_iHealth = 100;
 	m_fFade = 0;
 	m_iFlags = 0;
@@ -127,7 +128,6 @@ int CHudArmorHealth::Init(void)
 
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
 	HUDBigFont = pScheme->GetFont("HUDShitFont", true);
-	return 1;
 }
 
 void CHudArmorHealth::Reset(void)
@@ -151,7 +151,7 @@ void CHudArmorHealth::Reset(void)
 	}
 }
 
-int CHudArmorHealth::Draw(void)
+int CHudArmorHealth::Draw(float flTime)
 {
 	int r, g, b, a;
 	float iSizeStep = (float)gScreenInfo.iWidth / 3 / BackGroundAlpha;

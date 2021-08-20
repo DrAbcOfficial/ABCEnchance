@@ -10,13 +10,16 @@
 #include "math.h"
 #include "malloc.h"
 
+//HUD
 #include "CColor.h"
-
 #include "hud.h"
 #include "ammo.h"
 #include "healthhud.h"
 #include "basehealth.h"
 #include "drawElement.h"
+
+#include "CHudDelegate.h"
+
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -442,7 +445,9 @@ void HUD_Init(void)
 	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
-	m_HudArmorHealth.Init();
+	gHudDelegate = new CHudDelegate();
+	
+	gHudDelegate->HUD_Init();
 	gExportfuncs.HUD_Init();
 }
 
@@ -472,12 +477,13 @@ int HUD_Redraw(float time, int intermission)
 	}
 	DrawPlayerTitle();
 	RedrawCorssHair();
-	m_HudArmorHealth.Draw();
+
+	gHudDelegate->HUD_Draw(time);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
 void HUD_Reset(void)
 {
-	m_HudArmorHealth.Reset();
+	gHudDelegate->HUD_Reset();
 	gExportfuncs.HUD_Reset();
 }
 

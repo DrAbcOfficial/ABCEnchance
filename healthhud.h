@@ -81,15 +81,16 @@ typedef struct
 	int	x, y;
 } DAMAGE_IMAGE;
 
-class CHudArmorHealth : public CHudBase
+class CHudArmorHealth
 {
 public:
-	virtual int Init(void);
-	virtual int Draw(void);
+	virtual void Init(void);
+	virtual int Draw(float flTime);
 	virtual void Reset(void);
 	int m_iHealth;
 	int m_iBat;
 	int m_HUD_dmg_bio;
+	int m_iFlags;
 	void GetPainColor(int& r, int& g, int& b);
 	float m_fFade;
 

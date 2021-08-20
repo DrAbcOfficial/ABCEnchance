@@ -42,10 +42,10 @@
     <ClCompile Include="vguilocal.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="CColor.cpp">
+    <ClCompile Include="parsemsg.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="parsemsg.cpp">
+    <ClCompile Include="CHudDelegate.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -146,13 +146,16 @@
     <ClInclude Include="VGUI\Cursor.h">
       <Filter>VGUI</Filter>
     </ClInclude>
-    <ClInclude Include="CColor.h">
-      <Filter>Header</Filter>
-    </ClInclude>
     <ClInclude Include="basehealth.h">
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="parsemsg.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CHudDelegate.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CColor.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>
