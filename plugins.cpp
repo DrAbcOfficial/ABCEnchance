@@ -9,6 +9,13 @@ IFileSystem *g_pFileSystem;
 
 HINSTANCE g_hInstance, g_hThisModule;
 
+DWORD g_dwEngineBuildnum;
+HINSTANCE g_hEngineModule;
+
+PVOID g_dwClientBase;
+DWORD g_dwClientSize;
+PVOID g_dwEngineBase;
+DWORD g_dwEngineSize;
 PVOID g_dwEngineTextBase;
 DWORD g_dwEngineTextSize;
 PVOID g_dwEngineDataBase;

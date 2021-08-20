@@ -1,4 +1,4 @@
-#include <metahook.h>
+#include "plugins.h"
 
 #include "exportfuncs.h"
 #include "local.h"
@@ -13,7 +13,6 @@
 //efx
 #include "efxenchance.h"
 
-
 //HUD
 #include "CColor.h"
 #include "hud.h"
@@ -27,13 +26,6 @@
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
-
-PVOID g_dwEngineBase;
-DWORD g_dwEngineSize;
-DWORD g_dwEngineBuildnum;
-HINSTANCE g_hEngineModule;
-PVOID g_dwClientBase;
-DWORD g_dwClientSize;
 
 const clientdata_t* pClientData;
 float* pClientEVPunchAngles;

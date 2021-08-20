@@ -5,13 +5,6 @@
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
 
-extern PVOID g_dwEngineBase;
-extern DWORD g_dwEngineSize;
-extern DWORD g_dwEngineBuildnum;;
-extern HINSTANCE g_hEngineModule;
-extern PVOID g_dwClientBase;
-extern DWORD g_dwClientSize;
-
 extern vgui::ISchemeManager* g_pScheme;
 extern vgui::ISurface* pSurface;
 extern vgui::ILocalize* pLocalize;
