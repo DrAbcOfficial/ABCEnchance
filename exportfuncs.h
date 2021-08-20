@@ -1,4 +1,3 @@
-#include <metahook.h>
 #include "cvardef.h"
 #include <VGUI/IScheme.h>
 #include <VGUI/ISurface.h>
@@ -74,9 +73,11 @@ void Sys_ErrorEx(const char* fmt, ...);
 void FillDelegate();
 void FillAddress();
 void InstallHook();
+void MSG_Init(void);
 
 void HUD_Init(void);
 int HUD_Redraw(float time, int intermission);
+void HUD_Reset(void);
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);
 
 void R_Blood(float* org, float* dir, int pcolor, int speed);

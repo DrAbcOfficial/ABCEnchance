@@ -5,18 +5,18 @@
 #include "mathlib.h"
 #include "com_model.h"
 #include "palette.h"
+#include "triangleapi.h"
 
 #include "math.h"
 #include "malloc.h"
 
-#include <VGUI/IScheme.h>
-#include <VGUI/ISurface.h>
-#include <VGUI/ILocalize.h>
+#include "CColor.h"
 
-#include <triangleapi.h>
-
-#include <Color.h>
 #include "hud.h"
+#include "ammo.h"
+#include "healthhud.h"
+#include "basehealth.h"
+#include "drawElement.h"
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -30,18 +30,8 @@ HINSTANCE g_hEngineModule;
 PVOID g_dwClientBase;
 DWORD g_dwClientSize;
 
-vgui::ISchemeManager* g_pScheme;
-vgui::ISurface* pSurface;
-vgui::ILocalize* pLocalize;
-
-vgui::IScheme* pScheme;
-
-SCREENINFO_s gScreenInfo;
-
 const clientdata_t* pClientData;
 float* pClientEVPunchAngles;
-
-cl_hookedHUD pHookedHUD;
 //EFFECT
 void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale)
 {
@@ -163,148 +153,6 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 
 
 //PLAYER TITLE
-int GetHudFontHeight(vgui::HFont m_hFont)
-{
-	if (!m_hFont)
-		return 0;
-
-	return pSurface->GetFontTall(m_hFont);
-}
-void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m_hFont)
-{
-	int i;
-	int len;
-	int a, b, c;
-
-	if (width)
-		*width = 0;
-
-	if (height)
-		*height = 0;
-
-	if (!m_hFont)
-		return;
-
-	len = wcslen(string);
-
-	if (width)
-	{
-		for (i = 0; i < len; i++)
-		{
-			pSurface->GetCharABCwide(m_hFont, string[i], a, b, c);
-			*width += a + b + c;
-		}
-	}
-
-	if (height)
-	{
-		*height = GetHudFontHeight(m_hFont);
-	}
-}
-int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui::HFont m_hFont)
-{
-	if (r > 1.0)
-		r /= 255;
-	if (g > 1.0)
-		g /= 255;
-	if (b > 1.0)
-		b /= 255;
-	int i;
-	int iOriginalX;
-	int iTotalLines;
-	int iCurrentLine;
-	int w1, w2, w3;
-	bool bHorzCenter;
-	int len;
-	wchar_t* strTemp;
-	int fontheight;
-
-	if (!m_hFont)
-		return 0;
-
-	iCurrentLine = 0;
-	iOriginalX = x;
-	iTotalLines = 1;
-	bHorzCenter = false;
-	len = wcslen(msg);
-
-	for (strTemp = msg; *strTemp; strTemp++)
-	{
-		if (*strTemp == '\r')
-			iTotalLines++;
-	}
-
-	if (x == -1)
-	{
-		bHorzCenter = true;
-	}
-
-	if (y == -1)
-	{
-		fontheight = pSurface->GetFontTall(m_hFont);
-		y = (gScreenInfo.iHeight - fontheight) / 2;
-	}
-
-	for (i = 0; i < iTotalLines; i++)
-	{
-		wchar_t line[1024];
-		int iWidth;
-		int iHeight;
-		int iTempCount;
-		int j;
-		int shadow_x;
-
-		iTempCount = 0;
-		iWidth = 0;
-		iHeight = 0;
-
-		for (strTemp = &msg[iCurrentLine]; *strTemp; strTemp++, iCurrentLine++)
-		{
-			if (*strTemp == '\r')
-				break;
-
-			if (*strTemp != '\n')
-				line[iTempCount++] = *strTemp;
-		}
-
-		line[iTempCount] = 0;
-
-		GetStringSize(line, &iWidth, &iHeight, m_hFont);
-
-		if (bHorzCenter)
-			x = (gScreenInfo.iWidth - iWidth) / 2;
-		else
-			x = iOriginalX;
-
-		gEngfuncs.pfnDrawSetTextColor(0, 0, 0);
-
-		shadow_x = x;
-
-		for (j = 0; j < iTempCount; j++)
-		{
-			gEngfuncs.pfnVGUI2DrawCharacter(shadow_x, y, line[j], m_hFont);
-			pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
-
-			shadow_x += w1 + w2 + w3;
-		}
-
-		gEngfuncs.pfnDrawSetTextColor(r, g, b);
-
-		for (j = 0; j < iTempCount; j++)
-		{
-			gEngfuncs.pfnVGUI2DrawCharacter(x, y, line[j], m_hFont);
-			pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
-
-			x += w1 + w2 + w3;
-		}
-
-		y += iHeight;
-		iCurrentLine++;
-	}
-
-	return x;
-}
-
 void DrawPlayerTitle()
 {
 	if (gCVars.pPlayerTitle->value > 0)
@@ -473,215 +321,17 @@ void RedrawCorssHair()
 		gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset, iWidth, iLength, r, g, b, a);
 	}
 }
-
-//HUD
-cl_CustomVars pHudSetting;
-void HealthArmorHUDNewMap()
-{
-	pHudSetting.flPainIndicatorKeepTime = 0;
-	pHudSetting.iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
-	pHudSetting.iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
-	pHudSetting.iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
-	pHudSetting.iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
-
-	pHudSetting.StartX = atof(pScheme->GetResourceString("HealthArmor.StartX"));
-	pHudSetting.IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
-	pHudSetting.TextWidth = atof(pScheme->GetResourceString("HealthArmor.TextWidth"));
-	pHudSetting.IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
-	pHudSetting.BarLength = atof(pScheme->GetResourceString("HealthArmor.BarLength"));
-	pHudSetting.BarWidth = atof(pScheme->GetResourceString("HealthArmor.BarWidth"));
-	pHudSetting.ElementGap = atof(pScheme->GetResourceString("HealthArmor.ElementGap"));
-	pHudSetting.BackGroundY = atof(pScheme->GetResourceString("HealthArmor.BackGroundY"));
-	pHudSetting.BackGroundLength = atof(pScheme->GetResourceString("HealthArmor.BackGroundLength"));
-	pHudSetting.BackGroundAlpha = atof(pScheme->GetResourceString("HealthArmor.BackGroundAlpha"));
-
-	Color defaultColor = Color(245,230,195,255);
-	pHudSetting.HealthIconColor = pScheme->GetColor("HealthArmor.HealthIconColor", defaultColor);
-	pHudSetting.HealthBarColor = pScheme->GetColor("HealthArmor.HealthBarColor", defaultColor);
-	pHudSetting.HealthTextColor = pScheme->GetColor("HealthArmor.HealthTextColor", defaultColor);
-	pHudSetting.ArmorIconColor = pScheme->GetColor("HealthArmor.ArmorIconColor", defaultColor);
-	pHudSetting.ArmorBarColor = pScheme->GetColor("HealthArmor.ArmorBarColor", defaultColor);
-	pHudSetting.ArmorTextColor = pScheme->GetColor("HealthArmor.ArmorTextColor", defaultColor);
-	pHudSetting.BackGroundColor = pScheme->GetColor("HealthArmor.BackGroundColor", defaultColor);
-
-	pHudSetting.HUDFont = pScheme->GetFont("HUDShitFont", true);
-	pHudSetting.HUDBigFont = pScheme->GetFont("HUDShitFont", true);
-}
-void DrawSPRIcon(int SprHandle, float x, float y, float w, float h, int r, int g, int b, int a)
-{
-	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), 0);
-	gEngfuncs.pTriAPI->RenderMode(kRenderTransAdd);
-	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
-	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
-	gEngfuncs.pTriAPI->Color4ub(r, g, b, a);
-	gEngfuncs.pTriAPI->Brightness(1);
-	gEngfuncs.pTriAPI->TexCoord2f(0, 0);
-	gEngfuncs.pTriAPI->Vertex3f(x, y, 0);
-	gEngfuncs.pTriAPI->Brightness(1);
-	gEngfuncs.pTriAPI->TexCoord2f(0, 1);
-	gEngfuncs.pTriAPI->Vertex3f(x, y + h, 0);
-	gEngfuncs.pTriAPI->Brightness(1);
-	gEngfuncs.pTriAPI->TexCoord2f(1, 1);
-	gEngfuncs.pTriAPI->Vertex3f(x + w, y + h, 0);
-	gEngfuncs.pTriAPI->Brightness(1);
-	gEngfuncs.pTriAPI->TexCoord2f(1, 0);
-	gEngfuncs.pTriAPI->Vertex3f(x + w, y,0);
-	gEngfuncs.pTriAPI->End();
-	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
-}
-void DrawSPRIconPos(int SprHandle, vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int r, int g, int b, int a)
-{
-	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), 0);
-	gEngfuncs.pTriAPI->RenderMode(kRenderTransAdd);
-	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
-	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
-	gEngfuncs.pTriAPI->Color4ub(r, g, b, a);
-	gEngfuncs.pTriAPI->Brightness(1);
-	gEngfuncs.pTriAPI->TexCoord2f(0, 0);
-	gEngfuncs.pTriAPI->Vertex3f(p1[0], p1[1], 0);
-	gEngfuncs.pTriAPI->Brightness(1);
-	gEngfuncs.pTriAPI->TexCoord2f(0, 1);
-	gEngfuncs.pTriAPI->Vertex3f(p2[0], p2[1], 0);
-	gEngfuncs.pTriAPI->Brightness(1);
-	gEngfuncs.pTriAPI->TexCoord2f(1, 1);
-	gEngfuncs.pTriAPI->Vertex3f(p3[0], p3[1], 0);
-	gEngfuncs.pTriAPI->Brightness(1);
-	gEngfuncs.pTriAPI->TexCoord2f(1, 0);
-	gEngfuncs.pTriAPI->Vertex3f(p4[0], p4[1], 0);
-	gEngfuncs.pTriAPI->End();
-	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
-}
-void __fastcall R_CalcDamageDirection(void* pThis, int dummy, int x, float y, float z)
-{
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	vec3_t vecCalc;
-	vecCalc[0] = (float)x - local->curstate.origin[0];
-	vecCalc[1] = y - local->curstate.origin[1];
-	vecCalc[2] = z - local->curstate.origin[2];
-	vec3_t vecAngles;
-	VectorAngles(vecCalc, vecAngles);
-	float yaw = vecAngles[1] - local->curstate.angles[1];
-	//以屏幕中心为坐标轴的坐标系
-	float sprWidth = gScreenInfo.iHeight * 0.1667;
-	float y1 = gScreenInfo.iHeight / 4;
-	float y2 = y1 + sprWidth;
-	/*  旋转变换
-	*                ^
-	*                |y
-	*           A----------B
-	*           |    |     |
-	*           C----------D
-	*                |
-	*  --------------+----------------->x
-	*/
-	vec2_t vecA, vecB, vecC, vecD;
-	vecA[0] = -sprWidth * cos(yaw) + y2 * sin(yaw);
-	vecA[1] = sprWidth * sin(yaw) + y2 * cos(yaw);
-	vecB[0] = sprWidth * cos(yaw) + y2 * sin(yaw);
-	vecB[1] = -sprWidth * sin(yaw) + y2 * cos(yaw);
-	vecC[0] = -sprWidth * cos(yaw) + y1 * sin(yaw);
-	vecC[1] = sprWidth * sin(yaw) + y1 * cos(yaw);
-	vecD[0] = sprWidth * cos(yaw) + y1 * sin(yaw);
-	vecD[1] = -sprWidth * sin(yaw) + y1 * cos(yaw);
-	//变换为OpenGL屏幕坐标
-	int halfWidth = gScreenInfo.iWidth / 2;
-	int halfHeight = gScreenInfo.iHeight / 2;
-	vecA[0] += halfWidth;
-	vecA[1] = halfHeight - vecA[1];
-	vecB[0] += halfWidth;
-	vecB[1] = halfHeight - vecB[1];
-	vecC[0] += halfWidth;
-	vecC[1] = halfHeight - vecC[1];
-	vecD[0] += halfWidth;
-	vecD[1] = halfHeight - vecD[1];
-
-	Vector2Copy(vecA, pHudSetting.vecPainIndicatorA);
-	Vector2Copy(vecB, pHudSetting.vecPainIndicatorB);
-	Vector2Copy(vecC, pHudSetting.vecPainIndicatorC);
-	Vector2Copy(vecD, pHudSetting.vecPainIndicatorD);
-	pHudSetting.flPainIndicatorKeepTime = gEngfuncs.GetClientTime() + 3.0f;
-}
-void DrawPainIndicator(float time)
-{
-	float intermission = pHudSetting.flPainIndicatorKeepTime - time;
-	if (intermission >= 0)
-		DrawSPRIconPos(pHudSetting.iPainIndicator, pHudSetting.vecPainIndicatorA, pHudSetting.vecPainIndicatorC, pHudSetting.vecPainIndicatorD, pHudSetting.vecPainIndicatorB, 255, 0, 0, 255 * (intermission/3.0f));
-}
 void DrawHealthArmorHUD()
 {
 	if (gCVars.pDynamicHUD <= 0)
 		return;
 	if (pClientData->health <= 0)
 		return;
-	int r, g, b, a;
-	float iSizeStep = (float)gScreenInfo.iWidth / 3 / pHudSetting.BackGroundAlpha;
-	float i = 0, nowX = 0;
-	float flBackGroundY = gScreenInfo.iHeight * pHudSetting.BackGroundY;
-	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
-	pHudSetting.BackGroundColor.GetColor(r, g, b, a);
-	for (i = pHudSetting.BackGroundAlpha; i > 0.0f; i--)
-	{
-		gEngfuncs.pfnFillRGBABlend(nowX, flBackGroundY, iSizeStep, flBackGroundHeight, r, g, b, i);
-		nowX += iSizeStep;
-	}
-	int iStartX = gScreenInfo.iWidth / pHudSetting.StartX;
-	int iIconSize = flBackGroundHeight * pHudSetting.IconSize;
-	int iTextWidth = flBackGroundHeight * pHudSetting.TextWidth;
-	int iTextHeight = flBackGroundHeight * pHudSetting.TextHeight;
-	int iBarLength = flBackGroundHeight * pHudSetting.BarLength;
-	int iBarWidth = flBackGroundHeight * pHudSetting.BarWidth;
-	int iElementGap = flBackGroundHeight * pHudSetting.ElementGap;
-	int iHealth = pHookedHUD.pHUDHealth->m_iHealth;
-	int iBattery = pHookedHUD.pHUDBattery->m_iBat;
-	//HP ICON
-	if(!pHudSetting.iHealthIcon)
-		pHudSetting.iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
-	pHudSetting.HealthIconColor.GetColor(r, g, b, a);
-	DrawSPRIcon(pHudSetting.iHealthIcon, iStartX, flBackGroundY + (flBackGroundHeight - iIconSize) / 2, iIconSize, iIconSize,r, g, b, a);
-
-	char numberString[16];
-	itoa(iHealth, numberString, 10);
-	wchar_t wideName[8];
-	pLocalize->ConvertANSIToUnicode(numberString, wideName, sizeof(wideName));
-	int iSzWidth = 0;
-	GetStringSize(wideName, &iSzWidth, NULL, pHudSetting.HUDFont);
-	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
-	pHudSetting.HealthTextColor.GetColor(r, g, b, a);
-	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, pHudSetting.HUDFont);
-	iStartX += iSzWidth + iElementGap;
-
-	pHudSetting.HealthBarColor.GetColor(r, g, b, a);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, r/2, g/2, b/2, a);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iHealth / 100)), iBarWidth, r, g, b, a);
-	iStartX += iBarLength + iElementGap * 4;
-
-	//AP
-	if (!pHudSetting.iArmorIconNull || !pHudSetting.iArmorIconFull)
-		pHudSetting.iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
-	if (!pHudSetting.iArmorIconFull)
-		pHudSetting.iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
-	pHudSetting.ArmorIconColor.GetColor(r, g, b, a);
-	DrawSPRIcon(iBattery > 0 ? pHudSetting.iArmorIconFull : pHudSetting.iArmorIconNull, iStartX, flBackGroundY + (flBackGroundHeight - iIconSize) / 2, iIconSize, iIconSize, r, g, b, a);
-
-	itoa(iBattery, numberString, 10);
-	pLocalize->ConvertANSIToUnicode(numberString, wideName, sizeof(wideName));
-	GetStringSize(wideName, &iSzWidth, NULL, pHudSetting.HUDFont);
-	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
-	pHudSetting.ArmorTextColor.GetColor(r, g, b, a);
-	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, pHudSetting.HUDFont);
-	iStartX += iSzWidth + iElementGap;
-
-	pHudSetting.ArmorBarColor.GetColor(r, g, b, a);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, r/2, g/2, b/2, a);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iBattery / 100)), iBarWidth, r, g, b, a);
-	iStartX += iBarLength + iElementGap * 2;
 }
-
 //FINAL SHIT
 void R_NewMap(void)
 {
 	gHookFuncs.R_NewMap();
-	HealthArmorHUDNewMap();
 }
 void Sys_ErrorEx(const char* fmt, ...)
 {
@@ -735,12 +385,6 @@ void FillAddress()
 				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_VECTORSCALE_SIG, Sig_Length(R_VECTORSCALE_SIG));
 			Sig_FuncNotFound(VectorScale);
 		}
-#define R_CALCDAMAGE_DIRECTION_SIG "\x55\x8B\xEC\x83\xE4\xF8\xF3\x0F\x10\x65\x08\x83\xEC\x44\xF3\x0F\x10\x55\x10\x0F\x57\xC0\xF3\x0F\x10\x5D\x0C"
-		{
-			gHookFuncs.R_CalcDamageDirection = (decltype(gHookFuncs.R_CalcDamageDirection))
-				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_CALCDAMAGE_DIRECTION_SIG, Sig_Length(R_CALCDAMAGE_DIRECTION_SIG));
-			Sig_FuncNotFound(R_CalcDamageDirection);
-		}
 	}
 }
 
@@ -753,7 +397,6 @@ void InstallHook()
 
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.VectorScale, R_VectorScale, (void**)&gHookFuncs.VectorScale);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_NewMap, R_NewMap, (void**)&gHookFuncs.R_NewMap);
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_CalcDamageDirection, R_CalcDamageDirection, (void**)&gHookFuncs.R_CalcDamageDirection);
 }
 
 void HUD_Init(void)
@@ -799,6 +442,7 @@ void HUD_Init(void)
 	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
+	m_HudArmorHealth.Init();
 	gExportfuncs.HUD_Init();
 }
 
@@ -812,23 +456,15 @@ int HUD_Redraw(float time, int intermission)
 		while (pHudList)
 		{
 			if (dynamic_cast<CHudBattery*>(pHudList->p) != NULL)
-			{
-				pHookedHUD.pHUDBattery = dynamic_cast<CHudBattery*>(pHudList->p);
 				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
-			}
 			else if (dynamic_cast<CHudHealth*>(pHudList->p) != NULL)
-			{
-				pHookedHUD.pHUDHealth = dynamic_cast<CHudHealth*>(pHudList->p);
 				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
-			}
 			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != NULL)
 			{
-				pHookedHUD.pHUDAmmo = dynamic_cast<CHudAmmo*>(pHudList->p);
 				//pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			}
 			else if (dynamic_cast<CHudAmmoSecondary*>(pHudList->p) != NULL)
 			{
-				pHookedHUD.pHudAmmoSecondary = dynamic_cast<CHudAmmoSecondary*>(pHudList->p);
 				//pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			}
 			pHudList = pHudList->pNext;
@@ -836,9 +472,13 @@ int HUD_Redraw(float time, int intermission)
 	}
 	DrawPlayerTitle();
 	RedrawCorssHair();
-	DrawHealthArmorHUD();
-	DrawPainIndicator(time);
+	m_HudArmorHealth.Draw();
 	return gExportfuncs.HUD_Redraw(time, intermission);
+}
+void HUD_Reset(void)
+{
+	m_HudArmorHealth.Reset();
+	gExportfuncs.HUD_Reset();
 }
 
 

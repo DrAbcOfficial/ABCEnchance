@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="VGUI">
+      <UniqueIdentifier>{69190543-6612-4746-95eb-ee62b855faa6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="exportfuncs.cpp">
@@ -25,6 +28,24 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="mathlib.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="healthhud.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="msghook.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="drawElement.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vguilocal.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="CColor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="parsemsg.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,10 +71,88 @@
     <ClInclude Include="hud.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="Color.h">
+    <ClInclude Include="ammo.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="ammo.h">
+    <ClInclude Include="msghook.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="healthhud.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="drawElement.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="vguilocal.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\VGUI.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\OLDDar.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\MouseCode.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\KeyCode.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IVGUI.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\ISystem.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\ISurface2.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IScheme.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IPanel.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\ISurface.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\ILocalize.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IInputInternal.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IInput.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IImage.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IHTML.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IEngineVGui.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IClientPanel.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\IBorder.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\Dar.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI\Cursor.h">
+      <Filter>VGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="CColor.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="basehealth.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="parsemsg.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>
