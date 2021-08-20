@@ -1,5 +1,7 @@
 #include <metahook.h>
-#include <plugins.h>
+#include "parsemsg.h"
+#include "msghook.h"
+#include "plugins.h"
 
 typedef struct usermsg_s
 {
@@ -39,6 +41,7 @@ void MSG_Init(void)
 
 	gClientUserMsgs = *(usermsg_t***)(address + 0x1);
 }
+
 usermsg_t* MSG_FindUserMsgHook(char* szMsgName)
 {
 	for (usermsg_t* msg = *gClientUserMsgs; msg; msg = msg->next)
@@ -60,6 +63,7 @@ usermsg_t* MSG_FindUserMsgHookPrev(char* szMsgName)
 
 	return NULL;
 }
+
 pfnUserMsgHook MSG_HookUserMsg(char* szMsgName, pfnUserMsgHook pfn)
 {
 	usermsg_t* msg = MSG_FindUserMsgHook(szMsgName);

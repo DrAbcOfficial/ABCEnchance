@@ -23,12 +23,31 @@ extern vec3_t vec3_origin;
 #define EQUAL_EPSILON 0.001
 #define COLINEAR_EPSILON 0.001
 
+
+#pragma once
+#ifndef MAX_PLAYER_NAME_LENGTH
+#define MAX_PLAYER_NAME_LENGTH 128
+#endif
+#ifndef RADIAN_PER_DEGREE
+#define RADIAN_PER_DEGREE 57.29577951308232087684
+#endif
+#ifndef DEGREE_PER_RADIAN
+#define DEGREE_PER_RADIAN 0.017453292519943295769
+#endif
+#ifndef PERIGON_ANGLE
+#define PERIGON_ANGLE 360.0
+#endif
+#ifndef FLAT_ANGLE
+#define FLAT_ANGLE 180.0
+#endif
+
 struct mplane_s;
 
 extern int nanmask;
 
 #define IS_NAN(x) (((*(int *)&x)&nanmask) == nanmask)
 
+#define clamp(num, a, b) max(min(num, b),a)
 #define METERS_PER_INCH 0.0254f
 #define METER2INCH(x) (float)(x * (1.0f / METERS_PER_INCH))
 #define INCH2METER(x) (float)(x * (METERS_PER_INCH / 1.0f))

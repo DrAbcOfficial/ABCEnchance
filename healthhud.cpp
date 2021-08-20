@@ -47,7 +47,6 @@ int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
 		m_HudArmorHealth.m_fFade = FADE_TIME;
 		m_HudArmorHealth.m_iHealth = x;
 	}
-
 	return 1;
 }
 

@@ -48,6 +48,12 @@
     <ClCompile Include="CHudDelegate.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="efxenchance.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="local.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -156,6 +162,12 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="CColor.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="efxenchance.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="local.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>

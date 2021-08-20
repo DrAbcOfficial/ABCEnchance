@@ -1,56 +1,7 @@
-#include "cvardef.h"
 #include <VGUI/IScheme.h>
 #include <VGUI/ISurface.h>
 #include <VGUI/ILocalize.h>
 
-typedef struct
-{
-	void		(*R_Blood)					(float* org, float* dir, int pcolor, int speed);
-	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
-	void		(*R_Explosion)				(float* pos, int model, float scale, float framerate, int flags);
-	void		(*R_RicochetSprite)			(float* pos, struct model_s* pmodel, float duration, float scale);
-	void		(*R_SparkEffect)			(float* pos, int count, int velocityMin, int velocityMax);
-	void		(*R_BloodStream)			(float* org, float* dir, int pcolor, int speed);
-	float*		(*GetClientColor)			(int clientIndex);
-
-	void		(*VectorScale)				(float* pucnangle1, float scale, float* pucnangle2);
-	void		(*R_NewMap)					(void);
-	void		(__fastcall* R_CalcDamageDirection)(void* pthis, int dummy, int x, float y, float z);
-
-	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
-	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
-}cl_refHookfunc_t;
-typedef struct
-{
-	cvar_t* pBloodSpriteSpeed = NULL;
-	cvar_t* pBloodSpriteNumber = NULL;
-	cvar_t* pExpSmokeNumber = NULL;
-	cvar_t* pExpSmokeSpeed = NULL;
-	cvar_t* pRicochetNumber = NULL;
-
-	cvar_t* pPlayerTitle = NULL;
-
-	cvar_t* pDynamicCrossHair = NULL;
-	cvar_t* pDynamicCrossHairAH = NULL;
-	cvar_t* pDynamicCrossHairL = NULL;
-	cvar_t* pDynamicCrossHairW = NULL;
-	cvar_t* pDynamicCrossHairO = NULL;
-	cvar_t* pDynamicCrossHairM = NULL;
-	cvar_t* pDynamicCrossHairA = NULL;
-	cvar_t* pDynamicCrossHairCR = NULL;
-	cvar_t* pDynamicCrossHairCG = NULL;
-	cvar_t* pDynamicCrossHairCB = NULL;
-	cvar_t* pDynamicCrossHairOTD = NULL;
-	cvar_t* pDynamicCrossHairOTDW = NULL;
-	cvar_t* pDynamicCrossHairT = NULL;
-	cvar_t* pDynamicCrossHairD = NULL;
-	
-	cvar_t* pDynamicHUD = NULL;
-
-}cl_cvars_t;
-
-extern cl_refHookfunc_t gHookFuncs;
-extern cl_cvars_t gCVars;
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
 
@@ -80,13 +31,7 @@ int HUD_Redraw(float time, int intermission);
 void HUD_Reset(void);
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);
 
-void R_Blood(float* org, float* dir, int pcolor, int speed);
-void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
-void R_Explosion(float* pos, int model, float scale, float framerate, int flags);
-void R_RicochetSprite (float* pos, struct model_s* pmodel, float duration, float scale);
 void R_NewMap(void);
-
-#define clamp(num, a, b) max(min(num, b),a)
 
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
 #define Sig_NotFound(name) Sys_ErrorEx("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
@@ -102,21 +47,3 @@ void R_NewMap(void);
 #define Install_InlineHook(fn) g_pMetaHookAPI->InlineHook((void *)gRefFuncs.fn, fn, (void **)&gRefFuncs.fn);
 #define Install_InlineEfxHook(fn) g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn);
 #define Fill_InlineEfxHook(fn) Fill_DelegateFunc(fn) Install_InlineEfxHook(fn)
-
-
-#pragma once
-#ifndef MAX_PLAYER_NAME_LENGTH
-#define MAX_PLAYER_NAME_LENGTH 128
-#endif
-#ifndef RADIAN_PER_DEGREE
-#define RADIAN_PER_DEGREE 57.29577951308232087684
-#endif
-#ifndef DEGREE_PER_RADIAN
-#define DEGREE_PER_RADIAN 0.017453292519943295769
-#endif
-#ifndef PERIGON_ANGLE
-#define PERIGON_ANGLE 360.0
-#endif
-#ifndef FLAT_ANGLE
-#define FLAT_ANGLE 180.0
-#endif

@@ -107,8 +107,10 @@
     <ClCompile Include="..\..\HLSDK\common\interface.cpp" />
     <ClCompile Include="CHudDelegate.cpp" />
     <ClCompile Include="drawElement.cpp" />
+    <ClCompile Include="efxenchance.cpp" />
     <ClCompile Include="exportfuncs.cpp" />
     <ClCompile Include="healthhud.cpp" />
+    <ClCompile Include="local.cpp" />
     <ClCompile Include="mathlib.cpp" />
     <ClCompile Include="msghook.cpp" />
     <ClCompile Include="parsemsg.cpp" />
@@ -123,9 +125,11 @@
     <ClInclude Include="CHudDelegate.h" />
     <ClInclude Include="CColor.h" />
     <ClInclude Include="drawElement.h" />
+    <ClInclude Include="efxenchance.h" />
     <ClInclude Include="exportfuncs.h" />
     <ClInclude Include="healthhud.h" />
     <ClInclude Include="hud.h" />
+    <ClInclude Include="local.h" />
     <ClInclude Include="mathlib.h" />
     <ClInclude Include="msghook.h" />
     <ClInclude Include="palette.h" />
