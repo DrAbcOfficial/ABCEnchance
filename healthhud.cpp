@@ -6,6 +6,8 @@
 
 #include "vguilocal.h"
 #include "hud.h"
+#include "weapon.h"
+#include "CHudDelegate.h"
 #include "healthhud.h"
 
 #include "drawElement.h"
@@ -45,30 +47,28 @@ int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
 	}
 	return 1;
 }
-
 int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
-	int armor = READ_BYTE();	// armor
-	int damageTaken = READ_BYTE();	// health
-	long bitsDamage = READ_LONG(); // damage bits
+	int armor = READ_BYTE();
+	int damageTaken = READ_BYTE();
+	long bitsDamage = READ_LONG();
 
 	vec3_t vecFrom;
 
 	for (int i = 0; i < 3; i++)
 		vecFrom[i] = READ_COORD();
-
-	// Actually took damage?
+	m_HudArmorHealth.UpdateTiles(gEngfuncs.GetClientTime(), bitsDamage);
 	if (damageTaken > 0 || armor > 0)
 	{
 		m_HudArmorHealth.m_takeDamage = damageTaken;
 		m_HudArmorHealth.m_takeArmor = armor;
-		m_HudArmorHealth.CalcDamageDirection(vecFrom);
+		m_HudArmorHealth.flPainIndicatorKeepTime = gEngfuncs.GetClientTime() + PAIN_INDICAROT_TIME;
+		VectorCopy(vecFrom, m_HudArmorHealth.vecDamageFrom);
 	}
 	return 1;
 }
-
 int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
@@ -95,6 +95,8 @@ void CHudArmorHealth::Init(void)
 	m_takeDamage = 0;
 	m_takeArmor = 0;
 	m_iBat = 0;
+	giDmgHeight = 0;
+	giDmgWidth = 0;
 	memset(m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES);
 
 	iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
@@ -119,10 +121,22 @@ void CHudArmorHealth::Init(void)
 	ArmorBarColor = pScheme->GetColor("HealthArmor.ArmorBarColor", gDefaultColor);
 	ArmorTextColor = pScheme->GetColor("HealthArmor.ArmorTextColor", gDefaultColor);
 	BackGroundColor = pScheme->GetColor("HealthArmor.BackGroundColor", gDefaultColor);
+	PainIndicatorColor = pScheme->GetColor("HealthArmor.PainIndicatorColor", gDefaultColor);
+	PainIndicatorColorA = pScheme->GetColor("HealthArmor.PainIndicatorColorA", gDefaultColor);
 
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
 }
+int CHudArmorHealth::VidInit(void)
+{
+	m_hSprite = 0;
 
+	m_HUD_dmg_bio = gHudDelegate->GetSpriteIndex("dmg_bio") + 1;
+	m_HUD_cross = gHudDelegate->GetSpriteIndex("cross");
+
+	giDmgHeight = gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).right - gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).left;
+	giDmgWidth = gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).bottom - gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).top;
+	return 1;
+}
 void CHudArmorHealth::Reset(void)
 {
 	iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
@@ -138,14 +152,17 @@ void CHudArmorHealth::Reset(void)
 	m_takeArmor = 0;
 	m_bitsDamage = 0;
 	m_iBat = 0;
+
+	flPainIndicatorKeepTime = 0.0f;
 	for (int i = 0; i < NUM_DMG_TYPES; i++)
 	{
 		m_dmg[i].fExpire = 0;
 	}
 }
-
 int CHudArmorHealth::Draw(float flTime)
 {
+	if (flTime < flPainIndicatorKeepTime)
+		DrawPain(flTime);
 	int r, g, b, a;
 	float iSizeStep = (float)gScreenInfo.iWidth / 3 / BackGroundAlpha;
 	float i = 0, nowX = 0;
@@ -208,11 +225,7 @@ int CHudArmorHealth::Draw(float flTime)
 	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, r / 2, g / 2, b / 2, a);
 	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iBattery / 100)), iBarWidth, r, g, b, a);
 	iStartX += iBarLength + iElementGap * 2;
-	return 1;
-}
-
-void CHudArmorHealth::GetPainColor(int& r, int& g, int& b)
-{
+	return DrawDamage(flTime);
 }
 void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 {
@@ -223,7 +236,7 @@ void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 	vecCalc[2] = vecFrom[2] - local->curstate.origin[2];
 	vec3_t vecAngles;
 	VectorAngles(vecCalc, vecAngles);
-	float yaw = vecAngles[1] - local->curstate.angles[1];
+	float yaw = local->curstate.angles[0] - vecAngles[0];
 	//以屏幕中心为坐标轴的坐标系
 	float sprWidth = gScreenInfo.iHeight * 0.1667;
 	float y1 = gScreenInfo.iHeight / 4;
@@ -263,23 +276,95 @@ void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 	Vector2Copy(vecC, vecPainIndicatorC);
 	Vector2Copy(vecD, vecPainIndicatorD);
 }
-
 int CHudArmorHealth::DrawPain(float flTime)
 {
+	int r, g, b, a;
+	if(m_takeDamage <= 0 && m_takeArmor > 0)
+		PainIndicatorColorA.GetColor(r, g, b, a);
+	else
+		PainIndicatorColor.GetColor(r, g, b, a);
+
+	if (!iPainIndicator)
+		iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
+	CalcDamageDirection(vecDamageFrom);
+	DrawSPRIconPos(iPainIndicator, vecPainIndicatorA, vecPainIndicatorC, vecPainIndicatorD, vecPainIndicatorB, 
+		r, g, b, 
+		(flPainIndicatorKeepTime - flTime) / PAIN_INDICAROT_TIME * a);
 	return 1;
 }
 int CHudArmorHealth::DrawDamage(float flTime)
 {
 	int r, g, b, a;
 	DAMAGE_IMAGE* pdmg;
-
 	if (!m_bitsDamage)
 		return 1;
+	BitDamageColor.GetColor(r, g, b, a);
+	a = (int)(fabs(sin(flTime * 2)) * 256.0);
+	int i;
+	for (i = 0; i < NUM_DMG_TYPES; i++)
+	{
+		if (m_bitsDamage & giDmgFlags[i])
+		{
+			pdmg = &m_dmg[i];
+			SPR_Set(gHudDelegate->GetSprite(m_HUD_dmg_bio + i), r, g, b);
+			SPR_DrawAdditive(0, pdmg->x, pdmg->y, &gHudDelegate->GetSpriteRect(m_HUD_dmg_bio + i));
+		}
+	}
+	for (i = 0; i < NUM_DMG_TYPES; i++)
+	{
+		DAMAGE_IMAGE* pdmg = &m_dmg[i];
+
+		if (m_bitsDamage & giDmgFlags[i])
+		{
+			pdmg->fExpire = min(flTime + DMG_IMAGE_LIFE, pdmg->fExpire);
+
+			if (pdmg->fExpire <= flTime	&& a < 40)
+			{
+				pdmg->fExpire = 0;
+
+				int y = pdmg->y;
+				pdmg->x = pdmg->y = 0;
+				for (int j = 0; j < NUM_DMG_TYPES; j++)
+				{
+					pdmg = &m_dmg[j];
+					if ((pdmg->y) && (pdmg->y < y))
+						pdmg->y += giDmgHeight;
+				}
+				m_bitsDamage &= ~giDmgFlags[i];
+			}
+		}
+	}
 	return 1;
 }
 void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage)
 {
 	DAMAGE_IMAGE* pdmg;
-	// damage bits are only turned on here;  they are turned off when the draw time has expired (in DrawDamage())
+	long bitsOn = ~m_bitsDamage & bitsDamage;
+	for (int i = 0; i < NUM_DMG_TYPES; i++)
+	{
+		pdmg = &m_dmg[i];
+		if (m_bitsDamage & giDmgFlags[i])
+		{
+			pdmg->fExpire = flTime + DMG_IMAGE_LIFE; // extend the duration
+			if (!pdmg->fBaseline)
+				pdmg->fBaseline = flTime;
+		}
+		if (bitsOn & giDmgFlags[i])
+		{
+			pdmg->x = giDmgWidth / 8;
+			pdmg->y = ScreenHeight - giDmgHeight * 2;
+			pdmg->fExpire = flTime + DMG_IMAGE_LIFE;
+			for (int j = 0; j < NUM_DMG_TYPES; j++)
+			{
+				if (j == i)
+					continue;
+				pdmg = &m_dmg[j];
+				if (pdmg->y)
+					pdmg->y -= giDmgHeight;
+
+			}
+			pdmg = &m_dmg[i];
+		}
+	}
 	m_bitsDamage |= bitsDamage;
 }

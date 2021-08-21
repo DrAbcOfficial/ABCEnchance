@@ -25,9 +25,6 @@
 //efx
 #include "efxenchance.h"
 
-
-
-
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 
@@ -158,10 +155,11 @@ void RedrawCorssHair()
 			return;
 		if (gCVars.pDynamicCrossHairAH->value > 0)
 		{
-			int def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
+			float def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
 			if (def_fov != gClientData->fov)
 				return;
 		}
+
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		int iCenterX = gScreenInfo.iWidth / 2;
 		int iCenterY = gScreenInfo.iHeight / 2;
@@ -206,6 +204,7 @@ void RedrawCorssHair()
 //FINAL SHIT
 void R_NewMap(void)
 {
+	gHudDelegate->HUD_Reset();
 	gHookFuncs.R_NewMap();
 }
 void Sys_ErrorEx(const char* fmt, ...)
@@ -343,7 +342,10 @@ int HUD_Redraw(float time, int intermission)
 			else if (dynamic_cast<CHudHealth*>(pHudList->p) != NULL)
 				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != NULL)
+			{
 				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
+				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			}
 			else if (dynamic_cast<CHudAmmoSecondary*>(pHudList->p) != NULL)
 			{
 				//pHudList->p->m_iFlags &= ~HUD_ACTIVE;
@@ -361,7 +363,6 @@ int HUD_Redraw(float time, int intermission)
 }
 void HUD_Reset(void)
 {
-	gHudDelegate->HUD_Reset();
 	gExportfuncs.HUD_Reset();
 }
 

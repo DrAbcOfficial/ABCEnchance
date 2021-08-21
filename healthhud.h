@@ -74,6 +74,8 @@
 
 #define FADE_TIME 100
 
+#define PAIN_INDICAROT_TIME 5
+
 typedef struct
 {
 	float fExpire;
@@ -87,14 +89,17 @@ public:
 	virtual void Init(void);
 	virtual int Draw(float flTime);
 	virtual void Reset(void);
+	virtual int VidInit(void);
 	int m_iHealth;
 	int m_iBat;
-	int m_HUD_dmg_bio;
 	int m_iFlags;
-	void GetPainColor(int& r, int& g, int& b);
 	float m_fFade;
+	int m_HUD_dmg_bio;
+	int m_HUD_cross;
 
 	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
+	HSPRITE m_hSprite;
+	HSPRITE m_hDamage;
 
 	int iHealthIcon;
 	int iArmorIconNull;
@@ -106,7 +111,6 @@ public:
 	vec2_t vecPainIndicatorB;
 	vec2_t vecPainIndicatorC;
 	vec2_t vecPainIndicatorD;
-
 
 	float BackGroundAlpha = 128;
 	float StartX = 48;
@@ -125,6 +129,9 @@ public:
 	Color ArmorIconColor;
 	Color ArmorBarColor;
 	Color ArmorTextColor;
+	Color PainIndicatorColor;
+	Color PainIndicatorColorA;
+	Color BitDamageColor;
 	Color BackGroundColor;
 
 	vgui::HFont HUDFont;
@@ -133,6 +140,8 @@ public:
 	int	m_bitsDamage;
 	int m_takeDamage;
 	int m_takeArmor;
+	vec3_t vecDamageFrom;
+
 	int DrawPain(float fTime);
 	int DrawDamage(float fTime);
 	void CalcDamageDirection(vec3_t vecFrom);
