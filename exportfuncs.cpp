@@ -140,7 +140,6 @@ void DrawPlayerTitle()
 		}
 	}
 }
-
 //CROSSHAIR
 void R_VectorScale(float* pucnangle1, float scale, float* pucnangle2)
 {
@@ -201,6 +200,7 @@ void RedrawCorssHair()
 		gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset, iWidth, iLength, r, g, b, a);
 	}
 }
+
 //FINAL SHIT
 void R_NewMap(void)
 {
@@ -223,7 +223,6 @@ void Sys_ErrorEx(const char* fmt, ...)
 	MessageBox(NULL, msg, "Fatal Error", MB_ICONERROR);
 	TerminateProcess((HANDLE)(-1), 0);
 }
-
 void FillDelegate()
 {
 	Fill_DelegateFunc(CL_TempEntAllocHigh);
@@ -231,7 +230,6 @@ void FillDelegate()
 	Fill_DelegateFunc(R_SparkEffect);
 	Fill_DelegateFunc(R_BloodStream);
 }
-
 void FillAddress()
 {
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
@@ -261,7 +259,6 @@ void FillAddress()
 		}
 	}
 }
-
 void InstallHook()
 {
 	Fill_InlineEfxHook(R_Blood);
@@ -272,7 +269,6 @@ void InstallHook()
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.VectorScale, R_VectorScale, (void**)&gHookFuncs.VectorScale);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_NewMap, R_NewMap, (void**)&gHookFuncs.R_NewMap);
 }
-
 void HUD_Init(void)
 {
 	gScreenInfo.iSize = sizeof(SCREENINFO_s);
@@ -320,14 +316,12 @@ void HUD_Init(void)
 	gExportfuncs.HUD_Init();
 	gHudDelegate->HUD_Init();
 }
-
 int HUD_VidInit(void)
 {
 	int result = gExportfuncs.HUD_VidInit();
 	gHudDelegate->HUD_VidInit();
 	return result;
 }
-
 int HUD_Redraw(float time, int intermission)
 {
 	DWORD dwAddress = (DWORD)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
@@ -365,10 +359,13 @@ void HUD_Reset(void)
 {
 	gExportfuncs.HUD_Reset();
 }
-
-
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client)
 {
 	gClientData = client;
 	gExportfuncs.HUD_TxferLocalOverrides(state, client);
+}
+int HUD_UpdateClientData (struct client_data_s* c, float f)
+{
+	gHudDelegate->HUD_UpdateClientData(c,f);
+	return gExportfuncs.HUD_UpdateClientData(c, f);
 }

@@ -10,6 +10,7 @@ public:
 	virtual void HUD_VidInit(void);
 	virtual void HUD_Draw(float flTime);
 	virtual void HUD_Reset(void);
+	virtual void HUD_UpdateClientData(client_data_t* cdata, float time);
 
 	~CHudDelegate();			// destructor, frees allocated memory
 

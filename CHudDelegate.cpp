@@ -1,7 +1,6 @@
 #include <metahook.h>
 
 #include "vguilocal.h"
-
 #include "hud.h"
 #include "weapon.h"
 #include "ammo.h"
@@ -100,6 +99,11 @@ int CHudDelegate::GetSpriteIndex(const char* SpriteName)
 	}
 
 	return -1; // invalid sprite
+}
+void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
+{
+	m_iWeaponBits = cdata->iWeaponBits;
+	m_HudCustomAmmo.Think();
 }
 CHudDelegate :: ~CHudDelegate()
 {

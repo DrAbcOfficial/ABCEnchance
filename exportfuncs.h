@@ -25,6 +25,7 @@ int HUD_VidInit(void);
 int HUD_Redraw(float time, int intermission);
 void HUD_Reset(void);
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);
+int HUD_UpdateClientData(struct client_data_s* c, float f);
 
 void R_NewMap(void);
 

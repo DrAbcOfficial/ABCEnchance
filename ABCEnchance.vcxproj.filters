@@ -63,6 +63,9 @@
     <ClCompile Include="historyresource.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="command.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -192,6 +195,9 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="historyresource.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="command.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>

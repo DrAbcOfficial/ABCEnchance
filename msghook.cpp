@@ -2,7 +2,6 @@
 #include "parsemsg.h"
 #include "msghook.h"
 #include "plugins.h"
-
 typedef struct usermsg_s
 {
 	int index;
@@ -11,9 +10,7 @@ typedef struct usermsg_s
 	struct usermsg_s* next;
 	pfnUserMsgHook function;
 }usermsg_t;
-
 usermsg_t** gClientUserMsgs = NULL;
-
 void MSG_Init(void)
 {
 	DWORD address = (DWORD)g_pMetaSave->pEngineFuncs->pfnHookUserMsg;
@@ -41,7 +38,6 @@ void MSG_Init(void)
 
 	gClientUserMsgs = *(usermsg_t***)(address + 0x1);
 }
-
 usermsg_t* MSG_FindUserMsgHook(char* szMsgName)
 {
 	for (usermsg_t* msg = *gClientUserMsgs; msg; msg = msg->next)
@@ -52,7 +48,6 @@ usermsg_t* MSG_FindUserMsgHook(char* szMsgName)
 
 	return NULL;
 }
-
 usermsg_t* MSG_FindUserMsgHookPrev(char* szMsgName)
 {
 	for (usermsg_t* msg = (*gClientUserMsgs)->next; msg->next; msg = msg->next)
@@ -63,7 +58,6 @@ usermsg_t* MSG_FindUserMsgHookPrev(char* szMsgName)
 
 	return NULL;
 }
-
 pfnUserMsgHook MSG_HookUserMsg(char* szMsgName, pfnUserMsgHook pfn)
 {
 	usermsg_t* msg = MSG_FindUserMsgHook(szMsgName);
@@ -78,7 +72,6 @@ pfnUserMsgHook MSG_HookUserMsg(char* szMsgName, pfnUserMsgHook pfn)
 	gEngfuncs.pfnHookUserMsg(szMsgName, pfn);
 	return pfn;
 }
-
 pfnUserMsgHook MSG_UnHookUserMsg(char* szMsgName)
 {
 	usermsg_t* msg = MSG_FindUserMsgHook(szMsgName);

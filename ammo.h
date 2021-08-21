@@ -7,7 +7,7 @@ public:
 	void Think(void);
 	void Reset(void);
 	int DrawWList(float flTime);
-	void SlotInput(int iSlot);
+	void SlotInput(int iSlot, int fAdvance);
 
 	float StartX = 48;
 	float IconSize = 0.5;
@@ -15,6 +15,8 @@ public:
 	float BackGroundY = 0.95;
 	float BackGroundLength = 3;
 	float BackGroundAlpha = 128;
+
+	int iSelectCyclerSpr = 0;
 
 	Color Ammo1IconColor;
 	Color Ammo1BigTextColor;
@@ -35,3 +37,6 @@ public:
 
 };
 extern CHudCustomAmmo m_HudCustomAmmo;
+extern int g_weaponselect;
+extern WEAPON* gpActiveSel;
+extern WEAPON* gpLastSel;

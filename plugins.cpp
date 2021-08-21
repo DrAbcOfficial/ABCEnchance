@@ -1,5 +1,6 @@
 #include <metahook.h>
 #include "exportfuncs.h"
+#include "command.h"
 
 cl_enginefunc_t gEnginefuncs;
 mh_interface_t *g_pInterface;
@@ -50,6 +51,8 @@ void IPluginsV3::LoadEngine(cl_enginefunc_t *pEngfuncs)
 	g_dwEngineRdataBase = g_pMetaHookAPI->GetSectionByName(g_dwEngineBase, ".rdata\x0\x0", &g_dwEngineRdataSize);
 
 	memcpy(&gEngfuncs, pEngfuncs, sizeof(gEngfuncs));
+
+	Cmd_GetCmdBase = *(cmd_function_t * (**)(void))((DWORD)pEngfuncs + 0x198);
 }
 
 void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
@@ -67,6 +70,7 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	pExportFunc->HUD_Init = HUD_Init;
 	pExportFunc->HUD_VidInit = HUD_VidInit;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
+	pExportFunc->HUD_UpdateClientData = HUD_UpdateClientData;
 	pExportFunc->HUD_Reset = HUD_Reset;
 	pExportFunc->HUD_TxferLocalOverrides = HUD_TxferLocalOverrides;
 

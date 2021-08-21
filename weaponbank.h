@@ -8,41 +8,53 @@ class WeaponsResource
 {
 private:
 	WEAPON rgWeapons[MAX_WEAPONS];
-	WEAPON* rgSlots[MAX_WEAPON_SLOTS + 1][MAX_WEAPON_POSITIONS + 1];
-	int		riAmmo[MAX_AMMO];
+	int gridSlotMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
+	int	riAmmo[MAX_AMMO];
 
 public:
+	int gridDrawMenu[MAX_WEAPON_SLOTS];
+	int iNowSlot;
+	int iNowPos;
+	int iNowSelect;
+	int iOldWeaponBits;
+
 	void Init(void)
 	{
 		memset(rgWeapons, 0, sizeof rgWeapons);
 		Reset();
 	}
-
 	void Reset(void)
 	{
-		iOldWeaponBits = 0;
-		memset(rgSlots, 0, sizeof rgSlots);
+		iNowSlot = 0;
+		iNowPos = 0;
 		memset(riAmmo, 0, sizeof riAmmo);
+		memset(gridSlotMap, -1, sizeof gridSlotMap);
+		memset(gridDrawMenu, -1, sizeof gridDrawMenu);
 	}
-
-	///// WEAPON /////
-	int			iOldWeaponBits;
-
-	WEAPON* GetWeapon(int iId) { return &rgWeapons[iId]; }
+	WEAPON* GetWeapon(int iId)
+	{ 
+		return &rgWeapons[iId];
+	}
 	void AddWeapon(WEAPON* wp)
 	{
 		rgWeapons[wp->iId] = *wp;
 		LoadWeaponSprites(&rgWeapons[wp->iId]);
 	}
 
+	void PickupWeapon(int id)
+	{
+		WEAPON* wp = &rgWeapons[id];
+		gridSlotMap[wp->iSlot][wp->iSlotPos] = id;
+	}
+
 	void PickupWeapon(WEAPON* wp)
 	{
-		rgSlots[wp->iSlot][wp->iSlotPos] = wp;
+		gridSlotMap[wp->iSlot][wp->iSlotPos] = wp->iId;
 	}
 
 	void DropWeapon(WEAPON* wp)
 	{
-		rgSlots[wp->iSlot][wp->iSlotPos] = NULL;
+		gridSlotMap[wp->iSlot][wp->iSlotPos] = -1;
 	}
 
 	void DropAllWeapons(void)
@@ -54,23 +66,20 @@ public:
 		}
 	}
 
-	WEAPON* GetWeaponSlot(int slot, int pos) { return rgSlots[slot][pos]; }
+	WEAPON* GetWeaponSlot(int slot, int pos) 
+	{ 
+		return &rgWeapons[gridSlotMap[slot][pos]];
+	}
 
 	void LoadWeaponSprites(WEAPON* wp);
 	void LoadAllWeaponSprites(void);
-	WEAPON* GetFirstPos(int iSlot);
-	void SelectSlot(int iSlot, int fAdvance, int iDirection);
-	WEAPON* GetNextActivePos(int iSlot, int iSlotPos);
+	void SelectSlot(int iSlot, int fAdvance);
+	void FillMenuGrid();
 
 	int HasAmmo(WEAPON* p);
-
-	///// AMMO /////
 	AMMO GetAmmo(int iId) { return iId; }
-
 	void SetAmmo(int iId, int iCount) { riAmmo[iId] = iCount; }
-
 	int CountAmmo(int iId);
-
 	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect);
 };
 

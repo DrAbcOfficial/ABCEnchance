@@ -3,6 +3,8 @@
 #include "vguilocal.h"
 #include "hud.h"
 #include "weapon.h"
+#include "ammo.h"
+#include "CHudDelegate.h"
 #include "historyresource.h"
 #include "weaponbank.h"
 
@@ -53,7 +55,6 @@ int WeaponsResource::HasAmmo(WEAPON* p)
 	return (p->iAmmoType == -1) || p->iClip > 0 || CountAmmo(p->iAmmoType)
 		|| CountAmmo(p->iAmmo2Type) || (p->iFlags & WEAPON_FLAGS_SELECTONEMPTY);
 }
-
 
 void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 {
@@ -180,36 +181,6 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 
 }
 
-// Returns the first weapon for a given slot.
-WEAPON* WeaponsResource::GetFirstPos(int iSlot)
-{
-	WEAPON* pret = NULL;
-
-	for (int i = 0; i < MAX_WEAPON_POSITIONS; i++)
-	{
-		if (rgSlots[iSlot][i] && HasAmmo(rgSlots[iSlot][i]))
-		{
-			pret = rgSlots[iSlot][i];
-			break;
-		}
-	}
-
-	return pret;
-}
-
-
-WEAPON* WeaponsResource::GetNextActivePos(int iSlot, int iSlotPos)
-{
-	if (iSlotPos >= MAX_WEAPON_POSITIONS || iSlot >= MAX_WEAPON_SLOTS)
-		return NULL;
-
-	WEAPON* p = gWR.rgSlots[iSlot][iSlotPos + 1];
-
-	if (!p || !gWR.HasAmmo(p))
-		return GetNextActivePos(iSlot, iSlotPos + 1);
-
-	return p;
-}
 HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect)
 {
 	for (int i = 0; i < MAX_WEAPONS; i++)
@@ -227,5 +198,61 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect)
 	}
 
 	return NULL;
+}
+
+void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
+{
+	if (gHudDelegate->m_fPlayerDead)
+		return;
+
+	if (iSlot >= MAX_WEAPON_SLOTS || iSlot < 0)
+		return;
+	if (iSlot == iNowSlot) {
+		iNowPos += fAdvance;
+		if (iNowPos < 0)
+			iNowPos = MAX_WEAPON_POSITIONS-1;
+		else if (iNowPos >= MAX_WEAPON_POSITIONS)
+			iNowPos = 0;
+	}
+	else {
+		iNowSlot = iSlot;
+		iNowPos = 0;
+	}
+	int iCount = 0;
+	for (int i = 0; i < MAX_WEAPON_POSITIONS; i++)
+	{
+		if (gridSlotMap[iNowSlot][i] >= 0)
+			iCount++;
+	}
+	if (iCount <= 0) {
+		iNowSelect = -1;
+		return;
+	}
+	while (iNowPos < MAX_WEAPON_POSITIONS)
+	{
+		if (gridSlotMap[iNowSlot][iNowPos] >= 0) {
+			iNowSelect = gridSlotMap[iNowSlot][iNowPos];
+			break;
+		}
+		iNowPos++;
+		if (iNowPos >= MAX_WEAPON_POSITIONS)
+			iNowPos = 0;
+	}
+}
+
+void WeaponsResource::FillMenuGrid()
+{
+	int i,j;
+	for (i = 0; i < MAX_WEAPON_SLOTS; i++)
+	{
+		for (j = 0; j < MAX_WEAPON_POSITIONS; j++)
+		{
+			if (gridSlotMap[i][j] >= 0)
+			{
+				gridDrawMenu[i] = gridSlotMap[i][j];
+				break;
+			}
+		}
+	}
 }
 WeaponsResource gWR;

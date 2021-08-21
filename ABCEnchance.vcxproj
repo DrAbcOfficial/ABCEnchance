@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\HLSDK\common\interface.cpp" />
     <ClCompile Include="ammo.cpp" />
     <ClCompile Include="CHudDelegate.cpp" />
+    <ClCompile Include="command.cpp" />
     <ClCompile Include="drawElement.cpp" />
     <ClCompile Include="efxenchance.cpp" />
     <ClCompile Include="exportfuncs.cpp" />
@@ -129,6 +130,7 @@
     <ClInclude Include="basemenu.h" />
     <ClInclude Include="CHudDelegate.h" />
     <ClInclude Include="CColor.h" />
+    <ClInclude Include="command.h" />
     <ClInclude Include="drawElement.h" />
     <ClInclude Include="efxenchance.h" />
     <ClInclude Include="exportfuncs.h" />
