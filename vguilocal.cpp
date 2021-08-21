@@ -1,8 +1,5 @@
 #include <metahook.h>
-#include "CColor.h" 
-#include <VGUI/IScheme.h>
-#include <VGUI/ISurface.h>
-#include <VGUI/ILocalize.h>
+#include "vguilocal.h"
 
 vgui::ISchemeManager* g_pScheme;
 vgui::ISurface* pSurface;

@@ -12,6 +12,7 @@ extern vgui::HFont m_hFont;
 extern vgui::IScheme* pScheme;
 
 extern SCREENINFO_s gScreenInfo;
+extern const clientdata_t* gClientData;
 
 void Sys_ErrorEx(const char* fmt, ...);
 void FillDelegate();
@@ -20,6 +21,7 @@ void InstallHook();
 void MSG_Init(void);
 
 void HUD_Init(void);
+int HUD_VidInit(void);
 int HUD_Redraw(float time, int intermission);
 void HUD_Reset(void);
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);

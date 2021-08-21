@@ -54,6 +54,15 @@
     <ClCompile Include="local.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="ammo.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="weaponbank.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="historyresource.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -77,7 +86,7 @@
     <ClInclude Include="hud.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="ammo.h">
+    <ClInclude Include="baseammo.h">
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="msghook.h">
@@ -168,6 +177,21 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="local.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ammo.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="basemenu.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="weaponbank.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="historyresource.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>

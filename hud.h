@@ -2,6 +2,39 @@
 #define RGB_REDISH 0x00FF1010 //255,160,0
 #define RGB_GREENISH 0x0000A000 //0,160,0
 
+
+#define MAX_WEAPONS		255		// ???
+#define MAX_AMMO_TYPES	999
+#define MAX_WEAPON_SLOTS		10	// hud item selection slots
+#define MAX_ITEM_TYPES			6	// hud item selection slots
+#define CVAR_GET_FLOAT(x) gEngfuncs.pfnGetCvarFloat(x)
+#define CVAR_GET_STRING(x) gEngfuncs.pfnGetCvarString(x)
+#define SPR_Load (*gEngfuncs.pfnSPR_Load)
+#define SPR_Set (*gEngfuncs.pfnSPR_Set)
+#define SPR_Frames (*gEngfuncs.pfnSPR_Frames)
+#define SPR_GetList (*gEngfuncs.pfnSPR_GetList)
+// SPR_Draw  draws a the current sprite as solid
+#define SPR_Draw (*gEngfuncs.pfnSPR_Draw)
+// SPR_DrawHoles  draws the current sprites,  with color index255 not drawn (transparent)
+#define SPR_DrawHoles (*gEngfuncs.pfnSPR_DrawHoles)
+// SPR_DrawAdditive  adds the sprites RGB values to the background  (additive transulency)
+#define SPR_DrawAdditive (*gEngfuncs.pfnSPR_DrawAdditive)
+// SPR_EnableScissor  sets a clipping rect for HUD sprites.  (0,0) is the top-left hand corner of the screen.
+#define SPR_EnableScissor (*gEngfuncs.pfnSPR_EnableScissor)
+// SPR_DisableScissor  disables the clipping rect
+#define SPR_DisableScissor (*gEngfuncs.pfnSPR_DisableScissor)
+#define FillRGBA (*gEngfuncs.pfnFillRGBA)
+// ScreenHeight returns the height of the screen, in pixels
+#define ScreenHeight (gScreenInfo.iHeight)
+// ScreenWidth returns the width of the screen, in pixels
+#define ScreenWidth (gScreenInfo.iWidth)
+#define GetScreenInfo (*gEngfuncs.pfnGetScreenInfo)
+#define ServerCmd (*gEngfuncs.pfnServerCmd)
+#define EngineClientCmd (*gEngfuncs.pfnClientCmd)
+#define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
+#define AngleVectors (*gEngfuncs.pfnAngleVectors)
+#define WEAPON_SUIT			31
+
 #ifndef _WIN32
 #define _cdecl 
 #endif

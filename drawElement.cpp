@@ -1,8 +1,5 @@
 #include <metahook.h>
 #include <triangleapi.h>
-#include <VGUI/IScheme.h>
-#include <VGUI/ISurface.h>
-#include <VGUI/ILocalize.h>
 
 #include "vguilocal.h"
 
@@ -26,7 +23,52 @@ void DrawSPRIcon(int SprHandle, float x, float y, float w, float h, int r, int g
 	gEngfuncs.pTriAPI->TexCoord2f(1, 0);
 	gEngfuncs.pTriAPI->Vertex3f(x + w, y, 0);
 	gEngfuncs.pTriAPI->End();
-	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
+}
+
+void DrawSPRIconClip(int SprHandle, float x, float y, float w, float h, wrect_t* prc, float width, float height, int r, int g, int b, int a)
+{
+	float s1, s2, t1, t2;
+	if (prc)
+	{
+		wrect_t	rc;
+
+		rc = *prc;
+
+		// Sigh! some stupid modmakers set wrong rectangles in hud.txt 
+		if (rc.left <= 0 || rc.left >= width) rc.left = 0;
+		if (rc.top <= 0 || rc.top >= height) rc.top = 0;
+		if (rc.right <= 0 || rc.right > width) rc.right = width;
+		if (rc.bottom <= 0 || rc.bottom > height) rc.bottom = height;
+
+		// calc user-defined rectangle
+		s1 = (float)rc.left / width;
+		t1 = (float)rc.top / height;
+		s2 = (float)rc.right / width;
+		t2 = (float)rc.bottom / height;
+		width = rc.right - rc.left;
+		height = rc.bottom - rc.top;
+	}
+	else
+	{
+		s1 = t1 = 0.0f;
+		s2 = t2 = 1.0f;
+	}
+	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), 0);
+	gEngfuncs.pTriAPI->RenderMode(kRenderTransAdd);
+	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
+	gEngfuncs.pTriAPI->Color4ub(r, g, b, a);
+	gEngfuncs.pTriAPI->Brightness(1);
+	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
+	gEngfuncs.pTriAPI->TexCoord2f(s1, t1);
+	gEngfuncs.pTriAPI->Vertex3f(x, y, 0);
+	gEngfuncs.pTriAPI->TexCoord2f(s2, t1);
+	gEngfuncs.pTriAPI->Vertex3f(x + w, y, 0);
+	gEngfuncs.pTriAPI->TexCoord2f(s2, s2);
+	gEngfuncs.pTriAPI->Vertex3f(x + w, y + h, 0);
+	gEngfuncs.pTriAPI->TexCoord2f(s1, t2);
+	gEngfuncs.pTriAPI->Vertex3f(x, y + h, 0);
+	
+	gEngfuncs.pTriAPI->End();
 }
 void DrawSPRIconPos(int SprHandle, vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int r, int g, int b, int a)
 {
@@ -48,7 +90,6 @@ void DrawSPRIconPos(int SprHandle, vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, i
 	gEngfuncs.pTriAPI->TexCoord2f(1, 0);
 	gEngfuncs.pTriAPI->Vertex3f(p4[0], p4[1], 0);
 	gEngfuncs.pTriAPI->End();
-	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
 }
 int GetHudFontHeight(vgui::HFont m_hFont)
 {
@@ -190,4 +231,11 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 	}
 
 	return x;
+}
+void ScaleColors(int& r, int& g, int& b, int a)
+{
+	float x = (float)a / 255;
+	r = (int)(r * x);
+	g = (int)(g * x);
+	b = (int)(b * x);
 }

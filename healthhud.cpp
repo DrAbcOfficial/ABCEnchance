@@ -1,17 +1,13 @@
 #include <metahook.h>
 #include <parsemsg.h>
 #include <math.h>
-
-#include "CColor.h"  
-#include <VGUI/IScheme.h>
-#include <VGUI/ISurface.h>
-#include <VGUI/ILocalize.h>
-
 #include "mathlib.h"
 #include "msghook.h"
+
+#include "vguilocal.h"
 #include "hud.h"
 #include "healthhud.h"
-#include "vguilocal.h"
+
 #include "drawElement.h"
 
 #define DAMAGE_NAME "sprites/%d_dmg.spr"
@@ -109,7 +105,6 @@ void CHudArmorHealth::Init(void)
 	StartX = atof(pScheme->GetResourceString("HealthArmor.StartX"));
 	IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
 	TextWidth = atof(pScheme->GetResourceString("HealthArmor.TextWidth"));
-	IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
 	BarLength = atof(pScheme->GetResourceString("HealthArmor.BarLength"));
 	BarWidth = atof(pScheme->GetResourceString("HealthArmor.BarWidth"));
 	ElementGap = atof(pScheme->GetResourceString("HealthArmor.ElementGap"));
@@ -126,7 +121,6 @@ void CHudArmorHealth::Init(void)
 	BackGroundColor = pScheme->GetColor("HealthArmor.BackGroundColor", gDefaultColor);
 
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
-	HUDBigFont = pScheme->GetFont("HUDShitFont", true);
 }
 
 void CHudArmorHealth::Reset(void)

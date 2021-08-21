@@ -1,33 +1,37 @@
 #include "plugins.h"
 
-#include "exportfuncs.h"
-#include "local.h"
-
+#include "math.h"
+#include "malloc.h"
 #include "cl_entity.h"
 #include "mathlib.h"
 #include "com_model.h"
 #include "triangleapi.h"
 
-#include "math.h"
-#include "malloc.h"
-//efx
-#include "efxenchance.h"
-
+#include "hud.h"
+#include "exportfuncs.h"
 //HUD
 #include "CColor.h"
-#include "hud.h"
+#include "weapon.h"
+
 #include "ammo.h"
 #include "healthhud.h"
 #include "basehealth.h"
+
 #include "drawElement.h"
 
 #include "CHudDelegate.h"
+
+#include "local.h"
+//efx
+#include "efxenchance.h"
+
+
 
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 
-const clientdata_t* pClientData;
+const clientdata_t* gClientData;
 float* pClientEVPunchAngles;
 
 //PLAYER TITLE
@@ -150,12 +154,12 @@ void RedrawCorssHair()
 {
 	if (gCVars.pDynamicCrossHair->value > 0)
 	{
-		if (pClientData->health <= 0)
+		if (gClientData->health <= 0)
 			return;
 		if (gCVars.pDynamicCrossHairAH->value > 0)
 		{
 			int def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
-			if (def_fov != pClientData->fov)
+			if (def_fov != gClientData->fov)
 				return;
 		}
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
@@ -164,7 +168,7 @@ void RedrawCorssHair()
 		int iOffset = gCVars.pDynamicCrossHairO->value;
 		int iDrift = fabs(pClientEVPunchAngles[0]) + fabs(pClientEVPunchAngles[1]);
 		if (iDrift <= 0)
-			iDrift = fabs(pClientData->punchangle[0]) + fabs(pClientData->punchangle[1]);
+			iDrift = fabs(gClientData->punchangle[0]) + fabs(gClientData->punchangle[1]);
 		iDrift = iDrift * 5 * gCVars.pDynamicCrossHairM->value;
 		int r = gCVars.pDynamicCrossHairCR->value, g = gCVars.pDynamicCrossHairCG->value, b = gCVars.pDynamicCrossHairCB->value, a = gCVars.pDynamicCrossHairA->value;
 		int iWidth = gCVars.pDynamicCrossHairW->value;
@@ -198,13 +202,6 @@ void RedrawCorssHair()
 		//об
 		gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset, iWidth, iLength, r, g, b, a);
 	}
-}
-void DrawHealthArmorHUD()
-{
-	if (gCVars.pDynamicHUD <= 0)
-		return;
-	if (pClientData->health <= 0)
-		return;
 }
 //FINAL SHIT
 void R_NewMap(void)
@@ -321,9 +318,15 @@ void HUD_Init(void)
 	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gHudDelegate = new CHudDelegate();
-	
-	gHudDelegate->HUD_Init();
 	gExportfuncs.HUD_Init();
+	gHudDelegate->HUD_Init();
+}
+
+int HUD_VidInit(void)
+{
+	int result = gExportfuncs.HUD_VidInit();
+	gHudDelegate->HUD_VidInit();
+	return result;
 }
 
 int HUD_Redraw(float time, int intermission)
@@ -340,13 +343,13 @@ int HUD_Redraw(float time, int intermission)
 			else if (dynamic_cast<CHudHealth*>(pHudList->p) != NULL)
 				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != NULL)
-			{
-				//pHudList->p->m_iFlags &= ~HUD_ACTIVE;
-			}
+				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
 			else if (dynamic_cast<CHudAmmoSecondary*>(pHudList->p) != NULL)
 			{
 				//pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			}
+			else if (dynamic_cast<CHudMenu*>(pHudList->p) != NULL)
+				gHookHud.m_Menu = (dynamic_cast<CHudMenu*>(pHudList->p));
 			pHudList = pHudList->pNext;
 		}
 	}
@@ -365,6 +368,6 @@ void HUD_Reset(void)
 
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client)
 {
-	pClientData = client;
+	gClientData = client;
 	gExportfuncs.HUD_TxferLocalOverrides(state, client);
 }

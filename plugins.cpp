@@ -65,6 +65,7 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	InstallHook();
 	
 	pExportFunc->HUD_Init = HUD_Init;
+	pExportFunc->HUD_VidInit = HUD_VidInit;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
 	pExportFunc->HUD_Reset = HUD_Reset;
 	pExportFunc->HUD_TxferLocalOverrides = HUD_TxferLocalOverrides;

@@ -105,29 +105,35 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp" />
+    <ClCompile Include="ammo.cpp" />
     <ClCompile Include="CHudDelegate.cpp" />
     <ClCompile Include="drawElement.cpp" />
     <ClCompile Include="efxenchance.cpp" />
     <ClCompile Include="exportfuncs.cpp" />
     <ClCompile Include="healthhud.cpp" />
+    <ClCompile Include="historyresource.cpp" />
     <ClCompile Include="local.cpp" />
     <ClCompile Include="mathlib.cpp" />
     <ClCompile Include="msghook.cpp" />
     <ClCompile Include="parsemsg.cpp" />
     <ClCompile Include="plugins.cpp" />
     <ClCompile Include="vguilocal.cpp" />
+    <ClCompile Include="weaponbank.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h" />
     <ClInclude Include="..\..\metahook.h" />
     <ClInclude Include="ammo.h" />
+    <ClInclude Include="baseammo.h" />
     <ClInclude Include="basehealth.h" />
+    <ClInclude Include="basemenu.h" />
     <ClInclude Include="CHudDelegate.h" />
     <ClInclude Include="CColor.h" />
     <ClInclude Include="drawElement.h" />
     <ClInclude Include="efxenchance.h" />
     <ClInclude Include="exportfuncs.h" />
     <ClInclude Include="healthhud.h" />
+    <ClInclude Include="historyresource.h" />
     <ClInclude Include="hud.h" />
     <ClInclude Include="local.h" />
     <ClInclude Include="mathlib.h" />
@@ -156,6 +162,8 @@
     <ClInclude Include="VGUI\MouseCode.h" />
     <ClInclude Include="VGUI\OLDDar.h" />
     <ClInclude Include="VGUI\VGUI.h" />
+    <ClInclude Include="weapon.h" />
+    <ClInclude Include="weaponbank.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
