@@ -129,7 +129,7 @@ void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m
 		*height = GetHudFontHeight(m_hFont);
 	}
 }
-int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui::HFont m_hFont)
+int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui::HFont m_hFont, bool add = false)
 {
 	if (r > 1.0)
 		r /= 255;
@@ -204,23 +204,26 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 		else
 			x = iOriginalX;
 
-		gEngfuncs.pfnDrawSetTextColor(0, 0, 0);
-
-		shadow_x = x;
-
-		for (j = 0; j < iTempCount; j++)
+		if (!add)
 		{
-			gEngfuncs.pfnVGUI2DrawCharacter(shadow_x, y, line[j], m_hFont);
-			pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
-
-			shadow_x += w1 + w2 + w3;
+			gEngfuncs.pfnDrawSetTextColor(0, 0, 0);
+			shadow_x = x;
+			for (j = 0; j < iTempCount; j++)
+			{
+				gEngfuncs.pfnVGUI2DrawCharacter(shadow_x, y, line[j], m_hFont);
+				pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
+				shadow_x += w1 + w2 + w3;
+			}
 		}
 
 		gEngfuncs.pfnDrawSetTextColor(r, g, b);
 
 		for (j = 0; j < iTempCount; j++)
 		{
-			gEngfuncs.pfnVGUI2DrawCharacter(x, y, line[j], m_hFont);
+			if (add)
+				gEngfuncs.pfnVGUI2DrawCharacterAdd(x, y, line[j], r * 255, g * 255, b * 255, m_hFont);
+			else
+				gEngfuncs.pfnVGUI2DrawCharacter(x, y, line[j], m_hFont);
 			pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
 
 			x += w1 + w2 + w3;

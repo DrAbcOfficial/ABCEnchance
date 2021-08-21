@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include "CColor.h"
 #include "vguilocal.h"
 #include "hud.h"
 #include "weapon.h"
@@ -30,7 +31,7 @@ void HistoryResource::AddToHistory(int iType, int iId, int iCount)
 	if (iType == HISTSLOT_AMMO && !iCount)
 		return;  // no amount, so don't add
 
-	if ((((AMMO_PICKUP_GAP * iCurrentHistorySlot) + AMMO_PICKUP_PICK_HEIGHT) > AMMO_PICKUP_HEIGHT_MAX) || (iCurrentHistorySlot >= MAX_HISTORY))
+	if ((((AMMO_PICKUP_GAP * iCurrentHistorySlot) + AMMO_PICKUP_PICK_HEIGHT) > AMMO_PICKUP_HEIGHT_MAX) || (iCurrentHistorySlot >= iAmmoDisplayCount))
 	{	// the pic would have to be drawn too high
 		// so start from the bottom
 		iCurrentHistorySlot = 0;
@@ -50,7 +51,7 @@ void HistoryResource::AddToHistory(int iType, const char* szName, int iCount)
 	if (iType != HISTSLOT_ITEM)
 		return;
 
-	if ((((AMMO_PICKUP_GAP * iCurrentHistorySlot) + AMMO_PICKUP_PICK_HEIGHT) > AMMO_PICKUP_HEIGHT_MAX) || (iCurrentHistorySlot >= MAX_HISTORY))
+	if ((((AMMO_PICKUP_GAP * iCurrentHistorySlot) + AMMO_PICKUP_PICK_HEIGHT) > AMMO_PICKUP_HEIGHT_MAX) || (iCurrentHistorySlot >= iAmmoDisplayCount))
 	{	// the pic would have to be drawn too high
 		// so start from the bottom
 		iCurrentHistorySlot = 0;
@@ -75,7 +76,7 @@ void HistoryResource::AddToHistory(int iType, const char* szName, int iCount)
 
 void HistoryResource::CheckClearHistory(void)
 {
-	for (int i = 0; i < MAX_HISTORY; i++)
+	for (int i = 0; i < iAmmoDisplayCount; i++)
 	{
 		if (rgAmmoHistory[i].type)
 			return;
@@ -89,82 +90,92 @@ void HistoryResource::CheckClearHistory(void)
 //
 int HistoryResource::DrawAmmoHistory(float flTime)
 {
-	for (int i = 0; i < MAX_HISTORY; i++)
+ 	for (int i = 0; i < iAmmoDisplayCount; i++)
 	{
-		if (rgAmmoHistory[i].type)
+ 		if (rgAmmoHistory[i].type)
 		{
 			rgAmmoHistory[i].DisplayTime = min(rgAmmoHistory[i].DisplayTime, gEngfuncs.GetClientTime() + HISTORY_DRAW_TIME);
 
 			if (rgAmmoHistory[i].DisplayTime <= flTime)
-			{  // pic drawing time has expired
+			{
 				memset(&rgAmmoHistory[i], 0, sizeof(HIST_ITEM));
 				CheckClearHistory();
+				return 0;
 			}
-			else if (rgAmmoHistory[i].type == HISTSLOT_AMMO)
+			switch (rgAmmoHistory[i].type)
 			{
+			case HISTSLOT_AMMO: {
 				wrect_t rcPic;
 				HSPRITE* spr = gWR.GetAmmoPicFromWeapon(rgAmmoHistory[i].iId, rcPic);
-
-				int r, g, b;
-				UnpackRGB(r, g, b, RGB_YELLOWISH);
-				float scale = (rgAmmoHistory[i].DisplayTime - flTime) * 80;
-				ScaleColors(r, g, b, min(scale, 255));
-
-				// Draw the pic
-				int ypos = ScreenHeight - (AMMO_PICKUP_PICK_HEIGHT + (AMMO_PICKUP_GAP * i));
-				int xpos = ScreenWidth - 24;
-				if (spr && *spr)    // weapon isn't loaded yet so just don't draw the pic
-				{ // the dll has to make sure it has sent info the weapons you need
+				int r, g, b, a;
+				int ypos = ScreenHeight / 2 + vecAmmoPickUpPos[1];
+				int xpos = ScreenWidth / 2 + vecAmmoPickUpPos[0];
+				wchar_t buf[16];
+				wsprintfW(buf, L"%d", rgAmmoHistory[i].iCount);
+				int iTextWidth;
+				int iTextHeight;
+				GetStringSize(buf, &iTextWidth, &iTextHeight, hFont);
+				int iIconHeight = rcPic.bottom - rcPic.top;
+				xpos -= iTextWidth;
+				ypos -= max(iTextHeight, iIconHeight) * i;
+				AmmoTextColor.GetColor(r, g, b, a);
+				float scale = min(a, (rgAmmoHistory[i].DisplayTime - flTime) * 80) / 255;
+				r *= scale;
+				g *= scale;
+				b *= scale;
+				DrawVGUI2String(buf, xpos, ypos, r, g, b, hFont, true);
+				xpos += iTextWidth + ScreenWidth / 40;
+				if (spr && *spr)
+				{
+					AmmoIconColor.GetColor(r, g, b, a);
+					r *= scale;
+					g *= scale;
+					b *= scale;
 					SPR_Set(*spr, r, g, b);
 					SPR_DrawAdditive(0, xpos, ypos, &rcPic);
 				}
-
-				// Draw the number
-				//gHUD.DrawHudNumberString(xpos - 10, ypos, xpos - 100, rgAmmoHistory[i].iCount, r, g, b);
+				break;
 			}
-			else if (rgAmmoHistory[i].type == HISTSLOT_WEAP)
-			{
+			case HISTSLOT_WEAP: {
 				WEAPON* weap = gWR.GetWeapon(rgAmmoHistory[i].iId);
-
 				if (!weap)
-					return 1;  // we don't know about the weapon yet, so don't draw anything
-
-				int r, g, b;
-				UnpackRGB(r, g, b, RGB_YELLOWISH);
-
+					return 1;
+				int r, g, b, a;
+				WeaponPickUpColor.GetColor(r, g, b, a);
 				if (!gWR.HasAmmo(weap))
-					UnpackRGB(r, g, b, RGB_REDISH);	// if the weapon doesn't have ammo, display it as red
-
+					WeaponPickUpEmptyColor.GetColor(r, g, b, a);
 				float scale = (rgAmmoHistory[i].DisplayTime - flTime) * 80;
-				ScaleColors(r, g, b, min(scale, 255));
-
-				int ypos = ScreenHeight - (AMMO_PICKUP_PICK_HEIGHT + (AMMO_PICKUP_GAP * i));
-				int xpos = ScreenWidth - (weap->rcInactive.right - weap->rcInactive.left);
+				scale = min(a, scale) / 255;
+				r *= scale;
+				g *= scale;
+				b *= scale;
+				int ypos = ScreenHeight - (AMMO_PICKUP_PICK_HEIGHT + (AMMO_PICKUP_GAP * i)) + vecWeaponPickUpPos[1];
+				int xpos = ScreenWidth - (weap->rcInactive.right - weap->rcInactive.left) + vecWeaponPickUpPos[0];
 				SPR_Set(weap->hInactive, r, g, b);
 				SPR_DrawAdditive(0, xpos, ypos, &weap->rcInactive);
+				break;
 			}
-			else if (rgAmmoHistory[i].type == HISTSLOT_ITEM)
-			{
-				int r, g, b;
-
+			case HISTSLOT_ITEM: {
 				if (!rgAmmoHistory[i].iId)
-					continue;  // sprite not loaded
-
+					continue;
 				wrect_t rect = gHudDelegate->GetSpriteRect(rgAmmoHistory[i].iId);
-
-				UnpackRGB(r, g, b, RGB_YELLOWISH);
+				int r, g, b, a;
+				ItemPickUpColor.GetColor(r, g, b, a);
 				float scale = (rgAmmoHistory[i].DisplayTime - flTime) * 80;
-				ScaleColors(r, g, b, min(scale, 255));
-
-				int ypos = ScreenHeight - (AMMO_PICKUP_PICK_HEIGHT + (AMMO_PICKUP_GAP * i));
-				int xpos = ScreenWidth - (rect.right - rect.left) - 10;
-
+				scale = min(a, scale) / 255;
+				r *= scale;
+				g *= scale;
+				b *= scale;
+				int iIconWidth = rect.right - rect.left;
+				int iIconHeight = rect.bottom - rect.top;
+				int ypos = ScreenHeight / 2  - iIconHeight * i + vecItemPickUpPos[1];
+				int xpos = ScreenWidth / 2 + iIconWidth + vecItemPickUpPos[0];
 				SPR_Set(gHudDelegate->GetSprite(rgAmmoHistory[i].iId), r, g, b);
 				SPR_DrawAdditive(0, xpos, ypos, &rect);
+				break;
+			}
 			}
 		}
 	}
-
-
 	return 1;
 }

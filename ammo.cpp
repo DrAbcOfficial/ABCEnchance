@@ -362,7 +362,7 @@ int CHudCustomAmmo::Draw(float flTime)
 			gEngfuncs.pfnFillRGBABlend(nowX, flBackGroundY, iSizeStep, flBackGroundHeight, r, g, b, i);
 			nowX -= iSizeStep;
 		}
-		nowX += iStartX;
+		nowX += pw->iAmmo2Type > 0 ? iStartX : iStartX * 3;
 		Ammo1IconColor.GetColor(r, g, b, a);
 		//²ÙÄãÂè£¬ÍÂÁË£¬»ÙÃð°É£¬ÀÛÁË
 		//nowY = flBackGroundY + iIconSize / 2;
@@ -396,7 +396,7 @@ int CHudCustomAmmo::Draw(float flTime)
 		{
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = flBackGroundY + iTextHeight / 2;
+			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
 		nowX += iElementGap * 5;
@@ -426,7 +426,7 @@ int CHudCustomAmmo::Draw(float flTime)
 		{
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = flBackGroundY + iTextHeight / 2;
+			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
 		nowX += iElementGap;
