@@ -596,8 +596,8 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		else
 			SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
 		ColorCalcuAlpha(r, g, b, a);
-		SPR_Set(wp->hActive, r, g, b);
-		SPR_DrawAdditive(0, xpos - iWidth/2, ypos- iHeight/2, &wp->rcActive);
+		SPR_Set(wp->hInactive, r, g, b);
+		SPR_DrawAdditive(0, xpos - iWidth/2, ypos- iHeight/2, &wp->rcInactive);
 		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
 		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
 		SelectCyclerTextColor.GetColor(r, g, b, dummy);
