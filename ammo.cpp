@@ -193,7 +193,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iAll = iFlag1 + iFlag2;
 		if(iAll == 0X1FE)
 			gHudDelegate->m_fPlayerDead = TRUE;
-		if(iAll == 0X1FE || iAll == 0)
+		if(iAll == 0X12 || iAll == 0)
 			gWR.DropAllWeapons();
 	}
 	return 1;
