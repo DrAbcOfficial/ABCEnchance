@@ -125,7 +125,6 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	}
 	gWR.AddWeapon(&Weapon);
 	return 1;
-
 }
 
 int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf)
@@ -272,6 +271,7 @@ void __UserCmd_Close(void)
 }
 void __UserCmd_NextWeapon(void)
 {
+	
 	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, 1);
 	return UserCmd_NextWeapon();
 }
@@ -524,6 +524,8 @@ void CHudCustomAmmo::ChosePlayerWeapon(void)
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
 {
+	if (gHookHud.m_Menu->m_fMenuDisplayed)
+		return;
 	if (m_fFade <= gEngfuncs.GetClientTime())
 		gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
 	gWR.SelectSlot(iSlot, fAdvance);
