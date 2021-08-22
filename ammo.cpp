@@ -287,6 +287,7 @@ void __UserCmd_Attack1(void)
 	gWR.iNowPos = 0;
 	gWR.iNowSelect = 0;
 	m_HudCustomAmmo.m_fFade = 0;
+	m_HudCustomAmmo.m_bDisplay = false;
 	return UserCmd_Attack1();
 }
 void __UserCmd_Drop(void)
@@ -298,6 +299,7 @@ void __UserCmd_Drop(void)
 		gWR.iNowPos = 0;
 		gWR.iNowSelect = 0;
 		m_HudCustomAmmo.m_fFade = 0;
+		m_HudCustomAmmo.m_bDisplay = false;
 	}
 	ServerCmd("drop");
 }
@@ -355,6 +357,7 @@ int CHudCustomAmmo::Init(void)
 	SelectCyclerOffset = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerOffset"));
 	SelectCyclerSize = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerSize"));
 	SelectCyclerRotate = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerRotate"));
+	SelectCyclerAnimateTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerAnimateTime"));
 
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
 	HUDSmallFont = pScheme->GetFont("HUDSmallShitFont", true);
@@ -368,6 +371,8 @@ int CHudCustomAmmo::Init(void)
 void CHudCustomAmmo::Reset(void)
 {
 	m_fFade = 0;
+	m_fAnimateTime = 0;
+	m_bDisplay = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
 	gWR.Reset();
@@ -530,17 +535,25 @@ int CHudCustomAmmo::DrawWList(float flTime)
 {
 	if (m_fFade <= flTime)
 		return 1;
-
 	gWR.FillMenuGrid();
-
 	if(!iSelectCyclerSpr)
 		iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	if (!iSelectCyclerRinSpr)
 		iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
-	
+
+	float flTimeDiffer = m_fFade - flTime;
 	float flStartRot = SelectCyclerRotate;
 	int iBackGroundHeight = SelectCyclerSize;
 	int iOffset = SelectCyclerOffset;
+
+	if (!m_bDisplay)
+		m_fAnimateTime = flTime + SelectCyclerAnimateTime;
+	if (m_fAnimateTime > flTime)
+	{
+		if (flTimeDiffer >= SLECTEDRIN_KEEP_TIME - SelectCyclerAnimateTime)
+			iOffset *= ((float)(SLECTEDRIN_KEEP_TIME) - flTimeDiffer) / SelectCyclerAnimateTime;
+	}
+		
 	int i;
 	float ac, as;
 	vec2_t aryOut[10];
@@ -569,8 +582,8 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	int ypos;
 	vec2_t vecA, vecB, vecC, vecD;
 	int a = 255;
-	if (m_fFade - flTime < SLECTEDRIN_KEEP_TIME / 2)
-		a *= (m_fFade - flTime) / SLECTEDRIN_KEEP_TIME / 2;
+	if (flTimeDiffer < SLECTEDRIN_KEEP_TIME / 2)
+		a *= flTimeDiffer / SLECTEDRIN_KEEP_TIME / 2;
 	int r, g, b, dummy;
 	for (i = 0; i < 10; i++)
 	{
@@ -615,7 +628,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		ColorCalcuAlpha(r, g, b, a);
 		DrawVGUI2String(buf, xpos - iTextWidth/2, ypos + iHeight, r, g, b, HUDFont, true);
 	}
-
+	//绘制已选
 	if (gWR.iNowSelect > -1)
 	{
 		wp = gWR.GetWeapon(gWR.iNowSelect);
@@ -652,5 +665,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		SelectCyclerRinColor.GetColor(r, g, b, dummy);
 		DrawSPRIconPos(iSelectCyclerRinSpr, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
+	//绘制完毕，修改展示状态
+	m_bDisplay = true;
 	return 1;
 }

@@ -38,11 +38,14 @@ public:
 	float SelectCyclerOffset;
 	float SelectCyclerSize;
 	float SelectCyclerRotate;
+	float SelectCyclerAnimateTime;
 
 	vgui::HFont HUDFont;
 	vgui::HFont HUDSmallFont;
 	
 	float m_fFade;
+	float m_fAnimateTime;
+	bool m_bDisplay = false;
 	WEAPON* m_pWeapon;
 	int	m_HUD_bucket0;
 	int m_HUD_selection;

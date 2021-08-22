@@ -45,8 +45,6 @@ Scheme
 		"HealthArmor.BackGroundLength"	"3"
 		"HealthArmor.BackGroundAlpha"	"128"
 
-
-
 		"AmmoHUD.StartX"			"32"
 		"AmmoHUD.IconSize"			"0.5"
 		"AmmoHUD.ElementGap"		"0.2"
@@ -65,6 +63,7 @@ Scheme
 		"AmmoHUD.SelectCyclerOffset"	"256"
 		"AmmoHUD.SelectCyclerSize"	"96"
 		"AmmoHUD.SelectCyclerRotate"	"0"
+		"AmmoHUD.SelectCyclerAnimateTime"	"0.12"
 	}
 
 	Fonts
