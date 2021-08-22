@@ -292,7 +292,7 @@ void __UserCmd_Attack1(void)
 	gWR.iNowPos = 0;
 	gWR.iNowSelect = 0;
 	m_HudCustomAmmo.m_fFade = 0;
-	m_HudCustomAmmo.m_bDisplay = false;
+	m_HudCustomAmmo.m_bSelectMenuDisplay = false;
 	return UserCmd_Attack1();
 }
 void __UserCmd_Drop(void)
@@ -304,7 +304,7 @@ void __UserCmd_Drop(void)
 		gWR.iNowPos = 0;
 		gWR.iNowSelect = 0;
 		m_HudCustomAmmo.m_fFade = 0;
-		m_HudCustomAmmo.m_bDisplay = false;
+		m_HudCustomAmmo.m_bSelectMenuDisplay = false;
 	}
 	ServerCmd("drop");
 }
@@ -377,7 +377,7 @@ void CHudCustomAmmo::Reset(void)
 {
 	m_fFade = 0;
 	m_fAnimateTime = 0;
-	m_bDisplay = false;
+	m_bSelectMenuDisplay = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
 	gWR.Reset();
@@ -550,7 +550,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	int iBackGroundHeight = SelectCyclerSize;
 	int iOffset = SelectCyclerOffset;
 
-	if (!m_bDisplay)
+	if (!m_bSelectMenuDisplay)
 		m_fAnimateTime = flTime + SelectCyclerAnimateTime;
 	if (m_fAnimateTime > flTime)
 	{
@@ -587,7 +587,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	vec2_t vecA, vecB, vecC, vecD;
 	int a = 255;
 	if (flTimeDiffer < SLECTEDRIN_KEEP_TIME / 2)
-		a *= flTimeDiffer / SLECTEDRIN_KEEP_TIME / 2;
+		a *= flTimeDiffer / SLECTEDRIN_KEEP_TIME * 2;
 	int r, g, b, dummy;
 	for (i = 0; i < 10; i++)
 	{
@@ -670,6 +670,6 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		DrawSPRIconPos(iSelectCyclerRinSpr, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
 	//绘制完毕，修改展示状态
-	m_bDisplay = true;
+	m_bSelectMenuDisplay = true;
 	return 1;
 }
