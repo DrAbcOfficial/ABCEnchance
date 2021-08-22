@@ -148,44 +148,55 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 	BEGIN_READ(pbuf, iSize);
 
 	int iState = READ_BYTE();
-	int iId = READ_SHORT();
-	int iClip = READ_LONG();
-	int iClip2 = READ_LONG();
-
-	// detect if we're also on target
-	if (iState > 1)
-		fOnTarget = TRUE;
-	if (iId == -1 && iClip == -1)
+	if (iState > 0)
 	{
-		gHudDelegate->m_fPlayerDead = TRUE;
-		return 1;
-	}
-	gHudDelegate->m_fPlayerDead = FALSE;
+		int iId = READ_SHORT();
+		int iClip = READ_LONG();
+		int iClip2 = READ_LONG();
 
-	WEAPON* pWeapon = gWR.GetWeapon(iId);
-	if (!pWeapon)
-		return 0;
-	if (iState == 0)	// we're not the current weapon, so update no more
-		return 1;
-	//更新弹匣信息
-	pWeapon->iClip = iClip;
-	pWeapon->iClip2 = iClip2;
-	m_HudCustomAmmo.m_pWeapon = pWeapon;
-	int def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
-	if (gClientData->fov >= def_fov)
-	{ // normal crosshairs
-		if (fOnTarget && m_HudCustomAmmo.m_pWeapon->hAutoaim)
-			SetCrosshair(m_HudCustomAmmo.m_pWeapon->hAutoaim, m_HudCustomAmmo.m_pWeapon->rcAutoaim, 255, 255, 255);
+		// detect if we're also on target
+		if (iState > 1)
+			fOnTarget = TRUE;
+		if (iId == -1 && iClip == -1)
+		{
+			gHudDelegate->m_fPlayerDead = TRUE;
+			return 1;
+		}
+		gHudDelegate->m_fPlayerDead = FALSE;
+
+		WEAPON* pWeapon = gWR.GetWeapon(iId);
+		if (!pWeapon)
+			return 0;
+		if (iState == 0)	// we're not the current weapon, so update no more
+			return 1;
+		//更新弹匣信息
+		pWeapon->iClip = iClip;
+		pWeapon->iClip2 = iClip2;
+		m_HudCustomAmmo.m_pWeapon = pWeapon;
+		int def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
+		if (gClientData->fov >= def_fov)
+		{ // normal crosshairs
+			if (fOnTarget && m_HudCustomAmmo.m_pWeapon->hAutoaim)
+				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hAutoaim, m_HudCustomAmmo.m_pWeapon->rcAutoaim, 255, 255, 255);
+			else
+				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hCrosshair, m_HudCustomAmmo.m_pWeapon->rcCrosshair, 255, 255, 255);
+		}
 		else
-			SetCrosshair(m_HudCustomAmmo.m_pWeapon->hCrosshair, m_HudCustomAmmo.m_pWeapon->rcCrosshair, 255, 255, 255);
+		{ // zoomed crosshairs
+			if (fOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
+				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim, m_HudCustomAmmo.m_pWeapon->rcZoomedAutoaim, 255, 255, 255);
+			else
+				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedCrosshair, m_HudCustomAmmo.m_pWeapon->rcZoomedCrosshair, 255, 255, 255);
+
+		}
 	}
 	else
-	{ // zoomed crosshairs
-		if (fOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
-			SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim, m_HudCustomAmmo.m_pWeapon->rcZoomedAutoaim, 255, 255, 255);
-		else
-			SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedCrosshair, m_HudCustomAmmo.m_pWeapon->rcZoomedCrosshair, 255, 255, 255);
-
+	{
+		int iFlag1 = READ_BYTE();
+		int iFlag2 = READ_BYTE();
+		int iAll = iFlag1 + iFlag2;
+		if(iAll == 0X1FE || iAll == 0)
+			gWR.DropAllWeapons();
 	}
 	return 1;
 }
@@ -510,8 +521,6 @@ void CHudCustomAmmo::ChosePlayerWeapon(void)
 }
 void CHudCustomAmmo::Think(void)
 {
-	if(gClientData->health <= 0)
-		gWR.DropAllWeapons();
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
 {
@@ -603,7 +612,6 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		SPR_Set(wp->hActive, r, g, b);
 		SPR_DrawAdditive(0, xpos - iWidth/2, ypos- iHeight/2, &wp->rcActive);
 		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
-		WEAPON* t = gHookHud.m_Ammo->m_pWeapon;
 		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
 		SelectCyclerTextColor.GetColor(r, g, b, dummy);
 		ColorCalcuAlpha(r, g, b, a);
