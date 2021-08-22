@@ -15,8 +15,6 @@ public:
 	~CHudDelegate();			// destructor, frees allocated memory
 
 	bool m_fPlayerDead;
-	int	m_iWeaponBits;
-	int m_iKeyBits;
 
 	client_sprite_t* m_pSpriteList;
 	int m_iRes;

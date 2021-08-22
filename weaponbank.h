@@ -1,8 +1,8 @@
 #pragma once
-#define MAX_WEAPONS 255
-#define MAX_AMMO 255
-#define MAX_WEAPON_POSITIONS 25
+#define MAX_WEAPON_POSITIONS 50
 #define MAX_WEAPON_SLOTS 10
+#define MAX_WEAPONS MAX_WEAPON_POSITIONS * MAX_WEAPON_SLOTS
+#define MAX_AMMO 255
 
 class WeaponsResource
 {
@@ -32,7 +32,10 @@ public:
 	}
 	WEAPON* GetWeapon(int iId)
 	{ 
-		return &rgWeapons[iId];
+		WEAPON* wp = &rgWeapons[iId];
+		if ((wp->iFlags & ITEM_FLAG_EXHAUSTIBLE) > 0 && CountAmmo(iId) <= 0)
+			DropWeapon(wp);
+		return wp;
 	}
 	void AddWeapon(WEAPON* wp)
 	{
