@@ -114,6 +114,15 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	Weapon.iFlags = READ_BYTE();
 	Weapon.iClip = 0;
 
+	int tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, Weapon.iSlotPos);
+	while (tw > 0)
+	{
+		Weapon.iSlotPos++;
+		//草你真的应该去找服主排查下冲突
+		if (Weapon.iSlotPos >= MAX_WEAPON_POSITIONS - 1)
+			break;
+		tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, Weapon.iSlotPos);
+	}
 	gWR.AddWeapon(&Weapon);
 	return 1;
 

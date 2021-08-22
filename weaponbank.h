@@ -8,6 +8,8 @@ class WeaponsResource
 {
 private:
 	WEAPON rgWeapons[MAX_WEAPONS];
+	int gridSlotPosDataMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
+
 	int gridSlotMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
 	int	riAmmo[MAX_AMMO];
 
@@ -19,14 +21,16 @@ public:
 
 	void Init(void)
 	{
-		memset(rgWeapons, 0, sizeof rgWeapons);
 		Reset();
 	}
+
 	void Reset(void)
 	{
 		iNowSlot = 0;
 		iNowPos = 0;
+		memset(rgWeapons, 0, sizeof rgWeapons);
 		memset(riAmmo, 0, sizeof riAmmo);
+		memset(gridSlotPosDataMap, -1, sizeof gridSlotPosDataMap);
 		memset(gridSlotMap, -1, sizeof gridSlotMap);
 		memset(gridDrawMenu, -1, sizeof gridDrawMenu);
 	}
@@ -40,6 +44,7 @@ public:
 	void AddWeapon(WEAPON* wp)
 	{
 		rgWeapons[wp->iId] = *wp;
+		gridSlotPosDataMap[wp->iSlot][wp->iSlotPos] = wp->iId;
 		LoadWeaponSprites(&rgWeapons[wp->iId]);
 	}
 
@@ -71,6 +76,11 @@ public:
 	WEAPON* GetWeaponSlot(int slot, int pos) 
 	{ 
 		return &rgWeapons[gridSlotMap[slot][pos]];
+	}
+
+	int GetWeaponIdBySlot(int slot, int pos)
+	{
+		return gridSlotPosDataMap[slot][pos];
 	}
 
 	void LoadWeaponSprites(WEAPON* wp);
