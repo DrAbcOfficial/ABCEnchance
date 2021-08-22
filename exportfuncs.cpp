@@ -29,6 +29,7 @@ cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 
 const clientdata_t* gClientData;
+client_data_s* gClient_Data;
 float* pClientEVPunchAngles;
 
 //PLAYER TITLE
@@ -152,16 +153,16 @@ void RedrawCorssHair()
 	{
 		if (gClientData->health <= 0)
 			return;
+
 		if (gCVars.pDynamicCrossHairAH->value > 0)
 		{
 			float def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
-			if (def_fov != gClientData->fov)
+			if (def_fov != gClient_Data->fov)
 				return;
 		}
-
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-		int iCenterX = gScreenInfo.iWidth / 2;
-		int iCenterY = gScreenInfo.iHeight / 2;
+		int iCenterX = gScreenInfo.iWidth / 2 - 1;
+		int iCenterY = gScreenInfo.iHeight / 2 - 1;
 		int iOffset = gCVars.pDynamicCrossHairO->value;
 		int iDrift = fabs(pClientEVPunchAngles[0]) + fabs(pClientEVPunchAngles[1]);
 		if (iDrift <= 0)
@@ -366,6 +367,7 @@ void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientda
 }
 int HUD_UpdateClientData (struct client_data_s* c, float f)
 {
+	gClient_Data = c;
 	gHudDelegate->HUD_UpdateClientData(c,f);
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
