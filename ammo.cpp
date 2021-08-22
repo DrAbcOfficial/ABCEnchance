@@ -23,6 +23,9 @@
 #include "msghook.h"
 #include "command.h"
 
+#include <math.h>
+#include <mathlib.h>
+
 #include "hud.h"
 #include "weapon.h"
 
@@ -35,15 +38,10 @@
 #include "weaponbank.h"
 #include "historyresource.h"
 #include "ammo.h"
-#include <math.h>
+
 
 CHudCustomAmmo m_HudCustomAmmo;
 
-//tobe replace
-int g_weaponselect = 0;
-WEAPON* gpActiveSel;	// NULL means off, 1 means just the menu bar, otherwise
-						// this points to the active weapon menu item
-WEAPON* gpLastSel;		// Last weapon menu selection 
 HSPRITE ghsprBuckets;					// Sprite for top row of weapons menu
 int giBucketHeight, giBucketWidth, giABHeight, giABWidth; // Ammo Bar width and height
 
@@ -160,7 +158,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 	if (iId == -1 && iClip == -1)
 	{
 		gHudDelegate->m_fPlayerDead = TRUE;
-		gpActiveSel = NULL;
 		return 1;
 	}
 	gHudDelegate->m_fPlayerDead = FALSE;
@@ -174,7 +171,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 	pWeapon->iClip = iClip;
 	pWeapon->iClip2 = iClip2;
 	m_HudCustomAmmo.m_pWeapon = pWeapon;
-	gpActiveSel = pWeapon;
 	int def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
 	if (gClientData->fov >= def_fov)
 	{ // normal crosshairs
@@ -191,8 +187,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 			SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedCrosshair, m_HudCustomAmmo.m_pWeapon->rcZoomedCrosshair, 255, 255, 255);
 
 	}
-	m_HudCustomAmmo.m_fFade = 200.0f; //!!!
-	m_HudCustomAmmo.m_iFlags |= HUD_ACTIVE;
 	return 1;
 }
 
@@ -209,6 +203,7 @@ void(*UserCmd_Slot10)(void);
 void(*UserCmd_SlotClose)(void);
 void(*UserCmd_NextWeapon)(void);
 void(*UserCmd_PrevWeapon)(void);
+void(*UserCmd_Attack1)(void);
 
 void __UserCmd_Slot1(void)
 {
@@ -275,8 +270,32 @@ void __UserCmd_PrevWeapon(void)
 	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1);
 	return UserCmd_PrevWeapon();
 }
-
-
+void __UserCmd_Attack1(void)
+{
+	if (m_HudCustomAmmo.m_fFade > gEngfuncs.GetClientTime())
+	{
+		if (gHudDelegate->m_fPlayerDead)
+			return;
+		m_HudCustomAmmo.ChosePlayerWeapon();
+	}
+	gWR.iNowSelect = 0;
+	gWR.iNowPos = 0;
+	gWR.iNowSelect = 0;
+	m_HudCustomAmmo.m_fFade = 0;
+	return UserCmd_Attack1();
+}
+void __UserCmd_Drop(void)
+{
+	if (m_HudCustomAmmo.m_pWeapon->iId >0)
+	{
+		gWR.DropWeapon(m_HudCustomAmmo.m_pWeapon);
+		gWR.iNowSelect = 0;
+		gWR.iNowPos = 0;
+		gWR.iNowSelect = 0;
+		m_HudCustomAmmo.m_fFade = 0;
+	}
+	ServerCmd("drop");
+}
 int CHudCustomAmmo::Init(void)
 {
 	HOOK_MESSAGE(CurWeapon);
@@ -288,6 +307,7 @@ int CHudCustomAmmo::Init(void)
 	HOOK_MESSAGE(AmmoX);
 	HOOK_MESSAGE(WeaponSpr);
 	
+	gEngfuncs.pfnAddCommand("drop", __UserCmd_Drop);
 
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
 	UserCmd_Slot2 = HOOK_COMMAND("slot2", Slot2);
@@ -302,6 +322,7 @@ int CHudCustomAmmo::Init(void)
 	UserCmd_SlotClose = HOOK_COMMAND("cancelselect", Close);
 	UserCmd_NextWeapon = HOOK_COMMAND("invnext", NextWeapon);
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
+	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 
 	StartX = atof(pScheme->GetResourceString("AmmoHUD.StartX"));
 	IconSize = atof(pScheme->GetResourceString("AmmoHUD.IconSize"));
@@ -319,6 +340,16 @@ int CHudCustomAmmo::Init(void)
 	Ammo2TextColor = pScheme->GetColor("AmmoHUD.Ammo2TextColor", gDefaultColor);
 	BackGroundColor = pScheme->GetColor("AmmoHUD.BackGroundColor", gDefaultColor);
 
+	SelectCyclerColor = pScheme->GetColor("AmmoHUD.SelectCyclerColor", gDefaultColor);
+	SelectCyclerRinColor = pScheme->GetColor("AmmoHUD.SelectCyclerRinColor", gDefaultColor);
+	SelectCyclerIconColor = pScheme->GetColor("AmmoHUD.SelectCyclerIconColor", gDefaultColor);
+	SelectCyclerTextColor = pScheme->GetColor("AmmoHUD.SelectCyclerTextColor", gDefaultColor);
+	SelectCyclerEmptyColor = pScheme->GetColor("AmmoHUD.SelectCyclerEmptyColor", gDefaultColor);
+
+	SelectCyclerOffset = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerOffset"));
+	SelectCyclerSize = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerSize"));
+	SelectCyclerRotate = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerRotate"));
+
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
 	HUDSmallFont = pScheme->GetFont("HUDSmallShitFont", true);
 
@@ -332,12 +363,12 @@ void CHudCustomAmmo::Reset(void)
 {
 	m_fFade = 0;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
+	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
 	gWR.Reset();
 	gHR.Reset();
 }
 int CHudCustomAmmo::VidInit(void)
 {
-	// Load sprites for buckets (top row of weapon menu)
 	m_HUD_bucket0 = gHudDelegate->GetSpriteIndex("bucket1");
 	m_HUD_selection = gHudDelegate->GetSpriteIndex("selection");
 	ghsprBuckets = gHudDelegate->GetSprite(m_HUD_bucket0);
@@ -361,10 +392,11 @@ int CHudCustomAmmo::VidInit(void)
 }
 int CHudCustomAmmo::Draw(float flTime)
 {
+	if (gClientData->health <= 0)
+		return 1;
 	// Draw Weapon Menu
 	DrawWList(flTime);
 	gHR.DrawAmmoHistory(flTime);
-
 	if (!m_pWeapon)
 		return 0;
 	WEAPON* pw = m_pWeapon; // shorthand
@@ -469,76 +501,78 @@ int CHudCustomAmmo::Draw(float flTime)
 	}
 	return 1;
 }
-
-void CHudCustomAmmo::Think(void)
+void CHudCustomAmmo::ChosePlayerWeapon(void)
 {
-	if (gHudDelegate->m_fPlayerDead)
-		return;
-
-	if (!gpActiveSel)
-		return;
-	// has the player selected one?
-	if (gHudDelegate->m_iKeyBits & IN_ATTACK)
-	{
-		if (gpActiveSel != (WEAPON*)1)
-		{
-			ServerCmd(gpActiveSel->szName);
-			g_weaponselect = gpActiveSel->iId;
-		}
-
-		gpLastSel = gpActiveSel;
-		gpActiveSel = NULL;
-		gHudDelegate->m_iKeyBits &= ~IN_ATTACK;
+	if (gWR.iNowSelect >-1) {
+		ServerCmd(gWR.GetWeapon(gWR.iNowSelect)->szName);
 		gEngfuncs.pfnPlaySoundByName("common/wpn_select.wav", 1);
 	}
 }
+void CHudCustomAmmo::Think(void)
+{
+	if(gClientData->health <= 0)
+		gWR.DropAllWeapons();
+}
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
 {
+	if (m_fFade <= gEngfuncs.GetClientTime())
+		gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
 	gWR.SelectSlot(iSlot, fAdvance);
 }
 int CHudCustomAmmo::DrawWList(float flTime)
 {
+	if (m_fFade <= flTime)
+		return 1;
+
 	gWR.FillMenuGrid();
+
 	if(!iSelectCyclerSpr)
 		iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
+	if (!iSelectCyclerRinSpr)
+		iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
+	
+	float flStartRot = SelectCyclerRotate;
+	int iBackGroundHeight = SelectCyclerSize;
+	int iOffset = SelectCyclerOffset;
+	int i;
+	float ac, as;
+	vec2_t aryOut[10];
+	vec2_t aryIn[10];
+
+	//填充十边形坐标数组
+	for (i = 0; i < 10; i++)
+	{
+		ac = cos(2 * M_PI * i / 10 + flStartRot);
+		as = sin(2 * M_PI * i / 10 + flStartRot);
+
+		aryIn[i][0] = iOffset * ac;
+		aryIn[i][1] = iOffset * as;
+
+		aryOut[i][0] = (iOffset + iBackGroundHeight) * ac;
+		aryOut[i][1] = (iOffset + iBackGroundHeight) * as;
+	}
 	wchar_t buf[64];
 	WEAPON* wp;
-	int iBackGroundSize = 192;
-	int iOffset = 256;
-	int x1, x2, y1, y2;
-	x1 = iOffset;
-	x2 = x1 + iBackGroundSize;
-	y1 = 0;
-	y2 = iBackGroundSize;
-	float yaw;
-	int xpos;
-	int ypos;
 	int iHeight;
 	int iWidth;
 	int iTextWidth;
 	int halfWidth = gScreenInfo.iWidth / 2;
 	int halfHeight = gScreenInfo.iHeight / 2;
+	int xpos;
+	int ypos;
 	vec2_t vecA, vecB, vecC, vecD;
-	for (int i = 0; i <= 10; i++)
+	int a = 255;
+	if (m_fFade - flTime < SLECTEDRIN_KEEP_TIME / 2)
+		a *= (m_fFade - flTime) / SLECTEDRIN_KEEP_TIME / 2;
+	int r, g, b, dummy;
+	for (i = 0; i < 10; i++)
 	{
-		/*  旋转变换
-		*    ^
-		*    |y
-		*    |     C:x1y2   D:x2y2
-		*    |         +------+
-		*    |         |      |
-		*    |   A:x1y1|      |B:x2y1
-		*  --+----------------->x
-		*/
-		yaw = 36 * i;
-		vecA[0] = x1 * cos(yaw) - y1 * sin(yaw);
-		vecA[1] = x1 * sin(yaw) + y1 * cos(yaw);
-		vecB[0] = x2 * cos(yaw) - y1 * sin(yaw);
-		vecB[1] = x2 * sin(yaw) + y1 * cos(yaw);
-		vecC[0] = x1 * cos(yaw) - y2 * sin(yaw);
-		vecC[1] = x1 * sin(yaw) + y2 * cos(yaw);
-		vecD[0] = x2 * cos(yaw) - y2 * sin(yaw);
-		vecD[1] = x2 * sin(yaw) + y2 * cos(yaw);
+		//CABD
+		//↓→↑
+		Vector2Copy(aryIn[i == 9 ? 0 :i + 1], vecA);
+		Vector2Copy(aryIn[i], vecB);
+		Vector2Copy(aryOut[i == 9 ? 0 : i + 1], vecC);
+		Vector2Copy(aryOut[i], vecD);
 		//变换为OpenGL屏幕坐标
 		vecA[0] += halfWidth;
 		vecA[1] = halfHeight - vecA[1];
@@ -549,8 +583,9 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		vecD[0] += halfWidth;
 		vecD[1] = halfHeight - vecD[1];
 		//CABD
- 		DrawSPRIconPos(iSelectCyclerSpr, vecC, vecA, vecB, vecD, 255, 255, 255, 128);
-		if (gWR.gridDrawMenu[i] < 0)
+		SelectCyclerColor.GetColor(r, g, b, dummy);
+ 		DrawSPRIconPos(iSelectCyclerSpr, vecC, vecA, vecB, vecD, r, g, b, a*0.3);
+		if (gWR.gridDrawMenu[i] < 0 || i == gWR.iNowSlot)
 			continue;
 		wp = gWR.GetWeapon(gWR.gridDrawMenu[i]);
 		if (!wp)
@@ -559,23 +594,57 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
 		iHeight = wp->rcActive.bottom - wp->rcActive.top;
 		iWidth = wp->rcActive.right - wp->rcActive.left;
-		SPR_Set(wp->hActive, 255, 255, 255);
+
+		if(gWR.CountAmmo(wp->iAmmoType) > 0)
+			SelectCyclerIconColor.GetColor(r, g, b, dummy);
+		else
+			SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
+		ColorCalcuAlpha(r, g, b, a);
+		SPR_Set(wp->hActive, r, g, b);
 		SPR_DrawAdditive(0, xpos - iWidth/2, ypos- iHeight/2, &wp->rcActive);
 		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
+		WEAPON* t = gHookHud.m_Ammo->m_pWeapon;
 		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
-		DrawVGUI2String(buf, xpos - iTextWidth/2, ypos + iHeight, 128, 128, 128, HUDFont);
+		SelectCyclerTextColor.GetColor(r, g, b, dummy);
+		ColorCalcuAlpha(r, g, b, a);
+		DrawVGUI2String(buf, xpos - iTextWidth/2, ypos + iHeight, r, g, b, HUDFont, true);
 	}
-	//wsprintfW(buf, L"s: %d p: %d i %d", gWR.iNowSlot, gWR.iNowPos, gWR.iNowSelect);
-	//DrawVGUI2String(buf, xpos, ypos, 255, 255, 255, HUDFont, true);
-	/*
-	
 
 	if (gWR.iNowSelect > -1)
 	{
-		WEAPON* wp = gWR.GetWeapon(gWR.iNowSelect);
-
-		
+		wp = gWR.GetWeapon(gWR.iNowSelect);
+		Vector2Copy(aryIn[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecA);
+		Vector2Copy(aryIn[gWR.iNowSlot], vecB);
+		Vector2Copy(aryOut[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecC);
+		Vector2Copy(aryOut[gWR.iNowSlot], vecD);
+		//变换为OpenGL屏幕坐标
+		vecA[0] += halfWidth;
+		vecA[1] = halfHeight - vecA[1];
+		vecB[0] += halfWidth;
+		vecB[1] = halfHeight - vecB[1];
+		vecC[0] += halfWidth;
+		vecC[1] = halfHeight - vecC[1];
+		vecD[0] += halfWidth;
+		vecD[1] = halfHeight - vecD[1];
+		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
+		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
+		iHeight = wp->rcActive.bottom - wp->rcActive.top;
+		iWidth = wp->rcActive.right - wp->rcActive.left;
+		if (gWR.CountAmmo(wp->iAmmoType) > 0)
+			SelectCyclerIconColor.GetColor(r, g, b, dummy);
+		else
+			SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
+		ColorCalcuAlpha(r, g, b, a);
+		SPR_Set(wp->hActive, r, g, b);
+		SPR_DrawAdditive(0, xpos - iWidth / 2, ypos - iHeight / 2, &wp->rcActive);
+		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
+		WEAPON* t = gHookHud.m_Ammo->m_pWeapon;
+		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
+		SelectCyclerTextColor.GetColor(r, g, b, dummy);
+		ColorCalcuAlpha(r, g, b, a);
+		DrawVGUI2String(buf, xpos - iTextWidth / 2, ypos + iHeight, r, g, b, HUDFont,true);
+		SelectCyclerRinColor.GetColor(r, g, b, dummy);
+		DrawSPRIconPos(iSelectCyclerRinSpr, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
-	*/
 	return 1;
 }

@@ -238,6 +238,8 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 		if (iNowPos >= MAX_WEAPON_POSITIONS)
 			iNowPos = 0;
 	}
+	gEngfuncs.pfnPlaySoundByName("common/wpn_moveselect.wav", 1);
+	m_HudCustomAmmo.m_fFade = gEngfuncs.GetClientTime() + SLECTEDRIN_KEEP_TIME;
 }
 
 void WeaponsResource::FillMenuGrid()
@@ -252,6 +254,8 @@ void WeaponsResource::FillMenuGrid()
 				gridDrawMenu[i] = gridSlotMap[i][j];
 				break;
 			}
+			else
+				gridDrawMenu[i] = -1;
 		}
 	}
 }

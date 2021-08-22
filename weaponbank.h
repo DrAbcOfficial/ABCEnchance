@@ -16,7 +16,6 @@ public:
 	int iNowSlot;
 	int iNowPos;
 	int iNowSelect;
-	int iOldWeaponBits;
 
 	void Init(void)
 	{

@@ -1,3 +1,5 @@
+#define SLECTEDRIN_KEEP_TIME 5
+
 class CHudCustomAmmo : public CHudBase
 {
 public:
@@ -8,6 +10,7 @@ public:
 	void Reset(void);
 	int DrawWList(float flTime);
 	void SlotInput(int iSlot, int fAdvance);
+	void ChosePlayerWeapon(void);
 
 	float StartX = 48;
 	float IconSize = 0.5;
@@ -17,6 +20,7 @@ public:
 	float BackGroundAlpha = 128;
 
 	int iSelectCyclerSpr = 0;
+	int iSelectCyclerRinSpr = 0;
 
 	Color Ammo1IconColor;
 	Color Ammo1BigTextColor;
@@ -26,17 +30,23 @@ public:
 	Color Ammo2TextColor;
 	Color BackGroundColor;
 
+	Color SelectCyclerColor;
+	Color SelectCyclerRinColor;
+	Color SelectCyclerIconColor;
+	Color SelectCyclerTextColor;
+	Color SelectCyclerEmptyColor;
+
+	float SelectCyclerOffset;
+	float SelectCyclerSize;
+	float SelectCyclerRotate;
+
 	vgui::HFont HUDFont;
 	vgui::HFont HUDSmallFont;
 	
 	float m_fFade;
-	RGBA  m_rgba;
 	WEAPON* m_pWeapon;
 	int	m_HUD_bucket0;
 	int m_HUD_selection;
 
 };
 extern CHudCustomAmmo m_HudCustomAmmo;
-extern int g_weaponselect;
-extern WEAPON* gpActiveSel;
-extern WEAPON* gpLastSel;
