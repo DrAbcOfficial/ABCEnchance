@@ -74,6 +74,7 @@ public:
 	}
 
 	void LoadWeaponSprites(WEAPON* wp);
+	void WeaponsResource::LoadScriptWeaponSprites(int iId, char* cust);
 	void LoadAllWeaponSprites(void);
 	void SelectSlot(int iSlot, int fAdvance);
 	void FillMenuGrid();

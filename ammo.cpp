@@ -125,7 +125,8 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf)
 	int id = READ_SHORT();
 	char name[128];
 	strcpy_s(name, READ_STRING());
-
+	if (name[0] != 0)
+		gWR.LoadScriptWeaponSprites(id, name);
 	gWR.PickupWeapon(id);
 	return 1;
 
@@ -138,7 +139,6 @@ int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf)
 	char path[2048];
 	strcpy_s(path, READ_STRING());
 	return 1;
-
 }
 
 int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
@@ -505,8 +505,12 @@ int CHudCustomAmmo::Draw(float flTime)
 void CHudCustomAmmo::ChosePlayerWeapon(void)
 {
 	if (gWR.iNowSelect >-1) {
-		ServerCmd(gWR.GetWeapon(gWR.iNowSelect)->szName);
-		gEngfuncs.pfnPlaySoundByName("common/wpn_select.wav", 1);
+		WEAPON* wp = gWR.GetWeapon(gWR.iNowSelect);
+		if (gWR.HasAmmo(wp))
+		{
+			ServerCmd(wp->szName);
+			gEngfuncs.pfnPlaySoundByName("common/wpn_select.wav", 1);
+		}
 	}
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
