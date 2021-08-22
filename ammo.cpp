@@ -527,6 +527,9 @@ void CHudCustomAmmo::ChosePlayerWeapon(void)
 			return;
 		ServerCmd(wp->szName);
 		gEngfuncs.pfnPlaySoundByName("common/wpn_select.wav", 1);
+		gWR.iNowPos = -1;
+		gWR.iNowSlot = -1;
+		gWR.iNowSelect = -1;
 	}
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
