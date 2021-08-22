@@ -363,6 +363,8 @@ int CHudCustomAmmo::Init(void)
 	SelectCyclerSize = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerSize"));
 	SelectCyclerRotate = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerRotate"));
 	SelectCyclerAnimateTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerAnimateTime"));
+	SelectCyclerFadeTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerFadeTime"));
+	SelectCyclerHoldTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerHoldTime"));
 
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
 	HUDSmallFont = pScheme->GetFont("HUDSmallShitFont", true);
@@ -538,26 +540,31 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
 int CHudCustomAmmo::DrawWList(float flTime)
 {
 	if (m_fFade <= flTime)
+	{
+		if (m_bSelectMenuDisplay)
+		{
+			m_bSelectMenuDisplay = false;
+			m_fAnimateTime = 0;
+		}
 		return 1;
+	}
+	
 	gWR.FillMenuGrid();
 	if(!iSelectCyclerSpr)
 		iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	if (!iSelectCyclerRinSpr)
 		iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
-
 	float flTimeDiffer = m_fFade - flTime;
 	float flStartRot = SelectCyclerRotate;
 	int iBackGroundHeight = SelectCyclerSize;
 	int iOffset = SelectCyclerOffset;
-
 	if (!m_bSelectMenuDisplay)
 		m_fAnimateTime = flTime + SelectCyclerAnimateTime;
 	if (m_fAnimateTime > flTime)
 	{
-		if (flTimeDiffer >= SLECTEDRIN_KEEP_TIME - SelectCyclerAnimateTime)
-			iOffset *= ((float)(SLECTEDRIN_KEEP_TIME) - flTimeDiffer) / SelectCyclerAnimateTime;
-	}
-		
+		if (flTimeDiffer >= SelectCyclerHoldTime - SelectCyclerAnimateTime)
+			iOffset *= ((float)(SelectCyclerHoldTime) - flTimeDiffer) / SelectCyclerAnimateTime;
+	}	
 	int i;
 	float ac, as;
 	vec2_t aryOut[10];
@@ -586,8 +593,8 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	int ypos;
 	vec2_t vecA, vecB, vecC, vecD;
 	int a = 255;
-	if (flTimeDiffer < SLECTEDRIN_KEEP_TIME / 2)
-		a *= flTimeDiffer / SLECTEDRIN_KEEP_TIME * 2;
+	if (flTimeDiffer < SelectCyclerFadeTime)
+		a *= flTimeDiffer / SelectCyclerFadeTime;
 	int r, g, b, dummy;
 	for (i = 0; i < 10; i++)
 	{

@@ -64,6 +64,8 @@ Scheme
 		"AmmoHUD.SelectCyclerSize"	"96"
 		"AmmoHUD.SelectCyclerRotate"	"0"
 		"AmmoHUD.SelectCyclerAnimateTime"	"0.12"
+		"AmmoHUD.SelectCyclerFadeTime"	"0.2"
+		"AmmoHUD.SelectCyclerHoldTime"	"5"
 	}
 
 	Fonts

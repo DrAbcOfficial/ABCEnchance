@@ -363,7 +363,7 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 			iNowPos = 0;
 	}
 	gEngfuncs.pfnPlaySoundByName("common/wpn_moveselect.wav", 1);
-	m_HudCustomAmmo.m_fFade = gEngfuncs.GetClientTime() + SLECTEDRIN_KEEP_TIME;
+	m_HudCustomAmmo.m_fFade = gEngfuncs.GetClientTime() + m_HudCustomAmmo.SelectCyclerHoldTime;
 }
 
 void WeaponsResource::FillMenuGrid()

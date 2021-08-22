@@ -1,5 +1,3 @@
-#define SLECTEDRIN_KEEP_TIME 5
-
 class CHudCustomAmmo : public CHudBase
 {
 public:
@@ -39,6 +37,8 @@ public:
 	float SelectCyclerSize;
 	float SelectCyclerRotate;
 	float SelectCyclerAnimateTime;
+	float SelectCyclerFadeTime;
+	float SelectCyclerHoldTime;
 
 	vgui::HFont HUDFont;
 	vgui::HFont HUDSmallFont;
