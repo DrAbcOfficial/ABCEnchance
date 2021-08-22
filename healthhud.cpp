@@ -230,13 +230,10 @@ int CHudArmorHealth::Draw(float flTime)
 void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 {
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	vec3_t vecCalc;
-	vecCalc[0] = vecFrom[0] - local->curstate.origin[0];
-	vecCalc[1] = vecFrom[1] - local->curstate.origin[1];
-	vecCalc[2] = vecFrom[2] - local->curstate.origin[2];
-	vec3_t vecAngles;
-	VectorAngles(vecCalc, vecAngles);
-	float yaw = local->curstate.angles[0] - vecAngles[0];
+	float yaw = local->curstate.angles[1];
+	if (yaw < 0)
+		yaw += 360;
+	yaw *= (M_PI / 180.0);
 	//以屏幕中心为坐标轴的坐标系
 	float sprWidth = gScreenInfo.iHeight * 0.1667;
 	float y1 = gScreenInfo.iHeight / 4;
