@@ -139,7 +139,7 @@ int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf)
 }
 int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 {
-	int fOnTarget = FALSE;
+	int bOnTarget = FALSE;
 	BEGIN_READ(pbuf, iSize);
 	int iState = READ_BYTE();
 	if (iState > 0)
@@ -148,7 +148,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iClip = READ_LONG();
 		int iClip2 = READ_LONG();
 		if (iState > 1)
-			fOnTarget = TRUE;
+			bOnTarget = TRUE;
 		if(gHudDelegate->m_iPlayerHealth > 0)
 			gHudDelegate->m_fPlayerDead = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
@@ -158,17 +158,16 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		pWeapon->iClip = iClip;
 		pWeapon->iClip2 = iClip2;
 		m_HudCustomAmmo.m_pWeapon = pWeapon;
-		int def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
-		if (m_hfov >= def_fov)
+		if (m_hfov >= gEngfuncs.pfnGetCvarFloat("default_fov"))
 		{ 
-			if (fOnTarget && m_HudCustomAmmo.m_pWeapon->hAutoaim)
+			if (bOnTarget && m_HudCustomAmmo.m_pWeapon->hAutoaim)
 				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hAutoaim, m_HudCustomAmmo.m_pWeapon->rcAutoaim, 255, 255, 255);
 			else
 				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hCrosshair, m_HudCustomAmmo.m_pWeapon->rcCrosshair, 255, 255, 255);
 		}
 		else
 		{
-			if (fOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
+			if (bOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
 				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim, m_HudCustomAmmo.m_pWeapon->rcZoomedAutoaim, 255, 255, 255);
 			else
 				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedCrosshair, m_HudCustomAmmo.m_pWeapon->rcZoomedCrosshair, 255, 255, 255);
@@ -190,6 +189,12 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		} 
 		case 0X2:break;
 		case 0:gWR.DropAllWeapons(); break;
+		default: {
+			WEAPON* wp = gWR.GetWeapon(iFlag1);
+			if ((wp->iFlags & ITEM_FLAG_EXHAUSTIBLE) && !gWR.HasAmmo(wp))
+				gWR.DropWeapon(wp);
+			break;
+		}
 		}
 	}
 	return m_pfnCurWeapon(pszName, iSize, pbuf);
@@ -516,11 +521,10 @@ void CHudCustomAmmo::ChosePlayerWeapon(void)
 {
 	if (gWR.iNowSelect >-1) {
 		WEAPON* wp = gWR.GetWeapon(gWR.iNowSelect);
-		if (gWR.HasAmmo(wp))
-		{
-			ServerCmd(wp->szName);
-			gEngfuncs.pfnPlaySoundByName("common/wpn_select.wav", 1);
-		}
+		if (!(wp->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(wp))
+			return;
+		ServerCmd(wp->szName);
+		gEngfuncs.pfnPlaySoundByName("common/wpn_select.wav", 1);
 	}
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)

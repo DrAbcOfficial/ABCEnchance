@@ -23,7 +23,6 @@ public:
 	{
 		Reset();
 	}
-
 	void Reset(void)
 	{
 		iNowSlot = 0;
@@ -36,10 +35,7 @@ public:
 	}
 	WEAPON* GetWeapon(int iId)
 	{ 
-		WEAPON* wp = &rgWeapons[iId];
-		if ((wp->iFlags & ITEM_FLAG_EXHAUSTIBLE) > 0 && CountAmmo(iId) <= 0)
-			DropWeapon(wp);
-		return wp;
+		return &rgWeapons[iId];
 	}
 	void AddWeapon(WEAPON* wp)
 	{
@@ -47,23 +43,19 @@ public:
 		gridSlotPosDataMap[wp->iSlot][wp->iSlotPos] = wp->iId;
 		LoadWeaponSprites(&rgWeapons[wp->iId]);
 	}
-
 	void PickupWeapon(int id)
 	{
 		WEAPON* wp = &rgWeapons[id];
 		gridSlotMap[wp->iSlot][wp->iSlotPos] = id;
 	}
-
 	void PickupWeapon(WEAPON* wp)
 	{
 		gridSlotMap[wp->iSlot][wp->iSlotPos] = wp->iId;
 	}
-
 	void DropWeapon(WEAPON* wp)
 	{
 		gridSlotMap[wp->iSlot][wp->iSlotPos] = -1;
 	}
-
 	void DropAllWeapons(void)
 	{
 		for (int i = 0; i < MAX_WEAPONS; i++)
@@ -72,12 +64,10 @@ public:
 				DropWeapon(&rgWeapons[i]);
 		}
 	}
-
 	WEAPON* GetWeaponSlot(int slot, int pos) 
 	{ 
 		return &rgWeapons[gridSlotMap[slot][pos]];
 	}
-
 	int GetWeaponIdBySlot(int slot, int pos)
 	{
 		return gridSlotPosDataMap[slot][pos];
@@ -89,10 +79,16 @@ public:
 	void SelectSlot(int iSlot, int fAdvance);
 	void FillMenuGrid();
 
-	int HasAmmo(WEAPON* p);
-	AMMO GetAmmo(int iId) { return iId; }
-	void SetAmmo(int iId, int iCount) { riAmmo[iId] = iCount; }
+	AMMO GetAmmo(int iId)
+	{ 
+		return iId; 
+	}
+	void SetAmmo(int iId, int iCount) 
+	{ 
+		riAmmo[iId] = iCount; 
+	}
 	int CountAmmo(int iId);
+	int HasAmmo(WEAPON* p);
 	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect);
 };
 

@@ -45,12 +45,18 @@ int WeaponsResource::CountAmmo(int iId)
 int WeaponsResource::HasAmmo(WEAPON* p)
 {
 	if (!p)
-		return FALSE;
-	if (p->iMax1 == -1)
-		return TRUE;
-
-	return (p->iAmmoType == -1) || p->iClip > 0 || CountAmmo(p->iAmmoType)
-		|| CountAmmo(p->iAmmo2Type) || p->iClip2 > 0 || (p->iFlags & WEAPON_FLAGS_SELECTONEMPTY);
+		return false;
+	if (p->iMax1 == -1 && p->iMax2 == -1)
+		return true;
+	bool bFlag = false;
+	if (p->iAmmoType > -1)
+	{
+		bFlag = p->iClip > 0 || CountAmmo(p->iAmmoType);
+		if (!bFlag && p->iAmmo2Type > -1)
+			return CountAmmo(p->iAmmo2Type) || p->iClip2 > 0;
+		else
+			return bFlag;
+	}
 }
 
 void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
