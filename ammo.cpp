@@ -149,7 +149,8 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iClip2 = READ_LONG();
 		if (iState > 1)
 			fOnTarget = TRUE;
-		gHudDelegate->m_fPlayerDead = FALSE;
+		if(gClientData->health > 0)
+			gHudDelegate->m_fPlayerDead = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
 			return m_pfnCurWeapon(pszName, iSize, pbuf);
