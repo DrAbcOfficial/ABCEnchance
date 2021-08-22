@@ -1,12 +1,3 @@
-#define RGB_YELLOWISH 0x00FFA000 //255,160,0
-#define RGB_REDISH 0x00FF1010 //255,160,0
-#define RGB_GREENISH 0x0000A000 //0,160,0
-
-
-#define MAX_WEAPONS		255		// ???
-#define MAX_AMMO_TYPES	999
-#define MAX_WEAPON_SLOTS		10	// hud item selection slots
-#define MAX_ITEM_TYPES			6	// hud item selection slots
 #define CVAR_GET_FLOAT(x) gEngfuncs.pfnGetCvarFloat(x)
 #define CVAR_GET_STRING(x) gEngfuncs.pfnGetCvarString(x)
 #define SPR_Load (*gEngfuncs.pfnSPR_Load)
