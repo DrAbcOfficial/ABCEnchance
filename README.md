@@ -1,9 +1,9 @@
 # ABCEnchance
 ABCEnchance is a metabook plugin that provides experience improvement for Sven co-op
 
-<font color=red size=20>DO NOT USE THIS PLUGIN FOR NOW</font>
-<font color=red size=20>This plugin is under development and needs a lot of debugging and repair.</font> 
-<font color=red size=20>Using this plugin has many problems, such as </font><table><tr><td bgcolor=yellow><font color=red size=20>memory leakage, </font></td><td bgcolor=yellow><font color=red size=20>memory access conflict</font> </td><td bgcolor=yellow><font color=red size=20>dead loop</font> </td><td bgcolor=yellow><font color=red size=20>null pointer</font> </font></td></tr></table>  <font color=red size=20>and so on</font> 
+# **DO NOT USE THIS PLUGIN FOR NOW**
+# **This plugin is under development and needs a lot of debugging and repair.**
+# **Using this plugin has many problems, such as memory leakage, memory access conflict, dead loop, null pointer and so on**
 
 # CSGO like Hud and dsplaying player name title
 <img src="img/csgo1.jpg" width="100%">
