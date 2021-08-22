@@ -178,7 +178,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 	else
 	{
 		int iFlag1 = READ_BYTE();
-		int iFlag2 = READ_BYTE();;
+		int iFlag2 = READ_BYTE();
 		int iAll = iFlag1 + iFlag2;
 		switch (iAll)
 		{
