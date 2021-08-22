@@ -102,8 +102,6 @@ int CHudDelegate::GetSpriteIndex(const char* SpriteName)
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 {
-	m_iWeaponBits = cdata->iWeaponBits;
-	m_HudCustomAmmo.Think();
 }
 CHudDelegate :: ~CHudDelegate()
 {

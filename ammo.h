@@ -6,7 +6,6 @@ public:
 	int Init(void);
 	int VidInit(void);
 	int Draw(float flTime);
-	void Think(void);
 	void Reset(void);
 	int DrawWList(float flTime);
 	void SlotInput(int iSlot, int fAdvance);

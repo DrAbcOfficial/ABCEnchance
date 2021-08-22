@@ -519,9 +519,6 @@ void CHudCustomAmmo::ChosePlayerWeapon(void)
 		gEngfuncs.pfnPlaySoundByName("common/wpn_select.wav", 1);
 	}
 }
-void CHudCustomAmmo::Think(void)
-{
-}
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
 {
 	if (m_fFade <= gEngfuncs.GetClientTime())
