@@ -149,10 +149,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iClip2 = READ_LONG();
 		if (iState > 1)
 			fOnTarget = TRUE;
-		if (gHudDelegate->m_fPlayerDead && !gHudDelegate->m_fPlayerSpawned) {
-			//gWR.DropAllWeapons();
-			gHudDelegate->m_fPlayerSpawned = TRUE;
-		}
 		gHudDelegate->m_fPlayerDead = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
@@ -185,8 +181,12 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iAll = iFlag1 + iFlag2;
 		switch (iAll)
 		{
-		case 0X1FE:gHudDelegate->m_fPlayerDead = TRUE; gWR.DropAllWeapons(); break;
-		case 0X12:gHudDelegate->m_fPlayerSpawned = FALSE; break;
+		case 0X1FE:{
+			if(gHudDelegate->m_fPlayerDead)
+				gWR.DropAllWeapons();
+			gHudDelegate->m_fPlayerDead = TRUE;
+			break;
+		} 
 		case 0X2:break;
 		case 0:gWR.DropAllWeapons(); break;
 		}

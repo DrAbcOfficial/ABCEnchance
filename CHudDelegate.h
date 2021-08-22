@@ -15,7 +15,6 @@ public:
 	~CHudDelegate();			// destructor, frees allocated memory
 
 	bool m_fPlayerDead;
-	bool m_fPlayerSpawned;
 
 	client_sprite_t* m_pSpriteList;
 	int m_iRes;
