@@ -45,53 +45,44 @@ CHudCustomAmmo m_HudCustomAmmo;
 HSPRITE ghsprBuckets;					// Sprite for top row of weapons menu
 int giBucketHeight, giBucketWidth, giABHeight, giABWidth; // Ammo Bar width and height
 
+pfnUserMsgHook m_pfnCurWeapon;
+pfnUserMsgHook m_pfnWeaponList;
+pfnUserMsgHook m_pfnCustWeapon;
+pfnUserMsgHook m_pfnAmmoPickup;
+pfnUserMsgHook m_pfnWeapPickup;
+pfnUserMsgHook m_pfnItemPickup;
+pfnUserMsgHook m_pfnAmmoX;
+pfnUserMsgHook m_pfnWeaponSpr;
 int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
 	int iCount = READ_BYTE();
 	gWR.SetAmmo(iIndex, abs(iCount));
-	return 1;
+	return m_pfnAmmoX(pszName, iSize, pbuf);
 }
-
 int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
 	gHR.AddToHistory(HISTSLOT_AMMO, iIndex, abs(iCount));
-	return 1;
+	return m_pfnAmmoPickup(pszName, iSize, pbuf);
 }
-
 int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_SHORT();
 	gHR.AddToHistory(HISTSLOT_WEAP, iIndex);
-	return 1;
+	return m_pfnWeapPickup(pszName, iSize, pbuf);
 }
-
 int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	const char* szName = READ_STRING();
 	gHR.AddToHistory(HISTSLOT_ITEM, szName);
-	return 1;
+	return m_pfnItemPickup(pszName, iSize, pbuf);
 }
-
-int __MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf)
-{
-	BEGIN_READ(pbuf, iSize);
-	READ_BYTE();
-	if (gEngfuncs.IsSpectateOnly())
-		return 1;
-
-	if (m_HudCustomAmmo.m_pWeapon)
-		SetCrosshair(m_HudCustomAmmo.m_pWeapon->hCrosshair, m_HudCustomAmmo.m_pWeapon->rcCrosshair, 255, 255, 255);
-
-	return 1;
-}
-
 int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
@@ -124,9 +115,8 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 		tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, Weapon.iSlotPos);
 	}
 	gWR.AddWeapon(&Weapon);
-	return 1;
+	return m_pfnWeaponList(pszName, iSize, pbuf);
 }
-
 int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
@@ -136,19 +126,17 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf)
 	if (name[0] != 0)
 		gWR.LoadScriptWeaponSprites(id, name);
 	gWR.PickupWeapon(id);
-	return 1;
+	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
 }
-
 int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int id = READ_SHORT();
 	char path[2048];
 	strcpy_s(path, READ_STRING());
-	return 1;
+	return m_pfnWeaponSpr(pszName, iSize, pbuf);
 }
-
 int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 {
 	int fOnTarget = FALSE;
@@ -168,7 +156,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		gHudDelegate->m_fPlayerDead = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
-			return 0;
+			return m_pfnCurWeapon(pszName, iSize, pbuf);
 		//更新弹匣信息
 		pWeapon->iClip = iClip;
 		pWeapon->iClip2 = iClip2;
@@ -203,7 +191,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		case 0:gWR.DropAllWeapons(); break;
 		}
 	}
-	return 1;
+	return m_pfnCurWeapon(pszName, iSize, pbuf);
 }
 
 void(*UserCmd_Slot1)(void);
@@ -220,7 +208,6 @@ void(*UserCmd_SlotClose)(void);
 void(*UserCmd_NextWeapon)(void);
 void(*UserCmd_PrevWeapon)(void);
 void(*UserCmd_Attack1)(void);
-
 void __UserCmd_Slot1(void)
 {
 	m_HudCustomAmmo.SlotInput(0,1);
@@ -313,16 +300,17 @@ void __UserCmd_Drop(void)
 	}
 	ServerCmd("drop");
 }
+
 int CHudCustomAmmo::Init(void)
 {
-	HOOK_MESSAGE(CurWeapon);
-	HOOK_MESSAGE(WeaponList);
-	HOOK_MESSAGE(CustWeapon);
-	HOOK_MESSAGE(AmmoPickup);
-	HOOK_MESSAGE(WeapPickup);
-	HOOK_MESSAGE(ItemPickup);
-	HOOK_MESSAGE(AmmoX);
-	HOOK_MESSAGE(WeaponSpr);
+	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
+	m_pfnWeaponList = HOOK_MESSAGE(WeaponList);
+	m_pfnCustWeapon = HOOK_MESSAGE(CustWeapon);
+	m_pfnAmmoPickup = HOOK_MESSAGE(AmmoPickup);
+	m_pfnWeapPickup = HOOK_MESSAGE(WeapPickup);
+	m_pfnItemPickup = HOOK_MESSAGE(ItemPickup);
+	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
+	m_pfnWeaponSpr = HOOK_MESSAGE(WeaponSpr);
 	
 	gEngfuncs.pfnAddCommand("drop", __UserCmd_Drop);
 

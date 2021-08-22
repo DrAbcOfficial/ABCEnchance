@@ -31,6 +31,9 @@ int giDmgFlags[NUM_DMG_TYPES] =
 };
 CHudArmorHealth m_HudArmorHealth;
 
+pfnUserMsgHook m_pfnHealth;
+pfnUserMsgHook m_pfnDamage;
+pfnUserMsgHook m_pfnBattery;
 int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
 {
 	// TODO: update local health data
@@ -45,7 +48,7 @@ int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
 		m_HudArmorHealth.m_fFade = FADE_TIME;
 		m_HudArmorHealth.m_iHealth = x;
 	}
-	return 1;
+	return m_pfnHealth(pszName, iSize, pbuf);
 }
 int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 {
@@ -67,26 +70,25 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 		m_HudArmorHealth.flPainIndicatorKeepTime = gEngfuncs.GetClientTime() + PAIN_INDICAROT_TIME;
 		VectorCopy(vecFrom, m_HudArmorHealth.vecDamageFrom);
 	}
-	return 1;
+	return m_pfnDamage(pszName, iSize, pbuf);
 }
 int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_SHORT();
-
 	if (x != m_HudArmorHealth.m_iBat)
 	{
 		m_HudArmorHealth.m_fFade = FADE_TIME;
 		m_HudArmorHealth.m_iBat = x;
 	}
-	return 1;
+	return m_pfnBattery(pszName, iSize, pbuf);
 }
 
 void CHudArmorHealth::Init(void)
 {
-	HOOK_MESSAGE(Health);
-	HOOK_MESSAGE(Damage);
-	HOOK_MESSAGE(Battery);
+	m_pfnHealth = HOOK_MESSAGE(Health);
+	m_pfnDamage = HOOK_MESSAGE(Damage);
+	m_pfnBattery = HOOK_MESSAGE(Battery);
 
 	m_iHealth = 100;
 	m_fFade = 0;
