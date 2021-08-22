@@ -161,6 +161,10 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iClip2 = READ_LONG();
 		if (iState > 1)
 			fOnTarget = TRUE;
+		if (gHudDelegate->m_fPlayerDead && !gHudDelegate->m_fPlayerSpawned) {
+			//gWR.DropAllWeapons();
+			gHudDelegate->m_fPlayerSpawned = TRUE;
+		}
 		gHudDelegate->m_fPlayerDead = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
@@ -170,7 +174,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		pWeapon->iClip2 = iClip2;
 		m_HudCustomAmmo.m_pWeapon = pWeapon;
 		int def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
-		if (gClientData->fov >= def_fov)
+		if (m_hfov >= def_fov)
 		{ 
 			if (fOnTarget && m_HudCustomAmmo.m_pWeapon->hAutoaim)
 				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hAutoaim, m_HudCustomAmmo.m_pWeapon->rcAutoaim, 255, 255, 255);
@@ -189,12 +193,15 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 	else
 	{
 		int iFlag1 = READ_BYTE();
-		int iFlag2 = READ_BYTE();
+		int iFlag2 = READ_BYTE();;
 		int iAll = iFlag1 + iFlag2;
-		if(iAll == 0X1FE)
-			gHudDelegate->m_fPlayerDead = TRUE;
-		if(iAll == 0X12 || iAll == 0)
-			gWR.DropAllWeapons();
+		switch (iAll)
+		{
+		case 0X1FE:gHudDelegate->m_fPlayerDead = TRUE; gWR.DropAllWeapons(); break;
+		case 0X12:gHudDelegate->m_fPlayerSpawned = FALSE; break;
+		case 0X2:break;
+		case 0:gWR.DropAllWeapons(); break;
+		}
 	}
 	return 1;
 }
@@ -285,7 +292,7 @@ void __UserCmd_Attack1(void)
 	if (m_HudCustomAmmo.m_fFade > gEngfuncs.GetClientTime())
 	{
 		if (gHudDelegate->m_fPlayerDead)
-			return;
+			return UserCmd_Attack1();
 		m_HudCustomAmmo.ChosePlayerWeapon();
 	}
 	gWR.iNowSelect = 0;

@@ -13,6 +13,7 @@ extern vgui::IScheme* pScheme;
 
 extern SCREENINFO_s gScreenInfo;
 extern const clientdata_t* gClientData;
+extern float m_hfov;
 
 void Sys_ErrorEx(const char* fmt, ...);
 void FillDelegate();
