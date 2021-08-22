@@ -525,6 +525,24 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
 		gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
 	gWR.SelectSlot(iSlot, fAdvance);
 }
+bool IsWeaponNull(WEAPON* wp)
+{
+	if (wp->iAmmoType > 0)
+	{
+		if (wp->iMax1 > 0)
+			return wp->iClip <= 0 && gWR.CountAmmo(wp->iAmmoType) <= 0;
+		else
+			return gWR.CountAmmo(wp->iAmmoType) <= 0;
+	}
+	else if (wp->iAmmo2Type > 0)
+	{
+		if (wp->iMax2 > 0)
+			return wp->iClip2 <= 0 && gWR.CountAmmo(wp->iAmmo2Type) <= 0;
+		else
+			return gWR.CountAmmo(wp->iAmmo2Type) <= 0;
+	}
+	return false;
+}
 int CHudCustomAmmo::DrawWList(float flTime)
 {
 	if (m_fFade <= flTime)
@@ -601,7 +619,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		iHeight = wp->rcActive.bottom - wp->rcActive.top;
 		iWidth = wp->rcActive.right - wp->rcActive.left;
 
-		if(gWR.CountAmmo(wp->iAmmoType) > 0)
+		if(!IsWeaponNull(wp))
 			SelectCyclerIconColor.GetColor(r, g, b, dummy);
 		else
 			SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
@@ -635,7 +653,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
 		iHeight = wp->rcActive.bottom - wp->rcActive.top;
 		iWidth = wp->rcActive.right - wp->rcActive.left;
-		if (gWR.CountAmmo(wp->iAmmoType) > 0)
+		if (!IsWeaponNull(wp))
 			SelectCyclerIconColor.GetColor(r, g, b, dummy);
 		else
 			SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
