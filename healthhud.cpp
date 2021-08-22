@@ -36,30 +36,23 @@ pfnUserMsgHook m_pfnDamage;
 pfnUserMsgHook m_pfnBattery;
 int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
 {
-	// TODO: update local health data
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_BYTE();
-
-	m_HudArmorHealth.m_iFlags |= HUD_ACTIVE;
-
-	// Only update the fade if we've changed health
 	if (x != m_HudArmorHealth.m_iHealth)
 	{
 		m_HudArmorHealth.m_fFade = FADE_TIME;
 		m_HudArmorHealth.m_iHealth = x;
+		gHudDelegate->m_iPlayerHealth = x;
 	}
 	return m_pfnHealth(pszName, iSize, pbuf);
 }
 int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
-
 	int armor = READ_BYTE();
 	int damageTaken = READ_BYTE();
 	long bitsDamage = READ_LONG();
-
 	vec3_t vecFrom;
-
 	for (int i = 0; i < 3; i++)
 		vecFrom[i] = READ_COORD();
 	m_HudArmorHealth.UpdateTiles(gEngfuncs.GetClientTime(), bitsDamage);

@@ -15,6 +15,7 @@ public:
 	~CHudDelegate();			// destructor, frees allocated memory
 
 	bool m_fPlayerDead;
+	int m_iPlayerHealth;
 
 	client_sprite_t* m_pSpriteList;
 	int m_iRes;
@@ -25,8 +26,6 @@ public:
 	int GetSpriteIndex(const char* SpriteName);	// gets a sprite index, for use in the m_rghSprites[] array
 
 private:
-	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.
-	// freed in ~CHud()
 	int	 m_iSpriteCount;
 	HSPRITE* m_rghSprites;	/*[HUD_SPRITE_COUNT]*/			// the sprites loaded from hud.txt
 	wrect_t* m_rgrcRects;	/*[HUD_SPRITE_COUNT]*/
