@@ -155,7 +155,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iClip2 = READ_LONG();
 		if (iState > 1)
 			bOnTarget = TRUE;
-		if(gHudDelegate->m_iPlayerHealth > 0 && gHudDelegate->m_fPlayerDead)
+		if(gHudDelegate->m_iPlayerHealth > 0)
 			gHudDelegate->m_fPlayerDead = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
@@ -185,12 +185,14 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iFlag1 = READ_BYTE();
 		int iFlag2 = READ_BYTE();
 		int iAll = iFlag1 + iFlag2;
-		if(gCVars.pCurDebug->value > 0)
+		if (gCVars.pCurDebug->value > 0) {
 			gEngfuncs.Con_Printf("message CurWeapon, state %d  flag1  %d  flag2  %d  all  %d\n", iState, iFlag1, iFlag2, iAll);
+			gEngfuncs.Con_Printf("message CurWeapon, weaponlist %d  weapongrid  %d  weaponmenu  %d\n", gWR.CountWeapons(), gWR.CountGridWeapons(), gWR.CountMenuWeapons());
+		}
 		switch (iAll)
 		{
 		case 0X1FE:{
-			if(gHudDelegate->m_fPlayerDead)
+			if (gHudDelegate->m_fPlayerDead)
 				gWR.DropAllWeapons();
 			if(gHudDelegate->m_iPlayerHealth <= 0)
 				gHudDelegate->m_fPlayerDead = TRUE;
@@ -554,7 +556,6 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		}
 		return 1;
 	}
-	
 	gWR.FillMenuGrid();
 	if(!iSelectCyclerSpr)
 		iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");

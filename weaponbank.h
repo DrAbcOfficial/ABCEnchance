@@ -1,8 +1,8 @@
 #pragma once
-#define MAX_WEAPON_POSITIONS 50
+#define MAX_WEAPON_POSITIONS 30
 #define MAX_WEAPON_SLOTS 10
 #define MAX_WEAPONS MAX_WEAPON_POSITIONS * MAX_WEAPON_SLOTS
-#define MAX_AMMO 255
+#define MAX_AMMO 999
 
 class WeaponsResource
 {
@@ -32,6 +32,36 @@ public:
 		memset(gridSlotPosDataMap, -1, sizeof gridSlotPosDataMap);
 		memset(gridSlotMap, -1, sizeof gridSlotMap);
 		memset(gridDrawMenu, -1, sizeof gridDrawMenu);
+	}
+	int CountGridWeapons() {
+		int i, j, c = 0;
+		for (i = 0; i < MAX_WEAPON_SLOTS; i++)
+		{
+			for (j = 0; j < MAX_WEAPON_POSITIONS; j++)
+			{
+				if (gridSlotMap[i][j] >= 0)
+					c++;
+			}
+		}
+		return c;
+	}
+	int CountWeapons() {
+		int i, c = 0;
+		for (i = 0; i < MAX_WEAPONS; i++)
+		{
+			if (GetWeapon(i)->iId > 0)
+				c++;
+		}
+		return c;
+	}
+	int CountMenuWeapons() {
+		int i, c = 0;
+		for (i = 0; i < MAX_WEAPON_SLOTS; i++)
+		{
+			if (gridDrawMenu[i] > 0)
+				c++;
+		}
+		return c;
 	}
 	WEAPON* GetWeapon(int iId)
 	{ 

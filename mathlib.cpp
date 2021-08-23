@@ -760,11 +760,6 @@ void SinCos(float radians, float *sine, float *cosine)
 void Matrix4x4_CreateFromEntity(float out[4][4], const vec3_t angles, const vec3_t origin, float scale)
 {
 	float	angle, sr, sp, sy, cr, cp, cy;
-
-#define PITCH 0
-#define YAW 1
-#define ROLL 2
-
 	if (angles[ROLL])
 	{
 		angle = angles[YAW] * (M_PI * 2 / 360.0f);

@@ -84,6 +84,9 @@
     <ClCompile Include="local.cpp">
       <Filter>Source\Var</Filter>
     </ClCompile>
+    <ClCompile Include="viewmodellag.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">

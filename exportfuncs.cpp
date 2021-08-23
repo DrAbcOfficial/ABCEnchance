@@ -287,7 +287,7 @@ void HUD_Init(void)
 
 	g_pScheme->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
-
+	
 
 	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("cl_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
@@ -379,4 +379,8 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
 {
 	gHudDelegate->HUD_ClientMove(ppmove, server);
 	return gExportfuncs.HUD_PlayerMove(ppmove, server);
+}
+void V_CalcRefdef(struct ref_params_s* pparams)
+{
+	return gExportfuncs.V_CalcRefdef(pparams);
 }

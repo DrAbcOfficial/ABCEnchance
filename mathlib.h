@@ -7,6 +7,10 @@ typedef int fixed4_t;
 typedef int fixed8_t;
 typedef int fixed16_t;
 
+#define PITCH 0
+#define YAW 1
+#define ROLL 2
+
 #define SIDE_FRONT 0
 #define SIDE_ON 2
 #define SIDE_BACK 1

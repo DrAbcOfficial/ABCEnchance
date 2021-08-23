@@ -119,6 +119,7 @@
     <ClCompile Include="parsemsg.cpp" />
     <ClCompile Include="plugins.cpp" />
     <ClCompile Include="vguilocal.cpp" />
+    <ClCompile Include="viewmodellag.cpp" />
     <ClCompile Include="weaponbank.cpp" />
   </ItemGroup>
   <ItemGroup>
