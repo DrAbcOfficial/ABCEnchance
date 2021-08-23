@@ -186,13 +186,14 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iFlag2 = READ_BYTE();
 		int iAll = iFlag1 + iFlag2;
 		if(gCVars.pCurDebug->value > 0)
-			gEngfuncs.Con_Printf("message CurWeapon, state %s  flag1  %s  flag2  %s  all  %s\n", iState, iFlag1, iFlag2, iAll);
+			gEngfuncs.Con_Printf("message CurWeapon, state %d  flag1  %d  flag2  %d  all  %d\n", iState, iFlag1, iFlag2, iAll);
 		switch (iAll)
 		{
 		case 0X1FE:{
 			if(gHudDelegate->m_fPlayerDead)
 				gWR.DropAllWeapons();
-			gHudDelegate->m_fPlayerDead = TRUE;
+			if(gHudDelegate->m_iPlayerHealth <= 0)
+				gHudDelegate->m_fPlayerDead = TRUE;
 			break;
 		} 
 		case 0X2:break;
@@ -694,6 +695,6 @@ int CHudCustomAmmo::DrawWList(float flTime)
 void CHudCustomAmmo::ClientMove(struct playermove_s* ppmove, qboolean server)
 {
 	WEAPON* wp = m_pWeapon;
-	if ((wp->iFlags & ITEM_FLAG_EXHAUSTIBLE) && !gWR.HasAmmo(wp))
+	if (wp && (wp->iFlags & ITEM_FLAG_EXHAUSTIBLE) && !gWR.HasAmmo(wp))
 		gWR.DropWeapon(wp);
 }

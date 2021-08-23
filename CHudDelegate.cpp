@@ -107,7 +107,7 @@ void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 }
 void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
 {
-
+	m_HudCustomAmmo.ClientMove(ppmove, server);
 }
 CHudDelegate :: ~CHudDelegate()
 {
