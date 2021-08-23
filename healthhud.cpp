@@ -37,7 +37,7 @@ pfnUserMsgHook m_pfnBattery;
 int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
-	int x = READ_BYTE();
+	int x = READ_SHORT() + READ_SHORT() * USHRT_MAX;
 	if (x != m_HudArmorHealth.m_iHealth)
 	{
 		m_HudArmorHealth.m_fFade = FADE_TIME;
