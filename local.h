@@ -46,6 +46,9 @@ typedef struct
 
 	cvar_t* pDynamicHUD;
 
+	cvar_t* pModelLag;
+	cvar_t* pModelLagValue;
+
 	cvar_t* pCurDebug;
 
 }cl_cvars_t;

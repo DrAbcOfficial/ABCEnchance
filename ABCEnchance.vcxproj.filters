@@ -221,5 +221,8 @@
     <ClInclude Include="vguilocal.h">
       <Filter>Header\Var</Filter>
     </ClInclude>
+    <ClInclude Include="viewmodellag.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

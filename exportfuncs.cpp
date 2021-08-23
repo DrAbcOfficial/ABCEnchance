@@ -17,14 +17,12 @@
 #include "ammo.h"
 #include "healthhud.h"
 #include "basehealth.h"
-
 #include "drawElement.h"
-
 #include "CHudDelegate.h"
-
 #include "local.h"
 //efx
 #include "efxenchance.h"
+#include "viewmodellag.h"
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -314,6 +312,8 @@ void HUD_Init(void)
 	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
+	gCVars.pModelLag = gEngfuncs.pfnRegisterVariable("cl_modellag", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pModelLagValue = gEngfuncs.pfnRegisterVariable("cl_modellagvalue", "0.3", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pCurDebug = gEngfuncs.pfnRegisterVariable("cl_curdebug", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
@@ -382,5 +382,6 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
 }
 void V_CalcRefdef(struct ref_params_s* pparams)
 {
-	return gExportfuncs.V_CalcRefdef(pparams);
+	gExportfuncs.V_CalcRefdef(pparams);
+	V_CalcViewModelLag(pparams);
 }

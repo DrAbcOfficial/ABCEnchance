@@ -165,6 +165,7 @@
     <ClInclude Include="VGUI\MouseCode.h" />
     <ClInclude Include="VGUI\OLDDar.h" />
     <ClInclude Include="VGUI\VGUI.h" />
+    <ClInclude Include="viewmodellag.h" />
     <ClInclude Include="weapon.h" />
     <ClInclude Include="weaponbank.h" />
   </ItemGroup>

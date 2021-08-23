@@ -1,0 +1,1 @@
+void V_CalcViewModelLag(ref_params_t* pparams);
