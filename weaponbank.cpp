@@ -51,9 +51,9 @@ int WeaponsResource::HasAmmo(WEAPON* p)
 	bool bFlag = false;
 	if (p->iAmmoType > -1)
 	{
-		bFlag = p->iClip > 0 || CountAmmo(p->iAmmoType);
-		if (!bFlag && p->iAmmo2Type > -1)
-			return CountAmmo(p->iAmmo2Type) || p->iClip2 > 0;
+		bFlag = (p->iClip > 0) || CountAmmo(p->iAmmoType);
+		if (p->iAmmo2Type > -1 && !bFlag)
+			return CountAmmo(p->iAmmo2Type) || (p->iClip2 > 0);
 		else
 			return bFlag;
 	}
