@@ -313,7 +313,7 @@ void HUD_Init(void)
 	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pModelLag = gEngfuncs.pfnRegisterVariable("cl_modellag", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pModelLagValue = gEngfuncs.pfnRegisterVariable("cl_modellagvalue", "0.3", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pModelLagValue = gEngfuncs.pfnRegisterVariable("cl_modellagvalue", "1.0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pCurDebug = gEngfuncs.pfnRegisterVariable("cl_curdebug", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
