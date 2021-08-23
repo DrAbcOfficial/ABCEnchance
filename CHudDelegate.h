@@ -11,6 +11,7 @@ public:
 	virtual void HUD_Draw(float flTime);
 	virtual void HUD_Reset(void);
 	virtual void HUD_UpdateClientData(client_data_t* cdata, float time);
+	virtual void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
 
 	~CHudDelegate();			// destructor, frees allocated memory
 

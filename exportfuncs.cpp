@@ -6,6 +6,7 @@
 #include "mathlib.h"
 #include "com_model.h"
 #include "triangleapi.h"
+#include "pm_movevars.h"
 
 #include "hud.h"
 #include "exportfuncs.h"
@@ -313,6 +314,9 @@ void HUD_Init(void)
 	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
+
+	gCVars.pCurDebug = gEngfuncs.pfnRegisterVariable("cl_curdebug", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+
 	gHudDelegate = new CHudDelegate();
 	gExportfuncs.HUD_Init();
 	gHudDelegate->HUD_Init();
@@ -370,4 +374,9 @@ int HUD_UpdateClientData (struct client_data_s* c, float f)
 	m_hfov = c->fov;
 	gHudDelegate->HUD_UpdateClientData(c,f);
 	return gExportfuncs.HUD_UpdateClientData(c, f);
+}
+void HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
+{
+	gHudDelegate->HUD_ClientMove(ppmove, server);
+	return gExportfuncs.HUD_PlayerMove(ppmove, server);
 }

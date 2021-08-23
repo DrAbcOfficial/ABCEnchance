@@ -8,6 +8,7 @@ public:
 	int DrawWList(float flTime);
 	void SlotInput(int iSlot, int fAdvance);
 	void ChosePlayerWeapon(void);
+	void ClientMove(struct playermove_s* ppmove, qboolean server);
 
 	float StartX = 48;
 	float IconSize = 0.5;

@@ -73,6 +73,7 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	pExportFunc->HUD_UpdateClientData = HUD_UpdateClientData;
 	pExportFunc->HUD_Reset = HUD_Reset;
 	pExportFunc->HUD_TxferLocalOverrides = HUD_TxferLocalOverrides;
+	pExportFunc->HUD_PlayerMove = HUD_ClientMove;
 
 	MSG_Init();
 }

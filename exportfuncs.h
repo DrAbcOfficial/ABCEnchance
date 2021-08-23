@@ -27,6 +27,7 @@ int HUD_Redraw(float time, int intermission);
 void HUD_Reset(void);
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);
 int HUD_UpdateClientData(struct client_data_s* c, float f);
+void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
 
 void R_NewMap(void);
 

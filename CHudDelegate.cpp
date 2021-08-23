@@ -105,6 +105,10 @@ int CHudDelegate::GetSpriteIndex(const char* SpriteName)
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 {
 }
+void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
+{
+
+}
 CHudDelegate :: ~CHudDelegate()
 {
 	delete[] m_rghSprites;

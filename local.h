@@ -46,6 +46,8 @@ typedef struct
 
 	cvar_t* pDynamicHUD;
 
+	cvar_t* pCurDebug;
+
 }cl_cvars_t;
 
 extern cl_refHookfunc_t gHookFuncs;

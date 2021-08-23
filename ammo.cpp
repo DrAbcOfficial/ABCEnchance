@@ -29,6 +29,7 @@
 #include "hud.h"
 #include "weapon.h"
 
+#include "local.h"
 #include "vguilocal.h"
 #include "CHudDelegate.h"
 
@@ -104,16 +105,21 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	Weapon.iId = READ_SHORT();
 	Weapon.iFlags = READ_BYTE();
 	Weapon.iClip = 0;
-
-	int tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, Weapon.iSlotPos);
+	
+	int posFlag = Weapon.iSlotPos;
+	int tw = gWR.GetWeaponIdBySlot(posFlag, Weapon.iSlotPos);
 	while (tw > 0)
 	{
-		Weapon.iSlotPos++;
+		posFlag++;
 		//草你真的应该去找服主排查下冲突
-		if (Weapon.iSlotPos >= MAX_WEAPON_POSITIONS - 1)
+		if (Weapon.iSlotPos >= MAX_WEAPON_POSITIONS - 1) {
+			posFlag = Weapon.iSlotPos;
 			break;
-		tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, Weapon.iSlotPos);
+		}
+		tw = gWR.GetWeaponIdBySlot(posFlag, Weapon.iSlotPos);
 	}
+	if(posFlag != Weapon.iSlotPos)
+		Weapon.iSlotPos = posFlag;
 	gWR.AddWeapon(&Weapon);
 	return m_pfnWeaponList(pszName, iSize, pbuf);
 }
@@ -149,7 +155,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iClip2 = READ_LONG();
 		if (iState > 1)
 			bOnTarget = TRUE;
-		if(gHudDelegate->m_iPlayerHealth > 0)
+		if(gHudDelegate->m_iPlayerHealth > 0 && gHudDelegate->m_fPlayerDead)
 			gHudDelegate->m_fPlayerDead = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
@@ -179,6 +185,8 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iFlag1 = READ_BYTE();
 		int iFlag2 = READ_BYTE();
 		int iAll = iFlag1 + iFlag2;
+		if(gCVars.pCurDebug->value > 0)
+			gEngfuncs.Con_Printf("message CurWeapon, state %s  flag1  %s  flag2  %s  all  %s\n", iState, iFlag1, iFlag2, iAll);
 		switch (iAll)
 		{
 		case 0X1FE:{
@@ -682,4 +690,10 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	//绘制完毕，修改展示状态
 	m_bSelectMenuDisplay = true;
 	return 1;
+}
+void CHudCustomAmmo::ClientMove(struct playermove_s* ppmove, qboolean server)
+{
+	WEAPON* wp = m_pWeapon;
+	if ((wp->iFlags & ITEM_FLAG_EXHAUSTIBLE) && !gWR.HasAmmo(wp))
+		gWR.DropWeapon(wp);
 }
