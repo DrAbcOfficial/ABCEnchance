@@ -198,12 +198,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		} 
 		case 0X2:break;
 		case 0:gWR.DropAllWeapons(); break;
-		default: {
-			WEAPON* wp = gWR.GetWeapon(iFlag1);
-			if ((wp->iFlags & ITEM_FLAG_EXHAUSTIBLE) && !gWR.HasAmmo(wp))
-				gWR.DropWeapon(wp);
-			break;
-		}
 		}
 	}
 	return m_pfnCurWeapon(pszName, iSize, pbuf);
