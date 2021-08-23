@@ -370,6 +370,8 @@ int CHudCustomAmmo::Init(void)
 	SelectCyclerAnimateTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerAnimateTime"));
 	SelectCyclerFadeTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerFadeTime"));
 	SelectCyclerHoldTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerHoldTime"));
+	if (SelectCyclerHoldTime <= 0)
+		SelectCyclerHoldTime = 5;
 
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
 	HUDSmallFont = pScheme->GetFont("HUDSmallShitFont", true);
