@@ -40,7 +40,6 @@
 #include "historyresource.h"
 #include "ammo.h"
 
-
 CHudCustomAmmo m_HudCustomAmmo;
 
 HSPRITE ghsprBuckets;					// Sprite for top row of weapons menu
@@ -151,6 +150,12 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 	if (iState > 0)
 	{
 		int iId = READ_SHORT();
+		//sc反编汇后如此
+		if (iId == -1)
+		{
+			gWR.DropAllWeapons();
+			return m_pfnCurWeapon(pszName, iSize, pbuf);
+		}
 		int iClip = READ_LONG();
 		int iClip2 = READ_LONG();
 		if (iState > 1)
