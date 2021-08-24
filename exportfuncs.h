@@ -6,7 +6,7 @@ extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
 
 extern vgui::ISchemeManager* g_pScheme;
-extern vgui::ISurface* pSurface;
+extern vgui::ISurface* g_pSurface;
 extern vgui::ILocalize* pLocalize;
 extern vgui::HFont m_hFont;
 extern vgui::IScheme* pScheme;
@@ -14,6 +14,7 @@ extern vgui::IScheme* pScheme;
 extern SCREENINFO_s gScreenInfo;
 extern const clientdata_t* gClientData;
 extern float m_hfov;
+extern int* g_iVisibleMouse;
 
 void Sys_ErrorEx(const char* fmt, ...);
 void FillDelegate();
@@ -29,13 +30,15 @@ void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientda
 int HUD_UpdateClientData(struct client_data_s* c, float f);
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
 void V_CalcRefdef(struct ref_params_s* pparams);
-
+void IN_MouseEvent(int mstate);
+void IN_Accumulate(void);
+void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 void R_NewMap(void);
 
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
 #define Sig_NotFound(name) Sys_ErrorEx("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
 #define Sig_FuncNotFound(name) if(!gHookFuncs.name) Sig_NotFound(name)
-#define Sig_AddrNotFound(name) if(!name) Sig_NotFound(name)
+#define Sig_AddrNotFound(name) if(!addr) Sig_NotFound(name)
 #define Sig_AddrFoundOrFill(name) Sig_AddrNotFound(name) else name = (decltype(name))addr;
 
 #define Sig_Length(a) (sizeof(a)-1)

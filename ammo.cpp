@@ -322,6 +322,24 @@ void __UserCmd_Drop(void)
 	}
 	ServerCmd("drop");
 }
+void __UserCmd_OpenAnnularMenu(void)
+{
+	if (!m_HudCustomAmmo.m_bOpeningAnnularMenu) {
+		if (m_HudCustomAmmo.m_fFade <= gEngfuncs.GetClientTime())
+			gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
+		m_HudCustomAmmo.m_bOpeningAnnularMenu = true;
+		gHudDelegate->m_iVisibleMouse = true;
+	}
+}
+void __UserCmd_CloseAnnularMenu(void)
+{
+	if (m_HudCustomAmmo.m_bOpeningAnnularMenu) {
+		m_HudCustomAmmo.m_bOpeningAnnularMenu = false;
+		m_HudCustomAmmo.m_fFade = gEngfuncs.GetClientTime() +
+			m_HudCustomAmmo.SelectCyclerHoldTime - m_HudCustomAmmo.SelectCyclerFadeTime;
+		gHudDelegate->m_iVisibleMouse = false;
+	}
+}
 
 int CHudCustomAmmo::Init(void)
 {
@@ -335,6 +353,8 @@ int CHudCustomAmmo::Init(void)
 	m_pfnWeaponSpr = HOOK_MESSAGE(WeaponSpr);
 	
 	gEngfuncs.pfnAddCommand("drop", __UserCmd_Drop);
+	gEngfuncs.pfnAddCommand("+annularmenu", __UserCmd_OpenAnnularMenu);
+	gEngfuncs.pfnAddCommand("-annularmenu", __UserCmd_CloseAnnularMenu);
 
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
 	UserCmd_Slot2 = HOOK_COMMAND("slot2", Slot2);
@@ -395,7 +415,10 @@ void CHudCustomAmmo::Reset(void)
 {
 	m_fFade = 0;
 	m_fAnimateTime = 0;
+	m_pMousePos.x = 0;
+	m_pMousePos.y = 0;
 	m_bSelectMenuDisplay = false;
+	m_bOpeningAnnularMenu = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
 	gWR.Reset();
@@ -633,7 +656,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		vecD[1] = halfHeight - vecD[1];
 		//CABD
 		SelectCyclerColor.GetColor(r, g, b, dummy);
- 		DrawSPRIconPos(iSelectCyclerSpr, vecC, vecA, vecB, vecD, r, g, b, a*0.3);
+		DrawSPRIconPos(iSelectCyclerSpr, vecC, vecA, vecB, vecD, r, g, b, a * 0.3);
 		if (gWR.gridDrawMenu[i] < 0 || i == gWR.iNowSlot)
 			continue;
 		wp = gWR.GetWeapon(gWR.gridDrawMenu[i]);
@@ -658,7 +681,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		DrawVGUI2String(buf, xpos - iTextWidth/2, ypos + iHeight, r, g, b, HUDFont, true);
 	}
 	//绘制已选
-	if (gWR.iNowSelect > -1)
+	if (gWR.iNowSelect > -1 && gWR.iNowSlot >= 0)
 	{
 		wp = gWR.GetWeapon(gWR.iNowSelect);
 		Vector2Copy(aryIn[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecA);
@@ -703,4 +726,32 @@ void CHudCustomAmmo::ClientMove(struct playermove_s* ppmove, qboolean server)
 	WEAPON* wp = m_pWeapon;
 	if (wp && (wp->iFlags & ITEM_FLAG_EXHAUSTIBLE) && !gWR.HasAmmo(wp))
 		gWR.DropWeapon(wp);
+	if (m_bOpeningAnnularMenu)
+		m_fFade = gEngfuncs.GetClientTime() + SelectCyclerHoldTime;
+}
+void CHudCustomAmmo::IN_Accumulate()
+{
+	if (m_bOpeningAnnularMenu) {
+		int x, y;
+		gEngfuncs.GetMousePosition(&x, &y);
+		gEngfuncs.pfnFillRGBA(x, y, 4, 4, 255, 255, 255, 200);
+		x -= gScreenInfo.iWidth / 2;
+		y -= gScreenInfo.iHeight / 2;
+		y = -y;
+		float at = atan2(y, x);
+		int s = at / (0.2 * M_PI);
+		s = at >= 0 ? s : 9 + s;
+		if (gWR.gridDrawMenu[s] > -1)
+		{
+			gWR.iNowSlot = s;
+			gWR.iNowSelect = gWR.gridDrawMenu[s];
+		}
+	}
+}
+void CHudCustomAmmo::IN_MouseEvent(int mstate)
+{
+	if (mstate != 1 || gHudDelegate->m_fPlayerDead)
+		return;
+	//不清空，专门给鼠标换枪使用
+	m_HudCustomAmmo.ChosePlayerWeapon();
 }

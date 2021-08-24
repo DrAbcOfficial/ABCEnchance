@@ -9,8 +9,6 @@
 #include "CHudDelegate.h"
 #include <local.h>
 
-
-
 CHudDelegate* gHudDelegate = NULL;
 cl_hookedHud gHookHud;
 
@@ -109,6 +107,18 @@ void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
 {
 	m_HudCustomAmmo.ClientMove(ppmove, server);
+}
+void CHudDelegate::IN_MouseEvent(int mstate)
+{
+	m_HudCustomAmmo.IN_MouseEvent(mstate);
+}
+void CHudDelegate::IN_Accumulate(void)
+{
+	m_HudCustomAmmo.IN_Accumulate();
+}
+void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active)
+{
+	
 }
 CHudDelegate :: ~CHudDelegate()
 {

@@ -9,6 +9,7 @@
 #include "pm_movevars.h"
 
 #include "hud.h"
+#include "vguilocal.h"
 #include "exportfuncs.h"
 //HUD
 #include "CColor.h"
@@ -30,6 +31,7 @@ cl_exportfuncs_t gExportfuncs;
 const clientdata_t* gClientData;
 float m_hfov;
 float* pClientEVPunchAngles;
+int* g_iVisibleMouse = NULL;
 
 //PLAYER TITLE
 void DrawPlayerTitle()
@@ -257,6 +259,12 @@ void FillAddress()
 				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_VECTORSCALE_SIG, Sig_Length(R_VECTORSCALE_SIG));
 			Sig_FuncNotFound(VectorScale);
 		}
+#define SC_UPDATECURSORSTATE_SIG "\x8B\x40\x28\xFF\xD0\x84\xC0\x2A\x2A\xC7\x05\x2A\x2A\x2A\x2A\x01\x00\x00\x00"
+		{
+			DWORD addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_UPDATECURSORSTATE_SIG, Sig_Length(SC_UPDATECURSORSTATE_SIG));
+			Sig_AddrNotFound(g_iVisibleMouse);
+			g_iVisibleMouse = *(decltype(g_iVisibleMouse)*)(addr + 11);
+		}
 	}
 }
 void InstallHook()
@@ -281,8 +289,7 @@ void HUD_Init(void)
 		g_pScheme = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, NULL);
 		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, NULL);
 	}
-	pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, NULL);
-
+	g_pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, NULL);
 	g_pScheme->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
 	
@@ -384,4 +391,43 @@ void V_CalcRefdef(struct ref_params_s* pparams)
 {
 	gExportfuncs.V_CalcRefdef(pparams);
 	V_CalcViewModelLag(pparams);
+}
+void IN_MouseEvent(int mstate)
+{
+	if (g_iVisibleMouse && gHudDelegate->m_iVisibleMouse)
+	{
+		int iVisibleMouse = *g_iVisibleMouse;
+		*g_iVisibleMouse = 1;
+		gExportfuncs.IN_MouseEvent(mstate);
+		gHudDelegate->IN_MouseEvent(mstate);
+		*g_iVisibleMouse = iVisibleMouse;
+	}
+	else
+		gExportfuncs.IN_MouseEvent(mstate);
+}
+void IN_Accumulate(void)
+{
+	if (g_iVisibleMouse && gHudDelegate->m_iVisibleMouse)
+	{
+		int iVisibleMouse = *g_iVisibleMouse;
+		*g_iVisibleMouse = 1;
+		gExportfuncs.IN_Accumulate();
+		gHudDelegate->IN_Accumulate();
+		*g_iVisibleMouse = iVisibleMouse;
+	}
+	else
+		gExportfuncs.IN_Accumulate();
+}
+void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
+{
+	if (g_iVisibleMouse && gHudDelegate->m_iVisibleMouse)
+	{
+		int iVisibleMouse = *g_iVisibleMouse;
+		*g_iVisibleMouse = 1;
+		gExportfuncs.CL_CreateMove(frametime, cmd, active);
+		gHudDelegate->CL_CreateMove(frametime, cmd, active);
+		*g_iVisibleMouse = iVisibleMouse;
+	}
+	else
+		gExportfuncs.CL_CreateMove(frametime, cmd, active);
 }

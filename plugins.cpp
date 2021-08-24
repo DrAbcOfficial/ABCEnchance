@@ -63,18 +63,21 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	g_dwClientBase = (PVOID)GetModuleHandleA("client.dll");
 	g_dwClientSize = g_pMetaHookAPI->GetModuleSize((HMODULE)g_dwClientBase);
 
-	FillDelegate();
-	FillAddress();
-	InstallHook();
-	
 	pExportFunc->HUD_Init = HUD_Init;
 	pExportFunc->HUD_VidInit = HUD_VidInit;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
+	pExportFunc->IN_MouseEvent = IN_MouseEvent;
+	pExportFunc->IN_Accumulate = IN_Accumulate;
+	pExportFunc->CL_CreateMove = CL_CreateMove;
 	pExportFunc->HUD_UpdateClientData = HUD_UpdateClientData;
 	pExportFunc->HUD_Reset = HUD_Reset;
 	pExportFunc->HUD_TxferLocalOverrides = HUD_TxferLocalOverrides;
 	pExportFunc->HUD_PlayerMove = HUD_ClientMove;
 	pExportFunc->V_CalcRefdef = V_CalcRefdef;
+	
+	FillDelegate();
+	FillAddress();
+	InstallHook();
 
 	MSG_Init();
 }

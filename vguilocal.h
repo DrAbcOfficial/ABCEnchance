@@ -4,7 +4,7 @@
 #include <VGUI/ILocalize.h>
 
 extern vgui::ISchemeManager* g_pScheme;
-extern vgui::ISurface* pSurface;
+extern vgui::ISurface* g_pSurface;
 extern vgui::ILocalize* pLocalize;
 extern vgui::IScheme* pScheme;
 extern SCREENINFO_s gScreenInfo;

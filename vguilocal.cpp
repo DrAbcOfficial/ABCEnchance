@@ -2,7 +2,7 @@
 #include "vguilocal.h"
 
 vgui::ISchemeManager* g_pScheme;
-vgui::ISurface* pSurface;
+vgui::ISurface* g_pSurface;
 vgui::ILocalize* pLocalize;
 vgui::IScheme* pScheme;
 SCREENINFO_s gScreenInfo;

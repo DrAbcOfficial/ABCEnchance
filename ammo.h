@@ -9,6 +9,8 @@ public:
 	void SlotInput(int iSlot, int fAdvance);
 	void ChosePlayerWeapon(void);
 	void ClientMove(struct playermove_s* ppmove, qboolean server);
+	void IN_Accumulate();
+	void IN_MouseEvent(int mstate);
 
 	float StartX = 48;
 	float IconSize = 0.5;
@@ -46,6 +48,8 @@ public:
 	
 	float m_fFade;
 	float m_fAnimateTime;
+	bool m_bOpeningAnnularMenu = false;
+	tagPOINT m_pMousePos;
 	bool m_bSelectMenuDisplay = false;
 	WEAPON* m_pWeapon;
 	int	m_HUD_bucket0;

@@ -12,11 +12,14 @@ public:
 	virtual void HUD_Reset(void);
 	virtual void HUD_UpdateClientData(client_data_t* cdata, float time);
 	virtual void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
-
+	virtual void IN_MouseEvent(int mstate);
+	virtual void IN_Accumulate(void);
+	virtual void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 	~CHudDelegate();			// destructor, frees allocated memory
 
 	bool m_fPlayerDead;
 	int m_iPlayerHealth;
+	int m_iVisibleMouse;
 
 	client_sprite_t* m_pSpriteList;
 	int m_iRes;

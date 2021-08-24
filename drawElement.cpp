@@ -96,7 +96,7 @@ int GetHudFontHeight(vgui::HFont m_hFont)
 	if (!m_hFont)
 		return 0;
 
-	return pSurface->GetFontTall(m_hFont);
+	return g_pSurface->GetFontTall(m_hFont);
 }
 void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m_hFont)
 {
@@ -119,7 +119,7 @@ void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m
 	{
 		for (i = 0; i < len; i++)
 		{
-			pSurface->GetCharABCwide(m_hFont, string[i], a, b, c);
+			g_pSurface->GetCharABCwide(m_hFont, string[i], a, b, c);
 			*width += a + b + c;
 		}
 	}
@@ -169,7 +169,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 
 	if (y == -1)
 	{
-		fontheight = pSurface->GetFontTall(m_hFont);
+		fontheight = g_pSurface->GetFontTall(m_hFont);
 		y = (gScreenInfo.iHeight - fontheight) / 2;
 	}
 
@@ -211,7 +211,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 			for (j = 0; j < iTempCount; j++)
 			{
 				gEngfuncs.pfnVGUI2DrawCharacter(shadow_x, y, line[j], m_hFont);
-				pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
+				g_pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
 				shadow_x += w1 + w2 + w3;
 			}
 		}
@@ -224,7 +224,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 				gEngfuncs.pfnVGUI2DrawCharacterAdd(x, y, line[j], r * 255, g * 255, b * 255, m_hFont);
 			else
 				gEngfuncs.pfnVGUI2DrawCharacter(x, y, line[j], m_hFont);
-			pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
+			g_pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
 
 			x += w1 + w2 + w3;
 		}
