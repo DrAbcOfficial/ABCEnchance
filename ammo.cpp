@@ -107,7 +107,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	Weapon.iClip = 0;
 	
 	int posFlag = Weapon.iSlotPos;
-	int tw = gWR.GetWeaponIdBySlot(posFlag, Weapon.iSlotPos);
+	int tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, posFlag);
 	while (tw > 0)
 	{
 		posFlag++;
@@ -116,7 +116,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 			posFlag = Weapon.iSlotPos;
 			break;
 		}
-		tw = gWR.GetWeaponIdBySlot(posFlag, Weapon.iSlotPos);
+		tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, posFlag);
 	}
 	if(posFlag != Weapon.iSlotPos)
 		Weapon.iSlotPos = posFlag;
@@ -177,7 +177,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim, m_HudCustomAmmo.m_pWeapon->rcZoomedAutoaim, 255, 255, 255);
 			else
 				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedCrosshair, m_HudCustomAmmo.m_pWeapon->rcZoomedCrosshair, 255, 255, 255);
-
 		}
 	}
 	else
@@ -186,13 +185,18 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iFlag2 = READ_BYTE();
 		int iAll = iFlag1 + iFlag2;
 		if (gCVars.pCurDebug->value > 0) {
-			gEngfuncs.Con_Printf("message CurWeapon, state %d  flag1  %d  flag2  %d  all  %d\n", iState, iFlag1, iFlag2, iAll);
-			gEngfuncs.Con_Printf("message CurWeapon, weaponlist %d  weapongrid  %d  weaponmenu  %d\n", gWR.CountWeapons(), gWR.CountGridWeapons(), gWR.CountMenuWeapons());
+			gEngfuncs.Con_Printf("message CurWeapon, state %d  flag1  %d  flag2  %d  all  %d\n", 
+				iState, iFlag1, iFlag2, iAll);
+			gEngfuncs.Con_Printf("message CurWeapon, weaponlist %d  weapongrid  %d  weaponmenu  %d\n", 
+				gWR.CountWeapons(), gWR.CountGridWeapons(), gWR.CountMenuWeapons());
+			gEngfuncs.Con_Printf("message CurWeapon, health %d  deadflag  %d  fadetime  %g  nowtime %g display  %d\n",
+				gHudDelegate->m_iPlayerHealth, gHudDelegate->m_fPlayerDead, m_HudCustomAmmo.m_fFade, 
+				gEngfuncs.GetClientTime(), m_HudCustomAmmo.m_bSelectMenuDisplay);
 		}
 		switch (iAll)
 		{
 		case 0X1FE:{
-			if (gHudDelegate->m_fPlayerDead)
+			if (gHudDelegate->m_fPlayerDead && gHudDelegate->m_iPlayerHealth <= 0)
 				gWR.DropAllWeapons();
 			if(gHudDelegate->m_iPlayerHealth <= 0)
 				gHudDelegate->m_fPlayerDead = TRUE;

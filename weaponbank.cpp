@@ -26,6 +26,82 @@ client_sprite_t* GetSpriteList(client_sprite_t* pList, const char* psz, int iRes
 	return NULL;
 }
 
+void WeaponsResource::Init(void)
+{
+	Reset();
+}
+void WeaponsResource::Reset(void)
+{
+	iNowSlot = -1;
+	iNowPos = -1;
+	iNowSelect = -1;
+	memset(rgWeapons, 0, sizeof rgWeapons);
+	memset(riAmmo, 0, sizeof riAmmo);
+	memset(gridSlotPosDataMap, -1, sizeof gridSlotPosDataMap);
+	memset(gridSlotMap, -1, sizeof gridSlotMap);
+	memset(gridDrawMenu, -1, sizeof gridDrawMenu);
+}
+int WeaponsResource::CountGridWeapons() {
+	int i, j, c = 0;
+	for (i = 0; i < MAX_WEAPON_SLOTS; i++)
+	{
+		for (j = 0; j < MAX_WEAPON_POSITIONS; j++)
+		{
+			if (gridSlotMap[i][j] >= 0)
+				c++;
+		}
+	}
+	return c;
+}
+int WeaponsResource::CountWeapons() {
+	int i, c = 0;
+	for (i = 0; i < MAX_WEAPONS; i++)
+	{
+		if (GetWeapon(i)->iId > 0)
+			c++;
+	}
+	return c;
+}
+int WeaponsResource::CountMenuWeapons() {
+	int i, c = 0;
+	for (i = 0; i < MAX_WEAPON_SLOTS; i++)
+	{
+		if (gridDrawMenu[i] > 0)
+			c++;
+	}
+	return c;
+}
+WEAPON* WeaponsResource::GetWeapon(int iId)
+{
+	return &rgWeapons[iId];
+}
+void WeaponsResource::AddWeapon(WEAPON* wp)
+{
+	rgWeapons[wp->iId] = *wp;
+	gridSlotPosDataMap[wp->iSlot][wp->iSlotPos] = wp->iId;
+	LoadWeaponSprites(&rgWeapons[wp->iId]);
+}
+void WeaponsResource::PickupWeapon(int id)
+{
+	WEAPON* wp = &rgWeapons[id];
+	gridSlotMap[wp->iSlot][wp->iSlotPos] = id;
+}
+void WeaponsResource::DropWeapon(WEAPON* wp)
+{
+	gridSlotMap[wp->iSlot][wp->iSlotPos] = -1;
+}
+void WeaponsResource::DropAllWeapons(void)
+{
+	memset(gridSlotMap, -1, sizeof gridSlotMap);
+}
+WEAPON* WeaponsResource::GetWeaponSlot(int slot, int pos)
+{
+	return &rgWeapons[gridSlotMap[slot][pos]];
+}
+int WeaponsResource::GetWeaponIdBySlot(int slot, int pos)
+{
+	return gridSlotPosDataMap[slot][pos];
+}
 void WeaponsResource::LoadAllWeaponSprites(void)
 {
 	for (int i = 0; i < MAX_WEAPONS; i++)
@@ -34,31 +110,6 @@ void WeaponsResource::LoadAllWeaponSprites(void)
 			LoadWeaponSprites(&rgWeapons[i]);
 	}
 }
-
-int WeaponsResource::CountAmmo(int iId)
-{
-	if (iId < 0)
-		return 0;
-	return  riAmmo[iId];
-}
-
-int WeaponsResource::HasAmmo(WEAPON* p)
-{
-	if (!p)
-		return false;
-	if (p->iMax1 == -1 && p->iMax2 == -1)
-		return true;
-	bool bFlag = false;
-	if (p->iAmmoType > -1)
-	{
-		bFlag = (p->iClip > 0) || CountAmmo(p->iAmmoType);
-		if (p->iAmmo2Type > -1 && !bFlag)
-			return CountAmmo(p->iAmmo2Type) || (p->iClip2 > 0);
-		else
-			return bFlag;
-	}
-}
-
 void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 {
 	int i, iRes;
@@ -183,7 +234,6 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 		pWeapon->hAmmo2 = 0;
 
 }
-
 void WeaponsResource::LoadScriptWeaponSprites(int iId, char* cust)
 {
 	int i, iRes;
@@ -304,7 +354,6 @@ void WeaponsResource::LoadScriptWeaponSprites(int iId, char* cust)
 		pWeapon->hAmmo2 = 0;
 
 }
-
 HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect)
 {
 	for (int i = 0; i < MAX_WEAPONS; i++)
@@ -323,7 +372,6 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect)
 
 	return NULL;
 }
-
 void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 {
 	if (gHudDelegate->m_fPlayerDead)
@@ -365,7 +413,6 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 	gEngfuncs.pfnPlaySoundByName("common/wpn_moveselect.wav", 1);
 	m_HudCustomAmmo.m_fFade = gEngfuncs.GetClientTime() + m_HudCustomAmmo.SelectCyclerHoldTime;
 }
-
 void WeaponsResource::FillMenuGrid()
 {
 	int i,j;
@@ -382,5 +429,36 @@ void WeaponsResource::FillMenuGrid()
 				gridDrawMenu[i] = -1;
 		}
 	}
+}
+
+int WeaponsResource::CountAmmo(int iId)
+{
+	if (iId < 0)
+		return 0;
+	return  riAmmo[iId];
+}
+int WeaponsResource::HasAmmo(WEAPON* p)
+{
+	if (!p)
+		return false;
+	if (p->iMax1 == -1 && p->iMax2 == -1)
+		return true;
+	bool bFlag = false;
+	if (p->iAmmoType > -1)
+	{
+		bFlag = (p->iClip > 0) || CountAmmo(p->iAmmoType);
+		if (p->iAmmo2Type > -1 && !bFlag)
+			return CountAmmo(p->iAmmo2Type) || (p->iClip2 > 0);
+		else
+			return bFlag;
+	}
+}
+AMMO WeaponsResource::GetAmmo(int iId)
+{
+	return iId;
+}
+void WeaponsResource::SetAmmo(int iId, int iCount)
+{
+	riAmmo[iId] = iCount;
 }
 WeaponsResource gWR;
