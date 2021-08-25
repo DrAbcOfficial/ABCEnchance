@@ -83,22 +83,6 @@ void CHudArmorHealth::Init(void)
 	m_pfnDamage = HOOK_MESSAGE(Damage);
 	m_pfnBattery = HOOK_MESSAGE(Battery);
 
-	m_iHealth = 100;
-	m_fFade = 0;
-	m_iFlags = 0;
-	m_bitsDamage = 0;
-	m_takeDamage = 0;
-	m_takeArmor = 0;
-	m_iBat = 0;
-	giDmgHeight = 0;
-	giDmgWidth = 0;
-	memset(m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES);
-
-	iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
-	iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
-	iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
-	iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
-
 	StartX = atof(pScheme->GetResourceString("HealthArmor.StartX"));
 	IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
 	TextWidth = atof(pScheme->GetResourceString("HealthArmor.TextWidth"));
@@ -107,7 +91,6 @@ void CHudArmorHealth::Init(void)
 	ElementGap = atof(pScheme->GetResourceString("HealthArmor.ElementGap"));
 	BackGroundY = atof(pScheme->GetResourceString("HealthArmor.BackGroundY"));
 	BackGroundLength = atof(pScheme->GetResourceString("HealthArmor.BackGroundLength"));
-	BackGroundAlpha = atof(pScheme->GetResourceString("HealthArmor.BackGroundAlpha"));
 
 	HealthIconColor = pScheme->GetColor("HealthArmor.HealthIconColor", gDefaultColor);
 	HealthBarColor = pScheme->GetColor("HealthArmor.HealthBarColor", gDefaultColor);
@@ -115,11 +98,11 @@ void CHudArmorHealth::Init(void)
 	ArmorIconColor = pScheme->GetColor("HealthArmor.ArmorIconColor", gDefaultColor);
 	ArmorBarColor = pScheme->GetColor("HealthArmor.ArmorBarColor", gDefaultColor);
 	ArmorTextColor = pScheme->GetColor("HealthArmor.ArmorTextColor", gDefaultColor);
-	BackGroundColor = pScheme->GetColor("HealthArmor.BackGroundColor", gDefaultColor);
 	PainIndicatorColor = pScheme->GetColor("HealthArmor.PainIndicatorColor", gDefaultColor);
 	PainIndicatorColorA = pScheme->GetColor("HealthArmor.PainIndicatorColorA", gDefaultColor);
 
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
+	Reset();
 }
 int CHudArmorHealth::VidInit(void)
 {
@@ -138,6 +121,8 @@ void CHudArmorHealth::Reset(void)
 	iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
 	iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
 	iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
+	iHealthBarBackground = g_pSurface->CreateNewTextureID();
+	g_pSurface->DrawSetTextureFile(iHealthBarBackground, "abcenchance/tga/healthbar_background", true, false);
 
 	m_iHealth = 100;
 	m_fFade = 0;
@@ -147,6 +132,9 @@ void CHudArmorHealth::Reset(void)
 	m_takeArmor = 0;
 	m_bitsDamage = 0;
 	m_iBat = 0;
+	giDmgHeight = 0;
+	giDmgWidth = 0;
+	memset(m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES);
 
 	flPainIndicatorKeepTime = 0.0f;
 	for (int i = 0; i < NUM_DMG_TYPES; i++)
@@ -159,16 +147,11 @@ int CHudArmorHealth::Draw(float flTime)
 	if (flTime < flPainIndicatorKeepTime)
 		DrawPain(flTime);
 	int r, g, b, a;
-	float iSizeStep = (float)gScreenInfo.iWidth / 3 / BackGroundAlpha;
-	float i = 0, nowX = 0;
 	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
+	g_pSurface->DrawSetTexture(iHealthBarBackground);
+	g_pSurface->DrawTexturedRect(0, flBackGroundY, gScreenInfo.iWidth / 3, gScreenInfo.iHeight);
+
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
-	BackGroundColor.GetColor(r, g, b, a);
-	for (i = BackGroundAlpha; i > 0.0f; i--)
-	{
-		gEngfuncs.pfnFillRGBABlend(nowX, flBackGroundY, iSizeStep, flBackGroundHeight, r, g, b, i);
-		nowX += iSizeStep;
-	}
 	int iStartX = gScreenInfo.iWidth / StartX;
 	int iIconSize = flBackGroundHeight * IconSize;
 	int iTextWidth = flBackGroundHeight * TextWidth;

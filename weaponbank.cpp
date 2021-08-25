@@ -384,10 +384,9 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 		else if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS)
 			gridDrawMenu[iNowSlot].iPos = 0;
 	}
-	else {
+	else
 		iNowSlot = iSlot;
-		gridDrawMenu[iNowSlot].iPos = 0;
-	}
+
 	int iCount = 0;
 	for (int i = 0; i < MAX_WEAPON_POSITIONS; i++)
 	{

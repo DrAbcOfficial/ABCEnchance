@@ -90,6 +90,11 @@ public:
 	virtual int Draw(float flTime);
 	virtual void Reset(void);
 	virtual int VidInit(void);
+	int DrawPain(float fTime);
+	int DrawDamage(float fTime);
+	void CalcDamageDirection(vec3_t vecFrom);
+	void UpdateTiles(float fTime, long bits);
+
 	int m_iHealth;
 	int m_iBat;
 	int m_iFlags;
@@ -105,6 +110,7 @@ public:
 	int iArmorIconNull;
 	int iArmorIconFull;
 	int iPainIndicator;
+	int iHealthBarBackground;
 
 	float flPainIndicatorKeepTime = 0;
 	vec2_t vecPainIndicatorA;
@@ -112,7 +118,6 @@ public:
 	vec2_t vecPainIndicatorC;
 	vec2_t vecPainIndicatorD;
 
-	float BackGroundAlpha = 128;
 	float StartX = 48;
 	float IconSize = 0.5;
 	float TextWidth = 1;
@@ -132,7 +137,6 @@ public:
 	Color PainIndicatorColor;
 	Color PainIndicatorColorA;
 	Color BitDamageColor;
-	Color BackGroundColor;
 
 	vgui::HFont HUDFont;
 	vgui::HFont HUDBigFont;
@@ -141,10 +145,5 @@ public:
 	int m_takeDamage;
 	int m_takeArmor;
 	vec3_t vecDamageFrom;
-
-	int DrawPain(float fTime);
-	int DrawDamage(float fTime);
-	void CalcDamageDirection(vec3_t vecFrom);
-	void UpdateTiles(float fTime, long bits);
 };
 extern CHudArmorHealth m_HudArmorHealth;

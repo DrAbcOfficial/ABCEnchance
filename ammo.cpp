@@ -35,7 +35,7 @@ int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
-	int iCount = READ_BYTE();
+	int iCount = READ_LONG();
 	gWR.SetAmmo(iIndex, abs(iCount));
 	return m_pfnAmmoX(pszName, iSize, pbuf);
 }
@@ -354,7 +354,6 @@ int CHudCustomAmmo::Init(void)
 
 	BackGroundY = atof(pScheme->GetResourceString("AmmoHUD.BackGroundY"));
 	BackGroundLength = atof(pScheme->GetResourceString("AmmoHUD.BackGroundLength"));
-	BackGroundAlpha = atof(pScheme->GetResourceString("AmmoHUD.BackGroundAlpha"));
 
 	Ammo1IconColor = pScheme->GetColor("AmmoHUD.Ammo1IconColor", gDefaultColor);
 	Ammo1BigTextColor = pScheme->GetColor("AmmoHUD.Ammo1BigTextColor", gDefaultColor);
@@ -362,7 +361,6 @@ int CHudCustomAmmo::Init(void)
 	Ammo2IconColor = pScheme->GetColor("AmmoHUD.Ammo2IconColor", gDefaultColor);
 	Ammo2BigTextColor = pScheme->GetColor("AmmoHUD.Ammo2BigTextColor", gDefaultColor);
 	Ammo2TextColor = pScheme->GetColor("AmmoHUD.Ammo2TextColor", gDefaultColor);
-	BackGroundColor = pScheme->GetColor("AmmoHUD.BackGroundColor", gDefaultColor);
 
 	SelectCyclerColor = pScheme->GetColor("AmmoHUD.SelectCyclerColor", gDefaultColor);
 	SelectCyclerRinColor = pScheme->GetColor("AmmoHUD.SelectCyclerRinColor", gDefaultColor);
@@ -396,6 +394,8 @@ void CHudCustomAmmo::Reset(void)
 	m_bOpeningAnnularMenu = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
+	iBackGroundTga = g_pSurface->CreateNewTextureID();
+	g_pSurface->DrawSetTextureFile(iBackGroundTga, "abcenchance/tga/ammobar_background", true, false);
 	gWR.Reset();
 	gHR.Reset();
 }
@@ -421,8 +421,7 @@ int CHudCustomAmmo::Draw(float flTime)
 
 	int iFlags = DHN_DRAWZERO; // draw 0 values
 	int r, g, b, a;
-	float iSizeStep = (float)gScreenInfo.iWidth / 5 / BackGroundAlpha;
-	float i = 0, nowX = gScreenInfo.iWidth;
+	float i = 0, nowX = gScreenInfo.iWidth * (1 - 1/ BackGroundLength) ;
 	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
 	int iStartX = gScreenInfo.iWidth / StartX;
@@ -435,13 +434,8 @@ int CHudCustomAmmo::Draw(float flTime)
 
 	if (pw->iAmmoType > 0)
 	{
-
-		BackGroundColor.GetColor(r, g, b, a);
-		for (i = BackGroundAlpha; i > 0.0f; i--)
-		{
-			gEngfuncs.pfnFillRGBABlend(nowX, flBackGroundY, iSizeStep, flBackGroundHeight, r, g, b, i);
-			nowX -= iSizeStep;
-		}
+		g_pSurface->DrawSetTexture(iBackGroundTga);
+		g_pSurface->DrawTexturedRect(nowX, flBackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
 		nowX += pw->iAmmo2Type > 0 ? iStartX : iStartX * 3;
 		Ammo1IconColor.GetColor(r, g, b, a);
 		//²ÙÄãÂè£¬ÍÂÁË£¬»ÙÃð°É£¬ÀÛÁË
@@ -514,7 +508,7 @@ int CHudCustomAmmo::Draw(float flTime)
 }
 void CHudCustomAmmo::ChosePlayerWeapon(void)
 {
-	if (gWR.gridDrawMenu[gWR.iNowSlot].iId >-1) {
+	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1) {
 		WEAPON* wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
 		if (!(wp->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(wp))
 			return;

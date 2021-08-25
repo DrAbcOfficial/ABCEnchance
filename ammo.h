@@ -17,10 +17,10 @@ public:
 	float ElementGap = 0.2;
 	float BackGroundY = 0.95;
 	float BackGroundLength = 3;
-	float BackGroundAlpha = 128;
 
 	int iSelectCyclerSpr = 0;
 	int iSelectCyclerRinSpr = 0;
+	int iBackGroundTga = 0;
 
 	Color Ammo1IconColor;
 	Color Ammo1BigTextColor;
@@ -28,7 +28,6 @@ public:
 	Color Ammo2IconColor;
 	Color Ammo2BigTextColor;
 	Color Ammo2TextColor;
-	Color BackGroundColor;
 
 	Color SelectCyclerColor;
 	Color SelectCyclerRinColor;
