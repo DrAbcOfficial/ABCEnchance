@@ -480,13 +480,10 @@ int CHudCustomAmmo::Draw(float flTime)
 		Ammo1BigTextColor.GetColor(r, g, b, a);
 		if (pw->iClip >= 0)
 		{
-			wsprintfW(buf, L"%d", pw->iClip);
+			wsprintfW(buf, L"%d/", pw->iClip);
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
 			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-			nowX += iTextWidth;
-			GetStringSize(L"/", &iTextWidth, NULL, HUDFont);
-			DrawVGUI2String(L"/", nowX, nowY, r, g, b, HUDFont);
 			nowX += iTextWidth;
 			nowY += iTextHeight;
 			Ammo1TextColor.GetColor(r, g, b, a);
@@ -502,7 +499,7 @@ int CHudCustomAmmo::Draw(float flTime)
 			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
-		nowX += iElementGap * 5;
+		nowX += iElementGap * 6;
 	}
 
 	if (pw->iAmmo2Type > 0)
@@ -510,16 +507,14 @@ int CHudCustomAmmo::Draw(float flTime)
 		Ammo2BigTextColor.GetColor(r, g, b, a);
 		if (pw->iClip2 >= 0)
 		{
-			wsprintfW(buf, L"%d", pw->iClip2);
+			nowX += iElementGap * 2;
+			wsprintfW(buf, L"%d/", pw->iClip2);
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
 			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-			nowX += iTextWidth;
-			GetStringSize(L"/", &iTextWidth, NULL, HUDFont);
-			DrawVGUI2String(L"/", nowX, nowY, r, g, b, HUDFont);
-			Ammo2TextColor.GetColor(r, g, b, a);
-			nowX += iTextWidth;
+			nowX += iTextWidth + iElementGap;
 			nowY += iTextHeight;
+			Ammo2TextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
 			nowY -= iTextHeight;
