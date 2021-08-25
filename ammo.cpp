@@ -527,7 +527,7 @@ int CHudCustomAmmo::Draw(float flTime)
 			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
-		nowX += iElementGap;
+		nowX += iElementGap * 3;
 		Ammo2IconColor.GetColor(r, g, b, a);
 		nowY = flBackGroundY + (m_pWeapon->rcAmmo2.bottom - m_pWeapon->rcAmmo2.top) / 2;
 		gEngfuncs.pfnSPR_Set(m_pWeapon->hAmmo2, r, g, b);
