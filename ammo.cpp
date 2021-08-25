@@ -302,7 +302,7 @@ void __UserCmd_Drop(void)
 }
 void __UserCmd_OpenAnnularMenu(void)
 {
-	if (!m_HudCustomAmmo.m_bOpeningAnnularMenu) {
+	if (!m_HudCustomAmmo.m_bOpeningAnnularMenu && !m_HudCustomAmmo.m_bSelectMenuDisplay) {
 		if (m_HudCustomAmmo.m_fFade <= gEngfuncs.GetClientTime())
 			gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
 		m_HudCustomAmmo.m_bOpeningAnnularMenu = true;
@@ -311,7 +311,7 @@ void __UserCmd_OpenAnnularMenu(void)
 }
 void __UserCmd_CloseAnnularMenu(void)
 {
-	if (m_HudCustomAmmo.m_bOpeningAnnularMenu) {
+	if (m_HudCustomAmmo.m_bOpeningAnnularMenu && m_HudCustomAmmo.m_bSelectMenuDisplay) {
 		m_HudCustomAmmo.m_bOpeningAnnularMenu = false;
 		m_HudCustomAmmo.m_fFade = 0;
 		gHudDelegate->m_iVisibleMouse = false;
