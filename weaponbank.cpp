@@ -33,8 +33,6 @@ void WeaponsResource::Init(void)
 void WeaponsResource::Reset(void)
 {
 	iNowSlot = -1;
-	iNowPos = -1;
-	iNowSelect = -1;
 	memset(rgWeapons, 0, sizeof rgWeapons);
 	memset(riAmmo, 0, sizeof riAmmo);
 	memset(gridSlotPosDataMap, -1, sizeof gridSlotPosDataMap);
@@ -66,7 +64,7 @@ int WeaponsResource::CountMenuWeapons() {
 	int i, c = 0;
 	for (i = 0; i < MAX_WEAPON_SLOTS; i++)
 	{
-		if (gridDrawMenu[i] > 0)
+		if (gridDrawMenu[i].iId > 0)
 			c++;
 	}
 	return c;
@@ -374,21 +372,21 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect)
 }
 void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 {
-	if (gHudDelegate->m_fPlayerDead)
+	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
-
 	if (iSlot >= MAX_WEAPON_SLOTS || iSlot < 0)
 		return;
+
 	if (iSlot == iNowSlot) {
-		iNowPos += fAdvance;
-		if (iNowPos < 0)
-			iNowPos = MAX_WEAPON_POSITIONS-1;
-		else if (iNowPos >= MAX_WEAPON_POSITIONS)
-			iNowPos = 0;
+		gridDrawMenu[iNowSlot].iPos += fAdvance;
+		if (gridDrawMenu[iNowSlot].iPos < 0)
+			gridDrawMenu[iNowSlot].iPos = MAX_WEAPON_POSITIONS-1;
+		else if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS)
+			gridDrawMenu[iNowSlot].iPos = 0;
 	}
 	else {
 		iNowSlot = iSlot;
-		iNowPos = 0;
+		gridDrawMenu[iNowSlot].iPos = 0;
 	}
 	int iCount = 0;
 	for (int i = 0; i < MAX_WEAPON_POSITIONS; i++)
@@ -396,19 +394,20 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 		if (gridSlotMap[iNowSlot][i] >= 0)
 			iCount++;
 	}
+
 	if (iCount <= 0) {
-		iNowSelect = -1;
+		gridDrawMenu[iNowSlot].iId = -1;
 		return;
 	}
-	while (iNowPos < MAX_WEAPON_POSITIONS)
+	while (gridDrawMenu[iNowSlot].iPos < MAX_WEAPON_POSITIONS)
 	{
-		if (gridSlotMap[iNowSlot][iNowPos] >= 0) {
-			iNowSelect = gridSlotMap[iNowSlot][iNowPos];
+		if (gridSlotMap[iNowSlot][gridDrawMenu[iNowSlot].iPos] >= 0) {
+			gridDrawMenu[iNowSlot].iId = gridSlotMap[iNowSlot][gridDrawMenu[iNowSlot].iPos];
 			break;
 		}
-		iNowPos++;
-		if (iNowPos >= MAX_WEAPON_POSITIONS)
-			iNowPos = 0;
+		gridDrawMenu[iNowSlot].iPos++;
+		if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS)
+			gridDrawMenu[iNowSlot].iPos = 0;
 	}
 	gEngfuncs.pfnPlaySoundByName("common/wpn_moveselect.wav", 1);
 	m_HudCustomAmmo.m_fFade = gEngfuncs.GetClientTime() + m_HudCustomAmmo.SelectCyclerHoldTime;
@@ -416,17 +415,19 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 void WeaponsResource::FillMenuGrid()
 {
 	int i,j;
-	for (i = 0; i < MAX_WEAPON_SLOTS; i++)
-	{
-		for (j = 0; j < MAX_WEAPON_POSITIONS; j++)
-		{
-			if (gridSlotMap[i][j] >= 0)
-			{
-				gridDrawMenu[i] = gridSlotMap[i][j];
-				break;
+	for (i = 0; i < MAX_WEAPON_SLOTS; i++){
+		if (gridDrawMenu[i].iId > 0 && gridSlotMap[i][gridDrawMenu[i].iPos] > 0){
+				continue;
+		}
+		else{
+			for (j = 0; j < MAX_WEAPON_POSITIONS; j++){
+				if (gridSlotMap[i][j] > 0){
+					gridDrawMenu[i] = { gridSlotMap[i][j],j };
+					break;
+				}
+				else
+					gridDrawMenu[i] = { -1,-1 };
 			}
-			else
-				gridDrawMenu[i] = -1;
 		}
 	}
 }

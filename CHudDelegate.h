@@ -17,7 +17,6 @@ public:
 	virtual void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 	~CHudDelegate();			// destructor, frees allocated memory
 
-	bool m_fPlayerDead;
 	int m_iPlayerHealth;
 	int m_iVisibleMouse;
 

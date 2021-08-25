@@ -86,7 +86,6 @@ void CHudDelegate::HUD_Draw(float flTime)
 }
 void CHudDelegate::HUD_Reset(void)
 {
-	m_fPlayerDead = FALSE;
 	m_iPlayerHealth = 100;
 	m_HudArmorHealth.Reset();
 	m_HudCustomAmmo.Reset();

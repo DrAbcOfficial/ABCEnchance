@@ -4,6 +4,11 @@
 #define MAX_WEAPONS MAX_WEAPON_POSITIONS * MAX_WEAPON_SLOTS
 #define MAX_AMMO 999
 
+typedef struct {
+	int iId = -1;
+	int iPos = -1;
+}GridMenuItem;
+
 class WeaponsResource
 {
 private:
@@ -14,10 +19,8 @@ private:
 	int	riAmmo[MAX_AMMO];
 
 public:
-	int gridDrawMenu[MAX_WEAPON_SLOTS];
+	GridMenuItem gridDrawMenu[MAX_WEAPON_SLOTS];
 	int iNowSlot;
-	int iNowPos;
-	int iNowSelect;
 
 	void Init(void);
 	void Reset(void);
@@ -43,5 +46,4 @@ public:
 	int HasAmmo(WEAPON* p);
 	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect);
 };
-
 extern WeaponsResource gWR;

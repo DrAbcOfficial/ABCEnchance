@@ -54,5 +54,7 @@ public:
 	WEAPON* m_pWeapon;
 	int	m_HUD_bucket0;
 	int m_HUD_selection;
+
+	bool m_bAcceptDeadMessage = false;
 };
 extern CHudCustomAmmo m_HudCustomAmmo;

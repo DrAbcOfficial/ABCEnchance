@@ -42,9 +42,6 @@
 
 CHudCustomAmmo m_HudCustomAmmo;
 
-HSPRITE ghsprBuckets;					// Sprite for top row of weapons menu
-int giBucketHeight, giBucketWidth, giABHeight, giABWidth; // Ammo Bar width and height
-
 pfnUserMsgHook m_pfnCurWeapon;
 pfnUserMsgHook m_pfnWeaponList;
 pfnUserMsgHook m_pfnCustWeapon;
@@ -161,7 +158,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		if (iState > 1)
 			bOnTarget = TRUE;
 		if(gHudDelegate->m_iPlayerHealth > 0)
-			gHudDelegate->m_fPlayerDead = FALSE;
+			m_HudCustomAmmo.m_bAcceptDeadMessage = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
 			return m_pfnCurWeapon(pszName, iSize, pbuf);
@@ -189,22 +186,25 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iFlag1 = READ_BYTE();
 		int iFlag2 = READ_BYTE();
 		int iAll = iFlag1 + iFlag2;
+		if (gHudDelegate->m_iPlayerHealth > 0)
+			m_HudCustomAmmo.m_bAcceptDeadMessage = FALSE;
+
 		if (gCVars.pCurDebug->value > 0) {
 			gEngfuncs.Con_Printf("message CurWeapon, state %d  flag1  %d  flag2  %d  all  %d\n", 
 				iState, iFlag1, iFlag2, iAll);
 			gEngfuncs.Con_Printf("message CurWeapon, weaponlist %d  weapongrid  %d  weaponmenu  %d\n", 
 				gWR.CountWeapons(), gWR.CountGridWeapons(), gWR.CountMenuWeapons());
 			gEngfuncs.Con_Printf("message CurWeapon, health %d  deadflag  %d  fadetime  %g  nowtime %g display  %d\n",
-				gHudDelegate->m_iPlayerHealth, gHudDelegate->m_fPlayerDead, m_HudCustomAmmo.m_fFade, 
+				gHudDelegate->m_iPlayerHealth, m_HudCustomAmmo.m_bAcceptDeadMessage, m_HudCustomAmmo.m_fFade,
 				gEngfuncs.GetClientTime(), m_HudCustomAmmo.m_bSelectMenuDisplay);
 		}
 		switch (iAll)
 		{
 		case 0X1FE:{
-			if (gHudDelegate->m_fPlayerDead && gHudDelegate->m_iPlayerHealth <= 0)
+			if (m_HudCustomAmmo.m_bAcceptDeadMessage && gHudDelegate->m_iPlayerHealth <= 0)
 				gWR.DropAllWeapons();
 			if(gHudDelegate->m_iPlayerHealth <= 0)
-				gHudDelegate->m_fPlayerDead = TRUE;
+				m_HudCustomAmmo.m_bAcceptDeadMessage = TRUE;
 			break;
 		} 
 		case 0X2:break;
@@ -298,13 +298,11 @@ void __UserCmd_Attack1(void)
 {
 	if (m_HudCustomAmmo.m_fFade > gEngfuncs.GetClientTime())
 	{
-		if (gHudDelegate->m_fPlayerDead)
+		if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 			return UserCmd_Attack1();
 		m_HudCustomAmmo.ChosePlayerWeapon();
 	}
-	gWR.iNowSelect = 0;
-	gWR.iNowPos = 0;
-	gWR.iNowSelect = 0;
+	gWR.iNowSlot = 0;
 	m_HudCustomAmmo.m_fFade = 0;
 	m_HudCustomAmmo.m_bSelectMenuDisplay = false;
 	return UserCmd_Attack1();
@@ -314,9 +312,7 @@ void __UserCmd_Drop(void)
 	if (m_HudCustomAmmo.m_pWeapon->iId >0)
 	{
 		gWR.DropWeapon(m_HudCustomAmmo.m_pWeapon);
-		gWR.iNowSelect = 0;
-		gWR.iNowPos = 0;
-		gWR.iNowSelect = 0;
+		gWR.iNowSlot = 0;
 		m_HudCustomAmmo.m_fFade = 0;
 		m_HudCustomAmmo.m_bSelectMenuDisplay = false;
 	}
@@ -428,23 +424,8 @@ int CHudCustomAmmo::VidInit(void)
 {
 	m_HUD_bucket0 = gHudDelegate->GetSpriteIndex("bucket1");
 	m_HUD_selection = gHudDelegate->GetSpriteIndex("selection");
-	ghsprBuckets = gHudDelegate->GetSprite(m_HUD_bucket0);
-	giBucketWidth = gHudDelegate->GetSpriteRect(m_HUD_bucket0).right - gHudDelegate->GetSpriteRect(m_HUD_bucket0).left;
-	giBucketHeight = gHudDelegate->GetSpriteRect(m_HUD_bucket0).bottom - gHudDelegate->GetSpriteRect(m_HUD_bucket0).top;
-
 	gHR.iHistoryGap = max(gHR.iHistoryGap, gHudDelegate->GetSpriteRect(m_HUD_bucket0).bottom - gHudDelegate->GetSpriteRect(m_HUD_bucket0).top);
 	gWR.LoadAllWeaponSprites();
-
-	if (ScreenWidth >= 640)
-	{
-		giABWidth = 20;
-		giABHeight = 4;
-	}
-	else
-	{
-		giABWidth = 10;
-		giABHeight = 2;
-	}
 	return 1;
 }
 int CHudCustomAmmo::Draw(float flTime)
@@ -560,15 +541,13 @@ int CHudCustomAmmo::Draw(float flTime)
 }
 void CHudCustomAmmo::ChosePlayerWeapon(void)
 {
-	if (gWR.iNowSelect >-1) {
-		WEAPON* wp = gWR.GetWeapon(gWR.iNowSelect);
+	if (gWR.gridDrawMenu[gWR.iNowSlot].iId >-1) {
+		WEAPON* wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
 		if (!(wp->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(wp))
 			return;
 		ServerCmd(wp->szName);
 		gEngfuncs.pfnPlaySoundByName("common/wpn_select.wav", 1);
-		gWR.iNowPos = -1;
 		gWR.iNowSlot = -1;
-		gWR.iNowSelect = -1;
 	}
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
@@ -657,9 +636,9 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		//CABD
 		SelectCyclerColor.GetColor(r, g, b, dummy);
 		DrawSPRIconPos(iSelectCyclerSpr, vecC, vecA, vecB, vecD, r, g, b, a * 0.3);
-		if (gWR.gridDrawMenu[i] < 0 || i == gWR.iNowSlot)
+		if (gWR.gridDrawMenu[i].iId <= 0 || i == gWR.iNowSlot)
 			continue;
-		wp = gWR.GetWeapon(gWR.gridDrawMenu[i]);
+		wp = gWR.GetWeapon(gWR.gridDrawMenu[i].iId);
 		if (!wp)
 			continue;
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
@@ -681,9 +660,9 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		DrawVGUI2String(buf, xpos - iTextWidth/2, ypos + iHeight, r, g, b, HUDFont, true);
 	}
 	//绘制已选
-	if (gWR.iNowSelect > -1 && gWR.iNowSlot >= 0)
+	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1 && gWR.iNowSlot >= 0)
 	{
-		wp = gWR.GetWeapon(gWR.iNowSelect);
+		wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
 		Vector2Copy(aryIn[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecA);
 		Vector2Copy(aryIn[gWR.iNowSlot], vecB);
 		Vector2Copy(aryOut[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecC);
@@ -741,16 +720,13 @@ void CHudCustomAmmo::IN_Accumulate()
 		float at = atan2(y, x);
 		int s = at / (0.2 * M_PI);
 		s = at >= 0 ? s : 9 + s;
-		if (gWR.gridDrawMenu[s] > -1)
-		{
+		if (gWR.gridDrawMenu[s].iId > -1)
 			gWR.iNowSlot = s;
-			gWR.iNowSelect = gWR.gridDrawMenu[s];
-		}
 	}
 }
 void CHudCustomAmmo::IN_MouseEvent(int mstate)
 {
-	if (mstate != 1 || gHudDelegate->m_fPlayerDead)
+	if (mstate != 1 || m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
 	//不清空，专门给鼠标换枪使用
 	m_HudCustomAmmo.ChosePlayerWeapon();
