@@ -49,11 +49,10 @@ public:
 	float m_fFade;
 	float m_fAnimateTime;
 	bool m_bOpeningAnnularMenu = false;
-	tagPOINT m_pMousePos;
 	bool m_bSelectMenuDisplay = false;
+
 	WEAPON* m_pWeapon;
 	int	m_HUD_bucket0;
-	int m_HUD_selection;
 
 	bool m_bAcceptDeadMessage = false;
 };

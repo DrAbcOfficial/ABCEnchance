@@ -1,22 +1,3 @@
-/***
-*
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*
-*	This product contains software technology licensed from Id
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
-*	All Rights Reserved.
-*
-*   Use, distribution, and modification of this source code and/or resulting
-*   object code is restricted to non-commercial enhancements to products from
-*   Valve LLC.  All other use, distribution, or modification is prohibited
-*   without written permission from Valve LLC.
-*
-****/
-//
-// Ammo.cpp
-//
-// implementation of CHudAmmo class
-//
 #include <metahook.h>
 #include "parsemsg.h"
 #include "pm_shared.h"
@@ -332,8 +313,7 @@ void __UserCmd_CloseAnnularMenu(void)
 {
 	if (m_HudCustomAmmo.m_bOpeningAnnularMenu) {
 		m_HudCustomAmmo.m_bOpeningAnnularMenu = false;
-		m_HudCustomAmmo.m_fFade = gEngfuncs.GetClientTime() +
-			m_HudCustomAmmo.SelectCyclerHoldTime - m_HudCustomAmmo.SelectCyclerFadeTime;
+		m_HudCustomAmmo.m_fFade = 0;
 		gHudDelegate->m_iVisibleMouse = false;
 	}
 }
@@ -412,8 +392,6 @@ void CHudCustomAmmo::Reset(void)
 {
 	m_fFade = 0;
 	m_fAnimateTime = 0;
-	m_pMousePos.x = 0;
-	m_pMousePos.y = 0;
 	m_bSelectMenuDisplay = false;
 	m_bOpeningAnnularMenu = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
@@ -424,7 +402,6 @@ void CHudCustomAmmo::Reset(void)
 int CHudCustomAmmo::VidInit(void)
 {
 	m_HUD_bucket0 = gHudDelegate->GetSpriteIndex("bucket1");
-	m_HUD_selection = gHudDelegate->GetSpriteIndex("selection");
 	gHR.iHistoryGap = max(gHR.iHistoryGap, gHudDelegate->GetSpriteRect(m_HUD_bucket0).bottom - gHudDelegate->GetSpriteRect(m_HUD_bucket0).top);
 	gWR.LoadAllWeaponSprites();
 	return 1;
