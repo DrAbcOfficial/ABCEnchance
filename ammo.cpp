@@ -186,9 +186,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iFlag1 = READ_BYTE();
 		int iFlag2 = READ_BYTE();
 		int iAll = iFlag1 + iFlag2;
-		if (gHudDelegate->m_iPlayerHealth > 0)
-			m_HudCustomAmmo.m_bAcceptDeadMessage = FALSE;
-
 		if (gCVars.pCurDebug->value > 0) {
 			gEngfuncs.Con_Printf("message CurWeapon, state %d  flag1  %d  flag2  %d  all  %d\n", 
 				iState, iFlag1, iFlag2, iAll);
@@ -207,8 +204,12 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 				m_HudCustomAmmo.m_bAcceptDeadMessage = TRUE;
 			break;
 		} 
-		case 0X2:break;
-		case 0:gWR.DropAllWeapons(); break;
+		case 0:gWR.DropAllWeapons();
+		case 0X2:
+		default: {
+			if (gHudDelegate->m_iPlayerHealth > 0)
+				m_HudCustomAmmo.m_bAcceptDeadMessage = FALSE;
+		}
 		}
 	}
 	return m_pfnCurWeapon(pszName, iSize, pbuf);
