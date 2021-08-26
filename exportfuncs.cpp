@@ -318,11 +318,13 @@ void HUD_Init(void)
 	gCVars.pExpSmokeNumber = gEngfuncs.pfnRegisterVariable("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-
+	
 	gCVars.pModelLag = gEngfuncs.pfnRegisterVariable("cl_modellag", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pModelLagValue = gEngfuncs.pfnRegisterVariable("cl_modellagvalue", "1.0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pCurDebug = gEngfuncs.pfnRegisterVariable("cl_curdebug", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+
+	gCVars.pCamIdealHeight = gEngfuncs.pfnRegisterVariable("cam_idealheight", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gHudDelegate = new CHudDelegate();
 	gExportfuncs.HUD_Init();
@@ -390,7 +392,10 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
 void V_CalcRefdef(struct ref_params_s* pparams)
 {
 	gExportfuncs.V_CalcRefdef(pparams);
-	V_CalcViewModelLag(pparams);
+	if(!gExportfuncs.CL_IsThirdPerson())
+		V_CalcViewModelLag(pparams);
+	else
+		pparams->vieworg[2] -= gCVars.pCamIdealHeight->value;
 }
 void IN_MouseEvent(int mstate)
 {

@@ -148,6 +148,8 @@ int CHudArmorHealth::Draw(float flTime)
 		DrawPain(flTime);
 	int r, g, b, a;
 	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
+	g_pSurface->DrawSetTexture(-1);
+	g_pSurface->DrawSetColor(255, 255, 255, 255);
 	g_pSurface->DrawSetTexture(iHealthBarBackground);
 	g_pSurface->DrawTexturedRect(0, flBackGroundY, gScreenInfo.iWidth / 3, gScreenInfo.iHeight);
 

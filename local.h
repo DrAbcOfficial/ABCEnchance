@@ -49,6 +49,8 @@ typedef struct
 	cvar_t* pModelLag;
 	cvar_t* pModelLagValue;
 
+	cvar_t* pCamIdealHeight;
+
 	cvar_t* pCurDebug;
 
 }cl_cvars_t;

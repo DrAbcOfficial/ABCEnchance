@@ -434,6 +434,8 @@ int CHudCustomAmmo::Draw(float flTime)
 
 	if (pw->iAmmoType > 0)
 	{
+		g_pSurface->DrawSetTexture(-1);
+		g_pSurface->DrawSetColor(255, 255, 255, 255);
 		g_pSurface->DrawSetTexture(iBackGroundTga);
 		g_pSurface->DrawTexturedRect(nowX, flBackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
 		nowX += pw->iAmmo2Type > 0 ? iStartX : iStartX * 3;
