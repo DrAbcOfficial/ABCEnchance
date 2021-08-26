@@ -87,6 +87,9 @@
     <ClCompile Include="viewmodellag.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="deathmsg.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="viewmodellag.h">
       <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="deathmsg.h">
+      <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

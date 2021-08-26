@@ -5,6 +5,7 @@
 #include "weapon.h"
 #include "ammo.h"
 #include "healthhud.h"
+#include "deathmsg.h"
 
 #include "CHudDelegate.h"
 #include <local.h>
@@ -16,6 +17,7 @@ void CHudDelegate::HUD_Init(void)
 {
 	m_HudArmorHealth.Init();
 	m_HudCustomAmmo.Init();
+	m_HudDeathMsg.Init();
 }
 void CHudDelegate::HUD_VidInit(void)
 {
