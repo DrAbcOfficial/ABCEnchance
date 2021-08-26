@@ -210,18 +210,18 @@ int CHudArmorHealth::Draw(float flTime)
 void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 {
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	float yaw = local->curstate.angles[1];
-	vec3_t vc;
-	vc[0] = vecFrom[0] - local->curstate.origin[0];
-	vc[1] = vecFrom[1] - local->curstate.origin[1];
-	vc[2] = vecFrom[2] - local->curstate.origin[2];
+	vec2_t finalPos;
+	finalPos[0] = vecFrom[0] - local->curstate.origin[0];
+	finalPos[1] = vecFrom[1] - local->curstate.origin[1];
+	// 计算旋转
+	float angle = local->curstate.angles[1] * (M_PI / 180.0);
+	float ca = cos(angle);
+	float sa = sin(angle);
 
-	vec3_t angle;
-	VectorAngles(vc, angle);
-	yaw = angle[1] - yaw - 180;
-	if (yaw < 0)
-		yaw += 360;
-	yaw *= (M_PI / 180.0);
+	finalPos[0] = finalPos[0] * ca - finalPos[1] * sa;
+	finalPos[1] = -finalPos[0] * sa + finalPos[1] * ca;
+
+	float hudAngle = atan2(finalPos[1], finalPos[0]);
 	//以屏幕中心为坐标轴的坐标系
 	float sprWidth = gScreenInfo.iHeight * 0.1667;
 	float y1 = gScreenInfo.iHeight / 4;
@@ -236,14 +236,16 @@ void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 	*  --------------+----------------->x
 	*/
 	vec2_t vecA, vecB, vecC, vecD;
-	vecA[0] = -sprWidth * cos(yaw) + y2 * sin(yaw);
-	vecA[1] = sprWidth * sin(yaw) + y2 * cos(yaw);
-	vecB[0] = sprWidth * cos(yaw) + y2 * sin(yaw);
-	vecB[1] = -sprWidth * sin(yaw) + y2 * cos(yaw);
-	vecC[0] = -sprWidth * cos(yaw) + y1 * sin(yaw);
-	vecC[1] = sprWidth * sin(yaw) + y1 * cos(yaw);
-	vecD[0] = sprWidth * cos(yaw) + y1 * sin(yaw);
-	vecD[1] = -sprWidth * sin(yaw) + y1 * cos(yaw);
+	ca = cos(hudAngle);
+	sa = sin(hudAngle);
+	vecA[0] = -sprWidth * ca + y2 * sa;
+	vecA[1] = sprWidth * sa + y2 * ca;
+	vecB[0] = sprWidth * ca + y2 * sa;
+	vecB[1] = -sprWidth * sa + y2 * ca;
+	vecC[0] = -sprWidth * ca + y1 * sa;
+	vecC[1] = sprWidth * sa + y1 * ca;
+	vecD[0] = sprWidth * ca + y1 * sa;
+	vecD[1] = -sprWidth * sa + y1 * ca;
 	//变换为OpenGL屏幕坐标
 	int halfWidth = gScreenInfo.iWidth / 2;
 	int halfHeight = gScreenInfo.iHeight / 2;

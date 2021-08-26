@@ -415,11 +415,9 @@ int CHudCustomAmmo::Draw(float flTime)
 	gHR.DrawAmmoHistory(flTime);
 	if (!m_pWeapon)
 		return 0;
-	WEAPON* pw = m_pWeapon; // shorthand
+	WEAPON* pw = m_pWeapon;
 	if ((pw->iAmmoType < 0) && (pw->iAmmo2Type < 0))
 		return 0;
-
-	int iFlags = DHN_DRAWZERO; // draw 0 values
 	int r, g, b, a;
 	float i = 0, nowX = gScreenInfo.iWidth * (1 - 1/ BackGroundLength) ;
 	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
@@ -431,7 +429,6 @@ int CHudCustomAmmo::Draw(float flTime)
 	int iTextHeight;
 	int iTextWidth;
 	wchar_t buf[16];
-
 	if (pw->iAmmoType > 0)
 	{
 		g_pSurface->DrawSetTexture(-1);
@@ -549,11 +546,8 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	int iOffset = SelectCyclerOffset;
 	if (!m_bSelectMenuDisplay)
 		m_fAnimateTime = flTime + SelectCyclerAnimateTime;
-	if (m_fAnimateTime > flTime)
-	{
-		if (flTimeDiffer >= SelectCyclerHoldTime - SelectCyclerAnimateTime)
-			iOffset *= ((float)(SelectCyclerHoldTime) - flTimeDiffer) / SelectCyclerAnimateTime;
-	}	
+	if (m_fAnimateTime > flTime && flTimeDiffer >= SelectCyclerHoldTime - SelectCyclerAnimateTime)
+		iOffset *= ((float)(SelectCyclerHoldTime) - flTimeDiffer) / SelectCyclerAnimateTime;	
 	int i;
 	float ac, as;
 	vec2_t aryOut[10];
