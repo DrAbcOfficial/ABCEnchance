@@ -102,16 +102,6 @@ void CHudDelegate::HUD_Reset(void)
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
 }
-int CHudDelegate::GetSpriteIndex(const char* SpriteName)
-{
-	for (int i = 0; i < m_iSpriteCount; i++)
-	{
-		if (strncmp(SpriteName, m_rgszSpriteNames + (i * MAX_SPRITE_NAME_LENGTH), MAX_SPRITE_NAME_LENGTH) == 0)
-			return i;
-	}
-
-	return -1; // invalid sprite
-}
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 {
 }
@@ -138,6 +128,17 @@ void CHudDelegate::IN_Accumulate(void)
 void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 {
 	
+}
+
+int CHudDelegate::GetSpriteIndex(const char* SpriteName)
+{
+	for (int i = 0; i < m_iSpriteCount; i++)
+	{
+		if (strncmp(SpriteName, m_rgszSpriteNames + (i * MAX_SPRITE_NAME_LENGTH), MAX_SPRITE_NAME_LENGTH) == 0)
+			return i;
+	}
+
+	return -1; // invalid sprite
 }
 CHudDelegate :: ~CHudDelegate()
 {

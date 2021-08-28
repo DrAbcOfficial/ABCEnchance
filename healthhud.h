@@ -86,10 +86,10 @@ typedef struct
 class CHudArmorHealth
 {
 public:
-	virtual void Init(void);
-	virtual int Draw(float flTime);
-	virtual void Reset(void);
-	virtual int VidInit(void);
+	void Init(void);
+	int Draw(float flTime);
+	void Reset(void);
+	int VidInit(void);
 	int DrawPain(float fTime);
 	int DrawDamage(float fTime);
 	void CalcDamageDirection(vec3_t vecFrom);
