@@ -6,19 +6,26 @@
 class CHudDelegate
 {
 public:
-	virtual void HUD_Init(void);
-	virtual void HUD_VidInit(void);
-	virtual void HUD_Draw(float flTime);
-	virtual void HUD_Reset(void);
-	virtual void HUD_UpdateClientData(client_data_t* cdata, float time);
-	virtual void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
-	virtual void IN_MouseEvent(int mstate);
-	virtual void IN_Accumulate(void);
-	virtual void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
+	void GL_Init(void);
+	void HUD_Init(void);
+	void HUD_VidInit(void);
+	void HUD_Draw(float flTime);
+	void HUD_Reset(void);
+	void HUD_UpdateClientData(client_data_t* cdata, float time);
+	void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
+	void HUD_Clear(void);
+	void HUD_PreRenderView(int a1);
+	void IN_MouseEvent(int mstate);
+	void IN_Accumulate(void);
+	void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 	~CHudDelegate();			// destructor, frees allocated memory
 
 	int m_iPlayerHealth;
 	int m_iVisibleMouse;
+	int m_iIsOverView = 0;
+	float m_flOverViewScale;
+	float m_flOverViewYaw;
+	vec3_t m_vecOverViewOrg;
 
 	client_sprite_t* m_pSpriteList;
 	int m_iRes;

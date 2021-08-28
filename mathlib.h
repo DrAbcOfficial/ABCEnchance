@@ -50,7 +50,7 @@ struct mplane_s;
 extern int nanmask;
 
 #define IS_NAN(x) (((*(int *)&x)&nanmask) == nanmask)
-
+#define DEG2RAD(a) (a * M_PI) / 180.0F
 #define clamp(num, a, b) max(min(num, b),a)
 #define METERS_PER_INCH 0.0254f
 #define METER2INCH(x) (float)(x * (1.0f / METERS_PER_INCH))
@@ -58,13 +58,15 @@ extern int nanmask;
 
 #define VectorSubtract(a, b, c) { (c)[0] = (a)[0] - (b)[0]; (c)[1] = (a)[1] - (b)[1]; (c)[2] = (a)[2] - (b)[2]; }
 #define VectorAdd(a, b, c) { (c)[0] = (a)[0] + (b)[0]; (c)[1] = (a)[1] + (b)[1]; (c)[2] = (a)[2] + (b)[2]; }
+#define VectorAddFloat(a,f) {a[0]+=f;a[1]+=f;a[2]+=f;}
 #define VectorCopy(a, b) { (b)[0] = (a)[0]; (b)[1] = (a)[1]; (b)[2] = (a)[2]; }
 #define Vector2Copy(a, b) { (b)[0] = (a)[0]; (b)[1] = (a)[1]; }
 #define VectorClear(a) { (a)[0] = 0.0; (a)[1] = 0.0; (a)[2] = 0.0; }
 #define DotProduct(x, y) ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
 #define ColorCalcuAlpha(r, g, b, a) {(r)*=(a)/255;(g)*=(a)/255;(b)*=(a)/255;}
-void MatrixCopy(float in[4][3], float out[4][3]);
+#define Vector2Rotate(out,x, y, rotate) {out[0] = x * cos(rotate) - y * sin(rotate);out[1] = x * sin(rotate) + y * cos(rotate);}
 
+void MatrixCopy(float in[4][3], float out[4][3]);
 void VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc);
 
 vec_t _DotProduct(vec3_t v1, vec3_t v2);

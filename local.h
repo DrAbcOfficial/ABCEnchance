@@ -9,12 +9,16 @@ typedef struct
 	void		(*R_RicochetSprite)			(float* pos, struct model_s* pmodel, float duration, float scale);
 	void		(*R_SparkEffect)			(float* pos, int count, int velocityMin, int velocityMax);
 	void		(*R_BloodStream)			(float* org, float* dir, int pcolor, int speed);
-	float* (*GetClientColor)			(int clientIndex);
+	float*		(*GetClientColor)			(int clientIndex);
 
 	void		(*VectorScale)				(float* pucnangle1, float scale, float* pucnangle2);
 	void		(*R_NewMap)					(void);
 	void(__fastcall* R_CalcDamageDirection)(void* pthis, int dummy, int x, float y, float z);
-
+	int			(*CL_IsDevOverview)			(void);
+	void		(*R_RenderView)				(int a1);
+	void		(*R_RenderScene)			(void);
+	void		(*GL_Bind)					(int texnum);
+	void		(__cdecl* CL_SetDevOverView)(int param_1);
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
 }cl_refHookfunc_t;
@@ -50,6 +54,10 @@ typedef struct
 	cvar_t* pModelLagValue;
 
 	cvar_t* pCamIdealHeight;
+
+
+	cvar_t* pRadarZoom;
+	cvar_t* pRadarSize;
 
 	cvar_t* pCurDebug;
 

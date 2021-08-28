@@ -6,6 +6,8 @@
 #include "ammo.h"
 #include "healthhud.h"
 #include "deathmsg.h"
+#include "glew.h"
+#include "radar.h"
 
 #include "CHudDelegate.h"
 #include <local.h>
@@ -13,11 +15,16 @@
 CHudDelegate* gHudDelegate = NULL;
 cl_hookedHud gHookHud;
 
+void CHudDelegate::GL_Init(void)
+{
+	m_HudRadar.GLInit();
+}
 void CHudDelegate::HUD_Init(void)
 {
 	m_HudArmorHealth.Init();
 	m_HudCustomAmmo.Init();
 	m_HudDeathMsg.Init();
+	m_HudRadar.Init();
 }
 void CHudDelegate::HUD_VidInit(void)
 {
@@ -85,12 +92,15 @@ void CHudDelegate::HUD_Draw(float flTime)
 {
 	m_HudArmorHealth.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
+	m_HudRadar.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void)
 {
 	m_iPlayerHealth = 100;
+	m_flOverViewScale = 0;
 	m_HudArmorHealth.Reset();
 	m_HudCustomAmmo.Reset();
+	m_HudRadar.Reset();
 }
 int CHudDelegate::GetSpriteIndex(const char* SpriteName)
 {
@@ -108,6 +118,14 @@ void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
 {
 	m_HudCustomAmmo.ClientMove(ppmove, server);
+}
+void CHudDelegate::HUD_Clear(void)
+{
+	m_HudRadar.Clear();
+}
+void CHudDelegate::HUD_PreRenderView(int a1)
+{
+	m_HudRadar.PreRenderView(a1);
 }
 void CHudDelegate::IN_MouseEvent(int mstate)
 {

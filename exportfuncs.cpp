@@ -1,5 +1,5 @@
 #include "plugins.h"
-
+//Lib
 #include "math.h"
 #include "malloc.h"
 #include "cl_entity.h"
@@ -7,14 +7,14 @@
 #include "com_model.h"
 #include "triangleapi.h"
 #include "pm_movevars.h"
-
+#include "glew.h"
+//Def
 #include "hud.h"
 #include "vguilocal.h"
 #include "exportfuncs.h"
-//HUD
 #include "CColor.h"
 #include "weapon.h"
-
+//HUD
 #include "ammo.h"
 #include "healthhud.h"
 #include "basehealth.h"
@@ -31,7 +31,10 @@ cl_exportfuncs_t gExportfuncs;
 const clientdata_t* gClientData;
 float m_hfov;
 float* pClientEVPunchAngles;
+
+overviewInfo_t* gDevOverview;
 int* g_iVisibleMouse = NULL;
+refdef_t* g_refdef = NULL;
 
 //PLAYER TITLE
 void DrawPlayerTitle()
@@ -202,12 +205,31 @@ void RedrawCorssHair()
 		gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset, iWidth, iLength, r, g, b, a);
 	}
 }
-
 //FINAL SHIT
 void R_NewMap(void)
 {
 	gHudDelegate->HUD_Reset();
 	gHookFuncs.R_NewMap();
+}
+int CL_IsDevOverview(void)
+{
+	return gHudDelegate->m_iIsOverView ? 1 : gHookFuncs.CL_IsDevOverview();
+}
+void CL_SetDevOverView(int param1)
+{
+	gHookFuncs.CL_SetDevOverView(param1);
+	if (gHudDelegate->m_iIsOverView)
+	{
+		(*(vec3_t*)(param1 + 28))[YAW] = gHudDelegate->m_flOverViewYaw;
+		gDevOverview->zoom = gHudDelegate->m_flOverViewScale;
+		VectorCopy(gHudDelegate->m_vecOverViewOrg,gDevOverview->origin);
+	}
+		
+}
+void R_RenderView(int a1)
+{
+	gHudDelegate->HUD_PreRenderView(a1);
+	gHookFuncs.R_RenderView(a1);
 }
 void Sys_ErrorEx(const char* fmt, ...)
 {
@@ -237,11 +259,53 @@ void FillAddress()
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
 	if (engineFactory && engineFactory("EngineSurface007", NULL))
 	{
+		DWORD addr;
 #define R_NEWMAP_SIG "\x55\x8B\xEC\x51\xC7\x45\xFC\x00\x00\x00\x00\xEB\x2A\x8B\x45\xFC\x83\xC0\x01\x89\x45\xFC\x81\x7D\xFC\x00\x01\x00\x00"
 		{
 			gHookFuncs.R_NewMap = (decltype(gHookFuncs.R_NewMap))
 				g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, R_NEWMAP_SIG, Sig_Length(R_NEWMAP_SIG));
 			Sig_FuncNotFound(R_NewMap);
+		}
+#define R_ISCLOVERVIEW_SIG "\xD9\x05\x2A\x2A\x2A\x2A\xD9\xEE\xDA\xE9\xDF\xE0\xF6\xC4\x44\x2A\x2A\x83\x3D\x2A\x2A\x2A\x2A\x00\x2A\x2A\xB8\x01\x00\x00\x00\xC3\x2A\x2A"
+		{
+			gHookFuncs.CL_IsDevOverview = (decltype(gHookFuncs.CL_IsDevOverview))
+				g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, R_ISCLOVERVIEW_SIG, Sig_Length(R_ISCLOVERVIEW_SIG));
+			Sig_FuncNotFound(CL_IsDevOverview);
+		}
+#define R_VIEWREFDEF_SIG "\x68\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68"
+		{
+			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, R_VIEWREFDEF_SIG, Sig_Length(R_VIEWREFDEF_SIG));
+			Sig_AddrNotFound(g_refdef);
+			auto r_refdef_viewangles = (vec_t*)(*(DWORD*)(addr + 28));
+			g_refdef = (refdef_t*)((char*)r_refdef_viewangles - offsetof(refdef_t, viewangles));
+		}
+#define R_RENDERSCENE_SIG_SVENGINE "\xDD\xD8\xDD\xD8\xE8"
+#define R_RENDERVIEW_SIG_SVENGINE "\x55\x8B\xEC\x83\xE4\xC0\x83\xEC\x34\x53\x56\x57\x8B\x7D\x08\x85\xFF"
+		{
+			gHookFuncs.R_RenderView = (void(*)(int))Search_Pattern(R_RENDERVIEW_SIG_SVENGINE);
+			Sig_FuncNotFound(R_RenderView);
+
+			addr = (DWORD)Search_Pattern_From(gHookFuncs.R_RenderView, R_RENDERSCENE_SIG_SVENGINE);
+			Sig_AddrNotFound(R_RenderScene);
+			gHookFuncs.R_RenderScene = (void(*)(void))(addr + 5 + 4 + *(int*)(addr + 5));
+		}
+#define GL_BIND_SIG "\x8B\x44\x24\x04\x39\x05\x2A\x2A\x2A\x2A\x2A\x2A\x50\x68\xE1\x0D\x00\x00\xA3\x2A\x2A\x2A\x2A\xFF\x15\x2A\x2A\x2A\x2A\xC3"
+		{
+			gHookFuncs.GL_Bind = (decltype(gHookFuncs.GL_Bind))
+				g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, GL_BIND_SIG, Sig_Length(GL_BIND_SIG));
+			Sig_FuncNotFound(GL_Bind);
+		}
+#define CL_SETDEVOVERVIEW "\xD9\x05\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\xDC\xC9\xD9\x05\x2A\x2A\x2A\x2A\xDE\xE2\xD9\xC9\xD9\x1D\x2A\x2A\x2A\x2A\xD8\x0D\x2A\x2A\x2A\x2A\xD8\x2D\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\xEE\xD9\x05\x2A\x2A\x2A\x2A\xD8\xD1\xDF\xE0\xD9\xE8\xD9\x05\x2A\x2A\x2A\x2A\xF6\xC4\x41\x2A\x2A\xD8\xC1\xD9\x15\x2A\x2A\x2A\x2A"
+		{
+			gHookFuncs.CL_SetDevOverView = (decltype(gHookFuncs.CL_SetDevOverView))
+				g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, CL_SETDEVOVERVIEW, Sig_Length(CL_SETDEVOVERVIEW));
+			Sig_FuncNotFound(CL_SetDevOverView);
+		}
+#define DEVOVERVIEW_SIG "\x83\xEC\x30\xDD\x5C\x24\x2A\xD9\x05"
+		{
+			addr = (DWORD)Search_Pattern(DEVOVERVIEW_SIG);
+			Sig_AddrNotFound(gDevOverview);
+			gDevOverview = (decltype(gDevOverview))(*(DWORD*)(addr + 9) - 0xC);
 		}
 	}
 	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
@@ -276,12 +340,23 @@ void InstallHook()
 
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.VectorScale, R_VectorScale, (void**)&gHookFuncs.VectorScale);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_NewMap, R_NewMap, (void**)&gHookFuncs.R_NewMap);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_RenderView, R_RenderView, (void**)&gHookFuncs.R_RenderView);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.CL_IsDevOverview, CL_IsDevOverview, (void**)&gHookFuncs.CL_IsDevOverview);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.CL_SetDevOverView, CL_SetDevOverView, (void**)&gHookFuncs.CL_SetDevOverView);
+}
+void GL_Init(void)
+{
+	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, NULL, NULL);
+	auto err = glewInit();
+	if (GLEW_OK != err)
+	{
+		Sys_ErrorEx("glewInit failed, %s", glewGetErrorString(err));
+		return;
+	}
+	gHudDelegate->GL_Init();
 }
 void HUD_Init(void)
 {
-	gScreenInfo.iSize = sizeof(SCREENINFO_s);
-	gEngfuncs.pfnGetScreenInfo(&gScreenInfo);
-
 	HINTERFACEMODULE hVGUI2 = (HINTERFACEMODULE)GetModuleHandle("vgui2.dll");
 	if (hVGUI2)
 	{
@@ -435,4 +510,8 @@ void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 	}
 	else
 		gExportfuncs.CL_CreateMove(frametime, cmd, active);
+}
+void HUD_Clear(void)
+{
+	gHudDelegate->HUD_Clear();
 }

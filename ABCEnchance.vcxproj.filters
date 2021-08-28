@@ -90,6 +90,9 @@
     <ClCompile Include="deathmsg.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="radar.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -228,6 +231,15 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="deathmsg.h">
+      <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="enginedef.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="gldef.h">
+      <Filter>Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="radar.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>

@@ -36,6 +36,7 @@ void IPluginsV3::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_engin
 
 void IPluginsV3::Shutdown(void)
 {
+	HUD_Clear();
 }
 
 void IPluginsV3::LoadEngine(cl_enginefunc_t *pEngfuncs)
@@ -57,12 +58,12 @@ void IPluginsV3::LoadEngine(cl_enginefunc_t *pEngfuncs)
 
 void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 {
-
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
 
 	g_dwClientBase = (PVOID)GetModuleHandleA("client.dll");
 	g_dwClientSize = g_pMetaHookAPI->GetModuleSize((HMODULE)g_dwClientBase);
 
+	GL_Init();
 	pExportFunc->HUD_Init = HUD_Init;
 	pExportFunc->HUD_VidInit = HUD_VidInit;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
