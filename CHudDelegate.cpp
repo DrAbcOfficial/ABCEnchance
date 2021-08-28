@@ -140,6 +140,10 @@ int CHudDelegate::GetSpriteIndex(const char* SpriteName)
 
 	return -1; // invalid sprite
 }
+vgui::ISurface* CHudDelegate::surface()
+{
+	return g_pSurface;
+}
 CHudDelegate :: ~CHudDelegate()
 {
 	delete[] m_rghSprites;

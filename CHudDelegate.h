@@ -18,6 +18,8 @@ public:
 	void IN_MouseEvent(int mstate);
 	void IN_Accumulate(void);
 	void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
+
+	vgui::ISurface* surface();
 	~CHudDelegate();			// destructor, frees allocated memory
 
 	int m_iPlayerHealth;

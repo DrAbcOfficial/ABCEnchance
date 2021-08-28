@@ -35,23 +35,24 @@ int CHudRadar::Init()
 	XOffset = atof(pScheme->GetResourceString("Radar.XOffset"));
 	YOffset = atof(pScheme->GetResourceString("Radar.YOffset"));
 	OutLineAlpha = atof(pScheme->GetResourceString("Radar.OutLineAlpha"));
-	MapAlpha = atof(pScheme->GetResourceString("Radar.MapAlpha"));
+	MapAlpha = (GLubyte)atof(pScheme->GetResourceString("Radar.MapAlpha"));
 	CenterAlpha = atof(pScheme->GetResourceString("Radar.CenterAlpha"));
 
 	return 1;
 }
 void CHudRadar::Reset()
 {
-	OutLineImg = g_pSurface->CreateNewTextureID();
-	g_pSurface->DrawSetTextureFile(OutLineImg, "abcenchance/tga/radar_background", true, false);
+	OutLineImg = gHudDelegate->surface()->CreateNewTextureID();
+	gHudDelegate->surface()->DrawSetTextureFile(OutLineImg, "abcenchance/tga/radar_background", true, false);
 
-	PlayerPointImg = g_pSurface->CreateNewTextureID();
-	g_pSurface->DrawSetTextureFile(PlayerPointImg, "abcenchance/tga/radar_upground", true, false);
+	PlayerPointImg = gHudDelegate->surface()->CreateNewTextureID();
+	gHudDelegate->surface()->DrawSetTextureFile(PlayerPointImg, "abcenchance/tga/radar_upground", true, false);
 }
 void CHudRadar::Draw(float flTime)
 {
 	float size = gCVars.pRadarSize->value;
 	float sizeMap = size * 0.98;
+	float sizeGap = (size - sizeMap) / 2;
 	int iStartX = XOffset;
 	int iStartY = YOffset;
 	//计算纹理坐标
@@ -61,10 +62,10 @@ void CHudRadar::Draw(float flTime)
 	stx = (1 - w) / 2;
 	sty = (1 - h) / 2;
 	//绘制背景
-	g_pSurface->DrawSetTexture(-1);
-	g_pSurface->DrawSetColor(255, 255, 255, OutLineAlpha);
-	g_pSurface->DrawSetTexture(OutLineImg);
-	g_pSurface->DrawTexturedRect(iStartX, iStartY, iStartX + size, iStartX + size);
+	gHudDelegate->surface()->DrawSetTexture(-1);
+	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+	gHudDelegate->surface()->DrawSetTexture(OutLineImg);
+	gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 	//绘制雷达
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_hRadarBufferTex);
@@ -82,9 +83,9 @@ void CHudRadar::Draw(float flTime)
 		glVertex2f(iStartX, iStartY + sizeMap);
 	glEnd();
 	//绘制前景
-	g_pSurface->DrawSetColor(255, 255, 255, OutLineAlpha);
-	g_pSurface->DrawSetTexture(PlayerPointImg);
-	g_pSurface->DrawTexturedRect(iStartX, iStartY, iStartX + size, iStartX + size);
+	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+	gHudDelegate->surface()->DrawSetTexture(PlayerPointImg);
+	gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 }
 void CHudRadar::PreRenderView(int a1)
 {

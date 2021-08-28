@@ -121,8 +121,8 @@ void CHudArmorHealth::Reset(void)
 	iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
 	iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
 	iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
-	iHealthBarBackground = g_pSurface->CreateNewTextureID();
-	g_pSurface->DrawSetTextureFile(iHealthBarBackground, "abcenchance/tga/healthbar_background", true, false);
+	iHealthBarBackground = gHudDelegate->surface()->CreateNewTextureID();
+	gHudDelegate->surface()->DrawSetTextureFile(iHealthBarBackground, "abcenchance/tga/healthbar_background", true, false);
 
 	m_iHealth = 100;
 	m_fFade = 0;
@@ -148,10 +148,10 @@ int CHudArmorHealth::Draw(float flTime)
 		DrawPain(flTime);
 	int r, g, b, a;
 	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
-	g_pSurface->DrawSetTexture(-1);
-	g_pSurface->DrawSetColor(255, 255, 255, 255);
-	g_pSurface->DrawSetTexture(iHealthBarBackground);
-	g_pSurface->DrawTexturedRect(0, flBackGroundY, gScreenInfo.iWidth / 3, gScreenInfo.iHeight);
+	gHudDelegate->surface()->DrawSetTexture(-1);
+	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
+	gHudDelegate->surface()->DrawSetTexture(iHealthBarBackground);
+	gHudDelegate->surface()->DrawTexturedRect(0, flBackGroundY, gScreenInfo.iWidth / 3, gScreenInfo.iHeight);
 
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
 	int iStartX = gScreenInfo.iWidth / StartX;

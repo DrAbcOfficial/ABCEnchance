@@ -6,12 +6,6 @@
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
 
-extern vgui::ISchemeManager* g_pScheme;
-extern vgui::ISurface* g_pSurface;
-extern vgui::ILocalize* pLocalize;
-extern vgui::HFont m_hFont;
-extern vgui::IScheme* pScheme;
-
 extern const clientdata_t* gClientData;
 extern float m_hfov;
 

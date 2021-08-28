@@ -394,8 +394,8 @@ void CHudCustomAmmo::Reset(void)
 	m_bOpeningAnnularMenu = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
-	iBackGroundTga = g_pSurface->CreateNewTextureID();
-	g_pSurface->DrawSetTextureFile(iBackGroundTga, "abcenchance/tga/ammobar_background", true, false);
+	iBackGroundTga = gHudDelegate->surface()->CreateNewTextureID();
+	gHudDelegate->surface()->DrawSetTextureFile(iBackGroundTga, "abcenchance/tga/ammobar_background", true, false);
 	gWR.Reset();
 	gHR.Reset();
 }
@@ -431,10 +431,10 @@ int CHudCustomAmmo::Draw(float flTime)
 	wchar_t buf[16];
 	if (pw->iAmmoType > 0)
 	{
-		g_pSurface->DrawSetTexture(-1);
-		g_pSurface->DrawSetColor(255, 255, 255, 255);
-		g_pSurface->DrawSetTexture(iBackGroundTga);
-		g_pSurface->DrawTexturedRect(nowX, flBackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
+		gHudDelegate->surface()->DrawSetTexture(-1);
+		gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
+		gHudDelegate->surface()->DrawSetTexture(iBackGroundTga);
+		gHudDelegate->surface()->DrawTexturedRect(nowX, flBackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
 		nowX += pw->iAmmo2Type > 0 ? iStartX : iStartX * 3;
 		Ammo1IconColor.GetColor(r, g, b, a);
 		//╡ыдЦбХё╛мбакё╛╩ыцП╟иё╛юшак

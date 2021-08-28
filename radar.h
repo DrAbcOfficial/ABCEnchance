@@ -22,7 +22,7 @@ private:
 	float XOffset;
 	float YOffset;
 	float OutLineAlpha;
-	float MapAlpha;
+	GLubyte MapAlpha;
 	float CenterAlpha;
 
 	vec3_t m_oldViewOrg;
