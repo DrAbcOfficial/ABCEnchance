@@ -55,7 +55,7 @@ typedef struct
 
 	cvar_t* pCamIdealHeight;
 
-
+	cvar_t* pRadar;
 	cvar_t* pRadarZoom;
 	cvar_t* pRadarSize;
 

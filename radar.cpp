@@ -28,6 +28,7 @@ void CHudRadar::GLInit()
 }
 int CHudRadar::Init()
 {
+	gCVars.pRadar = gEngfuncs.pfnRegisterVariable("cl_radar", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRadarZoom = gEngfuncs.pfnRegisterVariable("cl_radarzoom", "5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRadarSize = gEngfuncs.pfnRegisterVariable("cl_radarsize", "344", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	pCVarDevOverview = gEngfuncs.pfnGetCvarPointer("dev_overview");
@@ -44,6 +45,8 @@ int CHudRadar::Init()
 }
 void CHudRadar::Reset()
 {
+	if (gCVars.pRadar->value <= 0)
+		return;
 	OutLineImg = gHudDelegate->surface()->CreateNewTextureID();
 	gHudDelegate->surface()->DrawSetTextureFile(OutLineImg, "abcenchance/tga/radar_background", true, false);
 
@@ -55,6 +58,8 @@ void CHudRadar::Reset()
 }
 void CHudRadar::Draw(float flTime)
 {
+	if (gCVars.pRadar->value <= 0)
+		return;
 	float size = gCVars.pRadarSize->value;
 	float sizeMap = size * 0.95;
 	float sizeGap = (size - sizeMap) / 2;
@@ -106,6 +111,8 @@ void CHudRadar::Draw(float flTime)
 }
 void CHudRadar::PreRenderView(int a1)
 {
+	if (gCVars.pRadar->value <= 0)
+		return;
 	if(!a1)
 		DrawRadarTexture();
 }
