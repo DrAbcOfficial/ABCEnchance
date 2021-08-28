@@ -1,5 +1,6 @@
 #include <metahook.h>
 #include "local.h"
+#include <math.h>
 #include "mathlib.h"
 #include "gldef.h"
 #include "glew.h"
@@ -37,6 +38,7 @@ int CHudRadar::Init()
 	OutLineAlpha = atof(pScheme->GetResourceString("Radar.OutLineAlpha"));
 	MapAlpha = (GLubyte)atof(pScheme->GetResourceString("Radar.MapAlpha"));
 	CenterAlpha = atof(pScheme->GetResourceString("Radar.CenterAlpha"));
+	NorthPointerSize = atof(pScheme->GetResourceString("Radar.NorthPointerSize"));
 
 	return 1;
 }
@@ -47,11 +49,14 @@ void CHudRadar::Reset()
 
 	PlayerPointImg = gHudDelegate->surface()->CreateNewTextureID();
 	gHudDelegate->surface()->DrawSetTextureFile(PlayerPointImg, "abcenchance/tga/radar_upground", true, false);
+
+	NorthImg = gHudDelegate->surface()->CreateNewTextureID();
+	gHudDelegate->surface()->DrawSetTextureFile(NorthImg, "abcenchance/tga/radar_north", true, false);
 }
 void CHudRadar::Draw(float flTime)
 {
 	float size = gCVars.pRadarSize->value;
-	float sizeMap = size * 0.98;
+	float sizeMap = size * 0.95;
 	float sizeGap = (size - sizeMap) / 2;
 	int iStartX = XOffset;
 	int iStartY = YOffset;
@@ -86,10 +91,22 @@ void CHudRadar::Draw(float flTime)
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
 	gHudDelegate->surface()->DrawSetTexture(PlayerPointImg);
 	gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
+	//»æÖÆÖ¸±±Õë
+	//Ô²
+	float rotate = DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[YAW]);
+	h = sqrt(2 * pow(size, 2)) / 2;
+	stx = (iStartX + size / 2) + h * cos(rotate);
+	sty = (iStartY + size / 2) + h * sin(rotate);
+	stx = clamp(stx, iStartX, iStartX + size);
+	sty = clamp(sty, iStartY, iStartY + size);
+	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+	gHudDelegate->surface()->DrawSetTexture(NorthImg);
+	w = NorthPointerSize / 2;
+	gHudDelegate->surface()->DrawTexturedRect(stx - w, sty - w, stx + w, sty + w);
 }
 void CHudRadar::PreRenderView(int a1)
 {
-	if(a1 == 0)
+	if(!a1)
 		DrawRadarTexture();
 }
 void CHudRadar::DrawRadarTexture()

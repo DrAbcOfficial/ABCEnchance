@@ -12,6 +12,7 @@ public:
 
 	int OutLineImg;
 	int PlayerPointImg;
+	int NorthImg;
 
 private:
 	cvar_t* pCVarDevOverview;
@@ -24,6 +25,7 @@ private:
 	float OutLineAlpha;
 	GLubyte MapAlpha;
 	float CenterAlpha;
+	float NorthPointerSize;
 
 	vec3_t m_oldViewOrg;
 	vec3_t m_oldViewAng;
