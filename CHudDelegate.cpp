@@ -8,6 +8,7 @@
 #include "deathmsg.h"
 #include "glew.h"
 #include "radar.h"
+#include "deathmsg.h"
 
 #include "CHudDelegate.h"
 #include <local.h>
@@ -25,6 +26,7 @@ void CHudDelegate::HUD_Init(void)
 	m_HudCustomAmmo.Init();
 	m_HudDeathMsg.Init();
 	m_HudRadar.Init();
+	m_HudDeathMsg.Init();
 }
 void CHudDelegate::HUD_VidInit(void)
 {
@@ -93,6 +95,7 @@ void CHudDelegate::HUD_Draw(float flTime)
 	m_HudArmorHealth.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
 	m_HudRadar.Draw(flTime);
+	m_HudDeathMsg.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void)
 {
@@ -101,6 +104,7 @@ void CHudDelegate::HUD_Reset(void)
 	m_HudArmorHealth.Reset();
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
+	m_HudDeathMsg.Reset();
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 {

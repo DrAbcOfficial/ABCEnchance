@@ -62,6 +62,13 @@ Scheme
 		"AmmoHUD.SelectCyclerAnimateTime"	"0.12"
 		"AmmoHUD.SelectCyclerFadeTime"	"0.2"
 		"AmmoHUD.SelectCyclerHoldTime"	"5"
+
+		"Radar.XOffset"			"32"
+		"Radar.YOffset"			"32"
+		"Radar.NorthPointerSize"	"24"
+		"Radar.OutLineAlpha"	"255"
+		"Radar.MapAlpha"		"255"
+		"Radar.CenterAlpha"		"255"
 	}
 
 	Fonts

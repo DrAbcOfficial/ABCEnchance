@@ -98,7 +98,8 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 			pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g;
 			pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b;
 
-			pTemp->entity.curstate.frame = gEngfuncs.pfnRandomLong(0, pModel->numframes - 1);
+			//TOO MANY ERROR!
+			//pTemp->entity.curstate.frame = gEngfuncs.pfnRandomLong(0, pModel->numframes - 1);
 
 			pTemp->die = gEngfuncs.GetClientTime() + gEngfuncs.pfnRandomFloat(1.0f, 3.0f);
 
