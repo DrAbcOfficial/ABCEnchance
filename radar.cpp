@@ -31,6 +31,7 @@ int CHudRadar::Init()
 	gCVars.pRadar = gEngfuncs.pfnRegisterVariable("cl_radar", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRadarZoom = gEngfuncs.pfnRegisterVariable("cl_radarzoom", "2.5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRadarSize = gEngfuncs.pfnRegisterVariable("cl_radarsize", "344", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pRadarGap = gEngfuncs.pfnRegisterVariable("cl_radargap", "0.98", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	pCVarDevOverview = gEngfuncs.pfnGetCvarPointer("dev_overview");
 	pCVarDrawEntities = gEngfuncs.pfnGetCvarPointer("r_drawentities");
 
@@ -59,7 +60,7 @@ void CHudRadar::Draw(float flTime)
 	if (gCVars.pRadar->value <= 0)
 		return;
 	float size = gCVars.pRadarSize->value;
-	float sizeMap = size * 0.95;
+	float sizeMap = size * gCVars.pRadarGap->value;
 	float sizeGap = (size - sizeMap) / 2;
 	int iStartX = XOffset;
 	int iStartY = YOffset;
