@@ -108,3 +108,5 @@ void Matrix4x4_ConcatTransforms(float out[4][4], float in1[4][4], float in2[4][4
 void VectorRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
 void VectorIRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
 float anglemod(float a);
+
+float fsqrt(float x);
