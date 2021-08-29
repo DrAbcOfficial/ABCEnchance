@@ -12,8 +12,10 @@ extern float m_hfov;
 extern overviewInfo_t* gDevOverview;
 extern int* g_iVisibleMouse;
 extern refdef_t* g_refdef;
+extern metaplugins_t g_metaplugins;
 
 void Sys_ErrorEx(const char* fmt, ...);
+void CheckOtherPlugin();
 void FillDelegate();
 void FillAddress();
 void InstallHook();

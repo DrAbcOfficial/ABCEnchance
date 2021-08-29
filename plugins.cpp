@@ -34,11 +34,6 @@ void IPluginsV3::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_engin
 	g_hInstance = GetModuleHandle(NULL);
 }
 
-void IPluginsV3::Shutdown(void)
-{
-	HUD_Clear();
-}
-
 void IPluginsV3::LoadEngine(cl_enginefunc_t *pEngfuncs)
 {
 	g_pFileSystem = g_pInterface->FileSystem;
@@ -52,8 +47,12 @@ void IPluginsV3::LoadEngine(cl_enginefunc_t *pEngfuncs)
 	g_dwEngineRdataBase = g_pMetaHookAPI->GetSectionByName(g_dwEngineBase, ".rdata\x0\x0", &g_dwEngineRdataSize);
 
 	memcpy(&gEngfuncs, pEngfuncs, sizeof(gEngfuncs));
-
 	Cmd_GetCmdBase = *(cmd_function_t * (**)(void))((DWORD)pEngfuncs + 0x198);
+
+	if (g_iEngineType != ENGINE_SVENGINE)
+		Sys_ErrorEx("%s can only run in SvenEngine!\nEngine type: %d\nEngine buildnum: %d", 
+			"ABCEnchance.dll", g_iEngineType, g_dwEngineBuildnum);
+	CheckOtherPlugin();
 }
 
 void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
@@ -83,8 +82,12 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	MSG_Init();
 }
 
+void IPluginsV3::Shutdown(void)
+{
+	HUD_Clear();
+}
+
 void IPluginsV3::ExitGame(int iResult)
 {
 }
-
 EXPOSE_SINGLE_INTERFACE(IPluginsV3, IPluginsV3, METAHOOK_PLUGIN_API_VERSION_V3);

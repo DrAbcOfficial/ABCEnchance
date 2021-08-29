@@ -17,7 +17,8 @@ CHudRadar m_HudRadar;
 
 void CHudRadar::GLInit()
 {
-	glGenFramebuffersEXT(1, &m_hRadarBufferFBO);
+	if(!g_metaplugins.renderer)
+		glGenFramebuffersEXT(1, &m_hRadarBufferFBO);
 	m_hRadarBufferTex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
 	m_hRadarBufferTexDepth = GL_GenDepthStencilTexture(gScreenInfo.iWidth, gScreenInfo.iHeight);
 }
@@ -112,11 +113,15 @@ void CHudRadar::PreRenderView(int a1)
 }
 void CHudRadar::DrawRadarTexture()
 {
-	//glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	//glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
+	if (!g_metaplugins.renderer)
+	{
+		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
+	}
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hRadarBufferTex, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, m_hRadarBufferTexDepth, 0);
-	//glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	if (!g_metaplugins.renderer)
+		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
 	//ÉèÖÃ±³¾°Í¸Ã÷
 	glClearColor(0.0f, 255.0f, 0.0f, 255.0f);
@@ -148,8 +153,8 @@ void CHudRadar::DrawRadarTexture()
 
 	VectorCopy(m_oldViewOrg, g_refdef->vieworg);
 	VectorCopy(m_oldViewAng, g_refdef->viewangles);
-
-	//glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+	if (!g_metaplugins.renderer)
+		glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
 void CHudRadar::Clear()
 {
