@@ -23,6 +23,7 @@ ABCEnchance is a metabook plugin that provides experience improvement for Sven c
 |cl_radar|Radar|1|0/1|
 |cl_radarzoom|Radar Zoom|2.5|0.0001~9999|
 |cl_radarsize|Radar Size|344|0-9999|
+|cl_radargap|Radar Gap|0.98|0-1|
 |---|---|---|---|
 |cl_playertitle|Show Player name|1|0/1|
 |---|---|---|---|
