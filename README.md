@@ -10,6 +10,11 @@ ABCEnchance is a metabook plugin that provides experience improvement for Sven c
  - Sometimes will empty the weapon menu incorrectly after player death
  - Dynamic indicator will point to wrong direction
 
+# Install
+ 1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
+ 2. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory.
+ 3. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
+ 4. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
 # CVars
 |CVar|uses|default|range|
 |---|---|---|---|
@@ -49,6 +54,12 @@ ABCEnchance is a metabook plugin that provides experience improvement for Sven c
 |---|---|---|---|
 |cl_curdebug|Curweapon Debug|0|0/1|
 
+# Build
+ 1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
+ 2. clone or download repository
+ 3. copy `ABCEnchance-master` into `MetaHookSv-master/Plugins`
+ 4. build `glew` or `glew-debug`
+ 5. build repository
 # CSGO like Hud and dsplaying player name title
 <img src="img/csgo1.jpg" width="100%">
 <img src="img/csgo2.jpg" width="100%">
