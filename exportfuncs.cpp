@@ -35,6 +35,7 @@ float* pClientEVPunchAngles;
 overviewInfo_t* gDevOverview;
 int* g_iVisibleMouse = NULL;
 refdef_t* g_refdef = NULL;
+metaplugins_t g_metaplugins;
 
 //PLAYER TITLE
 void DrawPlayerTitle()
@@ -246,6 +247,10 @@ void Sys_ErrorEx(const char* fmt, ...)
 
 	MessageBox(NULL, msg, "Fatal Error", MB_ICONERROR);
 	TerminateProcess((HANDLE)(-1), 0);
+}
+void CheckOtherPlugin()
+{
+	g_metaplugins.renderer = (HINTERFACEMODULE)GetModuleHandle("Renderer.dll");
 }
 void FillDelegate()
 {

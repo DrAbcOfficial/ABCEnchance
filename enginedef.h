@@ -1,4 +1,8 @@
 #pragma once
+typedef struct metaplugins_s
+{
+	bool renderer;
+}metaplugins_t;
 typedef struct refdef_s
 {
 	vec3_t vieworg;
