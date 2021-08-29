@@ -29,7 +29,7 @@ void CHudRadar::GLInit()
 int CHudRadar::Init()
 {
 	gCVars.pRadar = gEngfuncs.pfnRegisterVariable("cl_radar", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pRadarZoom = gEngfuncs.pfnRegisterVariable("cl_radarzoom", "5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pRadarZoom = gEngfuncs.pfnRegisterVariable("cl_radarzoom", "2.5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRadarSize = gEngfuncs.pfnRegisterVariable("cl_radarsize", "344", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	pCVarDevOverview = gEngfuncs.pfnGetCvarPointer("dev_overview");
 	pCVarDrawEntities = gEngfuncs.pfnGetCvarPointer("r_drawentities");

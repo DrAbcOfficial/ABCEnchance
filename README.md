@@ -1,15 +1,14 @@
 # ABCEnchance
 ABCEnchance is a metabook plugin that provides experience improvement for Sven co-op
 
-# **DO NOT USE THIS PLUGIN FOR NOW**
-# **This plugin is under development and needs a lot of debugging and repair.**
-# **Using this plugin has many problems, such as memory leakage, memory access conflict, dead loop, null pointer and so on**
+# **This plugin is under development and unstable, and may have major modifications compared with the current one**
+# **USE AT YOUR OWN RISK**
 
 # Known issue
 
  - After `CBasePlayer::RemovePlayerItem`, the menu will display the removed items incorrectly because there is no corresponding networkmessage to synchronize the message
-
  - Sometimes will empty the weapon menu incorrectly after player death
+ - Dynamic indicator will point to wrong direction
 
 # CSGO like Hud and dsplaying player name title
 <img src="img/csgo1.jpg" width="100%">
@@ -27,6 +26,12 @@ ABCEnchance is a metabook plugin that provides experience improvement for Sven c
 
 <img src="img/dynamic1.jpg" width="100%">
 <img src="img/dynamic2.jpg" width="100%">
+
+
+# Radar
+
+<img src="img/radar1.png" width="100%">
+<img src="img/radar2.png" width="100%">
 
 # And some useless efx enchance
 
