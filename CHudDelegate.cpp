@@ -24,9 +24,8 @@ void CHudDelegate::HUD_Init(void)
 {
 	m_HudArmorHealth.Init();
 	m_HudCustomAmmo.Init();
-	m_HudDeathMsg.Init();
 	m_HudRadar.Init();
-	m_HudDeathMsg.Init();
+	//m_HudDeathMsg.Init();
 }
 void CHudDelegate::HUD_VidInit(void)
 {
@@ -92,10 +91,12 @@ void CHudDelegate::HUD_VidInit(void)
 }
 void CHudDelegate::HUD_Draw(float flTime)
 {
+	if (gCVars.pDynamicHUD->value <= 0)
+		return;
 	m_HudArmorHealth.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
 	m_HudRadar.Draw(flTime);
-	m_HudDeathMsg.Draw(flTime);
+	//m_HudDeathMsg.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void)
 {
@@ -104,7 +105,7 @@ void CHudDelegate::HUD_Reset(void)
 	m_HudArmorHealth.Reset();
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
-	m_HudDeathMsg.Reset();
+	//m_HudDeathMsg.Reset();
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 {
@@ -119,14 +120,20 @@ void CHudDelegate::HUD_Clear(void)
 }
 void CHudDelegate::HUD_PreRenderView(int a1)
 {
+	if (gCVars.pDynamicHUD->value <= 0)
+		return;
 	m_HudRadar.PreRenderView(a1);
 }
 void CHudDelegate::IN_MouseEvent(int mstate)
 {
+	if (gCVars.pDynamicHUD->value <= 0)
+		return;
 	m_HudCustomAmmo.IN_MouseEvent(mstate);
 }
 void CHudDelegate::IN_Accumulate(void)
 {
+	if (gCVars.pDynamicHUD->value <= 0)
+		return;
 	m_HudCustomAmmo.IN_Accumulate();
 }
 void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active)

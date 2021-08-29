@@ -45,8 +45,6 @@ int CHudRadar::Init()
 }
 void CHudRadar::Reset()
 {
-	if (gCVars.pRadar->value <= 0)
-		return;
 	OutLineImg = gHudDelegate->surface()->CreateNewTextureID();
 	gHudDelegate->surface()->DrawSetTextureFile(OutLineImg, "abcenchance/tga/radar_background", true, false);
 

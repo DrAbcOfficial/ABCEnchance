@@ -421,17 +421,26 @@ int HUD_Redraw(float time, int intermission)
 		while (pHudList)
 		{
 			if (dynamic_cast<CHudBattery*>(pHudList->p) != NULL)
-				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			{
+				if (gCVars.pDynamicHUD->value <= 0)
+					pHudList->p->m_iFlags &= HUD_ACTIVE;
+				else
+					pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			}
 			else if (dynamic_cast<CHudHealth*>(pHudList->p) != NULL)
-				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			{
+				if (gCVars.pDynamicHUD->value <= 0)
+					pHudList->p->m_iFlags &= HUD_ACTIVE;
+				else
+					pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+			}
 			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != NULL)
 			{
 				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
-				pHudList->p->m_iFlags &= ~HUD_ACTIVE;
-			}
-			else if (dynamic_cast<CHudAmmoSecondary*>(pHudList->p) != NULL)
-			{
-				//pHudList->p->m_iFlags &= ~HUD_ACTIVE;
+				if (gCVars.pDynamicHUD->value <= 0)
+					pHudList->p->m_iFlags &= HUD_ACTIVE;
+				else
+					pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			}
 			else if (dynamic_cast<CHudMenu*>(pHudList->p) != NULL)
 				gHookHud.m_Menu = (dynamic_cast<CHudMenu*>(pHudList->p));
