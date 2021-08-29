@@ -1,4 +1,4 @@
-#include <metahook.h>
+ï»¿#include <metahook.h>
 #include "parsemsg.h"
 #include "pm_shared.h"
 #include "msghook.h"
@@ -88,7 +88,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	while (tw > 0)
 	{
 		posFlag++;
-		//²İÄãÕæµÄÓ¦¸ÃÈ¥ÕÒ·şÖ÷ÅÅ²éÏÂ³åÍ»
+		//è‰ä½ çœŸçš„åº”è¯¥å»æ‰¾æœä¸»æ’æŸ¥ä¸‹å†²çª
 		if (Weapon.iSlotPos >= MAX_WEAPON_POSITIONS - 1) {
 			posFlag = Weapon.iSlotPos;
 			break;
@@ -128,7 +128,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 	if (iState > 0)
 	{
 		int iId = READ_SHORT();
-		//sc·´±à»ãºóÈç´Ë
+		//scåç¼–æ±‡åå¦‚æ­¤
 		if (iId == -1)
 		{
 			gWR.DropAllWeapons();
@@ -143,7 +143,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
 			return m_pfnCurWeapon(pszName, iSize, pbuf);
-		//¸üĞÂµ¯Ï»ĞÅÏ¢
+		//æ›´æ–°å¼¹åŒ£ä¿¡æ¯
 		pWeapon->iClip = iClip;
 		pWeapon->iClip2 = iClip2;
 		m_HudCustomAmmo.m_pWeapon = pWeapon;
@@ -437,7 +437,7 @@ int CHudCustomAmmo::Draw(float flTime)
 		gHudDelegate->surface()->DrawTexturedRect(nowX, flBackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
 		nowX += pw->iAmmo2Type > 0 ? iStartX : iStartX * 3;
 		Ammo1IconColor.GetColor(r, g, b, a);
-		//²ÙÄãÂè£¬ÍÂÁË£¬»ÙÃğ°É£¬ÀÛÁË
+		//æ“ä½ å¦ˆï¼Œåäº†ï¼Œæ¯ç­å§ï¼Œç´¯äº†
 		//nowY = flBackGroundY + iIconSize / 2;
 		//float sprh = gEngfuncs.pfnSPR_Height(m_pWeapon->hAmmo, 0);
 		//float sprw = gEngfuncs.pfnSPR_Width(m_pWeapon->hAmmo, 0);
@@ -553,7 +553,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	vec2_t aryOut[10];
 	vec2_t aryIn[10];
 
-	//Ìî³äÊ®±ßĞÎ×ø±êÊı×é
+	//å¡«å……åè¾¹å½¢åæ ‡æ•°ç»„
 	for (i = 0; i < 10; i++)
 	{
 		ac = cos(2 * M_PI * i / 10 + flStartRot);
@@ -582,12 +582,12 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	for (i = 0; i < 10; i++)
 	{
 		//CABD
-		//¡ı¡ú¡ü
+		//â†“â†’â†‘
 		Vector2Copy(aryIn[i == 9 ? 0 :i + 1], vecA);
 		Vector2Copy(aryIn[i], vecB);
 		Vector2Copy(aryOut[i == 9 ? 0 : i + 1], vecC);
 		Vector2Copy(aryOut[i], vecD);
-		//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
+		//å˜æ¢ä¸ºOpenGLå±å¹•åæ ‡
 		vecA[0] += halfWidth;
 		vecA[1] = halfHeight - vecA[1];
 		vecB[0] += halfWidth;
@@ -616,13 +616,18 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		ColorCalcuAlpha(r, g, b, a);
 		SPR_Set(wp->hInactive, r, g, b);
 		SPR_DrawAdditive(0, xpos - iWidth/2, ypos- iHeight/2, &wp->rcInactive);
-		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
-		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
 		SelectCyclerTextColor.GetColor(r, g, b, dummy);
 		ColorCalcuAlpha(r, g, b, a);
+
+		wsprintfW(buf, L"â€£%d", wp->iSlotPos);
+		GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
+		DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
+
+		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
+		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
 		DrawVGUI2String(buf, xpos - iTextWidth/2, ypos + iHeight, r, g, b, HUDFont, true);
 	}
-	//»æÖÆÒÑÑ¡
+	//ç»˜åˆ¶å·²é€‰
 	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1 && gWR.iNowSlot >= 0)
 	{
 		wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
@@ -630,7 +635,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		Vector2Copy(aryIn[gWR.iNowSlot], vecB);
 		Vector2Copy(aryOut[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecC);
 		Vector2Copy(aryOut[gWR.iNowSlot], vecD);
-		//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
+		//å˜æ¢ä¸ºOpenGLå±å¹•åæ ‡
 		vecA[0] += halfWidth;
 		vecA[1] = halfHeight - vecA[1];
 		vecB[0] += halfWidth;
@@ -647,19 +652,26 @@ int CHudCustomAmmo::DrawWList(float flTime)
 			SelectCyclerIconColor.GetColor(r, g, b, dummy);
 		else
 			SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
+
 		ColorCalcuAlpha(r, g, b, a);
 		SPR_Set(wp->hActive, r, g, b);
 		SPR_DrawAdditive(0, xpos - iWidth / 2, ypos - iHeight / 2, &wp->rcActive);
-		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
-		WEAPON* t = gHookHud.m_Ammo->m_pWeapon;
-		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
+		
 		SelectCyclerTextColor.GetColor(r, g, b, dummy);
 		ColorCalcuAlpha(r, g, b, a);
+
+		wsprintfW(buf, L"â€£%d", wp->iSlotPos);
+		GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
+		DrawVGUI2String(buf, xpos - iTextWidth + iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
+
+		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
+		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
 		DrawVGUI2String(buf, xpos - iTextWidth / 2, ypos + iHeight, r, g, b, HUDFont,true);
+
 		SelectCyclerRinColor.GetColor(r, g, b, dummy);
 		DrawSPRIconPos(iSelectCyclerRinSpr, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
-	//»æÖÆÍê±Ï£¬ĞŞ¸ÄÕ¹Ê¾×´Ì¬
+	//ç»˜åˆ¶å®Œæ¯•ï¼Œä¿®æ”¹å±•ç¤ºçŠ¶æ€
 	m_bSelectMenuDisplay = true;
 	return 1;
 }
@@ -691,6 +703,6 @@ void CHudCustomAmmo::IN_MouseEvent(int mstate)
 {
 	if (mstate != 1 || m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
-	//²»Çå¿Õ£¬×¨ÃÅ¸øÊó±ê»»Ç¹Ê¹ÓÃ
+	//ä¸æ¸…ç©ºï¼Œä¸“é—¨ç»™é¼ æ ‡æ¢æªä½¿ç”¨
 	m_HudCustomAmmo.ChosePlayerWeapon();
 }
