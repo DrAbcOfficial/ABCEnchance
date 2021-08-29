@@ -848,3 +848,14 @@ void Matrix4x4_ConcatTransforms(float out[4][4], float in1[4][4], float in2[4][4
 	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2];
 	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] + in1[2][2] * in2[2][3] + in1[2][3];
 }
+
+//快速近似平方根
+float fsqrt(float x)
+{
+	float a = x;
+	unsigned int i = *(unsigned int*)&x;
+	i = (i + 0x3F76CF62) >> 1;
+	x = *(float*)&i;
+	x = (x + a / x) * 0.5;
+	return x;
+}

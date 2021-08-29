@@ -72,7 +72,7 @@ void DrawPlayerTitle()
 			dx = entity->curstate.origin[0] - local->curstate.origin[0];
 			dy = entity->curstate.origin[1] - local->curstate.origin[1];
 			dz = entity->curstate.origin[2] - local->curstate.origin[2];
-			float fDistance = sqrt(pow(dx, 2) + pow(dy, 2));
+			float fDistance = fsqrt(pow(dx, 2) + pow(dy, 2));
 			float* color = gHookFuncs.GetClientColor(i);
 			if (fDistance >= 2048 || color != localColor)
 				continue;
@@ -123,7 +123,7 @@ void DrawPlayerTitle()
 			else if (fPaintAngle_xy < -FLAT_ANGLE)
 				fPaintAngle_xy = fPaintAngle_xy + PERIGON_ANGLE;
 			//ÊÓ½Ç¸©Ñö¼Ð½Ç
-			fPlayerAngle_z = asin(dz / (sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2)))) * RADIAN_PER_DEGREE;
+			fPlayerAngle_z = asin(dz / (fsqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2)))) * RADIAN_PER_DEGREE;
 			fPaintAngle_z = elevation - fPlayerAngle_z;
 
 			gEngfuncs.pTriAPI->WorldToScreen(vecOrg, vecHUD);

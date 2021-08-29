@@ -94,7 +94,7 @@ void CHudRadar::Draw(float flTime)
 	//»æÖÆÖ¸±±Õë
 	//Ô²
 	float rotate = DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[YAW]);
-	h = sqrt(2 * pow(size, 2)) / 2;
+	h = fsqrt(2 * pow(size, 2)) / 2;
 	stx = (iStartX + size / 2) + h * cos(rotate);
 	sty = (iStartY + size / 2) + h * sin(rotate);
 	stx = clamp(stx, iStartX, iStartX + size);
