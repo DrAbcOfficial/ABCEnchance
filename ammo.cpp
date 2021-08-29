@@ -4,7 +4,7 @@
 #include "msghook.h"
 #include "command.h"
 
-#include <math.h>
+#include <cmath>
 #include <mathlib.h>
 
 #include "hud.h"

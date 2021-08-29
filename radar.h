@@ -19,6 +19,7 @@ private:
 	cvar_t* pCVarDrawEntities;
 	GLuint m_hRadarBufferFBO;
 	GLuint m_hRadarBufferTex;
+	GLuint m_hRadarBufferTexDepth;
 
 	float XOffset;
 	float YOffset;

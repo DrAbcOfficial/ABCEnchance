@@ -1,6 +1,6 @@
 #include "plugins.h"
 //Lib
-#include "math.h"
+#include "cmath"
 #include "malloc.h"
 #include "cl_entity.h"
 #include "mathlib.h"

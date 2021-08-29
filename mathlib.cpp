@@ -2,7 +2,7 @@
 #pragma warning(disable : 4237)
 #pragma warning(disable : 4305)
 
-#include <math.h>
+#include <cmath>
 #include <metahook.h>
 #include <mathlib.h>
 

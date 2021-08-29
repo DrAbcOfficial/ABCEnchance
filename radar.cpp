@@ -1,9 +1,10 @@
 #include <metahook.h>
 #include "local.h"
-#include <math.h>
+#include <cmath>
 #include "mathlib.h"
 #include "gldef.h"
 #include "glew.h"
+#include "glutility.h"
 #include "exportfuncs.h"
 #include "vguilocal.h"
 
@@ -17,14 +18,8 @@ CHudRadar m_HudRadar;
 void CHudRadar::GLInit()
 {
 	glGenFramebuffersEXT(1, &m_hRadarBufferFBO);
-	glGenTextures(1, &m_hRadarBufferTex);
-	glBindTexture(GL_TEXTURE_2D, m_hRadarBufferTex);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gScreenInfo.iWidth, gScreenInfo.iHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	m_hRadarBufferTex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
+	m_hRadarBufferTexDepth = GL_GenDepthStencilTexture(gScreenInfo.iWidth, gScreenInfo.iHeight);
 }
 int CHudRadar::Init()
 {
@@ -117,13 +112,14 @@ void CHudRadar::PreRenderView(int a1)
 }
 void CHudRadar::DrawRadarTexture()
 {
-	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_hRadarBufferTex, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	//glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+	//glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hRadarBufferTex, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, m_hRadarBufferTexDepth, 0);
+	//glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
 	//ÉèÖÃ±³¾°Í¸Ã÷
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 255.0f, 0.0f, 255.0f);
 	glStencilMask(0xFF);
 	glClearStencil(0);
 	glDepthMask(GL_TRUE);
@@ -153,7 +149,7 @@ void CHudRadar::DrawRadarTexture()
 	VectorCopy(m_oldViewOrg, g_refdef->vieworg);
 	VectorCopy(m_oldViewAng, g_refdef->viewangles);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+	//glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
 void CHudRadar::Clear()
 {
