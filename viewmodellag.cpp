@@ -1,5 +1,5 @@
 #include <metahook.h>
-#include "math.h"
+#include <cmath>
 #include "mathlib.h"
 #include "local.h"
 #include "viewmodellag.h"

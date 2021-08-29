@@ -93,6 +93,9 @@
     <ClCompile Include="radar.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="glutility.cpp">
+      <Filter>Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -212,9 +215,6 @@
     <ClInclude Include="mathlib.h">
       <Filter>Header\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="palette.h">
-      <Filter>Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="msghook.h">
       <Filter>Header\Utility</Filter>
     </ClInclude>
@@ -241,6 +241,12 @@
     </ClInclude>
     <ClInclude Include="radar.h">
       <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="glutility.h">
+      <Filter>Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="palette.h">
+      <Filter>Header\Var</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
