@@ -106,6 +106,7 @@
     <ClCompile Include="ammo.cpp" />
     <ClCompile Include="CHudDelegate.cpp" />
     <ClCompile Include="glutility.cpp" />
+    <ClCompile Include="gl_shader.cpp" />
     <ClCompile Include="radar.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="deathmsg.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="CHudDelegate.h" />
     <ClInclude Include="CColor.h" />
     <ClInclude Include="glutility.h" />
+    <ClInclude Include="gl_shader.h" />
     <ClInclude Include="radar.h" />
     <ClInclude Include="command.h" />
     <ClInclude Include="deathmsg.h" />

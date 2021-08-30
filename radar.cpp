@@ -2,11 +2,17 @@
 #include "local.h"
 #include <cmath>
 #include "mathlib.h"
-#include "gldef.h"
+#include "pm_defs.h"
+#include "event_api.h"
+
 #include "glew.h"
 #include "glutility.h"
+#include "gldef.h"
+
 #include "exportfuncs.h"
 #include "vguilocal.h"
+
+#include "gl_shader.h"
 
 #include "hud.h"
 #include "weapon.h"
@@ -14,10 +20,12 @@
 #include "radar.h"
 
 CHudRadar m_HudRadar;
+SHADER_DEFINE(pp_radarlight);
 
 void CHudRadar::GLInit()
 {
-	glGenFramebuffersEXT(1, &m_hRadarBufferFBO);
+	if(!g_metaplugins.renderer)
+		glGenFramebuffersEXT(1, &m_hRadarBufferFBO);
 	m_hRadarBufferTex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
 	m_hRadarBufferTexDepth = GL_GenDepthStencilTexture(gScreenInfo.iWidth, gScreenInfo.iHeight);
 }
@@ -27,7 +35,9 @@ int CHudRadar::Init()
 	gCVars.pRadarZoom = gEngfuncs.pfnRegisterVariable("cl_radarzoom", "2.5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRadarSize = gEngfuncs.pfnRegisterVariable("cl_radarsize", "344", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pRadarGap = gEngfuncs.pfnRegisterVariable("cl_radargap", "0.98", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pRadarUpdateInterval = gEngfuncs.pfnRegisterVariable("cl_radarupdateint", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	pCVarDevOverview = gEngfuncs.pfnGetCvarPointer("dev_overview");
+	pCVarDrawDynamic = gEngfuncs.pfnGetCvarPointer("r_dynamic");
 	pCVarDrawEntities = gEngfuncs.pfnGetCvarPointer("r_drawentities");
 
 	XOffset = atof(pScheme->GetResourceString("Radar.XOffset"));
@@ -36,6 +46,13 @@ int CHudRadar::Init()
 	MapAlpha = (GLubyte)atof(pScheme->GetResourceString("Radar.MapAlpha"));
 	CenterAlpha = atof(pScheme->GetResourceString("Radar.CenterAlpha"));
 	NorthPointerSize = atof(pScheme->GetResourceString("Radar.NorthPointerSize"));
+
+	pp_radarlight.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\pp_brightpass.fsh", NULL);
+	if (pp_radarlight.program)
+	{
+		SHADER_UNIFORM(pp_radarlight, tex, "tex");
+		SHADER_UNIFORM(pp_radarlight, lumtex, "lumtex");
+	}
 
 	return 1;
 }
@@ -49,11 +66,15 @@ void CHudRadar::Reset()
 
 	NorthImg = gHudDelegate->surface()->CreateNewTextureID();
 	gHudDelegate->surface()->DrawSetTextureFile(NorthImg, "abcenchance/tga/radar_north", true, false);
+
+	flNextUpdateTrTime = 0;
+
 }
 void CHudRadar::Draw(float flTime)
 {
 	if (gCVars.pRadar->value <= 0)
 		return;
+	UpdateZmax(flTime);
 	float size = gCVars.pRadarSize->value;
 	float sizeMap = size * gCVars.pRadarGap->value;
 	float sizeGap = (size - sizeMap) / 2;
@@ -72,6 +93,13 @@ void CHudRadar::Draw(float flTime)
 	gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 	//绘制雷达
 	glEnable(GL_TEXTURE_2D);
+
+	if (g_metaplugins.renderer) {
+		GL_UseProgram(pp_radarlight.program);
+		glUniform1i(pp_radarlight.tex, 0);
+		glUniform1i(pp_radarlight.lumtex, 1);
+	}
+	
 	glBindTexture(GL_TEXTURE_2D, m_hRadarBufferTex);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -114,9 +142,7 @@ void CHudRadar::DrawRadarTexture()
 {
 	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 	if (!m_oldFrameBuffer)
-	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
-	}
 
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hRadarBufferTex, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, m_hRadarBufferTexDepth, 0);
@@ -138,25 +164,49 @@ void CHudRadar::DrawRadarTexture()
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	gHudDelegate->m_vecOverViewOrg[0] = local->curstate.origin[0];
 	gHudDelegate->m_vecOverViewOrg[1] = local->curstate.origin[1];
-	gHudDelegate->m_vecOverViewOrg[2] = gDevOverview->origin[2];
 	gHudDelegate->m_flOverViewYaw = local->curstate.angles[YAW];
+
 	gHudDelegate->m_iIsOverView = 1;
-	float oldValue = pCVarDevOverview->value;
-	float oldEntity = pCVarDrawEntities->value;
-	pCVarDevOverview->value = 2;
-	pCVarDrawEntities->value = 0;
-	gHookFuncs.R_RenderScene();
-	pCVarDevOverview->value = oldValue;
-	pCVarDrawEntities->value = oldEntity;
+		vec3_t vecOldValue;
+		vecOldValue[0] = pCVarDevOverview->value;
+		vecOldValue[1] = pCVarDrawEntities->value;
+		vecOldValue[2] = pCVarDrawDynamic->value;
+		pCVarDevOverview->value = 2;
+		pCVarDrawEntities->value = 0;
+		pCVarDrawDynamic->value = 0;
+			gHookFuncs.R_RenderScene();
+		pCVarDevOverview->value = vecOldValue[0];
+		pCVarDrawEntities->value = vecOldValue[1];
+		pCVarDrawDynamic->value = vecOldValue[2];
 	gHudDelegate->m_iIsOverView = 0;
 
 	VectorCopy(m_oldViewOrg, g_refdef->vieworg);
 	VectorCopy(m_oldViewAng, g_refdef->viewangles);
 
 	if (!m_oldFrameBuffer)
-	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
-	}
+}
+void CHudRadar::UpdateZmax(float flTime)
+{
+	if (flTime < flNextUpdateTrTime)
+		return;
+	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+	vec3_t vecEndpos;
+	VectorCopy(local->curstate.origin, vecEndpos);
+	vecEndpos[2] = 9999;
+	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
+	//16，去除大多数烦人的天花板灯泡
+	gHudDelegate->m_flOverViewZmax = m_hRadarTr.endpos[2] - 16;
+	vecEndpos[2] = -9999;
+	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
+	float flOldStart = m_hRadarTr.endpos[2] - 1;
+	//半双人高，可以满足大多数地图的需求
+	m_hRadarTr.endpos[2] -= 144;
+	gEngfuncs.pEventAPI->EV_PlayerTrace(m_hRadarTr.endpos, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
+	gHudDelegate->m_flOverViewZmin = m_hRadarTr.startsolid ? m_hRadarTr.endpos[2] : flOldStart;
+	flNextUpdateTrTime = flTime + abs(gCVars.pRadarUpdateInterval->value);
 }
 void CHudRadar::Clear()
 {

@@ -96,6 +96,9 @@
     <ClCompile Include="glutility.cpp">
       <Filter>Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="gl_shader.cpp">
+      <Filter>Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -247,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="palette.h">
       <Filter>Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="gl_shader.h">
+      <Filter>Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
