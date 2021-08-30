@@ -227,13 +227,21 @@ void CL_SetDevOverView(int param1)
 		gDevOverview->z_max = gHudDelegate->m_flOverViewZmax;
 		gDevOverview->z_min = gHudDelegate->m_flOverViewZmin;
 		gDevOverview->zoom = gHudDelegate->m_flOverViewScale;
-	}
-		
+	}	
 }
 void R_RenderView(int a1)
 {
 	gHudDelegate->HUD_PreRenderView(a1);
 	gHookFuncs.R_RenderView(a1);
+}
+void R_DrawWorld(void)
+{
+	if (CL_IsDevOverview() && g_metaplugins.renderer)
+	{
+		glClearColor(0.8f, 0.8f, 0.8f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+	gHookFuncs.R_DrawWorld();
 }
 void Sys_ErrorEx(const char* fmt, ...)
 {
@@ -315,6 +323,12 @@ void FillAddress()
 			Sig_AddrNotFound(gDevOverview);
 			gDevOverview = (decltype(gDevOverview))(*(DWORD*)(addr + 9) - 0xC);
 		}
+#define R_DRAWWORLD_SIG "\x81\xEC\x2A\x2A\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\xB8\x0B\x00\x00\xD9\x05"
+		{
+			gHookFuncs.R_DrawWorld = (decltype(gHookFuncs.R_DrawWorld))
+				g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, R_DRAWWORLD_SIG, Sig_Length(R_DRAWWORLD_SIG));
+			Sig_FuncNotFound(R_DrawWorld);
+		}
 	}
 	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
 	if (pfnClientCreateInterface && pfnClientCreateInterface("SCClientDLL001", 0))
@@ -351,6 +365,7 @@ void InstallHook()
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_RenderView, R_RenderView, (void**)&gHookFuncs.R_RenderView);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.CL_IsDevOverview, CL_IsDevOverview, (void**)&gHookFuncs.CL_IsDevOverview);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.CL_SetDevOverView, CL_SetDevOverView, (void**)&gHookFuncs.CL_SetDevOverView);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_DrawWorld, R_DrawWorld, (void**)&gHookFuncs.R_DrawWorld);
 }
 void GL_Init(void)
 {
