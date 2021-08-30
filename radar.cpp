@@ -17,8 +17,7 @@ CHudRadar m_HudRadar;
 
 void CHudRadar::GLInit()
 {
-	if(!g_metaplugins.renderer)
-		glGenFramebuffersEXT(1, &m_hRadarBufferFBO);
+	glGenFramebuffersEXT(1, &m_hRadarBufferFBO);
 	m_hRadarBufferTex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
 	m_hRadarBufferTexDepth = GL_GenDepthStencilTexture(gScreenInfo.iWidth, gScreenInfo.iHeight);
 }
@@ -94,7 +93,7 @@ void CHudRadar::Draw(float flTime)
 	//绘制指北针
 	//圆
 	float rotate = DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[YAW]);
-	h = fsqrt(2 * pow(size, 2)) / 2;
+	h = sqrt(2 * pow(size, 2)) / 2;
 	stx = (iStartX + size / 2) + h * cos(rotate);
 	sty = (iStartY + size / 2) + h * sin(rotate);
 	stx = clamp(stx, iStartX, iStartX + size);
@@ -113,15 +112,15 @@ void CHudRadar::PreRenderView(int a1)
 }
 void CHudRadar::DrawRadarTexture()
 {
-	if (!g_metaplugins.renderer)
+	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+	if (!m_oldFrameBuffer)
 	{
-		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
 	}
+
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hRadarBufferTex, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, m_hRadarBufferTexDepth, 0);
-	if (!g_metaplugins.renderer)
-		glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
 	//设置背景透明
 	glClearColor(0.0f, 255.0f, 0.0f, 255.0f);
@@ -153,8 +152,11 @@ void CHudRadar::DrawRadarTexture()
 
 	VectorCopy(m_oldViewOrg, g_refdef->vieworg);
 	VectorCopy(m_oldViewAng, g_refdef->viewangles);
-	if (!g_metaplugins.renderer)
+
+	if (!m_oldFrameBuffer)
+	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+	}
 }
 void CHudRadar::Clear()
 {

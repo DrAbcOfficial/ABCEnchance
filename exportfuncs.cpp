@@ -35,7 +35,6 @@ float* pClientEVPunchAngles;
 overviewInfo_t* gDevOverview;
 int* g_iVisibleMouse = NULL;
 refdef_t* g_refdef = NULL;
-metaplugins_t g_metaplugins;
 
 //PLAYER TITLE
 void DrawPlayerTitle()
@@ -72,7 +71,7 @@ void DrawPlayerTitle()
 			dx = entity->curstate.origin[0] - local->curstate.origin[0];
 			dy = entity->curstate.origin[1] - local->curstate.origin[1];
 			dz = entity->curstate.origin[2] - local->curstate.origin[2];
-			float fDistance = fsqrt(pow(dx, 2) + pow(dy, 2));
+			float fDistance = sqrt(pow(dx, 2) + pow(dy, 2));
 			float* color = gHookFuncs.GetClientColor(i);
 			if (fDistance >= 2048 || color != localColor)
 				continue;
@@ -123,7 +122,7 @@ void DrawPlayerTitle()
 			else if (fPaintAngle_xy < -FLAT_ANGLE)
 				fPaintAngle_xy = fPaintAngle_xy + PERIGON_ANGLE;
 			//ÊÓ½Ç¸©Ñö¼Ð½Ç
-			fPlayerAngle_z = asin(dz / (fsqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2)))) * RADIAN_PER_DEGREE;
+			fPlayerAngle_z = asin(dz / (sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2)))) * RADIAN_PER_DEGREE;
 			fPaintAngle_z = elevation - fPlayerAngle_z;
 
 			gEngfuncs.pTriAPI->WorldToScreen(vecOrg, vecHUD);
@@ -222,8 +221,11 @@ void CL_SetDevOverView(int param1)
 	if (gHudDelegate->m_iIsOverView)
 	{
 		(*(vec3_t*)(param1 + 28))[YAW] = gHudDelegate->m_flOverViewYaw;
+		*(float *)(param1 + 16) = gHudDelegate->m_vecOverViewOrg[0];
+		*(float *)(param1 + 20) = gHudDelegate->m_vecOverViewOrg[1];
+		gDevOverview->z_max = -9999;
+		gDevOverview->z_min = 9999;
 		gDevOverview->zoom = gHudDelegate->m_flOverViewScale;
-		VectorCopy(gHudDelegate->m_vecOverViewOrg,gDevOverview->origin);
 	}
 		
 }
@@ -247,10 +249,6 @@ void Sys_ErrorEx(const char* fmt, ...)
 
 	MessageBox(NULL, msg, "Fatal Error", MB_ICONERROR);
 	TerminateProcess((HANDLE)(-1), 0);
-}
-void CheckOtherPlugin()
-{
-	g_metaplugins.renderer = (HINTERFACEMODULE)GetModuleHandle("Renderer.dll");
 }
 void FillDelegate()
 {
