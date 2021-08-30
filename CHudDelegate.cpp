@@ -88,6 +88,7 @@ void CHudDelegate::HUD_VidInit(void)
 	}
 	m_HudArmorHealth.VidInit();
 	m_HudCustomAmmo.VidInit();
+	m_HudRadar.VidInit();
 }
 void CHudDelegate::HUD_Draw(float flTime)
 {

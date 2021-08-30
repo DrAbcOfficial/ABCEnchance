@@ -619,7 +619,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		SelectCyclerTextColor.GetColor(r, g, b, dummy);
 		ColorCalcuAlpha(r, g, b, a);
 
-		wsprintfW(buf, L"‣%d", wp->iSlotPos);
+		wsprintfW(buf, L"-%d", wp->iSlotPos);
 		GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
 		DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
 
@@ -660,9 +660,9 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		SelectCyclerTextColor.GetColor(r, g, b, dummy);
 		ColorCalcuAlpha(r, g, b, a);
 
-		wsprintfW(buf, L"‣%d", wp->iSlotPos);
+		wsprintfW(buf, L"-%d", wp->iSlotPos);
 		GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
-		DrawVGUI2String(buf, xpos - iTextWidth + iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
+		DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
 
 		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
 		GetStringSize(buf, &iTextWidth, NULL, HUDFont);

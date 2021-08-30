@@ -4,6 +4,7 @@ class CHudRadar
 public:
 	void GLInit();
 	int Init();
+	void VidInit();
 	void Reset();
 	void Draw(float flTime);
 	void DrawRadarTexture();
@@ -19,6 +20,7 @@ private:
 	cvar_t* pCVarDevOverview;
 	cvar_t* pCVarDrawEntities;
 	cvar_t* pCVarDrawDynamic;
+	cvar_t* pCVarFXAA;
 
 	GLuint m_hRadarBufferFBO;
 	GLuint m_hRadarBufferTex;

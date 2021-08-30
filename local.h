@@ -19,6 +19,7 @@ typedef struct
 	void		(*R_RenderScene)			(void);
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
+	void		(*R_DrawWorld)				(void);
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
 }cl_refHookfunc_t;

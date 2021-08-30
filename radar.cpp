@@ -49,12 +49,14 @@ int CHudRadar::Init()
 
 	pp_radarlight.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\pp_brightpass.fsh", NULL);
 	if (pp_radarlight.program)
-	{
 		SHADER_UNIFORM(pp_radarlight, tex, "tex");
-		SHADER_UNIFORM(pp_radarlight, lumtex, "lumtex");
-	}
 
 	return 1;
+}
+void CHudRadar::VidInit()
+{
+	if(!pCVarFXAA)
+		pCVarFXAA = gEngfuncs.pfnGetCvarPointer("r_fxaa");
 }
 void CHudRadar::Reset()
 {
@@ -97,7 +99,6 @@ void CHudRadar::Draw(float flTime)
 	if (g_metaplugins.renderer) {
 		GL_UseProgram(pp_radarlight.program);
 		glUniform1i(pp_radarlight.tex, 0);
-		glUniform1i(pp_radarlight.lumtex, 1);
 	}
 	
 	glBindTexture(GL_TEXTURE_2D, m_hRadarBufferTex);
@@ -114,6 +115,10 @@ void CHudRadar::Draw(float flTime)
 		glTexCoord2f(stx, sty);
 		glVertex2f(iStartX, iStartY + sizeMap);
 	glEnd();
+
+	if (g_metaplugins.renderer)
+		GL_UseProgram(0);
+
 	//绘制前景
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
 	gHudDelegate->surface()->DrawSetTexture(PlayerPointImg);
@@ -149,7 +154,7 @@ void CHudRadar::DrawRadarTexture()
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
 	//设置背景透明
-	glClearColor(0.0f, 255.0f, 0.0f, 255.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glStencilMask(0xFF);
 	glClearStencil(0);
 	glDepthMask(GL_TRUE);
@@ -167,17 +172,22 @@ void CHudRadar::DrawRadarTexture()
 	gHudDelegate->m_flOverViewYaw = local->curstate.angles[YAW];
 
 	gHudDelegate->m_iIsOverView = 1;
-		vec3_t vecOldValue;
+		vec4_t vecOldValue;
 		vecOldValue[0] = pCVarDevOverview->value;
 		vecOldValue[1] = pCVarDrawEntities->value;
 		vecOldValue[2] = pCVarDrawDynamic->value;
+		if (g_metaplugins.renderer)
+			vecOldValue[3] = pCVarFXAA->value;
 		pCVarDevOverview->value = 2;
 		pCVarDrawEntities->value = 0;
 		pCVarDrawDynamic->value = 0;
+		pCVarFXAA->value = 0;
 			gHookFuncs.R_RenderScene();
 		pCVarDevOverview->value = vecOldValue[0];
 		pCVarDrawEntities->value = vecOldValue[1];
 		pCVarDrawDynamic->value = vecOldValue[2];
+		if (g_metaplugins.renderer)
+			pCVarFXAA->value = vecOldValue[3];
 	gHudDelegate->m_iIsOverView = 0;
 
 	VectorCopy(m_oldViewOrg, g_refdef->vieworg);
