@@ -27,6 +27,8 @@ public:
 	int m_iIsOverView = 0;
 	float m_flOverViewScale;
 	float m_flOverViewYaw;
+	float m_flOverViewZmax;
+	float m_flOverViewZmin;
 	vec3_t m_vecOverViewOrg;
 
 	client_sprite_t* m_pSpriteList;

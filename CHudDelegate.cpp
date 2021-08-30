@@ -1,5 +1,5 @@
 #include <metahook.h>
-
+#include "pmtrace.h"
 #include "vguilocal.h"
 #include "hud.h"
 #include "weapon.h"

@@ -7,6 +7,7 @@ public:
 	void Reset();
 	void Draw(float flTime);
 	void DrawRadarTexture();
+	void UpdateZmax(float flTime);
 	void PreRenderView(int a1);
 	void Clear();
 
@@ -17,9 +18,14 @@ public:
 private:
 	cvar_t* pCVarDevOverview;
 	cvar_t* pCVarDrawEntities;
+	cvar_t* pCVarDrawDynamic;
+
 	GLuint m_hRadarBufferFBO;
 	GLuint m_hRadarBufferTex;
 	GLuint m_hRadarBufferTexDepth;
+
+	pmtrace_t m_hRadarTr;
+	float flNextUpdateTrTime;
 
 	float XOffset;
 	float YOffset;

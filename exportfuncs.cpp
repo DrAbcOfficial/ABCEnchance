@@ -27,6 +27,7 @@
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
+metaplugins_t g_metaplugins;
 
 const clientdata_t* gClientData;
 float m_hfov;
@@ -223,8 +224,8 @@ void CL_SetDevOverView(int param1)
 		(*(vec3_t*)(param1 + 28))[YAW] = gHudDelegate->m_flOverViewYaw;
 		*(float *)(param1 + 16) = gHudDelegate->m_vecOverViewOrg[0];
 		*(float *)(param1 + 20) = gHudDelegate->m_vecOverViewOrg[1];
-		gDevOverview->z_max = -9999;
-		gDevOverview->z_min = 9999;
+		gDevOverview->z_max = gHudDelegate->m_flOverViewZmax;
+		gDevOverview->z_min = gHudDelegate->m_flOverViewZmin;
 		gDevOverview->zoom = gHudDelegate->m_flOverViewScale;
 	}
 		
@@ -249,6 +250,10 @@ void Sys_ErrorEx(const char* fmt, ...)
 
 	MessageBox(NULL, msg, "Fatal Error", MB_ICONERROR);
 	TerminateProcess((HANDLE)(-1), 0);
+}
+void CheckOtherPlugin()
+{
+	g_metaplugins.renderer = GetModuleHandle("vgui2.dll");
 }
 void FillDelegate()
 {
