@@ -253,7 +253,7 @@ void Sys_ErrorEx(const char* fmt, ...)
 }
 void CheckOtherPlugin()
 {
-	g_metaplugins.renderer = GetModuleHandle("vgui2.dll");
+	g_metaplugins.renderer = (HINTERFACEMODULE)GetModuleHandle("Renderer.dll");
 }
 void FillDelegate()
 {
