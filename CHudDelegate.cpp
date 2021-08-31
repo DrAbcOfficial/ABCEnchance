@@ -25,7 +25,7 @@ void CHudDelegate::HUD_Init(void)
 	m_HudArmorHealth.Init();
 	m_HudCustomAmmo.Init();
 	m_HudRadar.Init();
-	//m_HudDeathMsg.Init();
+	m_HudDeathMsg.Init();
 }
 void CHudDelegate::HUD_VidInit(void)
 {
@@ -97,7 +97,7 @@ void CHudDelegate::HUD_Draw(float flTime)
 	m_HudArmorHealth.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
 	m_HudRadar.Draw(flTime);
-	//m_HudDeathMsg.Draw(flTime);
+	m_HudDeathMsg.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void)
 {
@@ -106,7 +106,7 @@ void CHudDelegate::HUD_Reset(void)
 	m_HudArmorHealth.Reset();
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
-	//m_HudDeathMsg.Reset();
+	m_HudDeathMsg.Reset();
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 {
@@ -141,7 +141,6 @@ void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active)
 {
 	
 }
-
 int CHudDelegate::GetSpriteIndex(const char* SpriteName)
 {
 	for (int i = 0; i < m_iSpriteCount; i++)
@@ -149,7 +148,6 @@ int CHudDelegate::GetSpriteIndex(const char* SpriteName)
 		if (strncmp(SpriteName, m_rgszSpriteNames + (i * MAX_SPRITE_NAME_LENGTH), MAX_SPRITE_NAME_LENGTH) == 0)
 			return i;
 	}
-
 	return -1; // invalid sprite
 }
 vgui::ISurface* CHudDelegate::surface()

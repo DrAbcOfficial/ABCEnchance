@@ -12,12 +12,6 @@
 CHudDeathMsg m_HudDeathMsg;
 pfnUserMsgHook m_pfnTextMsg;
 
-#define MSG_BUF_SIZE 64
-#define HUD_PRINTNOTIFY 1
-#define MSG_SUICIDENOTIFY L" committed suicide."
-#define MSG_KILLEDNOTIFY L" was killed by a "
-#define MSG_PLAYERKILLNOTIFY L" : (.*) : "
-
 using namespace std;
 wregex parttenSuicide(MSG_SUICIDENOTIFY);
 wregex parttenKilled(MSG_KILLEDNOTIFY);
@@ -60,9 +54,9 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 			return 1;
 		}
 	}
-	return 1;
+	//return 1;
 	//Stack overflow
-	//return m_pfnTextMsg(pszName, iSize, pbuf);
+	return m_pfnTextMsg(pszName, iSize, pbuf);
 }
 
 int CHudDeathMsg::Draw(float flTime)
@@ -71,20 +65,20 @@ int CHudDeathMsg::Draw(float flTime)
 	int y = 0;
 	int w;
 	int h;
-	for each (deathmsgItem* var in aryKeepMsg)
+	for each (deathmsgItem var in aryKeepMsg)
 	{
-		if (!var)
+		if (!var.victim)
 			continue;
-		DrawVGUI2String(var->killer, x, y, 255, 255, 255, HUDFont);
-		GetStringSize(var->killer, &w, NULL, HUDFont);
+		DrawVGUI2String(var.killer, x, y, 255, 255, 255, HUDFont);
+		GetStringSize(var.killer, &w, NULL, HUDFont);
 		x += w;
 
-		DrawVGUI2String(var->executioner, x, y, 255, 255, 255, HUDFont);
-		GetStringSize(var->executioner, &w, NULL, HUDFont);
+		DrawVGUI2String(var.executioner, x, y, 255, 255, 255, HUDFont);
+		GetStringSize(var.executioner, &w, NULL, HUDFont);
 		x += w;
 
-		DrawVGUI2String(var->victim, x, y, 255, 255, 255, HUDFont);
-		GetStringSize(var->victim, NULL, &h, HUDFont);
+		DrawVGUI2String(var.victim, x, y, 255, 255, 255, HUDFont);
+		GetStringSize(var.victim, NULL, &h, HUDFont);
 		x = 0;
 		y += h;
 	}
@@ -96,18 +90,15 @@ void CHudDeathMsg::Reset(void)
 }
 void CHudDeathMsg::InsertNewMsg(const wchar_t* v, const wchar_t* e, const wchar_t* k)
 {
-	wchar_t wideVName[MSG_BUF_SIZE];
-	wchar_t wideEName[MSG_BUF_SIZE];
-	wchar_t wideKName[MSG_BUF_SIZE];
-	wcscpy(wideVName, v);
-	wcscpy(wideEName, e);
-	wcscpy(wideKName, k);
+	deathmsgItem item;
+	wcscpy(item.victim, v);
+	wcscpy(item.executioner, e);
+	wcscpy(item.killer, k);
 	for (int i = 0; i < MAX_KEEP_DEATHMSG - 1; i++)
 	{
 		aryKeepMsg[i + 1] = aryKeepMsg[i];
 	}
-	deathmsgItem item = { wideEName , wideVName , wideKName };
-	aryKeepMsg[0] = &item;
+	aryKeepMsg[0] = item;
 }
 int CHudDeathMsg::Init(void)
 {
