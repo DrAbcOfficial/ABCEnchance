@@ -243,6 +243,12 @@ void R_DrawWorld(void)
 	}
 	gHookFuncs.R_DrawWorld();
 }
+void R_ForceCVars(qboolean mp)
+{
+	if (CL_IsDevOverview())
+		return;
+	gHookFuncs.R_ForceCVars(mp);
+}
 void Sys_ErrorEx(const char* fmt, ...)
 {
 	char msg[4096] = { 0 };
@@ -328,6 +334,12 @@ void FillAddress()
 			gHookFuncs.R_DrawWorld = (decltype(gHookFuncs.R_DrawWorld))
 				g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, R_DRAWWORLD_SIG, Sig_Length(R_DRAWWORLD_SIG));
 			Sig_FuncNotFound(R_DrawWorld);
+		}
+#define R_FORCECVAR_SIG "\x83\x7C\x24\x2A\x00\x2A\x2A\x2A\x2A\x00\x00\x81\x3D\x2A\x2A\x2A\x2A\xFF\x00\x00\x00"
+		{
+			gHookFuncs.R_ForceCVars = (decltype(gHookFuncs.R_ForceCVars))
+				g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, R_FORCECVAR_SIG, Sig_Length(R_FORCECVAR_SIG));
+			Sig_FuncNotFound(R_ForceCVars);
 		}
 	}
 	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
