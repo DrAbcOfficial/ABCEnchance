@@ -54,11 +54,8 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 			return 1;
 		}
 	}
-	//return 1;
-	//Stack overflow
 	return m_pfnTextMsg(pszName, iSize, pbuf);
 }
-
 int CHudDeathMsg::Draw(float flTime)
 {
 	int x = 0;
