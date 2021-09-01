@@ -191,8 +191,11 @@ void CHudRadar::DrawRadarTexture()
 		pCVarDevOverview->value = 2;
 		pCVarDrawEntities->value = 0;
 		pCVarDrawDynamic->value = 0;
-		pCVarFXAA->value = 0;
-			gHookFuncs.R_RenderScene();
+		if (g_metaplugins.renderer)
+			pCVarFXAA->value = 0;
+
+		gHookFuncs.R_RenderScene();
+
 		pCVarDevOverview->value = vecOldValue[0];
 		pCVarDrawEntities->value = vecOldValue[1];
 		pCVarDrawDynamic->value = vecOldValue[2];
