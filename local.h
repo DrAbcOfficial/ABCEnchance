@@ -64,6 +64,8 @@ typedef struct
 	cvar_t* pRadarGap;
 	cvar_t* pRadarUpdateInterval;
 
+	cvar_t* pDeathNoticeTime;
+
 	cvar_t* pCurDebug;
 
 }cl_cvars_t;
