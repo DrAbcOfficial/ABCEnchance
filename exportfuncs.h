@@ -11,6 +11,7 @@ extern float m_hfov;
 
 extern overviewInfo_t* gDevOverview;
 extern int* g_iVisibleMouse;
+extern char (*g_rgBaseSlots)[10][25];
 extern refdef_t* g_refdef;
 extern metaplugins_t g_metaplugins;
 

@@ -34,6 +34,7 @@ float m_hfov;
 float* pClientEVPunchAngles;
 
 overviewInfo_t* gDevOverview;
+char(*g_rgBaseSlots)[10][25] = NULL;
 int* g_iVisibleMouse = NULL;
 refdef_t* g_refdef = NULL;
 
@@ -347,6 +348,12 @@ void FillAddress()
 			DWORD addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_UPDATECURSORSTATE_SIG, Sig_Length(SC_UPDATECURSORSTATE_SIG));
 			Sig_AddrNotFound(g_iVisibleMouse);
 			g_iVisibleMouse = *(decltype(g_iVisibleMouse)*)(addr + 11);
+		}
+#define SC_HUDAMMO_RESET_SIG "\x83\x49\x10\x01\x68\x78\x05\x00\x00\xC7\x41\x14\x00\x00\x00\x00\xC7\x41\x2C\x00\x00\x00\x00\xC7\x41\x18\x00\x00\x00\x00\x6A\x00\x68\x2A\x2A\x2A\x2A"
+		{
+			DWORD addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_HUDAMMO_RESET_SIG, Sig_Length(SC_HUDAMMO_RESET_SIG));
+			Sig_AddrNotFound(g_rgBaseSlots);
+			//g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 32);
 		}
 	}
 }

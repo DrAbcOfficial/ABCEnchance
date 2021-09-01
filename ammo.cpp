@@ -384,6 +384,8 @@ int CHudCustomAmmo::Init(void)
 
 	gWR.Init();
 	gHR.Init();
+
+	g_rgBaseSlots;
 	return 1;
 };
 void CHudCustomAmmo::Reset(void)
@@ -408,6 +410,10 @@ int CHudCustomAmmo::VidInit(void)
 }
 int CHudCustomAmmo::Draw(float flTime)
 {
+	//IDK Why, this var is totally useless for sven coop
+	//but ghidra never lie
+	if (!(gClientData->weapons & 0x80000000))
+		return 1;
 	if (gClientData->health <= 0)
 		return 1;
 	// Draw Weapon Menu
