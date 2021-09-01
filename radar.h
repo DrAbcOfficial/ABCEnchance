@@ -35,6 +35,10 @@ private:
 	GLubyte MapAlpha;
 	float CenterAlpha;
 	float NorthPointerSize;
+	
+	int iOverviewR;
+	int iOverviewG;
+	int iOverviewB;
 
 	vec3_t m_oldViewOrg;
 	vec3_t m_oldViewAng;

@@ -49,8 +49,10 @@ int CHudRadar::Init()
 
 	pp_radarlight.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\pp_brightpass.fsh", NULL);
 	if (pp_radarlight.program)
+	{
 		SHADER_UNIFORM(pp_radarlight, tex, "tex");
-
+		SHADER_UNIFORM(pp_radarlight, ovc, "ovc");
+	}
 	return 1;
 }
 void CHudRadar::VidInit()
@@ -70,7 +72,14 @@ void CHudRadar::Reset()
 	gHudDelegate->surface()->DrawSetTextureFile(NorthImg, "abcenchance/tga/radar_north", true, false);
 
 	flNextUpdateTrTime = 0;
-
+	cvar_t* pCvarDevC = gEngfuncs.pfnGetCvarPointer("dev_overview_color");
+	if (pCvarDevC && g_metaplugins.renderer)
+	{
+		sscanf_s(pCvarDevC->string, "%d %d %d", &iOverviewR, &iOverviewG, &iOverviewB);
+		iOverviewR /= 255;
+		iOverviewG /= 255;
+		iOverviewB /= 255;
+	}
 }
 void CHudRadar::Draw(float flTime)
 {
@@ -99,6 +108,7 @@ void CHudRadar::Draw(float flTime)
 	if (g_metaplugins.renderer) {
 		GL_UseProgram(pp_radarlight.program);
 		glUniform1i(pp_radarlight.tex, 0);
+		glUniform3f(pp_radarlight.ovc, iOverviewR, iOverviewG, iOverviewB);
 	}
 	
 	glBindTexture(GL_TEXTURE_2D, m_hRadarBufferTex);
