@@ -3,6 +3,7 @@
 #include "pm_shared.h"
 #include "msghook.h"
 #include <regex>
+#include "mathlib.h"
 
 #include "cvardef.h"
 #include "local.h"
@@ -46,7 +47,9 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 		found = regex_search(stdSzBuf, matched, parttenKilled);
 		if (found)
 		{
-			m_HudDeathMsg.InsertNewMsg(matched.prefix().str().c_str(), L"Killed", matched.suffix().str().c_str());
+			wstring k = matched.suffix().str();
+			k.erase(k.end() - 2);
+			m_HudDeathMsg.InsertNewMsg(matched.prefix().str().c_str(), L"Killed", k.c_str());
 			return 1;
 		}
 		found = regex_search(stdSzBuf, matched, parttenPlayer);
@@ -60,34 +63,58 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 }
 int CHudDeathMsg::Draw(float flTime)
 {
-	int x = 0;
-	int y = 0;
+	int iStartX = gScreenInfo.iWidth - 64;
+	int x = iStartX;
+	int y = 256;
+	int startA = 180;
 	int w;
 	int h;
-	int r, g, b, a;
+	float r, g, b, a;
 	for each (deathmsgItem var in aryKeepMsg)
 	{
 		if (!var.victim)
 			continue;
+		if (var.addTime < flTime)
+		{
+			memset(&var, 0, sizeof(var));
+			continue;
+		}
+		if (var.addTime * 0.8 < flTime)
+			a = startA * (1 - (flTime - var.addTime * 0.8) / gCVars.pDeathNoticeTime->value);
+		else
+			a = startA;
+
+
+		wchar_t buf[64];
+		wsprintfW(buf, L"%s[%s]%s", var.killer, var.executioner,var.victim);
+		GetStringSize(buf, &w, &h, HUDFont);
+		x -= w;
+		gEngfuncs.pfnFillRGBABlend(x - 3, y - 3, w + 6, h + 6, 180, 180, 180, a/2);
+
 		r = 250;
 		g = 0;
 		b = 0;
-		DrawVGUI2String(var.killer, x, y, r, g, b, HUDFont);
+		ColorCalcuAlpha(r, g, b, a);
+		DrawVGUI2String(var.killer, x, y, r, g, b, HUDFont, true);
 		GetStringSize(var.killer, &w, NULL, HUDFont);
 		x += w;
 
 		r = 180;
 		g = 180;
 		b = 180;
-		DrawVGUI2String(var.executioner, x, y, 255, 255, 255, HUDFont);
-		GetStringSize(var.executioner, &w, NULL, HUDFont);
+		ColorCalcuAlpha(r, g, b, a);
+		wsprintfW(buf, L"[%s]", var.executioner);
+		DrawVGUI2String(buf, x, y, r, g, b, HUDFont, true);
+		GetStringSize(buf, &w, NULL, HUDFont);
 		x += w;
 
 		r = 0;
-		DrawVGUI2String(var.victim, x, y, 255, 255, 255, HUDFont);
-		GetStringSize(var.victim, NULL, &h, HUDFont);
-		x = 0;
-		y += h;
+		ColorCalcuAlpha(r, g, b, a);
+		DrawVGUI2String(var.victim, x, y, r, g, b, HUDFont, true);
+		GetStringSize(var.victim, &w, &h, HUDFont);
+		
+		x = iStartX;
+		y -= h+1;
 	}
 	return 1;
 }
@@ -101,7 +128,7 @@ void CHudDeathMsg::InsertNewMsg(const wchar_t* v, const wchar_t* e, const wchar_
 	wcscpy(item.victim, v);
 	wcscpy(item.executioner, e);
 	wcscpy(item.killer, k);
-	item.addTime = gEngfuncs.GetClientTime();
+	item.addTime = gEngfuncs.GetClientTime() + gCVars.pDeathNoticeTime->value;
 	for (int i = 0; i < MAX_KEEP_DEATHMSG - 1; i++)
 	{
 		aryKeepMsg[i + 1] = aryKeepMsg[i];
@@ -112,6 +139,6 @@ int CHudDeathMsg::Init(void)
 {
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
 	gCVars.pDeathNoticeTime = gEngfuncs.pfnRegisterVariable("hud_deathnotice_time", "6", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	HUDFont = pScheme->GetFont("HUDShitFont", true);
+	HUDFont = pScheme->GetFont("MainShitFont", true);
 	return 1;
 }
