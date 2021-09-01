@@ -10,6 +10,7 @@ typedef struct {
 	wchar_t victim[MSG_BUF_SIZE];
 	wchar_t executioner[MSG_BUF_SIZE];
 	wchar_t killer[MSG_BUF_SIZE];
+	float addTime;
 } deathmsgItem;
 class CHudDeathMsg : public CHudBase
 {

@@ -4,6 +4,8 @@
 #include "msghook.h"
 #include <regex>
 
+#include "cvardef.h"
+#include "local.h"
 #include "hud.h"
 #include "vguilocal.h"
 #include "drawElement.h"
@@ -62,18 +64,26 @@ int CHudDeathMsg::Draw(float flTime)
 	int y = 0;
 	int w;
 	int h;
+	int r, g, b, a;
 	for each (deathmsgItem var in aryKeepMsg)
 	{
 		if (!var.victim)
 			continue;
-		DrawVGUI2String(var.killer, x, y, 255, 255, 255, HUDFont);
+		r = 250;
+		g = 0;
+		b = 0;
+		DrawVGUI2String(var.killer, x, y, r, g, b, HUDFont);
 		GetStringSize(var.killer, &w, NULL, HUDFont);
 		x += w;
 
+		r = 180;
+		g = 180;
+		b = 180;
 		DrawVGUI2String(var.executioner, x, y, 255, 255, 255, HUDFont);
 		GetStringSize(var.executioner, &w, NULL, HUDFont);
 		x += w;
 
+		r = 0;
 		DrawVGUI2String(var.victim, x, y, 255, 255, 255, HUDFont);
 		GetStringSize(var.victim, NULL, &h, HUDFont);
 		x = 0;
@@ -91,6 +101,7 @@ void CHudDeathMsg::InsertNewMsg(const wchar_t* v, const wchar_t* e, const wchar_
 	wcscpy(item.victim, v);
 	wcscpy(item.executioner, e);
 	wcscpy(item.killer, k);
+	item.addTime = gEngfuncs.GetClientTime();
 	for (int i = 0; i < MAX_KEEP_DEATHMSG - 1; i++)
 	{
 		aryKeepMsg[i + 1] = aryKeepMsg[i];
@@ -100,7 +111,7 @@ void CHudDeathMsg::InsertNewMsg(const wchar_t* v, const wchar_t* e, const wchar_
 int CHudDeathMsg::Init(void)
 {
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
-
+	gCVars.pDeathNoticeTime = gEngfuncs.pfnRegisterVariable("hud_deathnotice_time", "6", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
 	return 1;
 }
