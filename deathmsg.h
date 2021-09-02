@@ -7,9 +7,9 @@
 #define MSG_PLAYERKILLNOTIFY L" : (.*) : "
 
 typedef struct {
-	wchar_t victim[MSG_BUF_SIZE];
-	wchar_t executioner[MSG_BUF_SIZE];
-	wchar_t killer[MSG_BUF_SIZE];
+	std::wstring victim;
+	std::wstring executioner;
+	std::wstring killer;
 	float addTime;
 } deathmsgItem;
 class CHudDeathMsg : public CHudBase
@@ -18,7 +18,7 @@ public:
 	int Init(void);
 	int Draw(float flTime);
 	void Reset(void);
-	void InsertNewMsg(const wchar_t* v, const wchar_t* e, const wchar_t* k);
+	void InsertNewMsg(std::wstring v, std::wstring e, std::wstring k);
 private:
 	deathmsgItem aryKeepMsg[MAX_KEEP_DEATHMSG];
 	vgui::HFont HUDFont;
