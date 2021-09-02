@@ -429,7 +429,7 @@ int CHudCustomAmmo::Draw(float flTime)
 	float i = 0, nowX = gScreenInfo.iWidth * (1 - 1/ BackGroundLength) ;
 	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
-	float flCenterX = nowX + (gScreenInfo.iWidth - nowX) / 2, flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 4;
+	float flCenterX = nowX + (gScreenInfo.iWidth - nowX) / 2, flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
 	int nowY = 0;
 	int iIconSize = flBackGroundHeight * IconSize;
 	int iElementGap = flBackGroundHeight * ElementGap;
@@ -451,14 +451,14 @@ int CHudCustomAmmo::Draw(float flTime)
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
 			nowX -= iTextWidth;
-			nowY -= iTextHeight;
+			nowY -= iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
 
 			Ammo1BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d/", pw->iClip);
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
 			nowX -= iTextWidth;
-			nowY = flCenterY - iTextHeight;
+			nowY = flCenterY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
 		else
@@ -467,7 +467,7 @@ int CHudCustomAmmo::Draw(float flTime)
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
 			nowX -= iTextWidth;
-			nowY -= iTextHeight;
+			nowY -= iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
 
@@ -486,14 +486,14 @@ int CHudCustomAmmo::Draw(float flTime)
 			wsprintfW(buf, L"%d/", pw->iClip2);
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
 			nowX = flCenterX + iElementGap * 2;
-			nowY = flCenterY - iTextHeight;
+			nowY = flCenterY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 
 			Ammo2TextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
 			nowX += iTextWidth;
-			nowY = flCenterY - iTextHeight;
+			nowY = flCenterY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
 		}
 		else
@@ -502,7 +502,7 @@ int CHudCustomAmmo::Draw(float flTime)
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
 			nowX = flCenterX + iElementGap * 2;
-			nowY = flCenterY - iTextHeight;
+			nowY = flCenterY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
 		Ammo2IconColor.GetColor(r, g, b, a);
