@@ -34,7 +34,7 @@ float m_hfov;
 float* pClientEVPunchAngles;
 
 overviewInfo_t* gDevOverview;
-baseweapon_t* (*g_rgBaseSlots)[260] = NULL;
+baseweapon_t* (*g_rgBaseSlots)[10][26] = NULL;
 int* g_iVisibleMouse = NULL;
 refdef_t* g_refdef = NULL;
 
@@ -353,7 +353,7 @@ void FillAddress()
 		{
 			DWORD addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_HUDAMMO_RESET_SIG, Sig_Length(SC_HUDAMMO_RESET_SIG));
 			Sig_AddrNotFound(g_rgBaseSlots);
-			g_rgBaseSlots = (decltype(g_rgBaseSlots))(addr + 33);
+			g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 33);
 		}
 	}
 }
