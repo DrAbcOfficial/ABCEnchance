@@ -67,7 +67,9 @@ int CHudDeathMsg::Draw(float flTime)
 	int iStartX = gScreenInfo.iWidth - 64;
 	int x = iStartX;
 	int y = 256;
-	int startA = 180;
+	int startAlpha = 255;
+	int iOffset = 8;
+	int iBackWidth = 3;
 	int w;
 	int h;
 	float r, g, b, a;
@@ -75,22 +77,24 @@ int CHudDeathMsg::Draw(float flTime)
 	{
 		if (var.executioner.empty())
 			continue;
-		if (var.addTime < flTime)
+		if (var.addTime <= flTime)
 		{
 			memset(&var, 0, sizeof(var));
 			continue;
 		}
-
 		if (var.addTime * 0.8 < flTime)
-			a = startA * (1 - (flTime - var.addTime * 0.8) / gCVars.pDeathNoticeTime->value);
+			a = (float)startAlpha * (var.addTime - flTime) / gCVars.pDeathNoticeTime->value * 0.2;
 		else
-			a = startA;
+			a = startAlpha;
+
+		if (a <= 0)
+			continue;
 
 		wchar_t buf[64];
 		wsprintfW(buf, L"%s[%s]%s", var.killer.c_str(), var.executioner.c_str(),var.victim.c_str());
 		GetStringSize(buf, &w, &h, HUDFont);
 		x -= w;
-		gEngfuncs.pfnFillRGBABlend(x - 3, y - 3, w + 6, h + 6, 180, 180, 180, a/2);
+		gEngfuncs.pfnFillRGBABlend(x - iBackWidth, y - iBackWidth, w + iBackWidth * 2, h + iBackWidth * 2, 180, 180, 180, a / 2);
 
 		r = 250;
 		g = 0;
@@ -117,7 +121,7 @@ int CHudDeathMsg::Draw(float flTime)
 		GetStringSize(buf, &w, &h, HUDFont);
 		
 		x = iStartX;
-		y -= h+1;
+		y -= h + iOffset;
 	}
 	return 1;
 }
@@ -127,17 +131,17 @@ void CHudDeathMsg::Reset(void)
 }
 void CHudDeathMsg::InsertNewMsg(wstring v, wstring e, wstring k)
 {
-	deathmsgItem item;
-	item.victim = v;
-	item.executioner = e;
-	item.killer = k;
-	item.addTime = gEngfuncs.GetClientTime() + gCVars.pDeathNoticeTime->value;
 	for (int i = 0; i < MAX_KEEP_DEATHMSG; i++)
 	{
 		deathmsgItem a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];
 		aryKeepMsg[MAX_KEEP_DEATHMSG - 1] = aryKeepMsg[i];
 		aryKeepMsg[i] = a;
 	}
+	deathmsgItem item;
+	item.victim = v;
+	item.executioner = e;
+	item.killer = k;
+	item.addTime = gEngfuncs.GetClientTime() + gCVars.pDeathNoticeTime->value;
 	aryKeepMsg[0] = item;
 }
 int CHudDeathMsg::Init(void)
