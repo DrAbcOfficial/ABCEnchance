@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include <string>
 #include "pmtrace.h"
 #include "vguilocal.h"
 #include "hud.h"
