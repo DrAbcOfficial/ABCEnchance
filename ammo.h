@@ -5,7 +5,6 @@ public:
 	int VidInit(void);
 	int Draw(float flTime);
 	void Reset(void);
-	int DrawWList(float flTime);
 	void SlotInput(int iSlot, int fAdvance);
 	void ChosePlayerWeapon(void);
 	void ClientMove(struct playermove_s* ppmove, qboolean server);
@@ -46,7 +45,6 @@ public:
 	vgui::HFont HUDSmallFont;
 	
 	float m_fFade;
-	float m_fAnimateTime;
 	bool m_bOpeningAnnularMenu = false;
 	bool m_bSelectMenuDisplay = false;
 
@@ -54,5 +52,10 @@ public:
 	int	m_HUD_bucket0;
 
 	bool m_bAcceptDeadMessage = false;
+private:
+	int DrawWList(float flTime);
+	void SyncWeapon();
+	float m_fAnimateTime;
+	float m_fNextSyncTime;
 };
 extern CHudCustomAmmo m_HudCustomAmmo;

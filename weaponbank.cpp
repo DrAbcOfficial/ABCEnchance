@@ -83,9 +83,6 @@ void WeaponsResource::PickupWeapon(int id)
 {
 	WEAPON* wp = &rgWeapons[id];
 	gridSlotMap[wp->iSlot][wp->iSlotPos] = id;
-	//野蛮修复武器弹匣无法获取问题，必定要改
-	if (wp->iAmmoType > 0 && !HasAmmo(wp))
-		wp->iClip = 1;
 }
 void WeaponsResource::DropWeapon(WEAPON* wp)
 {
