@@ -353,7 +353,7 @@ void FillAddress()
 		{
 			DWORD addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_HUDAMMO_RESET_SIG, Sig_Length(SC_HUDAMMO_RESET_SIG));
 			Sig_AddrNotFound(g_rgBaseSlots);
-			//g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 32);
+			g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 32);
 		}
 	}
 }

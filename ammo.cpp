@@ -428,7 +428,7 @@ int CHudCustomAmmo::Draw(float flTime)
 	float i = 0, nowX = gScreenInfo.iWidth * (1 - 1/ BackGroundLength) ;
 	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
-	int iStartX = gScreenInfo.iWidth / StartX;
+	float flCenterX = nowX + (gScreenInfo.iWidth - nowX) / 2, flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 4;
 	int nowY = 0;
 	int iIconSize = flBackGroundHeight * IconSize;
 	int iElementGap = flBackGroundHeight * ElementGap;
@@ -441,71 +441,72 @@ int CHudCustomAmmo::Draw(float flTime)
 		gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 		gHudDelegate->surface()->DrawSetTexture(iBackGroundTga);
 		gHudDelegate->surface()->DrawTexturedRect(nowX, flBackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
-		nowX += pw->iAmmo2Type > 0 ? iStartX : iStartX * 3;
-		Ammo1IconColor.GetColor(r, g, b, a);
-		//操你妈，吐了，毁灭吧，累了
-		//nowY = flBackGroundY + iIconSize / 2;
-		//float sprh = gEngfuncs.pfnSPR_Height(m_pWeapon->hAmmo, 0);
-		//float sprw = gEngfuncs.pfnSPR_Width(m_pWeapon->hAmmo, 0);
-		//DrawSPRIconClip(m_pWeapon->hAmmo, 0, 0, iIconSize, iIconSize, &m_pWeapon->rcAmmo, sprw, sprh, r, g, b, a);
+ 		nowX = flCenterX;
+		nowY = flCenterY;
 
-		nowY = flBackGroundY + (m_pWeapon->rcAmmo.bottom - m_pWeapon->rcAmmo.top) / 2;
-		gEngfuncs.pfnSPR_Set(m_pWeapon->hAmmo, r, g, b);
-		gEngfuncs.pfnSPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo);
-		nowX += iIconSize + iElementGap;
-		Ammo1BigTextColor.GetColor(r, g, b, a);
 		if (pw->iClip >= 0)
 		{
-			wsprintfW(buf, L"%d/", pw->iClip);
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-			nowX += iTextWidth;
-			nowY += iTextHeight;
 			Ammo1TextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
+			nowX -= iTextWidth;
 			nowY -= iTextHeight;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
+
+			Ammo1BigTextColor.GetColor(r, g, b, a);
+			wsprintfW(buf, L"%d/", pw->iClip);
+			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
+			nowX -= iTextWidth;
+			nowY = flCenterY - iTextHeight;
+			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
 		else
 		{
+			Ammo1BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
+			nowX -= iTextWidth;
+			nowY -= iTextHeight;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
-		nowX += iElementGap * 6;
+
+		Ammo1IconColor.GetColor(r, g, b, a);
+		nowY = flCenterY - (m_pWeapon->rcAmmo.bottom - m_pWeapon->rcAmmo.top) / 2;
+		nowX -= iElementGap + iIconSize;
+		gEngfuncs.pfnSPR_Set(m_pWeapon->hAmmo, r, g, b);
+		gEngfuncs.pfnSPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo);
 	}
 
 	if (pw->iAmmo2Type > 0)
 	{
-		Ammo2BigTextColor.GetColor(r, g, b, a);
 		if (pw->iClip2 >= 0)
 		{
-			nowX += iElementGap * 2;
+			Ammo2BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d/", pw->iClip2);
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
+			nowX = flCenterX + iElementGap * 2;
+			nowY = flCenterY - iTextHeight;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-			nowX += iTextWidth + iElementGap;
-			nowY += iTextHeight;
+
 			Ammo2TextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
-			nowY -= iTextHeight;
+			nowX += iTextWidth;
+			nowY = flCenterY - iTextHeight;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
 		}
 		else
 		{
+			Ammo2BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = flBackGroundY + (flBackGroundHeight - iTextHeight) / 2;
+			nowX = flCenterX + iElementGap * 2;
+			nowY = flCenterY - iTextHeight;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
-		nowX += iElementGap * 3;
 		Ammo2IconColor.GetColor(r, g, b, a);
-		nowY = flBackGroundY + (m_pWeapon->rcAmmo2.bottom - m_pWeapon->rcAmmo2.top) / 2;
+		nowX += iElementGap;
+		nowY = flCenterY - (m_pWeapon->rcAmmo2.bottom - m_pWeapon->rcAmmo2.top) / 2;
 		gEngfuncs.pfnSPR_Set(m_pWeapon->hAmmo2, r, g, b);
 		gEngfuncs.pfnSPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo2);
 	}
