@@ -14,6 +14,7 @@
 #include "vguilocal.h"
 #include "CHudDelegate.h"
 
+#include "enginedef.h"
 #include "exportfuncs.h"
 #include <drawElement.h>
 
