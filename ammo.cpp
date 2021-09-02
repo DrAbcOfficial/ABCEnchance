@@ -85,6 +85,8 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	Weapon.iClip = 0;
 	
 	int posFlag = Weapon.iSlotPos;
+	/*
+	* 在找到解决方案前暂时停止修复选枪冲突
 	int tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, posFlag);
 	while (tw > 0)
 	{
@@ -98,6 +100,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	}
 	if(posFlag != Weapon.iSlotPos)
 		Weapon.iSlotPos = posFlag;
+		*/
 	gWR.AddWeapon(&Weapon);
 	return m_pfnWeaponList(pszName, iSize, pbuf);
 }
@@ -168,30 +171,14 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		int iFlag1 = READ_BYTE();
 		int iFlag2 = READ_BYTE();
 		int iAll = iFlag1 + iFlag2;
-		if (gCVars.pCurDebug->value > 0) {
-			gEngfuncs.Con_Printf("message CurWeapon, state %d  flag1  %d  flag2  %d  all  %d\n", 
-				iState, iFlag1, iFlag2, iAll);
-			gEngfuncs.Con_Printf("message CurWeapon, weaponlist %d  weapongrid  %d  weaponmenu  %d\n", 
-				gWR.CountWeapons(), gWR.CountGridWeapons(), gWR.CountMenuWeapons());
-			gEngfuncs.Con_Printf("message CurWeapon, health %d  deadflag  %d  fadetime  %g  nowtime %g display  %d\n",
-				gHudDelegate->m_iPlayerHealth, m_HudCustomAmmo.m_bAcceptDeadMessage, m_HudCustomAmmo.m_fFade,
-				gEngfuncs.GetClientTime(), m_HudCustomAmmo.m_bSelectMenuDisplay);
-		}
 		switch (iAll)
 		{
 		case 0X1FE:{
-			if (m_HudCustomAmmo.m_bAcceptDeadMessage && gHudDelegate->m_iPlayerHealth <= 0)
-				gWR.DropAllWeapons();
 			if(gHudDelegate->m_iPlayerHealth <= 0)
 				m_HudCustomAmmo.m_bAcceptDeadMessage = TRUE;
 			break;
 		} 
 		case 0:gWR.DropAllWeapons();
-		case 0X2:
-		default: {
-			if (gHudDelegate->m_iPlayerHealth > 0)
-				m_HudCustomAmmo.m_bAcceptDeadMessage = FALSE;
-		}
 		}
 	}
 	return m_pfnCurWeapon(pszName, iSize, pbuf);
@@ -290,17 +277,6 @@ void __UserCmd_Attack1(void)
 	m_HudCustomAmmo.m_bSelectMenuDisplay = false;
 	return UserCmd_Attack1();
 }
-void __UserCmd_Drop(void)
-{
-	if (m_HudCustomAmmo.m_pWeapon->iId >0)
-	{
-		gWR.DropWeapon(m_HudCustomAmmo.m_pWeapon);
-		gWR.iNowSlot = 0;
-		m_HudCustomAmmo.m_fFade = 0;
-		m_HudCustomAmmo.m_bSelectMenuDisplay = false;
-	}
-	ServerCmd("drop");
-}
 void __UserCmd_OpenAnnularMenu(void)
 {
 	if (!m_HudCustomAmmo.m_bOpeningAnnularMenu && !m_HudCustomAmmo.m_bSelectMenuDisplay) {
@@ -318,7 +294,8 @@ void __UserCmd_CloseAnnularMenu(void)
 		gHudDelegate->m_iVisibleMouse = false;
 	}
 }
-
+#define BASE_GWR_SELECTED 842100225
+#define BASE_GWR_UNSELECTED 842100224
 int CHudCustomAmmo::Init(void)
 {
 	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
@@ -330,7 +307,6 @@ int CHudCustomAmmo::Init(void)
 	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
 	m_pfnWeaponSpr = HOOK_MESSAGE(WeaponSpr);
 	
-	gEngfuncs.pfnAddCommand("drop", __UserCmd_Drop);
 	gEngfuncs.pfnAddCommand("+annularmenu", __UserCmd_OpenAnnularMenu);
 	gEngfuncs.pfnAddCommand("-annularmenu", __UserCmd_CloseAnnularMenu);
 
@@ -393,6 +369,8 @@ void CHudCustomAmmo::Reset(void)
 {
 	m_fFade = 0;
 	m_fAnimateTime = 0;
+	m_fNextSyncTime = 0;
+	m_pWeapon = NULL;
 	m_bSelectMenuDisplay = false;
 	m_bOpeningAnnularMenu = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
@@ -409,6 +387,34 @@ int CHudCustomAmmo::VidInit(void)
 	gWR.LoadAllWeaponSprites();
 	return 1;
 }
+void CHudCustomAmmo::SyncWeapon()
+{
+	WEAPON* wpi = NULL;
+	WEAPON* wp = NULL;
+	baseweapon_t* bwp = NULL;
+	for (int i = 0; i < MAX_WEAPON_OLDSLOTS; i++)
+	{
+		for (int j = 0; j < MAX_WEAPON_OLDSLOTS; j++)
+		{
+			bwp = (*g_rgBaseSlots)[i][j];
+			wp = NULL;
+			wpi = gWR.GetWeaponSlot(i, j);
+			if (!bwp) {
+				if(wpi->iId)
+					gWR.DropWeapon(wpi);
+			}		
+			else {
+				wp = gWR.GetWeapon(bwp->iId);
+				if (!wp->iId)
+					continue;
+				wp->iClip = bwp->iClip;
+				wp->iClip2 = bwp->iClip2;
+				if (!wpi->iId)
+					gWR.PickupWeapon(bwp->iId);
+			}
+		}
+	}
+}
 int CHudCustomAmmo::Draw(float flTime)
 {
 	//IDK Why, this var is totally useless for sven coop
@@ -417,6 +423,14 @@ int CHudCustomAmmo::Draw(float flTime)
 		return 1;
 	if (gClientData->health <= 0)
 		return 1;
+
+	//1s 进行一次武器同步
+	if (flTime > m_fNextSyncTime)
+	{
+		SyncWeapon();
+		m_fNextSyncTime = flTime + 1;
+	}
+
 	// Draw Weapon Menu
 	DrawWList(flTime);
 	gHR.DrawAmmoHistory(flTime);
@@ -685,9 +699,6 @@ int CHudCustomAmmo::DrawWList(float flTime)
 }
 void CHudCustomAmmo::ClientMove(struct playermove_s* ppmove, qboolean server)
 {
-	WEAPON* wp = m_pWeapon;
-	if (wp && (wp->iFlags & ITEM_FLAG_EXHAUSTIBLE) && !gWR.HasAmmo(wp))
-		gWR.DropWeapon(wp);
 	if (m_bOpeningAnnularMenu)
 		m_fFade = gEngfuncs.GetClientTime() + SelectCyclerHoldTime;
 }
