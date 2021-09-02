@@ -6,9 +6,10 @@ ABCEnchance is a metabook plugin that provides experience improvement for Sven c
 
 # Known issue
 
- - After `CBasePlayer::RemovePlayerItem`, the menu will display the removed items incorrectly because there is no corresponding networkmessage to synchronize the message
- - Sometimes will empty the weapon menu incorrectly after player death
+ - ~~After `CBasePlayer::RemovePlayerItem`, the menu will display the removed items incorrectly because there is no corresponding networkmessage to synchronize the message~~
+ - ~~Sometimes will empty the weapon menu incorrectly after player death~~
  - Dynamic indicator will point to wrong direction
+ - Weapon postion conflict fix will not work
 
 # Install
  1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
