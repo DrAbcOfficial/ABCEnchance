@@ -56,7 +56,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 		if (found)
 		{
 			wstring e = matched.str(0);
-			m_HudDeathMsg.InsertNewMsg(matched.suffix().str(), e.substr(4, e.length() - 7), matched.prefix().str());
+			m_HudDeathMsg.InsertNewMsg(matched.suffix().str(), e.substr(3, e.length() - 7), matched.prefix().str());
 			return 1;
 		}
 	}

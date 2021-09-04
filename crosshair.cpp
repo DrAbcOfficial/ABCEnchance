@@ -39,7 +39,6 @@ int CHudCustomCrosshair::Init(void)
 	pCvarDefaultFOV = gEngfuncs.pfnGetCvarPointer("default_fov");
 	return 1;
 }
-
 int CHudCustomCrosshair::Draw(float flTime)
 {
 	if (gHudDelegate->IsInSpectate())
@@ -129,11 +128,6 @@ int CHudCustomCrosshair::Draw(float flTime)
 	}
 	return 1;
 }
-
-void CHudCustomCrosshair::Reset(void)
-{
-}
-
 void CHudCustomCrosshair::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc)
 {
 	if (hPic <= 0)
@@ -141,9 +135,8 @@ void CHudCustomCrosshair::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc)
 	int rx = x + 1 - (hRc.right - hRc.left) / 2;
 	int ry = y + 1 - (hRc.bottom - hRc.top) / 2;
 	SPR_Set(hPic, 255, 255, 255);
-	SPR_DrawAdditive(0, rx, ry, &hRc);
+	SPR_DrawHoles(0, rx, ry, &hRc);
 }
-
 void CHudCustomCrosshair::DrawDefaultCrosshair(float flTime, int x, int y)
 {
 	WEAPON* pWeapon = m_HudCustomAmmo.m_pWeapon;
