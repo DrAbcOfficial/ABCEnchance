@@ -10,6 +10,7 @@
 #include "glew.h"
 #include "radar.h"
 #include "deathmsg.h"
+#include "crosshair.h"
 
 #include "CHudDelegate.h"
 #include <local.h>
@@ -27,6 +28,7 @@ void CHudDelegate::HUD_Init(void)
 	m_HudCustomAmmo.Init();
 	m_HudRadar.Init();
 	m_HudDeathMsg.Init();
+	m_HudCrosshair.Init();
 }
 void CHudDelegate::HUD_VidInit(void)
 {
@@ -99,6 +101,7 @@ void CHudDelegate::HUD_Draw(float flTime)
 	m_HudCustomAmmo.Draw(flTime);
 	m_HudRadar.Draw(flTime);
 	m_HudDeathMsg.Draw(flTime);
+	m_HudCrosshair.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void)
 {
@@ -108,6 +111,7 @@ void CHudDelegate::HUD_Reset(void)
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
 	m_HudDeathMsg.Reset();
+	m_HudCrosshair.Reset();
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 {

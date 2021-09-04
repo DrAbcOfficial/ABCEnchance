@@ -99,6 +99,9 @@
     <ClCompile Include="gl_shader.cpp">
       <Filter>Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="crosshair.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -253,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="gl_shader.h">
       <Filter>Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="crosshair.h">
+      <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
