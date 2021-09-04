@@ -67,7 +67,7 @@ int CHudDeathMsg::Draw(float flTime)
 	int iStartX = gScreenInfo.iWidth - 64;
 	int x = iStartX;
 	int y = 256;
-	int startAlpha = 255;
+	int startAlpha = 254;
 	int iOffset = 8;
 	int iBackWidth = 3;
 	int w;
@@ -75,28 +75,28 @@ int CHudDeathMsg::Draw(float flTime)
 	float r, g, b, a;
 	for each (deathmsgItem var in aryKeepMsg)
 	{
-		if (var.executioner.empty())
+		if (var.addTime <= 0)
 			continue;
 		if (var.addTime <= flTime)
 		{
-			memset(&var, 0, sizeof(var));
+			var.killer.clear();
+			var.executioner.clear();
+			var.victim.clear();
+			var.addTime = 0;
 			continue;
 		}
-		if (var.addTime * 0.8 < flTime)
-			a = (float)startAlpha * (var.addTime - flTime) / gCVars.pDeathNoticeTime->value * 0.2;
+		if (var.addTime - 2 < flTime)
+			a = (float)startAlpha * ((var.addTime - flTime) / gCVars.pDeathNoticeTime->value);
 		else
 			a = startAlpha;
-
-		if (a <= 0)
-			continue;
 
 		wchar_t buf[64];
 		wsprintfW(buf, L"%s[%s]%s", var.killer.c_str(), var.executioner.c_str(),var.victim.c_str());
 		GetStringSize(buf, &w, &h, HUDFont);
 		x -= w;
 		gEngfuncs.pfnFillRGBABlend(x - iBackWidth, y - iBackWidth, w + iBackWidth * 2, h + iBackWidth * 2, 180, 180, 180, a / 2);
-
-		r = 250;
+		
+		r = 0.8;
 		g = 0;
 		b = 0;
 		ColorCalcuAlpha(r, g, b, a);
@@ -105,9 +105,9 @@ int CHudDeathMsg::Draw(float flTime)
 		GetStringSize(buf, &w, NULL, HUDFont);
 		x += w;
 
-		r = 180;
-		g = 180;
-		b = 180;
+		r = 0.7;
+		g = 0.7;
+		b = 0.7;
 		ColorCalcuAlpha(r, g, b, a);
 		wsprintfW(buf, L"[%s]", var.executioner.c_str());
 		DrawVGUI2String(buf, x, y, r, g, b, HUDFont, true);
