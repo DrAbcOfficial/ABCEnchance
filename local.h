@@ -10,10 +10,9 @@ typedef struct
 	void		(*R_SparkEffect)			(float* pos, int count, int velocityMin, int velocityMax);
 	void		(*R_BloodStream)			(float* org, float* dir, int pcolor, int speed);
 	float*		(*GetClientColor)			(int clientIndex);
-
-	void		(*VectorScale)				(float* pucnangle1, float scale, float* pucnangle2);
+	float(__fastcall* R_CrossHair_ReDraw)	(void* pthis, int dummy, int param_1);
+	void		(*EVVectorScale)			(float* pucnangle1, float scale, float* pucnangle2);
 	void		(*R_NewMap)					(void);
-	void(__fastcall* R_CalcDamageDirection)(void* pthis, int dummy, int x, float y, float z);
 	int			(*CL_IsDevOverview)			(void);
 	void		(*R_RenderView)				(int a1);
 	void		(*R_RenderScene)			(void);

@@ -31,6 +31,9 @@ public:
 	float m_flOverViewZmin;
 	vec3_t m_vecOverViewOrg;
 
+	vec3_t m_vecClientEVPunch;
+	vec2_t m_vecThirdPersonCrosshairPos;
+
 	client_sprite_t* m_pSpriteList;
 	int m_iRes;
 	int m_iSpriteCountAllRes;

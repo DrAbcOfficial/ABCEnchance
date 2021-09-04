@@ -31,7 +31,6 @@ metaplugins_t g_metaplugins;
 
 const clientdata_t* gClientData;
 float m_hfov;
-float* pClientEVPunchAngles;
 
 overviewInfo_t* gDevOverview;
 baseweapon_t* (*g_rgBaseSlots)[10][26] = NULL;
@@ -147,71 +146,22 @@ void DrawPlayerTitle()
 		}
 	}
 }
-//CROSSHAIR
-void R_VectorScale(float* pucnangle1, float scale, float* pucnangle2)
-{
-	gHookFuncs.VectorScale(pucnangle1, scale, pucnangle2);
-	pClientEVPunchAngles = pucnangle1;
-}
-void RedrawCorssHair()
-{
-	if (gCVars.pDynamicCrossHair->value > 0)
-	{
-		if (gClientData->health <= 0)
-			return;
-
-		if (gCVars.pDynamicCrossHairAH->value > 0)
-		{
-			float def_fov = gEngfuncs.pfnGetCvarFloat("default_fov");
-			if (def_fov != m_hfov)
-				return;
-		}
-		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-		int iCenterX = gScreenInfo.iWidth / 2 - 1;
-		int iCenterY = gScreenInfo.iHeight / 2 - 1;
-		int iOffset = gCVars.pDynamicCrossHairO->value;
-		int iDrift = fabs(pClientEVPunchAngles[0]) + fabs(pClientEVPunchAngles[1]);
-		if (iDrift <= 0)
-			iDrift = fabs(gClientData->punchangle[0]) + fabs(gClientData->punchangle[1]);
-		iDrift = iDrift * 5 * gCVars.pDynamicCrossHairM->value;
-		int r = gCVars.pDynamicCrossHairCR->value, g = gCVars.pDynamicCrossHairCG->value, b = gCVars.pDynamicCrossHairCB->value, a = gCVars.pDynamicCrossHairA->value;
-		int iWidth = gCVars.pDynamicCrossHairW->value;
-		int iLength = gCVars.pDynamicCrossHairL->value;
-		int iWidthOffset = iWidth / 2;
-		int iFinalOffset = iDrift + iOffset + iWidthOffset;
-		//描边
-		if (gCVars.pDynamicCrossHairOTD->value)
-		{
-			int iOutLineWidth = gCVars.pDynamicCrossHairOTDW->value;
-			//左
-			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iOutLineWidth * 2 + iLength, iOutLineWidth * 2 + iWidth, 0, 0, 0, a);
-			//上
-			if (!gCVars.pDynamicCrossHairT->value)
-				gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset - iOutLineWidth, iCenterY - iFinalOffset - iLength - iOutLineWidth, iOutLineWidth * 2 + iWidth, iOutLineWidth * 2 + iLength, 0, 0, 0, a);
-			//右
-			gEngfuncs.pfnFillRGBABlend(iCenterX + iFinalOffset - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iOutLineWidth * 2 + iLength, iOutLineWidth * 2 + iWidth, 0, 0, 0, a);
-			//下
-			gEngfuncs.pfnFillRGBABlend(iCenterX - iWidthOffset - iOutLineWidth, iCenterY + iFinalOffset - iOutLineWidth, iOutLineWidth * 2 + iWidth, iOutLineWidth * 2 + iLength, 0, 0, 0, a);
-		}
-		//中心
-		if (gCVars.pDynamicCrossHairD->value)
-			gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY - iWidthOffset, iWidth, iWidth, r, g, b, a);
-		//左
-		gEngfuncs.pfnFillRGBA(iCenterX - iFinalOffset - iLength, iCenterY - iWidthOffset, iLength, iWidth, r, g, b, a);
-		//上
-		if(!gCVars.pDynamicCrossHairT->value)
-			gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY - iFinalOffset - iLength, iWidth, iLength, r, g, b, a);
-		//右
-		gEngfuncs.pfnFillRGBA(iCenterX + iFinalOffset, iCenterY - iWidthOffset, iLength, iWidth, r, g, b, a);
-		//下
-		gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset, iWidth, iLength, r, g, b, a);
-	}
-}
 //FINAL SHIT
 void R_NewMap(void)
 {
 	gHudDelegate->HUD_Reset();
 	gHookFuncs.R_NewMap();
+}
+int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1)
+{
+	if (gCVars.pDynamicCrossHair->value > 0 && gExportfuncs.CL_IsThirdPerson())
+		return 0;
+	return gHookFuncs.R_CrossHair_ReDraw(pthis, dummy, param_1);
+}
+void EVVectorScale(float* punchangle1, float scale, float* punchangle2)
+{
+	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
+	VectorCopy(punchangle1, gHudDelegate->m_vecClientEVPunch);
 }
 int CL_IsDevOverview(void)
 {
@@ -222,9 +172,9 @@ void CL_SetDevOverView(int param1)
 	gHookFuncs.CL_SetDevOverView(param1);
 	if (gHudDelegate->m_iIsOverView)
 	{
-		(*(vec3_t*)(param1 + 28))[YAW] = gHudDelegate->m_flOverViewYaw;
-		*(float *)(param1 + 16) = gHudDelegate->m_vecOverViewOrg[0];
-		*(float *)(param1 + 20) = gHudDelegate->m_vecOverViewOrg[1];
+		(*(vec3_t*)(param1 + 0x1C))[YAW] = gHudDelegate->m_flOverViewYaw;
+		*(float *)(param1 + 0x10) = gHudDelegate->m_vecOverViewOrg[0];
+		*(float *)(param1 + 0x14) = gHudDelegate->m_vecOverViewOrg[1];
 		gDevOverview->z_max = gHudDelegate->m_flOverViewZmax;
 		gDevOverview->z_min = gHudDelegate->m_flOverViewZmin;
 		gDevOverview->zoom = gHudDelegate->m_flOverViewScale;
@@ -337,11 +287,17 @@ void FillAddress()
 				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_GETCLIENTCOLOR_SIG, Sig_Length(SC_GETCLIENTCOLOR_SIG));
 			Sig_FuncNotFound(GetClientColor);
 		}
-#define R_VECTORSCALE_SIG "\x8B\x4C\x24\x04\xF3\x0F\x10\x4C\x24\x08\x8B\x44\x24\x0C\xF3\x0F\x10\x01\xF3\x0F\x59\xC1\xF3\x0F\x11\x00\xF3\x0F\x10\x41\x04"
+#define R_EVVECTORSCALE_SIG "\x8B\x4C\x24\x04\xF3\x0F\x10\x4C\x24\x08\x8B\x44\x24\x0C\xF3\x0F\x10\x01\xF3\x0F\x59\xC1\xF3\x0F\x11\x00\xF3\x0F\x10\x41\x04"
 		{
-			gHookFuncs.VectorScale = (decltype(gHookFuncs.VectorScale))
-				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_VECTORSCALE_SIG, Sig_Length(R_VECTORSCALE_SIG));
-			Sig_FuncNotFound(VectorScale);
+			gHookFuncs.EVVectorScale = (decltype(gHookFuncs.EVVectorScale))
+				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_EVVECTORSCALE_SIG, Sig_Length(R_EVVECTORSCALE_SIG));
+			Sig_FuncNotFound(EVVectorScale);
+		}
+#define R_CROSSHAIR_REDRAW_SIG "\x8B\x51\x14\x85\xD2\x0F\x84\x8B\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\xF3\x0F\x2C\x40\x0C\x85\xC0\x7E\x2A\x83\x3D\x2A\x2A\x2A\x2A\x00\x53\x56\x57\x74\x2A\x80\x3D\x2A\x2A\x2A\x2A\x00\x75\x2A\xF3\x0F\x2C\x79\x34\xF3\x0F\x2C\x59\x38\xEB\x2A"
+		{
+			gHookFuncs.R_CrossHair_ReDraw = (decltype(gHookFuncs.R_CrossHair_ReDraw))
+				g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_CROSSHAIR_REDRAW_SIG, Sig_Length(R_CROSSHAIR_REDRAW_SIG));
+			Sig_FuncNotFound(R_CrossHair_ReDraw);
 		}
 #define SC_UPDATECURSORSTATE_SIG "\x8B\x40\x28\xFF\xD0\x84\xC0\x2A\x2A\xC7\x05\x2A\x2A\x2A\x2A\x01\x00\x00\x00"
 		{
@@ -364,11 +320,12 @@ void InstallHook()
 	Fill_InlineEfxHook(R_Explosion);
 	Fill_InlineEfxHook(R_RicochetSprite);
 
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.VectorScale, R_VectorScale, (void**)&gHookFuncs.VectorScale);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_NewMap, R_NewMap, (void**)&gHookFuncs.R_NewMap);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_RenderView, R_RenderView, (void**)&gHookFuncs.R_RenderView);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.CL_IsDevOverview, CL_IsDevOverview, (void**)&gHookFuncs.CL_IsDevOverview);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.CL_SetDevOverView, CL_SetDevOverView, (void**)&gHookFuncs.CL_SetDevOverView);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.EVVectorScale, EVVectorScale, (void**)&gHookFuncs.EVVectorScale);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_CrossHair_ReDraw, R_CrossHair_ReDraw, (void**)&gHookFuncs.R_CrossHair_ReDraw);
 }
 void GL_Init(void)
 {
@@ -396,21 +353,6 @@ void HUD_Init(void)
 	
 
 	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("cl_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-
-	gCVars.pDynamicCrossHair = gEngfuncs.pfnRegisterVariable("cl_crosshair", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairAH = gEngfuncs.pfnRegisterVariable("cl_crosshairautohide", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairL = gEngfuncs.pfnRegisterVariable("cl_crosshairsize", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairW = gEngfuncs.pfnRegisterVariable("cl_crosshairthickness", "2", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairO = gEngfuncs.pfnRegisterVariable("cl_crosshairgap", "16", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairM = gEngfuncs.pfnRegisterVariable("cl_crosshairmultiple", "3", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairA = gEngfuncs.pfnRegisterVariable("cl_crosshairalpha", "200", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairCR = gEngfuncs.pfnRegisterVariable("cl_crosshaircolor_r", "50", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairCG = gEngfuncs.pfnRegisterVariable("cl_crosshaircolor_g", "250", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairCB = gEngfuncs.pfnRegisterVariable("cl_crosshaircolor_b", "50", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairOTD = gEngfuncs.pfnRegisterVariable("cl_crosshair_outline_draw", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairOTDW = gEngfuncs.pfnRegisterVariable("cl_crosshair_outline", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairT = gEngfuncs.pfnRegisterVariable("cl_crosshair_t", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pDynamicCrossHairD = gEngfuncs.pfnRegisterVariable("cl_crosshairdot", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
 	gCVars.pDynamicHUD = gEngfuncs.pfnRegisterVariable("cl_hud_csgo", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 
@@ -474,8 +416,6 @@ int HUD_Redraw(float time, int intermission)
 		}
 	}
 	DrawPlayerTitle();
-	RedrawCorssHair();
-
 	gHudDelegate->HUD_Draw(time);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
