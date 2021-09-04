@@ -44,6 +44,45 @@ int CHudCustomCrosshair::Draw(float flTime)
 {
 	if (gHudDelegate->IsInSpectate())
 		return 1;
+
+	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+	int iCenterX;
+	int iCenterY;
+	if (gExportfuncs.CL_IsThirdPerson())
+	{
+		pmtrace_t tr;
+		vec3_t vForward;
+		vec3_t vViewAngle;
+		gEngfuncs.GetViewAngles(vViewAngle);
+		cl_entity_s* local = gEngfuncs.GetLocalPlayer();
+		AngleVectors(vViewAngle, vForward, NULL, NULL);
+		vec3_t vecSrc, viewOfs, vecEnd;
+		VectorCopy(local->curstate.origin, vecSrc);
+		gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
+		VectorAdd(vecSrc, viewOfs, vecSrc);
+		vForward[0] *= 4096;
+		vForward[1] *= 4096;
+		vForward[2] *= 4096;
+		VectorAdd(vecSrc, vForward, vecEnd);
+		physent_t* pPhyplayer = gEngfuncs.pEventAPI->EV_GetPhysent(local->index);
+		if (!pPhyplayer)
+			return NULL;
+		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_STUDIO_BOX, pPhyplayer->info, &tr);
+
+		vec3_t vecHUD;
+		gEngfuncs.pTriAPI->WorldToScreen(tr.endpos, vecHUD);
+		iCenterX = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
+		iCenterY = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
+	}
+	else
+	{
+		iCenterX = gScreenInfo.iWidth / 2;
+		iCenterY = gScreenInfo.iHeight / 2;
+	}
+	//默认准心
+	if (pCvarDefaultCrosshair->value > 0)
+		DrawDefaultCrosshair(flTime, iCenterX, iCenterY);
 	if (gCVars.pDynamicCrossHair->value > 0)
 	{
 		if (gClientData->health <= 0)
@@ -51,41 +90,6 @@ int CHudCustomCrosshair::Draw(float flTime)
 
 		if (gCVars.pDynamicCrossHairAH->value > 0 && pCvarDefaultFOV->value != m_hfov)
 			return 0;
-		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-		int iCenterX;
-		int iCenterY;
-		if (gExportfuncs.CL_IsThirdPerson())
-		{
-			pmtrace_t tr;
-			vec3_t vForward;
-			vec3_t vViewAngle;
-			gEngfuncs.GetViewAngles(vViewAngle);
-			cl_entity_s* local = gEngfuncs.GetLocalPlayer();
-			AngleVectors(vViewAngle, vForward, NULL, NULL);
-			vec3_t vecSrc, viewOfs, vecEnd;
-			VectorCopy(local->curstate.origin, vecSrc);
-			gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
-			VectorAdd(vecSrc, viewOfs, vecSrc);
-			vForward[0] *= 4096;
-			vForward[1] *= 4096;
-			vForward[2] *= 4096;
-			VectorAdd(vecSrc, vForward, vecEnd);
-			physent_t* pPhyplayer = gEngfuncs.pEventAPI->EV_GetPhysent(local->index);
-			if (!pPhyplayer)
-				return NULL;
-			gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-			gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_STUDIO_BOX, pPhyplayer->info, &tr);
-
-			vec3_t vecHUD;
-			gEngfuncs.pTriAPI->WorldToScreen(tr.endpos, vecHUD);
-			iCenterX = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
-			iCenterY = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
-		}
-		else
-		{
-			iCenterX = gScreenInfo.iWidth / 2;
-			iCenterY = gScreenInfo.iHeight / 2;
-		}
 		int iOffset = gCVars.pDynamicCrossHairO->value;
 		int iDrift = fabs(gHudDelegate->m_vecClientEVPunch[0]) + fabs(gHudDelegate->m_vecClientEVPunch[1]);
 		if (iDrift <= 0)
@@ -122,9 +126,6 @@ int CHudCustomCrosshair::Draw(float flTime)
 		gEngfuncs.pfnFillRGBA(iCenterX + iFinalOffset, iCenterY - iWidthOffset, iLength, iWidth, r, g, b, a);
 		//下
 		gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset, iWidth, iLength, r, g, b, a);
-		//默认准心
-		if (pCvarDefaultCrosshair->value > 0)
-			DrawDefaultCrosshair(flTime, iCenterX, iCenterY);
 	}
 	return 1;
 }
@@ -137,8 +138,8 @@ void CHudCustomCrosshair::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc)
 {
 	if (hPic <= 0)
 		return;
-	int rx = x - (hRc.right - hRc.left) / 2;
-	int ry = y - (hRc.bottom - hRc.top) / 2;
+	int rx = x + 1 - (hRc.right - hRc.left) / 2;
+	int ry = y + 1 - (hRc.bottom - hRc.top) / 2;
 	SPR_Set(hPic, 255, 255, 255);
 	SPR_DrawAdditive(0, rx, ry, &hRc);
 }
