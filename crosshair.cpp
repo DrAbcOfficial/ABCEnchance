@@ -146,6 +146,10 @@ void CHudCustomCrosshair::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc)
 void CHudCustomCrosshair::DrawDefaultCrosshair(float flTime, int x, int y)
 {
 	WEAPON* pWeapon = m_HudCustomAmmo.m_pWeapon;
+	if (!pWeapon)
+		return;
+	if (pWeapon->iId <= 0)
+		return;
 	bool bOnTarget = m_HudCustomAmmo.m_bIsOnTarget;
 	if (m_hfov >= pCvarDefaultFOV->value)
 	{
