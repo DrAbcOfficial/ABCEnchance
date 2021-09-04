@@ -112,8 +112,10 @@ void CHudRadar::Draw(float flTime)
 	}
 	
 	glBindTexture(GL_TEXTURE_2D, m_hRadarBufferTex);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	if (!g_metaplugins.renderer) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
 	glColor4ub(255, 255, 255, MapAlpha);
 	glBegin(GL_QUADS);
 		glTexCoord2f(stx, sty + h);
