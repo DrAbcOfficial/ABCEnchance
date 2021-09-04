@@ -402,26 +402,28 @@ void CHudCustomAmmo::SyncWeapon()
 }
 int CHudCustomAmmo::Draw(float flTime)
 {
+	if (gEngfuncs.IsSpectateOnly())
+		return 1;
 	//IDK Why, this var is totally useless for sven coop
 	//but ghidra never lie
 	if (!(gClientData->weapons & 0x80000000))
 		return 1;
 	if (gClientData->health <= 0)
 		return 1;
-
 	//1s 进行一次武器同步
 	if (flTime > m_fNextSyncTime)
 	{
 		SyncWeapon();
 		m_fNextSyncTime = flTime + 1;
 	}
-
 	// Draw Weapon Menu
 	DrawWList(flTime);
 	gHR.DrawAmmoHistory(flTime);
 	if (!m_pWeapon)
 		return 0;
 	WEAPON* pw = m_pWeapon;
+	if (pw->iId <= 0)
+		return 0;
 	if ((pw->iAmmoType < 0) && (pw->iAmmo2Type < 0))
 		return 0;
 	int r, g, b, a;
