@@ -144,7 +144,7 @@ void CHudArmorHealth::Reset(void)
 }
 int CHudArmorHealth::Draw(float flTime)
 {
-	if (gEngfuncs.IsSpectateOnly())
+	if (gHudDelegate->IsInSpectate())
 		return 1;
 	if (flTime < flPainIndicatorKeepTime)
 		DrawPain(flTime);

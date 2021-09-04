@@ -402,7 +402,7 @@ void CHudCustomAmmo::SyncWeapon()
 }
 int CHudCustomAmmo::Draw(float flTime)
 {
-	if (gEngfuncs.IsSpectateOnly())
+	if (gHudDelegate->IsInSpectate())
 		return 1;
 	//IDK Why, this var is totally useless for sven coop
 	//but ghidra never lie
