@@ -12,6 +12,7 @@
 #include "exportfuncs.h"
 
 #include "crosshair.h"
+#include <ammo.h>
 
 
 CHudCustomCrosshair m_HudCrosshair;
@@ -32,6 +33,8 @@ int CHudCustomCrosshair::Init(void)
 	gCVars.pDynamicCrossHairOTDW = gEngfuncs.pfnRegisterVariable("cl_crosshair_outline", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairT = gEngfuncs.pfnRegisterVariable("cl_crosshair_t", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	gCVars.pDynamicCrossHairD = gEngfuncs.pfnRegisterVariable("cl_crosshairdot", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+
+	pCvarDefaultCrosshair = gEngfuncs.pfnGetCvarPointer("crosshair");
 
 	pCvarDefaultFOV = gEngfuncs.pfnGetCvarPointer("default_fov");
 	return 1;
@@ -117,10 +120,43 @@ int CHudCustomCrosshair::Draw(float flTime)
 		gEngfuncs.pfnFillRGBA(iCenterX + iFinalOffset, iCenterY - iWidthOffset, iLength, iWidth, r, g, b, a);
 		//下
 		gEngfuncs.pfnFillRGBA(iCenterX - iWidthOffset, iCenterY + iFinalOffset, iWidth, iLength, r, g, b, a);
+		//默认准心
+		if (pCvarDefaultCrosshair->value > 0)
+			DrawDefaultCrosshair(flTime, iCenterX, iCenterY);
 	}
 	return 1;
 }
 
 void CHudCustomCrosshair::Reset(void)
 {
+}
+
+void CHudCustomCrosshair::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc)
+{
+	if (hPic <= 0)
+		return;
+	int rx = x - (hRc.right - hRc.left) / 2;
+	int ry = y - (hRc.bottom - hRc.top) / 2;
+	SPR_Set(hPic, 255, 255, 255);
+	SPR_DrawAdditive(0, rx, ry, &hRc);
+}
+
+void CHudCustomCrosshair::DrawDefaultCrosshair(float flTime, int x, int y)
+{
+	WEAPON* pWeapon = m_HudCustomAmmo.m_pWeapon;
+	bool bOnTarget = m_HudCustomAmmo.m_bIsOnTarget;
+	if (m_hfov >= pCvarDefaultFOV->value)
+	{
+		if (bOnTarget && pWeapon->hAutoaim)
+			DrawCrosshairSPR(x, y, pWeapon->hAutoaim, pWeapon->rcAutoaim);
+		else
+			DrawCrosshairSPR(x, y, pWeapon->hCrosshair, pWeapon->rcCrosshair);
+	}
+	else
+	{
+		if (bOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
+			DrawCrosshairSPR(x, y, pWeapon->hZoomedAutoaim, pWeapon->rcZoomedAutoaim);
+		else
+			DrawCrosshairSPR(x, y, pWeapon->hZoomedCrosshair, pWeapon->rcZoomedCrosshair);
+	}
 }
