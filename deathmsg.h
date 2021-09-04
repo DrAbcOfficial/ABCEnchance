@@ -22,5 +22,11 @@ public:
 private:
 	deathmsgItem aryKeepMsg[MAX_KEEP_DEATHMSG];
 	vgui::HFont HUDFont;
+	float XOffset;
+	float YOffset;
+	float GapOffset;
+	float BackGoundWidth;
+
+	Color BackGoundColor;
 };
 extern CHudDeathMsg m_HudDeathMsg;
