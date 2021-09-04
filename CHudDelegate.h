@@ -41,7 +41,7 @@ public:
 	HSPRITE GetSprite(int index){ return (index < 0) ? 0 : m_rghSprites[index];}
 	wrect_t& GetSpriteRect(int index){ return m_rgrcRects[index]; }
 	int GetSpriteIndex(const char* SpriteName);	// gets a sprite index, for use in the m_rghSprites[] array
-
+	bool IsInSpectate();
 private:
 	int	 m_iSpriteCount;
 	HSPRITE* m_rghSprites;	/*[HUD_SPRITE_COUNT]*/			// the sprites loaded from hud.txt

@@ -155,6 +155,10 @@ int CHudDelegate::GetSpriteIndex(const char* SpriteName)
 	}
 	return -1; // invalid sprite
 }
+bool CHudDelegate::IsInSpectate()
+{
+	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
+}
 vgui::ISurface* CHudDelegate::surface()
 {
 	return g_pSurface;

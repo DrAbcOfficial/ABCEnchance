@@ -42,7 +42,7 @@ int CHudCustomCrosshair::Init(void)
 
 int CHudCustomCrosshair::Draw(float flTime)
 {
-	if (gEngfuncs.IsSpectateOnly())
+	if (gHudDelegate->IsInSpectate())
 		return 1;
 	if (gCVars.pDynamicCrossHair->value > 0)
 	{
@@ -83,8 +83,8 @@ int CHudCustomCrosshair::Draw(float flTime)
 		}
 		else
 		{
-			iCenterX = gScreenInfo.iWidth / 2 - 1;
-			iCenterY = gScreenInfo.iHeight / 2 - 1;
+			iCenterX = gScreenInfo.iWidth / 2;
+			iCenterY = gScreenInfo.iHeight / 2;
 		}
 		int iOffset = gCVars.pDynamicCrossHairO->value;
 		int iDrift = fabs(gHudDelegate->m_vecClientEVPunch[0]) + fabs(gHudDelegate->m_vecClientEVPunch[1]);
