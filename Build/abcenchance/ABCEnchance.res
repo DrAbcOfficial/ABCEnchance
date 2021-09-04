@@ -29,6 +29,8 @@ Scheme
 		"AmmoHUD.SelectCyclerIconColor"		"245 230 195 255"
 		"AmmoHUD.SelectCyclerEmptyColor"	"255 0 0 255"
 		"AmmoHUD.SelectCyclerTextColor"		"245 230 195 255"
+
+		"DeathMsg.BackGoundColor"		"180 180 180 255"
 	}
 
 	BaseSettings
@@ -69,6 +71,11 @@ Scheme
 		"Radar.OutLineAlpha"	"255"
 		"Radar.MapAlpha"		"255"
 		"Radar.CenterAlpha"		"255"
+
+		"DeathMsg.XOffset"		"64"
+		"DeathMsg.YOffset"		"256"
+		"DeathMsg.GapOffset"	"9"
+		"DeathMsg.BackGoundWidth"	"3"
 	}
 
 	Fonts

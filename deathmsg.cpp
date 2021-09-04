@@ -64,12 +64,12 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 }
 int CHudDeathMsg::Draw(float flTime)
 {
-	int iStartX = gScreenInfo.iWidth - 64;
+	int iStartX = gScreenInfo.iWidth - XOffset;
 	int x = iStartX;
-	int y = 256;
-	int startAlpha = 254;
-	int iOffset = 8;
-	int iBackWidth = 3;
+	int y = YOffset;
+	int startAlpha = 255;
+	int iOffset = GapOffset;
+	int iBackWidth = BackGoundWidth;
 	int w;
 	int h;
 	float r, g, b, a;
@@ -94,7 +94,10 @@ int CHudDeathMsg::Draw(float flTime)
 		wsprintfW(buf, L"%s[%s]%s", var.killer.c_str(), var.executioner.c_str(),var.victim.c_str());
 		GetStringSize(buf, &w, &h, HUDFont);
 		x -= w;
-		gEngfuncs.pfnFillRGBABlend(x - iBackWidth, y - iBackWidth, w + iBackWidth * 2, h + iBackWidth * 2, 180, 180, 180, a / 2);
+
+		int br, bg, bb, dummy;
+		BackGoundColor.GetColor(br, bg, bb, dummy);
+		gEngfuncs.pfnFillRGBABlend(x - iBackWidth, y - iBackWidth, w + iBackWidth * 2, h + iBackWidth * 2, br, bg, bb, a / 2);
 		
 		r = 0.8;
 		g = 0;
@@ -148,6 +151,13 @@ int CHudDeathMsg::Init(void)
 {
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
 	gCVars.pDeathNoticeTime = gEngfuncs.pfnRegisterVariable("hud_deathnotice_time", "6", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	
 	HUDFont = pScheme->GetFont("MainShitFont", true);
+	XOffset = atof(pScheme->GetResourceString("DeathMsg.XOffset"));
+	YOffset = atof(pScheme->GetResourceString("DeathMsg.YOffset"));
+	GapOffset = atof(pScheme->GetResourceString("DeathMsg.GapOffset"));
+	BackGoundWidth = atof(pScheme->GetResourceString("DeathMsg.BackGoundWidth"));
+
+	BackGoundColor = pScheme->GetColor("DeathMsg.BackGoundColor", gDefaultColor);
 	return 1;
 }
