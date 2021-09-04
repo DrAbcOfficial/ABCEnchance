@@ -494,30 +494,31 @@ int CHudCustomAmmo::Draw(float flTime)
 
 	if (pw->iAmmo2Type > 0)
 	{
+		nowX = flCenterX + iElementGap * 2;
 		if (pw->iClip2 >= 0)
 		{
 			Ammo2BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d/", pw->iClip2);
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowX = flCenterX + iElementGap * 2;
 			nowY = flCenterY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-
+			nowX += iTextWidth;
+	
 			Ammo2TextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
-			nowX += iTextWidth;
 			nowY = flCenterY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
+			nowX += iTextWidth;
 		}
 		else
 		{
 			Ammo2BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowX = flCenterX + iElementGap * 2;
 			nowY = flCenterY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
+			nowX += iTextWidth;
 		}
 		Ammo2IconColor.GetColor(r, g, b, a);
 		nowX += iElementGap;
