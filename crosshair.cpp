@@ -42,6 +42,8 @@ int CHudCustomCrosshair::Init(void)
 
 int CHudCustomCrosshair::Draw(float flTime)
 {
+	if (gEngfuncs.IsSpectateOnly())
+		return 1;
 	if (gCVars.pDynamicCrossHair->value > 0)
 	{
 		if (gClientData->health <= 0)
