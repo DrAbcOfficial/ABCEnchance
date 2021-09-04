@@ -51,6 +51,7 @@ extern int nanmask;
 
 #define IS_NAN(x) (((*(int *)&x)&nanmask) == nanmask)
 #define DEG2RAD(a) (a * M_PI) / 180.0F
+#define RAD2DEG(r) (r * 180.0F) / M_PI
 #define clamp(num, a, b) max(min(num, b),a)
 #define METERS_PER_INCH 0.0254f
 #define METER2INCH(x) (float)(x * (1.0f / METERS_PER_INCH))
