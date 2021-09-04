@@ -48,6 +48,7 @@ public:
 	bool m_bOpeningAnnularMenu = false;
 	bool m_bSelectMenuDisplay = false;
 
+	bool m_bIsOnTarget = false;
 	WEAPON* m_pWeapon;
 	int	m_HUD_bucket0;
 

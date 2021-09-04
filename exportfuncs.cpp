@@ -154,7 +154,7 @@ void R_NewMap(void)
 }
 int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1)
 {
-	if (gCVars.pDynamicCrossHair->value > 0 && gExportfuncs.CL_IsThirdPerson())
+	if (gCVars.pDynamicCrossHair->value > 0)
 		return 0;
 	return gHookFuncs.R_CrossHair_ReDraw(pthis, dummy, param_1);
 }

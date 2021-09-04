@@ -126,7 +126,6 @@ int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf)
 }
 int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 {
-	int bOnTarget = FALSE;
 	BEGIN_READ(pbuf, iSize);
 	int iState = READ_BYTE();
 	if (iState > 0)
@@ -140,8 +139,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		}
 		int iClip = READ_LONG();
 		int iClip2 = READ_LONG();
-		if (iState > 1)
-			bOnTarget = TRUE;
 		if(gHudDelegate->m_iPlayerHealth > 0)
 			m_HudCustomAmmo.m_bAcceptDeadMessage = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
@@ -151,20 +148,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		pWeapon->iClip = iClip;
 		pWeapon->iClip2 = iClip2;
 		m_HudCustomAmmo.m_pWeapon = pWeapon;
-		if (m_hfov >= gEngfuncs.pfnGetCvarFloat("default_fov"))
-		{ 
-			if (bOnTarget && m_HudCustomAmmo.m_pWeapon->hAutoaim)
-				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hAutoaim, m_HudCustomAmmo.m_pWeapon->rcAutoaim, 255, 255, 255);
-			else
-				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hCrosshair, m_HudCustomAmmo.m_pWeapon->rcCrosshair, 255, 255, 255);
-		}
-		else
-		{
-			if (bOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
-				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim, m_HudCustomAmmo.m_pWeapon->rcZoomedAutoaim, 255, 255, 255);
-			else
-				SetCrosshair(m_HudCustomAmmo.m_pWeapon->hZoomedCrosshair, m_HudCustomAmmo.m_pWeapon->rcZoomedCrosshair, 255, 255, 255);
-		}
+		m_HudCustomAmmo.m_bIsOnTarget = iState > 1;
 	}
 	else
 	{
@@ -373,6 +357,7 @@ void CHudCustomAmmo::Reset(void)
 	m_pWeapon = NULL;
 	m_bSelectMenuDisplay = false;
 	m_bOpeningAnnularMenu = false;
+	m_bIsOnTarget = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
 	iBackGroundTga = gHudDelegate->surface()->CreateNewTextureID();
