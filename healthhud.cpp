@@ -4,13 +4,15 @@
 #include "mathlib.h"
 #include "msghook.h"
 
-#include "vguilocal.h"
 #include "hud.h"
 #include "weapon.h"
 #include "CHudDelegate.h"
+#include "vguilocal.h"
+#include "drawElement.h"
+
 #include "healthhud.h"
 
-#include "drawElement.h"
+
 
 #define DAMAGE_NAME "sprites/%d_dmg.spr"
 int giDmgHeight, giDmgWidth;
@@ -121,9 +123,7 @@ void CHudArmorHealth::Reset(void)
 	iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
 	iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
 	iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
-	iHealthBarBackground = gHudDelegate->surface()->CreateNewTextureID();
-	gHudDelegate->surface()->DrawSetTextureFile(iHealthBarBackground, "abcenchance/tga/healthbar_background", true, false);
-
+	VGUI_CREATE_NEWTGA_TEXTURE(iHealthBarBackground, "abcenchance/tga/healthbar_background");
 	m_iHealth = 100;
 	m_fFade = 0;
 	m_iFlags = 0;

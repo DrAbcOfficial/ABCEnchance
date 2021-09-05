@@ -360,8 +360,7 @@ void CHudCustomAmmo::Reset(void)
 	m_bIsOnTarget = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
-	iBackGroundTga = gHudDelegate->surface()->CreateNewTextureID();
-	gHudDelegate->surface()->DrawSetTextureFile(iBackGroundTga, "abcenchance/tga/ammobar_background", true, false);
+	VGUI_CREATE_NEWTGA_TEXTURE(iBackGroundTga, "abcenchance/tga/ammobar_background");
 	gWR.Reset();
 	gHR.Reset();
 }
