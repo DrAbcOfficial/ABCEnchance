@@ -10,11 +10,11 @@
 #include "gldef.h"
 
 #include "exportfuncs.h"
-#include "vguilocal.h"
 
 #include "gl_shader.h"
 
 #include "hud.h"
+#include "vguilocal.h"
 #include "weapon.h"
 #include "CHudDelegate.h"
 #include "radar.h"
@@ -62,14 +62,9 @@ void CHudRadar::VidInit()
 }
 void CHudRadar::Reset()
 {
-	OutLineImg = gHudDelegate->surface()->CreateNewTextureID();
-	gHudDelegate->surface()->DrawSetTextureFile(OutLineImg, "abcenchance/tga/radar_background", true, false);
-
-	PlayerPointImg = gHudDelegate->surface()->CreateNewTextureID();
-	gHudDelegate->surface()->DrawSetTextureFile(PlayerPointImg, "abcenchance/tga/radar_upground", true, false);
-
-	NorthImg = gHudDelegate->surface()->CreateNewTextureID();
-	gHudDelegate->surface()->DrawSetTextureFile(NorthImg, "abcenchance/tga/radar_north", true, false);
+	VGUI_CREATE_NEWTGA_TEXTURE(OutLineImg, "abcenchance/tga/radar_background");
+	VGUI_CREATE_NEWTGA_TEXTURE(PlayerPointImg, "abcenchance/tga/radar_upground");
+	VGUI_CREATE_NEWTGA_TEXTURE(NorthImg, "abcenchance/tga/radar_north");
 
 	flNextUpdateTrTime = 0;
 	cvar_t* pCvarDevC = gEngfuncs.pfnGetCvarPointer("dev_overview_color");
