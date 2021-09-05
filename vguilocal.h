@@ -13,5 +13,6 @@ extern vgui::ISchemeManager* g_pScheme;
 extern vgui::ISurface* g_pSurface;
 extern vgui::ILocalize* pLocalize;
 extern vgui::IScheme* pScheme;
+extern vgui::IScheme* pSchemeLang;
 extern ScreenInfo_t gScreenInfo;
 extern Color gDefaultColor;

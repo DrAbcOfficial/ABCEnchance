@@ -33,8 +33,10 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
 void HUD_Clear(void);
 void V_CalcRefdef(struct ref_params_s* pparams);
 void IN_MouseEvent(int mstate);
+int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding);
 void IN_Accumulate(void);
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
+
 void R_NewMap(void);
 void R_RenderView(int a1);
 

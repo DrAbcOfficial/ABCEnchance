@@ -82,6 +82,7 @@ void R_ForceCVars(qboolean mp)
 		return;
 	gHookFuncs.R_ForceCVars(mp);
 }
+
 void Sys_ErrorEx(const char* fmt, ...)
 {
 	char msg[4096] = { 0 };
@@ -218,6 +219,7 @@ void InstallHook()
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.EVVectorScale, EVVectorScale, (void**)&gHookFuncs.EVVectorScale);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_CrossHair_ReDraw, R_CrossHair_ReDraw, (void**)&gHookFuncs.R_CrossHair_ReDraw);
 }
+
 void GL_Init(void)
 {
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, NULL, NULL);
@@ -359,6 +361,11 @@ void IN_Accumulate(void)
 	}
 	else
 		gExportfuncs.IN_Accumulate();
+}
+int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
+{
+	gHudDelegate->HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
+	return gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding);
 }
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 {

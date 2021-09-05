@@ -105,6 +105,9 @@
     <ClCompile Include="playertitle.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="vote.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -264,6 +267,9 @@
       <Filter>Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="playertitle.h">
+      <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="vote.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>

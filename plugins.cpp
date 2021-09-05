@@ -63,10 +63,12 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	g_dwClientSize = g_pMetaHookAPI->GetModuleSize((HMODULE)g_dwClientBase);
 
 	GL_Init();
+
 	pExportFunc->HUD_Init = HUD_Init;
 	pExportFunc->HUD_VidInit = HUD_VidInit;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
 	pExportFunc->IN_MouseEvent = IN_MouseEvent;
+	pExportFunc->HUD_Key_Event = HUD_KeyEvent;
 	pExportFunc->IN_Accumulate = IN_Accumulate;
 	pExportFunc->CL_CreateMove = CL_CreateMove;
 	pExportFunc->HUD_UpdateClientData = HUD_UpdateClientData;
