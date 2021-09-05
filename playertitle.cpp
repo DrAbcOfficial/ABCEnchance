@@ -165,58 +165,59 @@ int CHudPlayerTitle::Draw(float flTime)
 					flHealthRatio = clamp(m_Playerinfo[i].health / 100, 0, 1);
 					flArmorRatio = clamp(m_Playerinfo[i].armor / 100, 0, 1);
 					
-					nowX = vecHUD[0] - iTitleLength / 2;
+					nowX = vecHUD[0] - iTitleLength / 3;
 					nowY = vecHUD[1] - iTitleHeight / 2;
 					if (gCVars.pPlayerTitle->value < 2)
 					{
 						//±³¾°
-						glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 						glEnable(GL_TEXTURE_2D);
 						glEnable(GL_BLEND);
-						glColor4ub(255, 255, 255, 255);
+							glColor4ub(255, 255, 255, 255);
 
-						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-						glBindTexture(GL_TEXTURE_2D, iBackGroundTga);
-						glBegin(GL_QUADS);
-							glTexCoord2f(0, 0);
-							glVertex3f(nowX, nowY, 0);
-							glTexCoord2f(0, 1);
-							glVertex3f(nowX, nowY + iTitleHeight, 0);
-							glTexCoord2f(1, 1);
-							glVertex3f(nowX + iTitleLength, nowY + iTitleHeight, 0);
-							glTexCoord2f(1, 0);
-							glVertex3f(nowX + iTitleLength, nowY, 0);
-						glEnd();
+							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+							glBindTexture(GL_TEXTURE_2D, iBackGroundTga);
+							glBegin(GL_QUADS);
+								glTexCoord2f(0, 0);
+								glVertex3f(nowX, nowY, 0);
+								glTexCoord2f(0, 1);
+								glVertex3f(nowX, nowY + iTitleHeight, 0);
+								glTexCoord2f(1, 1);
+								glVertex3f(nowX + iTitleLength, nowY + iTitleHeight, 0);
+								glTexCoord2f(1, 0);
+								glVertex3f(nowX + iTitleLength, nowY, 0);
+							glEnd();
 
-						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-						glBindTexture(GL_TEXTURE_2D, iHealthBarTga);
-						glBegin(GL_QUADS);
-							glTexCoord2f(0, 0);
-							glVertex3f(nowX, nowY, 0);
-							glTexCoord2f(0, 1);
-							glVertex3f(nowX, nowY + iTitleHeight, 0);
-							glTexCoord2f(flHealthRatio, 1);
-							glVertex3f(nowX + iTitleLength * flHealthRatio, nowY + iTitleHeight, 0);
-							glTexCoord2f(flHealthRatio, 0);
-							glVertex3f(nowX + iTitleLength * flHealthRatio, nowY, 0);
-						glEnd();
+							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+							glBindTexture(GL_TEXTURE_2D, iHealthBarTga);
+							glBegin(GL_QUADS);
+								glTexCoord2f(0, 0);
+								glVertex3f(nowX, nowY, 0);
+								glTexCoord2f(0, 1);
+								glVertex3f(nowX, nowY + iTitleHeight, 0);
+								glTexCoord2f(flHealthRatio, 1);
+								glVertex3f(nowX + iTitleLength * flHealthRatio, nowY + iTitleHeight, 0);
+								glTexCoord2f(flHealthRatio, 0);
+								glVertex3f(nowX + iTitleLength * flHealthRatio, nowY, 0);
+							glEnd();
 
-						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-						glBindTexture(GL_TEXTURE_2D, iArmorBarTga);
-						glBegin(GL_QUADS);
-							glTexCoord2f(0, 0);
-							glVertex3f(nowX, nowY, 0);
-							glTexCoord2f(0, 1);
-							glVertex3f(nowX, nowY + iTitleHeight, 0);
-							glTexCoord2f(flArmorRatio, 1);
-							glVertex3f(nowX + iTitleLength * flArmorRatio, nowY + iTitleHeight, 0);
-							glTexCoord2f(flArmorRatio, 0);
-							glVertex3f(nowX + iTitleLength * flArmorRatio, nowY, 0);
-						glEnd();
-
+							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+							glBindTexture(GL_TEXTURE_2D, iArmorBarTga);
+							glBegin(GL_QUADS);
+								glTexCoord2f(0, 0);
+								glVertex3f(nowX, nowY, 0);
+								glTexCoord2f(0, 1);
+								glVertex3f(nowX, nowY + iTitleHeight, 0);
+								glTexCoord2f(flArmorRatio, 1);
+								glVertex3f(nowX + iTitleLength * flArmorRatio, nowY + iTitleHeight, 0);
+								glTexCoord2f(flArmorRatio, 0);
+								glVertex3f(nowX + iTitleLength * flArmorRatio, nowY, 0);
+							glEnd();
+						glDisable(GL_BLEND);
+						glDisable(GL_TEXTURE_2D);
+						
+						gHudDelegate->surface()->DrawSetTexture(-1);
 						if (flHealthRatio <= 0.45f || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64)
 						{
-							gHudDelegate->surface()->DrawSetTexture(-1);
 							gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 							gHudDelegate->surface()->DrawSetTexture(
 								flHealthRatio < 0.4 ? (
