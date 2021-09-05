@@ -96,7 +96,7 @@ int CHudPlayerTitle::Draw(float flTime)
 
 			levelAngle = vecView[1];
 			elevation = vecView[0];
-			//½Ç¶È²¹³¥  -180 180 =¡·0 360
+			//½Ç¶È²¹³¥  -180 180 => 0 360
 			if (levelAngle < 0)
 				levelAngle = levelAngle + PERIGON_ANGLE;
 			elevation = -elevation;
@@ -138,12 +138,12 @@ int CHudPlayerTitle::Draw(float flTime)
 			//ÊÓ½Ç¸©Ñö¼Ð½Ç
 			fPlayerAngle_z = asin(dz / (fsqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2)))) * RADIAN_PER_DEGREE;
 			fPaintAngle_z = elevation - fPlayerAngle_z;
-
-			gEngfuncs.pTriAPI->WorldToScreen(vecOrg, vecHUD);
-			vecHUD[0] = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
-			vecHUD[1] = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
 			if (fPaintAngle_xy > -45 && fPaintAngle_xy < 45 && fPaintAngle_z > -45 && fPaintAngle_z < 45)
 			{
+				gEngfuncs.pTriAPI->WorldToScreen(vecOrg, vecHUD);
+				vecHUD[0] = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
+				vecHUD[1] = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
+
 				hud_player_info_t playerinfo = { 0 };
 				gEngfuncs.pfnGetPlayerInfo(i, &playerinfo);
 				if (playerinfo.name)

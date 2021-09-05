@@ -211,22 +211,56 @@ int CHudArmorHealth::Draw(float flTime)
 }
 void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 {
+	float dx, dy, dz;
+	float levelAngle,elevation;
+	float angle;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	float yaw = local->curstate.angles[1];
-	if (yaw < 0)
-		yaw += 360;
-	vec2_t diffPos;
-	diffPos[0] = vecFrom[0] - local->curstate.origin[0];
-	diffPos[1] = vecFrom[1] - local->curstate.origin[1];
-	// 计算旋转
-	float yaw2 = atan2f(fabs(diffPos[1]), fabs(diffPos[0]));
-	if (diffPos[0] < 0 && diffPos[1] > 0)
-		yaw2 += M_PI / 2;
-	else if (diffPos[0] < 0 && diffPos[1] < 0)
-		yaw2 += M_PI;
-	else if (diffPos[0] > 0 && diffPos[1] < 0)
-		yaw2 += M_PI / 2 * 3;
-	float angle = DEG2RAD(yaw) - yaw2;
+	//计算我和目标的相对偏移
+	dx = vecFrom[0] - local->curstate.origin[0];
+	dy = vecFrom[1] - local->curstate.origin[1];
+	dz = vecFrom[2] - local->curstate.origin[2];
+	float fDistance = fsqrt(pow(dx, 2) + pow(dy, 2));
+	levelAngle = local->curstate.angles[1];
+	elevation = local->curstate.angles[0];
+
+	if (levelAngle < 0)
+		levelAngle = levelAngle + PERIGON_ANGLE;
+	elevation = -elevation;
+	//计算角色夹角
+	if (dx > 0)
+	{
+		if (dy == 0)
+			angle = 0.0;
+		else if (dy > 0)
+			angle = asin(dy / fDistance) * RADIAN_PER_DEGREE;
+		else if (dy < 0)
+			angle = PERIGON_ANGLE + (asin(dy / fDistance) * RADIAN_PER_DEGREE);
+	}
+	else if (dx == 0)
+	{
+		if (dy > 0)
+			angle = 90.0;
+		else if (dy < 0)
+			angle = 270.0;
+	}
+	else if (dx < 0)
+	{
+		if (dy == 0)
+			angle = FLAT_ANGLE;
+		else if (dy > 0)
+			angle = FLAT_ANGLE - asin(dy / (fDistance)) * RADIAN_PER_DEGREE;
+		else if (dy < 0)
+			angle = FLAT_ANGLE - asin(dy / (fDistance)) * RADIAN_PER_DEGREE;
+	}
+	//视角水平夹角
+	angle = levelAngle - angle;
+	if (angle == FLAT_ANGLE || angle == -FLAT_ANGLE)
+		angle = FLAT_ANGLE;
+	else if (angle > FLAT_ANGLE)
+		angle = angle - PERIGON_ANGLE;
+	else if (angle < -FLAT_ANGLE)
+		angle = angle + PERIGON_ANGLE;
+
 	float ca = cos(angle);
 	float sa = sin(angle);
 	//以屏幕中心为坐标轴的坐标系
