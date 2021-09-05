@@ -164,57 +164,56 @@ int CHudPlayerTitle::Draw(float flTime)
 				{
 					flHealthRatio = clamp(m_Playerinfo[i].health / 100, 0, 1);
 					flArmorRatio = clamp(m_Playerinfo[i].armor / 100, 0, 1);
-			
+					
 					nowX = vecHUD[0] - iTitleLength / 2;
 					nowY = vecHUD[1] - iTitleHeight / 2;
-					//±³¾°
-					gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-					gHudDelegate->surface()->DrawSetTexture(iBackGroundTga);
-					gHudDelegate->surface()->DrawTexturedRect(nowX, nowY, nowX + iTitleLength, nowY + iTitleHeight * 0.666);
-
-					glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-					glEnable(GL_TEXTURE_2D);
-					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					glBindTexture(GL_TEXTURE_2D, iHealthBarTga);
-					glColor4ub(255, 255, 255, 255);
-					glBegin(GL_QUADS);
-						glTexCoord2f(0, 0);
-						glVertex3f(nowX, nowY, 0);
-						glTexCoord2f(0, 1);
-						glVertex3f(nowX, nowY + iTitleHeight, 0);
-						glTexCoord2f(flHealthRatio, 1);
-						glVertex3f(nowX + iTitleLength * flHealthRatio, nowY+ iTitleHeight, 0);
-						glTexCoord2f(flHealthRatio, 0);
-						glVertex3f(nowX + iTitleLength * flHealthRatio, nowY, 0);
-					glEnd();
-
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					glBindTexture(GL_TEXTURE_2D, iArmorBarTga);
-					glBegin(GL_QUADS);
-						glTexCoord2f(0, 0);
-						glVertex3f(nowX, nowY, 0);
-
-						glTexCoord2f(0, 1);
-						glVertex3f(nowX, nowY + iTitleHeight, 0);
-
-						glTexCoord2f(flArmorRatio, 1);
-						glVertex3f(nowX + iTitleLength * flArmorRatio, nowY + iTitleHeight, 0);
-
-						glTexCoord2f(flArmorRatio, 0);
-						glVertex3f(nowX + iTitleLength * flArmorRatio, nowY, 0);
-					glEnd();
-
-					if (flHealthRatio <= 0.3 || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64)
+					if (gCVars.pPlayerTitle->value < 2)
 					{
+						//±³¾°
 						gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-						gHudDelegate->surface()->DrawSetTexture(
-							flHealthRatio < 0.3 ? (
-								flHealthRatio < 0.01 ? iDeathIconTga : iMedkitIconTga) : iCrouchIconTga);
-						gHudDelegate->surface()->DrawTexturedRect(nowX, nowY, nowX + iTitleHeight / 2, nowY + iTitleHeight / 2);
-					}
+						gHudDelegate->surface()->DrawSetTexture(iBackGroundTga);
+						gHudDelegate->surface()->DrawTexturedRect(nowX, nowY, nowX + iTitleLength, nowY + iTitleHeight * 0.666);
 
-					nowX += iTitleHeight / 2;
+						glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+						glEnable(GL_TEXTURE_2D);
+						glEnable(GL_BLEND);
+						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+						glBindTexture(GL_TEXTURE_2D, iHealthBarTga);
+						glColor4ub(255, 255, 255, 255);
+						glBegin(GL_QUADS);
+							glTexCoord2f(0, 0);
+							glVertex3f(nowX, nowY, 0);
+							glTexCoord2f(0, 1);
+							glVertex3f(nowX, nowY + iTitleHeight, 0);
+							glTexCoord2f(flHealthRatio, 1);
+							glVertex3f(nowX + iTitleLength * flHealthRatio, nowY + iTitleHeight, 0);
+							glTexCoord2f(flHealthRatio, 0);
+							glVertex3f(nowX + iTitleLength * flHealthRatio, nowY, 0);
+						glEnd();
+
+						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+						glBindTexture(GL_TEXTURE_2D, iArmorBarTga);
+						glBegin(GL_QUADS);
+							glTexCoord2f(0, 0);
+							glVertex3f(nowX, nowY, 0);
+							glTexCoord2f(0, 1);
+							glVertex3f(nowX, nowY + iTitleHeight, 0);
+							glTexCoord2f(flArmorRatio, 1);
+							glVertex3f(nowX + iTitleLength * flArmorRatio, nowY + iTitleHeight, 0);
+							glTexCoord2f(flArmorRatio, 0);
+							glVertex3f(nowX + iTitleLength * flArmorRatio, nowY, 0);
+						glEnd();
+
+						if (flHealthRatio <= 0.4 || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64)
+						{
+							gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
+							gHudDelegate->surface()->DrawSetTexture(
+								flHealthRatio < 0.4 ? (
+									flHealthRatio <= 0 ? iDeathIconTga : iMedkitIconTga) : iCrouchIconTga);
+							gHudDelegate->surface()->DrawTexturedRect(nowX, nowY, nowX + iTitleHeight / 2, nowY + iTitleHeight / 2);
+						}
+						nowX += iTitleHeight / 2;
+					}
 					pLocalize->ConvertANSIToUnicode(playerinfo.name, wideName, sizeof(wideName));
 					vgui::HFont hFont = pScheme->GetFont("MainShitFont", true);
 					DrawVGUI2String(wideName, nowX, nowY, color[0], color[1], color[2], hFont);
