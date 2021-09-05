@@ -33,6 +33,8 @@ typedef struct
 	cvar_t* pRicochetNumber;
 
 	cvar_t* pPlayerTitle;
+	cvar_t* pPlayerTitleLength;
+	cvar_t* pPlayerTitleHeight;
 
 	cvar_t* pDynamicCrossHair;
 	cvar_t* pDynamicCrossHairAH;

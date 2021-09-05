@@ -4,6 +4,8 @@
 #include "vguilocal.h"
 #include "hud.h"
 #include "weapon.h"
+#include "pm_defs.h"
+
 #include "ammo.h"
 #include "healthhud.h"
 #include "deathmsg.h"
