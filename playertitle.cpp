@@ -212,8 +212,6 @@ int CHudPlayerTitle::Draw(float flTime)
 								glTexCoord2f(flArmorRatio, 0);
 								glVertex3f(nowX + iTitleLength * flArmorRatio, nowY, 0);
 							glEnd();
-						glDisable(GL_BLEND);
-						glDisable(GL_TEXTURE_2D);
 						
 						gHudDelegate->surface()->DrawSetTexture(-1);
 						if (flHealthRatio <= 0.45f || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64)
