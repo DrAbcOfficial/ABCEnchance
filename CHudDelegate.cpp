@@ -14,6 +14,7 @@
 #include "deathmsg.h"
 #include "crosshair.h"
 #include "playertitle.h"
+#include "vote.h"
 
 #include "CHudDelegate.h"
 #include <local.h>
@@ -33,6 +34,7 @@ void CHudDelegate::HUD_Init(void)
 	m_HudDeathMsg.Init();
 	m_HudCrosshair.Init();
 	m_HudPlayerTitle.Init();
+	m_HudVote.Init();
 }
 void CHudDelegate::HUD_VidInit(void)
 {
@@ -107,6 +109,7 @@ void CHudDelegate::HUD_Draw(float flTime)
 	m_HudDeathMsg.Draw(flTime);
 	m_HudCrosshair.Draw(flTime);
 	m_HudPlayerTitle.Draw(flTime);
+	m_HudVote.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void)
 {
@@ -118,6 +121,7 @@ void CHudDelegate::HUD_Reset(void)
 	m_HudDeathMsg.Reset();
 	m_HudCrosshair.Reset();
 	m_HudPlayerTitle.Reset();
+	m_HudVote.Reset();
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
 {
@@ -141,6 +145,11 @@ void CHudDelegate::IN_MouseEvent(int mstate)
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 	m_HudCustomAmmo.IN_MouseEvent(mstate);
+}
+int CHudDelegate::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
+{
+	m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
+	return 0;
 }
 void CHudDelegate::IN_Accumulate(void)
 {

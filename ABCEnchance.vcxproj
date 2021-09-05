@@ -124,6 +124,7 @@
     <ClCompile Include="plugins.cpp" />
     <ClCompile Include="vguilocal.cpp" />
     <ClCompile Include="viewmodellag.cpp" />
+    <ClCompile Include="vote.cpp" />
     <ClCompile Include="weaponbank.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +179,7 @@
     <ClInclude Include="VGUI\OLDDar.h" />
     <ClInclude Include="VGUI\VGUI.h" />
     <ClInclude Include="viewmodellag.h" />
+    <ClInclude Include="vote.h" />
     <ClInclude Include="weapon.h" />
     <ClInclude Include="weaponbank.h" />
   </ItemGroup>

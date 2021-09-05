@@ -63,9 +63,12 @@ ABCEnchance is a metabook plugin that provides experience improvement for Sven c
  3. copy `ABCEnchance-master` into `MetaHookSv-master/Plugins`
  4. build `glew` or `glew-debug`
  5. build repository
-# CSGO like Hud and dsplaying player name title
+# CSGO like Hud
 <img src="img/csgo1.jpg" width="100%">
 <img src="img/csgo2.jpg" width="100%">
+
+# Player name title and hp/ap bar
+<img src="img/Playertitle1.png" width="100%">
 
 # Annular selection menu
 

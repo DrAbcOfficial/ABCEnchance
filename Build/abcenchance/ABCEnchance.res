@@ -31,6 +31,9 @@ Scheme
 		"AmmoHUD.SelectCyclerTextColor"		"245 230 195 255"
 
 		"DeathMsg.BackGoundColor"		"180 180 180 255"
+
+		"Vote.OutlineColor"		"180 180 180 255"
+		"Vote.BackGoundColor"		"120 120 180 255"
 	}
 
 	BaseSettings
@@ -76,6 +79,11 @@ Scheme
 		"DeathMsg.YOffset"		"256"
 		"DeathMsg.GapOffset"	"9"
 		"DeathMsg.BackGoundWidth"	"3"
+
+		"Vote.XOffset"		"128"
+		"Vote.YOffset"		"256"
+		"Vote.Height"		"2"
+		"Vote.Width"		"5"
 	}
 
 	Fonts

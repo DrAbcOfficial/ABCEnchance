@@ -16,6 +16,7 @@ public:
 	void HUD_Clear(void);
 	void HUD_PreRenderView(int a1);
 	void IN_MouseEvent(int mstate);
+	int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding);
 	void IN_Accumulate(void);
 	void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 
