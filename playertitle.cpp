@@ -216,6 +216,7 @@ int CHudPlayerTitle::Draw(float flTime)
 
 						if (flHealthRatio <= 0.45f || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64)
 						{
+							gHudDelegate->surface()->DrawSetTexture(-1);
 							gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 							gHudDelegate->surface()->DrawSetTexture(
 								flHealthRatio < 0.4 ? (

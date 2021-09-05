@@ -158,6 +158,8 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		switch (iAll)
 		{
 		case 0X1FE:{
+			if(m_HudCustomAmmo.m_bAcceptDeadMessage)
+				gWR.DropAllWeapons();
 			if(gHudDelegate->m_iPlayerHealth <= 0)
 				m_HudCustomAmmo.m_bAcceptDeadMessage = TRUE;
 			break;
