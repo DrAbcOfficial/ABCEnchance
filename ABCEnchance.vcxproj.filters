@@ -102,6 +102,9 @@
     <ClCompile Include="crosshair.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="playertitle.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -258,6 +261,9 @@
       <Filter>Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="crosshair.h">
+      <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="playertitle.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
