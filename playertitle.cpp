@@ -107,7 +107,7 @@ int CHudPlayerTitle::Draw(float flTime)
 
 			vecOrg[0] = entity->curstate.origin[0];
 			vecOrg[1] = entity->curstate.origin[1];
-			vecOrg[2] = entity->curstate.origin[2] + 56;
+			vecOrg[2] = entity->curstate.origin[2] + 32;
 
 			levelAngle = vecView[1];
 			elevation = vecView[0];
@@ -170,16 +170,26 @@ int CHudPlayerTitle::Draw(float flTime)
 					if (gCVars.pPlayerTitle->value < 2)
 					{
 						//±³¾°
-						gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-						gHudDelegate->surface()->DrawSetTexture(iBackGroundTga);
-						gHudDelegate->surface()->DrawTexturedRect(nowX, nowY, nowX + iTitleLength, nowY + iTitleHeight * 0.666);
-
 						glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 						glEnable(GL_TEXTURE_2D);
 						glEnable(GL_BLEND);
+						glColor4ub(255, 255, 255, 255);
+
+						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+						glBindTexture(GL_TEXTURE_2D, iBackGroundTga);
+						glBegin(GL_QUADS);
+							glTexCoord2f(0, 0);
+							glVertex3f(nowX, nowY, 0);
+							glTexCoord2f(0, 1);
+							glVertex3f(nowX, nowY + iTitleHeight, 0);
+							glTexCoord2f(1, 1);
+							glVertex3f(nowX + iTitleLength, nowY + iTitleHeight, 0);
+							glTexCoord2f(1, 0);
+							glVertex3f(nowX + iTitleLength, nowY, 0);
+						glEnd();
+
 						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 						glBindTexture(GL_TEXTURE_2D, iHealthBarTga);
-						glColor4ub(255, 255, 255, 255);
 						glBegin(GL_QUADS);
 							glTexCoord2f(0, 0);
 							glVertex3f(nowX, nowY, 0);
@@ -204,7 +214,7 @@ int CHudPlayerTitle::Draw(float flTime)
 							glVertex3f(nowX + iTitleLength * flArmorRatio, nowY, 0);
 						glEnd();
 
-						if (flHealthRatio <= 0.4 || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64)
+						if (flHealthRatio <= 0.45f || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64)
 						{
 							gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 							gHudDelegate->surface()->DrawSetTexture(
