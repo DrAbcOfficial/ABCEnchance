@@ -6,8 +6,8 @@
 
 #include "hud.h"
 #include "weapon.h"
-#include "CHudDelegate.h"
 #include "vguilocal.h"
+#include "CHudDelegate.h"
 #include "drawElement.h"
 
 #include "healthhud.h"
@@ -233,7 +233,7 @@ void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 			angle = 0.0;
 		else if (dy > 0)
 			angle = asin(dy / fDistance) * RADIAN_PER_DEGREE;
-		else if (dy < 0)
+		else
 			angle = PERIGON_ANGLE + (asin(dy / fDistance) * RADIAN_PER_DEGREE);
 	}
 	else if (dx == 0)
@@ -243,13 +243,13 @@ void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 		else if (dy < 0)
 			angle = 270.0;
 	}
-	else if (dx < 0)
+	else
 	{
 		if (dy == 0)
 			angle = FLAT_ANGLE;
 		else if (dy > 0)
 			angle = FLAT_ANGLE - asin(dy / (fDistance)) * RADIAN_PER_DEGREE;
-		else if (dy < 0)
+		else
 			angle = FLAT_ANGLE - asin(dy / (fDistance)) * RADIAN_PER_DEGREE;
 	}
 	//视角水平夹角
@@ -260,7 +260,7 @@ void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 		angle = angle - PERIGON_ANGLE;
 	else if (angle < -FLAT_ANGLE)
 		angle = angle + PERIGON_ANGLE;
-
+	angle = DEG2RAD(angle);
 	float ca = cos(angle);
 	float sa = sin(angle);
 	//以屏幕中心为坐标轴的坐标系

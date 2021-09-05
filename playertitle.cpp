@@ -11,6 +11,7 @@
 #include "CHudDelegate.h"
 #include "drawElement.h"
 #include "triangleapi.h"
+#include "glew.h"
 #include "exportfuncs.h"
 
 #include "playertitle.h"
@@ -24,14 +25,14 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf)
 	int clientIndex = READ_BYTE();
 	//wtf is not this shit
 	if (clientIndex >= 1 && clientIndex <= 32) {
-		m_HudPlayerTitle.playerinfo[clientIndex].index = clientIndex;
-		m_HudPlayerTitle.playerinfo[clientIndex].frags = READ_FLOAT();
-		m_HudPlayerTitle.playerinfo[clientIndex].death = READ_LONG();
-		m_HudPlayerTitle.playerinfo[clientIndex].health = READ_FLOAT();
-		m_HudPlayerTitle.playerinfo[clientIndex].armor = READ_FLOAT();
-		m_HudPlayerTitle.playerinfo[clientIndex].team = READ_BYTE();
-		m_HudPlayerTitle.playerinfo[clientIndex].donors = READ_CHAR();
-		m_HudPlayerTitle.playerinfo[clientIndex].admin = READ_CHAR();
+		m_HudPlayerTitle.m_Playerinfo[clientIndex].index = clientIndex;
+		m_HudPlayerTitle.m_Playerinfo[clientIndex].frags = READ_FLOAT();
+		m_HudPlayerTitle.m_Playerinfo[clientIndex].death = READ_LONG();
+		m_HudPlayerTitle.m_Playerinfo[clientIndex].health = READ_FLOAT();
+		m_HudPlayerTitle.m_Playerinfo[clientIndex].armor = READ_FLOAT();
+		m_HudPlayerTitle.m_Playerinfo[clientIndex].team = READ_BYTE();
+		m_HudPlayerTitle.m_Playerinfo[clientIndex].donors = READ_CHAR();
+		m_HudPlayerTitle.m_Playerinfo[clientIndex].admin = READ_CHAR();
 	}
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
 }
@@ -39,17 +40,21 @@ int CHudPlayerTitle::Init(void)
 {
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("cl_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+
+	gCVars.pPlayerTitleLength = gEngfuncs.pfnRegisterVariable("cl_playertitlelength", "196", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pPlayerTitleHeight = gEngfuncs.pfnRegisterVariable("cl_playertitleheight", "48", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
 	Reset();
 	return 0;
 }
 void CHudPlayerTitle::Reset()
 {
-	iDeathIconTga = 0;
+	VGUI_CREATE_NEWTGA_TEXTURE(iDeathIconTga, "abcenchance/tga/playertitle_deadicon");
+	VGUI_CREATE_NEWTGA_TEXTURE(iCrouchIconTga, "abcenchance/tga/playertitle_crouchicon");
+	VGUI_CREATE_NEWTGA_TEXTURE(iMedkitIconTga, "abcenchance/tga/playertitle_medkiticon");
 	VGUI_CREATE_NEWTGA_TEXTURE(iBackGroundTga, "abcenchance/tga/playertitle_background");
-	iHealthBarTga = 0;
-	iArmorBarTga = 0;
-	iIconBackGroundTga = 0;
-	memset(playerinfo, 0, sizeof(playerinfo));
+	VGUI_CREATE_NEWTGA_TEXTURE(iHealthBarTga, "abcenchance/tga/playertitle_healthbar");
+	VGUI_CREATE_NEWTGA_TEXTURE(iArmorBarTga, "abcenchance/tga/playertitle_armorbar");
+	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 }
 int CHudPlayerTitle::Draw(float flTime)
 {
@@ -57,8 +62,8 @@ int CHudPlayerTitle::Draw(float flTime)
 	{
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		float* localColor = gHookFuncs.GetClientColor(local->index);
-
 		float dx, dy, dz;
+		int nowX, nowY;
 		vec3_t vecHUD;
 		vec3_t vecOrg;
 		//Ë®Æ½¼Ð½Ç
@@ -71,10 +76,20 @@ int CHudPlayerTitle::Draw(float flTime)
 		//ÆÁÄ»¼Ð½Ç
 		float fPaintAngle_xy = 0;
 		float fPaintAngle_z = 0;
+		//»æÖÆÏà¹Ø
+		wchar_t wideName[MAX_PLAYER_NAME_LENGTH];
+		float* color;
+		float fDistance;
+		float flArmorRatio;
+		float flHealthRatio;
+		hud_player_info_t playerinfo = { 0 };
+		int iTitleLength = gCVars.pPlayerTitleLength->value;
+		int iTitleHeight = gCVars.pPlayerTitleHeight->value;
 		//ÊÓ½Ç½Ç¶È
 		vec3_t vecView;
 		gEngfuncs.GetViewAngles(vecView);
-
+		//ÖØÖÃvugi×´Ì¬
+		gHudDelegate->surface()->DrawSetTexture(-1);
 		for (int i = 1; i <= 32; i++)
 		{
 			cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i);
@@ -85,9 +100,9 @@ int CHudPlayerTitle::Draw(float flTime)
 			dx = entity->curstate.origin[0] - local->curstate.origin[0];
 			dy = entity->curstate.origin[1] - local->curstate.origin[1];
 			dz = entity->curstate.origin[2] - local->curstate.origin[2];
-			float fDistance = fsqrt(pow(dx, 2) + pow(dy, 2));
-			float* color = gHookFuncs.GetClientColor(i);
-			if (fDistance >= 2048 || color != localColor)
+			fDistance = fsqrt(pow(dx, 2) + pow(dy, 2));
+			color = gHookFuncs.GetClientColor(i);
+			if (fDistance >= 1024 || color != localColor)
 				continue;
 
 			vecOrg[0] = entity->curstate.origin[0];
@@ -144,16 +159,65 @@ int CHudPlayerTitle::Draw(float flTime)
 				vecHUD[0] = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
 				vecHUD[1] = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
 
-				hud_player_info_t playerinfo = { 0 };
 				gEngfuncs.pfnGetPlayerInfo(i, &playerinfo);
 				if (playerinfo.name)
 				{
-					wchar_t wideName[MAX_PLAYER_NAME_LENGTH];
+					flHealthRatio = clamp(m_Playerinfo[i].health / 100, 0, 1);
+					flArmorRatio = clamp(m_Playerinfo[i].armor / 100, 0, 1);
+			
+					nowX = vecHUD[0] - iTitleLength / 2;
+					nowY = vecHUD[1] - iTitleHeight / 2;
+					//±³¾°
+					gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
+					gHudDelegate->surface()->DrawSetTexture(iBackGroundTga);
+					gHudDelegate->surface()->DrawTexturedRect(nowX, nowY, nowX + iTitleLength, nowY + iTitleHeight * 0.666);
+
+					glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+					glEnable(GL_TEXTURE_2D);
+					glEnable(GL_BLEND);
+					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+					glBindTexture(GL_TEXTURE_2D, iHealthBarTga);
+					glColor4ub(255, 255, 255, 255);
+					glBegin(GL_QUADS);
+						glTexCoord2f(0, 0);
+						glVertex3f(nowX, nowY, 0);
+						glTexCoord2f(0, 1);
+						glVertex3f(nowX, nowY + iTitleHeight, 0);
+						glTexCoord2f(flHealthRatio, 1);
+						glVertex3f(nowX + iTitleLength * flHealthRatio, nowY+ iTitleHeight, 0);
+						glTexCoord2f(flHealthRatio, 0);
+						glVertex3f(nowX + iTitleLength * flHealthRatio, nowY, 0);
+					glEnd();
+
+					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+					glBindTexture(GL_TEXTURE_2D, iArmorBarTga);
+					glBegin(GL_QUADS);
+						glTexCoord2f(0, 0);
+						glVertex3f(nowX, nowY, 0);
+
+						glTexCoord2f(0, 1);
+						glVertex3f(nowX, nowY + iTitleHeight, 0);
+
+						glTexCoord2f(flArmorRatio, 1);
+						glVertex3f(nowX + iTitleLength * flArmorRatio, nowY + iTitleHeight, 0);
+
+						glTexCoord2f(flArmorRatio, 0);
+						glVertex3f(nowX + iTitleLength * flArmorRatio, nowY, 0);
+					glEnd();
+
+					if (flHealthRatio <= 0.3 || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64)
+					{
+						gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
+						gHudDelegate->surface()->DrawSetTexture(
+							flHealthRatio < 0.3 ? (
+								flHealthRatio < 0.01 ? iDeathIconTga : iMedkitIconTga) : iCrouchIconTga);
+						gHudDelegate->surface()->DrawTexturedRect(nowX, nowY, nowX + iTitleHeight / 2, nowY + iTitleHeight / 2);
+					}
+
+					nowX += iTitleHeight / 2;
 					pLocalize->ConvertANSIToUnicode(playerinfo.name, wideName, sizeof(wideName));
-					int iSzWidth = 0;
 					vgui::HFont hFont = pScheme->GetFont("MainShitFont", true);
-					GetStringSize(wideName, &iSzWidth, NULL, hFont);
-					DrawVGUI2String(wideName, vecHUD[0] - iSzWidth / 2, vecHUD[1], color[0], color[1], color[2], hFont);
+					DrawVGUI2String(wideName, nowX, nowY, color[0], color[1], color[2], hFont);
 				}
 			}
 		}

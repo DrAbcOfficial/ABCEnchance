@@ -30,12 +30,13 @@ public:
 	int Init(void);
 	int Draw(float flTime);
 	void Reset();
-	hud_playerinfo_t playerinfo[33];
+	hud_playerinfo_t m_Playerinfo[33];
 private:
-	int iDeathIconTga;
-	int iBackGroundTga;
-	int iHealthBarTga;
-	int iArmorBarTga;
-	int iIconBackGroundTga;
+	GLint iDeathIconTga;
+	GLint iCrouchIconTga;
+	GLint iMedkitIconTga;
+	GLint iBackGroundTga;
+	GLint iHealthBarTga;
+	GLint iArmorBarTga;
 };
 extern CHudPlayerTitle m_HudPlayerTitle;
