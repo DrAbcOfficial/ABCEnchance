@@ -88,8 +88,6 @@ int CHudPlayerTitle::Draw(float flTime)
 		//ÊÓ½Ç½Ç¶È
 		vec3_t vecView;
 		gEngfuncs.GetViewAngles(vecView);
-		//ÖØÖÃvugi×´Ì¬
-		gHudDelegate->surface()->DrawSetTexture(-1);
 		for (int i = 1; i <= 32; i++)
 		{
 			cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i);
@@ -162,8 +160,8 @@ int CHudPlayerTitle::Draw(float flTime)
 				gEngfuncs.pfnGetPlayerInfo(i, &playerinfo);
 				if (playerinfo.name)
 				{
-					flHealthRatio = clamp(m_Playerinfo[i].health / 100, 0, 1);
-					flArmorRatio = clamp(m_Playerinfo[i].armor / 100, 0, 1);
+					flHealthRatio = clamp((m_Playerinfo[i].health / 100.0f), 0.0f, 1.0f);
+					flArmorRatio = clamp((m_Playerinfo[i].armor / 100.0f), 0.0f, 1.0f);
 					
 					nowX = vecHUD[0] - iTitleLength / 3;
 					nowY = vecHUD[1] - iTitleHeight / 2;

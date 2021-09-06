@@ -148,8 +148,9 @@ void CHudDelegate::IN_MouseEvent(int mstate)
 }
 int CHudDelegate::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
 {
-	m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
-	return 0;
+	int result = 1;
+	result &= m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
+	return result;
 }
 void CHudDelegate::IN_Accumulate(void)
 {
