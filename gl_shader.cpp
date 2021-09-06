@@ -205,12 +205,11 @@ GLuint R_CompileShaderFileEx(
 	ExtraShaderStageCallback callback)
 {
 	auto vscode = (char*)gEngfuncs.COM_LoadFile((char*)vsfile, 5, 0);
+	std::string vs;
 	if (!vscode)
-	{
 		Sys_ErrorEx("R_CompileShaderFileEx: %s not found!", vsfile);
-	}
-
-	std::string vs(vscode);
+	else
+		vs = std::string(vscode);
 
 	R_CompileShaderAppendDefine(vs, "#define IS_VERTEX_SHADER\n");
 	if (vsdefine)
@@ -221,12 +220,11 @@ GLuint R_CompileShaderFileEx(
 	gEngfuncs.COM_FreeFile(vscode);
 
 	auto fscode = (char*)gEngfuncs.COM_LoadFile((char*)fsfile, 5, 0);
+	std::string fs;
 	if (!fscode)
-	{
 		Sys_ErrorEx("R_CompileShaderFileEx: %s not found!", fsfile);
-	}
-
-	std::string fs(fscode);
+	else
+		fs = std::string(fscode);
 
 	R_CompileShaderAppendDefine(fs, "#define IS_FRAGMENT_SHADER\n");
 	if (fsdefine)

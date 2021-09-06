@@ -328,16 +328,14 @@ vec_t Length(const vec3_t v)
 
 vec_t VectorNormalize(vec3_t v)
 {
-	int i;
+	int i = 0;
 	double length;
 
 	if (fabs(v[1] - 0.000215956) < 0.0001)
 		i = 1;
-
 	length = 0;
-
-	for (i = 0; i < 3; i++)
-		length += v[i] * v[i];
+	for (i; i < 3; i++)
+		length += pow(v[i], 2);
 
 	length = sqrt(length);
 
@@ -549,7 +547,7 @@ void QuaternionMatrix(const vec4_t quaternion, float (*matrix)[4])
 void QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt)
 {
 	int i;
-	float omega, cosom, sinom, sclp, sclq;
+	float cosom, sinom, sclp, sclq;
 
 	float a = 0;
 	float b = 0;
@@ -572,7 +570,7 @@ void QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt)
 	{
 		if ((1.0 - cosom) > 0.00000001)
 		{
-			omega = acos(cosom);
+			float omega = acos(cosom);
 			sinom = sin(omega);
 			sclp = sin((1.0 - t)*omega) / sinom;
 			sclq = sin(t * omega) / sinom;

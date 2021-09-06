@@ -73,15 +73,15 @@ int CHudDeathMsg::Draw(float flTime)
 	int w;
 	int h;
 	float r, g, b, a;
-	for each (deathmsgItem var in aryKeepMsg)
+	for each (deathmsgItem_t var in aryKeepMsg)
 	{
 		if (var.addTime <= 0)
 			continue;
 		if (var.addTime <= flTime)
 		{
-			var.killer.clear();
-			var.executioner.clear();
-			var.victim.clear();
+			memset(var.killer, 0, sizeof(var.killer));
+			memset(var.executioner, 0, sizeof(var.executioner));
+			memset(var.victim, 0, sizeof(var.victim));
 			var.addTime = 0;
 			continue;
 		}
@@ -91,7 +91,7 @@ int CHudDeathMsg::Draw(float flTime)
 			a = startAlpha;
 
 		wchar_t buf[64];
-		wsprintfW(buf, L"%s[%s]%s", var.killer.c_str(), var.executioner.c_str(),var.victim.c_str());
+		wsprintfW(buf, L"%s[%s]%s", var.killer, var.executioner,var.victim);
 		GetStringSize(buf, &w, &h, HUDFont);
 		x -= w;
 
@@ -103,7 +103,7 @@ int CHudDeathMsg::Draw(float flTime)
 		g = 0;
 		b = 0;
 		ColorCalcuAlpha(r, g, b, a);
-		wsprintfW(buf, L"%s", var.killer.c_str());
+		wsprintfW(buf, L"%s", var.killer);
 		DrawVGUI2String(buf, x, y, r, g, b, HUDFont, true);
 		GetStringSize(buf, &w, NULL, HUDFont);
 		x += w;
@@ -112,14 +112,14 @@ int CHudDeathMsg::Draw(float flTime)
 		g = 0.7;
 		b = 0.7;
 		ColorCalcuAlpha(r, g, b, a);
-		wsprintfW(buf, L"[%s]", var.executioner.c_str());
+		wsprintfW(buf, L"[%s]", var.executioner);
 		DrawVGUI2String(buf, x, y, r, g, b, HUDFont, true);
 		GetStringSize(buf, &w, NULL, HUDFont);
 		x += w;
 
 		r = 0;
 		ColorCalcuAlpha(r, g, b, a);
-		wsprintfW(buf, L"%s", var.victim.c_str());
+		wsprintfW(buf, L"%s", var.victim);
 		DrawVGUI2String(buf, x, y, r, g, b, HUDFont, true);
 		GetStringSize(buf, &w, &h, HUDFont);
 		
@@ -132,18 +132,18 @@ void CHudDeathMsg::Reset(void)
 {
 	memset(aryKeepMsg, 0, sizeof(aryKeepMsg));
 }
-void CHudDeathMsg::InsertNewMsg(wstring v, wstring e, wstring k)
+void CHudDeathMsg::InsertNewMsg(const wstring v, wstring e, wstring k)
 {
 	for (int i = 0; i < MAX_KEEP_DEATHMSG; i++)
 	{
-		deathmsgItem a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];
+		deathmsgItem_t a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];
 		aryKeepMsg[MAX_KEEP_DEATHMSG - 1] = aryKeepMsg[i];
 		aryKeepMsg[i] = a;
 	}
-	deathmsgItem item;
-	item.victim = v;
-	item.executioner = e;
-	item.killer = k;
+	deathmsgItem_t item;
+	wcscpy(item.victim, v.c_str());
+	wcscpy(item.executioner, e.c_str());
+	wcscpy(item.killer, k.c_str());
 	item.addTime = gEngfuncs.GetClientTime() + gCVars.pDeathNoticeTime->value;
 	aryKeepMsg[0] = item;
 }

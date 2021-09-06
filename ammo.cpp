@@ -31,7 +31,6 @@ pfnUserMsgHook m_pfnAmmoPickup;
 pfnUserMsgHook m_pfnWeapPickup;
 pfnUserMsgHook m_pfnItemPickup;
 pfnUserMsgHook m_pfnAmmoX;
-pfnUserMsgHook m_pfnWeaponSpr;
 int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
@@ -84,9 +83,9 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	Weapon.iFlags = READ_BYTE();
 	Weapon.iClip = 0;
 	
-	int posFlag = Weapon.iSlotPos;
 	/*
-	* 在找到解决方案前暂时停止修复选枪冲突
+	* * 在找到解决方案前暂时停止修复选枪冲突
+	int posFlag = Weapon.iSlotPos;
 	int tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, posFlag);
 	while (tw > 0)
 	{
@@ -115,14 +114,6 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf)
 	gWR.PickupWeapon(id);
 	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
-}
-int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf)
-{
-	BEGIN_READ(pbuf, iSize);
-	int id = READ_SHORT();
-	char path[2048];
-	strcpy_s(path, READ_STRING());
-	return m_pfnWeaponSpr(pszName, iSize, pbuf);
 }
 int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 {
@@ -291,7 +282,6 @@ int CHudCustomAmmo::Init(void)
 	m_pfnWeapPickup = HOOK_MESSAGE(WeapPickup);
 	m_pfnItemPickup = HOOK_MESSAGE(ItemPickup);
 	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
-	m_pfnWeaponSpr = HOOK_MESSAGE(WeaponSpr);
 	
 	gEngfuncs.pfnAddCommand("+annularmenu", __UserCmd_OpenAnnularMenu);
 	gEngfuncs.pfnAddCommand("-annularmenu", __UserCmd_CloseAnnularMenu);
@@ -347,8 +337,6 @@ int CHudCustomAmmo::Init(void)
 
 	gWR.Init();
 	gHR.Init();
-
-	g_rgBaseSlots;
 	return 1;
 };
 void CHudCustomAmmo::Reset(void)
@@ -375,7 +363,7 @@ int CHudCustomAmmo::VidInit(void)
 }
 void CHudCustomAmmo::SyncWeapon()
 {
-	WEAPON* wpi = NULL;
+	WEAPON* wpi;
 	WEAPON* wp = NULL;
 	baseweapon_t* bwp = NULL;
 	for (int i = 0; i < MAX_WEAPON_OLDSLOTS; i++)
@@ -383,7 +371,6 @@ void CHudCustomAmmo::SyncWeapon()
 		for (int j = 0; j < MAX_WEAPON_OLDSLOTS; j++)
 		{
 			bwp = (*g_rgBaseSlots)[i][j];
-			wp = NULL;
 			wpi = gWR.GetWeaponSlot(i, j);
 			if (!bwp) {
 				if(wpi->iId)
@@ -428,11 +415,11 @@ int CHudCustomAmmo::Draw(float flTime)
 	if ((pw->iAmmoType < 0) && (pw->iAmmo2Type < 0))
 		return 0;
 	int r, g, b, a;
-	float i = 0, nowX = gScreenInfo.iWidth * (1 - 1/ BackGroundLength) ;
+	float nowX = gScreenInfo.iWidth * (1 - 1/ BackGroundLength) ;
 	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
 	float flCenterX = nowX + (gScreenInfo.iWidth - nowX) / 2, flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
-	int nowY = 0;
+	int nowY;
 	int iIconSize = flBackGroundHeight * IconSize;
 	int iElementGap = flBackGroundHeight * ElementGap;
 	int iTextHeight;
