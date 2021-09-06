@@ -32,8 +32,8 @@ Scheme
 
 		"DeathMsg.BackGoundColor"		"180 180 180 255"
 
-		"Vote.OutlineColor"		"180 180 180 255"
-		"Vote.BackGoundColor"		"120 120 180 255"
+		"Vote.OutlineColor"		"180 180 180 180"
+		"Vote.BackGoundColor"		"60 60 180 180"
 	}
 
 	BaseSettings
@@ -82,7 +82,7 @@ Scheme
 
 		"Vote.XOffset"		"128"
 		"Vote.YOffset"		"256"
-		"Vote.Height"		"2"
+		"Vote.Height"		"3"
 		"Vote.Width"		"5"
 	}
 
