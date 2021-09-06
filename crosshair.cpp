@@ -59,15 +59,15 @@ int CHudCustomCrosshair::Draw(float flTime)
 		VectorCopy(local->curstate.origin, vecSrc);
 		gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
 		VectorAdd(vecSrc, viewOfs, vecSrc);
-		vForward[0] *= 4096;
-		vForward[1] *= 4096;
-		vForward[2] *= 4096;
+		vForward[0] *= 8192;
+		vForward[1] *= 8192;
+		vForward[2] *= 8192;
 		VectorAdd(vecSrc, vForward, vecEnd);
 		physent_t* pPhyplayer = gEngfuncs.pEventAPI->EV_GetPhysent(local->index);
 		if (!pPhyplayer)
 			return NULL;
 		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_STUDIO_BOX, pPhyplayer->info, &tr);
+		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_NORMAL, pPhyplayer->info, &tr);
 
 		vec3_t vecHUD;
 		gEngfuncs.pTriAPI->WorldToScreen(tr.endpos, vecHUD);
