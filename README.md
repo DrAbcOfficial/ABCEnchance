@@ -1,5 +1,5 @@
 # ABCEnchance
-ABCEnchance is a metabook plugin that provides experience improvement for Sven co-op
+ABCEnchance is a metahook plugin that provides experience improvement for Sven co-op
 
 # **<font color="#dd0000">This plugin is under development and unstable, and may have major modifications compared with the current one</font>**
 # **<font color="#dd0000">USE AT YOUR OWN RISK</font>**
