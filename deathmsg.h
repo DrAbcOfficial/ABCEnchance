@@ -6,12 +6,12 @@
 #define MSG_KILLEDNOTIFY L" was killed by a "
 #define MSG_PLAYERKILLNOTIFY L" : (.*) : "
 
-typedef struct {
-	std::wstring victim;
-	std::wstring executioner;
-	std::wstring killer;
+typedef struct deathmsgItem_s{
+	wchar_t victim[MSG_BUF_SIZE];
+	wchar_t executioner[MSG_BUF_SIZE];
+	wchar_t killer[MSG_BUF_SIZE];
 	float addTime;
-} deathmsgItem;
+} deathmsgItem_t;
 class CHudDeathMsg : public CHudBase
 {
 public:
@@ -20,7 +20,7 @@ public:
 	void Reset(void);
 	void InsertNewMsg(std::wstring v, std::wstring e, std::wstring k);
 private:
-	deathmsgItem aryKeepMsg[MAX_KEEP_DEATHMSG];
+	deathmsgItem_t aryKeepMsg[MAX_KEEP_DEATHMSG];
 	vgui::HFont HUDFont;
 	Color BackGoundColor;
 	float XOffset;

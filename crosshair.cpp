@@ -43,8 +43,6 @@ int CHudCustomCrosshair::Draw(float flTime)
 {
 	if (gHudDelegate->IsInSpectate())
 		return 1;
-
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	int iCenterX;
 	int iCenterY;
 	if (gExportfuncs.CL_IsThirdPerson())
