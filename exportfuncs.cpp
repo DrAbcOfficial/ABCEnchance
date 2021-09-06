@@ -364,8 +364,8 @@ void IN_Accumulate(void)
 }
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
 {
-	gHudDelegate->HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
-	return gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding);
+	return gHudDelegate->HUD_KeyEvent(eventcode, keynum, pszCurrentBinding) ? 
+		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
 }
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 {

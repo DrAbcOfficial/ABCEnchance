@@ -81,18 +81,19 @@ int CHudVote::Draw(float flTime)
 	//	m_bInVoting = false;
 	int r, g, b, a;
 	int x, y, w, h;
+	wchar_t buf[128];
 	w = gScreenInfo.iWidth / Width;
 	h = gScreenInfo.iHeight / Height;
 	x = gScreenInfo.iWidth - XOffset - w;
 	y = YOffset;
 	OutlineColor.GetColor(r, g, b, a);
-	gEngfuncs.pfnFillRGBABlend(x - 2, y - 2, w + 2, h + 2, r, g, b, a);
+	gEngfuncs.pfnFillRGBABlend(x - 2, y - 2, w + 4, h + 4, r, g, b, a);
 	BackGoundColor.GetColor(r, g, b, a);
 	gEngfuncs.pfnFillRGBABlend(x, y, w, h, r, g, b, a);
 
 	OutlineColor.GetColor(r, g, b, a);
 	GetStringSize(VoteTitle, &w, &h, HudFont);
-	x += 2;
+	x += GetHudFontHeight(HudFont);
 	y += 2;
 	DrawMultiLineStr(VoteTitle, x, y, r, g, b);
 	y += 2;
@@ -102,19 +103,22 @@ int CHudVote::Draw(float flTime)
 	y = YOffset + gScreenInfo.iHeight / Height;
 	y -= 6 * h;
 
+	x += 2.2 * h;
 	gHudDelegate->surface()->DrawSetTexture(-1);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 	gHudDelegate->surface()->DrawSetTexture(m_iYesIconTga);
 	gHudDelegate->surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
 	x += 2.2 * h;
-	DrawVGUI2String(!m_VoteYes[0] ? DefaultYes : m_VoteYes, x, y, r, g, b, HudFont);
+	wsprintfW(buf, L"F1  %s", !m_VoteYes[0] ? DefaultYes : m_VoteYes);
+	DrawVGUI2String(buf, x, y, r, g, b, HudFont);
 	y += 2.2 * h;
 	x -= 2.2 * h;
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 	gHudDelegate->surface()->DrawSetTexture(m_iNoIconTga);
 	gHudDelegate->surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
 	x += 2.2 * h;
-	DrawVGUI2String(!m_VoteNo[0] ? DefaultNo : m_VoteNo, x, y, r, g, b, HudFont);
+	wsprintfW(buf, L"F2  %s", !m_VoteNo[0] ? DefaultNo : m_VoteNo);
+	DrawVGUI2String(buf, x, y, r, g, b, HudFont);
 	return 0;
 }
 int CHudVote::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
@@ -122,8 +126,17 @@ int CHudVote::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBind
 	//F1 135
 	//F2 136
 	if (m_bInVoting)
-		gEngfuncs.Con_Printf("%d %d %s\n", eventcode, keynum, pszCurrentBinding);
-	return 0;
+	{
+		if (keynum == 135 || keynum == 136) {
+			if (keynum == 135)
+				ServerCmd("voteyes");
+			else if (keynum == 136)
+				ServerCmd("voteno");
+			m_bInVoting = false;
+			return 0;
+		}
+	}
+	return 1;
 }
 int CHudVote::StartVote()
 {
