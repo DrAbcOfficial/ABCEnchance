@@ -17,7 +17,14 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
  2. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory.
  3. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
  4. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
-   
+
+# Build
+ 1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
+ 2. clone or download repository
+ 3. copy `ABCEnchance-master` into `MetaHookSv-master/Plugins`
+ 4. build `glew` or `glew-debug`
+ 5. build repository
+ 
 # Command
 |Command|usage|
 |----|----|
@@ -66,14 +73,8 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
 |---|---|---|---|
 |cl_curdebug|Curweapon Debug|0|0/1|
 
+# <u>These pictures contain old version images, which may be inconsistent with the actual version</u>
 
-# <u>These pictures contain old version images, which may be inconsistent with the actual version
-# Build</u>
- 1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
- 2. clone or download repository
- 3. copy `ABCEnchance-master` into `MetaHookSv-master/Plugins`
- 4. build `glew` or `glew-debug`
- 5. build repository
 # CSGO like Hud
 <img src="img/csgo1.jpg" width="100%">
 <img src="img/csgo2.jpg" width="100%">
