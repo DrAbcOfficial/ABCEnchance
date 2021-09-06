@@ -126,6 +126,9 @@ public:
 	float ElementGap = 0.2;
 	float BackGroundY = 0.95;
 	float BackGroundLength = 3;
+	float DamageIconX = 0;
+	float DamageIconY = 0;
+	float DamageIconSize = 96;
 
 	Color HealthIconColor;
 	Color HealthBarColor;
