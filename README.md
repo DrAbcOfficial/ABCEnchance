@@ -10,12 +10,19 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
  - ~~Sometimes will empty the weapon menu incorrectly after player death~~
  - ~~Dynamic indicator will point to wrong direction~~
  - Weapon postion conflict fix will not work
+ - when bind `+annularmenu` command to `mouse4` or `mouse5`, will not hit `-annularmenu` command will not execute automatically.
 
 # Install
  1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
  2. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory.
  3. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
  4. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
+   
+# Command
+|Command|usage|
+|----|----|
+|+annularmenu|Open cycler weapon menu(Mouse selection)|
+|-+annularmenu|Close cycler weapon menu(Mouse selection)|
 # CVars
 |CVar|uses|default|range|
 |---|---|---|---|
@@ -27,7 +34,9 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
 |cl_radargap|Radar Gap|0.98|0-1|
 |cl_radarupdateint|Radar image update interval|1|0-9999|
 |---|---|---|---|
-|cl_playertitle|Show Player name|1|0/1|
+|cl_playertitle|Show Player name|1|0/1/2|
+|cl_playertitleheight|Player name bar height|48|0~9999|
+|cl_playertitlelength|Player name bar length|196|0~9999|
 |---|---|---|---|
 |cl_crosshair|Show dynamic crosshair|1|0/1|
 |cl_crosshairautohide|Auto hide crosshair when zoomed|1|0/1|
@@ -57,7 +66,9 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
 |---|---|---|---|
 |cl_curdebug|Curweapon Debug|0|0/1|
 
-# Build
+
+# <u>These pictures contain old version images, which may be inconsistent with the actual version
+# Build</u>
  1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
  2. clone or download repository
  3. copy `ABCEnchance-master` into `MetaHookSv-master/Plugins`
@@ -72,7 +83,7 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
 
 # Annular selection menu
 
-## And fixed the problem that the svencoop selection menu could not switch Postion conflict weapons
+## ~~And fixed the problem that the svencoop selection menu could not switch Postion conflict weapons~~
 
 <img src="img/Annular1.jpg" width="100%">
 <img src="img/Annular2.jpg" width="100%">
@@ -88,6 +99,10 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
 
 <img src="img/radar1.png" width="100%">
 <img src="img/radar2.png" width="100%">
+
+# The voting menu that won't block you when you bunnyhopping
+
+<img src="img/vote1.png" width="100%">
 
 # And some useless efx enchance
 
