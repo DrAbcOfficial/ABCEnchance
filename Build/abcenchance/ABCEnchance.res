@@ -46,6 +46,9 @@ Scheme
 		"HealthArmor.ElementGap"		"0.2"
 		"HealthArmor.BackGroundY"		"0.95"
 		"HealthArmor.BackGroundLength"	"3"
+		"HealthArmor.DamageIconX"		"0"
+		"HealthArmor.DamageIconY"		"0"
+		"HealthArmor.DamageIconSize"	"96"
 
 		"AmmoHUD.StartX"			"32"
 		"AmmoHUD.IconSize"			"0.5"

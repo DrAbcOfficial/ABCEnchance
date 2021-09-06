@@ -15,7 +15,6 @@
 
 
 #define DAMAGE_NAME "sprites/%d_dmg.spr"
-int giDmgHeight, giDmgWidth;
 int giDmgFlags[NUM_DMG_TYPES] =
 {
 	DMG_POISON,
@@ -93,10 +92,14 @@ void CHudArmorHealth::Init(void)
 	ElementGap = atof(pScheme->GetResourceString("HealthArmor.ElementGap"));
 	BackGroundY = atof(pScheme->GetResourceString("HealthArmor.BackGroundY"));
 	BackGroundLength = atof(pScheme->GetResourceString("HealthArmor.BackGroundLength"));
+	DamageIconX = atof(pScheme->GetResourceString("HealthArmor.DamageIconX"));
+	DamageIconY = atof(pScheme->GetResourceString("HealthArmor.DamageIconY"));
+	DamageIconSize = atof(pScheme->GetResourceString("HealthArmor.DamageIconSize"));
 
 	HealthIconColor = pScheme->GetColor("HealthArmor.HealthIconColor", gDefaultColor);
 	HealthBarColor = pScheme->GetColor("HealthArmor.HealthBarColor", gDefaultColor);
 	HealthTextColor = pScheme->GetColor("HealthArmor.HealthTextColor", gDefaultColor);
+	BitDamageColor = pScheme->GetColor("HealthArmor.BitDamageColor", gDefaultColor);
 	ArmorIconColor = pScheme->GetColor("HealthArmor.ArmorIconColor", gDefaultColor);
 	ArmorBarColor = pScheme->GetColor("HealthArmor.ArmorBarColor", gDefaultColor);
 	ArmorTextColor = pScheme->GetColor("HealthArmor.ArmorTextColor", gDefaultColor);
@@ -112,11 +115,7 @@ void CHudArmorHealth::Init(void)
 int CHudArmorHealth::VidInit(void)
 {
 	m_hSprite = 0;
-
 	m_HUD_dmg_bio = gHudDelegate->GetSpriteIndex("dmg_bio") + 1;
-
-	giDmgHeight = gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).right - gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).left;
-	giDmgWidth = gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).bottom - gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).top;
 	return 1;
 }
 void CHudArmorHealth::Reset(void)
@@ -133,8 +132,6 @@ void CHudArmorHealth::Reset(void)
 	m_takeDamage = 0;
 	m_takeArmor = 0;
 	m_iBat = 0;
-	giDmgHeight = 0;
-	giDmgWidth = 0;
 	flPainIndicatorKeepTime = 0.0f;
 	for (int i = 0; i < NUM_DMG_TYPES; i++)
 	{
@@ -353,7 +350,7 @@ int CHudArmorHealth::DrawDamage(float flTime)
 				{
 					pdmg = &m_dmg[j];
 					if ((pdmg->y) && (pdmg->y < y))
-						pdmg->y += giDmgHeight;
+						pdmg->y += DamageIconSize;
 				}
 				m_bitsDamage &= ~giDmgFlags[i];
 			}
@@ -376,8 +373,8 @@ void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage)
 		}
 		if (bitsOn & giDmgFlags[i])
 		{
-			pdmg->x = giDmgWidth / 8;
-			pdmg->y = ScreenHeight - giDmgHeight * 2;
+			pdmg->x = DamageIconX;
+			pdmg->y = ScreenHeight - DamageIconY - DamageIconSize * 2;
 			pdmg->fExpire = flTime + DMG_IMAGE_LIFE;
 			for (int j = 0; j < NUM_DMG_TYPES; j++)
 			{
@@ -385,7 +382,7 @@ void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage)
 					continue;
 				pdmg = &m_dmg[j];
 				if (pdmg->y)
-					pdmg->y -= giDmgHeight;
+					pdmg->y -= DamageIconSize;
 
 			}
 			pdmg = &m_dmg[i];
