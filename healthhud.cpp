@@ -38,7 +38,7 @@ pfnUserMsgHook m_pfnBattery;
 int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
-	int x = READ_SHORT() + READ_SHORT() * USHRT_MAX;
+	int x = READ_LONG();
 	if (x != m_HudArmorHealth.m_iHealth)
 	{
 		m_HudArmorHealth.m_fFade = FADE_TIME;
@@ -55,7 +55,7 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 	long bitsDamage = READ_LONG();
 	vec3_t vecFrom;
 	for (int i = 0; i < 3; i++)
-		vecFrom[i] = READ_FLOAT();
+		vecFrom[i] = READ_COORD();
 	m_HudArmorHealth.UpdateTiles(gEngfuncs.GetClientTime(), bitsDamage);
 	if (damageTaken > 0 || armor > 0)
 	{
@@ -211,11 +211,9 @@ void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	vecFinal[0] = vecFrom[0] - local->curstate.origin[0];
 	vecFinal[1] = vecFrom[1] - local->curstate.origin[1];
-	vecFinal[2] = 0;
+	vecFinal[2] = vecFrom[2] - local->curstate.origin[2];
 	VectorAngles(vecFinal, vecFinal);
-	vecFinal[0] -= local->curstate.angles[0];
-	vecFinal[1] -= local->curstate.angles[1];
-	vecFinal[2] -= local->curstate.angles[2];
+	vecFinal[1] -= local->curstate.angles[1] - 90;
 	float angle = DEG2RAD(vecFinal[YAW]);
 	float ca = cos(angle);
 	float sa = sin(angle);
@@ -232,15 +230,17 @@ void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
 	*                |
 	*  --------------+----------------->x
 	*/
+	//x2 = x1 * cos(alpha) - y1 * sin(alpha);
+	//y2 = x1 * sin(alpha) + y1 * cos(alpha);
 	vec2_t vecA, vecB, vecC, vecD;
-	vecA[0] = -sprWidth * ca + y2 * sa;
-	vecA[1] = sprWidth * sa + y2 * ca;
-	vecB[0] = sprWidth * ca + y2 * sa;
-	vecB[1] = -sprWidth * sa + y2 * ca;
-	vecC[0] = -sprWidth * ca + y1 * sa;
-	vecC[1] = sprWidth * sa + y1 * ca;
-	vecD[0] = sprWidth * ca + y1 * sa;
-	vecD[1] = -sprWidth * sa + y1 * ca;
+	vecA[0] = -sprWidth * ca - y2 * sa;
+	vecA[1] = -sprWidth * sa + y2 * ca;
+	vecB[0] = sprWidth * ca - y2 * sa;
+	vecB[1] = sprWidth * sa + y2 * ca;
+	vecC[0] = -sprWidth * ca - y1 * sa;
+	vecC[1] = -sprWidth * sa + y1 * ca;
+	vecD[0] = sprWidth * ca - y1 * sa;
+	vecD[1] = sprWidth * sa + y1 * ca;
 	//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
 	int halfWidth = gScreenInfo.iWidth / 2;
 	int halfHeight = gScreenInfo.iHeight / 2;

@@ -49,7 +49,6 @@ typedef struct {
 typedef struct cvar_s cvar_t;
 #define HUD_ACTIVE	1
 #define HUD_INTERMISSION 2
-#define MAX_PLAYER_NAME_LENGTH		32
 #define	MAX_MOTD_LENGTH				1536
 
 class CHudBase
