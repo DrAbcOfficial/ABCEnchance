@@ -100,7 +100,6 @@ public:
 	int m_iFlags;
 	float m_fFade;
 	int m_HUD_dmg_bio;
-	int m_HUD_cross;
 
 	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
 	HSPRITE m_hSprite;

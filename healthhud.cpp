@@ -104,6 +104,9 @@ void CHudArmorHealth::Init(void)
 	PainIndicatorColorA = pScheme->GetColor("HealthArmor.PainIndicatorColorA", gDefaultColor);
 
 	HUDFont = pScheme->GetFont("HUDShitFont", true);
+
+	memset(m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES);
+
 	Reset();
 }
 int CHudArmorHealth::VidInit(void)
@@ -111,7 +114,6 @@ int CHudArmorHealth::VidInit(void)
 	m_hSprite = 0;
 
 	m_HUD_dmg_bio = gHudDelegate->GetSpriteIndex("dmg_bio") + 1;
-	m_HUD_cross = gHudDelegate->GetSpriteIndex("cross");
 
 	giDmgHeight = gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).right - gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).left;
 	giDmgWidth = gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).bottom - gHudDelegate->GetSpriteRect(m_HUD_dmg_bio).top;
@@ -130,12 +132,9 @@ void CHudArmorHealth::Reset(void)
 	m_bitsDamage = 0;
 	m_takeDamage = 0;
 	m_takeArmor = 0;
-	m_bitsDamage = 0;
 	m_iBat = 0;
 	giDmgHeight = 0;
 	giDmgWidth = 0;
-	memset(m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES);
-
 	flPainIndicatorKeepTime = 0.0f;
 	for (int i = 0; i < NUM_DMG_TYPES; i++)
 	{
