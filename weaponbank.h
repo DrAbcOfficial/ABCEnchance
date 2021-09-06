@@ -6,10 +6,10 @@
 #define MAX_WEAPONS MAX_WEAPON_POSITIONS * MAX_WEAPON_SLOTS
 #define MAX_AMMO 999
 
-typedef struct {
+typedef struct gridmenuitem_s{
 	int iId = -1;
 	int iPos = -1;
-}GridMenuItem;
+}gridmenuitem_t;
 
 class WeaponsResource
 {
@@ -20,7 +20,7 @@ private:
 	int	riAmmo[MAX_AMMO];
 
 public:
-	GridMenuItem gridDrawMenu[MAX_WEAPON_SLOTS];
+	gridmenuitem_t gridDrawMenu[MAX_WEAPON_SLOTS];
 	int iNowSlot;
 
 	void Init(void);
@@ -36,7 +36,7 @@ public:
 	WEAPON* GetWeaponSlot(int slot, int pos);
 	int GetWeaponIdBySlot(int slot, int pos);
 	void LoadWeaponSprites(WEAPON* wp);
-	void WeaponsResource::LoadScriptWeaponSprites(int iId, char* cust);
+	void LoadScriptWeaponSprites(int iId, char* cust);
 	void LoadAllWeaponSprites(void);
 	void SelectSlot(int iSlot, int fAdvance);
 	void FillMenuGrid();
