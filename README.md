@@ -1,36 +1,42 @@
-# ABCEnchance
-ABCEnchance is a metahook plugin that provides experience improvement for Sven co-op
+# 🔤 ABCEnchance
+###  ABCEnchance is a metahook plugin that provides experience improvement for Sven co-op
 
-# **<font color="#dd0000">This plugin is under development and unstable, and may have major modifications compared with the current one</font>**
-# **<font color="#dd0000">USE AT YOUR OWN RISK</font>**
+----
 
-# Known issue
+# ⚠️ **<font color="#dd0000">This plugin is under development and unstable, and may have major modifications compared with the current one</font>** ⚠️
+# 💥 **<font color="#dd0000">USE AT YOUR OWN RISK</font>** 💥
 
- - ~~After `CBasePlayer::RemovePlayerItem`, the menu will display the removed items incorrectly because there is no corresponding networkmessage to synchronize the message~~
- - ~~Sometimes will empty the weapon menu incorrectly after player death~~
- - ~~Dynamic indicator will point to wrong direction~~
- - Weapon postion conflict fix will not work
- - when bind `+annularmenu` command to `mouse4` or `mouse5`, `-annularmenu` command will not execute automatically.
+----
 
-# Install
+# 🤫 Known issue
+
+ - [x] ~~After `CBasePlayer::RemovePlayerItem`, the menu will display the removed items incorrectly because there is no corresponding networkmessage to synchronize the message~~
+ - [x] ~~Sometimes will empty the weapon menu incorrectly after player death~~
+ - [x] ~~Dynamic indicator will point to wrong direction~~
+ - [ ] Weapon postion conflict fix will not work
+ - [ ] when bind `+annularmenu` command to `mouse4` or `mouse5`, `-annularmenu` command will not execute automatically.
+
+# 🖥️ Install
  1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
  2. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory.
  3. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
  4. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
 
-# Build
+# 🏗️ Build
  1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
  2. clone or download repository
  3. copy `ABCEnchance-master` into `MetaHookSv-master/Plugins`
  4. build `glew` or `glew-debug`
  5. build repository
  
-# Command
+ ----
+
+# 📤 Command
 |Command|usage|
 |----|----|
 |+annularmenu|Open cycler weapon menu(Mouse selection)|
 |-annularmenu|Close cycler weapon menu(Mouse selection)|
-# CVars
+# 📊 CVars
 |CVar|uses|default|range|
 |---|---|---|---|
 |cl_hud_csgo|Use now hud or not(restart map to take effect)|1|0/1|
@@ -73,38 +79,46 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
 |---|---|---|---|
 |cl_curdebug|Curweapon Debug|0|0/1|
 
-# <u>These pictures contain old version images, which may be inconsistent with the actual version</u>
+----
 
-# CSGO like Hud
-<img src="img/csgo1.jpg" width="100%">
-<img src="img/csgo2.jpg" width="100%">
+# 🖼️ Images
 
-# Player name title and hp/ap bar
+### 🛑 <u>These pictures contain old version images, which may be inconsistent with the actual version</u> 🛑
+
+## 👮 CSGO like Hud
+
+<div>
+<img src="img/csgo1.jpg" width="50%"><img src="img/csgo2.jpg" width="50%">
+</div>
+
+## 🗿Player name title and hp/ap bar
 <img src="img/Playertitle1.png" width="100%">
 
-# Annular selection menu
+## 🏐 Annular selection menu
 
-## ~~And fixed the problem that the svencoop selection menu could not switch Postion conflict weapons~~
+### ~~And fixed the problem that the svencoop selection menu could not switch Postion conflict weapons~~
 
-<img src="img/Annular1.jpg" width="100%">
-<img src="img/Annular2.jpg" width="100%">
-<img src="img/Annular3.jpg" width="100%">
+<div>
+<img src="img/Annular1.jpg" width="50%"><img src="img/Annular2.jpg" width="50%">
+<img src="img/Annular3.jpg" width="50%">
+</div>
 
-# Dynamic indicator and dynamic crosshair
+## 🔺 Dynamic indicator and dynamic crosshair
 
-<img src="img/dynamic1.jpg" width="100%">
-<img src="img/dynamic2.jpg" width="100%">
+<div>
+<img src="img/dynamic1.jpg" width="50%"><img src="img/dynamic2.jpg" width="50%">
+</div>
 
+## 🗺️ Radar
 
-# Radar
+<div>
+<img src="img/radar1.png" width="50%"><img src="img/radar2.png" width="50%">
+</div>
 
-<img src="img/radar1.png" width="100%">
-<img src="img/radar2.png" width="100%">
-
-# The voting menu that won't block you when you bunnyhopping
+## 🗳️ The voting menu that won't block you when you bunnyhopping
 
 <img src="img/vote1.png" width="100%">
 
-# And some useless efx enchance
+## 😗 And some useless efx enchance
 
 <img src="img/efx.jpg" width="100%">
