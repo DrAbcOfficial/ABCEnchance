@@ -22,7 +22,7 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
 |Command|usage|
 |----|----|
 |+annularmenu|Open cycler weapon menu(Mouse selection)|
-|-+annularmenu|Close cycler weapon menu(Mouse selection)|
+|-annularmenu|Close cycler weapon menu(Mouse selection)|
 # CVars
 |CVar|uses|default|range|
 |---|---|---|---|
