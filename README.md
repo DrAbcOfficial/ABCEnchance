@@ -3,10 +3,14 @@
 
 ----
 
-# ⚠️ **<font color="#dd0000">This plugin is under development and unstable, and may have major modifications compared with the current one</font>** ⚠️
-# 💥 **<font color="#dd0000">USE AT YOUR OWN RISK</font>** 💥
+# ⚠️ **<span color="#dd0000">This plugin is under development and unstable, and may have major modifications compared with the current one</span>** ⚠️
+# 💥 **<span color="#dd0000">USE AT YOUR OWN RISK</span>** 💥
 
 ----
+
+# 🀄 中文README
+
+> ## &emsp;👉  <u>[点我](READMECN.md)</u>
 
 # 🤫 Known issue
 
