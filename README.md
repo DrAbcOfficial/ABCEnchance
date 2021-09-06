@@ -10,7 +10,7 @@ ABCEnchance is a metahook plugin that provides experience improvement for Sven c
  - ~~Sometimes will empty the weapon menu incorrectly after player death~~
  - ~~Dynamic indicator will point to wrong direction~~
  - Weapon postion conflict fix will not work
- - when bind `+annularmenu` command to `mouse4` or `mouse5`, will not hit `-annularmenu` command will not execute automatically.
+ - when bind `+annularmenu` command to `mouse4` or `mouse5`, `-annularmenu` command will not execute automatically.
 
 # Install
  1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
