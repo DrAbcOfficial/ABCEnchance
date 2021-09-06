@@ -41,6 +41,8 @@
 |---|---|---|---|
 |cl_hud_csgo|Use now hud or not(restart map to take effect)|1|0/1|
 |---|---|---|---|
+|hud_deathnotice_time|the death message keep time|6|0~9999|
+|---|---|---|---|
 |cl_radar|Radar|1|0/1|
 |cl_radarzoom|Radar Zoom|2.5|0.0001~9999|
 |cl_radarsize|Radar Size|344|0-9999|
@@ -91,7 +93,7 @@
 <img src="img/csgo1.jpg" width="50%"><img src="img/csgo2.jpg" width="50%">
 </div>
 
-## 🗿Player name title and hp/ap bar
+## 🗿 Player name title and hp/ap bar
 <img src="img/Playertitle1.png" width="100%">
 
 ## 🏐 Annular selection menu
@@ -118,6 +120,10 @@
 ## 🗳️ The voting menu that won't block you when you bunnyhopping
 
 <img src="img/vote1.png" width="100%">
+
+## 💀 Player death message
+
+<img src="img/deathmsg1.png" width="100%">
 
 ## 😗 And some useless efx enchance
 
