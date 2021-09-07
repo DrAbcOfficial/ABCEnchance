@@ -1,5 +1,8 @@
 # 🔤 **ABCEnchance**
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d58f0a4ca9e649ffa5d1b97bb668598c)](https://www.codacy.com/gh/DrAbcrealone/ABCEnchance/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DrAbcrealone/ABCEnchance&amp;utm_campaign=Badge_Grade)
+![Codacy Badge](https://img.shields.io/codacy/grade/d58f0a4ca9e649ffa5d1b97bb668598c?style=for-the-badge)
+![Repo Size](https://img.shields.io/github/repo-size/DrAbcrealone/ABCEnchance?style=for-the-badge)
+![Last Commit](https://img.shields.io/github/last-commit/DrAbcrealone/ABCEnchance?style=for-the-badge)
+
 ###  ABCEnchance 是一个旨在提升Sven coop游玩体验并加入更多(花里胡哨)功能的metahook插件
 
 ----
