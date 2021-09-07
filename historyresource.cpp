@@ -18,11 +18,8 @@ HistoryResource gHR;
 #define MAX_ITEM_NAME	32
 int HISTORY_DRAW_TIME = 5;
 
-// keep a list of items
 struct ITEM_INFO
 {
-	char szName[MAX_ITEM_NAME];
-	HSPRITE spr;
 	wrect_t rect;
 };
 

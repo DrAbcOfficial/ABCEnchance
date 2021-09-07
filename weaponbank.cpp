@@ -443,15 +443,15 @@ int WeaponsResource::HasAmmo(WEAPON* p)
 		return false;
 	if (p->iMax1 == -1 && p->iMax2 == -1)
 		return true;
-	bool bFlag = false;
 	if (p->iAmmoType > -1)
 	{
-		bFlag = (p->iClip > 0) || CountAmmo(p->iAmmoType);
+		bool bFlag = (p->iClip > 0) || CountAmmo(p->iAmmoType);
 		if (p->iAmmo2Type > -1 && !bFlag)
 			return CountAmmo(p->iAmmo2Type) || (p->iClip2 > 0);
 		else
 			return bFlag;
 	}
+	return true;
 }
 AMMO WeaponsResource::GetAmmo(int iId)
 {

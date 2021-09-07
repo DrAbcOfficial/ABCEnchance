@@ -345,7 +345,6 @@ void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage)
 					pdmg->y -= DamageIconSize;
 
 			}
-			pdmg = &m_dmg[i];
 		}
 	}
 	m_bitsDamage |= bitsDamage;

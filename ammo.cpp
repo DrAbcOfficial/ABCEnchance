@@ -365,7 +365,7 @@ void CHudCustomAmmo::SyncWeapon()
 {
 	WEAPON* wpi;
 	WEAPON* wp = NULL;
-	baseweapon_t* bwp = NULL;
+	baseweapon_t* bwp;
 	for (int i = 0; i < MAX_WEAPON_OLDSLOTS; i++)
 	{
 		for (int j = 0; j < MAX_WEAPON_OLDSLOTS; j++)
