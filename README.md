@@ -1,4 +1,5 @@
-# 🔤 ABCEnchance
+# 🔤 **ABCEnchance**
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d58f0a4ca9e649ffa5d1b97bb668598c)](https://www.codacy.com/gh/DrAbcrealone/ABCEnchance/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DrAbcrealone/ABCEnchance&amp;utm_campaign=Badge_Grade)
 ###  ABCEnchance is a metahook plugin that provides experience improvement for Sven co-op
 
 ----
