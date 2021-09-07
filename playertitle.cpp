@@ -92,7 +92,9 @@ int CHudPlayerTitle::Draw(float flTime)
 		{
 			cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i);
 
-			if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->player || !entity->model || entity == local)
+			if (!entity || 
+				entity->curstate.messagenum != local->curstate.messagenum || 
+				!entity->player || !entity->model || entity == local)
 				continue;
 			//计算我和目标的相对偏移
 			dx = entity->curstate.origin[0] - local->curstate.origin[0];
