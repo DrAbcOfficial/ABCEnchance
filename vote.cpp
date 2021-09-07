@@ -3,13 +3,13 @@
 #include "parsemsg.h"
 #include "msghook.h"
 #include "hud.h"
-#include "glew.h"
 #include "local.h"
 #include "vguilocal.h"
 #include "weapon.h"
 #include "CColor.h"
 #include "CHudDelegate.h"
 #include "drawElement.h"
+#include "glew.h"
 
 #include "vote.h"
 
