@@ -21,6 +21,7 @@ void R_Explosion(float* pos, int model, float scale, float framerate, int flags)
 	for (int i = 0; i < gCVars.pExpSmokeNumber->value; i++)
 	{
 		VectorCopy(pos, offset);
+		VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * scale, forward, offset);
 		VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * scale, right, offset);
 		VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * scale, up, offset);
 
