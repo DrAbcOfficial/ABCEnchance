@@ -7,9 +7,9 @@
 
 #include "cvardef.h"
 #include "local.h"
-#include "hud.h"
 #include "vguilocal.h"
 #include "drawElement.h"
+#include "hud.h"
 #include "deathmsg.h"
 
 CHudDeathMsg m_HudDeathMsg;
@@ -134,6 +134,8 @@ void CHudDeathMsg::Reset(void)
 }
 void CHudDeathMsg::InsertNewMsg(const wstring v, wstring e, wstring k)
 {
+	//正常输出控制台
+	gEngfuncs.Con_Printf("%s was killed by %s with %s", v, k, e);
 	for (int i = 0; i < MAX_KEEP_DEATHMSG; i++)
 	{
 		deathmsgItem_t a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];
