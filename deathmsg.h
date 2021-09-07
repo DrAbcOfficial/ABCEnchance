@@ -18,7 +18,11 @@ public:
 	int Init(void);
 	int Draw(float flTime);
 	void Reset(void);
-	void InsertNewMsg(std::wstring v, std::wstring e, std::wstring k);
+	void InsertNewMsg(const std::wstring &v, std::wstring &e, std::wstring &k);
+
+	std::wstring szSuicide;
+	std::wstring szKilled;
+	std::wstring szEmpty;
 private:
 	deathmsgItem_t aryKeepMsg[MAX_KEEP_DEATHMSG];
 	vgui::HFont HUDFont;

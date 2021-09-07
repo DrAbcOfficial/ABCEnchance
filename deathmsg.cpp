@@ -41,7 +41,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 		found = regex_search(stdSzBuf, matched, parttenSuicide);
 		if (found)
 		{
-			m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), L"Suicide", L"");
+			m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), m_HudDeathMsg.szSuicide, m_HudDeathMsg.szEmpty);
 			return 1;
 		}
 		found = regex_search(stdSzBuf, matched, parttenKilled);
@@ -49,7 +49,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 		{
 			wstring k = matched.suffix().str();
 			k.erase(k.end() - 2);
-			m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), L"Killed", k);
+			m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), m_HudDeathMsg.szKilled, k);
 			return 1;
 		}
 		found = regex_search(stdSzBuf, matched, parttenPlayer);
@@ -79,10 +79,7 @@ int CHudDeathMsg::Draw(float flTime)
 			continue;
 		if (var.addTime <= flTime)
 		{
-			memset(var.killer, 0, sizeof(var.killer));
-			memset(var.executioner, 0, sizeof(var.executioner));
-			memset(var.victim, 0, sizeof(var.victim));
-			var.addTime = 0;
+			memset(&var, 0, sizeof(var));
 			continue;
 		}
 		if (var.addTime - 2 < flTime)
@@ -132,10 +129,13 @@ void CHudDeathMsg::Reset(void)
 {
 	memset(aryKeepMsg, 0, sizeof(aryKeepMsg));
 }
-void CHudDeathMsg::InsertNewMsg(const wstring v, wstring e, wstring k)
+void CHudDeathMsg::InsertNewMsg(const wstring &v, wstring &e, wstring &k)
 {
 	//正常输出控制台
-	gEngfuncs.Con_Printf("%s was killed by %s with %s", v, k, e);
+	gEngfuncs.Con_Printf("%s was killed by %s with %s\n", 
+		UnicodeToUtf8(v.c_str()), 
+		UnicodeToUtf8(k.empty() ? L"something" : k.c_str()), 
+		UnicodeToUtf8(e.c_str()));
 	for (int i = 0; i < MAX_KEEP_DEATHMSG; i++)
 	{
 		deathmsgItem_t a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];
@@ -161,5 +161,9 @@ int CHudDeathMsg::Init(void)
 	BackGoundWidth = atof(pScheme->GetResourceString("DeathMsg.BackGoundWidth"));
 
 	BackGoundColor = pScheme->GetColor("DeathMsg.BackGoundColor", gDefaultColor);
+
+	szSuicide = L"Suicide";
+	szKilled = L"Killed";
+	szEmpty = L"";
 	return 1;
 }
