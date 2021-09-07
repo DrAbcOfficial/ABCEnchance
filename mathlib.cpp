@@ -127,79 +127,66 @@ float anglemod(float a)
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 {
 	float angle;
-	float sr, sp, sy, cr, cp, cy;
-
-	angle = angles[1] * (M_PI * 2 / 360);
-	sy = sin(angle);
-	cy = cos(angle);
-	angle = angles[0] * (M_PI * 2 / 360);
-	sp = sin(angle);
-	cp = cos(angle);
-	angle = angles[2] * (M_PI * 2 / 360);
-	sr = sin(angle);
-	cr = cos(angle);
-
+	vec2_t cs[3];
+	for (int i = 0; i < 3; i++)
+	{
+		angle = angles[i] * (M_PI * 180.0F);
+		cs[i][0] = sin(angle);
+		cs[i][1] = cos(angle);
+	}
 	if (forward)
 	{
-		forward[0] = cp * cy;
-		forward[1] = cp * sy;
-		forward[2] = -sp;
+		forward[0] = cs[0][1] * cs[1][1];
+		forward[1] = cs[0][1] * cs[1][0];
+		forward[2] = -cs[0][0];
 	}
 	if (right)
 	{
-		right[0] = (-1 * sr * sp * cy + -1 * cr * -sy);
-		right[1] = (-1 * sr * sp * sy + -1 * cr * cy);
-		right[2] = -1 * sr * cp;
+		right[0] = (-1 * cs[2][0] * cs[0][0] * cs[1][1] + -1 * cs[2][1] * -cs[1][0]);
+		right[1] = (-1 * cs[2][0] * cs[0][0] * cs[1][0] + -1 * cs[2][1] * cs[1][1]);
+		right[2] = -1 * cs[2][0] * cs[0][1];
 	}
 	if (up)
 	{
-		up[0] = (cr * sp * cy + -sr * -sy);
-		up[1] = (cr * sp * sy + -sr * cy);
-		up[2] = cr * cp;
+		up[0] = (cs[2][1] * cs[0][0] * cs[1][1] + -cs[2][0] * -cs[1][0]);
+		up[1] = (cs[2][1] * cs[0][0] * cs[1][0] + -cs[2][0] * cs[1][1]);
+		up[2] = cs[2][1] * cs[0][1];
 	}
 }
 
 void AngleVectorsTranspose(const vec3_t angles, vec3_t *forward, vec3_t *right, vec3_t *up)
 {
 	float angle;
-	float sr, sp, sy, cr, cp, cy;
-
-	angle = angles[1] * (M_PI * 2 / 360);
-	sy = sin(angle);
-	cy = cos(angle);
-	angle = angles[0] * (M_PI * 2 / 360);
-	sp = sin(angle);
-	cp = cos(angle);
-	angle = angles[2] * (M_PI * 2 / 360);
-	sr = sin(angle);
-	cr = cos(angle);
-
+	vec2_t cs[3];
+	for (int i = 0; i < 3; i++)
+	{
+		angle = angles[i] * (M_PI * 180.0F);
+		cs[i][0] = sin(angle);
+		cs[i][1] = cos(angle);
+	}
 	if (forward)
 	{
-		(*forward)[0] = cp * cy;
-		(*forward)[1] = cp * sy;
-		(*forward)[2] = -sp;
+		(*forward)[0] = cs[0][1] * cs[1][1];
+		(*forward)[1] = cs[0][1] * cs[1][0];
+		(*forward)[2] = -cs[0][0];
 	}
-
 	if (right)
 	{
-		(*right)[0] = (-1 * sr * sp * cy + -1 * cr * -sy);
-		(*right)[1] = (-1 * sr * sp * sy + -1 * cr * cy);
-		(*right)[2] = -1 * sr * cp;
+		(*right)[0] = (-1 * cs[2][0] * cs[0][0] * cs[1][1] + -1 * cs[2][1] * -cs[1][0]);
+		(*right)[1] = (-1 * cs[2][0] * cs[0][0] * cs[1][0] + -1 * cs[2][1] * cs[1][1]);
+		(*right)[2] = -1 * cs[2][0] * cs[0][1];
 	}
-
 	if (up)
 	{
-		(*up)[0] = (cr * sp * cy + -sr * -sy);
-		(*up)[1] = (cr * sp * sy + -sr * cy);
-		(*up)[2] = cr * cp;
+		(*up)[0] = (cs[2][1] * cs[0][0] * cs[1][1] + -cs[2][0] * -cs[1][0]);
+		(*up)[1] = (cs[2][1] * cs[0][0] * cs[1][0] + -cs[2][0] * cs[1][1]);
+		(*up)[2] = cs[2][1] * cs[0][1];
 	}
-
 }
 
 void VectorAngles(const vec3_t forward, vec3_t angles)
 {
-	float tmp, yaw, pitch;
+	float yaw, pitch;
 
 	if (forward[1] == 0 && forward[0] == 0)
 	{
@@ -217,7 +204,7 @@ void VectorAngles(const vec3_t forward, vec3_t angles)
 		if (yaw < 0)
 			yaw += 360;
 
-		tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
+		float tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
 		pitch = (atan2(forward[2], tmp) * 180 / M_PI);
 
 		if (pitch < 0)
@@ -237,7 +224,7 @@ double VectorLength(vec3_t v)
 	length = 0;
 
 	for (i = 0; i < 3; i++)
-		length += v[i] * v[i];
+		length += pow(v[i], 2);
 
 	length = sqrt(length);
 	return length;
@@ -385,10 +372,8 @@ void MatrixCopy(float in[4][3], float out[4][3])
 
 void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs)
 {
-	int i;
 	vec_t val;
-
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		val = v[i];
 
@@ -547,7 +532,7 @@ void QuaternionMatrix(const vec4_t quaternion, float (*matrix)[4])
 void QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt)
 {
 	int i;
-	float cosom, sinom, sclp, sclq;
+	float sclp, sclq;
 
 	float a = 0;
 	float b = 0;
@@ -564,14 +549,14 @@ void QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt)
 			q[i] = -q[i];
 	}
 
-	cosom = p[0] * q[0] + p[1] * q[1] + p[2] * q[2] + p[3] * q[3];
+	float cosom = p[0] * q[0] + p[1] * q[1] + p[2] * q[2] + p[3] * q[3];
 
 	if ((1.0 + cosom) > 0.00000001)
 	{
 		if ((1.0 - cosom) > 0.00000001)
 		{
 			float omega = acos(cosom);
-			sinom = sin(omega);
+			float sinom = sin(omega);
 			sclp = sin((1.0 - t)*omega) / sinom;
 			sclq = sin(t * omega) / sinom;
 		}
