@@ -14,7 +14,7 @@ public:
 
 	bool m_bInVoting;
 private:
-	void DrawMultiLineStr(const wchar_t* str, int &x, int &y, int r, int g, int b);
+	void DrawMultiLineStr(const wchar_t* str, int limite, int x, int y, int r, int g, int b);
 	GLint m_iYesIconTga;
 	GLint m_iNoIconTga;
 

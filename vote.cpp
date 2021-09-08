@@ -12,6 +12,7 @@
 #include "glew.h"
 
 #include "vote.h"
+#include <string>
 
 CHudVote m_HudVote;
 pfnUserMsgHook m_pfnVoteMenu;
@@ -57,21 +58,22 @@ void CHudVote::Reset()
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iYesIconTga, "abcenchance/tga/vote_yes");
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iNoIconTga, "abcenchance/tga/vote_no");
 }
-void CHudVote::DrawMultiLineStr(const wchar_t *str, int &x, int &y, int r, int g, int b)
+void CHudVote::DrawMultiLineStr(const wchar_t *str, int limite, int x, int y, int r, int g, int b)
 {
-	int w = gScreenInfo.iWidth / Width;
-	int h;
-	int c = (int)(w / GetHudFontHeight(HudFont));
+	int totalW;
+	int nowW = 0;
+	int n;
+	int c;
+	std::wstring szbuf = str;
 	wchar_t buf[128];
-
-	//for (int i = 0; i < wcslen(str); i+=c)
-	//{
-	//	wcsncpy_s(buf, c, str + i, c);
-	wcscpy_s(buf, str);
-		GetStringSize(buf, NULL, &h, HudFont);
-		DrawVGUI2String(buf, x, y, r, g, b, HudFont);
-		y += h;
-	//}
+	GetStringSize(str, &totalW, NULL, HudFont);
+	c = wcslen(str) * limite / totalW;
+	for (int i = wcslen(str); i <= 0; i -= c)
+	{
+		szbuf.insert(i, L"\n");
+	}
+	wcscpy_s(buf, szbuf.c_str());
+	DrawVGUI2String(buf, x, y, r, g, b, HudFont);
 }
 int CHudVote::Draw(float flTime)
 {
@@ -93,13 +95,13 @@ int CHudVote::Draw(float flTime)
 
 	OutlineColor.GetColor(r, g, b, a);
 	GetStringSize(VoteTitle, &w, &h, HudFont);
-	x += GetHudFontHeight(HudFont);
+	x += h;
 	y += 2;
-	DrawMultiLineStr(VoteTitle, x, y, r, g, b);
-	y += 2;
+	DrawMultiLineStr(VoteTitle, w, x, y, r, g, b);
+	y += h + 2;
 	gEngfuncs.pfnFillRGBABlend(x, y, w, 2, r, g, b, a);
 	y += h;
-	DrawMultiLineStr(m_VoteContend, x, y, r, g, b);
+	DrawMultiLineStr(m_VoteContend, w, x, y, r, g, b);
 	y = YOffset + gScreenInfo.iHeight / Height;
 	y -= 6 * h;
 

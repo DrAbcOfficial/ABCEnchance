@@ -130,7 +130,7 @@ void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 	vec2_t cs[3];
 	for (int i = 0; i < 3; i++)
 	{
-		angle = angles[i] * (M_PI * 180.0F);
+		angle = angles[i] * (M_PI / 180.0F);
 		cs[i][0] = sin(angle);
 		cs[i][1] = cos(angle);
 	}
@@ -160,7 +160,7 @@ void AngleVectorsTranspose(const vec3_t angles, vec3_t *forward, vec3_t *right, 
 	vec2_t cs[3];
 	for (int i = 0; i < 3; i++)
 	{
-		angle = angles[i] * (M_PI * 180.0F);
+		angle = angles[i] * (M_PI / 180.0F);
 		cs[i][0] = sin(angle);
 		cs[i][1] = cos(angle);
 	}
