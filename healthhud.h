@@ -92,7 +92,7 @@ public:
 	int VidInit(void);
 	int DrawPain(float fTime);
 	int DrawDamage(float fTime);
-	void CalcDamageDirection(vec3_t vecFrom);
+	void CalcDamageDirection();
 	void UpdateTiles(float fTime, long bits);
 
 	int m_iHealth;

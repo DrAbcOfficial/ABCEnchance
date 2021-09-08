@@ -52,11 +52,12 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 	BEGIN_READ(pbuf, iSize);
 	int armor = READ_BYTE();
 	int damageTaken = READ_BYTE();
-	long bitsDamage = READ_LONG();
+	m_HudArmorHealth.UpdateTiles(gEngfuncs.GetClientTime(), READ_LONG());
+	//TODO: Why its {0 0 0}
 	vec3_t vecFrom;
-	for (int i = 0; i < 3; i++)
-		vecFrom[i] = READ_COORD();
-	m_HudArmorHealth.UpdateTiles(gEngfuncs.GetClientTime(), bitsDamage);
+	for (int i = 0; i < 3; i++) {
+		vecFrom[i] = READ_FLOAT();
+	}	
 	if (damageTaken > 0 || armor > 0)
 	{
 		m_HudArmorHealth.m_takeDamage = damageTaken;
@@ -205,13 +206,13 @@ int CHudArmorHealth::Draw(float flTime)
 	iStartX += iBarLength + iElementGap * 2;
 	return DrawDamage(flTime);
 }
-void CHudArmorHealth::CalcDamageDirection(vec3_t vecFrom)
+void CHudArmorHealth::CalcDamageDirection()
 {
 	vec3_t vecFinal;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	vecFinal[0] = vecFrom[0] - local->curstate.origin[0];
-	vecFinal[1] = vecFrom[1] - local->curstate.origin[1];
-	vecFinal[2] = vecFrom[2] - local->curstate.origin[2];
+	vecFinal[0] = vecDamageFrom[0] - local->curstate.origin[0];
+	vecFinal[1] = vecDamageFrom[1] - local->curstate.origin[1];
+	vecFinal[2] = vecDamageFrom[2] - local->curstate.origin[2];
 	VectorAngles(vecFinal, vecFinal);
 	vecFinal[1] -= local->curstate.angles[1] - 90;
 	float angle = DEG2RAD(vecFinal[YAW]);
@@ -268,7 +269,7 @@ int CHudArmorHealth::DrawPain(float flTime)
 
 	if (!iPainIndicator)
 		iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
-	CalcDamageDirection(vecDamageFrom);
+	CalcDamageDirection();
 	DrawSPRIconPos(iPainIndicator, vecPainIndicatorA, vecPainIndicatorC, vecPainIndicatorD, vecPainIndicatorB, 
 		r, g, b, 
 		(flPainIndicatorKeepTime - flTime) / PAIN_INDICAROT_TIME * a);
