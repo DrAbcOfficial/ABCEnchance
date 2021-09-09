@@ -5,9 +5,15 @@ Scheme
 		"HealthArmor.HealthIconColor"		"245 230 195 255"
 		"HealthArmor.HealthBarColor"		"245 230 195 255"
 		"HealthArmor.HealthTextColor"		"245 230 195 255"
+		"HealthArmor.HealthPainColor"		"255 0 0 255"
+		"HealthArmor.HealthDangerColor"		"250 0 0 255"
+
 		"HealthArmor.ArmorIconColor"		"245 230 195 255"
 		"HealthArmor.ArmorBarColor"			"245 230 195 255"
 		"HealthArmor.ArmorTextColor"		"245 230 195 255"
+		"HealthArmor.ArmorPainColor"		"255 0 0 255"
+		"HealthArmor.ArmorDangerColor"		"125 110 0 255"
+
 		"HealthArmor.PainIndicatorColor"	"255 0 0 255"
 		"HealthArmor.PainIndicatorColorA"	"255 255 255 255"
 		"HealthArmor.BitDamageColor"		"0 255 0 255"
@@ -49,6 +55,7 @@ Scheme
 		"HealthArmor.DamageIconX"		"0"
 		"HealthArmor.DamageIconY"		"0"
 		"HealthArmor.DamageIconSize"	"96"
+		"HealthArmor.PainColorTime"		"0.5"
 
 		"AmmoHUD.StartX"			"32"
 		"AmmoHUD.IconSize"			"0.5"

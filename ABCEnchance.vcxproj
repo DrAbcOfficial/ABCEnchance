@@ -125,6 +125,7 @@
     <ClCompile Include="msghook.cpp" />
     <ClCompile Include="parsemsg.cpp" />
     <ClCompile Include="plugins.cpp" />
+    <ClCompile Include="utility.cpp" />
     <ClCompile Include="vguilocal.cpp" />
     <ClCompile Include="viewmodellag.cpp" />
     <ClCompile Include="vote.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="palette.h" />
     <ClInclude Include="parsemsg.h" />
     <ClInclude Include="plugins.h" />
+    <ClInclude Include="utility.h" />
     <ClInclude Include="vguilocal.h" />
     <ClInclude Include="VGUI\Cursor.h" />
     <ClInclude Include="VGUI\Dar.h" />
