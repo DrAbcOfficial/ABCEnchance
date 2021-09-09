@@ -97,13 +97,6 @@ public:
 
 	int m_iHealth;
 	int m_iBat;
-	int m_iFlags;
-	float m_fFade;
-	int m_HUD_dmg_bio;
-
-	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
-	HSPRITE m_hSprite;
-	HSPRITE m_hDamage;
 
 	int iHealthIcon;
 	int iArmorIconNull;
@@ -112,6 +105,21 @@ public:
 	int iHealthBarBackground;
 
 	float flPainIndicatorKeepTime = 0;
+	float flPainColorKeepTime = 0;
+
+	int	m_bitsDamage;
+	int m_takeDamage;
+	int m_takeArmor;
+	vec3_t vecDamageFrom;
+
+	float PainColorTime = 0.5;
+private:
+	void CalcuPainFade(int& r, int& g, int& b, Color* c, float timeDiffer);
+	int m_HUD_dmg_bio;
+	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
+	HSPRITE m_hSprite;
+	HSPRITE m_hDamage;
+
 	vec2_t vecPainIndicatorA;
 	vec2_t vecPainIndicatorB;
 	vec2_t vecPainIndicatorC;
@@ -133,19 +141,19 @@ public:
 	Color HealthIconColor;
 	Color HealthBarColor;
 	Color HealthTextColor;
+	Color HealthPainColor;
+	Color HealthDangerColor;
+
 	Color ArmorIconColor;
 	Color ArmorBarColor;
 	Color ArmorTextColor;
+	Color ArmorPainColor;
+	Color ArmorDangerColor;
+
 	Color PainIndicatorColor;
 	Color PainIndicatorColorA;
 	Color BitDamageColor;
 
 	vgui::HFont HUDFont;
-	vgui::HFont HUDBigFont;
-
-	int	m_bitsDamage;
-	int m_takeDamage;
-	int m_takeArmor;
-	vec3_t vecDamageFrom;
 };
 extern CHudArmorHealth m_HudArmorHealth;

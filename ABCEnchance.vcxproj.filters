@@ -108,6 +108,9 @@
     <ClCompile Include="vote.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="utility.cpp">
+      <Filter>Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -270,6 +273,9 @@
       <Filter>Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="vote.h">
+      <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
