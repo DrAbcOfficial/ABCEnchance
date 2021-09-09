@@ -52,18 +52,14 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 	int armor = READ_BYTE();
 	int damageTaken = READ_BYTE();
 	m_HudArmorHealth.UpdateTiles(gEngfuncs.GetClientTime(), READ_LONG());
-	//TODO: Why its {0 0 0}
-	vec3_t vecFrom;
-	for (int i = 0; i < 3; i++) {
-		vecFrom[i] = READ_FLOAT();
-	}	
-	if (damageTaken > 0 || armor > 0)
-	{
+	if (damageTaken > 0 || armor > 0) {
+		for (int i = 0; i < 3; i++) {
+			m_HudArmorHealth.vecDamageFrom[i] = READ_COORD();
+		}
 		m_HudArmorHealth.m_takeDamage = damageTaken;
 		m_HudArmorHealth.m_takeArmor = armor;
 		m_HudArmorHealth.flPainIndicatorKeepTime = gEngfuncs.GetClientTime() + PAIN_INDICAROT_TIME;
 		m_HudArmorHealth.flPainColorKeepTime = gEngfuncs.GetClientTime() + m_HudArmorHealth.PainColorTime;
-		VectorCopy(vecFrom, m_HudArmorHealth.vecDamageFrom);
 	}
 	return m_pfnDamage(pszName, iSize, pbuf);
 }
@@ -261,7 +257,7 @@ void CHudArmorHealth::CalcDamageDirection()
 	vecFinal[1] = vecDamageFrom[1] - local->curstate.origin[1];
 	vecFinal[2] = vecDamageFrom[2] - local->curstate.origin[2];
 	VectorAngles(vecFinal, vecFinal);
-	vecFinal[1] -= local->curstate.angles[1] - 90;
+	vecFinal[YAW] -= local->curstate.angles[YAW];
 	float angle = DEG2RAD(vecFinal[YAW]);
 	float ca = cos(angle);
 	float sa = sin(angle);
@@ -309,7 +305,7 @@ void CHudArmorHealth::CalcDamageDirection()
 int CHudArmorHealth::DrawPain(float flTime)
 {
 	int r, g, b, a;
-	if(m_takeDamage <= 0 && m_takeArmor > 0)
+	if(m_takeDamage <= 0 && m_takeArmor <= 0)
 		PainIndicatorColorA.GetColor(r, g, b, a);
 	else
 		PainIndicatorColor.GetColor(r, g, b, a);

@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include "plugins.h"
 
 static byte *gpBuf;
 static int giSize;
@@ -128,7 +129,7 @@ char* READ_STRING(void)
 
 float READ_COORD(void)
 {
-	return (float)(READ_SHORT() * (1.0/8));
+	return (float)((g_iEngineType == ENGINE_SVENGINE ? READ_LONG() : READ_SHORT()) * (1.0/8));
 }
 
 float READ_ANGLE(void)
