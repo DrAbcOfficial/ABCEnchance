@@ -38,8 +38,8 @@ Scheme
 
 		"DeathMsg.BackGoundColor"		"180 180 180 255"
 
-		"Vote.OutlineColor"		"180 180 180 180"
-		"Vote.BackGoundColor"		"60 60 180 180"
+		"Vote.OutlineColor"		"255 255 255 180"
+		"Vote.BackGoundColor"		"139 137 137 180"
 	}
 
 	BaseSettings

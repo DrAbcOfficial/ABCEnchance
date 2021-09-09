@@ -61,8 +61,6 @@ void CHudVote::Reset()
 void CHudVote::DrawMultiLineStr(const wchar_t *str, int limite, int x, int y, int r, int g, int b)
 {
 	int totalW;
-	int nowW = 0;
-	int n;
 	int c;
 	std::wstring szbuf = str;
 	wchar_t buf[128];
