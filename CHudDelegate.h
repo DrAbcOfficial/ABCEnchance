@@ -15,6 +15,7 @@ public:
 	void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
 	void HUD_Clear(void);
 	void HUD_PreRenderView(int a1);
+	void HUD_PostRenderView(int a1);
 	void IN_MouseEvent(int mstate);
 	int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding);
 	void IN_Accumulate(void);

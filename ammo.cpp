@@ -586,6 +586,17 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
 		gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
 	gWR.SelectSlot(iSlot, fAdvance);
 }
+void CHudCustomAmmo::PostRenderView(int a1)
+{
+	if (m_HudCustomAmmo.m_bOpeningAnnularMenu) {
+		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
+		//复制tex到H
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferHFBO);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferHTex, 0);
+		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferHFBO,
+			gScreenInfo.iWidth, gScreenInfo.iHeight, gScreenInfo.iWidth, gScreenInfo.iHeight);
+	}
+}
 int CHudCustomAmmo::DrawWList(float flTime)
 {
 	if (m_fFade <= flTime)
@@ -611,15 +622,11 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		m_fAnimateTime = flTime + SelectCyclerAnimateTime;
 	if (m_fAnimateTime > flTime && flTimeDiffer >= SelectCyclerHoldTime - SelectCyclerAnimateTime)
 		iOffset *= flAnimationRatio;
-
+	int i;
+	float ac, as;
+	vec2_t aryOut[10];
+	vec2_t aryIn[10];
 	if (m_HudCustomAmmo.m_bOpeningAnnularMenu) {
-		GLint oldBuffer;
-		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &oldBuffer);
-		//复制tex到H
-		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferHFBO);
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferHTex, 0);
-		GL_BlitFrameBufferToFrameBufferColorOnly(oldBuffer, m_hGaussianBufferHFBO,
-			gScreenInfo.iWidth, gScreenInfo.iHeight, gScreenInfo.iWidth, gScreenInfo.iHeight);
 		//绘制到V
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferVFBO);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferVTex, 0);
@@ -633,19 +640,13 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		DrawScreenQuad();
 		//绘制到主画布
 		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferVTex);
-		glBindFramebuffer(GL_FRAMEBUFFER, oldBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
 		GL_UseProgram(pp_gaussianblurv.program);
 		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
 		glUniform1f(pp_gaussianblurh.du, flAnimationRatio / 200);
 		DrawScreenQuad();
 		GL_UseProgram(0);
 	}
-
-	int i;
-	float ac, as;
-	vec2_t aryOut[10];
-	vec2_t aryIn[10];
-
 	//填充十边形坐标数组
 	for (i = 0; i < 10; i++)
 	{

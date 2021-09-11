@@ -104,12 +104,12 @@ void CHudDelegate::HUD_Draw(float flTime)
 {
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
-	m_HudArmorHealth.Draw(flTime);
+	m_HudPlayerTitle.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
+	m_HudArmorHealth.Draw(flTime);
 	m_HudRadar.Draw(flTime);
 	m_HudDeathMsg.Draw(flTime);
 	m_HudCrosshair.Draw(flTime);
-	m_HudPlayerTitle.Draw(flTime);
 	m_HudVote.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void)
@@ -141,6 +141,12 @@ void CHudDelegate::HUD_PreRenderView(int a1)
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 	m_HudRadar.PreRenderView(a1);
+}
+void CHudDelegate::HUD_PostRenderView(int a1)
+{
+	if (gCVars.pDynamicHUD->value <= 0)
+		return;
+	m_HudCustomAmmo.PostRenderView(a1);
 }
 void CHudDelegate::IN_MouseEvent(int mstate)
 {

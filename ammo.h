@@ -7,6 +7,7 @@ public:
 	int Draw(float flTime);
 	void Reset(void);
 	void SlotInput(int iSlot, int fAdvance);
+	void PostRenderView(int a1);
 	void ChosePlayerWeapon(void);
 	void ClientMove(struct playermove_s* ppmove, qboolean server);
 	void IN_Accumulate();
@@ -61,6 +62,7 @@ private:
 	float m_fAnimateTime;
 	float m_fNextSyncTime;
 
+	GLint m_hOldBuffer;
 	GLuint m_hGaussianBufferVFBO;
 	GLuint m_hGaussianBufferVTex;
 	GLuint m_hGaussianBufferHFBO;
