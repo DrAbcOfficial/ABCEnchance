@@ -85,8 +85,9 @@ void R_ForceCVars(qboolean mp)
 }
 void Cvar_DirectSet(cvar_t* var, char* value) {
 	gHookFuncs.Cvar_DirectSet(var, value);
-	if (gCVarsHookMap[var])
+	if (gCVarsHookMap.count(var) && gCVarsHookMap[var]) {
 		gCVarsHookMap[var](var);
+	}
 }
 void Sys_ErrorEx(const char* fmt, ...)
 {

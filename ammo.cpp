@@ -18,11 +18,18 @@
 #include "exportfuncs.h"
 #include <drawElement.h>
 
+#include "glew.h"
+#include "gl_shader.h"
+#include "gldef.h"
+#include "glutility.h"
+
 #include "weaponbank.h"
 #include "historyresource.h"
 #include "ammo.h"
 
 CHudCustomAmmo m_HudCustomAmmo;
+SHADER_DEFINE(pp_gaussianblurh);
+SHADER_DEFINE(pp_gaussianblurv);
 
 pfnUserMsgHook m_pfnCurWeapon;
 pfnUserMsgHook m_pfnWeaponList;
@@ -293,6 +300,13 @@ void CustomSlotSetCallBack(cvar_t* vars)
 
 #define BASE_GWR_SELECTED 842100225
 #define BASE_GWR_UNSELECTED 842100224
+void CHudCustomAmmo::GLInit()
+{
+	glGenFramebuffersEXT(1, &m_hGaussianBufferVFBO);
+	m_hGaussianBufferVTex = GL_GenTextureRGB8(gScreenInfo.iWidth, gScreenInfo.iHeight);
+	glGenFramebuffersEXT(1, &m_hGaussianBufferHFBO);
+	m_hGaussianBufferHTex = GL_GenTextureRGB8(gScreenInfo.iWidth, gScreenInfo.iHeight);
+}
 int CHudCustomAmmo::Init(void)
 {
 	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
@@ -305,7 +319,12 @@ int CHudCustomAmmo::Init(void)
 	
 	gEngfuncs.pfnAddCommand("+annularmenu", __UserCmd_OpenAnnularMenu);
 	gEngfuncs.pfnAddCommand("-annularmenu", __UserCmd_CloseAnnularMenu);
-
+	pp_gaussianblurh.program = R_CompileShaderFileEx("renderer\\shader\\fullscreentriangle.vert.glsl", "renderer\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_HORIZONAL\n", NULL);
+	if (pp_gaussianblurh.program)
+		SHADER_UNIFORM(pp_gaussianblurh, du, "du");
+	pp_gaussianblurv.program = R_CompileShaderFileEx("renderer\\shader\\fullscreentriangle.vert.glsl", "renderer\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_VERTICAL\n", NULL);
+	if (pp_gaussianblurv.program)
+		SHADER_UNIFORM(pp_gaussianblurv, du, "du");
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
 	UserCmd_Slot2 = HOOK_COMMAND("slot2", Slot2);
 	UserCmd_Slot3 = HOOK_COMMAND("slot3", Slot3);
@@ -321,11 +340,17 @@ int CHudCustomAmmo::Init(void)
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 
-	char buf[10][16];
-	for (int i = 0; i < MAX_WEAPON_SLOTS; i++) {
-		sprintf(buf[i], "cl_customslot%d", i + 1);
-		gCVars.pAmmoCSlot[i] = CREATE_CVAR(buf[i], "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	}
+	gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[2] = CREATE_CVAR("cl_customslot3", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[3] = CREATE_CVAR("cl_customslot4", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[4] = CREATE_CVAR("cl_customslot5", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[5] = CREATE_CVAR("cl_customslot6", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[6] = CREATE_CVAR("cl_customslot7", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[7] = CREATE_CVAR("cl_customslot8", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[8] = CREATE_CVAR("cl_customslot9", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+
 	StartX = atof(pScheme->GetResourceString("AmmoHUD.StartX"));
 	IconSize = atof(pScheme->GetResourceString("AmmoHUD.IconSize"));
 	ElementGap = atof(pScheme->GetResourceString("AmmoHUD.ElementGap"));
@@ -385,6 +410,20 @@ int CHudCustomAmmo::VidInit(void)
 	gHR.iHistoryGap = max(gHR.iHistoryGap, gHudDelegate->GetSpriteRect(m_HUD_bucket0).bottom - gHudDelegate->GetSpriteRect(m_HUD_bucket0).top);
 	gWR.LoadAllWeaponSprites();
 	return 1;
+}
+void CHudCustomAmmo::DrawScreenQuad()
+{
+	glColor4ub(255, 255, 255, 255);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0);
+	glVertex2f(0, 0);
+	glTexCoord2f(1, 0);
+	glVertex2f(gScreenInfo.iWidth, 0);
+	glTexCoord2f(1, 1);
+	glVertex2f(gScreenInfo.iWidth, gScreenInfo.iHeight);
+	glTexCoord2f(0, 1);
+	glVertex2f(0, gScreenInfo.iHeight);
+	glEnd();
 }
 void CHudCustomAmmo::SyncWeapon()
 {
@@ -567,10 +606,41 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	float flStartRot = SelectCyclerRotate;
 	int iBackGroundHeight = SelectCyclerSize;
 	int iOffset = SelectCyclerOffset;
+	float flAnimationRatio = ((float)(SelectCyclerHoldTime)-flTimeDiffer) / SelectCyclerAnimateTime;
 	if (!m_bSelectMenuDisplay)
 		m_fAnimateTime = flTime + SelectCyclerAnimateTime;
 	if (m_fAnimateTime > flTime && flTimeDiffer >= SelectCyclerHoldTime - SelectCyclerAnimateTime)
-		iOffset *= ((float)(SelectCyclerHoldTime) - flTimeDiffer) / SelectCyclerAnimateTime;	
+		iOffset *= flAnimationRatio;
+
+	if (m_HudCustomAmmo.m_bOpeningAnnularMenu) {
+		GLint oldBuffer;
+		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &oldBuffer);
+		//复制tex到H
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferHFBO);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferHTex, 0);
+		GL_BlitFrameBufferToFrameBufferColorOnly(oldBuffer, m_hGaussianBufferHFBO,
+			gScreenInfo.iWidth, gScreenInfo.iHeight, gScreenInfo.iWidth, gScreenInfo.iHeight);
+		//绘制到V
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferVFBO);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferVTex, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferHTex);
+		//H模糊
+		GL_UseProgram(pp_gaussianblurh.program);
+		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
+		glUniform1f(pp_gaussianblurh.du, flAnimationRatio / 200);
+		glColor4ub(255, 255, 255, 255);
+		DrawScreenQuad();
+		//绘制到主画布
+		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferVTex);
+		glBindFramebuffer(GL_FRAMEBUFFER, oldBuffer);
+		GL_UseProgram(pp_gaussianblurv.program);
+		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
+		glUniform1f(pp_gaussianblurh.du, flAnimationRatio / 200);
+		DrawScreenQuad();
+		GL_UseProgram(0);
+	}
+
 	int i;
 	float ac, as;
 	vec2_t aryOut[10];
@@ -718,4 +788,11 @@ void CHudCustomAmmo::IN_Accumulate()
 		if (gWR.gridDrawMenu[s].iId > -1)
 			gWR.iNowSlot = s;
 	}
+}
+void CHudCustomAmmo::Clear()
+{
+	if (m_hGaussianBufferVTex)
+		glDeleteTextures(1, &m_hGaussianBufferVTex);
+	if (m_hGaussianBufferHTex)
+		glDeleteTextures(1, &m_hGaussianBufferHTex);
 }

@@ -1,6 +1,7 @@
 class CHudCustomAmmo : public CHudBase
 {
 public:
+	void GLInit();
 	int Init(void);
 	int VidInit(void);
 	int Draw(float flTime);
@@ -9,7 +10,7 @@ public:
 	void ChosePlayerWeapon(void);
 	void ClientMove(struct playermove_s* ppmove, qboolean server);
 	void IN_Accumulate();
-	//void IN_MouseEvent(int mstate);
+	void Clear();
 
 	float StartX = 48;
 	float IconSize = 0.5;
@@ -54,9 +55,15 @@ public:
 
 	bool m_bAcceptDeadMessage = false;
 private:
+	void DrawScreenQuad();
 	int DrawWList(float flTime);
 	void SyncWeapon();
 	float m_fAnimateTime;
 	float m_fNextSyncTime;
+
+	GLuint m_hGaussianBufferVFBO;
+	GLuint m_hGaussianBufferVTex;
+	GLuint m_hGaussianBufferHFBO;
+	GLuint m_hGaussianBufferHTex;
 };
 extern CHudCustomAmmo m_HudCustomAmmo;

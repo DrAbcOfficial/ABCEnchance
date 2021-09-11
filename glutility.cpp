@@ -48,3 +48,13 @@ GLuint GL_GenTextureRGBA8(int w, int h)
 {
 	return GL_GenTextureColorFormat(w, h, GL_RGBA8);
 }
+GLuint GL_GenTextureRGB8(int w, int h)
+{
+	return GL_GenTextureColorFormat(w, h, GL_RGB8);
+}
+void GL_BlitFrameBufferToFrameBufferColorOnly(GLuint src, GLuint dst, int w1, int h1, int w2, int h2)
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dst);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, src);
+	glBlitFramebuffer(0, 0, w1, h1, 0, 0, w2, h2, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+}

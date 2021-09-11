@@ -3,6 +3,7 @@
 #include "vguilocal.h"
 #include "hud.h"
 #include "weapon.h"
+#include "glew.h"
 #include "ammo.h"
 #include "CHudDelegate.h"
 #include "historyresource.h"
