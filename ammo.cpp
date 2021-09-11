@@ -340,16 +340,16 @@ int CHudCustomAmmo::Init(void)
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 
-	gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[2] = CREATE_CVAR("cl_customslot3", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[3] = CREATE_CVAR("cl_customslot4", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[4] = CREATE_CVAR("cl_customslot5", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[5] = CREATE_CVAR("cl_customslot6", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[6] = CREATE_CVAR("cl_customslot7", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[7] = CREATE_CVAR("cl_customslot8", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[8] = CREATE_CVAR("cl_customslot9", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[2] = CREATE_CVAR("cl_customslot3", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[3] = CREATE_CVAR("cl_customslot4", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[4] = CREATE_CVAR("cl_customslot5", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[5] = CREATE_CVAR("cl_customslot6", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[6] = CREATE_CVAR("cl_customslot7", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[7] = CREATE_CVAR("cl_customslot8", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[8] = CREATE_CVAR("cl_customslot9", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
 
 	StartX = atof(pScheme->GetResourceString("AmmoHUD.StartX"));
 	IconSize = atof(pScheme->GetResourceString("AmmoHUD.IconSize"));
