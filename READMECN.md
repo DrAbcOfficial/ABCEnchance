@@ -114,8 +114,8 @@
 ### ~~并且修复了SC的Position冲突导致无法患处武器问题~~
 
 <div>
-<img src="img/Annular1.jpg" width="50%"><img src="img/Annular2.jpg" width="50%">
-<img src="img/Annular3.jpg" width="50%">
+<img src="img/Annular4.png" width="50%"><img src="img/Annular1.jpg" width="50%">
+<img src="img/Annular3.jpg" width="50%"><img src="img/Annular2.jpg" width="50%">
 </div>
 
 ## 🔺 动态伤害指示器与动态准心

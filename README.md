@@ -120,8 +120,8 @@
 ### ~~And fixed the problem that the svencoop selection menu could not switch Postion conflict weapons~~
 
 <div>
-<img src="img/Annular1.jpg" width="50%"><img src="img/Annular2.jpg" width="50%">
-<img src="img/Annular3.jpg" width="50%">
+<img src="img/Annular4.png" width="50%"><img src="img/Annular1.jpg" width="50%">
+<img src="img/Annular3.jpg" width="50%"><img src="img/Annular2.jpg" width="50%">
 </div>
 
 ## 🔺 Dynamic indicator and dynamic crosshair
