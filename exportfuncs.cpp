@@ -76,6 +76,7 @@ void R_RenderView(int a1)
 {
 	gHudDelegate->HUD_PreRenderView(a1);
 	gHookFuncs.R_RenderView(a1);
+	gHudDelegate->HUD_PostRenderView(a1);
 }
 void R_ForceCVars(qboolean mp)
 {
