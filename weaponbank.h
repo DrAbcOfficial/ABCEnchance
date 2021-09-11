@@ -2,6 +2,7 @@
 #define MAX_WEAPON_OLDPOSITIONS 26
 #define MAX_WEAPON_OLDSLOTS 10
 #define MAX_WEAPON_POSITIONS 30
+#define MAX_WEAPON_POSITIONS_USER MAX_WEAPON_POSITIONS + 1
 #define MAX_WEAPON_SLOTS 10
 #define MAX_WEAPONS MAX_WEAPON_POSITIONS * MAX_WEAPON_SLOTS
 #define MAX_AMMO 999
@@ -16,7 +17,7 @@ class WeaponsResource
 private:
 	WEAPON rgWeapons[MAX_WEAPONS];
 	int gridSlotPosDataMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
-	int gridSlotMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
+	int gridSlotMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS_USER];
 	int	riAmmo[MAX_AMMO];
 
 public:
@@ -28,6 +29,7 @@ public:
 	int CountGridWeapons();
 	int CountWeapons();
 	int CountMenuWeapons();
+	int GetWeaponId(char* szName);
 	WEAPON* GetWeapon(int iId);
 	void AddWeapon(WEAPON* wp);
 	void PickupWeapon(int id);
@@ -40,6 +42,7 @@ public:
 	void LoadAllWeaponSprites(void);
 	void SelectSlot(int iSlot, int fAdvance);
 	void FillMenuGrid();
+	void SetUserSlot(int iSlot, int iId);
 
 	AMMO GetAmmo(int iId);
 	void SetAmmo(int iId, int iCount);

@@ -1,6 +1,6 @@
 #include <metahook.h>
 #include "hud.h"
-#include "cvardef.h"
+#include "cvar_hook.h"
 #include "local.h"
 #include "vguilocal.h"
 #include <cmath>
@@ -39,10 +39,9 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf)
 int CHudPlayerTitle::Init(void)
 {
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
-	gCVars.pPlayerTitle = gEngfuncs.pfnRegisterVariable("cl_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-
-	gCVars.pPlayerTitleLength = gEngfuncs.pfnRegisterVariable("cl_playertitlelength", "196", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pPlayerTitleHeight = gEngfuncs.pfnRegisterVariable("cl_playertitleheight", "48", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pPlayerTitleLength = CREATE_CVAR("cl_playertitlelength", "196", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pPlayerTitleHeight = CREATE_CVAR("cl_playertitleheight", "48", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	Reset();
 	return 0;
 }

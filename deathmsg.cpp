@@ -5,7 +5,7 @@
 #include <regex>
 #include "mathlib.h"
 
-#include "cvardef.h"
+#include "cvar_hook.h"
 #include "local.h"
 #include "vguilocal.h"
 #include "drawElement.h"
@@ -152,7 +152,7 @@ void CHudDeathMsg::InsertNewMsg(const wstring &v, wstring &e, wstring &k)
 int CHudDeathMsg::Init(void)
 {
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
-	gCVars.pDeathNoticeTime = gEngfuncs.pfnRegisterVariable("hud_deathnotice_time", "6", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	
 	HUDFont = pScheme->GetFont("MainShitFont", true);
 	XOffset = atof(pScheme->GetResourceString("DeathMsg.XOffset"));
