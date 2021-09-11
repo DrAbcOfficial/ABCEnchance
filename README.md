@@ -22,7 +22,7 @@
  - [x] ~~Dynamic indicator will point to wrong direction~~
  - [ ] The number of bullets in the second weapon will not be displayed correctly in Akimbo uzi. it is seem not regular `iAmmoType2`?
  - [ ] Weapon postion conflict fix will not work
- - [ ] when bind `+annularmenu` command to `mouse4` or `mouse5`, `-annularmenu` command will not execute automatically.
+ - [x] ~~when bind `+annularmenu` command to `mouse4` or `mouse5`, `-annularmenu` command will not execute automatically.~~
 
 # 🖥️ Install
  1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
@@ -50,6 +50,17 @@
 |cl_hud_csgo|Use now hud or not(restart map to take effect)|1|0/1|
 |---|---|---|---|
 |hud_deathnotice_time|the death message keep time|6|0~9999|
+|---|---|---|---|
+|cl_customslot1|Set customslot 1| |weapon_xxxxx|
+|cl_customslot2|Set customslot 2| |weapon_xxxxx|
+|cl_customslot3|Set customslot 3| |weapon_xxxxx|
+|cl_customslot4|Set customslot 4| |weapon_xxxxx|
+|cl_customslot5|Set customslot 5| |weapon_xxxxx|
+|cl_customslot6|Set customslot 6| |weapon_xxxxx|
+|cl_customslot7|Set customslot 7| |weapon_xxxxx|
+|cl_customslot8|Set customslot 8| |weapon_xxxxx|
+|cl_customslot9|Set customslot 9| |weapon_xxxxx|
+|cl_customslot10|Set customslot 10| |weapon_xxxxx|
 |---|---|---|---|
 |cl_radar|Radar|1|0/1|
 |cl_radarzoom|Radar Zoom|2.5|0.0001~9999|

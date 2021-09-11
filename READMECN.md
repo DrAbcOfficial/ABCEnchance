@@ -16,7 +16,7 @@
 
  - [ ] 双持UZI不能正确显示第二把枪的子弹数
  - [ ] 武器Position冲突修复不能正常工作
- - [ ] 当`+annularmenu`命令绑定到`mouse4`，`mouse5`（鼠标侧键）时，不会自动触发 `-annularmenu`命令
+ - [x] ~~当`+annularmenu`命令绑定到`mouse4`，`mouse5`（鼠标侧键）时，不会自动触发 `-annularmenu`命令~~
 
 # 🖥️ 安装
  1. 下载并依照指示安装 [MetahookSV](https://github.com/hzqst/MetaHookSv)
@@ -42,6 +42,17 @@
 |CVar|作用|默认值|取值范围|
 |---|---|---|---|
 |cl_hud_csgo|启用HUD（重启游戏生效）|1|0/1|
+|---|---|---|---|
+|cl_customslot1|设置自定义轮盘 1| |weapon_xxxxx|
+|cl_customslot2|设置自定义轮盘 2| |weapon_xxxxx|
+|cl_customslot3|设置自定义轮盘 3| |weapon_xxxxx|
+|cl_customslot4|设置自定义轮盘 4| |weapon_xxxxx|
+|cl_customslot5|设置自定义轮盘 5| |weapon_xxxxx|
+|cl_customslot6|设置自定义轮盘 6| |weapon_xxxxx|
+|cl_customslot7|设置自定义轮盘 7| |weapon_xxxxx|
+|cl_customslot8|设置自定义轮盘 8| |weapon_xxxxx|
+|cl_customslot9|设置自定义轮盘 9| |weapon_xxxxx|
+|cl_customslot10|设置自定义轮盘 10| |weapon_xxxxx|
 |---|---|---|---|
 |hud_deathnotice_time|死亡提示保持时间|6|0~9999|
 |---|---|---|---|
