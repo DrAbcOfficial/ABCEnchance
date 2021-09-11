@@ -111,6 +111,9 @@
     <ClCompile Include="utility.cpp">
       <Filter>Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="cvar_hook.cpp">
+      <Filter>Source\Var</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="utility.h">
       <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="cvar_hook.h">
+      <Filter>Header\Var</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

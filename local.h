@@ -1,5 +1,5 @@
 #pragma once
-#include "cvardef.h"
+#include "cvar_hook.h"
 
 typedef struct
 {
@@ -19,6 +19,7 @@ typedef struct
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
 	void		(*R_ForceCVars)				(qboolean mp);
+	void		(*Cvar_DirectSet)			(cvar_t* var, char* value);
 
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
@@ -52,6 +53,8 @@ typedef struct
 	cvar_t* pDynamicCrossHairD;
 
 	cvar_t* pDynamicHUD;
+
+	cvar_t* pAmmoCSlot[10];
 
 	cvar_t* pModelLag;
 	cvar_t* pModelLagValue;

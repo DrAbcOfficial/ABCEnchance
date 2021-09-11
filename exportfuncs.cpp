@@ -8,6 +8,7 @@
 #include "triangleapi.h"
 #include "pm_movevars.h"
 #include "glew.h"
+#include "cvar_hook.h"
 //Def
 #include "hud.h"
 #include "vguilocal.h"
@@ -82,7 +83,11 @@ void R_ForceCVars(qboolean mp)
 		return;
 	gHookFuncs.R_ForceCVars(mp);
 }
-
+void Cvar_DirectSet(cvar_t* var, char* value) {
+	gHookFuncs.Cvar_DirectSet(var, value);
+	if (gCVarsHookMap[var])
+		gCVarsHookMap[var](var);
+}
 void Sys_ErrorEx(const char* fmt, ...)
 {
 	char msg[4096] = { 0 };
@@ -203,6 +208,20 @@ void FillAddress()
 			Sig_AddrNotFound(g_rgBaseSlots);
 			g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 33);
 		}
+		if(1)
+		{
+			const char sigs1[] = "***PROTECTED***";
+			auto Cvar_DirectSet_String = Search_Pattern_Data(sigs1);
+			if (!Cvar_DirectSet_String)
+				Cvar_DirectSet_String = Search_Pattern_Rdata(sigs1);
+			Sig_VarNotFound(Cvar_DirectSet_String);
+			char pattern[] = "\x68\x2A\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\xE8";
+			*(DWORD*)(pattern + 1) = (DWORD)Cvar_DirectSet_String;
+			auto Cvar_DirectSet_Call = Search_Pattern(pattern);
+			Sig_VarNotFound(Cvar_DirectSet_Call);
+			gHookFuncs.Cvar_DirectSet = (decltype(gHookFuncs.Cvar_DirectSet))g_pMetaHookAPI->ReverseSearchFunctionBegin(Cvar_DirectSet_Call, 0x500);
+			Sig_FuncNotFound(Cvar_DirectSet);
+		}
 	}
 }
 void InstallHook()
@@ -218,6 +237,7 @@ void InstallHook()
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.CL_SetDevOverView, CL_SetDevOverView, (void**)&gHookFuncs.CL_SetDevOverView);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.EVVectorScale, EVVectorScale, (void**)&gHookFuncs.EVVectorScale);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_CrossHair_ReDraw, R_CrossHair_ReDraw, (void**)&gHookFuncs.R_CrossHair_ReDraw);
+	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.Cvar_DirectSet, Cvar_DirectSet, (void**)&gHookFuncs.Cvar_DirectSet);
 }
 
 void GL_Init(void)
@@ -244,20 +264,20 @@ void HUD_Init(void)
 	g_pScheme->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
 	
-	gCVars.pDynamicHUD = gEngfuncs.pfnRegisterVariable("cl_hud_csgo", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 
-	gCVars.pBloodSpriteSpeed = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pBloodSpriteNumber = gEngfuncs.pfnRegisterVariable("abc_bloodsprite_num", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pExpSmokeNumber = gEngfuncs.pfnRegisterVariable("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pExpSmokeSpeed = gEngfuncs.pfnRegisterVariable("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pRicochetNumber = gEngfuncs.pfnRegisterVariable("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pBloodSpriteNumber = CREATE_CVAR("abc_bloodsprite_num", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pExpSmokeNumber = CREATE_CVAR("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pExpSmokeSpeed = CREATE_CVAR("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pRicochetNumber = CREATE_CVAR("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	
-	gCVars.pModelLag = gEngfuncs.pfnRegisterVariable("cl_modellag", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pModelLagValue = gEngfuncs.pfnRegisterVariable("cl_modellagvalue", "1.0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pModelLag = CREATE_CVAR("cl_modellag", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 
-	gCVars.pCurDebug = gEngfuncs.pfnRegisterVariable("cl_curdebug", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pCurDebug = CREATE_CVAR("cl_curdebug", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 
-	gCVars.pCamIdealHeight = gEngfuncs.pfnRegisterVariable("cam_idealheight", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 
 	gHudDelegate = new CHudDelegate();
 	gExportfuncs.HUD_Init();

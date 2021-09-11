@@ -69,6 +69,18 @@ int WeaponsResource::CountMenuWeapons() {
 	}
 	return c;
 }
+int WeaponsResource::GetWeaponId(char* szName)
+{
+	for each (WEAPON var in rgWeapons)
+	{
+		if (!var.iId)
+			continue;
+		if (strcmp(var.szName, szName) == 0) {
+			return var.iId;
+		}
+	}
+	return -1;
+}
 WEAPON* WeaponsResource::GetWeapon(int iId)
 {
 	return &rgWeapons[iId];
@@ -374,38 +386,38 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 {
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
+
 	if (iSlot >= MAX_WEAPON_SLOTS || iSlot < 0)
 		return;
 
 	if (iSlot == iNowSlot) {
 		gridDrawMenu[iNowSlot].iPos += fAdvance;
 		if (gridDrawMenu[iNowSlot].iPos < 0)
-			gridDrawMenu[iNowSlot].iPos = MAX_WEAPON_POSITIONS-1;
-		else if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS)
+			gridDrawMenu[iNowSlot].iPos = MAX_WEAPON_POSITIONS_USER - 1;
+		else if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS_USER)
 			gridDrawMenu[iNowSlot].iPos = 0;
 	}
 	else
 		iNowSlot = iSlot;
 
 	int iCount = 0;
-	for (int i = 0; i < MAX_WEAPON_POSITIONS; i++)
+	for (int i = 0; i < MAX_WEAPON_POSITIONS_USER; i++)
 	{
 		if (gridSlotMap[iNowSlot][i] >= 0)
 			iCount++;
 	}
-
 	if (iCount <= 0) {
 		gridDrawMenu[iNowSlot].iId = -1;
 		return;
 	}
-	while (gridDrawMenu[iNowSlot].iPos < MAX_WEAPON_POSITIONS)
+	while (gridDrawMenu[iNowSlot].iPos < MAX_WEAPON_POSITIONS_USER)
 	{
-		if (gridSlotMap[iNowSlot][gridDrawMenu[iNowSlot].iPos] >= 0) {
+		if (GetWeapon(gridSlotMap[iNowSlot][gridDrawMenu[iNowSlot].iPos])->iId) {
 			gridDrawMenu[iNowSlot].iId = gridSlotMap[iNowSlot][gridDrawMenu[iNowSlot].iPos];
 			break;
 		}
 		gridDrawMenu[iNowSlot].iPos++;
-		if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS)
+		if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS_USER)
 			gridDrawMenu[iNowSlot].iPos = 0;
 	}
 	gEngfuncs.pfnPlaySoundByName("common/wpn_moveselect.wav", 1);
@@ -419,7 +431,7 @@ void WeaponsResource::FillMenuGrid()
 				continue;
 		}
 		else{
-			for (j = 0; j < MAX_WEAPON_POSITIONS; j++){
+			for (j = 0; j < MAX_WEAPON_POSITIONS_USER; j++){
 				if (gridSlotMap[i][j] > 0){
 					gridDrawMenu[i] = { gridSlotMap[i][j],j };
 					break;
@@ -430,12 +442,15 @@ void WeaponsResource::FillMenuGrid()
 		}
 	}
 }
-
 int WeaponsResource::CountAmmo(int iId)
 {
 	if (iId < 0)
 		return 0;
 	return  riAmmo[iId];
+}
+void WeaponsResource::SetUserSlot(int iSlot, int iId)
+{
+	gridSlotMap[iSlot][MAX_WEAPON_POSITIONS_USER - 1] = iId;
 }
 int WeaponsResource::HasAmmo(WEAPON* p)
 {

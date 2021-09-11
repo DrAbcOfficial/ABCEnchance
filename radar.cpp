@@ -31,11 +31,11 @@ void CHudRadar::GLInit()
 }
 int CHudRadar::Init()
 {
-	gCVars.pRadar = gEngfuncs.pfnRegisterVariable("cl_radar", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pRadarZoom = gEngfuncs.pfnRegisterVariable("cl_radarzoom", "2.5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pRadarSize = gEngfuncs.pfnRegisterVariable("cl_radarsize", "344", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pRadarGap = gEngfuncs.pfnRegisterVariable("cl_radargap", "0.98", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
-	gCVars.pRadarUpdateInterval = gEngfuncs.pfnRegisterVariable("cl_radarupdateint", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pRadarSize = CREATE_CVAR("cl_radarsize", "344", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pRadarGap = CREATE_CVAR("cl_radargap", "0.98", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pRadarUpdateInterval = CREATE_CVAR("cl_radarupdateint", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	pCVarDevOverview = gEngfuncs.pfnGetCvarPointer("dev_overview");
 	pCVarDrawDynamic = gEngfuncs.pfnGetCvarPointer("r_dynamic");
 	pCVarDrawEntities = gEngfuncs.pfnGetCvarPointer("r_drawentities");

@@ -83,6 +83,14 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	Weapon.iFlags = READ_BYTE();
 	Weapon.iClip = 0;
 	
+	for (int i = 0; i < MAX_WEAPON_SLOTS; i++) {
+		if (!gCVars.pAmmoCSlot[i]->string || gCVars.pAmmoCSlot[i]->string[0] == 0)
+			continue;
+		if (strcmp(Weapon.szName, gCVars.pAmmoCSlot[i]->string) == 0) {
+			gWR.SetUserSlot(i, Weapon.iId);
+			break;
+		}
+	}
 	/*
 	* * 在找到解决方案前暂时停止修复选枪冲突
 	int posFlag = Weapon.iSlotPos;
@@ -271,6 +279,16 @@ void __UserCmd_CloseAnnularMenu(void)
 		gHudDelegate->m_iVisibleMouse = false;
 	}
 }
+void CustomSlotSetCallBack(cvar_t* vars)
+{
+	if (!vars->string || vars->string[0] == 0)
+		return;
+	int slot;
+	sscanf_s(vars->name, "cl_customslot%d", &slot);
+	slot--;
+	gWR.SetUserSlot(slot, gWR.GetWeaponId(vars->string));
+}
+
 #define BASE_GWR_SELECTED 842100225
 #define BASE_GWR_UNSELECTED 842100224
 int CHudCustomAmmo::Init(void)
@@ -301,6 +319,11 @@ int CHudCustomAmmo::Init(void)
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 
+	char buf[10][16];
+	for (int i = 0; i < MAX_WEAPON_SLOTS; i++) {
+		sprintf(buf[i], "cl_customslot%d", i + 1);
+		gCVars.pAmmoCSlot[i] = CREATE_CVAR(buf[i], "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
+	}
 	StartX = atof(pScheme->GetResourceString("AmmoHUD.StartX"));
 	IconSize = atof(pScheme->GetResourceString("AmmoHUD.IconSize"));
 	ElementGap = atof(pScheme->GetResourceString("AmmoHUD.ElementGap"));
