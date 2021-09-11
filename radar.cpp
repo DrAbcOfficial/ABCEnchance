@@ -188,16 +188,45 @@ void CHudRadar::DrawRadarTexture()
 		pCVarDevOverview->value = 2;
 		pCVarDrawEntities->value = 0;
 		pCVarDrawDynamic->value = 0;
-		if (g_metaplugins.renderer)
+		GLint riFogMode;
+		vec3_t vecFogControl;
+		vec4_t vecFogColor;
+		bool bIsFog;
+		if (g_metaplugins.renderer) {
 			pCVarFXAA->value = 0;
-
+			bIsFog = glIsEnabled(GL_FOG);
+			if (bIsFog) {
+				glGetIntegerv(GL_FOG_MODE, &riFogMode);
+				if (riFogMode == GL_LINEAR) {
+					glGetFloatv(GL_FOG_START, &vecFogControl[0]);
+					glGetFloatv(GL_FOG_END, &vecFogControl[1]);
+					glGetFloatv(GL_FOG_COLOR, vecFogColor);
+				}
+				else if (riFogMode == GL_EXP2) {
+					glGetFloatv(GL_FOG_START, &vecFogControl[0]);
+					glGetFloatv(GL_FOG_END, &vecFogControl[1]);
+					glGetFloatv(GL_FOG_DENSITY, &vecFogControl[2]);
+					glGetFloatv(GL_FOG_COLOR, vecFogColor);
+				}
+			}
+		}
 		gHookFuncs.R_RenderScene();
-
 		pCVarDevOverview->value = vecOldValue[0];
 		pCVarDrawEntities->value = vecOldValue[1];
 		pCVarDrawDynamic->value = vecOldValue[2];
-		if (g_metaplugins.renderer)
+		if (g_metaplugins.renderer) {
+			if (bIsFog) {
+				glEnable(GL_FOG);
+				glFogi(GL_FOG_MODE, riFogMode);
+				if (riFogMode == GL_EXP2)
+					glFogf(GL_FOG_DENSITY, vecFogControl[2]);
+				glHint(GL_FOG_HINT, GL_NICEST);
+				glFogfv(GL_FOG_COLOR, vecFogColor);
+				glFogf(GL_FOG_START, vecFogControl[0]);
+				glFogf(GL_FOG_END, vecFogControl[1]);
+			}
 			pCVarFXAA->value = vecOldValue[3];
+		}
 	gHudDelegate->m_iIsOverView = 0;
 
 	VectorCopy(m_oldViewOrg, g_refdef->vieworg);
