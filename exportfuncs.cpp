@@ -358,16 +358,8 @@ void V_CalcRefdef(struct ref_params_s* pparams)
 }
 void IN_MouseEvent(int mstate)
 {
-	if (g_iVisibleMouse && gHudDelegate->m_iVisibleMouse)
-	{
-		int iVisibleMouse = *g_iVisibleMouse;
-		*g_iVisibleMouse = 1;
-		gExportfuncs.IN_MouseEvent(mstate);
-		gHudDelegate->IN_MouseEvent(mstate);
-		*g_iVisibleMouse = iVisibleMouse;
-	}
-	else
-		gExportfuncs.IN_MouseEvent(mstate);
+	gHudDelegate->IN_MouseEvent(mstate);
+	gExportfuncs.IN_MouseEvent(mstate);
 }
 void IN_Accumulate(void)
 {

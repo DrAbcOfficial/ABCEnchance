@@ -257,9 +257,11 @@ void __UserCmd_Attack1(void)
 			return UserCmd_Attack1();
 		m_HudCustomAmmo.ChosePlayerWeapon();
 	}
-	gWR.iNowSlot = 0;
-	m_HudCustomAmmo.m_fFade = 0;
-	m_HudCustomAmmo.m_bSelectMenuDisplay = false;
+	if (!m_HudCustomAmmo.m_bOpeningAnnularMenu) {
+		gWR.iNowSlot = 0;
+		m_HudCustomAmmo.m_fFade = 0;
+		m_HudCustomAmmo.m_bSelectMenuDisplay = false;
+	}
 	return UserCmd_Attack1();
 }
 void __UserCmd_OpenAnnularMenu(void)
@@ -716,11 +718,4 @@ void CHudCustomAmmo::IN_Accumulate()
 		if (gWR.gridDrawMenu[s].iId > -1)
 			gWR.iNowSlot = s;
 	}
-}
-void CHudCustomAmmo::IN_MouseEvent(int mstate)
-{
-	if (mstate != 1 || m_HudCustomAmmo.m_bAcceptDeadMessage)
-		return;
-	//不清空，专门给鼠标换枪使用
-	m_HudCustomAmmo.ChosePlayerWeapon();
 }

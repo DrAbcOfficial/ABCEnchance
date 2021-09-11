@@ -144,7 +144,6 @@ void CHudDelegate::IN_MouseEvent(int mstate)
 {
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
-	//m_HudCustomAmmo.IN_MouseEvent(mstate);
 }
 int CHudDelegate::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
 {

@@ -9,7 +9,7 @@ public:
 	void ChosePlayerWeapon(void);
 	void ClientMove(struct playermove_s* ppmove, qboolean server);
 	void IN_Accumulate();
-	void IN_MouseEvent(int mstate);
+	//void IN_MouseEvent(int mstate);
 
 	float StartX = 48;
 	float IconSize = 0.5;
