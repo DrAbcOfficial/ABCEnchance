@@ -5,11 +5,11 @@
 #include "hud.h"
 #include "weapon.h"
 #include "pm_defs.h"
+#include "glew.h"
 
 #include "ammo.h"
 #include "healthhud.h"
 #include "deathmsg.h"
-#include "glew.h"
 #include "radar.h"
 #include "deathmsg.h"
 #include "crosshair.h"
@@ -25,6 +25,7 @@ cl_hookedHud gHookHud;
 void CHudDelegate::GL_Init(void)
 {
 	m_HudRadar.GLInit();
+	m_HudCustomAmmo.GLInit();
 }
 void CHudDelegate::HUD_Init(void)
 {
@@ -133,6 +134,7 @@ void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
 void CHudDelegate::HUD_Clear(void)
 {
 	m_HudRadar.Clear();
+	m_HudCustomAmmo.Clear();
 }
 void CHudDelegate::HUD_PreRenderView(int a1)
 {

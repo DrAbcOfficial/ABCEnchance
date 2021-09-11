@@ -232,4 +232,6 @@ void CHudRadar::Clear()
 {
 	if (m_hRadarBufferTex)
 		glDeleteTextures(1, &m_hRadarBufferTex);
+	if (m_hRadarBufferTexDepth)
+		glDeleteTextures(1, &m_hRadarBufferTexDepth);
 }

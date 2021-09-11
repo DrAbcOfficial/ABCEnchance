@@ -13,7 +13,8 @@
 
 #include "crosshair.h"
 #include "cvar_hook.h"
-#include <ammo.h>
+#include "glew.h"
+#include "ammo.h"
 
 
 CHudCustomCrosshair m_HudCrosshair;
