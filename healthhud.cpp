@@ -80,7 +80,6 @@ void CHudArmorHealth::Init(void)
 
 	StartX = atof(pScheme->GetResourceString("HealthArmor.StartX"));
 	IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
-	TextWidth = atof(pScheme->GetResourceString("HealthArmor.TextWidth"));
 	BarLength = atof(pScheme->GetResourceString("HealthArmor.BarLength"));
 	BarWidth = atof(pScheme->GetResourceString("HealthArmor.BarWidth"));
 	ElementGap = atof(pScheme->GetResourceString("HealthArmor.ElementGap"));
@@ -164,10 +163,10 @@ int CHudArmorHealth::Draw(float flTime)
 	gHudDelegate->surface()->DrawTexturedRect(0, flBackGroundY, gScreenInfo.iWidth / 3, gScreenInfo.iHeight);
 
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
+	float flCenterY = gScreenInfo.iHeight - flBackGroundY / 2;
 	int iStartX = gScreenInfo.iWidth / StartX;
 	int iIconSize = flBackGroundHeight * IconSize;
-	int iTextWidth = flBackGroundHeight * TextWidth;
-	int iTextHeight = flBackGroundHeight * TextHeight;
+
 	int iBarLength = flBackGroundHeight * BarLength;
 	int iBarWidth = flBackGroundHeight * BarWidth;
 	int iElementGap = flBackGroundHeight * ElementGap;
@@ -181,34 +180,31 @@ int CHudArmorHealth::Draw(float flTime)
 		HealthDangerColor.GetColor(r, g, b, a);
 	else
 		HealthIconColor.GetColor(r, g, b, a);
-	DrawSPRIcon(iHealthIcon, iStartX, flBackGroundY + (flBackGroundHeight - iIconSize) / 2, iIconSize, iIconSize, r, g, b, a);
+	DrawSPRIcon(iHealthIcon, iStartX, flCenterY - iIconSize / 2, iIconSize, iIconSize, r, g, b, a);
 
 	wchar_t wideName[8];
 	wsprintfW(wideName, L"%d", iHealth);
-	int iSzWidth = 0;
-	GetStringSize(wideName, &iSzWidth, NULL, HUDFont);
-	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
+	int iTextWidth, iTextHeight;
+	GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
+	iStartX += iIconSize + iElementGap;
 	if(iHealth <= DAGER_HEALTH)
 		HealthDangerColor.GetColor(r, g, b, a);
 	else
 		HealthTextColor.GetColor(r, g, b, a);
-	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, HUDFont);
-	iStartX += iSzWidth + iElementGap;
-
-	if (flTime < flPainColorKeepTime)
-	{
+	DrawVGUI2String(wideName, iStartX, flCenterY - iTextHeight / 2, r, g, b, HUDFont);
+	iStartX += iTextWidth + iElementGap;
+	if (flTime < flPainColorKeepTime){
 		HealthPainColor.GetColor(r, g, b, a);
 		CalcuPainFade(r, g, b, &HealthBarColor, flPainColorKeepTime - flTime);
 	}
-	else
-	{
+	else{
 		if (iHealth <= DAGER_HEALTH)
 			HealthDangerColor.GetColor(r, g, b, a);
 		else
 			HealthBarColor.GetColor(r, g, b, a);
 	}
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, r / 2, g / 2, b / 2, a);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iHealth / 100)), iBarWidth, r, g, b, a);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - iBarWidth / 2, iBarLength, iBarWidth, r / 2, g / 2, b / 2, a);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - iBarWidth / 2, iBarLength * max(0, min(1, (float)iHealth / 100)), iBarWidth, r, g, b, a);
 	iStartX += iBarLength + iElementGap * 4;
 
 	//AP
@@ -221,18 +217,17 @@ int CHudArmorHealth::Draw(float flTime)
 		ArmorDangerColor.GetColor(r, g, b, a);
 	else
 		ArmorIconColor.GetColor(r, g, b, a);
-	DrawSPRIcon(iBattery > 0 ? iArmorIconFull : iArmorIconNull, iStartX, flBackGroundY + (flBackGroundHeight - iIconSize) / 2, iIconSize, iIconSize, r, g, b, a);
+	DrawSPRIcon(iBattery > 0 ? iArmorIconFull : iArmorIconNull, iStartX, flCenterY - iIconSize / 2, iIconSize, iIconSize, r, g, b, a);
 
 	wsprintfW(wideName, L"%d", iBattery);
-	GetStringSize(wideName, &iSzWidth, NULL, HUDFont);
-	iStartX += iIconSize + iElementGap + iTextWidth - iSzWidth;
-
+	GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
+	iStartX += iIconSize + iElementGap;
 	if (iBattery <= DAGER_HEALTH)
 		ArmorDangerColor.GetColor(r, g, b, a);
 	else
 		ArmorTextColor.GetColor(r, g, b, a);
-	DrawVGUI2String(wideName, iStartX, flBackGroundY + (flBackGroundHeight - iTextHeight) / 2, r, g, b, HUDFont);
-	iStartX += iSzWidth + iElementGap;
+	DrawVGUI2String(wideName, iStartX, flCenterY - iTextHeight / 2, r, g, b, HUDFont);
+	iStartX += iTextWidth + iElementGap;
 
 	if (flTime < flPainColorKeepTime){
 		ArmorPainColor.GetColor(r, g, b, a);
@@ -244,8 +239,8 @@ int CHudArmorHealth::Draw(float flTime)
 		else
 			ArmorBarColor.GetColor(r, g, b, a);
 	}
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength, iBarWidth, r / 2, g / 2, b / 2, a);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flBackGroundY + (flBackGroundHeight - iBarWidth) / 2, iBarLength * max(0, min(1, (float)iBattery / 100)), iBarWidth, r, g, b, a);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - iBarWidth / 2, iBarLength, iBarWidth, r / 2, g / 2, b / 2, a);
+	gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - iBarWidth / 2, iBarLength * max(0, min(1, (float)iBattery / 100)), iBarWidth, r, g, b, a);
 	iStartX += iBarLength + iElementGap * 2;
 	return DrawDamage(flTime);
 }
