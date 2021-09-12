@@ -612,7 +612,7 @@ void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos)
 	DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
 
 	if (wp->iAmmoType >= 0) {
-		if(wp->iClip > 0)
+		if(wp->iClip >= 0)
 			wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
 		else
 			wsprintfW(buf, L"%d", gWR.CountAmmo(wp->iAmmoType));
