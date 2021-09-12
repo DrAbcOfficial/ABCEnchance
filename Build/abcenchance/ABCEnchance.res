@@ -35,6 +35,7 @@ Scheme
 		"AmmoHUD.SelectCyclerIconColor"		"245 230 195 255"
 		"AmmoHUD.SelectCyclerEmptyColor"	"255 0 0 255"
 		"AmmoHUD.SelectCyclerTextColor"		"245 230 195 255"
+		"AmmoHUD.SelectCyclerPointerColor"		"255 128 0 255"
 
 		"DeathMsg.BackGoundColor"		"180 180 180 255"
 
@@ -46,7 +47,6 @@ Scheme
 	{
 		"HealthArmor.StartX"			"48"
 		"HealthArmor.IconSize"			"0.5"
-		"HealthArmor.TextWidth"			"1"
 		"HealthArmor.BarLength"			"2"
 		"HealthArmor.BarWidth"			"0.334"
 		"HealthArmor.ElementGap"		"0.2"
@@ -73,6 +73,7 @@ Scheme
 
 		"AmmoHUD.SelectCyclerOffset"	"256"
 		"AmmoHUD.SelectCyclerSize"	"96"
+		"AmmoHUD.SelectCyclerPointerSize"	"32"
 		"AmmoHUD.SelectCyclerRotate"	"0"
 		"AmmoHUD.SelectCyclerAnimateTime"	"0.12"
 		"AmmoHUD.SelectCyclerFadeTime"	"0.2"
@@ -98,15 +99,50 @@ Scheme
 
 	Fonts
 	{
-		"MainShitFont" // for HeadName
+		"MainShitFont"
 		{
 			"1"
 			{
 				"name"		"Verdana"
-				"tall"		"8"
-				"weight"	"600"
+				"tall"		"10"
+				"weight"	"0"
+				"range"		"0x0000 0x017F"
+				"yres"	"480 599"
+			}
+			"2"
+			{
+				"name"		"Verdana"
+				"tall"		"12"
+				"weight"	"0"
+				"range"		"0x0000 0x017F"
+				"yres"	"600 767"
+			}
+			"3"
+			{
+				"name"		"Verdana"
+				"tall"		"14"
+				"weight"	"0"
+				"range"		"0x0000 0x017F"
+				"yres"	"768 1023"
 				"antialias"	"1"
-				"custom"	"1"
+			}
+			"4"
+			{
+				"name"		"Verdana"
+				"tall"		"16"
+				"weight"	"0"
+				"range"		"0x0000 0x017F"
+				"yres"	"1024 1199"
+				"antialias"	"1"
+			}
+			"5"
+			{
+				"name"		"Verdana"
+				"tall"		"20"
+				"weight"	"0"
+				"range"		"0x0000 0x017F"
+				"yres"	"1200 6000"
+				"antialias"	"1"
 			}
 		}
 		"HUDShitFont" // for HUDFont
@@ -114,21 +150,85 @@ Scheme
 			"1"
 			{
 				"name"		"Verdana"
-				"tall"		"16"
-				"weight"	"600"
+				"tall"		"24"
+				"weight"	"700"
+				"yres"		"480 599"
 				"antialias"	"1"
-				"custom"	"1"
+			}
+			"2"
+			{
+				"name"		"Verdana"
+				"tall"		"28"
+				"weight"	"700"
+				"yres"		"600 767"
+				"antialias"	"1"
+			}
+			"3"
+			{
+				"name"		"Verdana"
+				"tall"		"30"
+				"weight"	"700"
+				"yres"		"768 1023"
+				"antialias"	"1"
+			}
+			"4"
+			{
+				"name"		"Verdana"
+				"tall"		"32"
+				"weight"	"700"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+			}
+			"5"
+			{
+				"name"		"Verdana"
+				"tall"		"42"
+				"weight"	"700"
+				"yres"		"1200 10000"
+				"antialias"	"1"
 			}
 		}
-		"HUDSmallShitFont" // for HUDBigSizeFont
+		"HUDSmallShitFont" // for HUDSmallSizeFont
 		{
 			"1"
 			{
 				"name"		"Verdana"
-				"tall"		"14"
-				"weight"	"600"
+				"tall"		"20"
+				"weight"	"700"
+				"yres"		"480 599"
 				"antialias"	"1"
-				"custom"	"1"
+			}
+			"2"
+			{
+				"name"		"Verdana"
+				"tall"		"24"
+				"weight"	"700"
+				"yres"		"600 767"
+				"antialias"	"1"
+			}
+			"3"
+			{
+				"name"		"Verdana"
+				"tall"		"26"
+				"weight"	"700"
+				"yres"		"768 1023"
+				"antialias"	"1"
+			}
+			"4"
+			{
+				"name"		"Verdana"
+				"tall"		"28"
+				"weight"	"700"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+			}
+			"5"
+			{
+				"name"		"Verdana"
+				"tall"		"36"
+				"weight"	"700"
+				"yres"		"1200 10000"
+				"antialias"	"1"
 			}
 		}
 	}
