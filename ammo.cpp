@@ -438,7 +438,7 @@ void CHudCustomAmmo::SyncWeapon()
 	baseweapon_t* bwp;
 	for (int i = 0; i < MAX_WEAPON_OLDSLOTS; i++)
 	{
-		for (int j = 0; j < MAX_WEAPON_OLDSLOTS; j++)
+		for (int j = 0; j < MAX_WEAPON_OLDPOSITIONS; j++)
 		{
 			bwp = (*g_rgBaseSlots)[i][j];
 			wpi = gWR.GetWeaponSlot(i, j);
