@@ -231,5 +231,44 @@ Scheme
 				"antialias"	"1"
 			}
 		}
+		"VoteShitFont"
+		{
+			"1"
+			{
+				"name"		"Arial"
+				"tall"		"14"
+				"weight"	"0"
+				"yres"	"480 599"
+			}
+			"2"
+			{
+				"name"		"Arial"
+				"tall"		"15"
+				"weight"	"0"
+				"yres"	"600 767"
+			}
+			"3"
+			{
+				"name"		"Arial"
+				"tall"		"16"
+				"weight"	"0"
+				"yres"	"768 1023"
+			}
+			"4"
+			{
+				"name"		"Arial"
+				"tall"		"18"
+				"weight"	"0"
+				"yres"	"1024 1199"
+			}
+			"5"
+			{
+				"name"		"Arial"
+				"tall"		"20"
+				"weight"	"0"
+				"yres"	"1200 6000"
+				"antialias"	"1"
+			}
+		}
 	}
 }

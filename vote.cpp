@@ -44,7 +44,7 @@ int CHudVote::Init()
 	OutlineColor = pScheme->GetColor("Vote.OutlineColor", gDefaultColor);
 	BackGoundColor = pScheme->GetColor("Vote.BackGoundColor", gDefaultColor);
 
-	HudFont = pScheme->GetFont("HUDShitFont");
+	HudFont = pScheme->GetFont("VoteShitFont");
 
 	wcscpy(VoteTitle, L"Started A new vote:");
 	wcscpy(DefaultYes, L"Yes");
