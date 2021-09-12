@@ -644,11 +644,14 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	float flStartRot = SelectCyclerRotate;
 	int iBackGroundHeight = SelectCyclerSize;
 	int iOffset = SelectCyclerOffset;
-	double dbAnimationRatio = ((double)(SelectCyclerHoldTime)-flTimeDiffer) / SelectCyclerAnimateTime;
+	float flAnimationRatio = 1.0f;
 	if (!m_bSelectMenuDisplay)
 		m_fAnimateTime = flTime + SelectCyclerAnimateTime;
-	if (m_fAnimateTime > flTime && flTimeDiffer >= SelectCyclerHoldTime - SelectCyclerAnimateTime)
-		iOffset *= dbAnimationRatio;
+	if (m_fAnimateTime > flTime && flTimeDiffer >= SelectCyclerHoldTime - SelectCyclerAnimateTime) {
+		flAnimationRatio = ((float)(SelectCyclerHoldTime)-flTimeDiffer) / SelectCyclerAnimateTime;
+		iOffset *= flAnimationRatio;
+		flAnimationRatio /= 100;
+	}
 	int i;
 	float ac, as;
 	vec2_t aryOut[10];
@@ -692,15 +695,15 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		//H模糊
 		GL_UseProgram(pp_gaussianblurh.program);
 		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
-		glUniform1f(pp_gaussianblurh.du, dbAnimationRatio / 200);
+		glUniform1f(pp_gaussianblurh.du, 2.0f / gScreenInfo.iWidth * flAnimationRatio);
 		glColor4ub(255, 255, 255, 255);
 		DrawScreenQuad();
 		//绘制到主画布
 		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferVTex);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
 		GL_UseProgram(pp_gaussianblurv.program);
-		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
-		glUniform1f(pp_gaussianblurh.du, dbAnimationRatio / 200);
+		glUniform1f(0, 1.0f / gScreenInfo.iHeight);
+		glUniform1f(pp_gaussianblurh.du, 2.0f / gScreenInfo.iHeight * flAnimationRatio);
 		DrawScreenQuad();
 		GL_UseProgram(0);
 		//绘制鼠标指针
