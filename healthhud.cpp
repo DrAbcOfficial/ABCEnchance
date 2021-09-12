@@ -163,7 +163,7 @@ int CHudArmorHealth::Draw(float flTime)
 	gHudDelegate->surface()->DrawTexturedRect(0, flBackGroundY, gScreenInfo.iWidth / 3, gScreenInfo.iHeight);
 
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
-	float flCenterY = gScreenInfo.iHeight - flBackGroundY / 2;
+	float flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
 	int iStartX = gScreenInfo.iWidth / StartX;
 	int iIconSize = flBackGroundHeight * IconSize;
 

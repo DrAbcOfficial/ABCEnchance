@@ -127,8 +127,6 @@ private:
 
 	float StartX = 48;
 	float IconSize = 0.5;
-	float TextWidth = 1;
-	float TextHeight = 0.667;
 	float BarLength = 2;
 	float BarWidth = 0.334;
 	float ElementGap = 0.2;
