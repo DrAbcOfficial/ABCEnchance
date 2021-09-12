@@ -617,7 +617,8 @@ void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos)
 		else
 			wsprintfW(buf, L"%d", gWR.CountAmmo(wp->iAmmoType));
 	}
-	wsprintfW(buf, L"");
+	else
+		wsprintfW(buf, L"");
 	GetStringSize(buf, &iTextWidth, NULL, HUDFont);
 	DrawVGUI2String(buf, xpos - iTextWidth / 2, ypos + iHeight, r, g, b, HUDFont, true);
 }
