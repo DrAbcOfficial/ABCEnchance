@@ -24,11 +24,7 @@ int giDmgFlags[NUM_DMG_TYPES] =
 	DMG_BURN | DMG_SLOWBURN,
 	DMG_NERVEGAS,
 	DMG_RADIATION,
-	DMG_SHOCK,
-	DMG_CALTROP,
-	DMG_TRANQ,
-	DMG_CONCUSS,
-	DMG_HALLUC
+	DMG_SHOCK
 };
 CHudArmorHealth m_HudArmorHealth;
 
@@ -58,7 +54,7 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 		}
 		m_HudArmorHealth.m_takeDamage = damageTaken;
 		m_HudArmorHealth.m_takeArmor = armor;
-		m_HudArmorHealth.flPainIndicatorKeepTime = gEngfuncs.GetClientTime() + PAIN_INDICAROT_TIME;
+		m_HudArmorHealth.flPainIndicatorKeepTime = gEngfuncs.GetClientTime() + m_HudArmorHealth.PainIndicatorTime;
 		m_HudArmorHealth.flPainColorKeepTime = gEngfuncs.GetClientTime() + m_HudArmorHealth.PainColorTime;
 	}
 	return m_pfnDamage(pszName, iSize, pbuf);
@@ -89,6 +85,7 @@ void CHudArmorHealth::Init(void)
 	DamageIconY = atof(pScheme->GetResourceString("HealthArmor.DamageIconY"));
 	DamageIconSize = atof(pScheme->GetResourceString("HealthArmor.DamageIconSize"));
 	PainColorTime = atof(pScheme->GetResourceString("HealthArmor.PainColorTime"));
+	PainIndicatorTime = atof(pScheme->GetResourceString("HealthArmor.PainIndicatorTime"));
 
 	HealthIconColor = pScheme->GetColor("HealthArmor.HealthIconColor", gDefaultColor);
 	HealthBarColor = pScheme->GetColor("HealthArmor.HealthBarColor", gDefaultColor);
@@ -310,7 +307,7 @@ int CHudArmorHealth::DrawPain(float flTime)
 	CalcDamageDirection();
 	DrawSPRIconPos(iPainIndicator, vecPainIndicatorA, vecPainIndicatorC, vecPainIndicatorD, vecPainIndicatorB, 
 		r, g, b, 
-		(flPainIndicatorKeepTime - flTime) / PAIN_INDICAROT_TIME * a);
+		(flPainIndicatorKeepTime - flTime) / PainIndicatorTime * a);
 	return 1;
 }
 int CHudArmorHealth::DrawDamage(float flTime)
