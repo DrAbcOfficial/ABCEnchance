@@ -146,7 +146,6 @@ void CHudDelegate::HUD_PostRenderView(int a1)
 {
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
-	m_HudCustomAmmo.PostRenderView(a1);
 }
 void CHudDelegate::IN_MouseEvent(int mstate)
 {

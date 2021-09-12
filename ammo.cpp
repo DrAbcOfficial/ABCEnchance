@@ -274,8 +274,10 @@ void __UserCmd_Attack1(void)
 void __UserCmd_OpenAnnularMenu(void)
 {
 	if (!m_HudCustomAmmo.m_bOpeningAnnularMenu && !m_HudCustomAmmo.m_bSelectMenuDisplay) {
-		if (m_HudCustomAmmo.m_fFade <= gEngfuncs.GetClientTime())
+		if (m_HudCustomAmmo.m_fFade <= gEngfuncs.GetClientTime()) {
+			gEngfuncs.GetMousePosition(&m_HudCustomAmmo.m_oldCursorX, &m_HudCustomAmmo.m_oldCursorY);
 			gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
+		}
 		m_HudCustomAmmo.m_bOpeningAnnularMenu = true;
 		gHudDelegate->m_iVisibleMouse = true;
 	}
@@ -370,6 +372,7 @@ int CHudCustomAmmo::Init(void)
 	SelectCyclerIconColor = pScheme->GetColor("AmmoHUD.SelectCyclerIconColor", gDefaultColor);
 	SelectCyclerTextColor = pScheme->GetColor("AmmoHUD.SelectCyclerTextColor", gDefaultColor);
 	SelectCyclerEmptyColor = pScheme->GetColor("AmmoHUD.SelectCyclerEmptyColor", gDefaultColor);
+	SelectCyclerPointerColor = pScheme->GetColor("AmmoHUD.SelectCyclerPointerColor", gDefaultColor);
 
 	SelectCyclerOffset = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerOffset"));
 	SelectCyclerSize = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerSize"));
@@ -377,6 +380,8 @@ int CHudCustomAmmo::Init(void)
 	SelectCyclerAnimateTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerAnimateTime"));
 	SelectCyclerFadeTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerFadeTime"));
 	SelectCyclerHoldTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerHoldTime"));
+	SelectCyclerPointerSize = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerPointerSize"));
+
 	if (SelectCyclerHoldTime <= 0)
 		SelectCyclerHoldTime = 5;
 
@@ -400,6 +405,7 @@ void CHudCustomAmmo::Reset(void)
 	m_bIsOnTarget = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
+	iSelectCyclerCursorPointer = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_pointer.spr");
 	VGUI_CREATE_NEWTGA_TEXTURE(iBackGroundTga, "abcenchance/tga/ammobar_background");
 	gWR.Reset();
 	gHR.Reset();
@@ -582,20 +588,38 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
 {
 	if (gHookHud.m_Menu->m_fMenuDisplayed)
 		return;
-	if (m_fFade <= gEngfuncs.GetClientTime())
-		gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
 	gWR.SelectSlot(iSlot, fAdvance);
 }
-void CHudCustomAmmo::PostRenderView(int a1)
+void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos)
 {
-	if (m_HudCustomAmmo.m_bOpeningAnnularMenu) {
-		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
-		//复制tex到H
-		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferHFBO);
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferHTex, 0);
-		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferHFBO,
-			gScreenInfo.iWidth, gScreenInfo.iHeight, gScreenInfo.iWidth, gScreenInfo.iHeight);
+	wchar_t buf[64];
+	int iTextWidth;
+	int r, g, b, dummy;
+	int iHeight = wp->rcActive.bottom - wp->rcActive.top;
+	int iWidth = wp->rcActive.right - wp->rcActive.left;
+	if (gWR.HasAmmo(wp) && gWR.HasWeapon(wp))
+		SelectCyclerIconColor.GetColor(r, g, b, dummy);
+	else
+		SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
+	ColorCalcuAlpha(r, g, b, a);
+	SPR_Set(wp->hInactive, r, g, b);
+	SPR_DrawAdditive(0, xpos - iWidth / 2, ypos - iHeight / 2, &wp->rcInactive);
+	SelectCyclerTextColor.GetColor(r, g, b, dummy);
+	ColorCalcuAlpha(r, g, b, a);
+
+	wsprintfW(buf, L"·%d", wp->iSlotPos);
+	GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
+	DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
+
+	if (wp->iAmmoType >= 0) {
+		if(wp->iClip > 0)
+			wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
+		else
+			wsprintfW(buf, L"%d", gWR.CountAmmo(wp->iAmmoType));
 	}
+	wsprintfW(buf, L"");
+	GetStringSize(buf, &iTextWidth, NULL, HUDFont);
+	DrawVGUI2String(buf, xpos - iTextWidth / 2, ypos + iHeight, r, g, b, HUDFont, true);
 }
 int CHudCustomAmmo::DrawWList(float flTime)
 {
@@ -613,40 +637,29 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	if (!iSelectCyclerRinSpr)
 		iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
+	if(!iSelectCyclerCursorPointer)
+		iSelectCyclerCursorPointer = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_pointer.spr");
 	float flTimeDiffer = m_fFade - flTime;
 	float flStartRot = SelectCyclerRotate;
 	int iBackGroundHeight = SelectCyclerSize;
 	int iOffset = SelectCyclerOffset;
-	float flAnimationRatio = ((float)(SelectCyclerHoldTime)-flTimeDiffer) / SelectCyclerAnimateTime;
+	double dbAnimationRatio = ((double)(SelectCyclerHoldTime)-flTimeDiffer) / SelectCyclerAnimateTime;
 	if (!m_bSelectMenuDisplay)
 		m_fAnimateTime = flTime + SelectCyclerAnimateTime;
 	if (m_fAnimateTime > flTime && flTimeDiffer >= SelectCyclerHoldTime - SelectCyclerAnimateTime)
-		iOffset *= flAnimationRatio;
+		iOffset *= dbAnimationRatio;
 	int i;
 	float ac, as;
 	vec2_t aryOut[10];
 	vec2_t aryIn[10];
-	if (m_HudCustomAmmo.m_bOpeningAnnularMenu) {
-		//绘制到V
-		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferVFBO);
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferVTex, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferHTex);
-		//H模糊
-		GL_UseProgram(pp_gaussianblurh.program);
-		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
-		glUniform1f(pp_gaussianblurh.du, flAnimationRatio / 200);
-		glColor4ub(255, 255, 255, 255);
-		DrawScreenQuad();
-		//绘制到主画布
-		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferVTex);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
-		GL_UseProgram(pp_gaussianblurv.program);
-		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
-		glUniform1f(pp_gaussianblurh.du, flAnimationRatio / 200);
-		DrawScreenQuad();
-		GL_UseProgram(0);
-	}
+	WEAPON* wp;
+	int halfWidth = gScreenInfo.iWidth / 2;
+	int halfHeight = gScreenInfo.iHeight / 2;
+	int xpos;
+	int ypos;
+	vec2_t vecA, vecB, vecC, vecD;
+	int a = 255;
+	int r, g, b, dummy;
 	//填充十边形坐标数组
 	for (i = 0; i < 10; i++)
 	{
@@ -659,20 +672,59 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		aryOut[i][0] = (iOffset + iBackGroundHeight) * ac;
 		aryOut[i][1] = (iOffset + iBackGroundHeight) * as;
 	}
-	wchar_t buf[64];
-	WEAPON* wp;
-	int iHeight;
-	int iWidth;
-	int iTextWidth;
-	int halfWidth = gScreenInfo.iWidth / 2;
-	int halfHeight = gScreenInfo.iHeight / 2;
-	int xpos;
-	int ypos;
-	vec2_t vecA, vecB, vecC, vecD;
-	int a = 255;
+	
 	if (flTimeDiffer < SelectCyclerFadeTime)
 		a *= flTimeDiffer / SelectCyclerFadeTime;
-	int r, g, b, dummy;
+
+	if (m_HudCustomAmmo.m_bOpeningAnnularMenu) {
+		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
+		//复制tex到H
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferHFBO);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferHTex, 0);
+		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferHFBO,
+			gScreenInfo.iWidth, gScreenInfo.iHeight, gScreenInfo.iWidth, gScreenInfo.iHeight);
+		//绘制到V
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferVFBO);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferVTex, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferHTex);
+		//H模糊
+		GL_UseProgram(pp_gaussianblurh.program);
+		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
+		glUniform1f(pp_gaussianblurh.du, dbAnimationRatio / 200);
+		glColor4ub(255, 255, 255, 255);
+		DrawScreenQuad();
+		//绘制到主画布
+		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferVTex);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
+		GL_UseProgram(pp_gaussianblurv.program);
+		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
+		glUniform1f(pp_gaussianblurh.du, dbAnimationRatio / 200);
+		DrawScreenQuad();
+		GL_UseProgram(0);
+		//绘制鼠标指针
+		SelectCyclerPointerColor.GetColor(r, g, b, dummy);
+		ac = cos(m_fCursorAngle - 0.45 * M_PI);
+		as = sin(m_fCursorAngle - 0.45 * M_PI);
+		vecA[0] = -SelectCyclerPointerSize * ac - (iOffset - SelectCyclerPointerSize) * as;
+		vecA[1] = -SelectCyclerPointerSize * as + (iOffset - SelectCyclerPointerSize) * ac;
+		vecB[0] = SelectCyclerPointerSize * ac - (iOffset - SelectCyclerPointerSize) * as;
+		vecB[1] = SelectCyclerPointerSize * as + (iOffset - SelectCyclerPointerSize) * ac;
+		vecC[0] = -SelectCyclerPointerSize * ac - iOffset * as;
+		vecC[1] = -SelectCyclerPointerSize * as + iOffset * ac;
+		vecD[0] = SelectCyclerPointerSize * ac - iOffset * as;
+		vecD[1] = SelectCyclerPointerSize * as + iOffset * ac;
+		vecA[0] += halfWidth;
+		vecA[1] = halfHeight - vecA[1];
+		vecB[0] += halfWidth;
+		vecB[1] = halfHeight - vecB[1];
+		vecC[0] += halfWidth;
+		vecC[1] = halfHeight - vecC[1];
+		vecD[0] += halfWidth;
+		vecD[1] = halfHeight - vecD[1];
+		DrawSPRIconPos(iSelectCyclerCursorPointer, vecC, vecA, vecB, vecD, r, g, b, a);
+	}
+	//绘制十边形
 	for (i = 0; i < 10; i++)
 	{
 		//CABD
@@ -700,26 +752,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 			continue;
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
-		iHeight = wp->rcActive.bottom - wp->rcActive.top;
-		iWidth = wp->rcActive.right - wp->rcActive.left;
-
-		if(gWR.HasAmmo(wp))
-			SelectCyclerIconColor.GetColor(r, g, b, dummy);
-		else
-			SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
-		ColorCalcuAlpha(r, g, b, a);
-		SPR_Set(wp->hInactive, r, g, b);
-		SPR_DrawAdditive(0, xpos - iWidth/2, ypos- iHeight/2, &wp->rcInactive);
-		SelectCyclerTextColor.GetColor(r, g, b, dummy);
-		ColorCalcuAlpha(r, g, b, a);
-
-		wsprintfW(buf, L"·%d", wp->iSlotPos);
-		GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
-		DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
-
-		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
-		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
-		DrawVGUI2String(buf, xpos - iTextWidth/2, ypos + iHeight, r, g, b, HUDFont, true);
+		DrawSelectIcon(wp, a, xpos, ypos);
 	}
 	//绘制已选
 	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1 && gWR.iNowSlot >= 0)
@@ -740,28 +773,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		vecD[1] = halfHeight - vecD[1];
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
-		iHeight = wp->rcActive.bottom - wp->rcActive.top;
-		iWidth = wp->rcActive.right - wp->rcActive.left;
-		if (gWR.HasAmmo(wp))
-			SelectCyclerIconColor.GetColor(r, g, b, dummy);
-		else
-			SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
-
-		ColorCalcuAlpha(r, g, b, a);
-		SPR_Set(wp->hActive, r, g, b);
-		SPR_DrawAdditive(0, xpos - iWidth / 2, ypos - iHeight / 2, &wp->rcActive);
-		
-		SelectCyclerTextColor.GetColor(r, g, b, dummy);
-		ColorCalcuAlpha(r, g, b, a);
-
-		wsprintfW(buf, L"·%d", wp->iSlotPos);
-		GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
-		DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
-
-		wsprintfW(buf, L"%d/%d", wp->iClip, gWR.CountAmmo(wp->iAmmoType));
-		GetStringSize(buf, &iTextWidth, NULL, HUDFont);
-		DrawVGUI2String(buf, xpos - iTextWidth / 2, ypos + iHeight, r, g, b, HUDFont,true);
-
+		DrawSelectIcon(wp, a, xpos, ypos);
 		SelectCyclerRinColor.GetColor(r, g, b, dummy);
 		DrawSPRIconPos(iSelectCyclerRinSpr, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
@@ -779,13 +791,12 @@ void CHudCustomAmmo::IN_Accumulate()
 	if (m_bOpeningAnnularMenu) {
 		int x, y;
 		gEngfuncs.GetMousePosition(&x, &y);
-		gEngfuncs.pfnFillRGBA(x, y, 4, 4, 255, 255, 255, 200);
-		x -= gScreenInfo.iWidth / 2;
-		y -= gScreenInfo.iHeight / 2;
+		x -= m_oldCursorX;
+		y -= m_oldCursorY;
 		y = -y;
-		float at = atan2(y, x);
-		int s = at / (0.2 * M_PI);
-		s = at >= 0 ? s : 9 + s;
+		m_fCursorAngle = atan2(y, x);
+		int s = m_fCursorAngle / (0.2 * M_PI);
+		s = m_fCursorAngle >= 0 ? s : 9 + s;
 		if (gWR.gridDrawMenu[s].iId > -1)
 			gWR.iNowSlot = s;
 	}

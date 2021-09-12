@@ -121,6 +121,10 @@ void WeaponsResource::LoadAllWeaponSprites(void)
 			LoadWeaponSprites(&rgWeapons[i]);
 	}
 }
+int WeaponsResource::HasWeapon(WEAPON* wp)
+{
+	return gridSlotMap[wp->iSlot][wp->iSlotPos] > 0;
+}
 void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 {
 	int i, iRes;
@@ -421,7 +425,6 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance)
 		if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS_USER)
 			gridDrawMenu[iNowSlot].iPos = 0;
 	}
-	gEngfuncs.pfnPlaySoundByName("common/wpn_moveselect.wav", 1);
 	m_HudCustomAmmo.m_fFade = gEngfuncs.GetClientTime() + m_HudCustomAmmo.SelectCyclerHoldTime;
 }
 void WeaponsResource::FillMenuGrid()
