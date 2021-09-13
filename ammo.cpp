@@ -7,18 +7,18 @@
 #include <cmath>
 #include <mathlib.h>
 
-#include "myconst.h"
-
 #include "hud.h"
 #include "weapon.h"
 
 #include "local.h"
 #include "vguilocal.h"
+#include "myconst.h"
 #include "CHudDelegate.h"
 
 #include "enginedef.h"
 #include "exportfuncs.h"
-#include <drawElement.h>
+#include "drawElement.h"
+#include "utility.h"
 
 #include "glew.h"
 #include "gl_shader.h"
@@ -592,23 +592,33 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
 		return;
 	gWR.SelectSlot(iSlot, fAdvance);
 }
-void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos)
+void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index)
 {
 	wchar_t buf[64];
 	int iTextWidth;
 	int r, g, b, dummy;
+	float h, s, v;
 	int iHeight = wp->rcActive.bottom - wp->rcActive.top;
 	int iWidth = wp->rcActive.right - wp->rcActive.left;
 	if (gWR.HasAmmo(wp) && gWR.HasWeapon(wp))
 		SelectCyclerIconColor.GetColor(r, g, b, dummy);
 	else
 		SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
+	if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
+		RGBToHSV(r, g, b, h, s, v);
+		h += 36 * index;
+		HSVToRGB(h, s, v, r, g, b);
+	}
 	ColorCalcuAlpha(r, g, b, a);
 	SPR_Set(wp->hInactive, r, g, b);
 	SPR_DrawAdditive(0, xpos - iWidth / 2, ypos - iHeight / 2, &wp->rcInactive);
 	SelectCyclerTextColor.GetColor(r, g, b, dummy);
+	if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
+		RGBToHSV(r, g, b, h, s, v);
+		h += 36 * index;
+		HSVToRGB(h, s, v, r, g, b);
+	}
 	ColorCalcuAlpha(r, g, b, a);
-	
 	if (gCVars.pAmmoMenuDrawPos->value > 0) {
 		wsprintfW(buf, L"·%d", wp->iSlotPos);
 		GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
@@ -742,14 +752,10 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		Vector2Copy(aryOut[i == 9 ? 0 : i + 1], vecC);
 		Vector2Copy(aryOut[i], vecD);
 		//变换为OpenGL屏幕坐标
-		vecA[0] += halfWidth;
-		vecA[1] = halfHeight - vecA[1];
-		vecB[0] += halfWidth;
-		vecB[1] = halfHeight - vecB[1];
-		vecC[0] += halfWidth;
-		vecC[1] = halfHeight - vecC[1];
-		vecD[0] += halfWidth;
-		vecD[1] = halfHeight - vecD[1];
+		CenterPos2OpenGLPos(vecA, halfWidth, halfHeight);
+		CenterPos2OpenGLPos(vecB, halfWidth, halfHeight);
+		CenterPos2OpenGLPos(vecC, halfWidth, halfHeight);
+		CenterPos2OpenGLPos(vecD, halfWidth, halfHeight);
 		//CABD
 		SelectCyclerColor.GetColor(r, g, b, dummy);
 		DrawSPRIconPos(iSelectCyclerSpr, vecC, vecA, vecB, vecD, r, g, b, a * 0.3);
@@ -760,7 +766,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 			continue;
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
-		DrawSelectIcon(wp, a, xpos, ypos);
+		DrawSelectIcon(wp, a, xpos, ypos, i);
 	}
 	//绘制已选
 	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1 && gWR.iNowSlot >= 0)
@@ -770,18 +776,13 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		Vector2Copy(aryIn[gWR.iNowSlot], vecB);
 		Vector2Copy(aryOut[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecC);
 		Vector2Copy(aryOut[gWR.iNowSlot], vecD);
-		//变换为OpenGL屏幕坐标
-		vecA[0] += halfWidth;
-		vecA[1] = halfHeight - vecA[1];
-		vecB[0] += halfWidth;
-		vecB[1] = halfHeight - vecB[1];
-		vecC[0] += halfWidth;
-		vecC[1] = halfHeight - vecC[1];
-		vecD[0] += halfWidth;
-		vecD[1] = halfHeight - vecD[1];
+		CenterPos2OpenGLPos(vecA, halfWidth, halfHeight);
+		CenterPos2OpenGLPos(vecB, halfWidth, halfHeight);
+		CenterPos2OpenGLPos(vecC, halfWidth, halfHeight);
+		CenterPos2OpenGLPos(vecD, halfWidth, halfHeight);
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
-		DrawSelectIcon(wp, a, xpos, ypos);
+		DrawSelectIcon(wp, a, xpos, ypos, gWR.iNowSlot);
 		SelectCyclerRinColor.GetColor(r, g, b, dummy);
 		DrawSPRIconPos(iSelectCyclerRinSpr, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
