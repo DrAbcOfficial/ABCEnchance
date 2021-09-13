@@ -301,7 +301,6 @@ void CustomSlotSetCallBack(cvar_t* vars)
 	gWR.SetUserSlot(slot, gWR.GetWeaponId(vars->string));
 }
 
-
 void CHudCustomAmmo::GLInit()
 {
 	glGenFramebuffersEXT(1, &m_hGaussianBufferVFBO);
