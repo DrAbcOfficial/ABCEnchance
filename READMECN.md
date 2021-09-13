@@ -56,6 +56,7 @@
 |cl_customslot8|设置自定义轮盘 8| |weapon_xxxxx|
 |cl_customslot9|设置自定义轮盘 9| |weapon_xxxxx|
 |cl_menudrawpos|是否绘制武器Pos|0|0/1|
+|cl_rainbowmenu|绘制武器菜单彩虹圈|1|0/1|
 |---|---|---|---|
 |hud_deathnotice_time|死亡提示保持时间|6|0~9999|
 |---|---|---|---|

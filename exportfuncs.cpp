@@ -15,6 +15,7 @@
 #include "exportfuncs.h"
 #include "CColor.h"
 #include "weapon.h"
+#include "myconst.h"
 //HUD
 #include "ammo.h"
 #include "healthhud.h"
@@ -266,20 +267,20 @@ void HUD_Init(void)
 	g_pScheme->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
 	
-	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, NULL);
 
-	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pBloodSpriteNumber = CREATE_CVAR("abc_bloodsprite_num", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pExpSmokeNumber = CREATE_CVAR("abc_explosion_smokenumr", "32", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pExpSmokeSpeed = CREATE_CVAR("abc_explosion_smokespeed", "256", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pRicochetNumber = CREATE_CVAR("abc_ricochet_sparknum", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_VALUE, NULL);
+	gCVars.pBloodSpriteNumber = CREATE_CVAR("abc_bloodsprite_num", "32", FCVAR_VALUE, NULL);
+	gCVars.pExpSmokeNumber = CREATE_CVAR("abc_explosion_smokenumr", "32", FCVAR_VALUE, NULL);
+	gCVars.pExpSmokeSpeed = CREATE_CVAR("abc_explosion_smokespeed", "256", FCVAR_VALUE, NULL);
+	gCVars.pRicochetNumber = CREATE_CVAR("abc_ricochet_sparknum", "24", FCVAR_VALUE, NULL);
 	
-	gCVars.pModelLag = CREATE_CVAR("cl_modellag", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pModelLag = CREATE_CVAR("cl_modellag", "1", FCVAR_VALUE, NULL);
+	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_VALUE, NULL);
 
-	gCVars.pCurDebug = CREATE_CVAR("cl_curdebug", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pCurDebug = CREATE_CVAR("cl_curdebug", "0", FCVAR_VALUE, NULL);
 
-	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, NULL);
 
 	gHudDelegate = new CHudDelegate();
 	gExportfuncs.HUD_Init();

@@ -1,17 +1,23 @@
 #include <metahook.h>
-#include "hud.h"
+#include <cmath>
+#include "mathlib.h"
+
+#include "glew.h"
+#include "triangleapi.h"
+
+#include "parsemsg.h"
+#include "msghook.h"
 #include "cvar_hook.h"
 #include "local.h"
 #include "vguilocal.h"
-#include <cmath>
-#include "mathlib.h"
-#include "parsemsg.h"
-#include "msghook.h"
+#include "myconst.h"
+
+#include "hud.h"
+
 #include "weapon.h"
 #include "CHudDelegate.h"
 #include "drawElement.h"
-#include "triangleapi.h"
-#include "glew.h"
+
 #include "exportfuncs.h"
 
 #include "playertitle.h"
@@ -39,9 +45,9 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf)
 int CHudPlayerTitle::Init(void)
 {
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
-	gCVars.pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pPlayerTitleLength = CREATE_CVAR("cl_playertitlelength", "196", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pPlayerTitleHeight = CREATE_CVAR("cl_playertitleheight", "48", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, NULL);
+	gCVars.pPlayerTitleLength = CREATE_CVAR("cl_playertitlelength", "196", FCVAR_VALUE, NULL);
+	gCVars.pPlayerTitleHeight = CREATE_CVAR("cl_playertitleheight", "48", FCVAR_VALUE, NULL);
 	Reset();
 	return 0;
 }
