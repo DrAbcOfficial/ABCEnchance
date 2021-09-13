@@ -1,40 +1,46 @@
 #include <metahook.h>
-#include "hud.h"
-#include "local.h"
-#include "vguilocal.h"
 #include <cmath>
 #include "pm_defs.h"
 #include "event_api.h"
 #include "triangleapi.h"
-#include <mathlib.h>
+
+#include "cvar_hook.h"
+#include "mathlib.h"
+
+#include "hud.h"
+#include "local.h"
+#include "vguilocal.h"
+#include "myconst.h"
+
+#include "glew.h"
 #include "weapon.h"
+#include "ammo.h"
+
 #include "CHudDelegate.h"
 #include "exportfuncs.h"
 
 #include "crosshair.h"
-#include "cvar_hook.h"
-#include "glew.h"
-#include "ammo.h"
+
 
 
 CHudCustomCrosshair m_HudCrosshair;
 
 int CHudCustomCrosshair::Init(void)
 {
-	gCVars.pDynamicCrossHair = CREATE_CVAR("cl_crosshair", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairAH = CREATE_CVAR("cl_crosshairautohide", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairL = CREATE_CVAR("cl_crosshairsize", "24", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairW = CREATE_CVAR("cl_crosshairthickness", "2", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairO = CREATE_CVAR("cl_crosshairgap", "16", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairM = CREATE_CVAR("cl_crosshairmultiple", "3", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairA = CREATE_CVAR("cl_crosshairalpha", "200", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairCR = CREATE_CVAR("cl_crosshaircolor_r", "50", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairCG = CREATE_CVAR("cl_crosshaircolor_g", "250", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairCB = CREATE_CVAR("cl_crosshaircolor_b", "50", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairOTD = CREATE_CVAR("cl_crosshair_outline_draw", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairOTDW = CREATE_CVAR("cl_crosshair_outline", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairT = CREATE_CVAR("cl_crosshair_t", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pDynamicCrossHairD = CREATE_CVAR("cl_crosshairdot", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pDynamicCrossHair = CREATE_CVAR("cl_crosshair", "1", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairAH = CREATE_CVAR("cl_crosshairautohide", "1", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairL = CREATE_CVAR("cl_crosshairsize", "24", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairW = CREATE_CVAR("cl_crosshairthickness", "2", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairO = CREATE_CVAR("cl_crosshairgap", "16", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairM = CREATE_CVAR("cl_crosshairmultiple", "3", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairA = CREATE_CVAR("cl_crosshairalpha", "200", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairCR = CREATE_CVAR("cl_crosshaircolor_r", "50", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairCG = CREATE_CVAR("cl_crosshaircolor_g", "250", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairCB = CREATE_CVAR("cl_crosshaircolor_b", "50", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairOTD = CREATE_CVAR("cl_crosshair_outline_draw", "1", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairOTDW = CREATE_CVAR("cl_crosshair_outline", "1", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairT = CREATE_CVAR("cl_crosshair_t", "0", FCVAR_VALUE, NULL);
+	gCVars.pDynamicCrossHairD = CREATE_CVAR("cl_crosshairdot", "0", FCVAR_VALUE, NULL);
 
 	pCvarDefaultCrosshair = gEngfuncs.pfnGetCvarPointer("crosshair");
 

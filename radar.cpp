@@ -8,13 +8,14 @@
 #include "glew.h"
 #include "glutility.h"
 #include "gldef.h"
+#include "gl_shader.h"
 
 #include "exportfuncs.h"
 
-#include "gl_shader.h"
-
 #include "hud.h"
 #include "vguilocal.h"
+#include "myconst.h"
+
 #include "weapon.h"
 #include "CHudDelegate.h"
 #include "radar.h"
@@ -45,12 +46,12 @@ int CHudRadar::Init()
 	gEngfuncs.pfnAddCommand("+scaleradar", __UserCmd_StartSizeRadar);
 	gEngfuncs.pfnAddCommand("-scaleradar", __UserCmd_EndSizeRadar);
 
-	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pRadarSize = CREATE_CVAR("cl_radarsize", "344", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pRadarSizeTime = CREATE_CVAR("cl_radarsizetime", "0.25", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pRadarGap = CREATE_CVAR("cl_radargap", "0.98", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
-	gCVars.pRadarUpdateInterval = CREATE_CVAR("cl_radarupdateint", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_VALUE, NULL);
+	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_VALUE, NULL);
+	gCVars.pRadarSize = CREATE_CVAR("cl_radarsize", "344", FCVAR_VALUE, NULL);
+	gCVars.pRadarSizeTime = CREATE_CVAR("cl_radarsizetime", "0.25", FCVAR_VALUE, NULL);
+	gCVars.pRadarGap = CREATE_CVAR("cl_radargap", "0.98", FCVAR_VALUE, NULL);
+	gCVars.pRadarUpdateInterval = CREATE_CVAR("cl_radarupdateint", "1", FCVAR_VALUE, NULL);
 	pCVarDevOverview = gEngfuncs.pfnGetCvarPointer("dev_overview");
 	pCVarDrawDynamic = gEngfuncs.pfnGetCvarPointer("r_dynamic");
 	pCVarDrawEntities = gEngfuncs.pfnGetCvarPointer("r_drawentities");

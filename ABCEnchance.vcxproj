@@ -141,6 +141,7 @@
     <ClInclude Include="basemenu.h" />
     <ClInclude Include="CHudDelegate.h" />
     <ClInclude Include="CColor.h" />
+    <ClInclude Include="myconst.h" />
     <ClInclude Include="crosshair.h" />
     <ClInclude Include="cvar_hook.h" />
     <ClInclude Include="glutility.h" />

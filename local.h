@@ -56,6 +56,7 @@ typedef struct
 
 	cvar_t* pAmmoCSlot[10];
 	cvar_t* pAmmoMenuDrawPos;
+	cvar_t* pAmmoMenuDrawRainbow;
 
 	cvar_t* pModelLag;
 	cvar_t* pModelLagValue;

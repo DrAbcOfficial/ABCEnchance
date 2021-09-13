@@ -284,5 +284,8 @@
     <ClInclude Include="cvar_hook.h">
       <Filter>Header\Var</Filter>
     </ClInclude>
+    <ClInclude Include="myconst.h">
+      <Filter>Header\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

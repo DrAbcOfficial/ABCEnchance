@@ -4,10 +4,10 @@
 #include "msghook.h"
 #include <regex>
 #include "mathlib.h"
-
 #include "cvar_hook.h"
 #include "local.h"
 #include "vguilocal.h"
+#include "myconst.h"
 #include "drawElement.h"
 #include "hud.h"
 #include "deathmsg.h"
@@ -152,7 +152,7 @@ void CHudDeathMsg::InsertNewMsg(const wstring &v, wstring &e, wstring &k)
 int CHudDeathMsg::Init(void)
 {
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
-	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_VALUE, NULL);
 	
 	HUDFont = pScheme->GetFont("MainShitFont", true);
 	XOffset = atof(pScheme->GetResourceString("DeathMsg.XOffset"));
