@@ -7,8 +7,6 @@ public:
 	void VidInit();
 	void Reset();
 	void Draw(float flTime);
-	void DrawRadarTexture();
-	void UpdateZmax(float flTime);
 	void PreRenderView(int a1);
 	void Clear();
 
@@ -16,11 +14,16 @@ public:
 	int PlayerPointImg;
 	int NorthImg;
 
+	float flFinishScaleTime;
 private:
+	void DrawRadarTexture();
+	void UpdateZmax(float flTime);
+
 	cvar_t* pCVarDevOverview;
 	cvar_t* pCVarDrawEntities;
 	cvar_t* pCVarDrawDynamic;
 	cvar_t* pCVarFXAA;
+	cvar_t* pCVarWater;
 
 	GLuint m_hRadarBufferFBO;
 	GLuint m_hRadarBufferTex;

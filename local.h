@@ -64,6 +64,7 @@ typedef struct
 	cvar_t* pRadar;
 	cvar_t* pRadarZoom;
 	cvar_t* pRadarSize;
+	cvar_t* pRadarSizeTime;
 	cvar_t* pRadarGap;
 	cvar_t* pRadarUpdateInterval;
 

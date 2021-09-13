@@ -22,6 +22,17 @@
 CHudRadar m_HudRadar;
 SHADER_DEFINE(pp_radarlight);
 
+void __UserCmd_StartSizeRadar(void)
+{
+	if (m_HudRadar.flFinishScaleTime <= 0)
+		m_HudRadar.flFinishScaleTime = gEngfuncs.GetClientTime() + gCVars.pRadarSizeTime->value;
+}
+void __UserCmd_EndSizeRadar(void)
+{
+	if (m_HudRadar.flFinishScaleTime > 0)
+		m_HudRadar.flFinishScaleTime = 0;
+}
+
 void CHudRadar::GLInit()
 {
 	if(!g_metaplugins.renderer)
@@ -31,9 +42,13 @@ void CHudRadar::GLInit()
 }
 int CHudRadar::Init()
 {
+	gEngfuncs.pfnAddCommand("+scaleradar", __UserCmd_StartSizeRadar);
+	gEngfuncs.pfnAddCommand("-scaleradar", __UserCmd_EndSizeRadar);
+
 	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	gCVars.pRadarSize = CREATE_CVAR("cl_radarsize", "344", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
+	gCVars.pRadarSizeTime = CREATE_CVAR("cl_radarsizetime", "0.25", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	gCVars.pRadarGap = CREATE_CVAR("cl_radargap", "0.98", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	gCVars.pRadarUpdateInterval = CREATE_CVAR("cl_radarupdateint", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	pCVarDevOverview = gEngfuncs.pfnGetCvarPointer("dev_overview");
@@ -59,6 +74,8 @@ void CHudRadar::VidInit()
 {
 	if(!pCVarFXAA)
 		pCVarFXAA = gEngfuncs.pfnGetCvarPointer("r_fxaa");
+	if(!pCVarWater)
+		pCVarWater = gEngfuncs.pfnGetCvarPointer("r_water");
 }
 void CHudRadar::Reset()
 {
@@ -67,6 +84,7 @@ void CHudRadar::Reset()
 	VGUI_CREATE_NEWTGA_TEXTURE(NorthImg, "abcenchance/tga/radar_north");
 
 	flNextUpdateTrTime = 0;
+	flFinishScaleTime = 0;
 	cvar_t* pCvarDevC = gEngfuncs.pfnGetCvarPointer("dev_overview_color");
 	if (pCvarDevC && g_metaplugins.renderer)
 	{
@@ -82,10 +100,16 @@ void CHudRadar::Draw(float flTime)
 		return;
 	UpdateZmax(flTime);
 	float size = gCVars.pRadarSize->value;
+	int iStartY = YOffset;
+	if (flFinishScaleTime > 0) {
+		int iMaxSize = gScreenInfo.iHeight - 2 * iStartY;
+		size = flFinishScaleTime > flTime ?
+			(size + (iMaxSize - size) * (1 - (flFinishScaleTime - flTime) / gCVars.pRadarSizeTime->value)) :
+			iMaxSize;
+	}
 	float sizeMap = size * gCVars.pRadarGap->value;
 	float sizeGap = (size - sizeMap) / 2;
 	int iStartX = XOffset;
-	int iStartY = YOffset;
 	//¼ÆËãÎÆÀí×ø±ê
 	float h, w, stx, sty;
 	h = size / gScreenInfo.iHeight;
@@ -179,12 +203,14 @@ void CHudRadar::DrawRadarTexture()
 	gHudDelegate->m_flOverViewYaw = local->curstate.angles[YAW];
 
 	gHudDelegate->m_iIsOverView = 1;
-		vec4_t vecOldValue;
+		vec5_t vecOldValue;
 		vecOldValue[0] = pCVarDevOverview->value;
 		vecOldValue[1] = pCVarDrawEntities->value;
 		vecOldValue[2] = pCVarDrawDynamic->value;
-		if (g_metaplugins.renderer)
+		if (g_metaplugins.renderer){
 			vecOldValue[3] = pCVarFXAA->value;
+			vecOldValue[4] = pCVarWater->value;
+		}
 		pCVarDevOverview->value = 2;
 		pCVarDrawEntities->value = 0;
 		pCVarDrawDynamic->value = 0;
@@ -194,6 +220,7 @@ void CHudRadar::DrawRadarTexture()
 		bool bIsFog;
 		if (g_metaplugins.renderer) {
 			pCVarFXAA->value = 0;
+			pCVarWater->value = 0;
 			bIsFog = glIsEnabled(GL_FOG);
 			if (bIsFog) {
 				glGetIntegerv(GL_FOG_MODE, &riFogMode);
@@ -226,6 +253,7 @@ void CHudRadar::DrawRadarTexture()
 				glFogf(GL_FOG_END, vecFogControl[1]);
 			}
 			pCVarFXAA->value = vecOldValue[3];
+			pCVarWater->value = vecOldValue[4];
 		}
 	gHudDelegate->m_iIsOverView = 0;
 
