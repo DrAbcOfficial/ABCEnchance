@@ -67,7 +67,6 @@ extern int nanmask;
 #define ColorCalcuAlpha(r, g, b, a) {(r)*=(a)/255;(g)*=(a)/255;(b)*=(a)/255;}
 #define Vector2Rotate(out,x, y, rotate) {out[0] = x * cos(rotate) - y * sin(rotate);out[1] = x * sin(rotate) + y * cos(rotate);}
 
-
 #define max3(a,b,c) max(a,max(b,c))
 #define min3(a,b,c) min(a,min(b,c))
 
