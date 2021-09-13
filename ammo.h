@@ -15,6 +15,7 @@ public:
 	float m_fFade;
 	bool m_bOpeningAnnularMenu = false;
 	bool m_bSelectMenuDisplay = false;
+	bool m_bSetedCursor = false;
 
 	bool m_bIsOnTarget = false;
 	WEAPON* m_pWeapon;
@@ -22,7 +23,6 @@ public:
 	float SelectCyclerHoldTime;
 
 	bool m_bAcceptDeadMessage = false;
-	int m_oldCursorX, m_oldCursorY;
 private:
 	void DrawScreenQuad();
 	void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos);
