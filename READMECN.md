@@ -46,6 +46,7 @@
 |cl_hud_csgo|启用HUD（重启游戏生效）|1|0/1|
 |---|---|---|---|
 |cl_customslot1|设置自定义轮盘 1| |weapon_xxxxx|
+|cl_customslot1|设置自定义轮盘 1| |weapon_xxxxx|
 |cl_customslot2|设置自定义轮盘 2| |weapon_xxxxx|
 |cl_customslot3|设置自定义轮盘 3| |weapon_xxxxx|
 |cl_customslot4|设置自定义轮盘 4| |weapon_xxxxx|
@@ -54,7 +55,7 @@
 |cl_customslot7|设置自定义轮盘 7| |weapon_xxxxx|
 |cl_customslot8|设置自定义轮盘 8| |weapon_xxxxx|
 |cl_customslot9|设置自定义轮盘 9| |weapon_xxxxx|
-|cl_customslot10|设置自定义轮盘 10| |weapon_xxxxx|
+|cl_menudrawpos|是否绘制武器Pos|0|0/1|
 |---|---|---|---|
 |hud_deathnotice_time|死亡提示保持时间|6|0~9999|
 |---|---|---|---|
