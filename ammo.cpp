@@ -274,10 +274,8 @@ void __UserCmd_Attack1(void)
 void __UserCmd_OpenAnnularMenu(void)
 {
 	if (!m_HudCustomAmmo.m_bOpeningAnnularMenu && !m_HudCustomAmmo.m_bSelectMenuDisplay) {
-		if (m_HudCustomAmmo.m_fFade <= gEngfuncs.GetClientTime()) {
-			gEngfuncs.GetMousePosition(&m_HudCustomAmmo.m_oldCursorX, &m_HudCustomAmmo.m_oldCursorY);
+		if (m_HudCustomAmmo.m_fFade <= gEngfuncs.GetClientTime())
 			gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
-		}
 		m_HudCustomAmmo.m_bOpeningAnnularMenu = true;
 		gHudDelegate->m_iVisibleMouse = true;
 	}
@@ -288,6 +286,7 @@ void __UserCmd_CloseAnnularMenu(void)
 		m_HudCustomAmmo.m_bOpeningAnnularMenu = false;
 		m_HudCustomAmmo.m_fFade = 0;
 		gHudDelegate->m_iVisibleMouse = false;
+		m_HudCustomAmmo.m_bSetedCursor = false;
 	}
 }
 void CustomSlotSetCallBack(cvar_t* vars)
@@ -403,6 +402,7 @@ void CHudCustomAmmo::Reset(void)
 	m_bSelectMenuDisplay = false;
 	m_bOpeningAnnularMenu = false;
 	m_bIsOnTarget = false;
+	m_bSetedCursor = false;
 	iSelectCyclerSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_cycler.spr");
 	iSelectCyclerRinSpr = gEngfuncs.pfnSPR_Load("abcenchance/spr/selected_rin.spr");
 	iSelectCyclerCursorPointer = gEngfuncs.pfnSPR_Load("abcenchance/spr/select_pointer.spr");
@@ -795,8 +795,12 @@ void CHudCustomAmmo::IN_Accumulate()
 	if (m_bOpeningAnnularMenu) {
 		int x, y;
 		gEngfuncs.GetMousePosition(&x, &y);
-		x -= m_oldCursorX;
-		y -= m_oldCursorY;
+		if (!m_bSetedCursor) {
+			gEngfuncs.pfnSetMousePos(gScreenInfo.iWidth / 2, gScreenInfo.iHeight / 2);
+			m_bSetedCursor = true;
+		}
+		x -= gScreenInfo.iWidth / 2;
+		y -= gScreenInfo.iHeight / 2;
 		y = -y;
 		m_fCursorAngle = atan2(y, x);
 		int s = m_fCursorAngle / (0.2 * M_PI);
