@@ -25,7 +25,7 @@ public:
 	bool m_bAcceptDeadMessage = false;
 private:
 	void DrawScreenQuad();
-	void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos);
+	void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index);
 	int DrawWList(float flTime);
 	void SyncWeapon();
 	float m_fAnimateTime;
