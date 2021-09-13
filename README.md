@@ -44,6 +44,8 @@
 |----|----|
 |+annularmenu|Open cycler weapon menu(Mouse selection)|
 |-annularmenu|Close cycler weapon menu(Mouse selection)|
+|+scaleradar|Start scale radar size|
+|-scaleradar|Stop scale radar size|
 # 📊 CVars
 |CVar|uses|default|range|
 |---|---|---|---|
@@ -65,6 +67,7 @@
 |cl_radar|Radar|1|0/1|
 |cl_radarzoom|Radar Zoom|2.5|0.0001~9999|
 |cl_radarsize|Radar Size|344|0-9999|
+|cl_radarsizetime|Radar Scale animation time|0.25|0~9999|
 |cl_radargap|Radar Gap|0.98|0-1|
 |cl_radarupdateint|Radar image update interval|1|0-9999|
 |---|---|---|---|
