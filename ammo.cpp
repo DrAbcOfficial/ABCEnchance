@@ -351,7 +351,7 @@ int CHudCustomAmmo::Init(void)
 	gCVars.pAmmoCSlot[7] = CREATE_CVAR("cl_customslot8", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
 	gCVars.pAmmoCSlot[8] = CREATE_CVAR("cl_customslot9", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
 	gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, CustomSlotSetCallBack);
-
+	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE, NULL);
 	StartX = atof(pScheme->GetResourceString("AmmoHUD.StartX"));
 	IconSize = atof(pScheme->GetResourceString("AmmoHUD.IconSize"));
 	ElementGap = atof(pScheme->GetResourceString("AmmoHUD.ElementGap"));
@@ -606,10 +606,12 @@ void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos)
 	SPR_DrawAdditive(0, xpos - iWidth / 2, ypos - iHeight / 2, &wp->rcInactive);
 	SelectCyclerTextColor.GetColor(r, g, b, dummy);
 	ColorCalcuAlpha(r, g, b, a);
-
-	wsprintfW(buf, L"·%d", wp->iSlotPos);
-	GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
-	DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
+	
+	if (gCVars.pAmmoMenuDrawPos->value > 0) {
+		wsprintfW(buf, L"·%d", wp->iSlotPos);
+		GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
+		DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
+	}
 
 	if (wp->iAmmoType >= 0) {
 		if(wp->iClip >= 0)

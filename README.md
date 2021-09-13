@@ -63,6 +63,7 @@
 |cl_customslot8|Set customslot 8| |weapon_xxxxx|
 |cl_customslot9|Set customslot 9| |weapon_xxxxx|
 |cl_customslot10|Set customslot 10| |weapon_xxxxx|
+|cl_menudrawpos|Draw weapon Pos|0|0/1|
 |---|---|---|---|
 |cl_radar|Radar|1|0/1|
 |cl_radarzoom|Radar Zoom|2.5|0.0001~9999|

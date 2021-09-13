@@ -55,6 +55,7 @@ typedef struct
 	cvar_t* pDynamicHUD;
 
 	cvar_t* pAmmoCSlot[10];
+	cvar_t* pAmmoMenuDrawPos;
 
 	cvar_t* pModelLag;
 	cvar_t* pModelLagValue;
