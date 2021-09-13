@@ -468,11 +468,11 @@ int CHudCustomAmmo::Draw(float flTime)
 		return 1;
 	if (gClientData->health <= 0)
 		return 1;
-	//1s 进行一次武器同步
+	//0.5s 进行一次武器同步
 	if (flTime > m_fNextSyncTime)
 	{
 		SyncWeapon();
-		m_fNextSyncTime = flTime + 1;
+		m_fNextSyncTime = flTime + 0.5;
 	}
 	// Draw Weapon Menu
 	DrawWList(flTime);
@@ -647,8 +647,8 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	float flAnimationRatio = 1.0f;
 	if (!m_bSelectMenuDisplay)
 		m_fAnimateTime = flTime + SelectCyclerAnimateTime;
-	if (m_fAnimateTime > flTime && flTimeDiffer >= SelectCyclerHoldTime - SelectCyclerAnimateTime) {
-		flAnimationRatio = ((float)(SelectCyclerHoldTime)-flTimeDiffer) / SelectCyclerAnimateTime;
+	if (m_fAnimateTime > flTime && SelectCyclerHoldTime > SelectCyclerAnimateTime) {
+		flAnimationRatio = 1 - ((m_fAnimateTime - flTime) / SelectCyclerAnimateTime);
 		iOffset *= flAnimationRatio;
 		flAnimationRatio /= 100;
 	}
