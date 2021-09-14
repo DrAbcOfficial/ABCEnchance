@@ -1,4 +1,4 @@
-class CHudCustomAmmo : public CHudBase
+class CHudCustomAmmo
 {
 public:
 	void GLInit();
@@ -40,11 +40,11 @@ private:
 	GLuint m_hGaussianBufferHFBO;
 	GLuint m_hGaussianBufferHTex;
 
-	float StartX = 48;
-	float IconSize = 0.5;
-	float ElementGap = 0.2;
-	float BackGroundY = 0.95;
-	float BackGroundLength = 3;
+	float StartX = 48.0F;
+	float IconSize = 0.5F;
+	float ElementGap = 0.2F;
+	float BackGroundY = 0.95F;
+	float BackGroundLength = 3.0F;
 
 	GLint iSelectCyclerSpr = 0;
 	GLint iSelectCyclerRinSpr = 0;

@@ -1,5 +1,5 @@
 #pragma once
-class CHudCustomCrosshair : public CHudBase
+class CHudCustomCrosshair
 {
 public:
 	int Init(void);

@@ -120,7 +120,6 @@ void CHudDelegate::HUD_Reset(void)
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
 	m_HudDeathMsg.Reset();
-	m_HudCrosshair.Reset();
 	m_HudPlayerTitle.Reset();
 	m_HudVote.Reset();
 }

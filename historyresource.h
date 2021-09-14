@@ -26,17 +26,17 @@ public:
 		AmmoIconColor = pScheme->GetColor("AmmoHUD.AmmoPickUpIconColor", gDefaultColor);
 		AmmoTextColor = pScheme->GetColor("AmmoHUD.AmmoPickUpTextColor", gDefaultColor);
 		iAmmoDisplayCount = (int)atof(pScheme->GetResourceString("AmmoHUD.AmmoPickUpDisplayCount"));
-		vecAmmoPickUpPos[0] = atof(pScheme->GetResourceString("AmmoHUD.AmmoPickUpX"));
-		vecAmmoPickUpPos[1] = atof(pScheme->GetResourceString("AmmoHUD.AmmoPickUpY"));
+		vecAmmoPickUpPos[0] = (int)atof(pScheme->GetResourceString("AmmoHUD.AmmoPickUpX"));
+		vecAmmoPickUpPos[1] = (int)atof(pScheme->GetResourceString("AmmoHUD.AmmoPickUpY"));
 
 		WeaponPickUpColor = pScheme->GetColor("AmmoHUD.WeaponPickUpColor", gDefaultColor);
 		WeaponPickUpEmptyColor = pScheme->GetColor("AmmoHUD.WeaponPickUpEmptyColor", gDefaultColor);
-		vecWeaponPickUpPos[0] = atof(pScheme->GetResourceString("AmmoHUD.WeaponPickUpX"));
-		vecWeaponPickUpPos[1] = atof(pScheme->GetResourceString("AmmoHUD.WeaponPickUpY"));
+		vecWeaponPickUpPos[0] = (int)atof(pScheme->GetResourceString("AmmoHUD.WeaponPickUpX"));
+		vecWeaponPickUpPos[1] = (int)atof(pScheme->GetResourceString("AmmoHUD.WeaponPickUpY"));
 
 		ItemPickUpColor = pScheme->GetColor("AmmoHUD.ItemPickUpColor", gDefaultColor);
-		vecItemPickUpPos[0] = atof(pScheme->GetResourceString("AmmoHUD.ItemPickUpX"));
-		vecItemPickUpPos[1] = atof(pScheme->GetResourceString("AmmoHUD.ItemPickUpY"));
+		vecItemPickUpPos[0] = (int)atof(pScheme->GetResourceString("AmmoHUD.ItemPickUpX"));
+		vecItemPickUpPos[1] = (int)atof(pScheme->GetResourceString("AmmoHUD.ItemPickUpY"));
 
 		hFont = pScheme->GetFont("HUDSmallShitFont", true);
 		Reset();

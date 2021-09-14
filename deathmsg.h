@@ -12,7 +12,7 @@ typedef struct deathmsgItem_s{
 	wchar_t killer[MSG_BUF_SIZE];
 	float addTime;
 } deathmsgItem_t;
-class CHudDeathMsg : public CHudBase
+class CHudDeathMsg
 {
 public:
 	int Init(void);

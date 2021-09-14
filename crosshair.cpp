@@ -21,8 +21,6 @@
 
 #include "crosshair.h"
 
-
-
 CHudCustomCrosshair m_HudCrosshair;
 
 int CHudCustomCrosshair::Init(void)
