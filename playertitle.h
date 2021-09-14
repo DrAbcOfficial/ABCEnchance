@@ -25,7 +25,7 @@ enum SC_ADMIN_ICON {
 	ADMIN_SERVER_OWNER
 };
 
-class CHudPlayerTitle : CHudBase {
+class CHudPlayerTitle {
 public:
 	int Init(void);
 	int Draw(float flTime);

@@ -36,9 +36,6 @@ void GL_VertexAttrib3fv(GLuint index, float* v);
 void GL_MultiTexCoord2f(GLenum target, float s, float t);
 void GL_MultiTexCoord3f(GLenum target, float s, float t, float r);
 
-#define clamp(value, mi, ma) min(max(value, mi), ma)
-
 #define SHADER_DEFINE(name) name##_program_t name;
-
 #define SHADER_UNIFORM(name, loc, locstring) name##.loc = glGetUniformLocationARB(name.program, locstring);
 #define SHADER_ATTRIB(name, loc, locstring) name##.loc = glGetAttribLocationARB(name.program, locstring);

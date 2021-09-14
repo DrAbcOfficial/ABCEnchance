@@ -353,12 +353,12 @@ int CHudCustomAmmo::Init(void)
 	gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
-	StartX = atof(pScheme->GetResourceString("AmmoHUD.StartX"));
-	IconSize = atof(pScheme->GetResourceString("AmmoHUD.IconSize"));
-	ElementGap = atof(pScheme->GetResourceString("AmmoHUD.ElementGap"));
+	StartX = (float)atof(pScheme->GetResourceString("AmmoHUD.StartX"));
+	IconSize = (float)atof(pScheme->GetResourceString("AmmoHUD.IconSize"));
+	ElementGap = (float)atof(pScheme->GetResourceString("AmmoHUD.ElementGap"));
 
-	BackGroundY = atof(pScheme->GetResourceString("AmmoHUD.BackGroundY"));
-	BackGroundLength = atof(pScheme->GetResourceString("AmmoHUD.BackGroundLength"));
+	BackGroundY = (float)atof(pScheme->GetResourceString("AmmoHUD.BackGroundY"));
+	BackGroundLength = (float)atof(pScheme->GetResourceString("AmmoHUD.BackGroundLength"));
 
 	Ammo1IconColor = pScheme->GetColor("AmmoHUD.Ammo1IconColor", gDefaultColor);
 	Ammo1BigTextColor = pScheme->GetColor("AmmoHUD.Ammo1BigTextColor", gDefaultColor);
@@ -757,7 +757,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		CenterPos2OpenGLPos(vecD, halfWidth, halfHeight);
 		//CABD
 		SelectCyclerColor.GetColor(r, g, b, dummy);
-		if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
+		if (gCVars.pAmmoMenuDrawRainbow->value > 1) {
 			float h, s, v;
 			RGBToHSV(r, g, b, h, s, v);
 			h += 36 * i;

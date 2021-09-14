@@ -1,5 +1,5 @@
 #pragma once
-class CHudVote : CHudBase {
+class CHudVote {
 public:
 	int Init();
 	int Draw(float flTime);
