@@ -25,8 +25,7 @@
 CHudPlayerTitle m_HudPlayerTitle;
 pfnUserMsgHook m_pfnScoreInfo;
 
-int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
 	//wtf is not this shit
@@ -42,8 +41,7 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf)
 	}
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
 }
-int CHudPlayerTitle::Init(void)
-{
+int CHudPlayerTitle::Init(void){
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 	gCVars.pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, NULL);
 	gCVars.pPlayerTitleLength = CREATE_CVAR("cl_playertitlelength", "196", FCVAR_VALUE, NULL);
@@ -51,8 +49,7 @@ int CHudPlayerTitle::Init(void)
 	Reset();
 	return 0;
 }
-void CHudPlayerTitle::Reset()
-{
+void CHudPlayerTitle::Reset(){
 	VGUI_CREATE_NEWTGA_TEXTURE(iDeathIconTga, "abcenchance/tga/playertitle_deadicon");
 	VGUI_CREATE_NEWTGA_TEXTURE(iCrouchIconTga, "abcenchance/tga/playertitle_crouchicon");
 	VGUI_CREATE_NEWTGA_TEXTURE(iMedkitIconTga, "abcenchance/tga/playertitle_medkiticon");
@@ -61,10 +58,8 @@ void CHudPlayerTitle::Reset()
 	VGUI_CREATE_NEWTGA_TEXTURE(iArmorBarTga, "abcenchance/tga/playertitle_armorbar");
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 }
-int CHudPlayerTitle::Draw(float flTime)
-{
-	if (gCVars.pPlayerTitle->value > 0)
-	{
+int CHudPlayerTitle::Draw(float flTime){
+	if (gCVars.pPlayerTitle->value > 0){
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		float* localColor = gHookFuncs.GetClientColor(local->index);
 		float dx, dy, dz;
@@ -93,8 +88,7 @@ int CHudPlayerTitle::Draw(float flTime)
 		// ”Ω«Ω«∂»
 		vec3_t vecView;
 		gEngfuncs.GetViewAngles(vecView);
-		for (int i = 1; i <= 32; i++)
-		{
+		for (int i = 1; i <= 32; i++){
 			cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i);
 
 			if (!entity || 
@@ -121,8 +115,7 @@ int CHudPlayerTitle::Draw(float flTime)
 				levelAngle = levelAngle + PERIGON_ANGLE;
 			elevation = -elevation;
 			//º∆À„Ω«…´º–Ω«
-			if (dx > 0)
-			{
+			if (dx > 0){
 				if (dy == 0)
 					fPlayerAngle_xy = 0.0;
 				else if (dy > 0)
@@ -131,15 +124,13 @@ int CHudPlayerTitle::Draw(float flTime)
 					fPlayerAngle_xy = PERIGON_ANGLE + (asin(dy / fDistance) * RADIAN_PER_DEGREE);
 			}
 			//≈–∂œÃÿ ‚Ω«∂»
-			else if (dx == 0)
-			{
+			else if (dx == 0){
 				if (dy > 0)
 					fPlayerAngle_xy = 90.0;
 				else if (dy < 0)
 					fPlayerAngle_xy = 270.0;
 			}
-			else if (dx < 0)
-			{
+			else if (dx < 0){
 				if (dy == 0)
 					fPlayerAngle_xy = FLAT_ANGLE;
 				else if (dy > 0)
@@ -158,22 +149,19 @@ int CHudPlayerTitle::Draw(float flTime)
 			// ”Ω«∏©—ˆº–Ω«
 			fPlayerAngle_z = asin(dz / (fsqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2)))) * RADIAN_PER_DEGREE;
 			fPaintAngle_z = elevation - fPlayerAngle_z;
-			if (fPaintAngle_xy > -45 && fPaintAngle_xy < 45 && fPaintAngle_z > -45 && fPaintAngle_z < 45)
-			{
+			if (fPaintAngle_xy > -45 && fPaintAngle_xy < 45 && fPaintAngle_z > -45 && fPaintAngle_z < 45){
 				gEngfuncs.pTriAPI->WorldToScreen(vecOrg, vecHUD);
 				vecHUD[0] = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
 				vecHUD[1] = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
 
 				gEngfuncs.pfnGetPlayerInfo(i, &playerinfo);
-				if (playerinfo.name)
-				{
+				if (playerinfo.name){
 					flHealthRatio = clamp((m_Playerinfo[i].health / 100.0f), 0.0f, 1.0f);
 					flArmorRatio = clamp((m_Playerinfo[i].armor / 100.0f), 0.0f, 1.0f);
 					
 					nowX = vecHUD[0] - iTitleLength / 3;
 					nowY = vecHUD[1] - iTitleHeight / 2;
-					if (gCVars.pPlayerTitle->value < 2)
-					{
+					if (gCVars.pPlayerTitle->value < 2){
 						//±≥æ∞
 						glEnable(GL_TEXTURE_2D);
 						glEnable(GL_BLEND);
@@ -219,8 +207,7 @@ int CHudPlayerTitle::Draw(float flTime)
 							glEnd();
 						
 						gHudDelegate->surface()->DrawSetTexture(-1);
-						if (flHealthRatio <= 0.45f || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64)
-						{
+						if (flHealthRatio <= 0.45f || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64){
 							gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 							gHudDelegate->surface()->DrawSetTexture(
 								flHealthRatio < 0.4 ? (

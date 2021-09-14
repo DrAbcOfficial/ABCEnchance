@@ -6,24 +6,20 @@ static int giSize;
 static int giRead;
 static int giBadRead;
 
-int READ_OK(void)
-{
+int READ_OK(void){
 	return !giBadRead;
 }
 
-void BEGIN_READ(void *buf, int size)
-{
+void BEGIN_READ(void *buf, int size){
 	giRead = 0;
 	giBadRead = 0;
 	giSize = size;
 	gpBuf = (byte*)buf;
 }
 
-int READ_CHAR(void)
-{
+int READ_CHAR(void){
 	int c;
-	if (giRead + 1 > giSize)
-	{
+	if (giRead + 1 > giSize){
 		giBadRead = TRUE;
 		return -1;
 	}
@@ -34,11 +30,9 @@ int READ_CHAR(void)
 	return c;
 }
 
-int READ_BYTE(void)
-{
+int READ_BYTE(void){
 	int c;
-	if (giRead+1 > giSize)
-	{
+	if (giRead+1 > giSize){
 		giBadRead = TRUE;
 		return -1;
 	}
@@ -49,11 +43,9 @@ int READ_BYTE(void)
 	return c;
 }
 
-int READ_SHORT(void)
-{
+int READ_SHORT(void){
 	int c;
-	if (giRead+2 > giSize)
-	{
+	if (giRead+2 > giSize){
 		giBadRead = TRUE;
 		return -1;
 	}
@@ -64,16 +56,13 @@ int READ_SHORT(void)
 	return c;
 }
 
-int READ_WORD(void)
-{
+int READ_WORD(void){
 	return READ_SHORT();
 }
 
-int READ_LONG(void)
-{
+int READ_LONG(void){
 	int c;
-	if (giRead+4 > giSize)
-	{
+	if (giRead+4 > giSize){
 		giBadRead = TRUE;
 		return -1;
 	}
@@ -84,10 +73,8 @@ int READ_LONG(void)
 	return c;
 }
 
-float READ_FLOAT(void)
-{
-	union
-	{
+float READ_FLOAT(void){
+	union{
 		byte b[4];
 		float f;
 		int l;
@@ -102,16 +89,14 @@ float READ_FLOAT(void)
 	return dat.f;   
 }
 
-char* READ_STRING(void)
-{
+char* READ_STRING(void){
 	int l, c;
 	static char string[2048];
 
 	string[0] = 0;
 
 	l = 0;
-	do
-	{
+	do{
 		if (giRead+1 > giSize)
 			break;
 
@@ -127,17 +112,14 @@ char* READ_STRING(void)
 	return string;
 }
 
-float READ_COORD(void)
-{
+float READ_COORD(void){
 	return (float)((g_iEngineType == ENGINE_SVENGINE ? READ_LONG() : READ_SHORT()) * (1.0/8));
 }
 
-float READ_ANGLE(void)
-{
+float READ_ANGLE(void){
 	return (float)(READ_CHAR() * (360.0/256));
 }
 
-float READ_HIRESANGLE(void)
-{
+float READ_HIRESANGLE(void){
 	return (float)(READ_SHORT() * (360.0/65536));
 }

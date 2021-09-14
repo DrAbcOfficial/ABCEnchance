@@ -11,18 +11,14 @@
 
 std::vector<glshader_t> g_ShaderTable;
 
-void GL_InitShaders(void)
-{
+void GL_InitShaders(void){
 
 }
 
-void GL_FreeShaders(void)
-{
-	for (size_t i = 0; i < g_ShaderTable.size(); ++i)
-	{
+void GL_FreeShaders(void){
+	for (size_t i = 0; i < g_ShaderTable.size(); ++i){
 		auto& objs = g_ShaderTable[i].shader_objects;
-		for (size_t j = 0; j < objs.size(); ++j)
-		{
+		for (size_t j = 0; j < objs.size(); ++j){
 			glDetachObjectARB(g_ShaderTable[i].program, objs[j]);
 			glDeleteObjectARB(objs[j]);
 		}
@@ -32,13 +28,11 @@ void GL_FreeShaders(void)
 	g_ShaderTable.clear();
 }
 
-void GL_CheckShaderError(GLuint shader, const char* code, const char* filename)
-{
+void GL_CheckShaderError(GLuint shader, const char* code, const char* filename){
 	int iStatus;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &iStatus);
 
-	if (!iStatus)
-	{
+	if (!iStatus){
 		int nInfoLength;
 		char szCompilerLog[1024] = { 0 };
 		glGetInfoLogARB(shader, sizeof(szCompilerLog) - 1, &nInfoLength, szCompilerLog);
@@ -47,8 +41,7 @@ void GL_CheckShaderError(GLuint shader, const char* code, const char* filename)
 		g_pFileSystem->CreateDirHierarchy("logs");
 		g_pFileSystem->CreateDirHierarchy("logs/abcenchance");
 		auto FileHandle = g_pFileSystem->Open("logs/abcenchance/error.log", "wb");
-		if (FileHandle)
-		{
+		if (FileHandle){
 			g_pFileSystem->Write(code, strlen(code), FileHandle);
 			g_pFileSystem->Write("\n\nFilename: ", sizeof("\n\nFilename: ") - 1, FileHandle);
 			g_pFileSystem->Write(filename, strlen(filename), FileHandle);
@@ -61,8 +54,7 @@ void GL_CheckShaderError(GLuint shader, const char* code, const char* filename)
 	}
 }
 
-GLuint R_CompileShaderObject(int type, const char* code, const char* filename)
-{
+GLuint R_CompileShaderObject(int type, const char* code, const char* filename){
 	auto obj = glCreateShaderObjectARB(type);
 
 	glShaderSource(obj, 1, &code, NULL);
@@ -74,8 +66,7 @@ GLuint R_CompileShaderObject(int type, const char* code, const char* filename)
 	return obj;
 }
 
-GLuint R_CompileShader(const char* vscode, const char* fscode, const char* vsfile, const char* fsfile, ExtraShaderStageCallback callback)
-{
+GLuint R_CompileShader(const char* vscode, const char* fscode, const char* vsfile, const char* fsfile, ExtraShaderStageCallback callback){
 	GLuint shader_objects[32];
 	int shader_object_used = 0;
 
@@ -95,8 +86,7 @@ GLuint R_CompileShader(const char* vscode, const char* fscode, const char* vsfil
 
 	int iStatus;
 	glGetProgramiv(program, GL_LINK_STATUS, &iStatus);
-	if (!iStatus)
-	{
+	if (!iStatus){
 		int nInfoLength;
 		char szCompilerLog[1024] = { 0 };
 		glGetProgramInfoLog(program, sizeof(szCompilerLog), &nInfoLength, szCompilerLog);
@@ -109,8 +99,7 @@ GLuint R_CompileShader(const char* vscode, const char* fscode, const char* vsfil
 	return program;
 }
 
-void R_CompileShaderAppendInclude(std::string& str, const char* filename)
-{
+void R_CompileShaderAppendInclude(std::string& str, const char* filename){
 	std::regex pattern("#include[< \"]+([a-zA-Z_\\.]+)[> \"]");
 	std::smatch result;
 	std::regex_search(str, result, pattern);
@@ -119,8 +108,7 @@ void R_CompileShaderAppendInclude(std::string& str, const char* filename)
 
 	std::string::const_iterator searchStart(str.cbegin());
 
-	while (std::regex_search(searchStart, str.cend(), result, pattern) && result.size() >= 2)
-	{
+	while (std::regex_search(searchStart, str.cend(), result, pattern) && result.size() >= 2){
 		std::string prefix = result.prefix();
 		std::string suffix = result.suffix();
 
@@ -129,10 +117,8 @@ void R_CompileShaderAppendInclude(std::string& str, const char* filename)
 		char slash;
 
 		std::string includePath = filename;
-		for (size_t j = includePath.length() - 1; j > 0; --j)
-		{
-			if (includePath[j] == '\\' || includePath[j] == '/')
-			{
+		for (size_t j = includePath.length() - 1; j > 0; --j){
+			if (includePath[j] == '\\' || includePath[j] == '/'){
 				slash = includePath[j];
 				includePath.resize(j);
 				break;
@@ -143,18 +129,15 @@ void R_CompileShaderAppendInclude(std::string& str, const char* filename)
 		includePath += includeFileName;
 
 		auto pFile = gEngfuncs.COM_LoadFile((char*)includePath.c_str(), 5, NULL);
-		if (pFile)
-		{
+		if (pFile){
 			std::string wbinding((char*)pFile);
 
 			gEngfuncs.COM_FreeFile(pFile);
 
-			if (searchStart != str.cbegin())
-			{
+			if (searchStart != str.cbegin()){
 				str = skipped + prefix;
 			}
-			else
-			{
+			else{
 				str = prefix;
 			}
 			str += wbinding;
@@ -172,14 +155,12 @@ void R_CompileShaderAppendInclude(std::string& str, const char* filename)
 	}
 }
 
-void R_CompileShaderAppendDefine(std::string& str, const std::string& def)
-{
+void R_CompileShaderAppendDefine(std::string& str, const std::string& def){
 	std::regex pattern("(#version [0-9a-z ]+)");
 	std::smatch result;
 	std::regex_search(str, result, pattern);
 
-	if (result.size() >= 1)
-	{
+	if (result.size() >= 1){
 		std::string prefix = result[0];
 		std::string suffix = result.suffix();
 
@@ -189,8 +170,7 @@ void R_CompileShaderAppendDefine(std::string& str, const std::string& def)
 		str += "\n\n";
 		str += suffix;
 	}
-	else
-	{
+	else{
 		std::string suffix = str;
 
 		str = def;
@@ -202,8 +182,7 @@ void R_CompileShaderAppendDefine(std::string& str, const std::string& def)
 GLuint R_CompileShaderFileEx(
 	const char* vsfile, const char* fsfile,
 	const char* vsdefine, const char* fsdefine,
-	ExtraShaderStageCallback callback)
-{
+	ExtraShaderStageCallback callback){
 	auto vscode = (char*)gEngfuncs.COM_LoadFile((char*)vsfile, 5, 0);
 	std::string vs;
 	if (!vscode)
@@ -212,8 +191,7 @@ GLuint R_CompileShaderFileEx(
 		vs = std::string(vscode);
 
 	R_CompileShaderAppendDefine(vs, "#define IS_VERTEX_SHADER\n");
-	if (vsdefine)
-	{
+	if (vsdefine){
 		R_CompileShaderAppendDefine(vs, vsdefine);
 	}
 
@@ -227,108 +205,88 @@ GLuint R_CompileShaderFileEx(
 		fs = std::string(fscode);
 
 	R_CompileShaderAppendDefine(fs, "#define IS_FRAGMENT_SHADER\n");
-	if (fsdefine)
-	{
+	if (fsdefine){
 		R_CompileShaderAppendDefine(fs, fsdefine);
 	}
 
 	gEngfuncs.COM_FreeFile(fscode);
 
-	if (vs.find("#include") != std::string::npos)
-	{
+	if (vs.find("#include") != std::string::npos){
 		R_CompileShaderAppendInclude(vs, vsfile);
 	}
 
-	if (fs.find("#include") != std::string::npos)
-	{
+	if (fs.find("#include") != std::string::npos){
 		R_CompileShaderAppendInclude(fs, fsfile);
 	}
 
 	return R_CompileShader(vs.c_str(), fs.c_str(), vsfile, fsfile, callback);
 }
 
-GLuint R_CompileShaderFile(const char* vsfile, const char* fsfile, ExtraShaderStageCallback callback)
-{
+GLuint R_CompileShaderFile(const char* vsfile, const char* fsfile, ExtraShaderStageCallback callback){
 	return R_CompileShaderFileEx(vsfile, fsfile, NULL, NULL, callback);
 }
 
-void GL_UseProgram(GLuint program)
-{
+void GL_UseProgram(GLuint program){
 	static int currentprogram = -1;
 
-	if (currentprogram != program)
-	{
+	if (currentprogram != program){
 		currentprogram = program;
 		glUseProgramObjectARB(program);
 	}
 }
 
-GLuint GL_GetUniformLoc(GLuint program, const char* name)
-{
+GLuint GL_GetUniformLoc(GLuint program, const char* name){
 	return glGetUniformLocationARB(program, name);
 }
 
-GLuint GL_GetAttribLoc(GLuint program, const char* name)
-{
+GLuint GL_GetAttribLoc(GLuint program, const char* name){
 	return glGetAttribLocationARB(program, name);
 }
 
-void GL_Uniform1i(GLuint loc, int v0)
-{
+void GL_Uniform1i(GLuint loc, int v0){
 	glUniform1i(loc, v0);
 }
 
-void GL_Uniform2i(GLuint loc, int v0, int v1)
-{
+void GL_Uniform2i(GLuint loc, int v0, int v1){
 	glUniform2iARB(loc, v0, v1);
 }
 
-void GL_Uniform3i(GLuint loc, int v0, int v1, int v2)
-{
+void GL_Uniform3i(GLuint loc, int v0, int v1, int v2){
 	glUniform3iARB(loc, v0, v1, v2);
 }
 
-void GL_Uniform4i(GLuint loc, int v0, int v1, int v2, int v3)
-{
+void GL_Uniform4i(GLuint loc, int v0, int v1, int v2, int v3){
 	glUniform4iARB(loc, v0, v1, v2, v3);
 }
 
-void GL_Uniform1f(GLuint loc, float v0)
-{
+void GL_Uniform1f(GLuint loc, float v0){
 	glUniform1f(loc, v0);
 }
 
-void GL_Uniform2f(GLuint loc, float v0, float v1)
-{
+void GL_Uniform2f(GLuint loc, float v0, float v1){
 	glUniform2fARB(loc, v0, v1);
 }
 
-void GL_Uniform3f(GLuint loc, float v0, float v1, float v2)
-{
+void GL_Uniform3f(GLuint loc, float v0, float v1, float v2){
 	glUniform3f(loc, v0, v1, v2);
 }
 
-void GL_Uniform4f(GLuint loc, float v0, int v1, int v2, int v3)
-{
+void GL_Uniform4f(GLuint loc, float v0, int v1, int v2, int v3){
 	glUniform4f(loc, v0, v1, v2, v3);
 }
 
-void GL_VertexAttrib3f(GLuint index, float x, float y, float z)
-{
+void GL_VertexAttrib3f(GLuint index, float x, float y, float z){
 	glVertexAttrib3f(index, x, y, z);
 }
 
-void GL_VertexAttrib3fv(GLuint index, float* v)
-{
+void GL_VertexAttrib3fv(GLuint index, float* v){
 	glVertexAttrib3fv(index, v);
 }
 
-void GL_MultiTexCoord2f(GLenum target, float s, float t)
-{
+void GL_MultiTexCoord2f(GLenum target, float s, float t){
 	glMultiTexCoord2fARB(target, s, t);
 }
 
-void GL_MultiTexCoord3f(GLenum target, float s, float t, float r)
-{
+void GL_MultiTexCoord3f(GLenum target, float s, float t, float r){
 	glMultiTexCoord3fARB(target, s, t, r);
 }

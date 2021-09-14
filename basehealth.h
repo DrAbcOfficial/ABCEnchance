@@ -1,6 +1,5 @@
 #pragma once
-class CHudBattery : public CHudBase
-{
+class CHudBattery : public CHudBase{
 public:
 	int Init(void);
 	int VidInit(void);
@@ -19,8 +18,7 @@ public:
 
 #define FADE_TIME 100
 
-class CHudHealth : public CHudBase
-{
+class CHudHealth : public CHudBase{
 public:
 	virtual int Init(void);
 	virtual int VidInit(void);

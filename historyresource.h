@@ -7,8 +7,7 @@ enum {
 	HISTSLOT_ITEM,
 };
 
-class HistoryResource
-{
+class HistoryResource{
 private:
 	struct HIST_ITEM {
 		int type;
@@ -21,8 +20,7 @@ private:
 
 public:
 
-	void Init(void)
-	{
+	void Init(void){
 		AmmoIconColor = pScheme->GetColor("AmmoHUD.AmmoPickUpIconColor", gDefaultColor);
 		AmmoTextColor = pScheme->GetColor("AmmoHUD.AmmoPickUpTextColor", gDefaultColor);
 		iAmmoDisplayCount = (int)atof(pScheme->GetResourceString("AmmoHUD.AmmoPickUpDisplayCount"));
@@ -42,8 +40,7 @@ public:
 		Reset();
 	}
 
-	void Reset(void)
-	{
+	void Reset(void){
 		memset(rgAmmoHistory, 0, sizeof rgAmmoHistory);
 	}
 

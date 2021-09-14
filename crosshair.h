@@ -1,6 +1,5 @@
 #pragma once
-class CHudCustomCrosshair
-{
+class CHudCustomCrosshair{
 public:
 	int Init(void);
 	int Draw(float flTime);

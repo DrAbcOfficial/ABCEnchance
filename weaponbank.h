@@ -12,8 +12,7 @@ typedef struct gridmenuitem_s{
 	int iPos = -1;
 }gridmenuitem_t;
 
-class WeaponsResource
-{
+class WeaponsResource{
 private:
 	WEAPON rgWeapons[MAX_WEAPONS];
 	int gridSlotPosDataMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];

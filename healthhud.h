@@ -45,15 +45,13 @@ enum DMG_TYPE {
 	DMG_SHOWNHUD = 7815448 // Shown on HUD.These are the damage types that have clien hud art.
 };
 
-typedef struct
-{
+typedef struct{
 	float fExpire;
 	float fBaseline;
 	int	x, y;
 } DAMAGE_IMAGE;
 
-class CHudArmorHealth
-{
+class CHudArmorHealth{
 public:
 	void Init(void);
 	int Draw(float flTime);

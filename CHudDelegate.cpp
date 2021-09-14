@@ -22,13 +22,11 @@
 CHudDelegate* gHudDelegate = NULL;
 cl_hookedHud gHookHud;
 
-void CHudDelegate::GL_Init(void)
-{
+void CHudDelegate::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
 }
-void CHudDelegate::HUD_Init(void)
-{
+void CHudDelegate::HUD_Init(void){
 	m_HudArmorHealth.Init();
 	m_HudCustomAmmo.Init();
 	m_HudRadar.Init();
@@ -37,23 +35,19 @@ void CHudDelegate::HUD_Init(void)
 	m_HudPlayerTitle.Init();
 	m_HudVote.Init();
 }
-void CHudDelegate::HUD_VidInit(void)
-{
+void CHudDelegate::HUD_VidInit(void){
 	if (ScreenWidth < 640)
 		m_iRes = 320;
 	else
 		m_iRes = 640;
-	if (!m_pSpriteList)
-	{
+	if (!m_pSpriteList){
 		m_pSpriteList = SPR_GetList("sprites/hud.txt", &m_iSpriteCountAllRes);
 
-		if (m_pSpriteList)
-		{
+		if (m_pSpriteList){
 			m_iSpriteCount = 0;
 			client_sprite_t* p = m_pSpriteList;
 			int j;
-			for (j = 0; j < m_iSpriteCountAllRes; j++)
-			{
+			for (j = 0; j < m_iSpriteCountAllRes; j++){
 				if (p->iRes == m_iRes)
 					m_iSpriteCount++;
 				p++;
@@ -64,10 +58,8 @@ void CHudDelegate::HUD_VidInit(void)
 
 			p = m_pSpriteList;
 			int index = 0;
-			for (j = 0; j < m_iSpriteCountAllRes; j++)
-			{
-				if (p->iRes == m_iRes)
-				{
+			for (j = 0; j < m_iSpriteCountAllRes; j++){
+				if (p->iRes == m_iRes){
 					char sz[256];
 					sprintf(sz, "sprites/%s.spr", p->szSprite);
 					m_rghSprites[index] = SPR_Load(sz);
@@ -80,14 +72,11 @@ void CHudDelegate::HUD_VidInit(void)
 			}
 		}
 	}
-	else
-	{
+	else{
 		client_sprite_t* p = m_pSpriteList;
 		int index = 0;
-		for (int j = 0; j < m_iSpriteCountAllRes; j++)
-		{
-			if (p->iRes == m_iRes)
-			{
+		for (int j = 0; j < m_iSpriteCountAllRes; j++){
+			if (p->iRes == m_iRes){
 				char sz[256];
 				sprintf(sz, "sprites/%s.spr", p->szSprite);
 				m_rghSprites[index] = SPR_Load(sz);
@@ -100,8 +89,7 @@ void CHudDelegate::HUD_VidInit(void)
 	m_HudCustomAmmo.VidInit();
 	m_HudRadar.VidInit();
 }
-void CHudDelegate::HUD_Draw(float flTime)
-{
+void CHudDelegate::HUD_Draw(float flTime){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 	m_HudPlayerTitle.Draw(flTime);
@@ -112,8 +100,7 @@ void CHudDelegate::HUD_Draw(float flTime)
 	m_HudCrosshair.Draw(flTime);
 	m_HudVote.Draw(flTime);
 }
-void CHudDelegate::HUD_Reset(void)
-{
+void CHudDelegate::HUD_Reset(void){
 	m_iPlayerHealth = 100;
 	m_flOverViewScale = 0;
 	m_HudArmorHealth.Reset();
@@ -123,69 +110,55 @@ void CHudDelegate::HUD_Reset(void)
 	m_HudPlayerTitle.Reset();
 	m_HudVote.Reset();
 }
-void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time)
-{
+void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time){
 }
-void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
-{
+void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	m_HudCustomAmmo.ClientMove(ppmove, server);
 }
-void CHudDelegate::HUD_Clear(void)
-{
+void CHudDelegate::HUD_Clear(void){
 	m_HudRadar.Clear();
 	m_HudCustomAmmo.Clear();
 }
-void CHudDelegate::HUD_PreRenderView(int a1)
-{
+void CHudDelegate::HUD_PreRenderView(int a1){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 	m_HudRadar.PreRenderView(a1);
 }
-void CHudDelegate::HUD_PostRenderView(int a1)
-{
+void CHudDelegate::HUD_PostRenderView(int a1){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 }
-void CHudDelegate::IN_MouseEvent(int mstate)
-{
+void CHudDelegate::IN_MouseEvent(int mstate){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 }
-int CHudDelegate::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
-{
+int CHudDelegate::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	int result = 1;
 	result &= m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
 	return result;
 }
-void CHudDelegate::IN_Accumulate(void)
-{
+void CHudDelegate::IN_Accumulate(void){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 	m_HudCustomAmmo.IN_Accumulate();
 }
-void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active)
-{
+void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active){
 	
 }
-int CHudDelegate::GetSpriteIndex(const char* SpriteName)
-{
-	for (int i = 0; i < m_iSpriteCount; i++)
-	{
+int CHudDelegate::GetSpriteIndex(const char* SpriteName){
+	for (int i = 0; i < m_iSpriteCount; i++){
 		if (strncmp(SpriteName, m_rgszSpriteNames + (i * MAX_SPRITE_NAME_LENGTH), MAX_SPRITE_NAME_LENGTH) == 0)
 			return i;
 	}
 	return -1; // invalid sprite
 }
-bool CHudDelegate::IsInSpectate()
-{
+bool CHudDelegate::IsInSpectate(){
 	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
 }
-vgui::ISurface* CHudDelegate::surface()
-{
+vgui::ISurface* CHudDelegate::surface(){
 	return g_pSurface;
 }
-CHudDelegate :: ~CHudDelegate()
-{
+CHudDelegate :: ~CHudDelegate(){
 	delete[] m_rghSprites;
 	delete[] m_rgrcRects;
 	delete[] m_rgszSpriteNames;

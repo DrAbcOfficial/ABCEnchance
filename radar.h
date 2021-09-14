@@ -1,6 +1,5 @@
 #pragma once
-class CHudRadar
-{
+class CHudRadar{
 public:
 	void GLInit();
 	int Init();

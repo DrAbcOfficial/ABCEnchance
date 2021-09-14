@@ -51,8 +51,7 @@ typedef struct cvar_s cvar_t;
 #define HUD_INTERMISSION 2
 #define	MAX_MOTD_LENGTH				1536
 
-class CHudBase
-{
+class CHudBase{
 public:
 	POSITION  m_pos;
 	int   m_type;

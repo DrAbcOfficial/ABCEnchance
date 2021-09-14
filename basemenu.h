@@ -1,6 +1,5 @@
 #pragma once
-class CHudMenu : public CHudBase
-{
+class CHudMenu : public CHudBase{
 public:
 	int Init(void);
 	void InitHUDData(void);

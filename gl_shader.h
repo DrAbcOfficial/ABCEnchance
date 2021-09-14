@@ -3,10 +3,8 @@
 
 #include <vector>
 
-typedef struct glshader_s
-{
-	struct glshader_s(GLuint prog, GLuint* objs, int used)
-	{
+typedef struct glshader_s{
+	struct glshader_s(GLuint prog, GLuint* objs, int used){
 		program = prog;
 		shader_objects.resize(used);
 		memcpy(shader_objects.data(), objs, used * sizeof(GLuint));

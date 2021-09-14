@@ -5,8 +5,7 @@
 
 #include "utility.h"
 
-void RGBToHSV(int r, int g, int b, float& h, float& s, float& v)
-{
+void RGBToHSV(int r, int g, int b, float& h, float& s, float& v){
 	float fr = r / 255.0, fg = g / 255.0, fb = b / 255.0;
 	float max = max3(fr, fg, fb);
 	float min = min3(fr, fg, fb);
@@ -27,8 +26,7 @@ void RGBToHSV(int r, int g, int b, float& h, float& s, float& v)
 	//V
 	v = max <= 0 ? 0 : max;
 }
-void HSVToRGB(float h, float s, float v, int& r, int& g, int& b)
-{
+void HSVToRGB(float h, float s, float v, int& r, int& g, int& b){
 	//0<=h<360
 	//0<=s<=1
 	//0<=v<=1

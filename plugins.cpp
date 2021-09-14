@@ -26,16 +26,14 @@ DWORD g_dwEngineRdataSize;
 
 int g_iEngineType;
 
-void IPluginsV3::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave)
-{
+void IPluginsV3::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave){
 	g_pInterface = pInterface;
 	g_pMetaHookAPI = pAPI;
 	g_pMetaSave = pSave;
 	g_hInstance = GetModuleHandle(NULL);
 }
 
-void IPluginsV3::LoadEngine(cl_enginefunc_t *pEngfuncs)
-{
+void IPluginsV3::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	g_pFileSystem = g_pInterface->FileSystem;
 	g_iEngineType = g_pMetaHookAPI->GetEngineType();
 	g_dwEngineBuildnum = g_pMetaHookAPI->GetEngineBuildnum();
@@ -55,8 +53,7 @@ void IPluginsV3::LoadEngine(cl_enginefunc_t *pEngfuncs)
 	CheckOtherPlugin();
 }
 
-void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
-{
+void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
 
 	g_dwClientBase = (PVOID)GetModuleHandleA("client.dll");
@@ -84,12 +81,10 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc)
 	MSG_Init();
 }
 
-void IPluginsV3::Shutdown(void)
-{
+void IPluginsV3::Shutdown(void){
 	HUD_Clear();
 }
 
-void IPluginsV3::ExitGame(int iResult)
-{
+void IPluginsV3::ExitGame(int iResult){
 }
 EXPOSE_SINGLE_INTERFACE(IPluginsV3, IPluginsV3, METAHOOK_PLUGIN_API_VERSION_V3);

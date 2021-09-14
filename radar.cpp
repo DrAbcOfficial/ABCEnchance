@@ -23,26 +23,22 @@
 CHudRadar m_HudRadar;
 SHADER_DEFINE(pp_radarlight);
 
-void __UserCmd_StartSizeRadar(void)
-{
+void __UserCmd_StartSizeRadar(void){
 	if (m_HudRadar.flFinishScaleTime <= 0)
 		m_HudRadar.flFinishScaleTime = gEngfuncs.GetClientTime() + gCVars.pRadarSizeTime->value;
 }
-void __UserCmd_EndSizeRadar(void)
-{
+void __UserCmd_EndSizeRadar(void){
 	if (m_HudRadar.flFinishScaleTime > 0)
 		m_HudRadar.flFinishScaleTime = 0;
 }
 
-void CHudRadar::GLInit()
-{
+void CHudRadar::GLInit(){
 	if(!g_metaplugins.renderer)
 		glGenFramebuffersEXT(1, &m_hRadarBufferFBO);
 	m_hRadarBufferTex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
 	m_hRadarBufferTexDepth = GL_GenDepthStencilTexture(gScreenInfo.iWidth, gScreenInfo.iHeight);
 }
-int CHudRadar::Init()
-{
+int CHudRadar::Init(){
 	gEngfuncs.pfnAddCommand("+scaleradar", __UserCmd_StartSizeRadar);
 	gEngfuncs.pfnAddCommand("-scaleradar", __UserCmd_EndSizeRadar);
 
@@ -64,22 +60,19 @@ int CHudRadar::Init()
 	NorthPointerSize = atof(pScheme->GetResourceString("Radar.NorthPointerSize"));
 
 	pp_radarlight.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\pp_brightpass.fsh", NULL);
-	if (pp_radarlight.program)
-	{
+	if (pp_radarlight.program){
 		SHADER_UNIFORM(pp_radarlight, tex, "tex");
 		SHADER_UNIFORM(pp_radarlight, ovc, "ovc");
 	}
 	return 1;
 }
-void CHudRadar::VidInit()
-{
+void CHudRadar::VidInit(){
 	if(!pCVarFXAA)
 		pCVarFXAA = gEngfuncs.pfnGetCvarPointer("r_fxaa");
 	if(!pCVarWater)
 		pCVarWater = gEngfuncs.pfnGetCvarPointer("r_water");
 }
-void CHudRadar::Reset()
-{
+void CHudRadar::Reset(){
 	VGUI_CREATE_NEWTGA_TEXTURE(OutLineImg, "abcenchance/tga/radar_background");
 	VGUI_CREATE_NEWTGA_TEXTURE(PlayerPointImg, "abcenchance/tga/radar_upground");
 	VGUI_CREATE_NEWTGA_TEXTURE(NorthImg, "abcenchance/tga/radar_north");
@@ -87,16 +80,14 @@ void CHudRadar::Reset()
 	flNextUpdateTrTime = 0;
 	flFinishScaleTime = 0;
 	cvar_t* pCvarDevC = gEngfuncs.pfnGetCvarPointer("dev_overview_color");
-	if (pCvarDevC && g_metaplugins.renderer)
-	{
+	if (pCvarDevC && g_metaplugins.renderer){
 		sscanf_s(pCvarDevC->string, "%d %d %d", &iOverviewR, &iOverviewG, &iOverviewB);
 		iOverviewR /= 255;
 		iOverviewG /= 255;
 		iOverviewB /= 255;
 	}
 }
-void CHudRadar::Draw(float flTime)
-{
+void CHudRadar::Draw(float flTime){
 	if (gCVars.pRadar->value <= 0)
 		return;
 	UpdateZmax(flTime);
@@ -168,15 +159,13 @@ void CHudRadar::Draw(float flTime)
 	w = NorthPointerSize / 2;
 	gHudDelegate->surface()->DrawTexturedRect(stx - w, sty - w, stx + w, sty + w);
 }
-void CHudRadar::PreRenderView(int a1)
-{
+void CHudRadar::PreRenderView(int a1){
 	if (gCVars.pRadar->value <= 0)
 		return;
 	if(!a1)
 		DrawRadarTexture();
 }
-void CHudRadar::DrawRadarTexture()
-{
+void CHudRadar::DrawRadarTexture(){
 	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 	if (!m_oldFrameBuffer)
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
@@ -264,8 +253,7 @@ void CHudRadar::DrawRadarTexture()
 	if (!m_oldFrameBuffer)
 		glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
-void CHudRadar::UpdateZmax(float flTime)
-{
+void CHudRadar::UpdateZmax(float flTime){
 	if (flTime < flNextUpdateTrTime)
 		return;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
@@ -286,8 +274,7 @@ void CHudRadar::UpdateZmax(float flTime)
 	gHudDelegate->m_flOverViewZmin = m_hRadarTr.startsolid ? m_hRadarTr.endpos[2] : flOldStart;
 	flNextUpdateTrTime = flTime + abs(gCVars.pRadarUpdateInterval->value);
 }
-void CHudRadar::Clear()
-{
+void CHudRadar::Clear(){
 	if (m_hRadarBufferTex)
 		glDeleteTextures(1, &m_hRadarBufferTex);
 	if (m_hRadarBufferTexDepth)

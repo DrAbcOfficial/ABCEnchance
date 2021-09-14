@@ -2,8 +2,7 @@
 #include "parsemsg.h"
 #include "msghook.h"
 #include "plugins.h"
-typedef struct usermsg_s
-{
+typedef struct usermsg_s{
 	int index;
 	int size;
 	char name[16];
@@ -11,17 +10,14 @@ typedef struct usermsg_s
 	pfnUserMsgHook function;
 }usermsg_t;
 usermsg_t** gClientUserMsgs = NULL;
-void MSG_Init(void)
-{
+void MSG_Init(void){
 	DWORD address = (DWORD)g_pMetaSave->pEngineFuncs->pfnHookUserMsg;
 
-	if (g_iEngineType == ENGINE_SVENGINE)
-	{
+	if (g_iEngineType == ENGINE_SVENGINE){
 		if (*(BYTE*)(address + 8) == 0xE8)
 			address += 8;
 	}
-	else
-	{
+	else{
 		if (*(BYTE*)(address + 0x1A) != 0xE8)
 			address += 0x19;
 		else
@@ -38,32 +34,26 @@ void MSG_Init(void)
 
 	gClientUserMsgs = *(usermsg_t***)(address + 0x1);
 }
-usermsg_t* MSG_FindUserMsgHook(char* szMsgName)
-{
-	for (usermsg_t* msg = *gClientUserMsgs; msg; msg = msg->next)
-	{
+usermsg_t* MSG_FindUserMsgHook(char* szMsgName){
+	for (usermsg_t* msg = *gClientUserMsgs; msg; msg = msg->next){
 		if (!strcmp(msg->name, szMsgName))
 			return msg;
 	}
 
 	return NULL;
 }
-usermsg_t* MSG_FindUserMsgHookPrev(char* szMsgName)
-{
-	for (usermsg_t* msg = (*gClientUserMsgs)->next; msg->next; msg = msg->next)
-	{
+usermsg_t* MSG_FindUserMsgHookPrev(char* szMsgName){
+	for (usermsg_t* msg = (*gClientUserMsgs)->next; msg->next; msg = msg->next){
 		if (!strcmp(msg->next->name, szMsgName))
 			return msg;
 	}
 
 	return NULL;
 }
-pfnUserMsgHook MSG_HookUserMsg(char* szMsgName, pfnUserMsgHook pfn)
-{
+pfnUserMsgHook MSG_HookUserMsg(char* szMsgName, pfnUserMsgHook pfn){
 	usermsg_t* msg = MSG_FindUserMsgHook(szMsgName);
 
-	if (msg)
-	{
+	if (msg){
 		pfnUserMsgHook result = msg->function;
 		msg->function = pfn;
 		return result;
@@ -72,16 +62,13 @@ pfnUserMsgHook MSG_HookUserMsg(char* szMsgName, pfnUserMsgHook pfn)
 	gEngfuncs.pfnHookUserMsg(szMsgName, pfn);
 	return pfn;
 }
-pfnUserMsgHook MSG_UnHookUserMsg(char* szMsgName)
-{
+pfnUserMsgHook MSG_UnHookUserMsg(char* szMsgName){
 	usermsg_t* msg = MSG_FindUserMsgHook(szMsgName);
 
-	if (msg)
-	{
+	if (msg){
 		usermsg_t* prev = MSG_FindUserMsgHookPrev(szMsgName);
 
-		if (prev)
-		{
+		if (prev){
 			prev->next = msg->next;
 			return msg->function;
 		}
