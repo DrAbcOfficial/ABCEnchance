@@ -605,7 +605,7 @@ void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int i
 		SelectCyclerEmptyColor.GetColor(r, g, b, dummy);
 	if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
 		RGBToHSV(r, g, b, h, s, v);
-		h += 36 * index;
+		h += 36 * index + 120;
 		HSVToRGB(h, s, v, r, g, b);
 	}
 	ColorCalcuAlpha(r, g, b, a);
@@ -614,7 +614,7 @@ void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int i
 	SelectCyclerTextColor.GetColor(r, g, b, dummy);
 	if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
 		RGBToHSV(r, g, b, h, s, v);
-		h += 36 * index;
+		h += 36 * index + 120;
 		HSVToRGB(h, s, v, r, g, b);
 	}
 	ColorCalcuAlpha(r, g, b, a);
@@ -757,7 +757,14 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		CenterPos2OpenGLPos(vecD, halfWidth, halfHeight);
 		//CABD
 		SelectCyclerColor.GetColor(r, g, b, dummy);
-		DrawSPRIconPos(iSelectCyclerSpr, vecC, vecA, vecB, vecD, r, g, b, a * 0.3);
+		if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
+			float h, s, v;
+			RGBToHSV(r, g, b, h, s, v);
+			h += 36 * i;
+			s = 1;
+			HSVToRGB(h, s, v, r, g, b);
+		}
+		DrawSPRIconPos(iSelectCyclerSpr, vecC, vecA, vecB, vecD, r, g, b, a * 0.5);
 		if (gWR.gridDrawMenu[i].iId <= 0 || i == gWR.iNowSlot)
 			continue;
 		wp = gWR.GetWeapon(gWR.gridDrawMenu[i].iId);
