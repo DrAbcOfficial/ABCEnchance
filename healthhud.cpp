@@ -15,8 +15,7 @@
 
 #define DAMAGE_NAME "sprites/%d_dmg.spr"
 #define DAGER_HEALTH 45
-int giDmgFlags[NUM_DMG_TYPES] =
-{
+int giDmgFlags[NUM_DMG_TYPES] ={
 	DMG_POISON,
 	DMG_ACID,
 	DMG_FREEZE | DMG_SLOWFREEZE,
@@ -31,19 +30,16 @@ CHudArmorHealth m_HudArmorHealth;
 pfnUserMsgHook m_pfnHealth;
 pfnUserMsgHook m_pfnDamage;
 pfnUserMsgHook m_pfnBattery;
-int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_LONG();
-	if (x != m_HudArmorHealth.m_iHealth)
-	{
+	if (x != m_HudArmorHealth.m_iHealth){
 		m_HudArmorHealth.m_iHealth = x;
 		gHudDelegate->m_iPlayerHealth = x;
 	}
 	return m_pfnHealth(pszName, iSize, pbuf);
 }
-int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int armor = READ_BYTE();
 	int damageTaken = READ_BYTE();
@@ -59,8 +55,7 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 	}
 	return m_pfnDamage(pszName, iSize, pbuf);
 }
-int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_SHORT();
 	if (x != m_HudArmorHealth.m_iBat)
@@ -68,8 +63,7 @@ int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
 	return m_pfnBattery(pszName, iSize, pbuf);
 }
 
-void CHudArmorHealth::Init(void)
-{
+void CHudArmorHealth::Init(void){
 	m_pfnHealth = HOOK_MESSAGE(Health);
 	m_pfnDamage = HOOK_MESSAGE(Damage);
 	m_pfnBattery = HOOK_MESSAGE(Battery);
@@ -109,14 +103,12 @@ void CHudArmorHealth::Init(void)
 
 	Reset();
 }
-int CHudArmorHealth::VidInit(void)
-{
+int CHudArmorHealth::VidInit(void){
 	m_hSprite = 0;
 	m_HUD_dmg_bio = gHudDelegate->GetSpriteIndex("dmg_bio") + 1;
 	return 1;
 }
-void CHudArmorHealth::Reset(void)
-{
+void CHudArmorHealth::Reset(void){
 	iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
 	iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
 	iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
@@ -129,13 +121,11 @@ void CHudArmorHealth::Reset(void)
 	m_iBat = 0;
 	flPainIndicatorKeepTime = 0.0f;
 	flPainColorKeepTime = 0.0f;
-	for (int i = 0; i < NUM_DMG_TYPES; i++)
-	{
+	for (int i = 0; i < NUM_DMG_TYPES; i++){
 		m_dmg[i].fExpire = 0;
 	}
 }
-void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDiffer)
-{
+void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDiffer){
 	vec3_t hsv,thsv;
 	int tr, tg, tb, ta;
 	c->GetColor(tr, tg, tb, ta);
@@ -146,8 +136,7 @@ void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeD
 	}
 	HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
 }
-int CHudArmorHealth::Draw(float flTime)
-{
+int CHudArmorHealth::Draw(float flTime){
 	if (gHudDelegate->IsInSpectate())
 		return 1;
 	if (flTime < flPainIndicatorKeepTime)
@@ -241,8 +230,7 @@ int CHudArmorHealth::Draw(float flTime)
 	iStartX += iBarLength + iElementGap * 2;
 	return DrawDamage(flTime);
 }
-void CHudArmorHealth::CalcDamageDirection()
-{
+void CHudArmorHealth::CalcDamageDirection(){
 	vec3_t vecFinal;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	vecFinal[0] = vecDamageFrom[0] - local->curstate.origin[0];
@@ -294,8 +282,7 @@ void CHudArmorHealth::CalcDamageDirection()
 	Vector2Copy(vecC, vecPainIndicatorC);
 	Vector2Copy(vecD, vecPainIndicatorD);
 }
-int CHudArmorHealth::DrawPain(float flTime)
-{
+int CHudArmorHealth::DrawPain(float flTime){
 	int r, g, b, a;
 	if(m_takeDamage <= 0 && m_takeArmor <= 0)
 		PainIndicatorColorA.GetColor(r, g, b, a);
@@ -310,8 +297,7 @@ int CHudArmorHealth::DrawPain(float flTime)
 		(flPainIndicatorKeepTime - flTime) / PainIndicatorTime * a);
 	return 1;
 }
-int CHudArmorHealth::DrawDamage(float flTime)
-{
+int CHudArmorHealth::DrawDamage(float flTime){
 	int r, g, b, a;
 	DAMAGE_IMAGE* pdmg;
 	if (!m_bitsDamage)
@@ -319,31 +305,25 @@ int CHudArmorHealth::DrawDamage(float flTime)
 	BitDamageColor.GetColor(r, g, b, a);
 	a = (int)(fabs(sin(flTime * 2)) * 256.0);
 	int i;
-	for (i = 0; i < NUM_DMG_TYPES; i++)
-	{
-		if (m_bitsDamage & giDmgFlags[i])
-		{
+	for (i = 0; i < NUM_DMG_TYPES; i++){
+		if (m_bitsDamage & giDmgFlags[i]){
 			pdmg = &m_dmg[i];
 			SPR_Set(gHudDelegate->GetSprite(m_HUD_dmg_bio + i), r, g, b);
 			SPR_DrawAdditive(0, pdmg->x, pdmg->y, &gHudDelegate->GetSpriteRect(m_HUD_dmg_bio + i));
 		}
 	}
-	for (i = 0; i < NUM_DMG_TYPES; i++)
-	{
+	for (i = 0; i < NUM_DMG_TYPES; i++){
 		DAMAGE_IMAGE* pdmg = &m_dmg[i];
 
-		if (m_bitsDamage & giDmgFlags[i])
-		{
+		if (m_bitsDamage & giDmgFlags[i]){
 			pdmg->fExpire = min(flTime + DMG_IMAGE_LIFE, pdmg->fExpire);
 
-			if (pdmg->fExpire <= flTime	&& a < 40)
-			{
+			if (pdmg->fExpire <= flTime	&& a < 40){
 				pdmg->fExpire = 0;
 
 				int y = pdmg->y;
 				pdmg->x = pdmg->y = 0;
-				for (int j = 0; j < NUM_DMG_TYPES; j++)
-				{
+				for (int j = 0; j < NUM_DMG_TYPES; j++){
 					pdmg = &m_dmg[j];
 					if ((pdmg->y) && (pdmg->y < y))
 						pdmg->y += DamageIconSize;
@@ -354,26 +334,21 @@ int CHudArmorHealth::DrawDamage(float flTime)
 	}
 	return 1;
 }
-void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage)
-{
+void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage){
 	DAMAGE_IMAGE* pdmg;
 	long bitsOn = ~m_bitsDamage & bitsDamage;
-	for (int i = 0; i < NUM_DMG_TYPES; i++)
-	{
+	for (int i = 0; i < NUM_DMG_TYPES; i++){
 		pdmg = &m_dmg[i];
-		if (m_bitsDamage & giDmgFlags[i])
-		{
+		if (m_bitsDamage & giDmgFlags[i]){
 			pdmg->fExpire = flTime + DMG_IMAGE_LIFE; // extend the duration
 			if (!pdmg->fBaseline)
 				pdmg->fBaseline = flTime;
 		}
-		if (bitsOn & giDmgFlags[i])
-		{
+		if (bitsOn & giDmgFlags[i]){
 			pdmg->x = DamageIconX;
 			pdmg->y = ScreenHeight - DamageIconY - DamageIconSize * 2;
 			pdmg->fExpire = flTime + DMG_IMAGE_LIFE;
-			for (int j = 0; j < NUM_DMG_TYPES; j++)
-			{
+			for (int j = 0; j < NUM_DMG_TYPES; j++){
 				if (j == i)
 					continue;
 				pdmg = &m_dmg[j];

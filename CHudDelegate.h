@@ -3,8 +3,7 @@
 #include "baseammo.h"
 #include "basemenu.h"
 
-class CHudDelegate
-{
+class CHudDelegate{
 public:
 	void GL_Init(void);
 	void HUD_Init(void);

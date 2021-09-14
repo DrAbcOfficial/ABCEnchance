@@ -1,24 +1,21 @@
 #ifndef _COLOR_H
 #define _COLOR_H
 
-class Color
-{
+class Color{
 public:
 	Color(void) { SetColor(0, 0, 0, 0); }
 	Color(int r, int g, int b) { SetColor(r, g, b, 0); }
 	Color(int r, int g, int b, int a) { SetColor(r, g, b, a); }
 
 public:
-	void SetColor(int r, int g, int b, int a)
-	{
+	void SetColor(int r, int g, int b, int a){
 		_color[0] = (unsigned char)r;
 		_color[1] = (unsigned char)g;
 		_color[2] = (unsigned char)b;
 		_color[3] = (unsigned char)a;
 	}
 
-	void GetColor(int &r, int &g, int &b, int &a) const
-	{
+	void GetColor(int &r, int &g, int &b, int &a) const{
 		r = _color[0];
 		g = _color[1];
 		b = _color[2];
@@ -32,18 +29,15 @@ public:
 	int a(void) { return _color[3]; }
 
 public:
-	unsigned char &operator[](int index)
-	{
+	unsigned char &operator[](int index){
 		return _color[index];
 	}
 
-	bool operator == (Color &rhs) const
-	{
+	bool operator == (Color &rhs) const{
 		return (_color[0] == rhs._color[0] && _color[1] == rhs._color[1] && _color[2] == rhs._color[2] && _color[3] == rhs._color[3]);
 	}
 
-	bool operator != (Color &rhs) const
-	{
+	bool operator != (Color &rhs) const{
 		return !(operator == (rhs));
 	}
 

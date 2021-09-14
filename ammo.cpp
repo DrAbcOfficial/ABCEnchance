@@ -40,38 +40,33 @@ pfnUserMsgHook m_pfnAmmoPickup;
 pfnUserMsgHook m_pfnWeapPickup;
 pfnUserMsgHook m_pfnItemPickup;
 pfnUserMsgHook m_pfnAmmoX;
-int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
 	gWR.SetAmmo(iIndex, abs(iCount));
 	return m_pfnAmmoX(pszName, iSize, pbuf);
 }
-int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
 	gHR.AddToHistory(HISTSLOT_AMMO, iIndex, abs(iCount));
 	return m_pfnAmmoPickup(pszName, iSize, pbuf);
 }
-int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_SHORT();
 	gHR.AddToHistory(HISTSLOT_WEAP, iIndex);
 	return m_pfnWeapPickup(pszName, iSize, pbuf);
 }
-int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	const char* szName = READ_STRING();
 	gHR.AddToHistory(HISTSLOT_ITEM, szName);
 	return m_pfnItemPickup(pszName, iSize, pbuf);
 }
-int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 
 	WEAPON Weapon;
@@ -104,8 +99,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	* * 在找到解决方案前暂时停止修复选枪冲突
 	int posFlag = Weapon.iSlotPos;
 	int tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, posFlag);
-	while (tw > 0)
-	{
+	while (tw > 0){
 		posFlag++;
 		//草你真的应该去找服主排查下冲突
 		if (Weapon.iSlotPos >= MAX_WEAPON_POSITIONS - 1) {
@@ -120,8 +114,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
 	gWR.AddWeapon(&Weapon);
 	return m_pfnWeaponList(pszName, iSize, pbuf);
 }
-int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int id = READ_SHORT();
 	char name[128];
@@ -132,16 +125,13 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf)
 	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
 }
-int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iState = READ_BYTE();
-	if (iState > 0)
-	{
+	if (iState > 0){
 		int iId = READ_SHORT();
 		//sc反编汇后如此
-		if (iId == -1)
-		{
+		if (iId == -1){
 			gWR.DropAllWeapons();
 			return m_pfnCurWeapon(pszName, iSize, pbuf);
 		}
@@ -158,13 +148,11 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 		m_HudCustomAmmo.m_pWeapon = pWeapon;
 		m_HudCustomAmmo.m_bIsOnTarget = iState > 1;
 	}
-	else
-	{
+	else{
 		int iFlag1 = READ_BYTE();
 		int iFlag2 = READ_BYTE();
 		int iAll = iFlag1 + iFlag2;
-		switch (iAll)
-		{
+		switch (iAll){
 		case 0X1FE:{
 			if(m_HudCustomAmmo.m_bAcceptDeadMessage)
 				gWR.DropAllWeapons();
@@ -192,76 +180,61 @@ void(*UserCmd_SlotClose)(void);
 void(*UserCmd_NextWeapon)(void);
 void(*UserCmd_PrevWeapon)(void);
 void(*UserCmd_Attack1)(void);
-void __UserCmd_Slot1(void)
-{
+void __UserCmd_Slot1(void){
 	m_HudCustomAmmo.SlotInput(0,1);
 	return UserCmd_Slot1();
 }
-void __UserCmd_Slot2(void)
-{
+void __UserCmd_Slot2(void){
 	m_HudCustomAmmo.SlotInput(1,1);
 	return UserCmd_Slot2();
 }
-void __UserCmd_Slot3(void)
-{
+void __UserCmd_Slot3(void){
 	m_HudCustomAmmo.SlotInput(2,1);
 	return UserCmd_Slot3();
 }
-void __UserCmd_Slot4(void)
-{
+void __UserCmd_Slot4(void){
 	m_HudCustomAmmo.SlotInput(3,1);
 	return UserCmd_Slot4();
 }
-void __UserCmd_Slot5(void)
-{
+void __UserCmd_Slot5(void){
 	m_HudCustomAmmo.SlotInput(4,1);
 	return UserCmd_Slot5();
 }
-void __UserCmd_Slot6(void)
-{
+void __UserCmd_Slot6(void){
 	m_HudCustomAmmo.SlotInput(5,1);
 	return UserCmd_Slot6();
 }
-void __UserCmd_Slot7(void)
-{
+void __UserCmd_Slot7(void){
 	m_HudCustomAmmo.SlotInput(6,1);
 	return UserCmd_Slot7();
 }
-void __UserCmd_Slot8(void)
-{
+void __UserCmd_Slot8(void){
 	m_HudCustomAmmo.SlotInput(7,1);
 	return UserCmd_Slot8();
 }
-void __UserCmd_Slot9(void)
-{
+void __UserCmd_Slot9(void){
 	m_HudCustomAmmo.SlotInput(8,1);
 	return UserCmd_Slot9();
 }
-void __UserCmd_Slot10(void)
-{
+void __UserCmd_Slot10(void){
 	m_HudCustomAmmo.SlotInput(9,1);
 	return UserCmd_Slot10();
 }
-void __UserCmd_Close(void)
-{
+void __UserCmd_Close(void){
 
 	return UserCmd_SlotClose();
 }
-void __UserCmd_NextWeapon(void)
-{
+void __UserCmd_NextWeapon(void){
 	
 	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, 1);
 	return UserCmd_NextWeapon();
 }
-void __UserCmd_PrevWeapon(void)
-{
+void __UserCmd_PrevWeapon(void){
 	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1);
 	return UserCmd_PrevWeapon();
 }
-void __UserCmd_Attack1(void)
-{
-	if (m_HudCustomAmmo.m_fFade > gEngfuncs.GetClientTime())
-	{
+void __UserCmd_Attack1(void){
+	if (m_HudCustomAmmo.m_fFade > gEngfuncs.GetClientTime()){
 		if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 			return UserCmd_Attack1();
 		m_HudCustomAmmo.ChosePlayerWeapon();
@@ -273,8 +246,7 @@ void __UserCmd_Attack1(void)
 	}
 	return UserCmd_Attack1();
 }
-void __UserCmd_OpenAnnularMenu(void)
-{
+void __UserCmd_OpenAnnularMenu(void){
 	if (!m_HudCustomAmmo.m_bOpeningAnnularMenu && !m_HudCustomAmmo.m_bSelectMenuDisplay) {
 		if (m_HudCustomAmmo.m_fFade <= gEngfuncs.GetClientTime())
 			gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
@@ -282,8 +254,7 @@ void __UserCmd_OpenAnnularMenu(void)
 		gHudDelegate->m_iVisibleMouse = true;
 	}
 }
-void __UserCmd_CloseAnnularMenu(void)
-{
+void __UserCmd_CloseAnnularMenu(void){
 	if (m_HudCustomAmmo.m_bOpeningAnnularMenu && m_HudCustomAmmo.m_bSelectMenuDisplay) {
 		m_HudCustomAmmo.m_bOpeningAnnularMenu = false;
 		m_HudCustomAmmo.m_fFade = 0;
@@ -291,8 +262,7 @@ void __UserCmd_CloseAnnularMenu(void)
 		m_HudCustomAmmo.m_bSetedCursor = false;
 	}
 }
-void CustomSlotSetCallBack(cvar_t* vars)
-{
+void CustomSlotSetCallBack(cvar_t* vars){
 	if (!vars->string || vars->string[0] == 0)
 		return;
 	int slot;
@@ -301,15 +271,13 @@ void CustomSlotSetCallBack(cvar_t* vars)
 	gWR.SetUserSlot(slot, gWR.GetWeaponId(vars->string));
 }
 
-void CHudCustomAmmo::GLInit()
-{
+void CHudCustomAmmo::GLInit(){
 	glGenFramebuffersEXT(1, &m_hGaussianBufferVFBO);
 	m_hGaussianBufferVTex = GL_GenTextureRGB8(gScreenInfo.iWidth, gScreenInfo.iHeight);
 	glGenFramebuffersEXT(1, &m_hGaussianBufferHFBO);
 	m_hGaussianBufferHTex = GL_GenTextureRGB8(gScreenInfo.iWidth, gScreenInfo.iHeight);
 }
-int CHudCustomAmmo::Init(void)
-{
+int CHudCustomAmmo::Init(void){
 	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
 	m_pfnWeaponList = HOOK_MESSAGE(WeaponList);
 	m_pfnCustWeapon = HOOK_MESSAGE(CustWeapon);
@@ -394,8 +362,7 @@ int CHudCustomAmmo::Init(void)
 	gHR.Init();
 	return 1;
 };
-void CHudCustomAmmo::Reset(void)
-{
+void CHudCustomAmmo::Reset(void){
 	m_fFade = 0;
 	m_fAnimateTime = 0;
 	m_fNextSyncTime = 0;
@@ -411,15 +378,13 @@ void CHudCustomAmmo::Reset(void)
 	gWR.Reset();
 	gHR.Reset();
 }
-int CHudCustomAmmo::VidInit(void)
-{
+int CHudCustomAmmo::VidInit(void){
 	m_HUD_bucket0 = gHudDelegate->GetSpriteIndex("bucket1");
 	gHR.iHistoryGap = max(gHR.iHistoryGap, gHudDelegate->GetSpriteRect(m_HUD_bucket0).bottom - gHudDelegate->GetSpriteRect(m_HUD_bucket0).top);
 	gWR.LoadAllWeaponSprites();
 	return 1;
 }
-void CHudCustomAmmo::DrawScreenQuad()
-{
+void CHudCustomAmmo::DrawScreenQuad(){
 	glColor4ub(255, 255, 255, 255);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
@@ -432,15 +397,12 @@ void CHudCustomAmmo::DrawScreenQuad()
 	glVertex2f(0, gScreenInfo.iHeight);
 	glEnd();
 }
-void CHudCustomAmmo::SyncWeapon()
-{
+void CHudCustomAmmo::SyncWeapon(){
 	WEAPON* wpi;
 	WEAPON* wp;
 	baseweapon_t* bwp;
-	for (int i = 0; i < MAX_WEAPON_OLDSLOTS; i++)
-	{
-		for (int j = 0; j < MAX_WEAPON_OLDPOSITIONS; j++)
-		{
+	for (int i = 0; i < MAX_WEAPON_OLDSLOTS; i++){
+		for (int j = 0; j < MAX_WEAPON_OLDPOSITIONS; j++){
 			bwp = (*g_rgBaseSlots)[i][j];
 			wpi = gWR.GetWeaponSlot(i, j);
 			if (!bwp) {
@@ -459,8 +421,7 @@ void CHudCustomAmmo::SyncWeapon()
 		}
 	}
 }
-int CHudCustomAmmo::Draw(float flTime)
-{
+int CHudCustomAmmo::Draw(float flTime){
 	if (gHudDelegate->IsInSpectate())
 		return 1;
 	//IDK Why, this var is totally useless for sven coop
@@ -470,8 +431,7 @@ int CHudCustomAmmo::Draw(float flTime)
 	if (gClientData->health <= 0)
 		return 1;
 	//0.5s 进行一次武器同步
-	if (flTime > m_fNextSyncTime)
-	{
+	if (flTime > m_fNextSyncTime){
 		SyncWeapon();
 		m_fNextSyncTime = flTime + 0.5;
 	}
@@ -496,8 +456,7 @@ int CHudCustomAmmo::Draw(float flTime)
 	int iTextHeight;
 	int iTextWidth;
 	wchar_t buf[16];
-	if (pw->iAmmoType > 0)
-	{
+	if (pw->iAmmoType > 0){
 		gHudDelegate->surface()->DrawSetTexture(-1);
 		gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 		gHudDelegate->surface()->DrawSetTexture(iBackGroundTga);
@@ -505,8 +464,7 @@ int CHudCustomAmmo::Draw(float flTime)
  		nowX = flCenterX;
 		nowY = flCenterY;
 
-		if (pw->iClip >= 0)
-		{
+		if (pw->iClip >= 0){
 			Ammo1TextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
@@ -521,8 +479,7 @@ int CHudCustomAmmo::Draw(float flTime)
 			nowY = flCenterY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
-		else
-		{
+		else{
 			Ammo1BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
@@ -538,11 +495,9 @@ int CHudCustomAmmo::Draw(float flTime)
 		gEngfuncs.pfnSPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo);
 	}
 
-	if (pw->iAmmo2Type > 0)
-	{
+	if (pw->iAmmo2Type > 0){
 		nowX = flCenterX + iElementGap * 2;
-		if (pw->iClip2 >= 0)
-		{
+		if (pw->iClip2 >= 0){
 			Ammo2BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d/", pw->iClip2);
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
@@ -557,8 +512,7 @@ int CHudCustomAmmo::Draw(float flTime)
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
 			nowX += iTextWidth;
 		}
-		else
-		{
+		else{
 			Ammo2BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
@@ -574,8 +528,7 @@ int CHudCustomAmmo::Draw(float flTime)
 	}
 	return 1;
 }
-void CHudCustomAmmo::ChosePlayerWeapon(void)
-{
+void CHudCustomAmmo::ChosePlayerWeapon(void){
 	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1) {
 		WEAPON* wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
 		if (!(wp->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(wp))
@@ -585,14 +538,12 @@ void CHudCustomAmmo::ChosePlayerWeapon(void)
 		gWR.iNowSlot = -1;
 	}
 }
-void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance)
-{
+void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
 	if (gHookHud.m_Menu->m_fMenuDisplayed)
 		return;
 	gWR.SelectSlot(iSlot, fAdvance);
 }
-void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index)
-{
+void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index){
 	wchar_t buf[64];
 	int iTextWidth;
 	int r, g, b, dummy;
@@ -635,12 +586,9 @@ void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int i
 	GetStringSize(buf, &iTextWidth, NULL, HUDFont);
 	DrawVGUI2String(buf, xpos - iTextWidth / 2, ypos + iHeight, r, g, b, HUDFont, true);
 }
-int CHudCustomAmmo::DrawWList(float flTime)
-{
-	if (m_fFade <= flTime)
-	{
-		if (m_bSelectMenuDisplay)
-		{
+int CHudCustomAmmo::DrawWList(float flTime){
+	if (m_fFade <= flTime){
+		if (m_bSelectMenuDisplay){
 			m_bSelectMenuDisplay = false;
 			m_fAnimateTime = 0;
 		}
@@ -678,8 +626,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	int a = 255;
 	int r, g, b, dummy;
 	//填充十边形坐标数组
-	for (i = 0; i < 10; i++)
-	{
+	for (i = 0; i < 10; i++){
 		ac = cos(2 * M_PI * i / 10 + flStartRot);
 		as = sin(2 * M_PI * i / 10 + flStartRot);
 
@@ -742,8 +689,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		DrawSPRIconPos(iSelectCyclerCursorPointer, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
 	//绘制十边形
-	for (i = 0; i < 10; i++)
-	{
+	for (i = 0; i < 10; i++){
 		//CABD
 		//↓→↑
 		Vector2Copy(aryIn[i == 9 ? 0 :i + 1], vecA);
@@ -775,8 +721,7 @@ int CHudCustomAmmo::DrawWList(float flTime)
 		DrawSelectIcon(wp, a, xpos, ypos, i);
 	}
 	//绘制已选
-	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1 && gWR.iNowSlot >= 0)
-	{
+	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1 && gWR.iNowSlot >= 0){
 		wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
 		Vector2Copy(aryIn[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecA);
 		Vector2Copy(aryIn[gWR.iNowSlot], vecB);
@@ -796,13 +741,11 @@ int CHudCustomAmmo::DrawWList(float flTime)
 	m_bSelectMenuDisplay = true;
 	return 1;
 }
-void CHudCustomAmmo::ClientMove(struct playermove_s* ppmove, qboolean server)
-{
+void CHudCustomAmmo::ClientMove(struct playermove_s* ppmove, qboolean server){
 	if (m_bOpeningAnnularMenu)
 		m_fFade = gEngfuncs.GetClientTime() + SelectCyclerHoldTime;
 }
-void CHudCustomAmmo::IN_Accumulate()
-{
+void CHudCustomAmmo::IN_Accumulate(){
 	if (m_bOpeningAnnularMenu) {
 		int x, y;
 		gEngfuncs.GetMousePosition(&x, &y);
@@ -820,8 +763,7 @@ void CHudCustomAmmo::IN_Accumulate()
 			gWR.iNowSlot = s;
 	}
 }
-void CHudCustomAmmo::Clear()
-{
+void CHudCustomAmmo::Clear(){
 	if (m_hGaussianBufferVTex)
 		glDeleteTextures(1, &m_hGaussianBufferVTex);
 	if (m_hGaussianBufferHTex)

@@ -1,5 +1,4 @@
-class CHudCustomAmmo
-{
+class CHudCustomAmmo{
 public:
 	void GLInit();
 	int Init(void);

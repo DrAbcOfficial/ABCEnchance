@@ -1,5 +1,4 @@
-class CHudAmmo : public CHudBase
-{
+class CHudAmmo : public CHudBase{
 public:
 	int Init(void);
 	int VidInit(void);
@@ -37,8 +36,7 @@ public:
 	int m_HUD_selection;
 
 };
-class CHudAmmoSecondary : public CHudBase
-{
+class CHudAmmoSecondary : public CHudBase{
 public:
 	int Init(void);
 	int VidInit(void);

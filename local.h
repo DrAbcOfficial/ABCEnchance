@@ -1,8 +1,7 @@
 #pragma once
 #include "cvar_hook.h"
 
-typedef struct
-{
+typedef struct{
 	void		(*R_Blood)					(float* org, float* dir, int pcolor, int speed);
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
 	void		(*R_Explosion)				(float* pos, int model, float scale, float framerate, int flags);
@@ -25,8 +24,7 @@ typedef struct
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
 }cl_refHookfunc_t;
 
-typedef struct
-{
+typedef struct{
 	cvar_t* pBloodSpriteSpeed;
 	cvar_t* pBloodSpriteNumber;
 	cvar_t* pExpSmokeNumber;

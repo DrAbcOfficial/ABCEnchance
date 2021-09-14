@@ -17,8 +17,7 @@
 CHudVote m_HudVote;
 pfnUserMsgHook m_pfnVoteMenu;
 pfnUserMsgHook m_pfnEndVote;
-int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	m_HudVote.m_flKeepTime = gEngfuncs.GetClientTime() + READ_BYTE();
 	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend));
@@ -26,13 +25,11 @@ int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf)
 	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
 	return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
 }
-int __MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf){
 	m_HudVote.m_bInVoting = false;
 	return m_pfnEndVote(pszName, iSize, pbuf);
 }
-int CHudVote::Init()
-{
+int CHudVote::Init(){
 	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
 	m_pfnEndVote = HOOK_MESSAGE(EndVote);
 	
@@ -53,20 +50,17 @@ int CHudVote::Init()
 	Reset();
 	return 0;
 }
-void CHudVote::Reset()
-{
+void CHudVote::Reset(){
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iYesIconTga, "abcenchance/tga/vote_yes");
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iNoIconTga, "abcenchance/tga/vote_no");
 }
-void CHudVote::DrawMultiLineStr(const wchar_t *str, int limite, int x, int y, int r, int g, int b)
-{
+void CHudVote::DrawMultiLineStr(const wchar_t *str, int limite, int x, int y, int r, int g, int b){
 	int totalW, h;
 	std::wstring szbuf = str;
 	wchar_t buf[128];
 	GetStringSize(str, &totalW, &h, HudFont);
 	int c = wcslen(str) * limite / totalW;
-	for (int i = wcslen(str); i > 0; i -= c)
-	{
+	for (int i = wcslen(str); i > 0; i -= c){
 		szbuf.insert(i, L"\n");
 	}
 	wcscpy_s(buf, szbuf.c_str());
@@ -77,8 +71,7 @@ void CHudVote::DrawMultiLineStr(const wchar_t *str, int limite, int x, int y, in
 		token = wcstok(NULL, L"\n");
 	}
 }
-int CHudVote::Draw(float flTime)
-{
+int CHudVote::Draw(float flTime){
 	if (!m_bInVoting)
 		return 0;
 	//if (m_flKeepTime <= flTime)
@@ -125,12 +118,10 @@ int CHudVote::Draw(float flTime)
 	DrawVGUI2String(buf, x, y, r, g, b, HudFont);
 	return 0;
 }
-int CHudVote::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
-{
+int CHudVote::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	//F1 135
 	//F2 136
-	if (m_bInVoting)
-	{
+	if (m_bInVoting){
 		if (keynum == 135 || keynum == 136) {
 			if (keynum == 135)
 				ServerCmd("voteyes");
@@ -142,8 +133,7 @@ int CHudVote::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBind
 	}
 	return 1;
 }
-int CHudVote::StartVote()
-{
+int CHudVote::StartVote(){
 	if (m_bInVoting)
 		return 0;
 	m_bInVoting = true;

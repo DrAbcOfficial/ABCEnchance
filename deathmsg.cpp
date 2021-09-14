@@ -20,13 +20,11 @@ wregex parttenSuicide(MSG_SUICIDENOTIFY);
 wregex parttenKilled(MSG_KILLEDNOTIFY);
 wregex parttenPlayer(MSG_PLAYERKILLNOTIFY);
 
-int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
-{
+int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 
 	int type = READ_BYTE();
-	if (type == HUD_PRINTNOTIFY)
-	{
+	if (type == HUD_PRINTNOTIFY){
 		char* msg_text = READ_STRING();
 		//什么鸡巴东西
 		if (msg_text == (char*)0)
@@ -39,22 +37,19 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 		wsmatch matched;
 		bool found = false;
 		found = regex_search(stdSzBuf, matched, parttenSuicide);
-		if (found)
-		{
+		if (found){
 			m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), m_HudDeathMsg.szSuicide, m_HudDeathMsg.szEmpty);
 			return 1;
 		}
 		found = regex_search(stdSzBuf, matched, parttenKilled);
-		if (found)
-		{
+		if (found){
 			wstring k = matched.suffix().str();
 			k.erase(k.end() - 2);
 			m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), m_HudDeathMsg.szKilled, k);
 			return 1;
 		}
 		found = regex_search(stdSzBuf, matched, parttenPlayer);
-		if (found)
-		{
+		if (found){
 			wstring e = matched.str(0);
 			m_HudDeathMsg.InsertNewMsg(matched.suffix().str(), e.substr(3, e.length() - 7), matched.prefix().str());
 			return 1;
@@ -62,8 +57,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 	}
 	return m_pfnTextMsg(pszName, iSize, pbuf);
 }
-int CHudDeathMsg::Draw(float flTime)
-{
+int CHudDeathMsg::Draw(float flTime){
 	int iStartX = gScreenInfo.iWidth - XOffset;
 	int x = iStartX;
 	int y = YOffset;
@@ -73,12 +67,10 @@ int CHudDeathMsg::Draw(float flTime)
 	int w;
 	int h;
 	float r, g, b, a;
-	for each (deathmsgItem_t var in aryKeepMsg)
-	{
+	for each (deathmsgItem_t var in aryKeepMsg){
 		if (var.addTime <= 0)
 			continue;
-		if (var.addTime <= flTime)
-		{
+		if (var.addTime <= flTime){
 			memset(&var, 0, sizeof(var));
 			continue;
 		}
@@ -125,19 +117,16 @@ int CHudDeathMsg::Draw(float flTime)
 	}
 	return 1;
 }
-void CHudDeathMsg::Reset(void)
-{
+void CHudDeathMsg::Reset(void){
 	memset(aryKeepMsg, 0, sizeof(aryKeepMsg));
 }
-void CHudDeathMsg::InsertNewMsg(const wstring &v, wstring &e, wstring &k)
-{
+void CHudDeathMsg::InsertNewMsg(const wstring &v, wstring &e, wstring &k){
 	//正常输出控制台
 	gEngfuncs.Con_Printf("%s was killed by %s with %s\n", 
 		UnicodeToUtf8(v.c_str()), 
 		UnicodeToUtf8(k.empty() ? L"something" : k.c_str()), 
 		UnicodeToUtf8(e.c_str()));
-	for (int i = 0; i < MAX_KEEP_DEATHMSG; i++)
-	{
+	for (int i = 0; i < MAX_KEEP_DEATHMSG; i++){
 		deathmsgItem_t a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];
 		aryKeepMsg[MAX_KEEP_DEATHMSG - 1] = aryKeepMsg[i];
 		aryKeepMsg[i] = a;
@@ -149,8 +138,7 @@ void CHudDeathMsg::InsertNewMsg(const wstring &v, wstring &e, wstring &k)
 	item.addTime = gEngfuncs.GetClientTime() + gCVars.pDeathNoticeTime->value;
 	aryKeepMsg[0] = item;
 }
-int CHudDeathMsg::Init(void)
-{
+int CHudDeathMsg::Init(void){
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
 	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_VALUE, NULL);
 	

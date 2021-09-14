@@ -18,18 +18,15 @@ HistoryResource gHR;
 #define MAX_ITEM_NAME	32
 int HISTORY_DRAW_TIME = 5;
 
-struct ITEM_INFO
-{
+struct ITEM_INFO{
 	wrect_t rect;
 };
 
-void HistoryResource::AddToHistory(int iType, int iId, int iCount)
-{
+void HistoryResource::AddToHistory(int iType, int iId, int iCount){
 	if (iType == HISTSLOT_AMMO && !iCount)
 		return;  // no amount, so don't add
 
-	if ((((AMMO_PICKUP_GAP * iCurrentHistorySlot) + AMMO_PICKUP_PICK_HEIGHT) > AMMO_PICKUP_HEIGHT_MAX) || (iCurrentHistorySlot >= iAmmoDisplayCount))
-	{	// the pic would have to be drawn too high
+	if ((((AMMO_PICKUP_GAP * iCurrentHistorySlot) + AMMO_PICKUP_PICK_HEIGHT) > AMMO_PICKUP_HEIGHT_MAX) || (iCurrentHistorySlot >= iAmmoDisplayCount)){	// the pic would have to be drawn too high
 		// so start from the bottom
 		iCurrentHistorySlot = 0;
 	}
@@ -43,13 +40,11 @@ void HistoryResource::AddToHistory(int iType, int iId, int iCount)
 	freeslot->DisplayTime = gEngfuncs.GetClientTime() + HISTORY_DRAW_TIME;
 }
 
-void HistoryResource::AddToHistory(int iType, const char* szName, int iCount)
-{
+void HistoryResource::AddToHistory(int iType, const char* szName, int iCount){
 	if (iType != HISTSLOT_ITEM)
 		return;
 
-	if ((((AMMO_PICKUP_GAP * iCurrentHistorySlot) + AMMO_PICKUP_PICK_HEIGHT) > AMMO_PICKUP_HEIGHT_MAX) || (iCurrentHistorySlot >= iAmmoDisplayCount))
-	{	// the pic would have to be drawn too high
+	if ((((AMMO_PICKUP_GAP * iCurrentHistorySlot) + AMMO_PICKUP_PICK_HEIGHT) > AMMO_PICKUP_HEIGHT_MAX) || (iCurrentHistorySlot >= iAmmoDisplayCount)){	// the pic would have to be drawn too high
 		// so start from the bottom
 		iCurrentHistorySlot = 0;
 	}
@@ -71,10 +66,8 @@ void HistoryResource::AddToHistory(int iType, const char* szName, int iCount)
 }
 
 
-void HistoryResource::CheckClearHistory(void)
-{
-	for (int i = 0; i < iAmmoDisplayCount; i++)
-	{
+void HistoryResource::CheckClearHistory(void){
+	for (int i = 0; i < iAmmoDisplayCount; i++){
 		if (rgAmmoHistory[i].type)
 			return;
 	}
@@ -85,22 +78,17 @@ void HistoryResource::CheckClearHistory(void)
 //
 // Draw Ammo pickup history
 //
-int HistoryResource::DrawAmmoHistory(float flTime)
-{
- 	for (int i = 0; i < iAmmoDisplayCount; i++)
-	{
- 		if (rgAmmoHistory[i].type)
-		{
+int HistoryResource::DrawAmmoHistory(float flTime){
+ 	for (int i = 0; i < iAmmoDisplayCount; i++){
+ 		if (rgAmmoHistory[i].type){
 			rgAmmoHistory[i].DisplayTime = min(rgAmmoHistory[i].DisplayTime, gEngfuncs.GetClientTime() + HISTORY_DRAW_TIME);
 
-			if (rgAmmoHistory[i].DisplayTime <= flTime)
-			{
+			if (rgAmmoHistory[i].DisplayTime <= flTime){
 				memset(&rgAmmoHistory[i], 0, sizeof(HIST_ITEM));
 				CheckClearHistory();
 				return 0;
 			}
-			switch (rgAmmoHistory[i].type)
-			{
+			switch (rgAmmoHistory[i].type){
 			case HISTSLOT_AMMO: {
 				wrect_t rcPic;
 				HSPRITE* spr = gWR.GetAmmoPicFromWeapon(rgAmmoHistory[i].iId, rcPic);
@@ -122,8 +110,7 @@ int HistoryResource::DrawAmmoHistory(float flTime)
 				b *= scale;
 				DrawVGUI2String(buf, xpos, ypos, r, g, b, hFont, true);
 				xpos += iTextWidth + ScreenWidth / 40;
-				if (spr && *spr)
-				{
+				if (spr && *spr){
 					AmmoIconColor.GetColor(r, g, b, a);
 					r *= scale;
 					g *= scale;

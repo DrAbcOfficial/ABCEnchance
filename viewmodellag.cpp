@@ -6,8 +6,7 @@
 //copied and edited from here: https://github.com/SNMetamorph/PrimeXT/blob/master/client/r_view.cpp#L266
 
 vec3_t m_vecLastFacing;
-void V_CalcViewModelLag(ref_params_t* pparams)
-{
+void V_CalcViewModelLag(ref_params_t* pparams){
 	cl_entity_t* view = gEngfuncs.GetViewModel();
 	vec3_t* origin = &view->origin;
 	vec3_t* angles = &view->angles;
@@ -19,8 +18,8 @@ void V_CalcViewModelLag(ref_params_t* pparams)
 	// Calculate our drift
 	vec3_t forward, right, up;
 	AngleVectors(*angles, forward, right, up);
-	if (pparams->frametime != 0.0f)	// not in paused
-	{
+	// not in paused
+	if (pparams->frametime != 0.0f){
 		vec3_t vDifference;
 		vDifference[0] = forward[0] - m_vecLastFacing[0];
 		vDifference[1] = forward[1] - m_vecLastFacing[1];
@@ -45,13 +44,11 @@ void V_CalcViewModelLag(ref_params_t* pparams)
 	AngleVectors(pparams->cl_viewangles, forward, right, up);
 	float pitch = pparams->cl_viewangles[PITCH];
 	pitch += pitch > 180.0f ? -360.0f : pitch < -180.0f ? 360.0f : 0;
-	if (gCVars.pModelLagValue->value <= 0.0f)
-	{
+	if (gCVars.pModelLagValue->value <= 0.0f){
 		VectorCopy(*origin, vOriginalOrigin);
 		VectorCopy(*angles, vOriginalAngles);
 	}
-	else
-	{
+	else{
 		*origin[0] += forward[0] * (-pitch * 0.035f);
 		*origin[1] += forward[1] * (-pitch * 0.035f);
 		*origin[2] += forward[2] * (-pitch * 0.035f);

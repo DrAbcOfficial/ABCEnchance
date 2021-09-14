@@ -23,8 +23,7 @@
 
 CHudCustomCrosshair m_HudCrosshair;
 
-int CHudCustomCrosshair::Init(void)
-{
+int CHudCustomCrosshair::Init(void){
 	gCVars.pDynamicCrossHair = CREATE_CVAR("cl_crosshair", "1", FCVAR_VALUE, NULL);
 	gCVars.pDynamicCrossHairAH = CREATE_CVAR("cl_crosshairautohide", "1", FCVAR_VALUE, NULL);
 	gCVars.pDynamicCrossHairL = CREATE_CVAR("cl_crosshairsize", "24", FCVAR_VALUE, NULL);
@@ -45,14 +44,12 @@ int CHudCustomCrosshair::Init(void)
 	pCvarDefaultFOV = gEngfuncs.pfnGetCvarPointer("default_fov");
 	return 1;
 }
-int CHudCustomCrosshair::Draw(float flTime)
-{
+int CHudCustomCrosshair::Draw(float flTime){
 	if (gHudDelegate->IsInSpectate())
 		return 1;
 	int iCenterX;
 	int iCenterY;
-	if (gExportfuncs.CL_IsThirdPerson())
-	{
+	if (gExportfuncs.CL_IsThirdPerson()){
 		pmtrace_t tr;
 		vec3_t vForward;
 		vec3_t vViewAngle;
@@ -78,16 +75,14 @@ int CHudCustomCrosshair::Draw(float flTime)
 		iCenterX = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
 		iCenterY = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
 	}
-	else
-	{
+	else{
 		iCenterX = gScreenInfo.iWidth / 2;
 		iCenterY = gScreenInfo.iHeight / 2;
 	}
 	//Ä¬ÈÏ×¼ÐÄ
 	if (pCvarDefaultCrosshair->value > 0)
 		DrawDefaultCrosshair(flTime, iCenterX, iCenterY);
-	if (gCVars.pDynamicCrossHair->value > 0)
-	{
+	if (gCVars.pDynamicCrossHair->value > 0){
 		if (gClientData->health <= 0)
 			return 0;
 
@@ -104,8 +99,7 @@ int CHudCustomCrosshair::Draw(float flTime)
 		int iWidthOffset = iWidth / 2;
 		int iFinalOffset = iDrift + iOffset + iWidthOffset;
 		//Ãè±ß
-		if (gCVars.pDynamicCrossHairOTD->value)
-		{
+		if (gCVars.pDynamicCrossHairOTD->value){
 			int iOutLineWidth = gCVars.pDynamicCrossHairOTDW->value;
 			//×ó
 			gEngfuncs.pfnFillRGBABlend(iCenterX - iFinalOffset - iLength - iOutLineWidth, iCenterY - iWidthOffset - iOutLineWidth, iOutLineWidth * 2 + iLength, iOutLineWidth * 2 + iWidth, 0, 0, 0, a);
@@ -132,8 +126,7 @@ int CHudCustomCrosshair::Draw(float flTime)
 	}
 	return 1;
 }
-void CHudCustomCrosshair::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc)
-{
+void CHudCustomCrosshair::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc){
 	if (hPic <= 0)
 		return;
 	int rx = x + 1 - (hRc.right - hRc.left) / 2;
@@ -141,23 +134,20 @@ void CHudCustomCrosshair::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc)
 	SPR_Set(hPic, 255, 255, 255);
 	SPR_DrawHoles(0, rx, ry, &hRc);
 }
-void CHudCustomCrosshair::DrawDefaultCrosshair(float flTime, int x, int y)
-{
+void CHudCustomCrosshair::DrawDefaultCrosshair(float flTime, int x, int y){
 	WEAPON* pWeapon = m_HudCustomAmmo.m_pWeapon;
 	if (!pWeapon)
 		return;
 	if (pWeapon->iId <= 0)
 		return;
 	bool bOnTarget = m_HudCustomAmmo.m_bIsOnTarget;
-	if (m_hfov >= pCvarDefaultFOV->value)
-	{
+	if (m_hfov >= pCvarDefaultFOV->value){
 		if (bOnTarget && pWeapon->hAutoaim)
 			DrawCrosshairSPR(x, y, pWeapon->hAutoaim, pWeapon->rcAutoaim);
 		else
 			DrawCrosshairSPR(x, y, pWeapon->hCrosshair, pWeapon->rcCrosshair);
 	}
-	else
-	{
+	else{
 		if (bOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
 			DrawCrosshairSPR(x, y, pWeapon->hZoomedAutoaim, pWeapon->rcZoomedAutoaim);
 		else

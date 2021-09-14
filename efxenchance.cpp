@@ -7,19 +7,16 @@
 #include "local.h"
 
 
-void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale)
-{
+void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale){
 	//stack overflow
 	//gHookFuncs.R_SparkEffect(pos, (int)gCVars.pRicochetNumber->value, 4, 32);
 	gHookFuncs.R_RicochetSprite(pos, pmodel, duration, scale);
 }
-void R_Explosion(float* pos, int model, float scale, float framerate, int flags)
-{
+void R_Explosion(float* pos, int model, float scale, float framerate, int flags){
 	int	i;
 	vec3_t	offset, dir;
 	vec3_t	forward, right, up;
-	for (int i = 0; i < gCVars.pExpSmokeNumber->value; i++)
-	{
+	for (int i = 0; i < gCVars.pExpSmokeNumber->value; i++){
 		VectorCopy(pos, offset);
 		VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * scale, forward, offset);
 		VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * scale, right, offset);
@@ -46,19 +43,16 @@ void R_Explosion(float* pos, int model, float scale, float framerate, int flags)
 	}
 	gHookFuncs.R_Explosion(pos, model, scale, framerate, flags);
 }
-void R_Blood(float* org, float* dir, int pcolor, int speed)
-{
+void R_Blood(float* org, float* dir, int pcolor, int speed){
 	//Todo::´´½¨Ê±ì­Ñª
 	gHookFuncs.R_Blood(org, dir, pcolor, speed);
 }
-void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size)
-{
+void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size){
 	model_t* pModel = gEngfuncs.hudGetModelByIndex(modelIndex);
 	if (!pModel)
 		return;
 	TEMPENTITY* pTemp = gHookFuncs.CL_TempEntAllocHigh(org, pModel);
-	if (pTemp)
-	{
+	if (pTemp){
 		int	i;
 		vec3_t	offset, dir;
 		vec3_t	forward, right, up;
@@ -83,8 +77,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 		up[1] = right[1] = forward[1] = 0.0f;
 		up[2] = right[2] = forward[2] = 1.0f;
 
-		for (i = 0; i < gCVars.pBloodSpriteNumber->value; i++)
-		{
+		for (i = 0; i < gCVars.pBloodSpriteNumber->value; i++){
 			VectorCopy(org, offset);
 			VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * size, right, offset);
 			VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * size, up, offset);
