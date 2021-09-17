@@ -114,6 +114,9 @@
     <ClCompile Include="cvar_hook.cpp">
       <Filter>Source\Var</Filter>
     </ClCompile>
+    <ClCompile Include="eccomoney.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -286,6 +289,12 @@
     </ClInclude>
     <ClInclude Include="myconst.h">
       <Filter>Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="eccomoney.h">
+      <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="numdisplay.h">
+      <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

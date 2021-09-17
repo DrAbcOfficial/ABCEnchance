@@ -5,6 +5,8 @@
 #include "hud.h"
 #include "weapon.h"
 #include "pm_defs.h"
+#include "parsemsg.h"
+#include "msghook.h"
 #include "glew.h"
 
 #include "ammo.h"
@@ -15,6 +17,7 @@
 #include "crosshair.h"
 #include "playertitle.h"
 #include "vote.h"
+#include "eccomoney.h"
 
 #include "CHudDelegate.h"
 #include <local.h>
@@ -22,11 +25,31 @@
 CHudDelegate* gHudDelegate = NULL;
 cl_hookedHud gHookHud;
 
+pfnUserMsgHook m_pfnScoreInfo;
+int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int clientIndex = READ_BYTE();
+	//wtf is not this shit
+	if (clientIndex >= 1 && clientIndex <= 32) {
+		gHudDelegate->m_Playerinfo[clientIndex].index = clientIndex;
+		gHudDelegate->m_Playerinfo[clientIndex].frags = READ_FLOAT();
+		gHudDelegate->m_Playerinfo[clientIndex].death = READ_LONG();
+		gHudDelegate->m_Playerinfo[clientIndex].health = READ_FLOAT();
+		gHudDelegate->m_Playerinfo[clientIndex].armor = READ_FLOAT();
+		gHudDelegate->m_Playerinfo[clientIndex].team = READ_BYTE();
+		gHudDelegate->m_Playerinfo[clientIndex].donors = READ_CHAR();
+		gHudDelegate->m_Playerinfo[clientIndex].admin = READ_CHAR();
+	}
+	return m_pfnScoreInfo(pszName, iSize, pbuf);
+}
+
 void CHudDelegate::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
 }
 void CHudDelegate::HUD_Init(void){
+	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
+
 	m_HudArmorHealth.Init();
 	m_HudCustomAmmo.Init();
 	m_HudRadar.Init();
@@ -34,6 +57,7 @@ void CHudDelegate::HUD_Init(void){
 	m_HudCrosshair.Init();
 	m_HudPlayerTitle.Init();
 	m_HudVote.Init();
+	m_HudEccoMoney.Init();
 }
 void CHudDelegate::HUD_VidInit(void){
 	if (ScreenWidth < 640)
@@ -99,6 +123,7 @@ void CHudDelegate::HUD_Draw(float flTime){
 	m_HudDeathMsg.Draw(flTime);
 	m_HudCrosshair.Draw(flTime);
 	m_HudVote.Draw(flTime);
+	m_HudEccoMoney.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void){
 	m_iPlayerHealth = 100;
@@ -109,6 +134,9 @@ void CHudDelegate::HUD_Reset(void){
 	m_HudDeathMsg.Reset();
 	m_HudPlayerTitle.Reset();
 	m_HudVote.Reset();
+	m_HudEccoMoney.Reset();
+
+	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time){
 }

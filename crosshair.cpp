@@ -85,7 +85,6 @@ int CHudCustomCrosshair::Draw(float flTime){
 	if (gCVars.pDynamicCrossHair->value > 0){
 		if (gClientData->health <= 0)
 			return 0;
-
 		if (gCVars.pDynamicCrossHairAH->value > 0 && pCvarDefaultFOV->value != m_hfov)
 			return 0;
 		int iOffset = gCVars.pDynamicCrossHairO->value;

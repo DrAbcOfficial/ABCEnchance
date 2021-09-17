@@ -5,8 +5,6 @@
 #include "glew.h"
 #include "triangleapi.h"
 
-#include "parsemsg.h"
-#include "msghook.h"
 #include "cvar_hook.h"
 #include "local.h"
 #include "vguilocal.h"
@@ -23,26 +21,8 @@
 #include "playertitle.h"
 
 CHudPlayerTitle m_HudPlayerTitle;
-pfnUserMsgHook m_pfnScoreInfo;
-
-int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf){
-	BEGIN_READ(pbuf, iSize);
-	int clientIndex = READ_BYTE();
-	//wtf is not this shit
-	if (clientIndex >= 1 && clientIndex <= 32) {
-		m_HudPlayerTitle.m_Playerinfo[clientIndex].index = clientIndex;
-		m_HudPlayerTitle.m_Playerinfo[clientIndex].frags = READ_FLOAT();
-		m_HudPlayerTitle.m_Playerinfo[clientIndex].death = READ_LONG();
-		m_HudPlayerTitle.m_Playerinfo[clientIndex].health = READ_FLOAT();
-		m_HudPlayerTitle.m_Playerinfo[clientIndex].armor = READ_FLOAT();
-		m_HudPlayerTitle.m_Playerinfo[clientIndex].team = READ_BYTE();
-		m_HudPlayerTitle.m_Playerinfo[clientIndex].donors = READ_CHAR();
-		m_HudPlayerTitle.m_Playerinfo[clientIndex].admin = READ_CHAR();
-	}
-	return m_pfnScoreInfo(pszName, iSize, pbuf);
-}
 int CHudPlayerTitle::Init(void){
-	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
+	
 	gCVars.pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, NULL);
 	gCVars.pPlayerTitleLength = CREATE_CVAR("cl_playertitlelength", "196", FCVAR_VALUE, NULL);
 	gCVars.pPlayerTitleHeight = CREATE_CVAR("cl_playertitleheight", "48", FCVAR_VALUE, NULL);
@@ -56,7 +36,6 @@ void CHudPlayerTitle::Reset(){
 	VGUI_CREATE_NEWTGA_TEXTURE(iBackGroundTga, "abcenchance/tga/playertitle_background");
 	VGUI_CREATE_NEWTGA_TEXTURE(iHealthBarTga, "abcenchance/tga/playertitle_healthbar");
 	VGUI_CREATE_NEWTGA_TEXTURE(iArmorBarTga, "abcenchance/tga/playertitle_armorbar");
-	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 }
 int CHudPlayerTitle::Draw(float flTime){
 	if (gCVars.pPlayerTitle->value > 0){
@@ -156,8 +135,8 @@ int CHudPlayerTitle::Draw(float flTime){
 
 				gEngfuncs.pfnGetPlayerInfo(i, &playerinfo);
 				if (playerinfo.name){
-					flHealthRatio = clamp((m_Playerinfo[i].health / 100.0f), 0.0f, 1.0f);
-					flArmorRatio = clamp((m_Playerinfo[i].armor / 100.0f), 0.0f, 1.0f);
+					flHealthRatio = clamp((gHudDelegate->m_Playerinfo[i].health / 100.0f), 0.0f, 1.0f);
+					flArmorRatio = clamp((gHudDelegate->m_Playerinfo[i].armor / 100.0f), 0.0f, 1.0f);
 					
 					nowX = vecHUD[0] - iTitleLength / 3;
 					nowY = vecHUD[1] - iTitleHeight / 2;

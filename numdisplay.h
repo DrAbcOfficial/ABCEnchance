@@ -1,0 +1,25 @@
+#pragma once
+class CHudNumDisplay
+{
+public:
+	char pad_0x0000[0xC]; //0x0000
+	__int32 flags; //0x000C 
+	char pad_0x0010[0x4]; //0x0010
+	float x; //0x0014 
+	float y; //0x0018 
+	char pad_0x001C[0xC]; //0x001C
+	float fadeinTime; //0x0028 
+	float fadeoutTime; //0x002C 
+	float holdTime; //0x0030 
+	float fxTime; //0x0034 
+	__int32 effect; //0x0038 
+	char pad_0x003C[0x4]; //0x003C
+	__int32 left; //0x0040 
+	__int32 width; //0x0044 
+	__int32 top; //0x0048 
+	__int32 height; //0x004C 
+	char pad_0x0050[0x4]; //0x0050
+	__int32 defdigits; //0x0054 
+	__int32 maxdigits; //0x0058 
+
+}; //Size=0x005C
