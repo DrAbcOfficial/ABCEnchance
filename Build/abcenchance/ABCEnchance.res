@@ -41,6 +41,10 @@ Scheme
 
 		"Vote.OutlineColor"		"255 255 255 180"
 		"Vote.BackGoundColor"		"139 137 137 180"
+
+		"Ecco.MoneyIncreseColor"		"0 255 0 255"
+		"Ecco.MoneyDecreseColor"		"255 0 0 255"
+		"Ecco.MoneyColor"		"245 230 195 255"
 	}
 
 	BaseSettings
@@ -95,6 +99,10 @@ Scheme
 		"Vote.YOffset"		"256"
 		"Vote.Height"		"3"
 		"Vote.Width"		"5"
+
+		"Ecco.YOffset"		"-64"
+		"Ecco.BackgroundLength"		"0.11"
+		"Ecco.BackgroundHeight"		"0.0325"
 	}
 
 	Fonts
