@@ -112,6 +112,7 @@
     <ClCompile Include="CHudDelegate.cpp" />
     <ClCompile Include="crosshair.cpp" />
     <ClCompile Include="cvar_hook.cpp" />
+    <ClCompile Include="eccomoney.cpp" />
     <ClCompile Include="glutility.cpp" />
     <ClCompile Include="gl_shader.cpp" />
     <ClCompile Include="playertitle.cpp" />
@@ -143,11 +144,13 @@
     <ClInclude Include="basemenu.h" />
     <ClInclude Include="CHudDelegate.h" />
     <ClInclude Include="CColor.h" />
+    <ClInclude Include="eccomoney.h" />
     <ClInclude Include="myconst.h" />
     <ClInclude Include="crosshair.h" />
     <ClInclude Include="cvar_hook.h" />
     <ClInclude Include="glutility.h" />
     <ClInclude Include="gl_shader.h" />
+    <ClInclude Include="numdisplay.h" />
     <ClInclude Include="playertitle.h" />
     <ClInclude Include="radar.h" />
     <ClInclude Include="command.h" />

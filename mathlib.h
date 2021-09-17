@@ -64,7 +64,7 @@ extern int nanmask;
 #define Vector2Copy(a, b) { (b)[0] = (a)[0]; (b)[1] = (a)[1]; }
 #define VectorClear(a) { (a)[0] = 0.0; (a)[1] = 0.0; (a)[2] = 0.0; }
 #define DotProduct(x, y) ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
-#define ColorCalcuAlpha(r, g, b, a) {(r)*=(a)/255;(g)*=(a)/255;(b)*=(a)/255;}
+#define ColorCalcuAlpha(r, g, b, a) {(r)*=(float)(a)/255;(g)*=(float)(a)/255;(b)*=(float)(a)/255;}
 #define Vector2Rotate(out,x, y, rotate) {out[0] = x * cos(rotate) - y * sin(rotate);out[1] = x * sin(rotate) + y * cos(rotate);}
 
 #define max3(a,b,c) max(a,max(b,c))
