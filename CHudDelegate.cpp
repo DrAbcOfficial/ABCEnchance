@@ -60,10 +60,7 @@ void CHudDelegate::HUD_Init(void){
 	m_HudEccoMoney.Init();
 }
 void CHudDelegate::HUD_VidInit(void){
-	if (ScreenWidth < 640)
-		m_iRes = 320;
-	else
-		m_iRes = 640;
+	int iRes = ScreenWidth < 640 ? 320 : 640;
 	if (!m_pSpriteList){
 		m_pSpriteList = SPR_GetList("sprites/hud.txt", &m_iSpriteCountAllRes);
 
@@ -72,7 +69,7 @@ void CHudDelegate::HUD_VidInit(void){
 			client_sprite_t* p = m_pSpriteList;
 			int j;
 			for (j = 0; j < m_iSpriteCountAllRes; j++){
-				if (p->iRes == m_iRes)
+				if (p->iRes == iRes)
 					m_iSpriteCount++;
 				p++;
 			}
@@ -83,7 +80,7 @@ void CHudDelegate::HUD_VidInit(void){
 			p = m_pSpriteList;
 			int index = 0;
 			for (j = 0; j < m_iSpriteCountAllRes; j++){
-				if (p->iRes == m_iRes){
+				if (p->iRes == iRes){
 					char sz[256];
 					sprintf(sz, "sprites/%s.spr", p->szSprite);
 					m_rghSprites[index] = SPR_Load(sz);
@@ -100,7 +97,7 @@ void CHudDelegate::HUD_VidInit(void){
 		client_sprite_t* p = m_pSpriteList;
 		int index = 0;
 		for (int j = 0; j < m_iSpriteCountAllRes; j++){
-			if (p->iRes == m_iRes){
+			if (p->iRes == iRes){
 				char sz[256];
 				sprintf(sz, "sprites/%s.spr", p->szSprite);
 				m_rghSprites[index] = SPR_Load(sz);

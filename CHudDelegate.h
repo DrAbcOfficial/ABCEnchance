@@ -13,7 +13,6 @@ typedef struct hud_playerinfo_s {
 	char donors;
 	char admin;
 }hud_playerinfo_t;
-
 enum SC_DONER_ICON {
 	DONER_NONE = 0,
 	DONER_ELECTRIC_CROWBAR,
@@ -22,7 +21,6 @@ enum SC_DONER_ICON {
 	DONER_TESTER,
 	DONER_DEVELOEPR
 };
-
 enum SC_ADMIN_ICON {
 	ADMIN_NONE = 0,
 	ADMIN_OPRATER,
@@ -63,7 +61,6 @@ public:
 	hud_playerinfo_t m_Playerinfo[33];
 
 	client_sprite_t* m_pSpriteList;
-	int m_iRes;
 	int m_iSpriteCountAllRes;
 
 	HSPRITE GetSprite(int index){ return (index < 0) ? 0 : m_rghSprites[index];}
