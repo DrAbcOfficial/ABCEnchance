@@ -3,8 +3,9 @@
 
 typedef struct pp_radarlight_program_s {
 	GLuint program;
-	GLuint tex;
-	GLuint ovc;
+	GLuint rad;
+	GLuint xys;
+	GLuint gamma;
 }pp_radarlight_program_t;
 
 typedef struct pp_gaussianblurh_program_s {

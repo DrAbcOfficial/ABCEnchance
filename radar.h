@@ -9,9 +9,11 @@ public:
 	void PreRenderView(int a1);
 	void Clear();
 
-	int OutLineImg;
-	int PlayerPointImg;
-	int NorthImg;
+	GLint BackGroundImg;
+	GLint UpGroundImg;
+	GLint NorthImg;
+	GLint ViewAngleImg;
+	GLint RoundBackGroundImg;
 
 	float flFinishScaleTime;
 private:
@@ -19,6 +21,7 @@ private:
 	void UpdateZmax(float flTime);
 
 	cvar_t* pCVarDevOverview;
+	cvar_t* pCVarGamma;
 	cvar_t* pCVarDrawEntities;
 	cvar_t* pCVarDrawDynamic;
 	cvar_t* pCVarFXAA;
@@ -37,6 +40,7 @@ private:
 	GLubyte MapAlpha;
 	float CenterAlpha;
 	float NorthPointerSize;
+	float ViewAngleSize;
 	
 	int iOverviewR;
 	int iOverviewG;
