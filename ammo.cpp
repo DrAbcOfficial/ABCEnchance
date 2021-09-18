@@ -321,12 +321,12 @@ int CHudCustomAmmo::Init(void){
 	gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
-	StartX = (float)atof(pScheme->GetResourceString("AmmoHUD.StartX"));
-	IconSize = (float)atof(pScheme->GetResourceString("AmmoHUD.IconSize"));
-	ElementGap = (float)atof(pScheme->GetResourceString("AmmoHUD.ElementGap"));
-
-	BackGroundY = (float)atof(pScheme->GetResourceString("AmmoHUD.BackGroundY"));
-	BackGroundLength = (float)atof(pScheme->GetResourceString("AmmoHUD.BackGroundLength"));
+	
+	StartX = GET_SCREEN_PIXEL(false, "AmmoHUD.StartX");
+	IconSize = GET_SCREEN_PIXEL(true, "AmmoHUD.IconSize");
+	ElementGap = GET_SCREEN_PIXEL(true, "AmmoHUD.ElementGap");
+	BackGroundY = GET_SCREEN_PIXEL(true, "AmmoHUD.BackGroundY");
+	BackGroundLength = GET_SCREEN_PIXEL(false, "AmmoHUD.BackGroundLength");
 
 	Ammo1IconColor = pScheme->GetColor("AmmoHUD.Ammo1IconColor", gDefaultColor);
 	Ammo1BigTextColor = pScheme->GetColor("AmmoHUD.Ammo1BigTextColor", gDefaultColor);
@@ -342,13 +342,13 @@ int CHudCustomAmmo::Init(void){
 	SelectCyclerEmptyColor = pScheme->GetColor("AmmoHUD.SelectCyclerEmptyColor", gDefaultColor);
 	SelectCyclerPointerColor = pScheme->GetColor("AmmoHUD.SelectCyclerPointerColor", gDefaultColor);
 
-	SelectCyclerOffset = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerOffset"));
-	SelectCyclerSize = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerSize"));
+	SelectCyclerOffset = GET_SCREEN_PIXEL(true, "AmmoHUD.SelectCyclerOffset");
+	SelectCyclerSize = GET_SCREEN_PIXEL(true, "AmmoHUD.SelectCyclerSize");
+	SelectCyclerPointerSize = GET_SCREEN_PIXEL(true, "AmmoHUD.SelectCyclerPointerSize");
 	SelectCyclerRotate = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerRotate"));
 	SelectCyclerAnimateTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerAnimateTime"));
 	SelectCyclerFadeTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerFadeTime"));
 	SelectCyclerHoldTime = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerHoldTime"));
-	SelectCyclerPointerSize = atof(pScheme->GetResourceString("AmmoHUD.SelectCyclerPointerSize"));
 
 	if (SelectCyclerHoldTime <= 0)
 		SelectCyclerHoldTime = 5;
@@ -446,13 +446,12 @@ int CHudCustomAmmo::Draw(float flTime){
 	if ((pw->iAmmoType < 0) && (pw->iAmmo2Type < 0))
 		return 0;
 	int r, g, b, a;
-	float nowX = gScreenInfo.iWidth * (1 - 1/ BackGroundLength) ;
-	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
-	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
+	float nowX = gScreenInfo.iWidth - BackGroundLength;
+	float flBackGroundHeight = gScreenInfo.iHeight - BackGroundY;
 	float flCenterX = nowX + (gScreenInfo.iWidth - nowX) / 2, flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
 	int nowY;
-	int iIconSize = flBackGroundHeight * IconSize;
-	int iElementGap = flBackGroundHeight * ElementGap;
+	int iIconSize = IconSize;
+	int iElementGap = ElementGap;
 	int iTextHeight;
 	int iTextWidth;
 	wchar_t buf[16];
@@ -460,7 +459,7 @@ int CHudCustomAmmo::Draw(float flTime){
 		gHudDelegate->surface()->DrawSetTexture(-1);
 		gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 		gHudDelegate->surface()->DrawSetTexture(iBackGroundTga);
-		gHudDelegate->surface()->DrawTexturedRect(nowX, flBackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
+		gHudDelegate->surface()->DrawTexturedRect(nowX, BackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
  		nowX = flCenterX;
 		nowY = flCenterY;
 
