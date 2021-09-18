@@ -322,7 +322,6 @@ int CHudCustomAmmo::Init(void){
 	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
 	
-	StartX = GET_SCREEN_PIXEL(false, "AmmoHUD.StartX");
 	IconSize = GET_SCREEN_PIXEL(true, "AmmoHUD.IconSize");
 	ElementGap = GET_SCREEN_PIXEL(true, "AmmoHUD.ElementGap");
 	BackGroundY = GET_SCREEN_PIXEL(true, "AmmoHUD.BackGroundY");
