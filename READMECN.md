@@ -5,6 +5,8 @@
 
 ###  ABCEnchance 是一个旨在提升Sven coop游玩体验并加入更多(花里胡哨)功能的metahook插件
 
+<img src="img/cover.png" width="200%">
+
 ----
 
 # ⚠️ **<span color="red">该插件正在开发，并不稳定，可能会有较大的修改</span>** ⚠️
@@ -60,7 +62,7 @@
 |---|---|---|---|
 |hud_deathnotice_time|死亡提示保持时间|6|0~9999|
 |---|---|---|---|
-|cl_radar|启用雷达|1|0/1|
+|cl_radar|启用雷达|1|0/1/2|
 |cl_radarzoom|雷达缩放倍数|2.5|0.0001~9999|
 |cl_radarsize|雷达绘制尺寸|344|0-9999|
 |cl_radarsizetime|雷达放大动画时间|0.25|0~9999|
