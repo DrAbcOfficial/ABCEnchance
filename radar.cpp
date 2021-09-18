@@ -15,6 +15,7 @@
 #include "hud.h"
 #include "vguilocal.h"
 #include "myconst.h"
+#include "utility.h"
 
 #include "weapon.h"
 #include "CHudDelegate.h"
@@ -54,14 +55,15 @@ int CHudRadar::Init(){
 	pCVarDrawDynamic = gEngfuncs.pfnGetCvarPointer("r_dynamic");
 	pCVarDrawEntities = gEngfuncs.pfnGetCvarPointer("r_drawentities");
 	pCVarGamma = gEngfuncs.pfnGetCvarPointer("gamma");
-
-	XOffset = atof(pScheme->GetResourceString("Radar.XOffset"));
-	YOffset = atof(pScheme->GetResourceString("Radar.YOffset"));
+	
+	XOffset = GET_SCREEN_PIXEL(false, "Radar.XOffset");
+	YOffset = GET_SCREEN_PIXEL(true, "Radar.YOffset");
+	NorthPointerSize = GET_SCREEN_PIXEL(true, "Radar.NorthPointerSize");
+	ViewAngleSize = GET_SCREEN_PIXEL(true, "Radar.ViewAngleSize");
 	OutLineAlpha = atof(pScheme->GetResourceString("Radar.OutLineAlpha"));
 	MapAlpha = (GLubyte)atof(pScheme->GetResourceString("Radar.MapAlpha"));
 	CenterAlpha = atof(pScheme->GetResourceString("Radar.CenterAlpha"));
-	NorthPointerSize = atof(pScheme->GetResourceString("Radar.NorthPointerSize"));
-	ViewAngleSize = atof(pScheme->GetResourceString("Radar.ViewAngleSize"));
+	
 
 	pp_radarlight.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\radar.fsh", NULL);
 	if (pp_radarlight.program){
