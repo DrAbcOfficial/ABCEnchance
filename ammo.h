@@ -39,7 +39,6 @@ private:
 	GLuint m_hGaussianBufferHFBO;
 	GLuint m_hGaussianBufferHTex;
 
-	float StartX = 48.0F;
 	float IconSize = 0.5F;
 	float ElementGap = 0.2F;
 	float BackGroundY = 0.95F;
