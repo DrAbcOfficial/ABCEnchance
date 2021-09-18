@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include "mathlib.h"
 #include "vguilocal.h"
 
 vgui::ISchemeManager* g_pScheme;

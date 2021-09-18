@@ -14,6 +14,7 @@
 #include "enginedef.h"
 #include "exportfuncs.h"
 #include "drawElement.h"
+#include "utility.h"
 
 #include "eccomoney.h"
 CHudEccoMoney m_HudEccoMoney;
@@ -44,11 +45,12 @@ int CHudEccoMoney::Draw(float flTime){
 		gHudDelegate->surface()->DrawSetTexture(-1);
 		gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 		gHudDelegate->surface()->DrawSetTexture(MoneyBackGround);
-		int iSizeX = gScreenInfo.iWidth * BackgroundLength;
-		int iSizeY = gScreenInfo.iHeight * BackgroundHeight;
+		int iSizeX = GetScreenPixel(false, BackgroundLength);
+		int iSizeY = GetScreenPixel(true, BackgroundHeight);
+		int iYPixel = GetScreenPixel(true, YOffset);
 		int nowX = 0;
-		int nowY = gScreenInfo.iHeight / 2 + YOffset + iSizeY;
-		gHudDelegate->surface()->DrawTexturedRect(nowX, gScreenInfo.iHeight / 2 + YOffset, iSizeX, nowY);
+		int nowY = iYPixel + iSizeY;
+		gHudDelegate->surface()->DrawTexturedRect(nowX, gScreenInfo.iHeight / 2 + iYPixel, iSizeX, nowY);
 		int iTextHeight;
 		wchar_t buf[16];
 		int r, g, b, a;

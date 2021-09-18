@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include "mathlib.h"
+#include "vguilocal.h"
 
 #include "utility.h"
 
@@ -49,4 +50,7 @@ void HSVToRGB(float h, float s, float v, int& r, int& g, int& b){
 	r = (hr + m) * 255;
 	g = (hg + m) * 255;
 	b = (hb + m) * 255;
+}
+int GetScreenPixel(bool h, float percent) {
+	return h ? gScreenInfo.iHeight : gScreenInfo.iWidth * clamp(percent, 0.0F, 1.0F);
 }
