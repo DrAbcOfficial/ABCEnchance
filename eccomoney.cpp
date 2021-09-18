@@ -19,9 +19,9 @@
 #include "eccomoney.h"
 CHudEccoMoney m_HudEccoMoney;
 int CHudEccoMoney::Init(void){
-	YOffset = (float)atof(pScheme->GetResourceString("Ecco.YOffset"));
-	BackgroundLength = (float)atof(pScheme->GetResourceString("Ecco.BackgroundLength"));
-	BackgroundHeight = (float)atof(pScheme->GetResourceString("Ecco.BackgroundHeight"));
+	YOffset = GET_SCREEN_PIXEL(true, "Ecco.YOffset");
+	BackgroundLength = GET_SCREEN_PIXEL(false, "Ecco.BackgroundLength");
+	BackgroundHeight = GET_SCREEN_PIXEL(true, "Ecco.BackgroundHeight");
 
 	MoneyColor = pScheme->GetColor("Ecco.MoneyColor", gDefaultColor);
 	MoneyDecreseColor = pScheme->GetColor("Ecco.MoneyDecreseColor", gDefaultColor);
@@ -45,12 +45,11 @@ int CHudEccoMoney::Draw(float flTime){
 		gHudDelegate->surface()->DrawSetTexture(-1);
 		gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 		gHudDelegate->surface()->DrawSetTexture(MoneyBackGround);
-		int iSizeX = GetScreenPixel(false, BackgroundLength);
-		int iSizeY = GetScreenPixel(true, BackgroundHeight);
-		int iYPixel = GetScreenPixel(true, YOffset);
+		int iSizeX = BackgroundLength;
+		int iSizeY = BackgroundHeight;
 		int nowX = 0;
-		int nowY = iYPixel + iSizeY;
-		gHudDelegate->surface()->DrawTexturedRect(nowX, gScreenInfo.iHeight / 2 + iYPixel, iSizeX, nowY);
+		int nowY = YOffset + iSizeY;
+		gHudDelegate->surface()->DrawTexturedRect(nowX, gScreenInfo.iHeight / 2 + YOffset, iSizeX, nowY);
 		int iTextHeight;
 		wchar_t buf[16];
 		int r, g, b, a;
