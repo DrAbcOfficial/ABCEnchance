@@ -19,30 +19,8 @@ private:
 	HIST_ITEM rgAmmoHistory[MAX_HISTORY];
 
 public:
-
-	void Init(void){
-		AmmoIconColor = pScheme->GetColor("AmmoHUD.AmmoPickUpIconColor", gDefaultColor);
-		AmmoTextColor = pScheme->GetColor("AmmoHUD.AmmoPickUpTextColor", gDefaultColor);
-		iAmmoDisplayCount = (int)atof(pScheme->GetResourceString("AmmoHUD.AmmoPickUpDisplayCount"));
-		vecAmmoPickUpPos[0] = (int)atof(pScheme->GetResourceString("AmmoHUD.AmmoPickUpX"));
-		vecAmmoPickUpPos[1] = (int)atof(pScheme->GetResourceString("AmmoHUD.AmmoPickUpY"));
-
-		WeaponPickUpColor = pScheme->GetColor("AmmoHUD.WeaponPickUpColor", gDefaultColor);
-		WeaponPickUpEmptyColor = pScheme->GetColor("AmmoHUD.WeaponPickUpEmptyColor", gDefaultColor);
-		vecWeaponPickUpPos[0] = (int)atof(pScheme->GetResourceString("AmmoHUD.WeaponPickUpX"));
-		vecWeaponPickUpPos[1] = (int)atof(pScheme->GetResourceString("AmmoHUD.WeaponPickUpY"));
-
-		ItemPickUpColor = pScheme->GetColor("AmmoHUD.ItemPickUpColor", gDefaultColor);
-		vecItemPickUpPos[0] = (int)atof(pScheme->GetResourceString("AmmoHUD.ItemPickUpX"));
-		vecItemPickUpPos[1] = (int)atof(pScheme->GetResourceString("AmmoHUD.ItemPickUpY"));
-
-		hFont = pScheme->GetFont("HUDSmallShitFont", true);
-		Reset();
-	}
-
-	void Reset(void){
-		memset(rgAmmoHistory, 0, sizeof rgAmmoHistory);
-	}
+	void Init(void);
+	void Reset(void);
 
 	int iHistoryGap;
 	int iCurrentHistorySlot;
@@ -60,7 +38,6 @@ public:
 
 	void AddToHistory(int iType, int iId, int iCount = 0);
 	void AddToHistory(int iType, const char* szName, int iCount = 0);
-
 	void CheckClearHistory(void);
 	int DrawAmmoHistory(float flTime);
 };

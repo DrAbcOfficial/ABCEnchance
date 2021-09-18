@@ -68,16 +68,17 @@ void CHudArmorHealth::Init(void){
 	m_pfnDamage = HOOK_MESSAGE(Damage);
 	m_pfnBattery = HOOK_MESSAGE(Battery);
 
-	StartX = atof(pScheme->GetResourceString("HealthArmor.StartX"));
-	IconSize = atof(pScheme->GetResourceString("HealthArmor.IconSize"));
-	BarLength = atof(pScheme->GetResourceString("HealthArmor.BarLength"));
-	BarWidth = atof(pScheme->GetResourceString("HealthArmor.BarWidth"));
-	ElementGap = atof(pScheme->GetResourceString("HealthArmor.ElementGap"));
-	BackGroundY = atof(pScheme->GetResourceString("HealthArmor.BackGroundY"));
-	BackGroundLength = atof(pScheme->GetResourceString("HealthArmor.BackGroundLength"));
-	DamageIconX = atof(pScheme->GetResourceString("HealthArmor.DamageIconX"));
-	DamageIconY = atof(pScheme->GetResourceString("HealthArmor.DamageIconY"));
-	DamageIconSize = atof(pScheme->GetResourceString("HealthArmor.DamageIconSize"));
+	StartX = GET_SCREEN_PIXEL(false, "HealthArmor.StartX");
+	IconSize = GET_SCREEN_PIXEL(true, "HealthArmor.IconSize");
+	BarLength = GET_SCREEN_PIXEL(false, "HealthArmor.BarLength");
+	BarWidth = GET_SCREEN_PIXEL(true, "HealthArmor.BarWidth");
+	ElementGap = GET_SCREEN_PIXEL(true, "HealthArmor.ElementGap");
+	BackGroundY = GET_SCREEN_PIXEL(true, "HealthArmor.BackGroundY");
+	BackGroundLength = GET_SCREEN_PIXEL(false, "HealthArmor.BackGroundLength");
+	DamageIconX = GET_SCREEN_PIXEL(false, "HealthArmor.DamageIconX");
+	DamageIconY = GET_SCREEN_PIXEL(true, "HealthArmor.DamageIconY");
+	DamageIconSize = GET_SCREEN_PIXEL(true, "HealthArmor.DamageIconSize");
+
 	PainColorTime = atof(pScheme->GetResourceString("HealthArmor.PainColorTime"));
 	PainIndicatorTime = atof(pScheme->GetResourceString("HealthArmor.PainIndicatorTime"));
 
@@ -142,7 +143,7 @@ int CHudArmorHealth::Draw(float flTime){
 	if (flTime < flPainIndicatorKeepTime)
 		DrawPain(flTime);
 	int r, g, b, a;
-	float flBackGroundY = gScreenInfo.iHeight * BackGroundY;
+	float flBackGroundY = BackGroundY;
 	gHudDelegate->surface()->DrawSetTexture(-1);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 	gHudDelegate->surface()->DrawSetTexture(iHealthBarBackground);
@@ -150,12 +151,12 @@ int CHudArmorHealth::Draw(float flTime){
 
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
 	float flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
-	int iStartX = gScreenInfo.iWidth / StartX;
-	int iIconSize = flBackGroundHeight * IconSize;
+	int iStartX = StartX;
+	int iIconSize = IconSize;
 
-	int iBarLength = flBackGroundHeight * BarLength;
-	int iBarWidth = flBackGroundHeight * BarWidth;
-	int iElementGap = flBackGroundHeight * ElementGap;
+	int iBarLength = BarLength;
+	int iBarWidth = BarWidth;
+	int iElementGap = ElementGap;
 	int iHealth = m_iHealth;
 	int iBattery = m_iBat;
 	//HP ICON
@@ -346,7 +347,7 @@ void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage){
 		}
 		if (bitsOn & giDmgFlags[i]){
 			pdmg->x = DamageIconX;
-			pdmg->y = ScreenHeight - DamageIconY - DamageIconSize * 2;
+			pdmg->y = DamageIconY - DamageIconSize * 2;
 			pdmg->fExpire = flTime + DMG_IMAGE_LIFE;
 			for (int j = 0; j < NUM_DMG_TYPES; j++){
 				if (j == i)
