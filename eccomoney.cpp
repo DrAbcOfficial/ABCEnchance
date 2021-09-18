@@ -49,7 +49,7 @@ int CHudEccoMoney::Draw(float flTime){
 		int iSizeY = BackgroundHeight;
 		int nowX = 0;
 		int nowY = YOffset + iSizeY;
-		gHudDelegate->surface()->DrawTexturedRect(nowX, gScreenInfo.iHeight / 2 + YOffset, iSizeX, nowY);
+		gHudDelegate->surface()->DrawTexturedRect(nowX, YOffset, iSizeX, nowY);
 		int iTextHeight;
 		wchar_t buf[16];
 		int r, g, b, a;

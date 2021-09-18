@@ -147,7 +147,7 @@ int CHudArmorHealth::Draw(float flTime){
 	gHudDelegate->surface()->DrawSetTexture(-1);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 	gHudDelegate->surface()->DrawSetTexture(iHealthBarBackground);
-	gHudDelegate->surface()->DrawTexturedRect(0, flBackGroundY, gScreenInfo.iWidth / 3, gScreenInfo.iHeight);
+	gHudDelegate->surface()->DrawTexturedRect(0, flBackGroundY, BackGroundLength, gScreenInfo.iHeight);
 
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
 	float flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;

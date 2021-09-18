@@ -52,5 +52,5 @@ void HSVToRGB(float h, float s, float v, int& r, int& g, int& b){
 	b = (hb + m) * 255;
 }
 int GetScreenPixel(bool h, float percent) {
-	return h ? gScreenInfo.iHeight : gScreenInfo.iWidth * clamp(percent, 0.0F, 1.0F);
+	return (float)(h ? gScreenInfo.iHeight : gScreenInfo.iWidth) * clamp(percent, 0.0F, 1.0F);
 }
