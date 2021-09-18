@@ -47,10 +47,13 @@ int CHudRadar::Init(){
 	gCVars.pRadarSize = CREATE_CVAR("cl_radarsize", "344", FCVAR_VALUE, NULL);
 	gCVars.pRadarSizeTime = CREATE_CVAR("cl_radarsizetime", "0.25", FCVAR_VALUE, NULL);
 	gCVars.pRadarGap = CREATE_CVAR("cl_radargap", "0.98", FCVAR_VALUE, NULL);
+	gCVars.pRadarRoundRadius = CREATE_CVAR("cl_radarradius", "344", FCVAR_VALUE, NULL);
+
 	gCVars.pRadarUpdateInterval = CREATE_CVAR("cl_radarupdateint", "1", FCVAR_VALUE, NULL);
 	pCVarDevOverview = gEngfuncs.pfnGetCvarPointer("dev_overview");
 	pCVarDrawDynamic = gEngfuncs.pfnGetCvarPointer("r_dynamic");
 	pCVarDrawEntities = gEngfuncs.pfnGetCvarPointer("r_drawentities");
+	pCVarGamma = gEngfuncs.pfnGetCvarPointer("gamma");
 
 	XOffset = atof(pScheme->GetResourceString("Radar.XOffset"));
 	YOffset = atof(pScheme->GetResourceString("Radar.YOffset"));
@@ -58,11 +61,13 @@ int CHudRadar::Init(){
 	MapAlpha = (GLubyte)atof(pScheme->GetResourceString("Radar.MapAlpha"));
 	CenterAlpha = atof(pScheme->GetResourceString("Radar.CenterAlpha"));
 	NorthPointerSize = atof(pScheme->GetResourceString("Radar.NorthPointerSize"));
+	ViewAngleSize = atof(pScheme->GetResourceString("Radar.ViewAngleSize"));
 
-	pp_radarlight.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\pp_brightpass.fsh", NULL);
+	pp_radarlight.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\radar.fsh", NULL);
 	if (pp_radarlight.program){
-		SHADER_UNIFORM(pp_radarlight, tex, "tex");
-		SHADER_UNIFORM(pp_radarlight, ovc, "ovc");
+		SHADER_UNIFORM(pp_radarlight, rad, "rad");
+		SHADER_UNIFORM(pp_radarlight, xys, "xys");
+		SHADER_UNIFORM(pp_radarlight, gamma, "gamma");
 	}
 	return 1;
 }
@@ -73,9 +78,11 @@ void CHudRadar::VidInit(){
 		pCVarWater = gEngfuncs.pfnGetCvarPointer("r_water");
 }
 void CHudRadar::Reset(){
-	VGUI_CREATE_NEWTGA_TEXTURE(OutLineImg, "abcenchance/tga/radar_background");
-	VGUI_CREATE_NEWTGA_TEXTURE(PlayerPointImg, "abcenchance/tga/radar_upground");
+	VGUI_CREATE_NEWTGA_TEXTURE(BackGroundImg, "abcenchance/tga/radar_background");
+	VGUI_CREATE_NEWTGA_TEXTURE(UpGroundImg, "abcenchance/tga/radar_upground");
 	VGUI_CREATE_NEWTGA_TEXTURE(NorthImg, "abcenchance/tga/radar_north");
+	VGUI_CREATE_NEWTGA_TEXTURE(ViewAngleImg, "abcenchance/tga/radar_viewangle");
+	VGUI_CREATE_NEWTGA_TEXTURE(RoundBackGroundImg, "abcenchance/tga/radar_roundbackground");
 
 	flNextUpdateTrTime = 0;
 	flFinishScaleTime = 0;
@@ -111,22 +118,23 @@ void CHudRadar::Draw(float flTime){
 	//绘制背景
 	gHudDelegate->surface()->DrawSetTexture(-1);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
-	gHudDelegate->surface()->DrawSetTexture(OutLineImg);
+	gHudDelegate->surface()->DrawSetTexture(gCVars.pRadar->value > 1 ? RoundBackGroundImg : BackGroundImg);
 	gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
-	//绘制雷达
-	glEnable(GL_TEXTURE_2D);
+	//shader
+	GL_UseProgram(pp_radarlight.program);
+	if (gCVars.pRadar->value > 1) {
+		glUniform1f(pp_radarlight.rad, min(1.0f, fabs(gCVars.pRadarRoundRadius->value) / sizeMap));
+		glUniform3f(pp_radarlight.xys, iStartX, iStartY, sizeMap);
+	}
+	else
+		glUniform1f(pp_radarlight.rad, 0);
+	if (g_metaplugins.renderer)
+		glUniform1f(pp_radarlight.gamma, 1 / pCVarGamma->value);
 
-	if (g_metaplugins.renderer) {
-		GL_UseProgram(pp_radarlight.program);
-		glUniform1i(pp_radarlight.tex, 0);
-		glUniform3f(pp_radarlight.ovc, iOverviewR, iOverviewG, iOverviewB);
-	}
-	
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_hRadarBufferTex);
-	if (!g_metaplugins.renderer) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4ub(255, 255, 255, MapAlpha);
 	glBegin(GL_QUADS);
 		glTexCoord2f(stx, sty + h);
@@ -138,22 +146,26 @@ void CHudRadar::Draw(float flTime){
 		glTexCoord2f(stx, sty);
 		glVertex2f(iStartX, iStartY + sizeMap);
 	glEnd();
-
-	if (g_metaplugins.renderer)
-		GL_UseProgram(0);
-
+	GL_UseProgram(0);
 	//绘制前景
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
-	gHudDelegate->surface()->DrawSetTexture(PlayerPointImg);
-	gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
+	if (gCVars.pRadar->value == 1) {
+		gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+		gHudDelegate->surface()->DrawSetTexture(UpGroundImg);
+		gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
+	}
+	//绘制箭头
+	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
+	gHudDelegate->surface()->DrawSetTexture(ViewAngleImg);
+	gHudDelegate->surface()->DrawTexturedRect(
+		iStartX + (size - ViewAngleSize) / 2,
+		iStartY + (size - ViewAngleSize) / 2,
+		iStartX + (size + ViewAngleSize) / 2,
+		iStartY + (size + ViewAngleSize) / 2);
 	//绘制指北针
-	//圆
 	float rotate = DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[YAW]);
-	h = sqrt(2 * pow(size, 2)) / 2;
-	stx = (iStartX + size / 2) + h * cos(rotate);
-	sty = (iStartY + size / 2) + h * sin(rotate);
-	stx = clamp(stx, iStartX, iStartX + size);
-	sty = clamp(sty, iStartY, iStartY + size);
+	h = gCVars.pRadar->value > 1 ? size / 2 : fsqrt(2 * pow(size, 2)) / 2;
+	stx = clamp(((iStartX + size / 2) + h * cos(rotate)), iStartX, iStartX + size);
+	sty = clamp(((iStartY + size / 2) + h * sin(rotate)), iStartY, iStartY + size);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
 	gHudDelegate->surface()->DrawSetTexture(NorthImg);
 	w = NorthPointerSize / 2;
