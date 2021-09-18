@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include <string>
 
 #include "parsemsg.h"
 #include "msghook.h"
@@ -7,12 +8,16 @@
 #include "vguilocal.h"
 #include "weapon.h"
 #include "CColor.h"
-#include "CHudDelegate.h"
-#include "drawElement.h"
 #include "glew.h"
 
+#include "CHudDelegate.h"
+#include "drawElement.h"
+#include "mathlib.h"
+#include "utility.h"
+
 #include "vote.h"
-#include <string>
+
+
 
 CHudVote m_HudVote;
 pfnUserMsgHook m_pfnVoteMenu;
@@ -77,12 +82,16 @@ int CHudVote::Draw(float flTime){
 	//if (m_flKeepTime <= flTime)
 	//	m_bInVoting = false;
 	int r, g, b, a;
-	int x, y, w, h;
 	wchar_t buf[128];
-	w = gScreenInfo.iWidth / Width;
-	h = gScreenInfo.iHeight / Height;
-	x = gScreenInfo.iWidth - XOffset - w;
-	y = YOffset;
+	vec4_t xywh;
+	xywh[2] = GetScreenPixel(false, Width);
+	xywh[3] = GetScreenPixel(true, Height);
+	xywh[0] = GetScreenPixel(false, XOffset) - xywh[3];
+	xywh[1] = GetScreenPixel(true, YOffset);
+	int x = xywh[0];
+	int y = xywh[1];
+	int w = xywh[2];
+	int h = xywh[3];
 	OutlineColor.GetColor(r, g, b, a);
 	gEngfuncs.pfnFillRGBABlend(x - 2, y - 2, w + 4, h + 4, r, g, b, a);
 	BackGoundColor.GetColor(r, g, b, a);
@@ -97,8 +106,7 @@ int CHudVote::Draw(float flTime){
 	gEngfuncs.pfnFillRGBABlend(x, y, w, 2, r, g, b, a);
 	y += h;
 	DrawMultiLineStr(m_VoteContend, w, x, y, r, g, b);
-	y = YOffset + gScreenInfo.iHeight / Height;
-	y -= 6 * h;
+	y = xywh[1] + xywh[3] - 6 * h;
 
 	x += 2.2 * h;
 	gHudDelegate->surface()->DrawSetTexture(-1);
