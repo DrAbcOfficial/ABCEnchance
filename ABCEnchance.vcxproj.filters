@@ -281,9 +281,6 @@
     <ClInclude Include="vote.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="utility.h">
-      <Filter>Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="cvar_hook.h">
       <Filter>Header\Var</Filter>
     </ClInclude>
@@ -295,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="numdisplay.h">
       <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
