@@ -405,6 +405,7 @@ void CHudCustomAmmo::SyncWeapon(){
 			bwp = (*g_rgBaseSlots)[i][j];
 			wpi = gWR.GetWeaponSlot(i, j);
 			if (!bwp) {
+				//TODO: 此处有访问冲突风险
 				if(wpi->iId)
 					gWR.DropWeapon(wpi);
 			}		
