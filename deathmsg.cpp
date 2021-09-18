@@ -1,15 +1,20 @@
 #include <metahook.h>
+#include <regex>
+
 #include "parsemsg.h"
 #include "pm_shared.h"
 #include "msghook.h"
-#include <regex>
-#include "mathlib.h"
 #include "cvar_hook.h"
+
 #include "local.h"
 #include "vguilocal.h"
 #include "myconst.h"
-#include "drawElement.h"
 #include "hud.h"
+
+#include "drawElement.h"
+#include "mathlib.h"
+#include "utility.h"
+
 #include "deathmsg.h"
 
 CHudDeathMsg m_HudDeathMsg;
@@ -58,7 +63,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf){
 	return m_pfnTextMsg(pszName, iSize, pbuf);
 }
 int CHudDeathMsg::Draw(float flTime){
-	int iStartX = gScreenInfo.iWidth - XOffset;
+	int iStartX = XOffset;
 	int x = iStartX;
 	int y = YOffset;
 	int startAlpha = 255;
@@ -143,10 +148,10 @@ int CHudDeathMsg::Init(void){
 	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_VALUE, NULL);
 	
 	HUDFont = pScheme->GetFont("MainShitFont", true);
-	XOffset = atof(pScheme->GetResourceString("DeathMsg.XOffset"));
-	YOffset = atof(pScheme->GetResourceString("DeathMsg.YOffset"));
-	GapOffset = atof(pScheme->GetResourceString("DeathMsg.GapOffset"));
-	BackGoundWidth = atof(pScheme->GetResourceString("DeathMsg.BackGoundWidth"));
+	XOffset = GET_SCREEN_PIXEL(false, "DeathMsg.XOffset");
+	YOffset = GET_SCREEN_PIXEL(true, "DeathMsg.YOffset");
+	GapOffset = GET_SCREEN_PIXEL(true, "DeathMsg.GapOffset");
+	BackGoundWidth = GET_SCREEN_PIXEL(true, "DeathMsg.BackGoundWidth");
 
 	BackGoundColor = pScheme->GetColor("DeathMsg.BackGoundColor", gDefaultColor);
 
