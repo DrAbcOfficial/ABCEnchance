@@ -4,6 +4,8 @@
 ![Last Commit](https://img.shields.io/github/last-commit/DrAbcrealone/ABCEnchance?style=for-the-badge)
 ###  ABCEnchance is a metahook plugin that provides experience improvement for Sven co-op
 
+<img src="img/cover.png" width="200%">
+
 ----
 
 # ⚠️ **<span color="#dd0000">This plugin is under development and unstable, and may have major modifications compared with the current one</span>** ⚠️
@@ -66,7 +68,7 @@
 |cl_menudrawpos|Draw weapon Pos|0|0/1|
 |cl_rainbowmenu|Draw weapon menu in rainbow|1|0/1/2|
 |---|---|---|---|
-|cl_radar|Radar|1|0/1|
+|cl_radar|Radar|1|0/1/2|
 |cl_radarzoom|Radar Zoom|2.5|0.0001~9999|
 |cl_radarsize|Radar Size|344|0-9999|
 |cl_radarsizetime|Radar Scale animation time|0.25|0~9999|
