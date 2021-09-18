@@ -38,10 +38,10 @@ int CHudVote::Init(){
 	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
 	m_pfnEndVote = HOOK_MESSAGE(EndVote);
 	
-	XOffset = atof(pScheme->GetResourceString("Vote.XOffset"));
-	YOffset = atof(pScheme->GetResourceString("Vote.YOffset"));
-	Height = atof(pScheme->GetResourceString("Vote.Height"));
-	Width = atof(pScheme->GetResourceString("Vote.Width"));
+	XOffset = GET_SCREEN_PIXEL(false, "Vote.XOffset");
+	YOffset = GET_SCREEN_PIXEL(true, "Vote.YOffset");
+	Height = GET_SCREEN_PIXEL(true, "Vote.Height");
+	Width = GET_SCREEN_PIXEL(false, "Vote.Width");
 
 	OutlineColor = pScheme->GetColor("Vote.OutlineColor", gDefaultColor);
 	BackGoundColor = pScheme->GetColor("Vote.BackGoundColor", gDefaultColor);
@@ -83,11 +83,7 @@ int CHudVote::Draw(float flTime){
 	//	m_bInVoting = false;
 	int r, g, b, a;
 	wchar_t buf[128];
-	vec4_t xywh;
-	xywh[2] = GetScreenPixel(false, Width);
-	xywh[3] = GetScreenPixel(true, Height);
-	xywh[0] = GetScreenPixel(false, XOffset) - xywh[3];
-	xywh[1] = GetScreenPixel(true, YOffset);
+	vec4_t xywh = { XOffset - Height, YOffset, Width, Height };
 	int x = xywh[0];
 	int y = xywh[1];
 	int w = xywh[2];
