@@ -63,12 +63,9 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf){
 	return m_pfnTextMsg(pszName, iSize, pbuf);
 }
 int CHudDeathMsg::Draw(float flTime){
-	int iStartX = XOffset;
-	int x = iStartX;
+	int x = XOffset;
 	int y = YOffset;
 	int startAlpha = 255;
-	int iOffset = GapOffset;
-	int iBackWidth = BackGoundWidth;
 	int w;
 	int h;
 	float r, g, b, a;
@@ -91,7 +88,8 @@ int CHudDeathMsg::Draw(float flTime){
 
 		int br, bg, bb, dummy;
 		BackGoundColor.GetColor(br, bg, bb, dummy);
-		gEngfuncs.pfnFillRGBABlend(x - iBackWidth, y - iBackWidth, w + iBackWidth * 2, h + iBackWidth * 2, br, bg, bb, a / 2);
+		gEngfuncs.pfnFillRGBABlend(x - BackGoundWidth, y - BackGoundWidth, 
+			w + BackGoundWidth * 2, h + BackGoundWidth * 2, br, bg, bb, a / 2);
 		
 		r = 0.8;
 		g = 0;
@@ -117,8 +115,8 @@ int CHudDeathMsg::Draw(float flTime){
 		DrawVGUI2String(buf, x, y, r, g, b, HUDFont, true);
 		GetStringSize(buf, &w, &h, HUDFont);
 		
-		x = iStartX;
-		y -= h + iOffset;
+		x = XOffset;
+		y -= h + GapOffset;
 	}
 	return 1;
 }

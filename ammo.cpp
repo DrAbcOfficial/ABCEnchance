@@ -449,8 +449,6 @@ int CHudCustomAmmo::Draw(float flTime){
 	float flBackGroundHeight = gScreenInfo.iHeight - BackGroundY;
 	float flCenterX = nowX + (gScreenInfo.iWidth - nowX) / 2, flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
 	int nowY;
-	int iIconSize = IconSize;
-	int iElementGap = ElementGap;
 	int iTextHeight;
 	int iTextWidth;
 	wchar_t buf[16];
@@ -488,13 +486,13 @@ int CHudCustomAmmo::Draw(float flTime){
 
 		Ammo1IconColor.GetColor(r, g, b, a);
 		nowY = flCenterY - (m_pWeapon->rcAmmo.bottom - m_pWeapon->rcAmmo.top) / 2;
-		nowX -= iElementGap + iIconSize;
+		nowX -= ElementGap + IconSize;
 		gEngfuncs.pfnSPR_Set(m_pWeapon->hAmmo, r, g, b);
 		gEngfuncs.pfnSPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo);
 	}
 
 	if (pw->iAmmo2Type > 0){
-		nowX = flCenterX + iElementGap * 2;
+		nowX = flCenterX + ElementGap * 2;
 		if (pw->iClip2 >= 0){
 			Ammo2BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d/", pw->iClip2);
@@ -519,7 +517,7 @@ int CHudCustomAmmo::Draw(float flTime){
 			nowX += iTextWidth;
 		}
 		Ammo2IconColor.GetColor(r, g, b, a);
-		nowX += iElementGap;
+		nowX += ElementGap;
 		nowY = flCenterY - (m_pWeapon->rcAmmo2.bottom - m_pWeapon->rcAmmo2.top) / 2;
 		gEngfuncs.pfnSPR_Set(m_pWeapon->hAmmo2, r, g, b);
 		gEngfuncs.pfnSPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo2);

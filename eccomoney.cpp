@@ -45,18 +45,16 @@ int CHudEccoMoney::Draw(float flTime){
 		gHudDelegate->surface()->DrawSetTexture(-1);
 		gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 		gHudDelegate->surface()->DrawSetTexture(MoneyBackGround);
-		int iSizeX = BackgroundLength;
-		int iSizeY = BackgroundHeight;
 		int nowX = 0;
-		int nowY = YOffset + iSizeY;
-		gHudDelegate->surface()->DrawTexturedRect(nowX, YOffset, iSizeX, nowY);
+		int nowY = YOffset + BackgroundHeight;
+		gHudDelegate->surface()->DrawTexturedRect(nowX, YOffset, BackgroundLength, nowY);
 		int iTextHeight;
 		wchar_t buf[16];
 		int r, g, b, a;
 		wsprintfW(buf, L"$%d", iEcco);
 		GetStringSize(buf, NULL, &iTextHeight, HUDSmallFont);
-		nowX = iSizeX / 8;
-		nowY -= (iSizeY + iTextHeight) / 2;
+		nowX = BackgroundLength / 8;
+		nowY -= (BackgroundHeight + iTextHeight) / 2;
 		MoneyColor.GetColor(r, g, b, a);
 		DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont, true);
 		if (iEcco != flStoreMoney && flTime > flNextUpdateTime) {
@@ -68,7 +66,7 @@ int CHudEccoMoney::Draw(float flTime){
 		if (flTime < flDifferDisapearTime) {
 			wsprintfW(buf, iDifferMoney > 0 ? L"+$%d" : L"-$%d", abs(iDifferMoney));
 			GetStringSize(buf, NULL, &iTextHeight, HUDSmallFont);
-			nowY -= iTextHeight + iSizeY / 2;
+			nowY -= iTextHeight + BackgroundHeight / 2;
 			if (iDifferMoney > 0)
 				MoneyIncreseColor.GetColor(r, g, b, a);
 			else
