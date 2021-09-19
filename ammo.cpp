@@ -397,25 +397,29 @@ void CHudCustomAmmo::DrawScreenQuad(){
 	glEnd();
 }
 void CHudCustomAmmo::SyncWeapon(){
-	WEAPON* wpi;
-	WEAPON* wp;
 	baseweapon_t* bwp;
 	for (int i = 0; i < MAX_WEAPON_OLDSLOTS; i++){
 		for (int j = 0; j < MAX_WEAPON_OLDPOSITIONS; j++){
+			//没有WeaponList信息，丢弃
+			if (gWR.GetWeaponIdBySlot(i, j) <= 0)
+				continue;
+			//获得原位武器信息
 			bwp = (*g_rgBaseSlots)[i][j];
-			wpi = gWR.GetWeaponSlot(i, j);
+			//若原位已没有
 			if (!bwp) {
-				if (wpi->iId > 0)
+				//现位还有，丢弃武器
+				if (gWR.HasWeapon(i, j))
 					gWR.DropWeapon(i, j);
-			}		
+			}
+			//若原位已有
 			else {
-				wp = gWR.GetWeapon(bwp->iId);
-				if (wp->iId <= 0)
-					continue;
+				//现位没有，捡起武器
+				if (!gWR.HasWeapon(i, j))
+					gWR.PickupWeapon(bwp->iId);
+				//同步弹匣数据
+				WEAPON* wp = gWR.GetWeapon(bwp->iId);
 				wp->iClip = bwp->iClip;
 				wp->iClip2 = bwp->iClip2;
-				if (!wpi->iId)
-					gWR.PickupWeapon(bwp->iId);
 			}
 		}
 	}

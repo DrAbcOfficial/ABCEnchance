@@ -36,6 +36,7 @@ public:
 	void DropAllWeapons(void);
 	WEAPON* GetWeaponSlot(int slot, int pos);
 	int GetWeaponIdBySlot(int slot, int pos);
+	int HasWeapon(int s, int p);
 	int HasWeapon(WEAPON* wp);
 	void LoadWeaponSprites(WEAPON* wp);
 	void LoadScriptWeaponSprites(int iId, char* cust);
