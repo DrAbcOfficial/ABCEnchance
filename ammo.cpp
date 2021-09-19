@@ -397,14 +397,13 @@ void CHudCustomAmmo::DrawScreenQuad(){
 	glEnd();
 }
 void CHudCustomAmmo::SyncWeapon(){
-	baseweapon_t* bwp;
 	for (int i = 0; i < MAX_WEAPON_OLDSLOTS; i++){
 		for (int j = 0; j < MAX_WEAPON_OLDPOSITIONS; j++){
 			//没有WeaponList信息，丢弃
 			if (gWR.GetWeaponIdBySlot(i, j) <= 0)
 				continue;
 			//获得原位武器信息
-			bwp = (*g_rgBaseSlots)[i][j];
+			baseweapon_t* bwp = (*g_rgBaseSlots)[i][j];
 			//若原位已没有
 			if (!bwp) {
 				//现位还有，丢弃武器
