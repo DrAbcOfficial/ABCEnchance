@@ -102,6 +102,9 @@ void WeaponsResource::LoadAllWeaponSprites(void){
 			LoadWeaponSprites(&rgWeapons[i]);
 	}
 }
+int WeaponsResource::HasWeapon(int s, int p) {
+	return gridSlotMap[s][p] > 0;
+}
 int WeaponsResource::HasWeapon(WEAPON* wp){
 	return gridSlotMap[wp->iSlot][wp->iSlotPos] > 0;
 }
