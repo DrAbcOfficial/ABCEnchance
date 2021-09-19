@@ -23,6 +23,7 @@
 #define ServerCmd (*gEngfuncs.pfnServerCmd)
 #define EngineClientCmd (*gEngfuncs.pfnClientCmd)
 #define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
+
 #define WEAPON_SUIT			31
 
 #ifndef _WIN32
