@@ -6,6 +6,7 @@
 #include "weapon.h"
 #include "weaponbank.h"
 #include "cvardef.h"
+#include "mathlib.h"
 
 #include "drawElement.h"
 #include "CHudDelegate.h"
@@ -46,7 +47,8 @@ HIST_ITEM* HistoryResource::GetFreeSlot(){
 	if ((((AMMO_PICKUP_GAP * iCurrentHistorySlot) + AMMO_PICKUP_PICK_HEIGHT) > AMMO_PICKUP_HEIGHT_MAX) ||
 		(iCurrentHistorySlot >= pHudDrawTime->value))
 		iCurrentHistorySlot = 0;
-	return &rgAmmoHistory[iCurrentHistorySlot++];
+	iCurrentHistorySlot++;
+	return &rgAmmoHistory[clamp(iCurrentHistorySlot, 0, MAX_HISTORY - 1)];
 }
 void HistoryResource::SetFreeSlot(int iType, int iId, int iCount){
 	HIST_ITEM* freeslot = GetFreeSlot();
