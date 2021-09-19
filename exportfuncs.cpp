@@ -258,8 +258,6 @@ void HUD_Init(void){
 	gCVars.pModelLag = CREATE_CVAR("cl_modellag", "1", FCVAR_VALUE, NULL);
 	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_VALUE, NULL);
 
-	gCVars.pCurDebug = CREATE_CVAR("cl_curdebug", "0", FCVAR_VALUE, NULL);
-
 	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, NULL);
 
 	gHudDelegate = new CHudDelegate();

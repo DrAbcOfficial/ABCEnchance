@@ -71,8 +71,7 @@ typedef struct{
 
 	cvar_t* pDeathNoticeTime;
 
-	cvar_t* pCurDebug;
-
+	cvar_t* pHudEfx;
 }cl_cvars_t;
 
 extern cl_refHookfunc_t gHookFuncs;

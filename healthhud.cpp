@@ -7,6 +7,8 @@
 #include "hud.h"
 #include "weapon.h"
 #include "vguilocal.h"
+#include "myconst.h"
+
 #include "CHudDelegate.h"
 #include "drawElement.h"
 #include "utility.h"
@@ -14,7 +16,6 @@
 #include "healthhud.h"
 
 #define DAMAGE_NAME "sprites/%d_dmg.spr"
-#define DAGER_HEALTH 45
 int giDmgFlags[NUM_DMG_TYPES] ={
 	DMG_POISON,
 	DMG_ACID,

@@ -8,6 +8,7 @@
 #include "parsemsg.h"
 #include "msghook.h"
 #include "glew.h"
+#include "drawElement.h"
 
 #include "ammo.h"
 #include "healthhud.h"
@@ -18,6 +19,7 @@
 #include "playertitle.h"
 #include "vote.h"
 #include "eccomoney.h"
+#include "efxhud.h"
 
 #include "CHudDelegate.h"
 #include <local.h>
@@ -58,6 +60,7 @@ void CHudDelegate::HUD_Init(void){
 	m_HudPlayerTitle.Init();
 	m_HudVote.Init();
 	m_HudEccoMoney.Init();
+	m_HudEfx.Init();
 }
 void CHudDelegate::HUD_VidInit(void){
 	int iRes = ScreenWidth < 640 ? 320 : 640;
@@ -113,6 +116,7 @@ void CHudDelegate::HUD_VidInit(void){
 void CHudDelegate::HUD_Draw(float flTime){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
+	m_HudEfx.Draw(flTime);
 	m_HudPlayerTitle.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
 	m_HudArmorHealth.Draw(flTime);
@@ -132,6 +136,7 @@ void CHudDelegate::HUD_Reset(void){
 	m_HudPlayerTitle.Reset();
 	m_HudVote.Reset();
 	m_HudEccoMoney.Reset();
+	m_HudEfx.Reset();
 
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 }

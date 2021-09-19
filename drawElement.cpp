@@ -13,8 +13,8 @@ char* UnicodeToUtf8(const wchar_t* unicode){
 	return szUtf8;
 }
 
-void DrawSPRIcon(int SprHandle, float x, float y, float w, float h, int r, int g, int b, int a){
-	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), 0);
+void DrawSPRIcon(int SprHandle, float x, float y, float w, float h, int r, int g, int b, int a, int frame = 0){
+	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), frame);
 	gEngfuncs.pTriAPI->RenderMode(kRenderTransAdd);
 	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
 	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
