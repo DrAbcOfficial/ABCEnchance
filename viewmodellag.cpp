@@ -45,20 +45,19 @@ void V_CalcViewModelLag(ref_params_t* pparams){
 	float pitch = pparams->cl_viewangles[PITCH];
 	pitch += pitch > 180.0f ? -360.0f : pitch < -180.0f ? 360.0f : 0;
 	if (gCVars.pModelLagValue->value <= 0.0f){
-		VectorCopy(*origin, vOriginalOrigin);
-		VectorCopy(*angles, vOriginalAngles);
+		VectorCopy(vOriginalOrigin, *origin);
+		VectorCopy(vOriginalAngles, *angles);
 	}
 	else{
-		*origin[0] += forward[0] * (-pitch * 0.035f);
-		*origin[1] += forward[1] * (-pitch * 0.035f);
-		*origin[2] += forward[2] * (-pitch * 0.035f);
-
-		*origin[0] += right[0] * (-pitch * 0.03f);
-		*origin[1] += right[1] * (-pitch * 0.03f);
-		*origin[2] += right[2] * (-pitch * 0.03f);
-
-		*origin[0] += up[0] * (-pitch * 0.02f);
-		*origin[1] += up[1] * (-pitch * 0.02f);
-		*origin[2] += up[2] * (-pitch * 0.02f);
+		int i;
+		for (i = 0; i < 3; i++) {
+			*origin[i] += forward[i] * (-pitch * 0.035f);
+		}
+		for (i = 0; i < 3; i++) {
+			*origin[i] += right[i] * (-pitch * 0.03f);
+		}
+		for (i = 0; i < 3; i++) {
+			*origin[i] += up[i] * (-pitch * 0.02f);
+		}
 	}
 }

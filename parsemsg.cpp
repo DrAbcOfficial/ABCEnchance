@@ -90,25 +90,20 @@ float READ_FLOAT(void){
 }
 
 char* READ_STRING(void){
-	int l, c;
 	static char string[2048];
-
 	string[0] = 0;
-
-	l = 0;
+	int l = 0;
+	int c;
 	do{
-		if (giRead+1 > giSize)
+		if (giRead + 1 > giSize)
 			break;
-
 		c = READ_CHAR();
 		if (c == -1 || c == 0)
 			break;
 		string[l] = c;
 		l++;
 	} while (l < sizeof(string)-1);
-	
 	string[l] = 0;
-	
 	return string;
 }
 

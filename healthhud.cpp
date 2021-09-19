@@ -341,7 +341,7 @@ void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage){
 	for (int i = 0; i < NUM_DMG_TYPES; i++){
 		pdmg = &m_dmg[i];
 		if (m_bitsDamage & giDmgFlags[i]){
-			pdmg->fExpire = flTime + DMG_IMAGE_LIFE; // extend the duration
+			pdmg->fExpire = flTime + DMG_IMAGE_LIFE;
 			if (!pdmg->fBaseline)
 				pdmg->fBaseline = flTime;
 		}

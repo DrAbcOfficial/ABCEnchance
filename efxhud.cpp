@@ -28,7 +28,7 @@ int CHudEfx::Init(void){
 int CHudEfx::Draw(float flTime){
 	if (gCVars.pHudEfx->value < 1)
 		return 0;
-	//ûѪ״̬
+	//低血量
 	gHudDelegate->surface()->DrawSetTexture(-1);
 	if (m_HudArmorHealth.m_iHealth < DAGER_HEALTH) {
 		if ((double)flTime - flDyingFlincAdvanceTime >= FRAME_ADVANCE_INTERVAL) {
@@ -44,14 +44,14 @@ int CHudEfx::Draw(float flTime){
 		gHudDelegate->surface()->DrawSetTexture(DarkconerImg);
 		gHudDelegate->surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 	}
-	//ˮ
+	//水下
 	if (iOldWaterType == WATERLEVEL_HEAD && gClientData->waterlevel != WATERLEVEL_HEAD) {
 		flWaterFaceDisapearTime = flTime + 1.5f;
 		flFrameLeftAdvanceTime = flFrameRightAdvanceTime = flTime;
 	}
 	if (flWaterFaceDisapearTime > flTime) {
 		int a = (flWaterFaceDisapearTime - flTime) * 255;
-		int frame = 0;
+		int frame;
 		if ((double)flTime - flFrameLeftAdvanceTime >= FRAME_ADVANCE_INTERVAL) {
 			frame = SPR_Frames(WaterLeftSpr);
 			iFrameLeft++;
