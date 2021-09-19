@@ -28,6 +28,9 @@ int CHudEfx::Init(void){
 int CHudEfx::Draw(float flTime){
 	if (gCVars.pHudEfx->value < 1)
 		return 0;
+	//观察者
+	if (gHudDelegate->IsInSpectate())
+		return 0;
 	//低血量
 	gHudDelegate->surface()->DrawSetTexture(-1);
 	if (m_HudArmorHealth.m_iHealth < DAGER_HEALTH) {
