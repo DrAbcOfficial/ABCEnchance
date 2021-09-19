@@ -48,6 +48,7 @@ HIST_ITEM* HistoryResource::GetFreeSlot(){
 		(iCurrentHistorySlot >= pHudDrawTime->value))
 		iCurrentHistorySlot = 0;
 	iCurrentHistorySlot++;
+	//TODO: 重构，V社的这整个类都是忍者大师
 	return &rgAmmoHistory[clamp(iCurrentHistorySlot, 0, MAX_HISTORY - 1)];
 }
 void HistoryResource::SetFreeSlot(int iType, int iId, int iCount){
