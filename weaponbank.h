@@ -32,7 +32,7 @@ public:
 	WEAPON* GetWeapon(int iId);
 	void AddWeapon(WEAPON* wp);
 	void PickupWeapon(int id);
-	void DropWeapon(WEAPON* wp);
+	void DropWeapon(int s, int p);
 	void DropAllWeapons(void);
 	WEAPON* GetWeaponSlot(int slot, int pos);
 	int GetWeaponIdBySlot(int slot, int pos);

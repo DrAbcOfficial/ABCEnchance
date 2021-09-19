@@ -84,8 +84,8 @@ void WeaponsResource::PickupWeapon(int id){
 	WEAPON* wp = &rgWeapons[id];
 	gridSlotMap[wp->iSlot][wp->iSlotPos] = id;
 }
-void WeaponsResource::DropWeapon(WEAPON* wp){
-	gridSlotMap[wp->iSlot][wp->iSlotPos] = -1;
+void WeaponsResource::DropWeapon(int s,int p){
+	gridSlotMap[s][p] = -1;
 }
 void WeaponsResource::DropAllWeapons(void){
 	memset(gridSlotMap, -1, sizeof gridSlotMap);

@@ -20,7 +20,7 @@ public:
 	void AddToHistory(int iType, const char* szName, int iCount = 0);
 	int DrawAmmoHistory(float flTime);
 
-	int iHistoryGap;
+	int iHistoryGap = 0;
 private:
 	HIST_ITEM* GetFreeSlot();
 	void SetFreeSlot(int iType, int iId, int iCount);
