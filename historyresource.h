@@ -1,10 +1,10 @@
 #pragma once
-#define MAX_HISTORY 64
+#define MAX_HISTORY 16
 enum {
-	HISTSLOT_EMPTY,
 	HISTSLOT_AMMO,
-	HISTSLOT_WEAP,
 	HISTSLOT_ITEM,
+	HISTSLOT_WEAP,
+	HISTSLOT_EMPTY
 };
 struct HIST_ITEM {
 	int type;
@@ -19,15 +19,13 @@ public:
 	void AddToHistory(int iType, int iId, int iCount = 0);
 	void AddToHistory(int iType, const char* szName, int iCount = 0);
 	int DrawAmmoHistory(float flTime);
-
-	int iHistoryGap = 0;
 private:
-	HIST_ITEM* GetFreeSlot();
 	void SetFreeSlot(int iType, int iId, int iCount);
-	void CheckClearHistory(void);
-	
-	HIST_ITEM rgAmmoHistory[MAX_HISTORY];
-	int iCurrentHistorySlot;
+	float GetAlphaScale(float a, float flTimediffer);
+	//0 Ammo
+	//1 Item
+	//2 Weapon
+	HIST_ITEM rgHistory[3][MAX_HISTORY];
 
 	cvar_t* pHudDrawTime;
 
@@ -41,8 +39,6 @@ private:
 	vec2_t vecWeaponPickUpPos;
 	vec2_t vecItemPickUpPos;
 
-	int AmmoPickUpDisplayCount;
 	vgui::HFont hFont;
 };
-
 extern HistoryResource gHR;
