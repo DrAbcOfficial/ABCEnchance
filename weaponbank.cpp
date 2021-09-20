@@ -336,8 +336,10 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
 
-	if (iSlot >= MAX_WEAPON_SLOTS || iSlot < 0)
-		return;
+	if (iSlot >= MAX_WEAPON_SLOTS)
+		iSlot = 0;
+	else if (iSlot < 0)
+		iSlot = MAX_WEAPON_SLOTS - 1;
 
 	if (iSlot == iNowSlot) {
 		gridDrawMenu[iNowSlot].iPos += fAdvance;

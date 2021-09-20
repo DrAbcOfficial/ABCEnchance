@@ -92,8 +92,8 @@ Scheme
 
 		"DeathMsg.XOffset"		"0.93"
 		"DeathMsg.YOffset"		"0.25"
-		"DeathMsg.GapOffset"	"0.01"
-		"DeathMsg.BackGoundWidth"	"0.008"
+		"DeathMsg.GapOffset"	"0.0105"
+		"DeathMsg.BackGoundWidth"	"0.0075"
 
 		"Vote.XOffset"		"0.9"
 		"Vote.YOffset"		"0.233"
