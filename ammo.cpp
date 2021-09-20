@@ -378,8 +378,6 @@ void CHudCustomAmmo::Reset(void){
 	gHR.Reset();
 }
 int CHudCustomAmmo::VidInit(void){
-	m_HUD_bucket0 = gHudDelegate->GetSpriteIndex("bucket1");
-	gHR.iHistoryGap = max(gHR.iHistoryGap, gHudDelegate->GetSpriteRect(m_HUD_bucket0).bottom - gHudDelegate->GetSpriteRect(m_HUD_bucket0).top);
 	gWR.LoadAllWeaponSprites();
 	return 1;
 }

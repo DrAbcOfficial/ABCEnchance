@@ -29,7 +29,6 @@ private:
 	void SyncWeapon();
 	float m_fAnimateTime;
 	float m_fNextSyncTime;
-	int	m_HUD_bucket0;
 
 	float m_fCursorAngle;
 
