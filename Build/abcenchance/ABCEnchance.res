@@ -67,11 +67,10 @@ Scheme
 		"AmmoHUD.BackGroundY"		"0.95"
 		"AmmoHUD.BackGroundLength"	"0.2"
 
-		"AmmoHUD.AmmoPickUpDisplayCount"	"8"
 		"AmmoHUD.AmmoPickUpX"	"0.45"
 		"AmmoHUD.AmmoPickUpY"	"0.55"
 		"AmmoHUD.WeaponPickUpX"	"1"
-		"AmmoHUD.WeaponPickUpY"	"0.96"
+		"AmmoHUD.WeaponPickUpY"	"0.85"
 		"AmmoHUD.ItemPickUpX"	"0.55"
 		"AmmoHUD.ItemPickUpY"	"0.55"
 
@@ -93,8 +92,8 @@ Scheme
 
 		"DeathMsg.XOffset"		"0.93"
 		"DeathMsg.YOffset"		"0.25"
-		"DeathMsg.GapOffset"	"0.0125"
-		"DeathMsg.BackGoundWidth"	"0.01"
+		"DeathMsg.GapOffset"	"0.01"
+		"DeathMsg.BackGoundWidth"	"0.008"
 
 		"Vote.XOffset"		"0.9"
 		"Vote.YOffset"		"0.233"
