@@ -430,6 +430,11 @@ int CHudCustomAmmo::Draw(float flTime){
 		return 1;
 	if (gClientData->health <= 0)
 		return 1;
+	//0.5s 进行一次武器同步
+	if (gEngfuncs.GetClientTime() > m_fNextSyncTime) {
+		SyncWeapon();
+		m_fNextSyncTime = gEngfuncs.GetClientTime() + 0.5F;
+	}
 	// Draw Weapon Menu
 	DrawWList(flTime);
 	gHR.DrawAmmoHistory(flTime);
@@ -736,11 +741,6 @@ int CHudCustomAmmo::DrawWList(float flTime){
 void CHudCustomAmmo::ClientMove(struct playermove_s* ppmove, qboolean server){
 	if (m_bOpeningAnnularMenu)
 		m_fFade = gEngfuncs.GetClientTime() + SelectCyclerHoldTime;
-	//0.5s 进行一次武器同步
-	if (gEngfuncs.GetClientTime() > m_fNextSyncTime) {
-		SyncWeapon();
-		m_fNextSyncTime = gEngfuncs.GetClientTime() + 0.5F;
-	}
 }
 void CHudCustomAmmo::IN_Accumulate(){
 	if (m_bOpeningAnnularMenu) {
