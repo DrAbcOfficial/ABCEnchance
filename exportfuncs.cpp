@@ -256,6 +256,7 @@ void HUD_Init(void){
 	gCVars.pRicochetNumber = CREATE_CVAR("abc_ricochet_sparknum", "24", FCVAR_VALUE, NULL);
 	
 	gCVars.pModelLag = CREATE_CVAR("cl_modellag", "1", FCVAR_VALUE, NULL);
+	gCVars.pModelLagAutoStop = CREATE_CVAR("cl_modellagautostop", "1", FCVAR_VALUE, NULL);
 	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_VALUE, NULL);
 
 	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, NULL);
@@ -265,6 +266,9 @@ void HUD_Init(void){
 	gHudDelegate->HUD_Init();
 }
 int HUD_VidInit(void){
+	//Fillup Default CVars
+	gCVars.pCvarDefaultFOV = gEngfuncs.pfnGetCvarPointer("default_fov");
+
 	int result = gExportfuncs.HUD_VidInit();
 	gHudDelegate->HUD_VidInit();
 	return result;
