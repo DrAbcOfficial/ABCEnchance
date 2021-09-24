@@ -1,5 +1,6 @@
 #include <metahook.h>
 #include <string>
+#include <map>
 #include "pmtrace.h"
 #include "vguilocal.h"
 #include "hud.h"
@@ -20,6 +21,7 @@
 #include "vote.h"
 #include "eccomoney.h"
 #include "efxhud.h"
+#include "itemhighlight.h"
 
 #include "CHudDelegate.h"
 #include <local.h>
@@ -61,6 +63,7 @@ void CHudDelegate::HUD_Init(void){
 	m_HudVote.Init();
 	m_HudEccoMoney.Init();
 	m_HudEfx.Init();
+	m_HudItemHighLight.Init();
 }
 void CHudDelegate::HUD_VidInit(void){
 	int iRes = ScreenWidth < 640 ? 320 : 640;
@@ -125,6 +128,7 @@ void CHudDelegate::HUD_Draw(float flTime){
 	m_HudCrosshair.Draw(flTime);
 	m_HudVote.Draw(flTime);
 	m_HudEccoMoney.Draw(flTime);
+	m_HudItemHighLight.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void){
 	m_iPlayerHealth = 100;
@@ -137,6 +141,7 @@ void CHudDelegate::HUD_Reset(void){
 	m_HudVote.Reset();
 	m_HudEccoMoney.Reset();
 	m_HudEfx.Reset();
+	m_HudItemHighLight.Reset();
 
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 }
@@ -172,8 +177,10 @@ void CHudDelegate::IN_Accumulate(void){
 		return;
 	m_HudCustomAmmo.IN_Accumulate();
 }
-void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active){
-	
+int CHudDelegate::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
+{
+	m_HudItemHighLight.AddEntity(type, ent, modelname);
+	return 0;
 }
 int CHudDelegate::GetSpriteIndex(const char* SpriteName){
 	for (int i = 0; i < m_iSpriteCount; i++){
