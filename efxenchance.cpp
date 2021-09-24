@@ -1,5 +1,7 @@
 #include <metahook.h>
-
+#include "pm_defs.h"
+#include "pmtrace.h"
+#include "event_api.h"
 #include "cl_entity.h"
 #include "mathlib.h"
 #include "com_model.h"
@@ -117,5 +119,44 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 		nOrg[1] = org[1];
 		nOrg[2] = org[2];
 		gHookFuncs.R_BloodStream(nOrg, dir, nColor == 247 ? 70 : nColor, gEngfuncs.pfnRandomLong(4, gCVars.pBloodSpriteSpeed->value));
+	}
+}
+void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short eventindex, 
+	float delay, float* origin, float* angles, 
+	float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2) {
+	//高斯flag 3, index 12
+	//高斯蓄力flag1, index 13
+	gEngfuncs.Con_Printf("flag: %d index: %d\n",flags, (int)eventindex);
+	switch (eventindex) {
+	case 12: {
+		//f1 亮度
+		//b1 是否左键
+		//待完善
+		pmtrace_t tr;
+		vec3_t vForward;
+		vec3_t vViewAngle;
+		gEngfuncs.GetViewAngles(vViewAngle);
+		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+		AngleVectors(vViewAngle, vForward, NULL, NULL);
+		vec3_t vecSrc, viewOfs, vecEnd;
+		VectorCopy(local->curstate.origin, vecSrc);
+		gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
+		VectorAdd(vecSrc, viewOfs, vecSrc);
+		vForward[0] *= 8192;
+		vForward[1] *= 8192;
+		vForward[2] *= 8192;
+		VectorAdd(vecSrc, vForward, vecEnd);
+		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_NORMAL, NULL, &tr);
+		
+		int modelindex = gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/laserbeam.spr");
+		if (modelindex < 0)
+			modelindex = gEngfuncs.pfnSPR_Load("sprites/laserbeam.spr");
+		cl_entity_t* view = gEngfuncs.GetViewModel();
+		gEngfuncs.pEfxAPI->R_BeamPoints(view->attachment[0], tr.endpos, modelindex, 0.2, 4, 0, 1, 1, 0, 0, 255, 255, 255);
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
+		break;
+	}
+	default:gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2); break;
 	}
 }

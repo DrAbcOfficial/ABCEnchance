@@ -17,7 +17,7 @@ extern metaplugins_t g_metaplugins;
 
 void Sys_ErrorEx(const char* fmt, ...);
 void CheckOtherPlugin();
-void FillDelegate();
+void FillEfxAddress();
 void FillAddress();
 void InstallHook();
 void MSG_Init(void);
@@ -50,7 +50,8 @@ void R_RenderView(int a1);
 #define Search_Pattern(sig) g_pMetaHookAPI->SearchPattern((void *)g_dwEngineBase, g_dwEngineSize, sig, Sig_Length(sig));
 #define Search_Pattern_From(fn, sig) g_pMetaHookAPI->SearchPattern((void *)fn, ((PUCHAR)g_dwEngineTextBase + g_dwEngineTextSize) - (PUCHAR)fn, sig, Sig_Length(sig))
 
-#define Fill_DelegateFunc(fn) gHookFuncs.fn = *gEngfuncs.pEfxAPI->fn;
+#define Fill_EfxFunc(fn) gHookFuncs.fn = *gEngfuncs.pEfxAPI->fn
+#define Fill_EngFunc(fn) gHookFuncs.fn = *gEngfuncs.fn
 #define Install_InlineHook(fn) g_pMetaHookAPI->InlineHook((void *)gRefFuncs.fn, fn, (void **)&gRefFuncs.fn);
-#define Install_InlineEfxHook(fn) g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn);
-#define Fill_InlineEfxHook(fn) Fill_DelegateFunc(fn) Install_InlineEfxHook(fn)
+#define Install_InlineEngHook(fn) g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn);
+#define Fill_InlineEfxHook(fn) Fill_EfxFunc(fn);Install_InlineEngHook(fn)

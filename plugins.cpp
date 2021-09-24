@@ -74,7 +74,7 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_AddEntity = HUD_AddEntity;
 	pExportFunc->V_CalcRefdef = V_CalcRefdef;
 	
-	FillDelegate();
+	FillEfxAddress();
 	FillAddress();
 	InstallHook();
 
