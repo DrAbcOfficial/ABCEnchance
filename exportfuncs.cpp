@@ -344,20 +344,13 @@ void IN_Accumulate(void){
 	else
 		gExportfuncs.IN_Accumulate();
 }
+int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
+	gHudDelegate->HUD_AddEntity(type, ent, modelname);
+	return gExportfuncs.HUD_AddEntity(type, ent, modelname);
+}
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	return gHudDelegate->HUD_KeyEvent(eventcode, keynum, pszCurrentBinding) ? 
 		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
-}
-void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active){
-	if (g_iVisibleMouse && gHudDelegate->m_iVisibleMouse){
-		int iVisibleMouse = *g_iVisibleMouse;
-		*g_iVisibleMouse = 1;
-		gExportfuncs.CL_CreateMove(frametime, cmd, active);
-		gHudDelegate->CL_CreateMove(frametime, cmd, active);
-		*g_iVisibleMouse = iVisibleMouse;
-	}
-	else
-		gExportfuncs.CL_CreateMove(frametime, cmd, active);
 }
 void HUD_Clear(void){
 	gHudDelegate->HUD_Clear();

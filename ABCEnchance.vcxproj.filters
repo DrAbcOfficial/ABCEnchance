@@ -120,6 +120,9 @@
     <ClCompile Include="efxhud.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="itemhighlight.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -300,6 +303,9 @@
       <Filter>Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="efxhud.h">
+      <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="itemhighlight.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>

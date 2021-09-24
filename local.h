@@ -74,6 +74,9 @@ typedef struct{
 
 	cvar_t* pHudEfx;
 
+	cvar_t* pItemHighLight;
+	cvar_t* pItemHighLightRange;
+
 	//Defualt CVars
 	cvar_t* pCvarDefaultFOV;
 }cl_cvars_t;

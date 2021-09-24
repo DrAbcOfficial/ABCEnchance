@@ -118,6 +118,7 @@
     <ClCompile Include="efxhud.cpp" />
     <ClCompile Include="glutility.cpp" />
     <ClCompile Include="gl_shader.cpp" />
+    <ClCompile Include="itemhighlight.cpp" />
     <ClCompile Include="playertitle.cpp" />
     <ClCompile Include="radar.cpp" />
     <ClCompile Include="command.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="CColor.h" />
     <ClInclude Include="eccomoney.h" />
     <ClInclude Include="efxhud.h" />
+    <ClInclude Include="itemhighlight.h" />
     <ClInclude Include="myconst.h" />
     <ClInclude Include="crosshair.h" />
     <ClInclude Include="cvar_hook.h" />
