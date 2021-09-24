@@ -76,7 +76,7 @@ cl_hightlight_t aryHighLightList[HIGH_LIGHT_LIST_SIZE] = {
 CHudItemHighLight m_HudItemHighLight;
 
 void RangeSizeCallBack(cvar_t* cvar) {
-	cvar->value = clamp(cvar->value, 0, 512);
+	cvar->value = clamp(cvar->value, 0, 344);
 }
 int CHudItemHighLight::Init(){
 	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "1", FCVAR_VALUE, NULL);
