@@ -13,6 +13,7 @@
 
 #include "itemhighlight.h"
 
+//TODO: 用txt列表取代该固定玩意儿
 #define HIGH_LIGHT_LIST_SIZE 55
 cl_hightlight_t aryHighLightList[HIGH_LIGHT_LIST_SIZE] = {
 	{"models/w_2uzis.mdl", 2},
