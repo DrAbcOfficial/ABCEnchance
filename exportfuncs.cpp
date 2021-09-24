@@ -101,11 +101,11 @@ void Sys_ErrorEx(const char* fmt, ...){
 void CheckOtherPlugin(){
 	g_metaplugins.renderer = (HINTERFACEMODULE)GetModuleHandle("Renderer.dll");
 }
-void FillDelegate(){
-	Fill_DelegateFunc(CL_TempEntAllocHigh);
-	Fill_DelegateFunc(CL_TempEntAlloc);
-	Fill_DelegateFunc(R_SparkEffect);
-	Fill_DelegateFunc(R_BloodStream);
+void FillEfxAddress(){
+	Fill_EfxFunc(CL_TempEntAllocHigh);
+	Fill_EfxFunc(CL_TempEntAlloc);
+	Fill_EfxFunc(R_SparkEffect);
+	Fill_EfxFunc(R_BloodStream);
 }
 void FillAddress(){
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
@@ -217,6 +217,9 @@ void InstallHook(){
 	Fill_InlineEfxHook(R_BloodSprite);
 	Fill_InlineEfxHook(R_Explosion);
 	Fill_InlineEfxHook(R_RicochetSprite);
+
+	Fill_EngFunc(pfnPlaybackEvent);
+	Install_InlineEngHook(pfnPlaybackEvent);
 
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_NewMap, R_NewMap, (void**)&gHookFuncs.R_NewMap);
 	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_RenderView, R_RenderView, (void**)&gHookFuncs.R_RenderView);
