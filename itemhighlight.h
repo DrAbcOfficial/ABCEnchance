@@ -11,6 +11,7 @@ public:
 	void Reset();
 	void Draw(float flTime);
 	void AddEntity(int type, cl_entity_s* ent, const char* modelname);
+private:
 	std::map<int, cl_entity_t*> m_mapToBeDraw;
 	std::map<int, cl_hightlight_t*> m_mapHighLightTable;
 };
