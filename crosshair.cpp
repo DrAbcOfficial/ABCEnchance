@@ -40,8 +40,6 @@ int CHudCustomCrosshair::Init(void){
 	gCVars.pDynamicCrossHairD = CREATE_CVAR("cl_crosshairdot", "0", FCVAR_VALUE, NULL);
 
 	pCvarDefaultCrosshair = gEngfuncs.pfnGetCvarPointer("crosshair");
-
-	pCvarDefaultFOV = gEngfuncs.pfnGetCvarPointer("default_fov");
 	return 1;
 }
 int CHudCustomCrosshair::Draw(float flTime){
@@ -85,7 +83,7 @@ int CHudCustomCrosshair::Draw(float flTime){
 	if (gCVars.pDynamicCrossHair->value > 0){
 		if (gClientData->health <= 0)
 			return 0;
-		if (gCVars.pDynamicCrossHairAH->value > 0 && pCvarDefaultFOV->value != m_hfov)
+		if (gCVars.pDynamicCrossHairAH->value > 0 && gCVars.pCvarDefaultFOV->value != m_hfov)
 			return 0;
 		int iOffset = gCVars.pDynamicCrossHairO->value;
 		int iDrift = fabs(gHudDelegate->m_vecClientEVPunch[0]) + fabs(gHudDelegate->m_vecClientEVPunch[1]);
@@ -140,7 +138,7 @@ void CHudCustomCrosshair::DrawDefaultCrosshair(float flTime, int x, int y){
 	if (pWeapon->iId <= 0)
 		return;
 	bool bOnTarget = m_HudCustomAmmo.m_bIsOnTarget;
-	if (m_hfov >= pCvarDefaultFOV->value){
+	if (m_hfov >= gCVars.pCvarDefaultFOV->value){
 		if (bOnTarget && pWeapon->hAutoaim)
 			DrawCrosshairSPR(x, y, pWeapon->hAutoaim, pWeapon->rcAutoaim);
 		else

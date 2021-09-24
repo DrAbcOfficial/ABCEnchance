@@ -57,6 +57,7 @@ typedef struct{
 	cvar_t* pAmmoMenuDrawRainbow;
 
 	cvar_t* pModelLag;
+	cvar_t* pModelLagAutoStop;
 	cvar_t* pModelLagValue;
 
 	cvar_t* pCamIdealHeight;
@@ -72,6 +73,9 @@ typedef struct{
 	cvar_t* pDeathNoticeTime;
 
 	cvar_t* pHudEfx;
+
+	//Defualt CVars
+	cvar_t* pCvarDefaultFOV;
 }cl_cvars_t;
 
 extern cl_refHookfunc_t gHookFuncs;
