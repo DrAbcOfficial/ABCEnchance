@@ -19,7 +19,7 @@ typedef struct{
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
 	void		(*R_ForceCVars)				(qboolean mp);
 	void		(*Cvar_DirectSet)			(cvar_t* var, char* value);
-
+	void		(*SetPunchAngle)				(int y, float value);
 	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
 	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
 
