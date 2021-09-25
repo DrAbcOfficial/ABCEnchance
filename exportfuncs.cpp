@@ -234,7 +234,6 @@ void HUD_Init(void){
 	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_VALUE, NULL);
 
 	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, NULL);
-	EfxInit();
 	gHudDelegate = new CHudDelegate();
 	gExportfuncs.HUD_Init();
 	gHudDelegate->HUD_Init();

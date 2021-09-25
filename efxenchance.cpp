@@ -14,15 +14,9 @@ struct EfxVarible{
 	int iGaussBeam;
 	int iGaussWaveBeam;
 	int iGaussLoophole;
-	mstudioevent_t pGaussFireSoundEvent;
+	mstudioevent_t pGaussFireSoundEvent = { 0,5004,0,GAUSS_FIRE_SOUND };
 };
 EfxVarible gEfxVarible;
-void EfxInit() {
-	gEfxVarible.pGaussFireSoundEvent.event = 5004;
-	gEfxVarible.pGaussFireSoundEvent.frame = 0;
-	gEfxVarible.pGaussFireSoundEvent.type = 0;
-	strcpy_s(gEfxVarible.pGaussFireSoundEvent.options, GAUSS_FIRE_SOUND);
-}
 void EfxReset() {
 	gEfxVarible.iGaussBeam = gEngfuncs.pEventAPI->EV_FindModelIndex(GAUSS_LASER_SPR);
 	if (gEfxVarible.iGaussBeam < 0)
@@ -280,11 +274,12 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 	//gEngfuncs.Con_Printf("flag: %d index: %d\n",flags, (int)eventindex);
 	switch (eventindex) {
 	case 12: {
-		//gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
-		//gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
+		gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
+		gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
 		//f1 ÉËº¦
 		//b1 ÊÇ·ñ×ó¼ü
 		DoGaussFire(fparam1, bparam1);
+		break;
 	}
 	default:gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2); break;
 	}
