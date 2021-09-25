@@ -58,9 +58,7 @@ int CHudCustomCrosshair::Draw(float flTime){
 		VectorCopy(local->curstate.origin, vecSrc);
 		gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
 		VectorAdd(vecSrc, viewOfs, vecSrc);
-		vForward[0] *= 8192;
-		vForward[1] *= 8192;
-		vForward[2] *= 8192;
+		VectorMultipiler(vForward, 8192);
 		VectorAdd(vecSrc, vForward, vecEnd);
 		physent_t* pPhyplayer = gEngfuncs.pEventAPI->EV_GetPhysent(local->index);
 		if (!pPhyplayer)

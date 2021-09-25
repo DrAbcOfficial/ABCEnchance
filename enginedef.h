@@ -12,14 +12,12 @@ typedef struct refdef_s{
 	qboolean useCamera;
 	vec3_t r_camera_origin;
 }refdef_t;
-
 typedef struct overviewInfo_s{
 	vec3_t origin;
 	float z_min, z_max;
 	float zoom;
 	qboolean rotated;
 }overviewInfo_t;
-
 typedef struct baseweapon_s{
 	char szName[128]; //0x0000 
 	int iAmmoType; //0x0080 

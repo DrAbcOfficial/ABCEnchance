@@ -40,6 +40,7 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 void R_NewMap(void);
 void R_RenderView(int a1);
 
+#define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
 #define Sig_NotFound(name) Sys_ErrorEx("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
 #define Sig_FuncNotFound(name) if(!gHookFuncs.name) Sig_NotFound(name)

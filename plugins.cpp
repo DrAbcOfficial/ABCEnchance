@@ -73,7 +73,7 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_PlayerMove = HUD_ClientMove;
 	pExportFunc->HUD_AddEntity = HUD_AddEntity;
 	pExportFunc->V_CalcRefdef = V_CalcRefdef;
-	
+
 	FillEfxAddress();
 	FillAddress();
 	InstallHook();
