@@ -5,12 +5,11 @@
 #include "exportfuncs.h"
 #include "viewmodellag.h"
 //copied and edited from here: https://github.com/SNMetamorph/PrimeXT/blob/master/client/r_view.cpp#L266
-
-vec3_t m_vecLastFacing;
 void V_CalcViewModelLag(ref_params_t* pparams){
 	//¼¦ÃçÎäÆ÷
 	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != gCVars.pCvarDefaultFOV->value)
 		return;
+	static vec3_t m_vecLastFacing;
 	cl_entity_t* view = gEngfuncs.GetViewModel();
 	vec3_t* origin = &view->origin;
 	vec3_t* angles = &view->angles;
