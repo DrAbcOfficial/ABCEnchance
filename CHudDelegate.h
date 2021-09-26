@@ -41,6 +41,7 @@ public:
 	void HUD_PostRenderView(int a1);
 	void IN_MouseEvent(int mstate);
 	int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding);
+	void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 	void IN_Accumulate(void);
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 

@@ -192,6 +192,8 @@ int CHudDelegate::GetSpriteIndex(const char* SpriteName){
 bool CHudDelegate::IsInSpectate(){
 	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
 }
+void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active){
+}
 vgui::ISurface* CHudDelegate::surface(){
 	return g_pSurface;
 }
