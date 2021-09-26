@@ -7,7 +7,7 @@
 model_t* g_ExtraPreacheModel[MAX_EXTRA_PRECACHENUM];
 int iExtraPrecaheSize = 0;
 int GetExtraModelIndex(char* path) {
-	for (int i = 0; i < MAX_EXTRA_PRECACHENUM; i++) {
+	for (int i = 0; i < iExtraPrecaheSize; i++) {
 		if (!g_ExtraPreacheModel[i])
 			continue;
 		if (!strcmp(path, g_ExtraPreacheModel[i]->name))
