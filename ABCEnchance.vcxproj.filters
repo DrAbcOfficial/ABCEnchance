@@ -123,6 +123,9 @@
     <ClCompile Include="itemhighlight.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="extraprecache.cpp">
+      <Filter>Source\Var</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -260,9 +263,6 @@
     <ClInclude Include="deathmsg.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="enginedef.h">
-      <Filter>Header</Filter>
-    </ClInclude>
     <ClInclude Include="gldef.h">
       <Filter>Header\Var</Filter>
     </ClInclude>
@@ -307,6 +307,12 @@
     </ClInclude>
     <ClInclude Include="itemhighlight.h">
       <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="extraprecache.h">
+      <Filter>Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="enginedef.h">
+      <Filter>Header\Var</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

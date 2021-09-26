@@ -1,5 +1,6 @@
 #pragma once
 #include "cvar_hook.h"
+#include "com_model.h"
 
 typedef struct{
 	void		(*R_Blood)					(float* org, float* dir, int pcolor, int speed);
@@ -15,6 +16,7 @@ typedef struct{
 	int			(*CL_IsDevOverview)			(void);
 	void		(*R_RenderView)				(int a1);
 	void		(*R_RenderScene)			(void);
+	model_t*	(*CL_GetModelByIndex)		(int index);
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
 	void		(*R_ForceCVars)				(qboolean mp);

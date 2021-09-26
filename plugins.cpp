@@ -30,7 +30,7 @@ void IPluginsV3::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_engin
 	g_pInterface = pInterface;
 	g_pMetaHookAPI = pAPI;
 	g_pMetaSave = pSave;
-	g_hInstance = GetModuleHandle(NULL);
+	g_hInstance = GetModuleHandle(nullptr);
 }
 
 void IPluginsV3::LoadEngine(cl_enginefunc_t *pEngfuncs){
@@ -62,6 +62,7 @@ void IPluginsV3::LoadClient(cl_exportfuncs_t *pExportFunc){
 	GL_Init();
 
 	pExportFunc->HUD_Init = HUD_Init;
+	pExportFunc->HUD_GetStudioModelInterface = HUD_GetStudioModelInterface;
 	pExportFunc->HUD_VidInit = HUD_VidInit;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
 	pExportFunc->IN_MouseEvent = IN_MouseEvent;

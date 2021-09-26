@@ -57,6 +57,9 @@ extern int nanmask;
 #define METER2INCH(x) (float)(x * (1.0f / METERS_PER_INCH))
 #define INCH2METER(x) (float)(x * (METERS_PER_INCH / 1.0f))
 
+#define RANDOM_LONG(a,b) gEngfuncs.pfnRandomLong(a, b)
+#define RANDOM_FLOAT(a,b) gEngfuncs.pfnRandomFloat(a, b)
+
 #define VectorSubtract(a, b, c) { (c)[0] = (a)[0] - (b)[0]; (c)[1] = (a)[1] - (b)[1]; (c)[2] = (a)[2] - (b)[2]; }
 #define VectorAdd(a, b, c) { (c)[0] = (a)[0] + (b)[0]; (c)[1] = (a)[1] + (b)[1]; (c)[2] = (a)[2] + (b)[2]; }
 #define VectorAddFloat(a,f) {a[0]+=f;a[1]+=f;a[2]+=f;}

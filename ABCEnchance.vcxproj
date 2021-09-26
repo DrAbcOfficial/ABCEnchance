@@ -116,6 +116,7 @@
     <ClCompile Include="cvar_hook.cpp" />
     <ClCompile Include="eccomoney.cpp" />
     <ClCompile Include="efxhud.cpp" />
+    <ClCompile Include="extraprecache.cpp" />
     <ClCompile Include="glutility.cpp" />
     <ClCompile Include="gl_shader.cpp" />
     <ClCompile Include="itemhighlight.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="CColor.h" />
     <ClInclude Include="eccomoney.h" />
     <ClInclude Include="efxhud.h" />
+    <ClInclude Include="extraprecache.h" />
     <ClInclude Include="itemhighlight.h" />
     <ClInclude Include="myconst.h" />
     <ClInclude Include="crosshair.h" />
