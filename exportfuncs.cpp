@@ -16,6 +16,7 @@
 #include "CColor.h"
 #include "weapon.h"
 #include "myconst.h"
+#include "extraprecache.h"
 //HUD
 #include "ammo.h"
 #include "healthhud.h"
@@ -30,19 +31,20 @@
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 metaplugins_t g_metaplugins;
+engine_studio_api_t gEngineStudio;
 
 const clientdata_t* gClientData;
 float m_hfov;
 
 overviewInfo_t* gDevOverview;
-baseweapon_t* (*g_rgBaseSlots)[10][26] = NULL;
-int* g_iVisibleMouse = NULL;
-refdef_t* g_refdef = NULL;
+baseweapon_t* (*g_rgBaseSlots)[10][26] = nullptr;
+int* g_iVisibleMouse = nullptr;
+refdef_t* g_refdef = nullptr;
 
 //FINAL SHIT
 void R_NewMap(void){
-	EfxReset();
 	gHudDelegate->HUD_Reset();
+	EfxReset();
 	gHookFuncs.R_NewMap();
 }
 int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1){
@@ -78,6 +80,11 @@ void R_ForceCVars(qboolean mp){
 		return;
 	gHookFuncs.R_ForceCVars(mp);
 }
+model_t* CL_GetModelByIndex (int index){
+	if (index >= EXTRPRECACHE_INDEX_BASE && index < EXTRPRECACHE_INDEX_BASE+ MAX_EXTRA_PRECACHENUM)
+		return g_ExtraPreacheModel[index - EXTRPRECACHE_INDEX_BASE];
+	return gHookFuncs.CL_GetModelByIndex(index);
+}
 void Cvar_DirectSet(cvar_t* var, char* value) {
 	gHookFuncs.Cvar_DirectSet(var, value);
 	if (gCVarsHookMap.count(var) && gCVarsHookMap[var]) {
@@ -96,7 +103,7 @@ void Sys_ErrorEx(const char* fmt, ...){
 	if (gEngfuncs.pfnClientCmd)
 		gEngfuncs.pfnClientCmd("escape\n");
 
-	MessageBox(NULL, msg, "Fatal Error", MB_ICONERROR);
+	MessageBox(nullptr, msg, "Fatal Error", MB_ICONERROR);
 	TerminateProcess((HANDLE)(-1), 0);
 }
 void CheckOtherPlugin(){
@@ -110,7 +117,7 @@ void FillEfxAddress(){
 }
 void FillAddress(){
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
-	if (engineFactory && engineFactory("EngineSurface007", NULL)){
+	if (engineFactory && engineFactory("EngineSurface007", nullptr)){
 #define R_NEWMAP_SIG "\x55\x8B\xEC\x51\xC7\x45\xFC\x00\x00\x00\x00\xEB\x2A\x8B\x45\xFC\x83\xC0\x01\x89\x45\xFC\x81\x7D\xFC\x00\x01\x00\x00"
 		Fill_Sig(R_NEWMAP_SIG, g_dwEngineBase, g_dwEngineSize, R_NewMap);
 #define R_ISCLOVERVIEW_SIG "\xD9\x05\x2A\x2A\x2A\x2A\xD9\xEE\xDA\xE9\xDF\xE0\xF6\xC4\x44\x2A\x2A\x83\x3D\x2A\x2A\x2A\x2A\x00\x2A\x2A\xB8\x01\x00\x00\x00\xC3\x2A\x2A"
@@ -121,6 +128,8 @@ void FillAddress(){
 		Fill_Sig(CL_SETDEVOVERVIEW, g_dwEngineBase, g_dwEngineSize, CL_SetDevOverView);
 #define R_FORCECVAR_SIG "\x83\x7C\x24\x2A\x00\x2A\x2A\x2A\x2A\x00\x00\x81\x3D\x2A\x2A\x2A\x2A\xFF\x00\x00\x00"
 		Fill_Sig(R_FORCECVAR_SIG, g_dwEngineBase, g_dwEngineSize, R_ForceCVars);
+#define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
+		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
 
 		DWORD addr;
 #define R_VIEWREFDEF_SIG "\x68\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68"
@@ -191,18 +200,18 @@ void InstallHook(){
 
 	Fill_EngFunc(pfnPlaybackEvent);
 	Install_InlineEngHook(pfnPlaybackEvent);
-
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_NewMap, R_NewMap, (void**)&gHookFuncs.R_NewMap);
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_RenderView, R_RenderView, (void**)&gHookFuncs.R_RenderView);
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.CL_IsDevOverview, CL_IsDevOverview, (void**)&gHookFuncs.CL_IsDevOverview);
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.CL_SetDevOverView, CL_SetDevOverView, (void**)&gHookFuncs.CL_SetDevOverView);
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.EVVectorScale, EVVectorScale, (void**)&gHookFuncs.EVVectorScale);
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.R_CrossHair_ReDraw, R_CrossHair_ReDraw, (void**)&gHookFuncs.R_CrossHair_ReDraw);
-	g_pMetaHookAPI->InlineHook((void*)gHookFuncs.Cvar_DirectSet, Cvar_DirectSet, (void**)&gHookFuncs.Cvar_DirectSet);
+	Install_InlineEngHook(R_NewMap);
+	Install_InlineEngHook(R_RenderView);
+	Install_InlineEngHook(CL_IsDevOverview);
+	Install_InlineEngHook(CL_SetDevOverView);
+	Install_InlineEngHook(EVVectorScale);
+	Install_InlineEngHook(R_CrossHair_ReDraw);
+	Install_InlineEngHook(Cvar_DirectSet);
+	Install_InlineEngHook(CL_GetModelByIndex);
 }
 
 void GL_Init(void){
-	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, NULL, NULL);
+	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
 	if (GLEW_OK != err){
 		Sys_ErrorEx("glewInit failed, %s", glewGetErrorString(err));
@@ -214,29 +223,34 @@ void HUD_Init(void){
 	HINTERFACEMODULE hVGUI2 = (HINTERFACEMODULE)GetModuleHandle("vgui2.dll");
 	if (hVGUI2){
 		CreateInterfaceFn fnVGUI2CreateInterface = Sys_GetFactory(hVGUI2);
-		g_pScheme = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, NULL);
-		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, NULL);
+		g_pScheme = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, nullptr);
+		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, nullptr);
 	}
-	g_pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, NULL);
+	g_pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, nullptr);
 	g_pScheme->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = g_pScheme->GetIScheme(g_pScheme->GetScheme("ABCEnchance"));
 	
-	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, NULL);
+	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
 
-	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_VALUE, NULL);
-	gCVars.pBloodSpriteNumber = CREATE_CVAR("abc_bloodsprite_num", "32", FCVAR_VALUE, NULL);
-	gCVars.pExpSmokeNumber = CREATE_CVAR("abc_explosion_smokenumr", "32", FCVAR_VALUE, NULL);
-	gCVars.pExpSmokeSpeed = CREATE_CVAR("abc_explosion_smokespeed", "256", FCVAR_VALUE, NULL);
-	gCVars.pRicochetNumber = CREATE_CVAR("abc_ricochet_sparknum", "24", FCVAR_VALUE, NULL);
+	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_VALUE, nullptr);
+	gCVars.pBloodSpriteNumber = CREATE_CVAR("abc_bloodsprite_num", "32", FCVAR_VALUE, nullptr);
+	gCVars.pExpSmokeNumber = CREATE_CVAR("abc_explosion_smokenumr", "32", FCVAR_VALUE, nullptr);
+	gCVars.pExpSmokeSpeed = CREATE_CVAR("abc_explosion_smokespeed", "256", FCVAR_VALUE, nullptr);
+	gCVars.pRicochetNumber = CREATE_CVAR("abc_ricochet_sparknum", "24", FCVAR_VALUE, nullptr);
 	
-	gCVars.pModelLag = CREATE_CVAR("cl_modellag", "1", FCVAR_VALUE, NULL);
-	gCVars.pModelLagAutoStop = CREATE_CVAR("cl_modellagautostop", "1", FCVAR_VALUE, NULL);
-	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_VALUE, NULL);
+	gCVars.pModelLag = CREATE_CVAR("cl_modellag", "1", FCVAR_VALUE, nullptr);
+	gCVars.pModelLagAutoStop = CREATE_CVAR("cl_modellagautostop", "1", FCVAR_VALUE, nullptr);
+	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_VALUE, nullptr);
 
-	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, NULL);
+	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, nullptr);
 	gHudDelegate = new CHudDelegate();
 	gExportfuncs.HUD_Init();
 	gHudDelegate->HUD_Init();
+}
+int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio)
+{
+	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
+	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
 int HUD_VidInit(void){
 	//Fillup Default CVars
@@ -252,26 +266,26 @@ int HUD_Redraw(float time, int intermission){
 		static DWORD pHUD = *(DWORD*)(dwAddress + 0x1);
 		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(pHUD + 0x0));
 		while (pHudList){
-			if (dynamic_cast<CHudBattery*>(pHudList->p) != NULL){
+			if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr){
 				if (gCVars.pDynamicHUD->value <= 0)
 					pHudList->p->m_iFlags &= HUD_ACTIVE;
 				else
 					pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			}
-			else if (dynamic_cast<CHudHealth*>(pHudList->p) != NULL){
+			else if (dynamic_cast<CHudHealth*>(pHudList->p) != nullptr){
 				if (gCVars.pDynamicHUD->value <= 0)
 					pHudList->p->m_iFlags &= HUD_ACTIVE;
 				else
 					pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			}
-			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != NULL){
+			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != nullptr){
 				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
 				if (gCVars.pDynamicHUD->value <= 0)
 					pHudList->p->m_iFlags &= HUD_ACTIVE;
 				else
 					pHudList->p->m_iFlags &= ~HUD_ACTIVE;
 			}
-			else if (dynamic_cast<CHudMenu*>(pHudList->p) != NULL)
+			else if (dynamic_cast<CHudMenu*>(pHudList->p) != nullptr)
 				gHookHud.m_Menu = (dynamic_cast<CHudMenu*>(pHudList->p));
 			pHudList = pHudList->pNext;
 		}
@@ -327,4 +341,5 @@ int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 }
 void HUD_Clear(void){
 	gHudDelegate->HUD_Clear();
+	ClearExtraPrecache();
 }

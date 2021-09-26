@@ -2,9 +2,11 @@
 #include <VGUI/ISurface.h>
 #include <VGUI/ILocalize.h>
 #include "enginedef.h"
+#include "r_studioint.h"
 
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
+extern engine_studio_api_t gEngineStudio;
 
 extern const clientdata_t* gClientData;
 extern float m_hfov;
@@ -24,6 +26,7 @@ void MSG_Init(void);
 
 void GL_Init(void);
 void HUD_Init(void);
+int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio);
 int HUD_VidInit(void);
 int HUD_Redraw(float time, int intermission);
 void HUD_Reset(void);
@@ -53,6 +56,6 @@ void R_RenderView(int a1);
 
 #define Fill_EfxFunc(fn) gHookFuncs.fn = *gEngfuncs.pEfxAPI->fn
 #define Fill_EngFunc(fn) gHookFuncs.fn = *gEngfuncs.fn
-#define Install_InlineHook(fn) g_pMetaHookAPI->InlineHook((void *)gRefFuncs.fn, fn, (void **)&gRefFuncs.fn);
-#define Install_InlineEngHook(fn) g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn);
+#define Install_InlineHook(fn) g_pMetaHookAPI->InlineHook((void *)gRefFuncs.fn, fn, (void **)&gRefFuncs.fn)
+#define Install_InlineEngHook(fn) g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn)
 #define Fill_InlineEfxHook(fn) Fill_EfxFunc(fn);Install_InlineEngHook(fn)
