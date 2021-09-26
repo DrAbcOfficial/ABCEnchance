@@ -80,7 +80,7 @@ void RangeSizeCallBack(cvar_t* cvar) {
 	cvar->value = clamp(cvar->value, 0, 344);
 }
 int CHudItemHighLight::Init(){
-	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "1", FCVAR_VALUE, NULL);
+	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "0", FCVAR_VALUE, NULL);
 	gCVars.pItemHighLightRange = CREATE_CVAR("cl_itemhighlightrange", "344", FCVAR_VALUE, RangeSizeCallBack);
 	return 0;
 }
