@@ -322,6 +322,17 @@ void IN_MouseEvent(int mstate){
 	gHudDelegate->IN_MouseEvent(mstate);
 	gExportfuncs.IN_MouseEvent(mstate);
 }
+void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
+	if (g_iVisibleMouse && gHudDelegate->m_iVisibleMouse) {
+		int iVisibleMouse = *g_iVisibleMouse;
+		*g_iVisibleMouse = 1;
+		gExportfuncs.CL_CreateMove(frametime, cmd, active);
+		gHudDelegate->CL_CreateMove(frametime, cmd, active);
+		*g_iVisibleMouse = iVisibleMouse;
+	}
+	else
+		gExportfuncs.CL_CreateMove(frametime, cmd, active);
+}
 void IN_Accumulate(void){
 	if (g_iVisibleMouse && gHudDelegate->m_iVisibleMouse){
 		int iVisibleMouse = *g_iVisibleMouse;
