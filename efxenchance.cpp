@@ -12,6 +12,8 @@
 
 #define GAUSS_LASER_SPR "sprites/laserbeam.spr"
 #define GAUSS_WAVE_SPR "abcenchance/spr/gauss_wave.spr"
+#define GAUSS_LOOPHOLE_MDL "abcenchance/mdl/gauss_loophole.mdl"
+
 #define GAUSS_FIRE_SOUND "weapons/gauss2.wav"
 #define GAUSS_WAVE_LENGTH 48
 #define GAUSS_LASER_P_WIDTH 2
@@ -19,13 +21,14 @@
 struct EfxVarible{
 	int iGaussBeam;
 	int iGaussWaveBeam;
-	int iGaussLoophole;
+	model_t* iGaussLoophole;
 	mstudioevent_t pGaussFireSoundEvent = { 0,5004,0,GAUSS_FIRE_SOUND };
 };
 EfxVarible gEfxVarible;
 void EfxReset() {
 	gEfxVarible.iGaussBeam = PrecacheExtraModel(GAUSS_LASER_SPR);
 	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel(GAUSS_WAVE_SPR);
+	gEfxVarible.iGaussLoophole = gEngfuncs.hudGetModelByIndex(PrecacheExtraModel(GAUSS_LOOPHOLE_MDL));
 }
 void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale){
 	//stack overflow
@@ -139,6 +142,19 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 		gHookFuncs.R_BloodStream(nOrg, dir, nColor == 247 ? 70 : nColor, gEngfuncs.pfnRandomLong(4, gCVars.pBloodSpriteSpeed->value));
 	}
 }
+void GaussLoopholeCallback(TEMPENTITY* ent, float frametime, float currenttime) {
+	float size = ent->die - currenttime;
+	ent->entity.curstate.scale = size;
+}
+void CreateGaussLoophole(pmtrace_t* tr) {
+	TEMPENTITY* pTemp = gHookFuncs.CL_TempEntAllocHigh(tr->endpos, gEfxVarible.iGaussLoophole);
+	VectorAngles(tr->plane.normal, pTemp->entity.angles);
+	pTemp->entity.angles[0] += 90;
+	pTemp->entity.angles[2] += 180;
+	pTemp->die = gEngfuncs.GetClientTime() + 1.0f;
+	pTemp->flags = FTENT_CLIENTCUSTOM | FTENT_FADEOUT;
+	pTemp->callback = GaussLoopholeCallback;
+}
 void DoGaussFire(float fparam1, int bparam1) {
 	pmtrace_t tr, beam_tr;
 	vec3_t vecForward;
@@ -181,11 +197,8 @@ void DoGaussFire(float fparam1, int bparam1) {
 			gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, tr.endpos, gEfxVarible.iGaussBeam, 0.2,
 				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, 0.8, 0);
 		//绘制落点模型
-		/*model_t* pModel = gEngfuncs.hudGetModelByIndex(modelIndex);
-				if (pModel) {
-					TEMPENTITY* pTemp = gHookFuncs.CL_TempEntAllocHigh(tr.endpos, pModel);
-
-				}*/
+		if (gEfxVarible.iGaussLoophole)
+			CreateGaussLoophole(&tr);
 		cl_entity_t* hit = gEngfuncs.GetEntityByIndex(tr.ent);
 		//可反射高斯
 		if (tr.ent == 0 || hit->curstate.solid == SOLID_BSP || hit->curstate.movetype == MOVETYPE_PUSHSTEP) {
@@ -212,10 +225,13 @@ void DoGaussFire(float fparam1, int bparam1) {
 				//落点绘制随机散射波动Spr
 				vec3_t vecRandom;
 				for (int i = 0; i < RANDOM_LONG(0, 4); i++) {
-					vecRandom[0] = vecSrc[0] + GAUSS_WAVE_LENGTH * (vecNormal[0] * n * RANDOM_FLOAT(1, 3) + vecDir[0] * RANDOM_FLOAT(-3, 3));
-					vecRandom[1] = vecSrc[1] + GAUSS_WAVE_LENGTH * (vecNormal[1] * n * RANDOM_FLOAT(1, 3) + vecDir[1] * RANDOM_FLOAT(-3, 3));
-					vecRandom[2] = vecSrc[2] + GAUSS_WAVE_LENGTH * (vecNormal[2] * n * RANDOM_FLOAT(1, 3) + vecDir[2] * RANDOM_FLOAT(-3, 3));
-					gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, vecRandom, gEfxVarible.iGaussWaveBeam, 60,
+					vecRandom[0] = vecSrc[0] + RANDOM_FLOAT(GAUSS_WAVE_LENGTH / 2, GAUSS_WAVE_LENGTH) * 
+						(vecNormal[0] * n * RANDOM_FLOAT(1, 3) + vecDir[0] * RANDOM_FLOAT(-3, 3));
+					vecRandom[1] = vecSrc[1] + RANDOM_FLOAT(GAUSS_WAVE_LENGTH / 2, GAUSS_WAVE_LENGTH) * 
+						(vecNormal[1] * n * RANDOM_FLOAT(1, 3) + vecDir[1] * RANDOM_FLOAT(-3, 3));
+					vecRandom[2] = vecSrc[2] + RANDOM_FLOAT(GAUSS_WAVE_LENGTH / 2, GAUSS_WAVE_LENGTH) * 
+						(vecNormal[2] * n * RANDOM_FLOAT(1, 3) + vecDir[2] * RANDOM_FLOAT(-3, 3));
+					gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, vecRandom, gEfxVarible.iGaussWaveBeam, 0.2,
 						bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, 0.8, 0);
 				}
 				// lose energy
