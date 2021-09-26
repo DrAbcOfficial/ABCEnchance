@@ -43,6 +43,8 @@ refdef_t* g_refdef = nullptr;
 
 //FINAL SHIT
 void R_NewMap(void){
+	ClearExtraPrecache();
+
 	gHudDelegate->HUD_Reset();
 	EfxReset();
 	gHookFuncs.R_NewMap();

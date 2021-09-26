@@ -157,6 +157,8 @@ void GaussChargeCallback(TEMPENTITY* ent, float frametime, float currenttime) {
 }
 void CreateGaussLoophole(pmtrace_t* tr) {
 	TEMPENTITY* pTemp = gHookFuncs.CL_TempEntAllocHigh(tr->endpos, gEfxVarible.iGaussLoophole);
+	if (!pTemp)
+		return;
 	VectorAngles(tr->plane.normal, pTemp->entity.angles);
 	pTemp->entity.angles[0] += 90;
 	pTemp->entity.angles[2] += 180;
@@ -168,6 +170,7 @@ void DoGaussFire(float fparam1, int bparam1) {
 	pmtrace_t tr, beam_tr;
 	vec3_t vecForward, vecViewAngle;
 	vec3_t vecSrc, vecDest, vecDir, viewOfs;
+	vec3_t vecNormal, vecReflect, vecRandom, vecRandomSrc, vecLength;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	int entignore = local->index;
 	bool fHasPunched = false;
@@ -219,13 +222,12 @@ void DoGaussFire(float fparam1, int bparam1) {
 			//清空无视实体
 			entignore = -1;
 			//与击中面法线做点乘，取负数，判断入射角
-			vec3_t vecNormal;
+			
 			VectorCopy(tr.plane.normal, vecNormal);
 			float n = -DotProduct(vecNormal, vecDir);
 			//角度小于60°
 			if (n < 0.5) {
 				// reflect
-				vec3_t vecReflect;
 				//向量和相加乘二取得终点坐标
 				vecReflect[0] = 2.0 * vecNormal[0] * n + vecDir[0];
 				vecReflect[1] = 2.0 * vecNormal[1] * n + vecDir[1];
@@ -237,7 +239,6 @@ void DoGaussFire(float fparam1, int bparam1) {
 				vecDest[1] = vecSrc[1] + vecDir[1] * 8192;
 				vecDest[2] = vecSrc[2] + vecDir[2] * 8192;
 				//落点绘制随机散射波动Spr
-				vec3_t vecRandom;
 				for (int i = 0; i < RANDOM_LONG(0, 4); i++) {
 					vecRandom[0] = vecSrc[0] + RANDOM_FLOAT(GAUSS_WAVE_LENGTH / 2, GAUSS_WAVE_LENGTH) * 
 						(vecNormal[0] * n * RANDOM_FLOAT(1, 3) + vecDir[0] * RANDOM_FLOAT(-3, 3));
@@ -275,13 +276,10 @@ void DoGaussFire(float fparam1, int bparam1) {
 						gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 						gEngfuncs.pEventAPI->EV_PlayerTrace(beam_tr.endpos, tr.endpos, PM_NORMAL, entignore, &beam_tr);
 						//求该射线长度为n
-						vec3_t vecLength;
 						VectorSubtract(beam_tr.endpos, tr.endpos, vecLength)
 							n = VectorLength(vecLength);
 						//如果长度比伤害小
 						//射线的后面一点做球
-						vec3_t vecRandom;
-						vec3_t vecRandomSrc;
 						VectorCopy(beam_tr.endpos, vecRandomSrc);
 						vecRandomSrc[0] += vecDir[0] * flDamage;
 						vecRandomSrc[1] += vecDir[1] * flDamage;
@@ -313,9 +311,6 @@ void DoGaussFire(float fparam1, int bparam1) {
 				}
 				else {
 					//大于60°，不穿透，折射一次后停止循环
-					if (bparam1) {
-						//特效
-					}
 					flDamage = 0;
 				}
 			}
@@ -339,15 +334,18 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 		gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
 		//f1 伤害
 		//b1 是否左键
+		/*
 		if (gEfxVarible.pChargeGlow) {
 			gEfxVarible.pChargeGlow->die = 0;
 			gEfxVarible.pChargeGlow = nullptr;
 			gEfxVarible.flGaussStartChargeTime = 0;
 		}
+		*/
 		DoGaussFire(fparam1, bparam1);
 		break;
 	}
 	case 13: {
+		/*
 		if (!gEfxVarible.pChargeGlow) {
 			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 			gEfxVarible.pChargeGlow = gEngfuncs.pEfxAPI->R_TempSprite(local->origin, local->angles, 1.0f,
@@ -358,6 +356,7 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 		}
 		else
 			gEfxVarible.pChargeGlow->die = gEngfuncs.GetClientTime() + 1.0f;
+			*/
 	}
 	default:gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2); break;
 	}

@@ -26,10 +26,8 @@ int PrecacheExtraModel(char* path) {
 }
 void ClearExtraPrecache(){
 	for each (model_t* var in g_ExtraPreacheModel){
-		if (var) {
-			free(var);
+		if (var)
 			var = nullptr;
-		}
 	}
 	iExtraPrecaheSize = 0;
 }
