@@ -12,6 +12,7 @@
 
 #define GAUSS_LASER_SPR "sprites/laserbeam.spr"
 #define GAUSS_WAVE_SPR "abcenchance/spr/gauss_wave.spr"
+#define GAUSS_CHARGE_SPR "abcenchance/spr/gauss_spark.spr"
 #define GAUSS_LOOPHOLE_MDL "abcenchance/mdl/gauss_loophole.mdl"
 
 #define GAUSS_FIRE_SOUND "weapons/gauss2.wav"
@@ -21,13 +22,17 @@
 struct EfxVarible{
 	int iGaussBeam;
 	int iGaussWaveBeam;
+	int iGaussChargeSprite;
+	float flGaussStartChargeTime;
 	model_t* iGaussLoophole;
 	mstudioevent_t pGaussFireSoundEvent = { 0,5004,0,GAUSS_FIRE_SOUND };
+	TEMPENTITY* pChargeGlow = nullptr;
 };
 EfxVarible gEfxVarible;
 void EfxReset() {
 	gEfxVarible.iGaussBeam = PrecacheExtraModel(GAUSS_LASER_SPR);
 	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel(GAUSS_WAVE_SPR);
+	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel(GAUSS_CHARGE_SPR);
 	gEfxVarible.iGaussLoophole = gEngfuncs.hudGetModelByIndex(PrecacheExtraModel(GAUSS_LOOPHOLE_MDL));
 }
 void R_RicochetSprite(float* pos, struct model_s* pmodel, float duration, float scale){
@@ -143,8 +148,12 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 	}
 }
 void GaussLoopholeCallback(TEMPENTITY* ent, float frametime, float currenttime) {
-	float size = ent->die - currenttime;
-	ent->entity.curstate.scale = size;
+	ent->entity.curstate.scale = ent->die - currenttime;
+}
+void GaussChargeCallback(TEMPENTITY* ent, float frametime, float currenttime) {
+	cl_entity_t* view = gEngfuncs.GetViewModel();
+	VectorCopy(view->attachment[0], ent->entity.origin);
+	ent->entity.curstate.scale = min(0.5, (currenttime - gEfxVarible.flGaussStartChargeTime) / 2);
 }
 void CreateGaussLoophole(pmtrace_t* tr) {
 	TEMPENTITY* pTemp = gHookFuncs.CL_TempEntAllocHigh(tr->endpos, gEfxVarible.iGaussLoophole);
@@ -157,23 +166,28 @@ void CreateGaussLoophole(pmtrace_t* tr) {
 }
 void DoGaussFire(float fparam1, int bparam1) {
 	pmtrace_t tr, beam_tr;
-	vec3_t vecForward;
-	vec3_t vecViewAngle;
-	vec3_t vecSrc, vecDest, vecDir;
-	gEngfuncs.GetViewAngles(vecViewAngle);
+	vec3_t vecForward, vecViewAngle;
+	vec3_t vecSrc, vecDest, vecDir, viewOfs;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	cl_entity_t* view = gEngfuncs.GetViewModel();
-	AngleVectors(vecViewAngle, vecForward, nullptr, nullptr);
-	VectorCopy(vecForward, vecDir);
-	VectorNormalize(vecDir);
-	VectorCopy(view->attachment[0], vecSrc);
-	VectorMultipiler(vecForward, 8192);
-	VectorAdd(vecSrc, vecForward, vecDest);
 	int entignore = local->index;
 	bool fHasPunched = false;
 	bool fFirstBeam = true;
 	int	nMaxHits = 10;
 	float flDamage = fparam1;
+
+	gEngfuncs.GetViewAngles(vecViewAngle);
+
+	AngleVectors(vecViewAngle, vecForward, nullptr, nullptr);
+	VectorCopy(vecForward, vecDir);
+	VectorNormalize(vecDir);
+
+	AngleVectors(vecViewAngle, vecForward, NULL, NULL);
+	VectorCopy(local->curstate.origin, vecSrc);
+	gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
+	VectorAdd(vecSrc, viewOfs, vecSrc);
+	VectorMultipiler(vecForward, 8192);
+	VectorAdd(vecSrc, vecForward, vecDest);
+
 	while (flDamage > 10 && nMaxHits > 0) {
 		//减一次反射次数
 		nMaxHits--;
@@ -190,18 +204,18 @@ void DoGaussFire(float fparam1, int bparam1) {
 		if (fFirstBeam) {
 			local->curstate.effects |= EF_MUZZLEFLASH;
 			fFirstBeam = false;
-			gEngfuncs.pEfxAPI->R_BeamEntPoint(local->index + 4096, tr.endpos, gEfxVarible.iGaussBeam, 0.2,
+			gEngfuncs.pEfxAPI->R_BeamEntPoint(local->index + (gExportfuncs.CL_IsThirdPerson() ? 0 : 4096), tr.endpos, gEfxVarible.iGaussBeam, 0.2,
 				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, 0.8, 0);
 		}
 		else
 			gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, tr.endpos, gEfxVarible.iGaussBeam, 0.2,
 				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, 0.8, 0);
-		//绘制落点模型
-		if (gEfxVarible.iGaussLoophole)
-			CreateGaussLoophole(&tr);
 		cl_entity_t* hit = gEngfuncs.GetEntityByIndex(tr.ent);
 		//可反射高斯
 		if (tr.ent == 0 || hit->curstate.solid == SOLID_BSP || hit->curstate.movetype == MOVETYPE_PUSHSTEP) {
+			//绘制落点模型
+			if (gEfxVarible.iGaussLoophole)
+				CreateGaussLoophole(&tr);
 			//清空无视实体
 			entignore = -1;
 			//与击中面法线做点乘，取负数，判断入射角
@@ -265,14 +279,28 @@ void DoGaussFire(float fparam1, int bparam1) {
 						VectorSubtract(beam_tr.endpos, tr.endpos, vecLength)
 							n = VectorLength(vecLength);
 						//如果长度比伤害小
+						//射线的后面一点做球
+						vec3_t vecRandom;
+						vec3_t vecRandomSrc;
+						VectorCopy(beam_tr.endpos, vecRandomSrc);
+						vecRandomSrc[0] += vecDir[0] * flDamage;
+						vecRandomSrc[1] += vecDir[1] * flDamage;
+						vecRandomSrc[2] += vecDir[2] * flDamage;
+						for (int i = 0; i < RANDOM_LONG(8, 14); i++) {
+							vecRandom[0] = vecRandomSrc[0] + vecDir[0] * RANDOM_FLOAT(-512, 512);
+							vecRandom[1] = vecRandomSrc[1] + vecDir[1] * RANDOM_FLOAT(-512, 512);
+							vecRandom[2] = vecRandomSrc[2] + vecDir[2] * RANDOM_FLOAT(-512, 512);
+							gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+							gEngfuncs.pEventAPI->EV_PlayerTrace(vecRandomSrc, vecRandom, PM_STUDIO_IGNORE, entignore, &beam_tr);
+							if (beam_tr.ent == 0)
+								CreateGaussLoophole(&beam_tr);
+						}
 						if (n < flDamage) {
 							//不能为0的，长度永远为1
 							if (n == 0)
 								n = 1;
 							//每折射一次伤害少n
 							flDamage -= n;
-							//射线的后面一点做球
-
 							//下一次主激光点为折射激光点终点，法线重置为向前
 							vecSrc[0] = beam_tr.endpos[0] + vecDir[0];
 							vecSrc[1] = beam_tr.endpos[1] + vecDir[1];
@@ -305,15 +333,31 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 	float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2) {
 	//高斯flag 3, index 12
 	//高斯蓄力flag1, index 13
-	//gEngfuncs.Con_Printf("flag: %d index: %d\n",flags, (int)eventindex);
 	switch (eventindex) {
 	case 12: {
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
 		gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
 		//f1 伤害
 		//b1 是否左键
+		if (gEfxVarible.pChargeGlow) {
+			gEfxVarible.pChargeGlow->die = 0;
+			gEfxVarible.pChargeGlow = nullptr;
+			gEfxVarible.flGaussStartChargeTime = 0;
+		}
 		DoGaussFire(fparam1, bparam1);
 		break;
+	}
+	case 13: {
+		if (!gEfxVarible.pChargeGlow) {
+			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+			gEfxVarible.pChargeGlow = gEngfuncs.pEfxAPI->R_TempSprite(local->origin, local->angles, 1.0f,
+				gEfxVarible.iGaussChargeSprite, kRenderTransAdd, kRenderFxFadeFast, 80, 1, 0);
+			gEfxVarible.pChargeGlow->flags = FTENT_CLIENTCUSTOM | FTENT_FADEOUT;
+			gEfxVarible.pChargeGlow->callback = GaussChargeCallback;
+			gEfxVarible.flGaussStartChargeTime = gEngfuncs.GetClientTime();
+		}
+		else
+			gEfxVarible.pChargeGlow->die = gEngfuncs.GetClientTime() + 1.0f;
 	}
 	default:gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2); break;
 	}
