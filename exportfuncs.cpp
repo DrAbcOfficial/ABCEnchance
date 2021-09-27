@@ -83,7 +83,7 @@ void R_ForceCVars(qboolean mp){
 	gHookFuncs.R_ForceCVars(mp);
 }
 model_t* CL_GetModelByIndex (int index){
-	if (index >= EXTRPRECACHE_INDEX_BASE && index < EXTRPRECACHE_INDEX_BASE+ MAX_EXTRA_PRECACHENUM)
+	if (index >= EXTRPRECACHE_INDEX_BASE && index < EXTRPRECACHE_INDEX_BASE + MAX_EXTRA_PRECACHENUM)
 		return g_ExtraPreacheModel[index - EXTRPRECACHE_INDEX_BASE];
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
