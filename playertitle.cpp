@@ -11,7 +11,6 @@
 #include "myconst.h"
 
 #include "hud.h"
-
 #include "weapon.h"
 #include "CHudDelegate.h"
 #include "drawElement.h"
