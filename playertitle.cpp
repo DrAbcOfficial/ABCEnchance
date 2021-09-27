@@ -52,7 +52,6 @@ int CHudPlayerTitle::Draw(float flTime){
 		//绘制相关
 		wchar_t wideName[MAX_PLAYER_NAME_LENGTH];
 		float* color;
-		float fDistance;
 		float flArmorRatio;
 		float flHealthRatio;
 		hud_player_info_t playerinfo = { 0 };
@@ -70,9 +69,8 @@ int CHudPlayerTitle::Draw(float flTime){
 				continue;
 			//计算我和目标的相对偏移
 			VectorSubtract(entity->curstate.origin, local->curstate.origin, vecAngle);
-			fDistance = fsqrt(pow(vecAngle[0], 2) + pow(vecAngle[1], 2) + +pow(vecAngle[2], 2));
 			color = gHookFuncs.GetClientColor(i);
-			if (fDistance >= 1024 || color != localColor)
+			if (FVectorLength(vecAngle) >= 1024 || color != localColor)
 				continue;
 			VectorNormalize(vecAngle);
 			angledotResult = DotProduct(vecAngle, vecView);
