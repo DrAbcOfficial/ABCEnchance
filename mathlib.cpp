@@ -197,17 +197,17 @@ void VectorAngles(const vec3_t forward, vec3_t angles){
 	angles[2] = 0;
 }
 
-double VectorLength(vec3_t v){
-	int i;
-	double length;
-
-	length = 0;
-
-	for (i = 0; i < 3; i++)
+float FVectorLength(vec3_t v) {
+	float length = 0;
+	for (int i = 0; i < 3; i++)
 		length += pow(v[i], 2);
-
-	length = sqrt(length);
-	return length;
+	return fsqrt(length);
+}
+double VectorLength(vec3_t v){
+	double length = 0;
+	for (int i = 0; i < 3; i++)
+		length += pow(v[i], 2);
+	return sqrt(length);
 }
 
 #ifndef FLT_EPSILON
@@ -216,12 +216,10 @@ double VectorLength(vec3_t v){
 
 int VectorCompare(const vec3_t v1, const vec3_t v2){
 	int i;
-
 	for (i = 0; i < 3; i++){
 		if (fabs(v1[i] - v2[i]) > FLT_EPSILON)
 			return 0;
 	}
-
 	return 1;
 }
 
