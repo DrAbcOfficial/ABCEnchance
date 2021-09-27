@@ -51,8 +51,8 @@ int CHudPlayerTitle::Draw(float flTime){
 		//»æÖÆÏà¹Ø
 		wchar_t wideName[MAX_PLAYER_NAME_LENGTH];
 		float* color;
-		float flArmorRatio;
-		float flHealthRatio;
+		float flArmorRatio, flArmorLength;
+		float flHealthRatio, flHealthLength;
 		hud_player_info_t playerinfo = { 0 };
 		float flTitleLength = gCVars.pPlayerTitleLength->value;
 		float flTitleHeight = gCVars.pPlayerTitleHeight->value;
@@ -82,12 +82,14 @@ int CHudPlayerTitle::Draw(float flTime){
 				vecHUD[1] = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
 				gEngfuncs.pfnGetPlayerInfo(i, &playerinfo);
 				if (playerinfo.name){
-					flHealthRatio = clamp((gHudDelegate->m_Playerinfo[i].health / 100.0f), 0.0f, 1.0f);
-					flArmorRatio = clamp((gHudDelegate->m_Playerinfo[i].armor / 100.0f), 0.0f, 1.0f);
-					
 					nowX = vecHUD[0] - flTitleLength / 3;
 					nowY = vecHUD[1] - flTitleHeight / 2;
 					if (gCVars.pPlayerTitle->value < 2){
+						flHealthRatio = clamp((gHudDelegate->m_Playerinfo[i].health / 100.0f), 0.0f, 1.0f);
+						flArmorRatio = clamp((gHudDelegate->m_Playerinfo[i].armor / 100.0f), 0.0f, 1.0f);
+
+						flHealthLength = nowX + (flTitleLength * flHealthRatio);
+						flArmorLength = nowX + (flTitleLength * flArmorRatio);
 						//±³¾°
 						glEnable(GL_TEXTURE_2D);
 						glEnable(GL_BLEND);
@@ -114,9 +116,9 @@ int CHudPlayerTitle::Draw(float flTime){
 								glTexCoord2f(0, 1);
 								glVertex3f(nowX, nowY + flTitleHeight, 0);
 								glTexCoord2f(flHealthRatio, 1);
-								glVertex3f(nowX + (flTitleLength * flHealthRatio), nowY + flTitleHeight, 0);
+								glVertex3f(flHealthLength, nowY + flTitleHeight, 0);
 								glTexCoord2f(flHealthRatio, 0);
-								glVertex3f(nowX + (flTitleLength * flHealthRatio), nowY, 0);
+								glVertex3f(flHealthLength, nowY, 0);
 							glEnd();
 
 							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -127,9 +129,9 @@ int CHudPlayerTitle::Draw(float flTime){
 								glTexCoord2f(0, 1);
 								glVertex3f(nowX, nowY + flTitleHeight, 0);
 								glTexCoord2f(flArmorRatio, 1);
-								glVertex3f(nowX + (flTitleLength * flArmorRatio), nowY + flTitleHeight, 0);
+								glVertex3f(flArmorLength, nowY + flTitleHeight, 0);
 								glTexCoord2f(flArmorRatio, 0);
-								glVertex3f(nowX + (flTitleLength * flArmorRatio), nowY, 0);
+								glVertex3f(flArmorLength, nowY, 0);
 							glEnd();
 						
 						gHudDelegate->surface()->DrawSetTexture(-1);
