@@ -14,6 +14,8 @@ Scheme
 		"HealthArmor.ArmorPainColor"		"255 0 0 255"
 		"HealthArmor.ArmorDangerColor"		"125 110 0 255"
 
+		"HealthArmor.LongjumpIconColor"		"245 230 195 255"
+
 		"HealthArmor.PainIndicatorColor"	"255 0 0 255"
 		"HealthArmor.PainIndicatorColorA"	"255 255 255 255"
 		"HealthArmor.BitDamageColor"		"0 255 0 255"
