@@ -114,11 +114,11 @@ int CHudArmorHealth::VidInit(void){
 	return 1;
 }
 void CHudArmorHealth::Reset(void){
-	iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
-	iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
-	iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
-	iLongjumpIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-longjump.spr");
-	iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
+	iHealthIcon = SPR_Load("abcenchance/spr/icon-cross1.spr");
+	iArmorIconNull = SPR_Load("abcenchance/spr/icon-shield.spr");
+	iArmorIconFull = SPR_Load("abcenchance/spr/icon-armor-helmet.spr");
+	iLongjumpIcon = SPR_Load("abcenchance/spr/icon-longjump.spr");
+	iPainIndicator = SPR_Load("abcenchance/spr/pain_indicator.spr");
 	VGUI_CREATE_NEWTGA_TEXTURE(iHealthBarBackground, "abcenchance/tga/healthbar_background");
 	m_iHealth = 100;
 	m_bitsDamage = 0;
@@ -160,9 +160,6 @@ int CHudArmorHealth::Draw(float flTime){
 	int iHealth = m_iHealth;
 	int iBattery = m_iBat;
 	//HP ICON
-	if (!iHealthIcon)
-		iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
-
 	if (iHealth <= DAGER_HEALTH)
 		HealthDangerColor.GetColor(r, g, b, a);
 	else
@@ -197,11 +194,6 @@ int CHudArmorHealth::Draw(float flTime){
 	iStartX += BarLength + ElementGap * 4;
 
 	//AP
-	if (!iArmorIconNull || !iArmorIconFull)
-		iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
-	if (!iArmorIconFull)
-		iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
-
 	if (iBattery <= DAGER_HEALTH)
 		ArmorDangerColor.GetColor(r, g, b, a);
 	else
@@ -297,9 +289,6 @@ int CHudArmorHealth::DrawPain(float flTime){
 		PainIndicatorColorA.GetColor(r, g, b, a);
 	else
 		PainIndicatorColor.GetColor(r, g, b, a);
-
-	if (!iPainIndicator)
-		iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
 	CalcDamageDirection();
 	DrawSPRIconPos(iPainIndicator, vecPainIndicatorA, vecPainIndicatorC, vecPainIndicatorD, vecPainIndicatorB, 
 		r, g, b, 
