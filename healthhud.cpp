@@ -3,6 +3,7 @@
 #include <cmath>
 #include "mathlib.h"
 #include "msghook.h"
+#include "glew.h"
 
 #include "hud.h"
 #include "weapon.h"
@@ -16,7 +17,7 @@
 #include "healthhud.h"
 
 #define DAMAGE_NAME "sprites/%d_dmg.spr"
-int giDmgFlags[NUM_DMG_TYPES] ={
+int aryDmgFlags[NUM_DMG_TYPES] ={
 	DMG_POISON,
 	DMG_ACID,
 	DMG_FREEZE | DMG_SLOWFREEZE,
@@ -96,6 +97,8 @@ void CHudArmorHealth::Init(void){
 	ArmorPainColor = pScheme->GetColor("HealthArmor.ArmorPainColor", gDefaultColor);
 	ArmorDangerColor = pScheme->GetColor("HealthArmor.ArmorDangerColor", gDefaultColor);
 
+	LongjumpIconColor = pScheme->GetColor("HealthArmor.LongjumpIconColor", gDefaultColor);
+
 	PainIndicatorColor = pScheme->GetColor("HealthArmor.PainIndicatorColor", gDefaultColor);
 	PainIndicatorColorA = pScheme->GetColor("HealthArmor.PainIndicatorColorA", gDefaultColor);
 
@@ -114,6 +117,7 @@ void CHudArmorHealth::Reset(void){
 	iHealthIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-cross1.spr");
 	iArmorIconNull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-shield.spr");
 	iArmorIconFull = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-armor-helmet.spr");
+	iLongjumpIcon = gEngfuncs.pfnSPR_Load("abcenchance/spr/icon-longjump.spr");
 	iPainIndicator = gEngfuncs.pfnSPR_Load("abcenchance/spr/pain_indicator.spr");
 	VGUI_CREATE_NEWTGA_TEXTURE(iHealthBarBackground, "abcenchance/tga/healthbar_background");
 	m_iHealth = 100;
@@ -228,7 +232,11 @@ int CHudArmorHealth::Draw(float flTime){
 		BarLength, BarWidth, r / 2, g / 2, b / 2, a);
 	gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
 		BarLength * clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
-	iStartX += BarLength + ElementGap * 2;
+	if (gHudDelegate->m_bPlayerLongjump) {
+		iStartX += BarLength + ElementGap * 2;
+		LongjumpIconColor.GetColor(r, g, b, a);
+		DrawSPRIcon(iLongjumpIcon, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
+	}
 	return DrawDamage(flTime);
 }
 void CHudArmorHealth::CalcDamageDirection(){
@@ -307,7 +315,7 @@ int CHudArmorHealth::DrawDamage(float flTime){
 	a = (int)(fabs(sin(flTime * 2)) * 256.0);
 	int i;
 	for (i = 0; i < NUM_DMG_TYPES; i++){
-		if (m_bitsDamage & giDmgFlags[i]){
+		if (m_bitsDamage & aryDmgFlags[i]){
 			pdmg = &m_dmg[i];
 			SPR_Set(gHudDelegate->GetSprite(m_HUD_dmg_bio + i), r, g, b);
 			SPR_DrawAdditive(0, pdmg->x, pdmg->y, &gHudDelegate->GetSpriteRect(m_HUD_dmg_bio + i));
@@ -316,7 +324,7 @@ int CHudArmorHealth::DrawDamage(float flTime){
 	for (i = 0; i < NUM_DMG_TYPES; i++){
 		DAMAGE_IMAGE* pdmg = &m_dmg[i];
 
-		if (m_bitsDamage & giDmgFlags[i]){
+		if (m_bitsDamage & aryDmgFlags[i]){
 			pdmg->fExpire = min(flTime + DMG_IMAGE_LIFE, pdmg->fExpire);
 
 			if (pdmg->fExpire <= flTime	&& a < 40){
@@ -329,7 +337,7 @@ int CHudArmorHealth::DrawDamage(float flTime){
 					if ((pdmg->y) && (pdmg->y < y))
 						pdmg->y += DamageIconSize;
 				}
-				m_bitsDamage &= ~giDmgFlags[i];
+				m_bitsDamage &= ~aryDmgFlags[i];
 			}
 		}
 	}
@@ -340,12 +348,12 @@ void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage){
 	long bitsOn = ~m_bitsDamage & bitsDamage;
 	for (int i = 0; i < NUM_DMG_TYPES; i++){
 		pdmg = &m_dmg[i];
-		if (m_bitsDamage & giDmgFlags[i]){
+		if (m_bitsDamage & aryDmgFlags[i]){
 			pdmg->fExpire = flTime + DMG_IMAGE_LIFE;
 			if (!pdmg->fBaseline)
 				pdmg->fBaseline = flTime;
 		}
-		if (bitsOn & giDmgFlags[i]){
+		if (bitsOn & aryDmgFlags[i]){
 			pdmg->x = DamageIconX;
 			pdmg->y = DamageIconY - DamageIconSize * 2;
 			pdmg->fExpire = flTime + DMG_IMAGE_LIFE;

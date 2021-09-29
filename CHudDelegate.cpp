@@ -146,6 +146,7 @@ void CHudDelegate::HUD_Reset(void){
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time){
+	m_bPlayerLongjump = atoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
 }
 void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	m_HudCustomAmmo.ClientMove(ppmove, server);

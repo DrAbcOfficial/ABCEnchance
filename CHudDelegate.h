@@ -49,6 +49,7 @@ public:
 	~CHudDelegate();			// destructor, frees allocated memory
 
 	int m_iPlayerHealth;
+	bool m_bPlayerLongjump;
 	int m_iVisibleMouse;
 	int m_iIsOverView = 0;
 	float m_flOverViewScale;

@@ -65,11 +65,12 @@ public:
 	int m_iHealth;
 	int m_iBat;
 
-	int iHealthIcon;
-	int iArmorIconNull;
-	int iArmorIconFull;
-	int iPainIndicator;
-	int iHealthBarBackground;
+	GLint iHealthIcon;
+	GLint iArmorIconNull;
+	GLint iArmorIconFull;
+	GLint iLongjumpIcon;
+	GLint iPainIndicator;
+	GLint iHealthBarBackground;
 
 	float flPainIndicatorKeepTime = 0;
 	float flPainColorKeepTime = 0;
@@ -115,6 +116,8 @@ private:
 	Color ArmorTextColor;
 	Color ArmorPainColor;
 	Color ArmorDangerColor;
+
+	Color LongjumpIconColor;
 
 	Color PainIndicatorColor;
 	Color PainIndicatorColorA;
