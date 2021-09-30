@@ -2,7 +2,7 @@
 #include "mathlib.h"
 #include "vguilocal.h"
 
-vgui::ISchemeManager* g_pScheme;
+vgui::ISchemeManager* pSchemeManager;
 vgui::ISurface* g_pSurface;
 vgui::ILocalize* pLocalize;
 vgui::IScheme* pScheme;

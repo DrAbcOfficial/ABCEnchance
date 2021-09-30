@@ -11,24 +11,35 @@ typedef struct deathmsgItem_s{
 	wchar_t executioner[MSG_BUF_SIZE];
 	wchar_t killer[MSG_BUF_SIZE];
 	float addTime;
+	int attackerIndex = -1;
+	bool isYou = false;
+	int damageType = 0;
+
+	bool hide = false;
 } deathmsgItem_t;
 class CHudDeathMsg{
 public:
 	int Init(void);
 	int Draw(float flTime);
 	void Reset(void);
+	void InsertNewDeathMsg(wchar_t* v, wchar_t* e, wchar_t* k, int kIndex, bool bIsYou, int iDamageType);
 	void InsertNewMsg(const std::wstring &v, std::wstring &e, std::wstring &k);
 
-	std::wstring szSuicide;
-	std::wstring szKilled;
-	std::wstring szEmpty;
+	bool bIsDeathMsgOn;
 private:
 	deathmsgItem_t aryKeepMsg[MAX_KEEP_DEATHMSG];
 	vgui::HFont HUDFont;
 	Color BackGoundColor;
+	Color BackGoundOutLineColor;
+	Color VictimColor;
+	Color AttackerColor;
+	Color InflictorColor;
+
 	float XOffset;
 	float YOffset;
 	float GapOffset;
 	float BackGoundWidth;
+
+	void PushDeathNotice(wchar_t* v, wchar_t* e, wchar_t* k);
 };
 extern CHudDeathMsg m_HudDeathMsg;
