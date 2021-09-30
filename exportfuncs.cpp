@@ -32,6 +32,7 @@ cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 metaplugins_t g_metaplugins;
 engine_studio_api_t gEngineStudio;
+int gPluginVersion;
 
 const clientdata_t* gClientData;
 float m_hfov;
@@ -232,6 +233,10 @@ void HUD_Init(void){
 	pSchemeManager->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = pSchemeManager->GetIScheme(pSchemeManager->GetScheme("ABCEnchance"));
 	pLocalize->AddFile(g_pFileSystem, "abcenchance/Localize.txt");
+	gPluginVersion = atoi(pScheme->GetResourceString("Version"));
+	if (gPluginVersion < PLUGIN_VERSION)
+		Sys_ErrorEx("[ABCEnchance]:\nMissing Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
+			PLUGIN_VERSION, gPluginVersion);
 	
 	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
 

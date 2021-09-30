@@ -55,6 +55,7 @@ Scheme
 
 	BaseSettings
 	{
+		"Version"						100000
 		"HealthArmor.StartX"			"0.013"
 		"HealthArmor.IconSize"			"0.03"
 		"HealthArmor.BarLength"			"0.07"
