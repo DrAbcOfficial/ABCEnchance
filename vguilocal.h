@@ -9,7 +9,7 @@ typedef struct ScreenInfo_s{
 	int iWidth;
 	int iHeight;
 } ScreenInfo_t;
-extern vgui::ISchemeManager* g_pScheme;
+extern vgui::ISchemeManager* pSchemeManager;
 extern vgui::ISurface* g_pSurface;
 extern vgui::ILocalize* pLocalize;
 extern vgui::IScheme* pScheme;

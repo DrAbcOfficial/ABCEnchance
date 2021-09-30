@@ -334,29 +334,10 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 		gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
 		//f1 ÉËº¦
 		//b1 ÊÇ·ñ×ó¼ü
-		/*
-		if (gEfxVarible.pChargeGlow) {
-			gEfxVarible.pChargeGlow->die = 0;
-			gEfxVarible.pChargeGlow = nullptr;
-			gEfxVarible.flGaussStartChargeTime = 0;
-		}
-		*/
 		DoGaussFire(fparam1, bparam1);
 		break;
 	}
 	case 13: {
-		/*
-		if (!gEfxVarible.pChargeGlow) {
-			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-			gEfxVarible.pChargeGlow = gEngfuncs.pEfxAPI->R_TempSprite(local->origin, local->angles, 1.0f,
-				gEfxVarible.iGaussChargeSprite, kRenderTransAdd, kRenderFxFadeFast, 80, 1, 0);
-			gEfxVarible.pChargeGlow->flags = FTENT_CLIENTCUSTOM | FTENT_FADEOUT;
-			gEfxVarible.pChargeGlow->callback = GaussChargeCallback;
-			gEfxVarible.flGaussStartChargeTime = gEngfuncs.GetClientTime();
-		}
-		else
-			gEfxVarible.pChargeGlow->die = gEngfuncs.GetClientTime() + 1.0f;
-			*/
 	}
 	default:gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2); break;
 	}

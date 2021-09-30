@@ -40,6 +40,10 @@ Scheme
 		"AmmoHUD.SelectCyclerPointerColor"		"255 128 0 255"
 
 		"DeathMsg.BackGoundColor"		"180 180 180 255"
+		"DeathMsg.BackGoundOutLineColor"		"255 182 193 255"
+		"DeathMsg.VictimColor"		"0 178 178 255"
+		"DeathMsg.AttackerColor"		"204 0 0 255"
+		"DeathMsg.InflictorColor"		"178 178 178 255"
 
 		"Vote.OutlineColor"		"255 255 255 180"
 		"Vote.BackGoundColor"		"139 137 137 180"
