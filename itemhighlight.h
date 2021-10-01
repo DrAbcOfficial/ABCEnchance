@@ -12,7 +12,12 @@ public:
 	void Draw(float flTime);
 	void AddEntity(int type, cl_entity_s* ent, const char* modelname);
 private:
+	void CreateHighLight(cl_entity_t* var);
+	void EraseHighLight(cl_entity_t* var);
+
+	int m_iHighLightMdl;
 	std::map<int, cl_entity_t*> m_mapToBeDraw;
 	std::map<int, cl_hightlight_t*> m_mapHighLightTable;
+	std::map<cl_entity_t*, std::pair<TEMPENTITY*, TEMPENTITY*>> m_mapRestoredTent;
 };
 extern CHudItemHighLight m_HudItemHighLight;
