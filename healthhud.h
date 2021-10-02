@@ -84,7 +84,7 @@ public:
 	float PainIndicatorTime;
 private:
 	void CalcuPainFade(int& r, int& g, int& b, Color* c, float timeDiffer);
-	int m_HUD_dmg_bio;
+	int m_iDMGIconStart;
 	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
 	HSPRITE m_hSprite;
 	HSPRITE m_hDamage;

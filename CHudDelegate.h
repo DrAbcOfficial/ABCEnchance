@@ -1,5 +1,6 @@
 #pragma once
 #define MAX_SPRITE_NAME_LENGTH	24
+#include <vector>
 #include "baseammo.h"
 #include "basemenu.h"
 
@@ -13,6 +14,15 @@ typedef struct hud_playerinfo_s {
 	char donors;
 	char admin;
 }hud_playerinfo_t;
+typedef struct {
+	CHudMenu* m_Menu;
+	CHudAmmo* m_Ammo;
+} cl_hookedHud;
+typedef struct cl_spritem_s {
+	HSPRITE spr;
+	wrect_t rect;
+	char name[MAX_SPRITE_NAME_LENGTH];
+}cl_spritem_t;
 enum SC_DONER_ICON {
 	DONER_NONE = 0,
 	DONER_ELECTRIC_CROWBAR,
@@ -44,40 +54,33 @@ public:
 	void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 	void IN_Accumulate(void);
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
+	bool IsInSpectate();
+
+	HSPRITE GetSprite(int index);
+	wrect_t* GetSpriteRect(int index);
+	int GetSpriteIndex(const char* SpriteName);
 
 	vgui::ISurface* surface();
 	~CHudDelegate();			// destructor, frees allocated memory
 
-	int m_iPlayerHealth;
-	bool m_bPlayerLongjump;
-	int m_iVisibleMouse;
+	int m_iPlayerHealth = 0;
+	bool m_bPlayerLongjump = false;
+	int m_iVisibleMouse = 0;
 	int m_iIsOverView = 0;
-	float m_flOverViewScale;
-	float m_flOverViewYaw;
-	float m_flOverViewZmax;
-	float m_flOverViewZmin;
-	vec3_t m_vecOverViewOrg;
+	float m_flOverViewScale = 0;
+	float m_flOverViewYaw = 0;
+	float m_flOverViewZmax = 0;
+	float m_flOverViewZmin = 0;
+	hud_playerinfo_t m_Playerinfo[33] = { 0 };
 
+	vec3_t m_vecOverViewOrg;
 	vec3_t m_vecClientEVPunch;
 	vec2_t m_vecThirdPersonCrosshairPos;
-	hud_playerinfo_t m_Playerinfo[33];
-
+	
 	client_sprite_t* m_pSpriteList;
-	int m_iSpriteCountAllRes;
-
-	HSPRITE GetSprite(int index){ return (index < 0) ? 0 : m_rghSprites[index];}
-	wrect_t& GetSpriteRect(int index){ return m_rgrcRects[index]; }
-	int GetSpriteIndex(const char* SpriteName);	// gets a sprite index, for use in the m_rghSprites[] array
-	bool IsInSpectate();
 private:
-	int	 m_iSpriteCount;
-	HSPRITE* m_rghSprites;	/*[HUD_SPRITE_COUNT]*/			// the sprites loaded from hud.txt
-	wrect_t* m_rgrcRects;	/*[HUD_SPRITE_COUNT]*/
-	char* m_rgszSpriteNames; /*[HUD_SPRITE_COUNT][MAX_SPRITE_NAME_LENGTH]*/
+	int m_iSpriteCountAllRes;
+	std::vector<cl_spritem_s*> m_arySprites; // the sprites loaded from hud.txt
 };
 extern CHudDelegate* gHudDelegate;
-typedef struct {
-	CHudMenu* m_Menu;
-	CHudAmmo* m_Ammo;
-} cl_hookedHud;
 extern cl_hookedHud gHookHud;

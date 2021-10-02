@@ -27,16 +27,16 @@ private:
 	void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index);
 	int DrawWList(float flTime);
 	void SyncWeapon();
-	float m_fAnimateTime;
-	float m_fNextSyncTime;
+	float m_fAnimateTime = 0;
+	float m_fNextSyncTime = 0;
 
-	float m_fCursorAngle;
+	float m_fCursorAngle = 0;
 
-	GLint m_hOldBuffer;
-	GLuint m_hGaussianBufferVFBO;
-	GLuint m_hGaussianBufferVTex;
-	GLuint m_hGaussianBufferHFBO;
-	GLuint m_hGaussianBufferHTex;
+	GLint m_hOldBuffer = 0;
+	GLuint m_hGaussianBufferVFBO = 0;
+	GLuint m_hGaussianBufferVTex = 0;
+	GLuint m_hGaussianBufferHFBO = 0;
+	GLuint m_hGaussianBufferHTex = 0;
 
 	float IconSize = 0.5F;
 	float ElementGap = 0.2F;
@@ -62,14 +62,14 @@ private:
 	Color SelectCyclerEmptyColor;
 	Color SelectCyclerPointerColor;
 
-	float SelectCyclerOffset;
-	float SelectCyclerSize;
-	float SelectCyclerRotate;
-	float SelectCyclerAnimateTime;
-	float SelectCyclerFadeTime;
-	float SelectCyclerPointerSize;
+	float SelectCyclerOffset = 0;
+	float SelectCyclerSize = 0;
+	float SelectCyclerRotate = 0;
+	float SelectCyclerAnimateTime = 0;
+	float SelectCyclerFadeTime = 0;
+	float SelectCyclerPointerSize = 0;
 
-	vgui::HFont HUDFont;
-	vgui::HFont HUDSmallFont;
+	vgui::HFont HUDFont = 0;
+	vgui::HFont HUDSmallFont = 0;
 };
 extern CHudCustomAmmo m_HudCustomAmmo;

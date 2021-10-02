@@ -110,7 +110,7 @@ void CHudArmorHealth::Init(void){
 }
 int CHudArmorHealth::VidInit(void){
 	m_hSprite = 0;
-	m_HUD_dmg_bio = gHudDelegate->GetSpriteIndex("dmg_bio") + 1;
+	m_iDMGIconStart = gHudDelegate->GetSpriteIndex("dmg_bio") + 1;
 	return 1;
 }
 void CHudArmorHealth::Reset(void){
@@ -306,8 +306,8 @@ int CHudArmorHealth::DrawDamage(float flTime){
 	for (i = 0; i < NUM_DMG_TYPES; i++){
 		if (m_bitsDamage & aryDmgFlags[i]){
 			pdmg = &m_dmg[i];
-			SPR_Set(gHudDelegate->GetSprite(m_HUD_dmg_bio + i), r, g, b);
-			SPR_DrawAdditive(0, pdmg->x, pdmg->y, &gHudDelegate->GetSpriteRect(m_HUD_dmg_bio + i));
+			SPR_Set(gHudDelegate->GetSprite(m_iDMGIconStart + i), r, g, b);
+			SPR_DrawAdditive(0, pdmg->x, pdmg->y, gHudDelegate->GetSpriteRect(m_iDMGIconStart + i));
 		}
 	}
 	for (i = 0; i < NUM_DMG_TYPES; i++){
