@@ -151,6 +151,14 @@
 
 <img src="img/deathmsg1.png" width="100%">
 
+## ☢️ BMS style gauss laser
+
+<img src="img/gauss.jpg" width="100%">
+
+## 🪔 Item high light
+
+<img src="img/highlight.jpg" width="100%">
+
 ## 😗 And some useless efx enchance
 
 <img src="img/efx.jpg" width="100%">
