@@ -12,6 +12,7 @@ public:
 	void Draw(float flTime);
 	void AddEntity(int type, cl_entity_s* ent, const char* modelname);
 private:
+	void LoadItemList();
 	void CreateHighLight(cl_entity_t* var);
 	void EraseHighLight(cl_entity_t* var);
 
