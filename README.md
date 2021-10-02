@@ -68,6 +68,9 @@
 |cl_menudrawpos|Draw weapon Pos|0|0/1|
 |cl_rainbowmenu|Draw weapon menu in rainbow|1|0/1/2|
 |---|---|---|---|
+|cl_itemhighlight|Draw item high light|1|0/1|
+|cl_itemhighlightrange|Item high light range|344|0~500|
+|---|---|---|---|
 |cl_radar|Radar|1|0/1/2|
 |cl_radarzoom|Radar Zoom|2.5|0.0001~9999|
 |cl_radarsize|Radar Size|344|0-9999|

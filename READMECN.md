@@ -60,6 +60,9 @@
 |cl_menudrawpos|是否绘制武器Pos|0|0/1|
 |cl_rainbowmenu|绘制武器菜单彩虹圈|1|0/1/2|
 |---|---|---|---|
+|cl_itemhighlight|是否显示物品高亮|1|0/1|
+|cl_itemhighlightrange|物品高亮范围|344|0~500|
+|---|---|---|---|
 |hud_deathnotice_time|死亡提示保持时间|6|0~9999|
 |---|---|---|---|
 |cl_radar|启用雷达|1|0/1/2|
