@@ -145,6 +145,14 @@
 
 <img src="img/deathmsg1.png" width="100%">
 
+## ☢️ BMS样式高斯光线
+
+<img src="img/gauss.jpg" width="100%">
+
+## 🪔 物品高亮
+
+<img src="img/highlight.jpg" width="100%">
+
 ## 😗 与及一些没卵用的Efx特效
 
 <img src="img/efx.jpg" width="100%">
