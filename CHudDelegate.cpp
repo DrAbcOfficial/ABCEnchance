@@ -10,6 +10,7 @@
 #include "msghook.h"
 #include "glew.h"
 #include "drawElement.h"
+#include "local.h"
 
 #include "ammo.h"
 #include "healthhud.h"
@@ -24,7 +25,6 @@
 #include "itemhighlight.h"
 
 #include "CHudDelegate.h"
-#include <local.h>
 
 CHudDelegate* gHudDelegate = NULL;
 cl_hookedHud gHookHud;
@@ -71,29 +71,16 @@ void CHudDelegate::HUD_VidInit(void){
 		m_pSpriteList = SPR_GetList("sprites/hud.txt", &m_iSpriteCountAllRes);
 
 		if (m_pSpriteList){
-			m_iSpriteCount = 0;
 			client_sprite_t* p = m_pSpriteList;
-			int j;
-			for (j = 0; j < m_iSpriteCountAllRes; j++){
-				if (p->iRes == iRes)
-					m_iSpriteCount++;
-				p++;
-			}
-			m_rghSprites = new HSPRITE[m_iSpriteCount];
-			m_rgrcRects = new wrect_t[m_iSpriteCount];
-			m_rgszSpriteNames = new char[m_iSpriteCount * MAX_SPRITE_NAME_LENGTH];
-
-			p = m_pSpriteList;
-			int index = 0;
-			for (j = 0; j < m_iSpriteCountAllRes; j++){
+			for (int j = 0; j < m_iSpriteCountAllRes; j++){
 				if (p->iRes == iRes){
 					char sz[256];
 					sprintf(sz, "sprites/%s.spr", p->szSprite);
-					m_rghSprites[index] = SPR_Load(sz);
-					m_rgrcRects[index] = p->rc;
-					strncpy(&m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH], p->szName, MAX_SPRITE_NAME_LENGTH);
-
-					index++;
+					cl_spritem_s* item = new cl_spritem_s();
+					item->spr = SPR_Load(sz);
+					item->rect = p->rc;
+					strncpy_s(item->name, p->szName, MAX_SPRITE_NAME_LENGTH);
+					m_arySprites.push_back(item);
 				}
 				p++;
 			}
@@ -106,7 +93,7 @@ void CHudDelegate::HUD_VidInit(void){
 			if (p->iRes == iRes){
 				char sz[256];
 				sprintf(sz, "sprites/%s.spr", p->szSprite);
-				m_rghSprites[index] = SPR_Load(sz);
+				m_arySprites[index]->spr = SPR_Load(sz);
 				index++;
 			}
 			p++;
@@ -183,23 +170,28 @@ int CHudDelegate::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelnam
 	m_HudItemHighLight.AddEntity(type, ent, modelname);
 	return 0;
 }
+void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {
+}
+bool CHudDelegate::IsInSpectate() {
+	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
+}
+
+HSPRITE CHudDelegate::GetSprite(int index) {
+	return (index < 0) ? 0 : m_arySprites[index]->spr;
+}
+wrect_t* CHudDelegate::GetSpriteRect(int index) {
+	return &m_arySprites[index]->rect;
+}
 int CHudDelegate::GetSpriteIndex(const char* SpriteName){
-	for (int i = 0; i < m_iSpriteCount; i++){
-		if (strncmp(SpriteName, m_rgszSpriteNames + (i * MAX_SPRITE_NAME_LENGTH), MAX_SPRITE_NAME_LENGTH) == 0)
+	for (int i = 0; i < m_arySprites.size(); i++){
+		if (strncmp(SpriteName, m_arySprites[i]->name, MAX_SPRITE_NAME_LENGTH) == 0)
 			return i;
 	}
 	return -1; // invalid sprite
-}
-bool CHudDelegate::IsInSpectate(){
-	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
-}
-void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active){
 }
 vgui::ISurface* CHudDelegate::surface(){
 	return g_pSurface;
 }
 CHudDelegate :: ~CHudDelegate(){
-	delete[] m_rghSprites;
-	delete[] m_rgrcRects;
-	delete[] m_rgszSpriteNames;
+	m_arySprites.clear();
 }

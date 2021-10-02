@@ -124,17 +124,17 @@ int HistoryResource::DrawAmmoHistory(float flTime){
 			case HISTSLOT_ITEM: {
 				if (!item->iId)
 					continue;
-				wrect_t rect = gHudDelegate->GetSpriteRect(item->iId);
+				wrect_t* rect = gHudDelegate->GetSpriteRect(item->iId);
 				ItemPickUpColor.GetColor(r, g, b, a);
 				float scale = GetAlphaScale(a, item->DisplayTime - flTime);
 				r *= scale;
 				g *= scale;
 				b *= scale;
-				xpos = vecItemPickUpPos[0] + rect.right - rect.left;
-				ypos = vecItemPickUpPos[1] - (rect.bottom - rect.top) * j;
+				xpos = vecItemPickUpPos[0] + rect->right - rect->left;
+				ypos = vecItemPickUpPos[1] - (rect->bottom - rect->top) * j;
 
 				SPR_Set(gHudDelegate->GetSprite(item->iId), r, g, b);
-				SPR_DrawAdditive(0, xpos, ypos, &rect);
+				SPR_DrawAdditive(0, xpos, ypos, rect);
 				break;
 			}
 			}
