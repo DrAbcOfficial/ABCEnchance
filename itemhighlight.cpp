@@ -1,5 +1,6 @@
 #include <metahook.h>
 #include <map>
+#include <vector>
 #include "pm_defs.h"
 #include "com_model.h"
 #include "cl_entity.h"
@@ -14,86 +15,30 @@
 #include "myconst.h"
 
 #include "itemhighlight.h"
+#include <plugins.h>
 
-//TODO: 用txt列表取代该固定玩意儿
-#define HIGH_LIGHT_LIST_SIZE 55
-cl_hightlight_t aryHighLightList[HIGH_LIGHT_LIST_SIZE] = {
-	{"models/w_2uzis.mdl", 2},
-	{"models/w_2uzis_gold.mdl", 2},
-	{"models/w_9mmar.mdl", 2},
-	{"models/w_9mmhandgun.mdl", 2},
-	{"models/w_357.mdl", 2},
-	{"models/w_bgrap.mdl", 2},
-	{"models/w_crossbow.mdl", 2},
-	{"models/w_crowbar.mdl", 2},
-	{"models/w_desert_eagle.mdl", 2},
-	{"models/w_displacer.mdl", 2},
-	{"models/w_egon.mdl", 2},
-	{"models/w_desert_eagle.mdl", 2},
-	{"models/w_gauss.mdl", 2},
-	{"models/w_hgun.mdl", 2},
-	{"models/w_m16.mdl", 2},
-	{"models/w_m40a1.mdl", 2},
-	{"models/w_minigun.mdl", 2},
-	{"models/w_mp5.mdl", 2},
-	{"models/w_minigun.mdl", 2},
-	{"models/w_pipe_wrench.mdl", 2},
-	{"models/w_pmedkit.mdl", 2},
-	{"models/w_pipe_wrench.mdl", 2},
-	{"models/w_rpg.mdl", 2},
-	{"models/w_saw.mdl", 2},
-	{"models/w_shock.mdl", 2},
-	{"models/w_shock_rifle.mdl", 2},
-	{"models/w_shotgun.mdl", 2},
-	{"models/w_spore_launcher.mdl", 2},
-	{"models/w_squeak.mdl", 2},
-	{"models/w_uzi.mdl", 2},
-	{"models/w_uzi_gold.mdl", 2},
+#define ITEM_LIST_PATH "abcenchance/ItemHighLightList.txt"
+std::vector<cl_hightlight_s*> aryHighLightList;
 
-	{"models/w_9mmarclip.mdl", 1},
-	{"models/w_9mmclip.mdl", 1},
-	{"models/w_357ammo.mdl", 1},
-	{"models/w_357ammobox.mdl", 1},
-	{"models/w_argrenade.mdl", 1},
-	{"models/w_chainammo.mdl", 1},
-	{"models/w_crossbow_clip.mdl", 1},
-	{"models/w_gaussammo.mdl", 1},
-	{"models/w_grenade.mdl", 1},
-	{"models/w_m40a1clip.mdl", 1},
-	{"models/w_mp5_clip.mdl", 1},
-	{"models/w_satchel.mdl", 1},
-	{"models/w_rpgammo.mdl", 1},
-	{"models/w_saw_clip.mdl", 1},
-	{"models/w_shotbox.mdl", 1},
-	{"models/w_tripmine.mdl", 1},
-	{"models/w_uzi_clip.mdl", 1},
-
-	{"models/w_adrenaline.mdl", 0},
-	{"models/w_antidote.mdl", 0},
-	{"models/w_battery.mdl", 0},
-	{"models/w_longjump.mdl", 0},
-	{"models/w_medkit.mdl", 0},
-	{"models/w_oxygen.mdl", 0},
-	{"models/w_rad.mdl", 0},
-};
 CHudItemHighLight m_HudItemHighLight;
-
+char szItemPraseBuf[256];
 void RangeSizeCallBack(cvar_t* cvar) {
 	cvar->value = clamp(cvar->value, 0, 344);
 }
 int CHudItemHighLight::Init(){
 	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "0", FCVAR_VALUE, NULL);
 	gCVars.pItemHighLightRange = CREATE_CVAR("cl_itemhighlightrange", "344", FCVAR_VALUE, RangeSizeCallBack);
+	//LoadItemList();
 	return 0;
 }
 void CHudItemHighLight::Reset(){
 	m_mapHighLightTable.clear();
 	m_mapToBeDraw.clear();
 	m_mapRestoredTent.clear();
-	for (int i = 0; i < HIGH_LIGHT_LIST_SIZE; i++) {
-		aryHighLightList[i].Index = gEngfuncs.pEventAPI->EV_FindModelIndex(aryHighLightList[i].Name);
-		if (aryHighLightList[i].Index > 0)
-			m_mapHighLightTable[aryHighLightList[i].Index] = &aryHighLightList[i];
+	for (int i = 0; i < aryHighLightList.size(); i++) {
+		aryHighLightList[i]->Index = gEngfuncs.pEventAPI->EV_FindModelIndex(aryHighLightList[i]->Name);
+		if (aryHighLightList[i]->Index > 0)
+			m_mapHighLightTable[aryHighLightList[i]->Index] = aryHighLightList[i];
 	}
 	m_iHighLightMdl = PrecacheExtraModel("abcenchance/mdl/item_highlight.mdl");
 }
@@ -169,4 +114,29 @@ void CHudItemHighLight::AddEntity(int type, cl_entity_s* ent, const char* modeln
 		!m_mapToBeDraw.count(ent->index)) {
 		m_mapToBeDraw[ent->index] = ent;
 	}
+}
+void CHudItemHighLight::LoadItemList() {
+	char* pfile = (char*)gEngfuncs.COM_LoadFile(ITEM_LIST_PATH, 5, NULL);
+	int i = 0;
+	if (!pfile){
+		gEngfuncs.Con_DPrintf("CHudItemHighLight::LoadItemList: No item list file %s\n", ITEM_LIST_PATH);
+		return;
+	}
+	while (1){
+		pfile = gEngfuncs.COM_ParseFile(pfile, szItemPraseBuf);
+		if (!pfile)
+			break;
+		if (i == 0) {
+			cl_hightlight_s* item = new cl_hightlight_s();
+			strcpy(item->Name, szItemPraseBuf);
+			aryHighLightList.push_back(item);
+		}
+		else
+			aryHighLightList[aryHighLightList.size() - 1]->Type = clamp(atoi(szItemPraseBuf), 0, 2);
+		i++;
+		if (i >= 2)
+			i = 0;
+	}
+	g_dwEngineBase;
+	gEngfuncs.COM_FreeFile(ITEM_LIST_PATH);
 }
