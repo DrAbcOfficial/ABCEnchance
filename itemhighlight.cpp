@@ -9,13 +9,13 @@
 #include "mathlib.h"
 #include "cvardef.h"
 #include "extraprecache.h"
+#include "exportfuncs.h"
 
 #include "vguilocal.h"
 #include "local.h"
 #include "myconst.h"
 
 #include "itemhighlight.h"
-#include <plugins.h>
 
 #define ITEM_LIST_PATH "abcenchance/ItemHighLightList.txt"
 std::vector<cl_hightlight_s*> aryHighLightList;
@@ -26,9 +26,9 @@ void RangeSizeCallBack(cvar_t* cvar) {
 	cvar->value = clamp(cvar->value, 0, 344);
 }
 int CHudItemHighLight::Init(){
-	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "0", FCVAR_VALUE, NULL);
+	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "1", FCVAR_VALUE, NULL);
 	gCVars.pItemHighLightRange = CREATE_CVAR("cl_itemhighlightrange", "344", FCVAR_VALUE, RangeSizeCallBack);
-	//LoadItemList();
+	LoadItemList();
 	return 0;
 }
 void CHudItemHighLight::Reset(){
@@ -117,26 +117,29 @@ void CHudItemHighLight::AddEntity(int type, cl_entity_s* ent, const char* modeln
 }
 void CHudItemHighLight::LoadItemList() {
 	char* pfile = (char*)gEngfuncs.COM_LoadFile(ITEM_LIST_PATH, 5, NULL);
-	int i = 0;
+	int i = 0, index = 0;
 	if (!pfile){
 		gEngfuncs.Con_DPrintf("CHudItemHighLight::LoadItemList: No item list file %s\n", ITEM_LIST_PATH);
 		return;
 	}
-	while (1){
+	while (true){
 		pfile = gEngfuncs.COM_ParseFile(pfile, szItemPraseBuf);
 		if (!pfile)
 			break;
 		if (i == 0) {
 			cl_hightlight_s* item = new cl_hightlight_s();
-			strcpy(item->Name, szItemPraseBuf);
+			strcpy_s(item->Name, szItemPraseBuf);
 			aryHighLightList.push_back(item);
 		}
-		else
-			aryHighLightList[aryHighLightList.size() - 1]->Type = clamp(atoi(szItemPraseBuf), 0, 2);
+		else {
+			aryHighLightList[index]->Type = clamp(atoi(szItemPraseBuf), 0, 2);
+			index++;
+		}
 		i++;
 		if (i >= 2)
 			i = 0;
 	}
-	g_dwEngineBase;
-	gEngfuncs.COM_FreeFile(ITEM_LIST_PATH);
+	if (i != 0)
+		Sys_ErrorEx("Error in parsing file:%s\nLine:%d\nBuf is not end with even.", ITEM_LIST_PATH, index);
+	gEngfuncs.COM_FreeFile(pfile);
 }
