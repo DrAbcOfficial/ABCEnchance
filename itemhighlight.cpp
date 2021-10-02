@@ -89,6 +89,7 @@ int CHudItemHighLight::Init(){
 void CHudItemHighLight::Reset(){
 	m_mapHighLightTable.clear();
 	m_mapToBeDraw.clear();
+	m_mapRestoredTent.clear();
 	for (int i = 0; i < HIGH_LIGHT_LIST_SIZE; i++) {
 		aryHighLightList[i].Index = gEngfuncs.pEventAPI->EV_FindModelIndex(aryHighLightList[i].Name);
 		if (aryHighLightList[i].Index > 0)
@@ -102,10 +103,8 @@ void HighLightTentCallBack(TEMPENTITY* ent, float frametime, float currenttime) 
 		ent->die = 0;
 		return;
 	}
-	VectorCopy(var->angles, ent->entity.angles);
 	VectorCopy(var->curstate.origin, ent->entity.origin);
 	VectorAdd(ent->entity.origin, ent->tentOffset, ent->entity.origin);
-	ent->entity.angles[1] += ent->bounceFactor;
 }
 void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	if (m_mapRestoredTent.count(var))
@@ -120,11 +119,10 @@ void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	ent1->flags = ent2->flags = FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
 	ent1->clientIndex = ent2->clientIndex = var->index;
 	ent1->die = ent2->die = gEngfuncs.GetClientTime() + 999.0f;
-	VectorCopy(var->curstate.maxs, ent1->tentOffset);
-	VectorCopy(var->curstate.mins, ent2->tentOffset);
-	/*½Ç¶È²»¶Ô*/
-	ent1->bounceFactor = -90;
-	ent2->bounceFactor = 90;
+	VectorCopy(var->curstate.mins, ent1->tentOffset);
+	VectorCopy(var->curstate.maxs, ent2->tentOffset);
+
+	ent2->entity.angles[1] = 180;
 	ent1->entity.curstate.skin = ent2->entity.curstate.skin = m_mapHighLightTable[var->curstate.modelindex]->Type;
 	ent1->callback = ent2->callback = HighLightTentCallBack;
 	m_mapRestoredTent[var].first = ent1;
