@@ -169,7 +169,7 @@ void CHudDeathMsg::InsertNewDeathMsg(wchar_t* v, wchar_t* e, wchar_t* k, int kIn
 	aryKeepMsg[0].damageType = iDamageType;
 	wcscpy_s(aryKeepMsg[0].killer, L"");
 	cl_entity_t* killer = gEngfuncs.GetEntityByIndex(kIndex);
-	if (!killer || killer->model->type == mod_brush) {
+	if (!killer || !killer->model || killer->model->type == mod_brush) {
 		switch (iDamageType) {
 		case 1: case 2: case 4: case 8: case 16:
 		case 32: case 64: case 128: case 256: case 512:
