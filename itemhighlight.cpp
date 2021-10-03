@@ -50,6 +50,8 @@ void HighLightTentCallBack(TEMPENTITY* ent, float frametime, float currenttime) 
 	}
 	VectorCopy(var->curstate.origin, ent->entity.origin);
 	VectorAdd(ent->entity.origin, ent->tentOffset, ent->entity.origin);
+	ent->entity.angles[0] = var->curstate.angles[0];
+	ent->entity.angles[2] = var->curstate.angles[2];
 }
 void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	if (m_mapRestoredTent.count(var))
@@ -64,9 +66,20 @@ void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	ent1->flags = ent2->flags = FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
 	ent1->clientIndex = ent2->clientIndex = var->index;
 	ent1->die = ent2->die = gEngfuncs.GetClientTime() + 999.0f;
-	VectorCopy(var->curstate.mins, ent1->tentOffset);
-	VectorCopy(var->curstate.maxs, ent2->tentOffset);
-
+	vec3_t vecTemp;
+	if (FVectorLength(var->curstate.mins) <= 3.2) {
+		vecTemp[0] = vecTemp[1] = -16;
+		vecTemp[2] = 0;
+	}
+	else
+		VectorCopy(var->curstate.mins, vecTemp);
+	VectorCopy(vecTemp, ent1->tentOffset);
+	
+	if (FVectorLength(var->curstate.maxs) <= 3.2)
+		vecTemp[0] = vecTemp[1] = vecTemp[2] = 16;
+	else
+		VectorCopy(var->curstate.maxs, vecTemp);
+	VectorCopy(vecTemp, ent2->tentOffset);
 	ent2->entity.angles[1] = 180;
 	ent1->entity.curstate.skin = ent2->entity.curstate.skin = m_mapHighLightTable[var->curstate.modelindex]->Type;
 	ent1->callback = ent2->callback = HighLightTentCallBack;
@@ -109,7 +122,7 @@ void CHudItemHighLight::AddEntity(int type, cl_entity_s* ent, const char* modeln
 	if (gCVars.pItemHighLight->value <= 0)
 		return;
 	//mdlÄ£ĞÍ
-	if (ent && ent->model->type == mod_studio && 
+	if ((ent) && (ent->model) && (ent->model->type == mod_studio) &&
 		m_mapHighLightTable.count(ent->curstate.modelindex) && 
 		!m_mapToBeDraw.count(ent->index)) {
 		m_mapToBeDraw[ent->index] = ent;

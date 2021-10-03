@@ -55,7 +55,7 @@ Scheme
 
 	BaseSettings
 	{
-		"Version"						100000
+		"Version"						100001
 		"HealthArmor.StartX"			"0.013"
 		"HealthArmor.IconSize"			"0.03"
 		"HealthArmor.BarLength"			"0.07"
@@ -99,8 +99,8 @@ Scheme
 
 		"DeathMsg.XOffset"		"0.93"
 		"DeathMsg.YOffset"		"0.25"
-		"DeathMsg.GapOffset"	"0.0105"
-		"DeathMsg.BackGoundWidth"	"0.0075"
+		"DeathMsg.GapOffset"	"0.012"
+		"DeathMsg.BackGoundWidth"	"0.007"
 
 		"Vote.XOffset"		"0.9"
 		"Vote.YOffset"		"0.233"
