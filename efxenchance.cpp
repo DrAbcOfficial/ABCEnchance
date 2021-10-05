@@ -215,7 +215,7 @@ void DoGaussFire(float fparam1, int bparam1) {
 				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, 0.8, 0);
 		cl_entity_t* hit = gEngfuncs.GetEntityByIndex(tr.ent);
 		//可反射高斯
-		if (tr.ent == 0 || hit->curstate.solid == SOLID_BSP || hit->curstate.movetype == MOVETYPE_PUSHSTEP) {
+		if (hit && hit->model && hit->model->type == mod_brush) {
 			//绘制落点模型
 			if (gEfxVarible.iGaussLoophole)
 				CreateGaussLoophole(&tr);
