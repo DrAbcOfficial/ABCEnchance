@@ -1,4 +1,4 @@
-# 🔤 **ABCEnchance**
+# <img src="img/icon.png" width="6%"><a> **ABCEnchance**</a>
 ![Codacy Badge](https://img.shields.io/codacy/grade/d58f0a4ca9e649ffa5d1b97bb668598c?label=%E4%BB%A3%E7%A0%81%E8%B4%A8%E9%87%8F&style=for-the-badge)
 ![Repo Size](https://img.shields.io/github/repo-size/DrAbcrealone/ABCEnchance?label=%E5%82%A8%E5%AD%98%E5%BA%93%E5%A4%A7%E5%B0%8F&style=for-the-badge)
 ![Last Commit](https://img.shields.io/github/last-commit/DrAbcrealone/ABCEnchance?label=%E6%9C%80%E5%90%8E%E6%8F%90%E4%BA%A4%E6%97%B6%E9%97%B4&style=for-the-badge)
