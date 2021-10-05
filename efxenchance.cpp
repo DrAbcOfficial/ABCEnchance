@@ -319,7 +319,7 @@ void DoGaussFire(float fparam1, int bparam1) {
 			//不可反射表面
 			//以终点向前尝试一次穿透后停止
 			VectorAdd(tr.endpos, vecDir, vecSrc);
-			entignore = hit->index;
+			entignore = tr.ent;
 		}
 	}
 }
