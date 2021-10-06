@@ -1,5 +1,6 @@
 #pragma once
 #define NUM_DMG_TYPES 8
+#define NUM_MAX_INDICATOR 4
 enum DMG_IMAGE {
 	DMG_IMAGE_POISON = 0,
 	DMG_IMAGE_ACID,
@@ -44,7 +45,13 @@ enum DMG_TYPE {
 	DMG_GIB_CORPSE = 993, // Gib corpse.These are the damage types that are allowed to gib corpses.
 	DMG_SHOWNHUD = 7815448 // Shown on HUD.These are the damage types that have clien hud art.
 };
-
+typedef struct indicatorinfo_s {
+	int iDamage;
+	int iArmor;
+	vec3_t vecFrom;
+	float flKeepTime;
+	vec2_t vecHUDA, vecHUDB, vecHUDC, vecHUDD;
+}indicatorinfo_t;
 typedef struct{
 	float fExpire;
 	float fBaseline;
@@ -59,11 +66,15 @@ public:
 	int VidInit(void);
 	int DrawPain(float fTime);
 	int DrawDamage(float fTime);
-	void CalcDamageDirection();
+	void CalcDamageDirection(indicatorinfo_s& var);
+	void AddIdicator(int dmg, int armor, vec3_t vecFrom);
 	void UpdateTiles(float fTime, long bits);
 
+	indicatorinfo_t aryIndicators[NUM_MAX_INDICATOR];
+	int iNowSelectIndicator = 0;
+
 	int m_iHealth;
-	int m_iBat;
+	int m_iBattery;
 
 	GLint iHealthIcon;
 	GLint iArmorIconNull;
@@ -72,13 +83,9 @@ public:
 	GLint iPainIndicator;
 	GLint iHealthBarBackground;
 
-	float flPainIndicatorKeepTime = 0;
 	float flPainColorKeepTime = 0;
 
 	int	m_bitsDamage;
-	int m_takeDamage;
-	int m_takeArmor;
-	vec3_t vecDamageFrom;
 
 	float PainColorTime = 0.5;
 	float PainIndicatorTime;
@@ -88,11 +95,6 @@ private:
 	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
 	HSPRITE m_hSprite;
 	HSPRITE m_hDamage;
-
-	vec2_t vecPainIndicatorA;
-	vec2_t vecPainIndicatorB;
-	vec2_t vecPainIndicatorC;
-	vec2_t vecPainIndicatorD;
 
 	float StartX = 48;
 	float IconSize = 0.5;

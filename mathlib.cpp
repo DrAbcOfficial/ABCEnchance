@@ -215,9 +215,8 @@ double VectorLength(vec3_t v){
 #endif
 
 int VectorCompare(const vec3_t v1, const vec3_t v2){
-	int i;
-	for (i = 0; i < 3; i++){
-		if (fabs(v1[i] - v2[i]) > FLT_EPSILON)
+	for (int i = 0; i < 3; i++){
+		if (abs(v1[i] - v2[i]) > FLT_EPSILON)
 			return 0;
 	}
 	return 1;

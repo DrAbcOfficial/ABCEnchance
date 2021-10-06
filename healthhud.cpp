@@ -32,6 +32,7 @@ CHudArmorHealth m_HudArmorHealth;
 pfnUserMsgHook m_pfnHealth;
 pfnUserMsgHook m_pfnDamage;
 pfnUserMsgHook m_pfnBattery;
+
 int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_LONG();
@@ -47,24 +48,30 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf){
 	int damageTaken = READ_BYTE();
 	m_HudArmorHealth.UpdateTiles(gEngfuncs.GetClientTime(), READ_LONG());
 	if (damageTaken > 0 || armor > 0) {
+		vec3_t vecFrom;
 		for (int i = 0; i < 3; i++) {
-			m_HudArmorHealth.vecDamageFrom[i] = READ_COORD();
+			vecFrom[i] = READ_COORD();
 		}
-		m_HudArmorHealth.m_takeDamage = damageTaken;
-		m_HudArmorHealth.m_takeArmor = armor;
-		m_HudArmorHealth.flPainIndicatorKeepTime = gEngfuncs.GetClientTime() + m_HudArmorHealth.PainIndicatorTime;
-		m_HudArmorHealth.flPainColorKeepTime = gEngfuncs.GetClientTime() + m_HudArmorHealth.PainColorTime;
+		float flTime = gEngfuncs.GetClientTime();
+		for each (indicatorinfo_t var in m_HudArmorHealth.aryIndicators){
+			if (var.flKeepTime < flTime)
+				continue;
+			if (VectorCompare(var.vecFrom, vecFrom)) {
+				var.flKeepTime = flTime + m_HudArmorHealth.PainColorTime;
+				return m_pfnDamage(pszName, iSize, pbuf);
+			}
+		}
+		m_HudArmorHealth.AddIdicator(damageTaken, armor, vecFrom);
 	}
 	return m_pfnDamage(pszName, iSize, pbuf);
 }
 int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_SHORT();
-	if (x != m_HudArmorHealth.m_iBat)
-		m_HudArmorHealth.m_iBat = x;
+	if (x != m_HudArmorHealth.m_iBattery)
+		m_HudArmorHealth.m_iBattery = x;
 	return m_pfnBattery(pszName, iSize, pbuf);
 }
-
 void CHudArmorHealth::Init(void){
 	m_pfnHealth = HOOK_MESSAGE(Health);
 	m_pfnDamage = HOOK_MESSAGE(Damage);
@@ -120,12 +127,13 @@ void CHudArmorHealth::Reset(void){
 	iLongjumpIcon = SPR_Load("abcenchance/spr/icon-longjump.spr");
 	iPainIndicator = SPR_Load("abcenchance/spr/pain_indicator.spr");
 	VGUI_CREATE_NEWTGA_TEXTURE(iHealthBarBackground, "abcenchance/tga/healthbar_background");
+
+	memset(aryIndicators, 0, sizeof(aryIndicators));
+	iNowSelectIndicator = 0;
+
 	m_iHealth = 100;
+	m_iBattery = 0;
 	m_bitsDamage = 0;
-	m_takeDamage = 0;
-	m_takeArmor = 0;
-	m_iBat = 0;
-	flPainIndicatorKeepTime = 0.0f;
 	flPainColorKeepTime = 0.0f;
 	for (int i = 0; i < NUM_DMG_TYPES; i++){
 		m_dmg[i].fExpire = 0;
@@ -145,8 +153,7 @@ void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeD
 int CHudArmorHealth::Draw(float flTime){
 	if (gHudDelegate->IsInSpectate())
 		return 1;
-	if (flTime < flPainIndicatorKeepTime)
-		DrawPain(flTime);
+	DrawPain(flTime);
 	int r, g, b, a;
 	float flBackGroundY = BackGroundY;
 	gHudDelegate->surface()->DrawSetTexture(-1);
@@ -158,7 +165,7 @@ int CHudArmorHealth::Draw(float flTime){
 	float flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
 	int iStartX = StartX;
 	int iHealth = m_iHealth;
-	int iBattery = m_iBat;
+	int iBattery = m_iBattery;
 	//HP ICON
 	if (iHealth <= DAGER_HEALTH)
 		HealthDangerColor.GetColor(r, g, b, a);
@@ -231,12 +238,23 @@ int CHudArmorHealth::Draw(float flTime){
 	}
 	return DrawDamage(flTime);
 }
-void CHudArmorHealth::CalcDamageDirection(){
+void CHudArmorHealth::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
+	indicatorinfo_t* pTarget = &aryIndicators[iNowSelectIndicator];
+	pTarget->iDamage = dmg;
+	pTarget->iArmor = armor;
+	VectorCopy(vecFrom, pTarget->vecFrom);
+	pTarget->flKeepTime = gEngfuncs.GetClientTime() + PainIndicatorTime;
+	iNowSelectIndicator++;
+	if (iNowSelectIndicator >= NUM_MAX_INDICATOR)
+		iNowSelectIndicator = 0;
+	flPainColorKeepTime = gEngfuncs.GetClientTime() + PainColorTime;
+}
+void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 	vec3_t vecFinal;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	vecFinal[0] = vecDamageFrom[0] - local->curstate.origin[0];
-	vecFinal[1] = vecDamageFrom[1] - local->curstate.origin[1];
-	vecFinal[2] = vecDamageFrom[2] - local->curstate.origin[2];
+	vecFinal[0] = var.vecFrom[0] - local->curstate.origin[0];
+	vecFinal[1] = var.vecFrom[1] - local->curstate.origin[1];
+	vecFinal[2] = var.vecFrom[2] - local->curstate.origin[2];
 	VectorAngles(vecFinal, vecFinal);
 	vecFinal[YAW] -= local->curstate.angles[YAW];
 	float angle = DEG2RAD(vecFinal[YAW]);
@@ -257,42 +275,31 @@ void CHudArmorHealth::CalcDamageDirection(){
 	*/
 	//x2 = x1 * cos(alpha) - y1 * sin(alpha);
 	//y2 = x1 * sin(alpha) + y1 * cos(alpha);
-	vec2_t vecA, vecB, vecC, vecD;
-	vecA[0] = -sprWidth * ca - y2 * sa;
-	vecA[1] = -sprWidth * sa + y2 * ca;
-	vecB[0] = sprWidth * ca - y2 * sa;
-	vecB[1] = sprWidth * sa + y2 * ca;
-	vecC[0] = -sprWidth * ca - y1 * sa;
-	vecC[1] = -sprWidth * sa + y1 * ca;
-	vecD[0] = sprWidth * ca - y1 * sa;
-	vecD[1] = sprWidth * sa + y1 * ca;
+	Vector2Rotate(var.vecHUDA, -sprWidth, y2, ca, sa);
+	Vector2Rotate(var.vecHUDB, sprWidth, y2, ca, sa);
+	Vector2Rotate(var.vecHUDC, -sprWidth, y1, ca, sa);
+	Vector2Rotate(var.vecHUDD, sprWidth, y1, ca, sa);
 	//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
 	int halfWidth = gScreenInfo.iWidth / 2;
 	int halfHeight = gScreenInfo.iHeight / 2;
-	vecA[0] += halfWidth;
-	vecA[1] = halfHeight - vecA[1];
-	vecB[0] += halfWidth;
-	vecB[1] = halfHeight - vecB[1];
-	vecC[0] += halfWidth;
-	vecC[1] = halfHeight - vecC[1];
-	vecD[0] += halfWidth;
-	vecD[1] = halfHeight - vecD[1];
-
-	Vector2Copy(vecA, vecPainIndicatorA);
-	Vector2Copy(vecB, vecPainIndicatorB);
-	Vector2Copy(vecC, vecPainIndicatorC);
-	Vector2Copy(vecD, vecPainIndicatorD);
+	CenterPos2OpenGLPos(var.vecHUDA, halfWidth, halfHeight);
+	CenterPos2OpenGLPos(var.vecHUDB, halfWidth, halfHeight);
+	CenterPos2OpenGLPos(var.vecHUDC, halfWidth, halfHeight);
+	CenterPos2OpenGLPos(var.vecHUDD, halfWidth, halfHeight);
 }
 int CHudArmorHealth::DrawPain(float flTime){
 	int r, g, b, a;
-	if(m_takeDamage <= 0 && m_takeArmor <= 0)
-		PainIndicatorColorA.GetColor(r, g, b, a);
-	else
-		PainIndicatorColor.GetColor(r, g, b, a);
-	CalcDamageDirection();
-	DrawSPRIconPos(iPainIndicator, vecPainIndicatorA, vecPainIndicatorC, vecPainIndicatorD, vecPainIndicatorB, 
-		r, g, b, 
-		(flPainIndicatorKeepTime - flTime) / PainIndicatorTime * a);
+	for each (indicatorinfo_t var in aryIndicators){
+		if (var.flKeepTime <= flTime)
+			continue;
+		if(var.iDamage <= 0 && var.iArmor <= 0)
+			PainIndicatorColorA.GetColor(r, g, b, a);
+		else
+			PainIndicatorColor.GetColor(r, g, b, a);
+		CalcDamageDirection(var);
+		DrawSPRIconPos(iPainIndicator, var.vecHUDA, var.vecHUDC, var.vecHUDD, var.vecHUDB,
+			r, g, b, (var.flKeepTime - flTime) / PainIndicatorTime * a);
+	}
 	return 1;
 }
 int CHudArmorHealth::DrawDamage(float flTime){
@@ -312,13 +319,10 @@ int CHudArmorHealth::DrawDamage(float flTime){
 	}
 	for (i = 0; i < NUM_DMG_TYPES; i++){
 		DAMAGE_IMAGE* pdmg = &m_dmg[i];
-
 		if (m_bitsDamage & aryDmgFlags[i]){
 			pdmg->fExpire = min(flTime + DMG_IMAGE_LIFE, pdmg->fExpire);
-
 			if (pdmg->fExpire <= flTime	&& a < 40){
 				pdmg->fExpire = 0;
-
 				int y = pdmg->y;
 				pdmg->x = pdmg->y = 0;
 				for (int j = 0; j < NUM_DMG_TYPES; j++){
