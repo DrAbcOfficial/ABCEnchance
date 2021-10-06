@@ -97,11 +97,12 @@
 |cl_crosshair_t|T shape|0|0/1|
 |cl_crosshairdot|Draw center dot or not|0|0/1|
 |---|---|---|---|
+|abc_bloodefx|Enable blood efx|1|0/1|
 |abc_bloodsprite_speed|Efx bloodsprite speed|128|0-9999|
 |abc_bloodsprite_num|Efx new bloodsprite number|32|0-9999|
-|abc_explosion_smokenumr|Efx explosion smoke number|32|0-9999|
-|abc_explosion_smokespeed|Efx explosion smoke disapear speed|256|0-9999|
-|abc_ricochet_sparknum|Efx ricochet spark number(Not implemented yet)|24|0-9999|
+|abc_gaussefx|Enable gauss efx|1|0/1|
+|---|---|---|---|
+|cl_eccocheck|Enable Ecco plugin check|0|0/1|
 |---|---|---|---|
 |cl_modellag|View model lag|1|0/1|
 |cl_modellagvalue|View model lag value|1.0|0-9999|
