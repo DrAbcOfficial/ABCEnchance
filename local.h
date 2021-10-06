@@ -34,6 +34,7 @@ typedef struct{
 	cvar_t* pExpSmokeNumber;
 	cvar_t* pExpSmokeSpeed;
 	cvar_t* pRicochetNumber;
+	cvar_t* pGaussEfx;
 
 	cvar_t* pPlayerTitle;
 	cvar_t* pPlayerTitleLength;
@@ -77,6 +78,8 @@ typedef struct{
 	cvar_t* pDeathNoticeTime;
 
 	cvar_t* pHudEfx;
+
+	cvar_t* pEccoCheckInfo;
 
 	cvar_t* pItemHighLight;
 	cvar_t* pItemHighLightRange;

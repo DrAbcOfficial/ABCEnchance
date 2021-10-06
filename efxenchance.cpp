@@ -330,15 +330,15 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 	//¸ßË¹ÐîÁ¦flag1, index 13
 	switch (eventindex) {
 	case 12: {
-		gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
-		gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
-		gHookFuncs.SetPunchAngle(0, -1.5f);
-		//f1 ÉËº¦
-		//b1 ÊÇ·ñ×ó¼ü
-		DoGaussFire(fparam1, bparam1);
-		break;
-	}
-	case 13: {
+		if (gCVars.pGaussEfx > 0) {
+			gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
+			gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
+			gHookFuncs.SetPunchAngle(0, -1.5f);
+			//f1 ÉËº¦
+			//b1 ÊÇ·ñ×ó¼ü
+			DoGaussFire(fparam1, bparam1);
+			break;
+		}
 	}
 	default:gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2); break;
 	}

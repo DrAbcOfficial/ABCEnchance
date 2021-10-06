@@ -250,6 +250,7 @@ void HUD_Init(void){
 	gCVars.pExpSmokeNumber = CREATE_CVAR("abc_explosion_smokenumr", "32", FCVAR_VALUE, nullptr);
 	gCVars.pExpSmokeSpeed = CREATE_CVAR("abc_explosion_smokespeed", "256", FCVAR_VALUE, nullptr);
 	gCVars.pRicochetNumber = CREATE_CVAR("abc_ricochet_sparknum", "24", FCVAR_VALUE, nullptr);
+	gCVars.pGaussEfx = CREATE_CVAR("abc_gaussefx", "1", FCVAR_VALUE, nullptr);
 	
 	gCVars.pModelLag = CREATE_CVAR("cl_modellag", "1", FCVAR_VALUE, nullptr);
 	gCVars.pModelLagAutoStop = CREATE_CVAR("cl_modellagautostop", "1", FCVAR_VALUE, nullptr);
