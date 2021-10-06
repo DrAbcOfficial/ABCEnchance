@@ -220,6 +220,7 @@ void CHudRadar::DrawRadarTexture(){
 		pCVarDrawDynamic->value = 0;
 		GLint riFogMode;
 		vec3_t vecFogControl;
+		VectorClear(vecFogControl);
 		vec4_t vecFogColor;
 		bool bIsFog;
 		if (g_metaplugins.renderer) {
