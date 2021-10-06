@@ -275,10 +275,10 @@ void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 	*/
 	//x2 = x1 * cos(alpha) - y1 * sin(alpha);
 	//y2 = x1 * sin(alpha) + y1 * cos(alpha);
-	Vector2Rotate(var.vecHUDA, -sprWidth, y2, ca, sa);
-	Vector2Rotate(var.vecHUDB, sprWidth, y2, ca, sa);
-	Vector2Rotate(var.vecHUDC, -sprWidth, y1, ca, sa);
-	Vector2Rotate(var.vecHUDD, sprWidth, y1, ca, sa);
+	Vector2RotateCASA(var.vecHUDA, -sprWidth, y2, ca, sa);
+	Vector2RotateCASA(var.vecHUDB, sprWidth, y2, ca, sa);
+	Vector2RotateCASA(var.vecHUDC, -sprWidth, y1, ca, sa);
+	Vector2RotateCASA(var.vecHUDD, sprWidth, y1, ca, sa);
 	//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
 	int halfWidth = gScreenInfo.iWidth / 2;
 	int halfHeight = gScreenInfo.iHeight / 2;
