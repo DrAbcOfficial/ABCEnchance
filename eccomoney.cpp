@@ -1,8 +1,8 @@
 #include <metahook.h>
+#include <cmath>
 #include "hud.h"
 #include "weapon.h"
 #include "CColor.h"
-#include <cmath>
 #include "mathlib.h"
 
 #include "local.h"
@@ -40,41 +40,41 @@ void CHudEccoMoney::Reset() {
 	flDifferDisapearTime = 0;
 }
 int CHudEccoMoney::Draw(float flTime){
-	int iEcco = gHudDelegate->m_Playerinfo[gEngfuncs.GetLocalPlayer()->index].frags;
-	//if (iEcco != 0) {
-		gHudDelegate->surface()->DrawSetTexture(-1);
-		gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-		gHudDelegate->surface()->DrawSetTexture(MoneyBackGround);
-		int nowX = 0;
-		int nowY = YOffset + BackgroundHeight;
-		gHudDelegate->surface()->DrawTexturedRect(nowX, YOffset, BackgroundLength, nowY);
-		int iTextHeight;
-		wchar_t buf[16];
-		int r, g, b, a;
-		wsprintfW(buf, L"$%d", iEcco);
+	int iEcco = atoi(gEngfuncs.PhysInfo_ValueForKey("ecco_value"));
+	if(iEcco == 0)
+		iEcco = gHudDelegate->GetPlayerHUDInfo(gEngfuncs.GetLocalPlayer()->index)->frags;
+	gHudDelegate->surface()->DrawSetTexture(-1);
+	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
+	gHudDelegate->surface()->DrawSetTexture(MoneyBackGround);
+	int nowX = 0;
+	int nowY = YOffset + BackgroundHeight;
+	gHudDelegate->surface()->DrawTexturedRect(nowX, YOffset, BackgroundLength, nowY);
+	int iTextHeight;
+	wchar_t buf[16];
+	int r, g, b, a;
+	wsprintfW(buf, L"$%d", iEcco);
+	GetStringSize(buf, NULL, &iTextHeight, HUDSmallFont);
+	nowX = BackgroundLength / 8;
+	nowY -= (BackgroundHeight + iTextHeight) / 2;
+	MoneyColor.GetColor(r, g, b, a);
+	DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont, true);
+	if (iEcco != flStoreMoney && flTime > flNextUpdateTime) {
+		iDifferMoney = iEcco - flStoreMoney;
+		flStoreMoney = iEcco;
+		flDifferDisapearTime = flTime + 1.0F;
+		flNextUpdateTime = flTime + 0.2F;
+	}
+	if (flTime < flDifferDisapearTime) {
+		wsprintfW(buf, iDifferMoney > 0 ? L"+$%d" : L"-$%d", abs(iDifferMoney));
 		GetStringSize(buf, NULL, &iTextHeight, HUDSmallFont);
-		nowX = BackgroundLength / 8;
-		nowY -= (BackgroundHeight + iTextHeight) / 2;
-		MoneyColor.GetColor(r, g, b, a);
+		nowY -= iTextHeight + BackgroundHeight / 2;
+		if (iDifferMoney > 0)
+			MoneyIncreseColor.GetColor(r, g, b, a);
+		else
+			MoneyDecreseColor.GetColor(r, g, b, a);
+		a *= flDifferDisapearTime - flTime;
+		ColorCalcuAlpha(r, g, b, a);
 		DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont, true);
-		if (iEcco != flStoreMoney && flTime > flNextUpdateTime) {
-			iDifferMoney = iEcco - flStoreMoney;
-			flStoreMoney = iEcco;
-			flDifferDisapearTime = flTime + 1.0F;
-			flNextUpdateTime = flTime + 0.2F;
-		}
-		if (flTime < flDifferDisapearTime) {
-			wsprintfW(buf, iDifferMoney > 0 ? L"+$%d" : L"-$%d", abs(iDifferMoney));
-			GetStringSize(buf, NULL, &iTextHeight, HUDSmallFont);
-			nowY -= iTextHeight + BackgroundHeight / 2;
-			if (iDifferMoney > 0)
-				MoneyIncreseColor.GetColor(r, g, b, a);
-			else
-				MoneyDecreseColor.GetColor(r, g, b, a);
-			a *= flDifferDisapearTime - flTime;
-			ColorCalcuAlpha(r, g, b, a);
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont, true);
-		}
-	//}
+	}
 	return 0;
 }

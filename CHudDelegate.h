@@ -60,6 +60,8 @@ public:
 	wrect_t* GetSpriteRect(int index);
 	int GetSpriteIndex(const char* SpriteName);
 
+	hud_playerinfo_t* GetPlayerHUDInfo(int index);
+
 	vgui::ISurface* surface();
 	~CHudDelegate();			// destructor, frees allocated memory
 
@@ -71,7 +73,6 @@ public:
 	float m_flOverViewYaw = 0;
 	float m_flOverViewZmax = 0;
 	float m_flOverViewZmin = 0;
-	hud_playerinfo_t m_Playerinfo[33] = { 0 };
 
 	vec3_t m_vecOverViewOrg;
 	vec3_t m_vecClientEVPunch;
@@ -79,6 +80,7 @@ public:
 	
 	client_sprite_t* m_pSpriteList;
 private:
+	hud_playerinfo_t m_Playerinfo[33] = { 0 };
 	int m_iSpriteCountAllRes;
 	std::vector<cl_spritem_s*> m_arySprites; // the sprites loaded from hud.txt
 };
