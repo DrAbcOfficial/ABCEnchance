@@ -330,7 +330,7 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 	//¸ßË¹ÐîÁ¦flag1, index 13
 	switch (eventindex) {
 	case 12: {
-		if (gCVars.pGaussEfx > 0) {
+		if (gCVars.pGaussEfx->value > 0) {
 			gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
 			gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
 			gHookFuncs.SetPunchAngle(0, -1.5f);
