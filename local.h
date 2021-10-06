@@ -3,12 +3,7 @@
 #include "com_model.h"
 
 typedef struct{
-	void		(*R_Blood)					(float* org, float* dir, int pcolor, int speed);
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
-	void		(*R_Explosion)				(float* pos, int model, float scale, float framerate, int flags);
-	void		(*R_RicochetSprite)			(float* pos, struct model_s* pmodel, float duration, float scale);
-	void		(*R_SparkEffect)			(float* pos, int count, int velocityMin, int velocityMax);
-	void		(*R_BloodStream)			(float* org, float* dir, int pcolor, int speed);
 	float*		(*GetClientColor)			(int clientIndex);
 	float(__fastcall* R_CrossHair_ReDraw)	(void* pthis, int dummy, int param_1);
 	void		(*EVVectorScale)			(float* pucnangle1, float scale, float* pucnangle2);
@@ -29,11 +24,9 @@ typedef struct{
 }cl_refHookfunc_t;
 
 typedef struct{
+	cvar_t* pBloodEfx;
 	cvar_t* pBloodSpriteSpeed;
 	cvar_t* pBloodSpriteNumber;
-	cvar_t* pExpSmokeNumber;
-	cvar_t* pExpSmokeSpeed;
-	cvar_t* pRicochetNumber;
 	cvar_t* pGaussEfx;
 
 	cvar_t* pPlayerTitle;
