@@ -91,11 +91,12 @@
 |cl_crosshair_t|T形准心|0|0/1|
 |cl_crosshairdot|绘制中心点|0|0/1|
 |---|---|---|---|
+|abc_bloodefx|启用Efx血迹特效|1|0/1|
 |abc_bloodsprite_speed|Efx血迹速度|128|0-9999|
 |abc_bloodsprite_num|Efx新生成血迹数量|32|0-9999|
-|abc_explosion_smokenumr|Efx爆炸烟雾数量|32|0-9999|
-|abc_explosion_smokespeed|Efx爆炸烟雾消失速度|256|0-9999|
-|abc_ricochet_sparknum|Efx击中墙壁火花数量(暂未实现)|24|0-9999|
+|abc_gaussefx|启用bms高斯特效|1|0/1|
+|---|---|---|---|
+|cl_eccocheck|Enable Ecco plugin check|0|0/1|
 |---|---|---|---|
 |cl_modellag|启用V模型延迟|1|0/1|
 |cl_modellagvalue|V模型延迟数值|1.0|0-9999|
