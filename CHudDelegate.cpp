@@ -34,15 +34,16 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
 	//wtf is not this shit
-	if (clientIndex >= 1 && clientIndex <= 32) {
-		gHudDelegate->m_Playerinfo[clientIndex].index = clientIndex;
-		gHudDelegate->m_Playerinfo[clientIndex].frags = READ_FLOAT();
-		gHudDelegate->m_Playerinfo[clientIndex].death = READ_LONG();
-		gHudDelegate->m_Playerinfo[clientIndex].health = READ_FLOAT();
-		gHudDelegate->m_Playerinfo[clientIndex].armor = READ_FLOAT();
-		gHudDelegate->m_Playerinfo[clientIndex].team = READ_BYTE();
-		gHudDelegate->m_Playerinfo[clientIndex].donors = READ_CHAR();
-		gHudDelegate->m_Playerinfo[clientIndex].admin = READ_CHAR();
+	if (clientIndex >= 1 && clientIndex <= 33) {
+		hud_playerinfo_t* info = gHudDelegate->GetPlayerHUDInfo(clientIndex);
+		info->index = clientIndex;
+		info->frags = READ_FLOAT();
+		info->death = READ_LONG();
+		info->health = READ_FLOAT();
+		info->armor = READ_FLOAT();
+		info->team = READ_BYTE();
+		info->donors = READ_CHAR();
+		info->admin = READ_CHAR();
 	}
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
 }
@@ -129,7 +130,6 @@ void CHudDelegate::HUD_Reset(void){
 	m_HudEccoMoney.Reset();
 	m_HudEfx.Reset();
 	m_HudItemHighLight.Reset();
-
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time){
@@ -188,6 +188,11 @@ int CHudDelegate::GetSpriteIndex(const char* SpriteName){
 			return i;
 	}
 	return -1; // invalid sprite
+}
+hud_playerinfo_t* CHudDelegate::GetPlayerHUDInfo(int index){
+	if (index > 0 && index <= 33)
+		return &m_Playerinfo[index];
+	return nullptr;
 }
 vgui::ISurface* CHudDelegate::surface(){
 	return g_pSurface;

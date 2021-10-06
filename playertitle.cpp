@@ -41,7 +41,7 @@ int CHudPlayerTitle::Draw(float flTime){
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		float* localColor = gHookFuncs.GetClientColor(local->index);
 		GLfloat nowX, nowY;
-		vec2_t vecHUD;
+		vec3_t vecHUD;
 		//¼Ð½Ç
 		vec3_t vecAngle;
 		//¼Ð½Çµã»ý
@@ -82,11 +82,12 @@ int CHudPlayerTitle::Draw(float flTime){
 				vecHUD[1] = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
 				gEngfuncs.pfnGetPlayerInfo(i, &playerinfo);
 				if (playerinfo.name){
-					nowX = vecHUD[0] - flTitleLength / 3;
+					nowX = vecHUD[0] - flTitleLength / 2;
 					nowY = vecHUD[1] - flTitleHeight / 2;
 					if (gCVars.pPlayerTitle->value < 2){
-						flHealthRatio = clamp((gHudDelegate->m_Playerinfo[i].health / 100.0f), 0.0f, 1.0f);
-						flArmorRatio = clamp((gHudDelegate->m_Playerinfo[i].armor / 100.0f), 0.0f, 1.0f);
+						hud_playerinfo_t* info = gHudDelegate->GetPlayerHUDInfo(i);
+						flHealthRatio = clamp((info->health / 100.0f), 0.0f, 1.0f);
+						flArmorRatio = clamp((info->armor / 100.0f), 0.0f, 1.0f);
 
 						flHealthLength = nowX + (flTitleLength * flHealthRatio);
 						flArmorLength = nowX + (flTitleLength * flArmorRatio);
