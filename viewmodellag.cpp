@@ -11,16 +11,13 @@ void V_CalcViewModelLag(ref_params_t* pparams){
 		return;
 	static vec3_t m_vecLastFacing;
 	cl_entity_t* view = gEngfuncs.GetViewModel();
-	vec3_t* origin = &view->origin;
-	vec3_t* angles = &view->angles;
-
 	vec3_t vOriginalOrigin;
 	vec3_t vOriginalAngles;
-	VectorCopy(*origin,vOriginalOrigin);
-	VectorCopy(*angles, vOriginalAngles);
+	VectorCopy(view->origin, vOriginalOrigin);
+	VectorCopy(view->angles, vOriginalAngles);
 	// Calculate our drift
 	vec3_t forward, right, up;
-	AngleVectors(*angles, forward, right, up);
+	AngleVectors(view->angles, forward, right, up);
 	// not in paused
 	if (pparams->frametime != 0.0f){
 		vec3_t vDifference;
@@ -40,27 +37,22 @@ void V_CalcViewModelLag(ref_params_t* pparams){
 		m_vecLastFacing[2] = m_vecLastFacing[2] + vDifference[2] * (flSpeed * pparams->frametime);
 		// Make sure it doesn't grow out of control!!!
 		VectorNormalize(m_vecLastFacing);
-		*origin[0] += (vDifference[0] * -1.0f) * flSpeed;
-		*origin[1] += (vDifference[1] * -1.0f) * flSpeed;
-		*origin[2] += (vDifference[2] * -1.0f) * flSpeed;
+		view->origin[0] += (vDifference[0] * -1.0f) * flSpeed;
+		view->origin[1] += (vDifference[1] * -1.0f) * flSpeed;
+		view->origin[2] += (vDifference[2] * -1.0f) * flSpeed;
 	}
 	AngleVectors(pparams->cl_viewangles, forward, right, up);
 	float pitch = pparams->cl_viewangles[PITCH];
 	pitch += pitch > 180.0f ? -360.0f : pitch < -180.0f ? 360.0f : 0;
 	if (gCVars.pModelLagValue->value <= 0.0f){
-		VectorCopy(vOriginalOrigin, *origin);
-		VectorCopy(vOriginalAngles, *angles);
+		VectorCopy(vOriginalOrigin, view->origin);
+		VectorCopy(vOriginalAngles, view->angles);
 	}
 	else{
-		int i;
-		for (i = 0; i < 3; i++) {
-			*origin[i] += forward[i] * (-pitch * 0.035f);
-		}
-		for (i = 0; i < 3; i++) {
-			*origin[i] += right[i] * (-pitch * 0.03f);
-		}
-		for (i = 0; i < 3; i++) {
-			*origin[i] += up[i] * (-pitch * 0.02f);
+		for (int i = 0; i < 3; i++) {
+			view->origin[i] += (forward[i] * (-pitch * 0.035f));
+			view->origin[i] += (right[i] * (-pitch * 0.03f));
+			view->origin[i] += (up[i] * (-pitch * 0.02f));
 		}
 	}
 }

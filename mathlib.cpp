@@ -180,13 +180,13 @@ void VectorAngles(const vec3_t forward, vec3_t angles){
 			pitch = 270;
 	}
 	else{
-		yaw = (atan2(forward[1], forward[0]) * 180 / M_PI);
+		yaw = (atan2((double)forward[1], (double)forward[0]) * 180 / M_PI);
 
 		if (yaw < 0)
 			yaw += 360;
 
 		float tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
-		pitch = (atan2(forward[2], tmp) * 180 / M_PI);
+		pitch = (atan2((double)forward[2], (double)tmp) * 180 / M_PI);
 
 		if (pitch < 0)
 			pitch += 360;

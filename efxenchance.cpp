@@ -86,7 +86,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 		vec3_t	forward, right, up;
 		int nColor = colorindex;
 
-		nColor = clamp(nColor, 0, 256);
+		nColor = clamp(nColor, 0, 255);
 
 		pTemp->entity.curstate.scale = gEngfuncs.pfnRandomFloat((size / 25.0f), (size / 35.0f));
 		pTemp->flags = FTENT_SPRANIMATE;

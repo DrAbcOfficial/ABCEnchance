@@ -114,7 +114,7 @@ void R_CompileShaderAppendInclude(std::string& str, const char* filename){
 
 		auto includeFileName = result[1].str();
 
-		char slash;
+		char slash = 0;
 
 		std::string includePath = filename;
 		for (size_t j = includePath.length() - 1; j > 0; --j){
@@ -124,10 +124,8 @@ void R_CompileShaderAppendInclude(std::string& str, const char* filename){
 				break;
 			}
 		}
-
 		includePath += slash;
 		includePath += includeFileName;
-
 		auto pFile = gEngfuncs.COM_LoadFile((char*)includePath.c_str(), 5, NULL);
 		if (pFile){
 			std::string wbinding((char*)pFile);
