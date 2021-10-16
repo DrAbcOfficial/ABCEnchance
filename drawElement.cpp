@@ -2,20 +2,9 @@
 #include <triangleapi.h>
 
 #include "vguilocal.h"
-
-char* UnicodeToUtf8(const wchar_t* unicode){
-	int len = WideCharToMultiByte(CP_UTF8, 0, unicode, -1, NULL, 0, NULL, NULL);
-	char* szUtf8 = (char*)malloc(len + 1);
-	if (!szUtf8)
-		return "";
-	memset(szUtf8, 0, len + 1);
-	WideCharToMultiByte(CP_UTF8, 0, unicode, -1, szUtf8, len, NULL, NULL);
-	return szUtf8;
-}
-
-void DrawSPRIcon(int SprHandle, float x, float y, float w, float h, int r, int g, int b, int a, int frame = 0){
+void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame = 0){
 	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), frame);
-	gEngfuncs.pTriAPI->RenderMode(kRenderTransAdd);
+	gEngfuncs.pTriAPI->RenderMode(mode);
 	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
 	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
 	gEngfuncs.pTriAPI->Color4ub(r, g, b, a);
@@ -32,11 +21,12 @@ void DrawSPRIcon(int SprHandle, float x, float y, float w, float h, int r, int g
 	gEngfuncs.pTriAPI->TexCoord2f(1, 0);
 	gEngfuncs.pTriAPI->Vertex3f(x + w, y, 0);
 	gEngfuncs.pTriAPI->End();
+	gEngfuncs.pTriAPI->CullFace(TRI_FRONT);
+	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
 }
-
-void DrawSPRIconPos(int SprHandle, vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int r, int g, int b, int a){
+void DrawSPRIconPos(int SprHandle, int mode, vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int r, int g, int b, int a){
 	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), 0);
-	gEngfuncs.pTriAPI->RenderMode(kRenderTransAdd);
+	gEngfuncs.pTriAPI->RenderMode(mode);
 	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
 	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
 	gEngfuncs.pTriAPI->Color4ub(r, g, b, a);
@@ -53,6 +43,8 @@ void DrawSPRIconPos(int SprHandle, vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, i
 	gEngfuncs.pTriAPI->TexCoord2f(1, 0);
 	gEngfuncs.pTriAPI->Vertex3f(p4[0], p4[1], 0);
 	gEngfuncs.pTriAPI->End();
+	gEngfuncs.pTriAPI->CullFace(TRI_FRONT);
+	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
 }
 int GetHudFontHeight(vgui::HFont m_hFont){
 	if (!m_hFont)

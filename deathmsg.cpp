@@ -11,6 +11,7 @@
 #include "myconst.h"
 #include "hud.h"
 
+#include "encode.h"
 #include "drawElement.h"
 #include "mathlib.h"
 #include "utility.h"
@@ -151,11 +152,16 @@ void CHudDeathMsg::Reset(void){
 	memset(aryKeepMsg, 0, sizeof(aryKeepMsg));
 }
 void CHudDeathMsg::PushDeathNotice(wchar_t* v, wchar_t* e, wchar_t* k) {
-	//正常输出控制台
-	gEngfuncs.Con_Printf(UnicodeToUtf8(pLocalize->Find("DeathMsg_ConsolePrint")),
-		UnicodeToUtf8(v),
-		UnicodeToUtf8(k[0] == 0 ? L"something" : k),
-		UnicodeToUtf8(e));
+	//无插件服务器输出控制台
+	if (!bIsDeathMsgOn) {
+		string cl, cv, ce, ck;
+		UnicodeToUTF8((wstring)pLocalize->Find("DeathMsg_ConsolePrint"), cl);
+		UnicodeToUTF8((wstring)v, cv);
+		UnicodeToUTF8((wstring)e, ce);
+		UnicodeToUTF8((wstring)k, ck);
+		gEngfuncs.Con_Printf((char*)cl.c_str(), (char*)cv.c_str(), 
+			ck[0] == 0 ? "something" : (char*)ck.c_str(), (char*)ce.c_str());
+	}
 	for (int i = 0; i < MAX_KEEP_DEATHMSG; i++) {
 		deathmsgItem_t a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];
 		aryKeepMsg[MAX_KEEP_DEATHMSG - 1] = aryKeepMsg[i];

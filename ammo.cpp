@@ -677,7 +677,7 @@ int CHudCustomAmmo::DrawWList(float flTime){
 		vecC[1] = halfHeight - vecC[1];
 		vecD[0] += halfWidth;
 		vecD[1] = halfHeight - vecD[1];
-		DrawSPRIconPos(iSelectCyclerCursorPointer, vecC, vecA, vecB, vecD, r, g, b, a);
+		DrawSPRIconPos(iSelectCyclerCursorPointer, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
 	//绘制十边形
 	for (i = 0; i < 10; i++){
@@ -701,7 +701,7 @@ int CHudCustomAmmo::DrawWList(float flTime){
 			s = 1;
 			HSVToRGB(h, s, v, r, g, b);
 		}
-		DrawSPRIconPos(iSelectCyclerSpr, vecC, vecA, vecB, vecD, r, g, b, a * 0.5);
+		DrawSPRIconPos(iSelectCyclerSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, a * 0.5);
 		if (gWR.gridDrawMenu[i].iId <= 0 || i == gWR.iNowSlot)
 			continue;
 		wp = gWR.GetWeapon(gWR.gridDrawMenu[i].iId);
@@ -726,7 +726,7 @@ int CHudCustomAmmo::DrawWList(float flTime){
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
 		DrawSelectIcon(wp, a, xpos, ypos, gWR.iNowSlot);
 		SelectCyclerRinColor.GetColor(r, g, b, dummy);
-		DrawSPRIconPos(iSelectCyclerRinSpr, vecC, vecA, vecB, vecD, r, g, b, a);
+		DrawSPRIconPos(iSelectCyclerRinSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
 	//绘制完毕，修改展示状态
 	m_bSelectMenuDisplay = true;

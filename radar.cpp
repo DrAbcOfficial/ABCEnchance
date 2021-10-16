@@ -181,7 +181,7 @@ void CHudRadar::PreRenderView(int a1){
 }
 void CHudRadar::DrawRadarTexture(){
 	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	if (!m_oldFrameBuffer)
+	if (!m_oldFrameBuffer && !g_metaplugins.renderer)
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
 
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hRadarBufferTex, 0);
@@ -265,7 +265,7 @@ void CHudRadar::DrawRadarTexture(){
 	VectorCopy(m_oldViewOrg, g_refdef->vieworg);
 	VectorCopy(m_oldViewAng, g_refdef->viewangles);
 
-	if (!m_oldFrameBuffer)
+	if (!m_oldFrameBuffer && !g_metaplugins.renderer)
 		glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
 void CHudRadar::UpdateZmax(float flTime){
