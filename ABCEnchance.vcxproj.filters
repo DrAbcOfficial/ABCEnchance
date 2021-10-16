@@ -126,6 +126,9 @@
     <ClCompile Include="extraprecache.cpp">
       <Filter>Source\Var</Filter>
     </ClCompile>
+    <ClCompile Include="encode.cpp">
+      <Filter>Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -313,6 +316,9 @@
     </ClInclude>
     <ClInclude Include="enginedef.h">
       <Filter>Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="encode.h">
+      <Filter>Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

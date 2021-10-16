@@ -171,7 +171,7 @@ int CHudArmorHealth::Draw(float flTime){
 		HealthDangerColor.GetColor(r, g, b, a);
 	else
 		HealthIconColor.GetColor(r, g, b, a);
-	DrawSPRIcon(iHealthIcon, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
+	DrawSPRIcon(iHealthIcon, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
 
 	wchar_t wideName[8];
 	wsprintfW(wideName, L"%d", iHealth);
@@ -205,7 +205,7 @@ int CHudArmorHealth::Draw(float flTime){
 		ArmorDangerColor.GetColor(r, g, b, a);
 	else
 		ArmorIconColor.GetColor(r, g, b, a);
-	DrawSPRIcon(iBattery > 0 ? iArmorIconFull : iArmorIconNull, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
+	DrawSPRIcon(iBattery > 0 ? iArmorIconFull : iArmorIconNull, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
 
 	wsprintfW(wideName, L"%d", iBattery);
 	GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
@@ -234,7 +234,7 @@ int CHudArmorHealth::Draw(float flTime){
 	if (gHudDelegate->m_bPlayerLongjump) {
 		iStartX += BarLength + ElementGap * 2;
 		LongjumpIconColor.GetColor(r, g, b, a);
-		DrawSPRIcon(iLongjumpIcon, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
+		DrawSPRIcon(iLongjumpIcon, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
 	}
 	return DrawDamage(flTime);
 }
@@ -297,7 +297,7 @@ int CHudArmorHealth::DrawPain(float flTime){
 		else
 			PainIndicatorColor.GetColor(r, g, b, a);
 		CalcDamageDirection(var);
-		DrawSPRIconPos(iPainIndicator, var.vecHUDA, var.vecHUDC, var.vecHUDD, var.vecHUDB,
+		DrawSPRIconPos(iPainIndicator, kRenderTransAdd, var.vecHUDA, var.vecHUDC, var.vecHUDD, var.vecHUDB,
 			r, g, b, (var.flKeepTime - flTime) / PainIndicatorTime * a);
 	}
 	return 1;
