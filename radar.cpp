@@ -156,6 +156,7 @@ void CHudRadar::Draw(float flTime){
 		gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 	}
 	//»æÖÆ¼ýÍ·
+	gHudDelegate->surface()->DrawSetTexture(-1);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 	gHudDelegate->surface()->DrawSetTexture(ViewAngleImg);
 	gHudDelegate->surface()->DrawTexturedRect(
