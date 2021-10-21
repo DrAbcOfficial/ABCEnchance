@@ -150,13 +150,13 @@ void CHudRadar::Draw(float flTime){
 	glEnd();
 	GL_UseProgram(0);
 	//绘制前景
+	gHudDelegate->surface()->DrawSetTexture(-1);
 	if (gCVars.pRadar->value == 1) {
 		gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
 		gHudDelegate->surface()->DrawSetTexture(UpGroundImg);
 		gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 	}
 	//绘制箭头
-	gHudDelegate->surface()->DrawSetTexture(-1);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 	gHudDelegate->surface()->DrawSetTexture(ViewAngleImg);
 	gHudDelegate->surface()->DrawTexturedRect(
