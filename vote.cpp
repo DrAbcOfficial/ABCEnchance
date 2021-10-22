@@ -48,9 +48,9 @@ int CHudVote::Init(){
 
 	HudFont = pScheme->GetFont("VoteShitFont");
 
-	wcscpy(VoteTitle, L"Started A new vote:");
-	wcscpy(DefaultYes, L"Yes");
-	wcscpy(DefaultNo, L"No");
+	VoteTitle = pLocalize->Find("Vote_DefaultMessage");
+	DefaultYes = pLocalize->Find("Vote_DefaultYes");
+	DefaultNo = pLocalize->Find("Vote_DefaultNo");
 
 	Reset();
 	return 0;
