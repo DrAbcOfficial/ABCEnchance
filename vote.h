@@ -26,9 +26,9 @@ private:
 	Color OutlineColor;
 	Color BackGoundColor;
 
-	wchar_t VoteTitle[64];
-	wchar_t DefaultYes[16];
-	wchar_t DefaultNo[16];
+	wchar_t* VoteTitle;
+	wchar_t* DefaultYes;
+	wchar_t* DefaultNo;
 
 	vgui::HFont HudFont;
 };
