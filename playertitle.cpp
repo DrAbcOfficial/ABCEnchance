@@ -4,6 +4,7 @@
 
 #include "glew.h"
 #include "triangleapi.h"
+#include "gl_draw.h"
 
 #include "cvar_hook.h"
 #include "local.h"
@@ -97,7 +98,7 @@ int CHudPlayerTitle::Draw(float flTime){
 							glColor4ub(255, 255, 255, 255);
 
 							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-							glBindTexture(GL_TEXTURE_2D, iBackGroundTga);
+							glBind(iBackGroundTga);
 							glBegin(GL_QUADS);
 								glTexCoord2f(0, 0);
 								glVertex3f(nowX, nowY, 0);
@@ -110,7 +111,7 @@ int CHudPlayerTitle::Draw(float flTime){
 							glEnd();
 
 							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-							glBindTexture(GL_TEXTURE_2D, iHealthBarTga);
+							glBind(iHealthBarTga);
 							glBegin(GL_QUADS);
 								glTexCoord2f(0, 0);
 								glVertex3f(nowX, nowY, 0);
@@ -123,7 +124,7 @@ int CHudPlayerTitle::Draw(float flTime){
 							glEnd();
 
 							glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-							glBindTexture(GL_TEXTURE_2D, iArmorBarTga);
+							glBind(iArmorBarTga);
 							glBegin(GL_QUADS);
 								glTexCoord2f(0, 0);
 								glVertex3f(nowX, nowY, 0);
@@ -134,6 +135,7 @@ int CHudPlayerTitle::Draw(float flTime){
 								glTexCoord2f(flArmorRatio, 0);
 								glVertex3f(flArmorLength, nowY, 0);
 							glEnd();
+						glDisable(GL_BLEND);
 						
 						gHudDelegate->surface()->DrawSetTexture(-1);
 						if (flHealthRatio <= 0.45f || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64){

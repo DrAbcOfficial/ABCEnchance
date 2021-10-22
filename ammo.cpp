@@ -24,6 +24,7 @@
 #include "gl_shader.h"
 #include "gldef.h"
 #include "glutility.h"
+#include "gl_draw.h"
 
 #include "weaponbank.h"
 #include "historyresource.h"
@@ -642,7 +643,7 @@ int CHudCustomAmmo::DrawWList(float flTime){
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferVFBO);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferVTex, 0);
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferHTex);
+		glBind(m_hGaussianBufferHTex);
 		//H模糊
 		GL_UseProgram(pp_gaussianblurh.program);
 		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
@@ -650,7 +651,7 @@ int CHudCustomAmmo::DrawWList(float flTime){
 		glColor4ub(255, 255, 255, 255);
 		DrawScreenQuad();
 		//绘制到主画布
-		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferVTex);
+		glBind(m_hGaussianBufferVTex);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
 		GL_UseProgram(pp_gaussianblurv.program);
 		glUniform1f(0, 1.0f / gScreenInfo.iHeight);
