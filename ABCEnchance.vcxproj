@@ -141,6 +141,7 @@
     <ClCompile Include="viewmodellag.cpp" />
     <ClCompile Include="vote.cpp" />
     <ClCompile Include="weaponbank.cpp" />
+    <ClCompile Include="wmenu_annular.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h" />
@@ -157,6 +158,7 @@
     <ClInclude Include="extraprecache.h" />
     <ClInclude Include="gl_draw.h" />
     <ClInclude Include="itemhighlight.h" />
+    <ClInclude Include="IWeaponSelect.h" />
     <ClInclude Include="myconst.h" />
     <ClInclude Include="crosshair.h" />
     <ClInclude Include="cvar_hook.h" />
@@ -207,6 +209,7 @@
     <ClInclude Include="vote.h" />
     <ClInclude Include="weapon.h" />
     <ClInclude Include="weaponbank.h" />
+    <ClInclude Include="wmenu_annular.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
