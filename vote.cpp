@@ -17,8 +17,6 @@
 
 #include "vote.h"
 
-
-
 CHudVote m_HudVote;
 pfnUserMsgHook m_pfnVoteMenu;
 pfnUserMsgHook m_pfnEndVote;
