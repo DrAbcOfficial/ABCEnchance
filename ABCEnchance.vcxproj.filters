@@ -132,6 +132,9 @@
     <ClCompile Include="gl_draw.cpp">
       <Filter>Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="wmenu_annular.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -325,6 +328,12 @@
     </ClInclude>
     <ClInclude Include="gl_draw.h">
       <Filter>Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="IWeaponSelect.h">
+      <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="wmenu_annular.h">
+      <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

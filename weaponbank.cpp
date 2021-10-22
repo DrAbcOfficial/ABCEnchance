@@ -4,6 +4,7 @@
 #include "hud.h"
 #include "weapon.h"
 #include "glew.h"
+#include "IWeaponSelect.h"
 #include "ammo.h"
 #include "CHudDelegate.h"
 #include "historyresource.h"
@@ -369,7 +370,8 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 		if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS_USER)
 			gridDrawMenu[iNowSlot].iPos = 0;
 	}
-	m_HudCustomAmmo.m_fFade = gEngfuncs.GetClientTime() + m_HudCustomAmmo.SelectCyclerHoldTime;
+	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade = 
+		gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
 }
 void WeaponsResource::FillMenuGrid(){
 	int i,j;
