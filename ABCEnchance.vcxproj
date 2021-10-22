@@ -119,6 +119,7 @@
     <ClCompile Include="encode.cpp" />
     <ClCompile Include="extraprecache.cpp" />
     <ClCompile Include="glutility.cpp" />
+    <ClCompile Include="gl_draw.cpp" />
     <ClCompile Include="gl_shader.cpp" />
     <ClCompile Include="itemhighlight.cpp" />
     <ClCompile Include="playertitle.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="efxhud.h" />
     <ClInclude Include="encode.h" />
     <ClInclude Include="extraprecache.h" />
+    <ClInclude Include="gl_draw.h" />
     <ClInclude Include="itemhighlight.h" />
     <ClInclude Include="myconst.h" />
     <ClInclude Include="crosshair.h" />

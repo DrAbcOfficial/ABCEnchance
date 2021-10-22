@@ -9,6 +9,7 @@
 #include "glutility.h"
 #include "gldef.h"
 #include "gl_shader.h"
+#include "gl_draw.h"
 
 #include "exportfuncs.h"
 
@@ -134,7 +135,7 @@ void CHudRadar::Draw(float flTime){
 		glUniform1f(pp_radarlight.gamma, 1 / pCVarGamma->value);
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, m_hRadarBufferTex);
+	glBind(m_hRadarBufferTex);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glColor4ub(255, 255, 255, MapAlpha);
@@ -148,6 +149,7 @@ void CHudRadar::Draw(float flTime){
 		glTexCoord2f(stx, sty);
 		glVertex2f(iStartX, iStartY + sizeMap);
 	glEnd();
+	glDisable(GL_BLEND);
 	GL_UseProgram(0);
 	//»æÖÆÇ°¾°
 	gHudDelegate->surface()->DrawSetTexture(-1);
