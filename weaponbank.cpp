@@ -1,6 +1,7 @@
 #include <metahook.h>
-#include <map>
+#include "cvardef.h"
 #include "vguilocal.h"
+#include "local.h"
 #include "hud.h"
 #include "weapon.h"
 #include "glew.h"
@@ -336,42 +337,69 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
 void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
-
 	if (iSlot >= MAX_WEAPON_SLOTS)
 		iSlot = 0;
 	else if (iSlot < 0)
 		iSlot = MAX_WEAPON_SLOTS - 1;
 
+	WEAPON* wp = nullptr;
 	if (iSlot == iNowSlot) {
 		gridDrawMenu[iNowSlot].iPos += fAdvance;
 		if (gridDrawMenu[iNowSlot].iPos < 0)
-			gridDrawMenu[iNowSlot].iPos = MAX_WEAPON_POSITIONS_USER - 1;
+			wp = gWR.GetLastPos(iNowSlot);
 		else if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS_USER)
-			gridDrawMenu[iNowSlot].iPos = 0;
+			wp = gWR.GetFirstPos(iNowSlot);
+		if(wp && wp->iId > 0)
+			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
 	}
-	else
+	else {
 		iNowSlot = iSlot;
-
-	int iCount = 0;
-	for (int i = 0; i < MAX_WEAPON_POSITIONS_USER; i++){
-		if (gridSlotMap[iNowSlot][i] >= 0)
-			iCount++;
+		//¾­µäÑùÊ½
+		if (gCVars.pAmmoMenuStyle->value <= 0) {
+			wp = gWR.GetFirstPos(iNowSlot);
+			if (wp && wp->iId > 0)
+				gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
+		}
 	}
-	if (iCount <= 0) {
-		gridDrawMenu[iNowSlot].iId = -1;
-		return;
-	}
-	while (gridDrawMenu[iNowSlot].iPos < MAX_WEAPON_POSITIONS_USER){
-		if (GetWeapon(gridSlotMap[iNowSlot][gridDrawMenu[iNowSlot].iPos])->iId) {
-			gridDrawMenu[iNowSlot].iId = gridSlotMap[iNowSlot][gridDrawMenu[iNowSlot].iPos];
+	gridDrawMenu[iNowSlot].iId = -1;
+	for (int i = gridDrawMenu[iNowSlot].iPos; i < MAX_WEAPON_POSITIONS_USER; i++) {
+		if (gWR.HasWeapon(iNowSlot, i)) {
+			wp = gWR.GetWeaponSlot(iNowSlot, i);
+			gridDrawMenu[iNowSlot].iId = wp->iId;
+			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
 			break;
 		}
-		gridDrawMenu[iNowSlot].iPos++;
-		if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS_USER)
-			gridDrawMenu[iNowSlot].iPos = 0;
+	}
+	if (gridDrawMenu[iNowSlot].iId <= 0) {
+		wp = gWR.GetFirstPos(iNowSlot);
+		gridDrawMenu[iNowSlot].iId = wp->iId;
+		gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
+		return;
 	}
 	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade = 
 		gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
+}
+WEAPON* WeaponsResource::GetFirstPos(int iSlot){
+	if (iSlot >= MAX_WEAPON_SLOTS)
+		return nullptr;
+	WEAPON* now = nullptr;
+	for (int i = 0; i < MAX_WEAPON_POSITIONS_USER; i++){
+		now = GetWeaponSlot(iSlot, i);
+		if (HasWeapon(iSlot,i) && HasAmmo(now))
+			return now;
+	}
+	return nullptr;
+}
+WEAPON* WeaponsResource::GetLastPos(int iSlot) {
+	if (iSlot >= MAX_WEAPON_SLOTS)
+		return nullptr;
+	WEAPON* now = nullptr;
+	for (int i = MAX_WEAPON_POSITIONS_USER - 1; i >= 0 ; i--){
+		now = GetWeaponSlot(iSlot, i);
+		if (HasWeapon(iSlot, i) && HasAmmo(now))
+			return now;
+	}
+	return nullptr;
 }
 void WeaponsResource::FillMenuGrid(){
 	int i,j;

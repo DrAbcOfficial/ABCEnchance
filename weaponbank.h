@@ -14,6 +14,7 @@ typedef struct gridmenuitem_s{
 
 class WeaponsResource{
 private:
+	//同步到的所有武器数据
 	WEAPON rgWeapons[MAX_WEAPONS];
 	int gridSlotPosDataMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
 	int gridSlotMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS_USER];
@@ -44,6 +45,8 @@ public:
 	void SelectSlot(int iSlot, int fAdvance);
 	void FillMenuGrid();
 	void SetUserSlot(int iSlot, int iId);
+	WEAPON* GetFirstPos(int iSlot);
+	WEAPON* GetLastPos(int iSlot);
 
 	AMMO GetAmmo(int iId);
 	void SetAmmo(int iId, int iCount);

@@ -23,6 +23,7 @@
 #include "glew.h"
 #include "IWeaponSelect.h"
 #include "wmenu_annular.h"
+#include "wmenu_slot.h"
 
 #include "weaponbank.h"
 #include "historyresource.h"
@@ -242,6 +243,12 @@ void CustomSlotSetCallBack(cvar_t* vars){
 	slot--;
 	gWR.SetUserSlot(slot, gWR.GetWeaponId(vars->string));
 }
+void ChangeWMenuStyleCallBack(cvar_t* vars) {
+	if (vars->value > 0)
+		m_HudCustomAmmo.m_pNowSelectMenu = &m_HudWMenuAnnular;
+	else
+		m_HudCustomAmmo.m_pNowSelectMenu = &m_HudWMenuSlot;
+}
 void CHudCustomAmmo::GLInit(){
 	//所有选择菜单都要加载
 	m_HudWMenuAnnular.GLInit();
@@ -282,6 +289,7 @@ int CHudCustomAmmo::Init(void){
 	gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
+	gCVars.pAmmoMenuStyle = CREATE_CVAR("cl_wmenustyle", "1", FCVAR_VALUE, ChangeWMenuStyleCallBack);
 	
 	IconSize = GET_SCREEN_PIXEL(true, "AmmoHUD.IconSize");
 	ElementGap = GET_SCREEN_PIXEL(true, "AmmoHUD.ElementGap");
@@ -300,10 +308,13 @@ int CHudCustomAmmo::Init(void){
 
 	//所有选择菜单都要加载
 	m_HudWMenuAnnular.Init();
+	m_HudWMenuSlot.Init();
 	Reset();
 	//设置所选菜单
-	m_pNowSelectMenu = &m_HudWMenuAnnular;
-
+	if(gCVars.pAmmoMenuStyle->value > 0)
+		m_pNowSelectMenu = &m_HudWMenuAnnular;
+	else
+		m_pNowSelectMenu = &m_HudWMenuSlot;
 	gWR.Init();
 	gHR.Init();
 	return 1;
@@ -316,12 +327,14 @@ void CHudCustomAmmo::Reset(void){
 
 	//所有选择菜单都要加载
 	m_HudWMenuAnnular.Reset();
+	m_HudWMenuSlot.Reset();
 
 	gWR.Reset();
 	gHR.Reset();
 }
 int CHudCustomAmmo::VidInit(void){
 	gWR.LoadAllWeaponSprites();
+	m_HudWMenuSlot.VidInit();
 	return 1;
 }
 void CHudCustomAmmo::SyncWeapon(){
@@ -469,9 +482,6 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
 	if (gHookHud.m_Menu->m_fMenuDisplayed)
 		return;
 	gWR.SelectSlot(iSlot, fAdvance);
-}
-void CHudCustomAmmo::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index){
-	m_pNowSelectMenu->DrawSelectIcon(wp, a, xpos, ypos, index);
 }
 int CHudCustomAmmo::DrawWList(float flTime){
 	m_pNowSelectMenu->DrawWList(flTime);

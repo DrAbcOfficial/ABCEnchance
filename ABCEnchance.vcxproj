@@ -142,6 +142,7 @@
     <ClCompile Include="vote.cpp" />
     <ClCompile Include="weaponbank.cpp" />
     <ClCompile Include="wmenu_annular.cpp" />
+    <ClCompile Include="wmenu_slot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="weapon.h" />
     <ClInclude Include="weaponbank.h" />
     <ClInclude Include="wmenu_annular.h" />
+    <ClInclude Include="wmenu_slot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

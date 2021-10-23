@@ -2,14 +2,11 @@
 class IWeaponSelect {
 public:
 	virtual void Init() = 0;
-	virtual void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index) = 0;
 	virtual int DrawWList(float flTime) = 0;
 	virtual void ClientMove(struct playermove_s* ppmove, int server) = 0;
 	virtual void IN_Accumulate() = 0;
 	virtual void Reset() = 0;
-	virtual void GLInit() = 0;
 	virtual void Select() = 0;
-	virtual void Clear() = 0;
 
 	float m_fFade;
 	bool m_bOpeningMenu = false;

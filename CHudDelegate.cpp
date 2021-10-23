@@ -180,7 +180,9 @@ HSPRITE CHudDelegate::GetSprite(int index) {
 	return (index < 0) ? 0 : m_arySprites[index]->spr;
 }
 wrect_t* CHudDelegate::GetSpriteRect(int index) {
-	return &m_arySprites[index]->rect;
+	if(index >= 0 && index < m_arySprites.size())
+		return &m_arySprites[index]->rect;
+	return nullptr;
 }
 int CHudDelegate::GetSpriteIndex(const char* SpriteName){
 	for (int i = 0; i < m_arySprites.size(); i++){
