@@ -62,7 +62,9 @@ int CHudEfx::Draw(float flTime){
 				iFrameLeft = 0;
 			flFrameLeftAdvanceTime = flTime;
 		}
-		DrawSPRIcon(WaterLeftSpr, 0, 0, ScreenWidth / 3, ScreenHeight,
+		gHudDelegate->surface()->DrawSetTexture(-1);
+		DrawSPRIcon(WaterLeftSpr, kRenderTransAdd, 
+			0, 0, ScreenWidth / 3, ScreenHeight,
 			255, 255, 255, a, iFrameLeft);
 		if ((double)flTime - flFrameRightAdvanceTime >= FRAME_ADVANCE_INTERVAL) {
 			frame = SPR_Frames(WaterRightSpr);
@@ -71,10 +73,12 @@ int CHudEfx::Draw(float flTime){
 				iFrameRight = 0;
 			flFrameRightAdvanceTime = flTime;
 		}
-		DrawSPRIcon(WaterRightSpr, ScreenWidth * 0.666, 0, ScreenWidth / 3, ScreenHeight,
+		DrawSPRIcon(WaterRightSpr, kRenderTransAdd, 
+			ScreenWidth * 0.666, 0, ScreenWidth / 3, ScreenHeight,
 			255, 255, 255, a, iFrameRight);
 	}
 	if (gClientData->waterlevel == WATERLEVEL_HEAD) {
+		gHudDelegate->surface()->DrawSetTexture(-1);
 		gHudDelegate->surface()->DrawSetColor(0, 0, 0, 125);
 		gHudDelegate->surface()->DrawSetTexture(DarkconerImg);
 		gHudDelegate->surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
