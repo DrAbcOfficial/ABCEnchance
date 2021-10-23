@@ -19,7 +19,6 @@ public:
 
 	bool m_bAcceptDeadMessage = false;
 private:
-	void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index);
 	int DrawWList(float flTime);
 	void SyncWeapon();
 	float m_fNextSyncTime = 0;

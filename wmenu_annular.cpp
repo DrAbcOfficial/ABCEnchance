@@ -45,15 +45,15 @@ void __UserCmd_CloseAnnularMenu(void) {
 	}
 }
 void CWeaponMenuAnnular::Select() {
-	if (m_HudWMenuAnnular.m_fFade > gEngfuncs.GetClientTime()) {
+	if (m_fFade > gEngfuncs.GetClientTime()) {
 		if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 			return;
 		m_HudCustomAmmo.ChosePlayerWeapon();
 	}
-	if (!m_HudWMenuAnnular.m_bOpeningMenu) {
+	if (!m_bOpeningMenu) {
 		gWR.iNowSlot = 0;
-		m_HudWMenuAnnular.m_fFade = 0;
-		m_HudWMenuAnnular.m_bSelectMenuDisplay = false;
+		m_fFade = 0;
+		m_bSelectMenuDisplay = false;
 	}
 }
 void CWeaponMenuAnnular::GLInit() {

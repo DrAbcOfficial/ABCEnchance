@@ -12,32 +12,36 @@ Scheme
 		"HealthArmor.ArmorBarColor"			"245 230 195 255"
 		"HealthArmor.ArmorTextColor"		"245 230 195 255"
 		"HealthArmor.ArmorPainColor"		"255 0 0 255"
-		"HealthArmor.ArmorDangerColor"		"125 110 0 255"
+		"HealthArmor.ArmorDangerColor"		"0 125 0 255"
 
 		"HealthArmor.LongjumpIconColor"		"245 230 195 255"
 
 		"HealthArmor.PainIndicatorColor"	"255 0 0 255"
 		"HealthArmor.PainIndicatorColorA"	"255 255 255 255"
-		"HealthArmor.BitDamageColor"		"0 255 0 255"
+		"HealthArmor.BitDamageColor"		"245 230 195 255"
 
 		"AmmoHUD.Ammo1IconColor"		"245 230 195 255"
 		"AmmoHUD.Ammo1BigTextColor"		"245 230 195 255"
 		"AmmoHUD.Ammo1TextColor"		"245 230 195 255"
 		"AmmoHUD.Ammo2IconColor"		"245 230 195 255"
 		"AmmoHUD.Ammo2BigTextColor"			"245 230 195 255"
-		"AmmoHUD.Ammo2TextColor"		"122 115 87 255"
+		"AmmoHUD.Ammo2TextColor"		"245 230 195 255"
 		"AmmoHUD.AmmoPickUpIconColor"		"245 230 195 255"
 		"AmmoHUD.AmmoPickUpTextColor"		"245 230 195 255"
-		"AmmoHUD.WeaponPickUpColor"		"200 200 200 255"
+		"AmmoHUD.WeaponPickUpColor"		"245 230 195 255"
 		"AmmoHUD.WeaponPickUpEmptyColor"		"255 0 0 255"
 		"AmmoHUD.ItemPickUpColor"		"245 230 195 255"
 
-		"AmmoHUD.SelectCyclerColor"			"106 102 96 255"
-		"AmmoHUD.SelectCyclerRinColor"		"245 230 195 255"
-		"AmmoHUD.SelectCyclerIconColor"		"245 230 195 255"
-		"AmmoHUD.SelectCyclerEmptyColor"	"255 0 0 255"
-		"AmmoHUD.SelectCyclerTextColor"		"245 230 195 255"
-		"AmmoHUD.SelectCyclerPointerColor"		"255 128 0 255"
+		"WMenuAnnular.SelectColor"			"106 102 96 255"
+		"WMenuAnnular.SelectRinColor"		"245 230 195 255"
+		"WMenuAnnular.SelectIconColor"		"128 255 0 255"
+		"WMenuAnnular.SelectEmptyColor"		"255 0 0 255"
+		"WMenuAnnular.SelectTextColor"		"128 255 0 255"
+		"WMenuAnnular.SelectPointerColor"		"255 128 0 255"
+
+		"WMenuBucket.SelectColor"			"245 230 195 255"
+		"WMenuBucket.SelectIconColor"		"255 255 0 255"
+		"WMenuBucket.SelectEmptyColor"		"255 0 0 255"
 
 		"DeathMsg.BackGoundColor"		"180 180 180 255"
 		"DeathMsg.BackGoundOutLineColor"		"255 182 193 255"
@@ -48,14 +52,14 @@ Scheme
 		"Vote.OutlineColor"		"255 255 255 180"
 		"Vote.BackGoundColor"		"139 137 137 180"
 
-		"Ecco.MoneyIncreseColor"		"0 255 0 255"
+		"Ecco.MoneyIncreseColor"		"245 230 195 255"
 		"Ecco.MoneyDecreseColor"		"255 0 0 255"
 		"Ecco.MoneyColor"		"245 230 195 255"
 	}
 
 	BaseSettings
 	{
-		"Version"						100001
+		"Version"						"100010"
 		"HealthArmor.StartX"			"0.013"
 		"HealthArmor.IconSize"			"0.03"
 		"HealthArmor.BarLength"			"0.07"
@@ -65,7 +69,7 @@ Scheme
 		"HealthArmor.BackGroundLength"	"0.333"
 		"HealthArmor.DamageIconX"		"0"
 		"HealthArmor.DamageIconY"		"0.85"
-		"HealthArmor.DamageIconSize"	"0.2"
+		"HealthArmor.DamageIconSize"	"0.08"
 		"HealthArmor.PainColorTime"		"0.5"
 		"HealthArmor.PainIndicatorTime"	"3"
 
@@ -81,13 +85,17 @@ Scheme
 		"AmmoHUD.ItemPickUpX"	"0.55"
 		"AmmoHUD.ItemPickUpY"	"0.55"
 
-		"AmmoHUD.SelectCyclerOffset"	"0.25"
-		"AmmoHUD.SelectCyclerSize"	"0.1"
-		"AmmoHUD.SelectCyclerPointerSize"	"0.03"
-		"AmmoHUD.SelectCyclerRotate"	"0"
-		"AmmoHUD.SelectCyclerAnimateTime"	"0.12"
-		"AmmoHUD.SelectCyclerFadeTime"	"0.2"
-		"AmmoHUD.SelectCyclerHoldTime"	"5"
+		"WMenuAnnular.SelectOffset"	"0.25"
+		"WMenuAnnular.SelectSize"	"0.1"
+		"WMenuAnnular.SelectPointerSize"	"0.03"
+		"WMenuAnnular.SelectRotate"	"0"
+		"WMenuAnnular.SelectAnimateTime"	"0.12"
+		"WMenuAnnular.SelectFadeTime"	"0.2"
+		"WMenuAnnular.SelectHoldTime"	"5"
+
+		"WMenuBucket.SelectAnimateTime"	"0.12"
+		"WMenuBucket.SelectFadeTime"	"0.2"
+		"WMenuBucket.SelectHoldTime"	"5"
 
 		"Radar.XOffset"			"0.012"
 		"Radar.YOffset"			"0.0225"
@@ -100,7 +108,7 @@ Scheme
 		"DeathMsg.XOffset"		"0.93"
 		"DeathMsg.YOffset"		"0.25"
 		"DeathMsg.GapOffset"	"0.012"
-		"DeathMsg.BackGoundWidth"	"0.007"
+		"DeathMsg.BackGoundWidth"	"0.0070"
 
 		"Vote.XOffset"		"0.9"
 		"Vote.YOffset"		"0.233"

@@ -2,7 +2,6 @@
 class CWeaponMenuAnnular : public IWeaponSelect {
 public:
 	void Init();
-	void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index);
 	int DrawWList(float flTime);
 	void ClientMove(struct playermove_s* ppmove, int server);
 	void IN_Accumulate();
@@ -12,6 +11,7 @@ public:
 	void Clear();
 private:
 	void DrawScreenQuad();
+	void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index);
 
 	GLint iSelectCyclerSpr = 0;
 	GLint iSelectCyclerRinSpr = 0;

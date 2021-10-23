@@ -135,6 +135,9 @@
     <ClCompile Include="wmenu_annular.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="wmenu_slot.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -333,6 +336,9 @@
       <Filter>Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="wmenu_annular.h">
+      <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="wmenu_slot.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
