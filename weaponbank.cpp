@@ -376,7 +376,8 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 			gridDrawMenu[iNowSlot].iId = wp->iId;
 			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
 		}
-		gridDrawMenu[iNowSlot].iPos = -1;
+		else
+			gridDrawMenu[iNowSlot].iPos = -1;
 		return;
 	}
 	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade = 
