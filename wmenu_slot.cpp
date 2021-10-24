@@ -215,17 +215,10 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 	m_bSelectMenuDisplay = true;
 	return 1;
 }
-void CWeaponMenuSlot::ClientMove(playermove_s* ppmove, int server){
-	//No me
-}
-void CWeaponMenuSlot::IN_Accumulate(){
-	//Did nothing
-}
 void CWeaponMenuSlot::Reset(){
 	m_fFade = 0;
 	m_fAnimateTime = 0;
 	m_bSelectMenuDisplay = false;
-	m_bOpeningMenu = false;
 	m_bSetedCursor = false;
 }
 void CWeaponMenuSlot::Select(){

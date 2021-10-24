@@ -233,6 +233,8 @@ void __UserCmd_PrevWeapon(void){
 }
 void __UserCmd_Attack1(void){
 	m_HudCustomAmmo.m_pNowSelectMenu->Select();
+	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)
+		m_HudWMenuAnnular.Select();
 	return UserCmd_Attack1();
 }
 void CustomSlotSetCallBack(cvar_t* vars){
@@ -485,13 +487,31 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
 }
 int CHudCustomAmmo::DrawWList(float flTime){
 	m_pNowSelectMenu->DrawWList(flTime);
+	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)
+		m_HudWMenuAnnular.DrawWList(flTime);
 	return 1;
 }
 void CHudCustomAmmo::ClientMove(struct playermove_s* ppmove, qboolean server){
-	m_pNowSelectMenu->ClientMove(ppmove, server);
+	if (m_HudWMenuAnnular.m_bOpeningMenu)
+		m_HudWMenuAnnular.m_fFade = gEngfuncs.GetClientTime() + m_HudWMenuAnnular.SelectHoldTime;
 }
 void CHudCustomAmmo::IN_Accumulate(){
-	m_pNowSelectMenu->IN_Accumulate();
+	if (m_HudWMenuAnnular.m_bOpeningMenu) {
+		int x, y;
+		gEngfuncs.GetMousePosition(&x, &y);
+		if (!m_HudWMenuAnnular.m_bSetedCursor) {
+			gEngfuncs.pfnSetMousePos(gScreenInfo.iWidth / 2, gScreenInfo.iHeight / 2);
+			m_HudWMenuAnnular.m_bSetedCursor = true;
+		}
+		x -= gScreenInfo.iWidth / 2;
+		y -= gScreenInfo.iHeight / 2;
+		y = -y;
+		m_HudWMenuAnnular.m_fCursorAngle = atan2(y, x);
+		int s = m_HudWMenuAnnular.m_fCursorAngle / (0.2 * M_PI);
+		s = m_HudWMenuAnnular.m_fCursorAngle >= 0 ? s : 9 + s;
+		if (gWR.gridDrawMenu[s].iId > -1)
+			gWR.iNowSlot = s;
+	}
 }
 void CHudCustomAmmo::Clear(){
 	//所有选择列表都需要清理
