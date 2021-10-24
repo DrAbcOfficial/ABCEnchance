@@ -67,6 +67,7 @@
 |cl_customslot10|Set customslot 10| |weapon_xxxxx|
 |cl_menudrawpos|Draw weapon Pos|0|0/1|
 |cl_rainbowmenu|Draw weapon menu in rainbow|1|0/1/2|
+|cl_wmenustyle|1:Annular weapon menu 0:Classic weapon menu|1|0/1|
 |---|---|---|---|
 |cl_itemhighlight|Draw item high light|1|0/1|
 |cl_itemhighlightrange|Item high light range|344|0~500|
