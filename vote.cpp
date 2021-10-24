@@ -60,14 +60,13 @@ void CHudVote::Reset(){
 void CHudVote::DrawMultiLineStr(const wchar_t *str, int limite, int x, int y, int r, int g, int b){
 	int totalW, h;
 	std::wstring szbuf = str;
-	wchar_t buf[128];
 	GetStringSize(str, &totalW, &h, HudFont);
-	int c = wcslen(str) * limite / totalW;
-	for (int i = wcslen(str); i > 0; i -= c){
+	int c = szbuf.size() * limite / totalW;
+	int iOriginC = szbuf.size();
+	for (int i = iOriginC; i > 0; i -= c){
 		szbuf.insert(i, L"\n");
 	}
-	wcscpy_s(buf, szbuf.c_str());
-	wchar_t* token = wcstok(buf, L"\n");
+	wchar_t* token = wcstok((wchar_t*)szbuf.c_str(), L"\n");
 	while (token) {
 		DrawVGUI2String(token, x, y, r, g, b, HudFont);
 		y += h;
