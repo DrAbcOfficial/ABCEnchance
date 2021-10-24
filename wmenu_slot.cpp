@@ -27,10 +27,10 @@ void CWeaponMenuSlot::Init(){
 	SelectIconColor = pScheme->GetColor("WMenuBucket.SelectIconColor", gDefaultColor);
 	SelectEmptyColor = pScheme->GetColor("WMenuBucket.SelectEmptyColor", gDefaultColor);
 
-	SelectXOffset = atof(pScheme->GetResourceString("WMenuBucket.SelectXOffset"));
-	SelectYOffset = atof(pScheme->GetResourceString("WMenuBucket.SelectYOffset"));
-	SelectXGap = atof(pScheme->GetResourceString("WMenuBucket.SelectXGap"));
-	SelectYGap = atof(pScheme->GetResourceString("WMenuBucket.SelectYGap"));
+	SelectXOffset = GET_SCREEN_PIXEL(false, "WMenuBucket.SelectXOffset");
+	SelectYOffset = GET_SCREEN_PIXEL(true, "WMenuBucket.SelectYOffset");
+	SelectXGap = GET_SCREEN_PIXEL(false, "WMenuBucket.SelectXGap");
+	SelectYGap = GET_SCREEN_PIXEL(true, "WMenuBucket.SelectYGap");
 	SelectAnimateTime = atof(pScheme->GetResourceString("WMenuBucket.SelectAnimateTime"));
 	SelectFadeTime = atof(pScheme->GetResourceString("WMenuBucket.SelectFadeTime"));
 	SelectHoldTime = atof(pScheme->GetResourceString("WMenuBucket.SelectHoldTime"));
