@@ -59,6 +59,7 @@
 |cl_customslot9|设置自定义轮盘 9| |weapon_xxxxx|
 |cl_menudrawpos|是否绘制武器Pos|0|0/1|
 |cl_rainbowmenu|绘制武器菜单彩虹圈|1|0/1/2|
+|cl_wmenustyle|1:使用选枪轮盘菜单 0:使用选枪经典菜单|1|0/1|
 |---|---|---|---|
 |cl_itemhighlight|是否显示物品高亮|1|0/1|
 |cl_itemhighlightrange|物品高亮范围|344|0~500|
@@ -96,7 +97,7 @@
 |abc_bloodsprite_num|Efx新生成血迹数量|32|0-9999|
 |abc_gaussefx|启用bms高斯特效|1|0/1|
 |---|---|---|---|
-|cl_eccocheck|Enable Ecco plugin check|0|0/1|
+|cl_eccocheck|启用Ecco插件检查|0|0/1|
 |---|---|---|---|
 |cl_modellag|启用V模型延迟|1|0/1|
 |cl_modellagvalue|V模型延迟数值|1.0|0-9999|
