@@ -27,26 +27,30 @@ void CWeaponMenuSlot::Init(){
 	SelectIconColor = pScheme->GetColor("WMenuBucket.SelectIconColor", gDefaultColor);
 	SelectEmptyColor = pScheme->GetColor("WMenuBucket.SelectEmptyColor", gDefaultColor);
 
+	SelectXOffset = atof(pScheme->GetResourceString("WMenuBucket.SelectXOffset"));
+	SelectYOffset = atof(pScheme->GetResourceString("WMenuBucket.SelectYOffset"));
+	SelectXGap = atof(pScheme->GetResourceString("WMenuBucket.SelectXGap"));
+	SelectYGap = atof(pScheme->GetResourceString("WMenuBucket.SelectYGap"));
 	SelectAnimateTime = atof(pScheme->GetResourceString("WMenuBucket.SelectAnimateTime"));
 	SelectFadeTime = atof(pScheme->GetResourceString("WMenuBucket.SelectFadeTime"));
 	SelectHoldTime = atof(pScheme->GetResourceString("WMenuBucket.SelectHoldTime"));
 }
 void CWeaponMenuSlot::VidInit(){
-	m_HUD_bucket0 = gHudDelegate->GetSpriteIndex("bucket1");
-	m_HUD_selection = gHudDelegate->GetSpriteIndex("selection");
-	m_HUD_rcSelection = gHudDelegate->GetSpriteRect(m_HUD_selection);
-	ghsprBuckets = gHudDelegate->GetSprite(m_HUD_bucket0);
-	giBucketWidth = gHudDelegate->GetSpriteRect(m_HUD_bucket0)->right -
-		gHudDelegate->GetSpriteRect(m_HUD_bucket0)->left;
-	giBucketHeight = gHudDelegate->GetSpriteRect(m_HUD_bucket0)->bottom -
-		gHudDelegate->GetSpriteRect(m_HUD_bucket0)->top;
+	iBucket0Spr = gHudDelegate->GetSpriteIndex("bucket1");
+	iSelectionSpr = gHudDelegate->GetSpriteIndex("selection");
+	pRcSelection = gHudDelegate->GetSpriteRect(iSelectionSpr);
+	pBucketSpr = gHudDelegate->GetSprite(iBucket0Spr);
+	SelectBucketWidth = gHudDelegate->GetSpriteRect(iBucket0Spr)->right -
+		gHudDelegate->GetSpriteRect(iBucket0Spr)->left;
+	SelectBucketHeight = gHudDelegate->GetSpriteRect(iBucket0Spr)->bottom -
+		gHudDelegate->GetSpriteRect(iBucket0Spr)->top;
 	if (ScreenWidth >= 640) {
-		giABWidth = 20;
-		giABHeight = 4;
+		SelectABWidth = 20;
+		SelectABHeight = 4;
 	}
 	else {
-		giABWidth = 10;
-		giABHeight = 2;
+		SelectABWidth = 10;
+		SelectABHeight = 2;
 	}
 }
 int CWeaponMenuSlot::DrawBar(int x, int y, int width, int height, float f){
@@ -94,19 +98,31 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 		}
 		return 1;
 	}
-	int r, g, b, a, x, y, i;
+	float flAnimationRatio = 1.0f;
+	if (!m_bSelectMenuDisplay)
+		m_fAnimateTime = flTime + SelectAnimateTime;
+
+	if (m_fAnimateTime > flTime && SelectHoldTime > SelectAnimateTime)
+		flAnimationRatio = 1 - ((m_fAnimateTime - flTime) / SelectAnimateTime);
+	int r, g, b, a;
+	int x, y;
 	int id;
-	x = 10; //!!!
-	y = 10; //!!!
-	// Draw top line
-	for (i = 0; i < MAX_WEAPON_SLOTS; i++){
+	int iXStart = SelectXOffset;
+	int iYStart = SelectYOffset;
+	int iXGap = SelectXGap;
+	int iYGap = SelectYGap;
+
+	x = iXStart;
+	y = iYStart;
+	//绘制顶端1~10
+	for (int i = 0; i < MAX_WEAPON_SLOTS; i++){
 		int iWidth;
 		if (gWR.iNowSlot == i)
 			a = 255;
 		else
 			a = 192;
 		SelectColor.GetColor(r, g, b, a);
-		SPR_Set(gHudDelegate->GetSprite(m_HUD_bucket0 + i), r, g, b);
+		SPR_Set(gHudDelegate->GetSprite(iBucket0Spr + i), r, g, b);
 		// make active slot wide enough to accomodate gun pictures
 		if (i == gWR.iNowSlot)
 		{
@@ -114,22 +130,22 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 			if (p && p->iId > 0)
 				iWidth = p->rcActive.right - p->rcActive.left;
 			else
-				iWidth = giBucketWidth;
+				iWidth = SelectBucketWidth;
 		}
 		else
-			iWidth = giBucketWidth;
-		SPR_DrawAdditive(0, x, y, gHudDelegate->GetSpriteRect(m_HUD_bucket0 + i));
-		x += iWidth + 5;
+			iWidth = SelectBucketWidth;
+		SPR_DrawAdditive(0, x, y, gHudDelegate->GetSpriteRect(iBucket0Spr + i));
+		x += iWidth + (iXGap);
 	}
-	x = 10;
+	x = iXStart;
 	// Draw all of the buckets
-	for (i = 0; i < MAX_WEAPON_SLOTS; i++){
-		y = giBucketHeight + 10;
+	for (int i = 0; i < MAX_WEAPON_SLOTS; i++){
+		y = SelectBucketHeight + (iYGap * 2 * flAnimationRatio);
 		// If this is the active slot, draw the bigger pictures,
 		// otherwise just draw boxes
 		if (i == gWR.iNowSlot){
 			WEAPON* p = gWR.GetFirstPos(i);
-			int iWidth = giBucketWidth;
+			int iWidth = SelectBucketWidth;
 			if (p && p->iId > 0)
 				iWidth = p->rcActive.right - p->rcActive.left;
 			for (int iPos = 0; iPos < MAX_WEAPON_POSITIONS_USER; iPos++){
@@ -143,12 +159,12 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 					continue;
 				SelectColor.GetColor(r, g, b, a);
 				// if active, then we must have ammo.
-				if (gWR.gridDrawMenu->iPos == iPos){
+				if (gWR.gridDrawMenu[i].iPos == iPos){
 					ScaleColors(r, g, b, a);
 					SPR_Set(p->hActive, r, g, b);
 					SPR_DrawAdditive(0, x, y, &p->rcActive);
-					SPR_Set(gHudDelegate->GetSprite(m_HUD_selection), r, g, b);
-					SPR_DrawAdditive(0, x, y, gHudDelegate->GetSpriteRect(m_HUD_selection));
+					SPR_Set(gHudDelegate->GetSprite(iSelectionSpr), r, g, b);
+					SPR_DrawAdditive(0, x, y, gHudDelegate->GetSpriteRect(iSelectionSpr));
 				}
 				else{
 					// Draw Weapon if Red if no ammo
@@ -165,10 +181,10 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 					SPR_DrawAdditive(0, x, y, &p->rcInactive);
 				}
 				// Draw Ammo Bar
-				DrawAmmoBar(p, x + giABWidth / 2, y, giABWidth, giABHeight);
-				y += p->rcActive.bottom - p->rcActive.top + 5;
+				DrawAmmoBar(p, x + SelectABWidth / 2, y, SelectABWidth, SelectABHeight);
+				y += (p->rcActive.bottom - p->rcActive.top + iYGap) * flAnimationRatio;
 			}
-			x += iWidth + 5;
+			x += iWidth + (iXGap);
 		}
 		else{
 			// Draw Row of weapons.
@@ -189,17 +205,21 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 					SelectEmptyColor.GetColor(r, g, b, a);
 					a = 96;
 				}
-				FillRGBA(x, y, giBucketWidth, giBucketHeight, r, g, b, a);
-				y += giBucketHeight + 5;
+				FillRGBA(x, y, SelectBucketWidth, SelectBucketHeight, r, g, b, a);
+				y += (SelectBucketHeight + iYGap) * flAnimationRatio;
 			}
-			x += giBucketWidth + 5;
+			x += SelectBucketWidth + (iXGap);
 		}
 	}
+	//绘制完毕，修改展示状态
+	m_bSelectMenuDisplay = true;
 	return 1;
 }
 void CWeaponMenuSlot::ClientMove(playermove_s* ppmove, int server){
+	//No me
 }
 void CWeaponMenuSlot::IN_Accumulate(){
+	//Did nothing
 }
 void CWeaponMenuSlot::Reset(){
 	m_fFade = 0;
@@ -214,9 +234,7 @@ void CWeaponMenuSlot::Select(){
 			return;
 		m_HudCustomAmmo.ChosePlayerWeapon();
 	}
-	if (!m_bOpeningMenu) {
-		gWR.iNowSlot = 0;
-		m_fFade = 0;
-		m_bSelectMenuDisplay = false;
-	}
+	gWR.iNowSlot = 0;
+	m_fFade = 0;
+	m_bSelectMenuDisplay = false;
 }

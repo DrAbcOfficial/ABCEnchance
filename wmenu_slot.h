@@ -11,10 +11,19 @@ public:
 private:
 	int DrawBar(int x, int y, int width, int height, float f);
 	void DrawAmmoBar(WEAPON* p, int x, int y, int width, int height);
-	int m_HUD_bucket0;
-	int m_HUD_selection;
-	wrect_t* m_HUD_rcSelection;
-	int giBucketHeight, giBucketWidth, giABHeight, giABWidth; // Ammo Bar width and height
-	HSPRITE ghsprBuckets; // Sprite for top row of weapons menu
+
+	float SelectXOffset;
+	float SelectYOffset;
+	float SelectXGap;
+	float SelectYGap;
+	int SelectBucketHeight;
+	int SelectBucketWidth;
+	int SelectABHeight;
+	int SelectABWidth;
+
+	int iBucket0Spr;
+	int iSelectionSpr;
+	wrect_t* pRcSelection;
+	HSPRITE pBucketSpr; // Sprite for top row of weapons menu
 };
 extern CWeaponMenuSlot m_HudWMenuSlot;

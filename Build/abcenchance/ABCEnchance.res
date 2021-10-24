@@ -59,7 +59,7 @@ Scheme
 
 	BaseSettings
 	{
-		"Version"						"100010"
+		"Version"						"100011"
 		"HealthArmor.StartX"			"0.013"
 		"HealthArmor.IconSize"			"0.03"
 		"HealthArmor.BarLength"			"0.07"
@@ -93,6 +93,11 @@ Scheme
 		"WMenuAnnular.SelectFadeTime"	"0.2"
 		"WMenuAnnular.SelectHoldTime"	"5"
 
+		"WMenuBucket.SelectXOffset"	"0.005"
+		"WMenuBucket.SelectYOffset"	"0.01"
+		"WMenuBucket.SelectXGap"	"0.0025"
+		"WMenuBucket.SelectYGap"	"0.005"
+		"WMenuBucket.SelectHoldTime"	"5"
 		"WMenuBucket.SelectAnimateTime"	"0.12"
 		"WMenuBucket.SelectFadeTime"	"0.2"
 		"WMenuBucket.SelectHoldTime"	"5"

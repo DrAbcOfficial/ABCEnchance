@@ -4,7 +4,7 @@
 #include "enginedef.h"
 #include "r_studioint.h"
 
-#define PLUGIN_VERSION 100010
+#define PLUGIN_VERSION 100011
 
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
