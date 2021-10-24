@@ -42,6 +42,7 @@ void __UserCmd_CloseAnnularMenu(void) {
 		m_HudWMenuAnnular.m_fFade = 0;
 		gHudDelegate->m_iVisibleMouse = false;
 		m_HudWMenuAnnular.m_bSetedCursor = false;
+		m_HudWMenuAnnular.m_bSelectMenuDisplay = false;
 	}
 }
 void CWeaponMenuAnnular::Select() {
@@ -303,28 +304,6 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 	//绘制完毕，修改展示状态
 	m_bSelectMenuDisplay = true;
 	return 1;
-}
-void CWeaponMenuAnnular::ClientMove(playermove_s* ppmove, int server){
-	if (m_bOpeningMenu)
-		m_fFade = gEngfuncs.GetClientTime() + SelectHoldTime;
-}
-void CWeaponMenuAnnular::IN_Accumulate(){
-	if (m_bOpeningMenu) {
-		int x, y;
-		gEngfuncs.GetMousePosition(&x, &y);
-		if (!m_bSetedCursor) {
-			gEngfuncs.pfnSetMousePos(gScreenInfo.iWidth / 2, gScreenInfo.iHeight / 2);
-			m_bSetedCursor = true;
-		}
-		x -= gScreenInfo.iWidth / 2;
-		y -= gScreenInfo.iHeight / 2;
-		y = -y;
-		m_fCursorAngle = atan2(y, x);
-		int s = m_fCursorAngle / (0.2 * M_PI);
-		s = m_fCursorAngle >= 0 ? s : 9 + s;
-		if (gWR.gridDrawMenu[s].iId > -1)
-			gWR.iNowSlot = s;
-	}
 }
 void CWeaponMenuAnnular::Reset(){
 	m_fFade = 0;

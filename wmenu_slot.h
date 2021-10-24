@@ -4,8 +4,6 @@ public:
 	void Init();
 	void VidInit();
 	int DrawWList(float flTime);
-	void ClientMove(struct playermove_s* ppmove, int server);
-	void IN_Accumulate();
 	void Reset();
 	void Select();
 private:

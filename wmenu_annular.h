@@ -3,12 +3,13 @@ class CWeaponMenuAnnular : public IWeaponSelect {
 public:
 	void Init();
 	int DrawWList(float flTime);
-	void ClientMove(struct playermove_s* ppmove, int server);
-	void IN_Accumulate();
 	void Reset();
 	void GLInit();
 	void Select();
 	void Clear();
+
+	float m_fCursorAngle = 0;
+	bool m_bOpeningMenu = false;
 private:
 	void DrawScreenQuad();
 	void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index);
