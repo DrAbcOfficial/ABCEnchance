@@ -101,16 +101,19 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 	float flAnimationRatio = 1.0f;
 	if (!m_bSelectMenuDisplay)
 		m_fAnimateTime = flTime + SelectAnimateTime;
-
 	if (m_fAnimateTime > flTime && SelectHoldTime > SelectAnimateTime)
 		flAnimationRatio = 1 - ((m_fAnimateTime - flTime) / SelectAnimateTime);
-	int r, g, b, a;
+	int r, g, b, a, dummy;
 	int x, y;
 	int id;
 	int iXStart = SelectXOffset;
 	int iYStart = SelectYOffset;
 	int iXGap = SelectXGap;
 	int iYGap = SelectYGap;
+	float flAlphaRatio = 1.0f;
+	float flTimeDiffer = m_fFade - flTime;
+	if (flTimeDiffer < SelectFadeTime)
+		flAlphaRatio = flTimeDiffer / SelectFadeTime;
 
 	x = iXStart;
 	y = iYStart;
@@ -118,10 +121,10 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 	for (int i = 0; i < MAX_WEAPON_SLOTS; i++){
 		int iWidth;
 		if (gWR.iNowSlot == i)
-			a = 255;
+			a = 255 * flAlphaRatio;
 		else
-			a = 192;
-		SelectColor.GetColor(r, g, b, a);
+			a = 192 * flAlphaRatio;
+		SelectColor.GetColor(r, g, b, dummy);
 		SPR_Set(gHudDelegate->GetSprite(iBucket0Spr + i), r, g, b);
 		// make active slot wide enough to accomodate gun pictures
 		if (i == gWR.iNowSlot)
@@ -160,6 +163,7 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 				SelectColor.GetColor(r, g, b, a);
 				// if active, then we must have ammo.
 				if (gWR.gridDrawMenu[i].iPos == iPos){
+					a = 255 * flAlphaRatio;
 					ScaleColors(r, g, b, a);
 					SPR_Set(p->hActive, r, g, b);
 					SPR_DrawAdditive(0, x, y, &p->rcActive);
@@ -169,12 +173,12 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 				else{
 					// Draw Weapon if Red if no ammo
 					if (gWR.HasAmmo(p)){
-						a = 192;
+						a = 192 * flAlphaRatio;
 						ScaleColors(r, g, b, a);
 					}
 					else{
-						SelectEmptyColor.GetColor(r, g, b, a);
-						a = 128;
+						SelectEmptyColor.GetColor(r, g, b, dummy);
+						a = 128 * flAlphaRatio;
 						ScaleColors(r, g, b, a);
 					}
 					SPR_Set(p->hInactive, r, g, b);
@@ -198,12 +202,12 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 				if (!p)
 					continue;
 				if (gWR.HasAmmo(p)){
-					SelectColor.GetColor(r, g, b, a);
-					a = 128;
+					SelectColor.GetColor(r, g, b, dummy);
+					a = 128 * flAlphaRatio;
 				}
 				else{
-					SelectEmptyColor.GetColor(r, g, b, a);
-					a = 96;
+					SelectEmptyColor.GetColor(r, g, b, dummy);
+					a = 96 * flAlphaRatio;
 				}
 				FillRGBA(x, y, SelectBucketWidth, SelectBucketHeight, r, g, b, a);
 				y += (SelectBucketHeight + iYGap) * flAnimationRatio;
