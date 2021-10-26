@@ -25,7 +25,7 @@ int PrecacheExtraModel(char* path) {
 	return index;
 }
 void ClearExtraPrecache(){
-	for each (model_t* var in g_ExtraPreacheModel){
+	for (model_t* var : g_ExtraPreacheModel) {
 		if (var)
 			var = nullptr;
 	}

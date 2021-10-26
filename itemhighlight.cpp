@@ -35,7 +35,7 @@ void CHudItemHighLight::Reset(){
 	m_mapHighLightTable.clear();
 	m_mapToBeDraw.clear();
 	m_mapRestoredTent.clear();
-	for (int i = 0; i < aryHighLightList.size(); i++) {
+	for (int i = 0; i < (int)aryHighLightList.size(); i++) {
 		aryHighLightList[i]->Index = gEngfuncs.pEventAPI->EV_FindModelIndex(aryHighLightList[i]->Name);
 		if (aryHighLightList[i]->Index > 0)
 			m_mapHighLightTable[aryHighLightList[i]->Index] = aryHighLightList[i];
