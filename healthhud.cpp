@@ -53,7 +53,7 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf){
 			vecFrom[i] = READ_COORD();
 		}
 		float flTime = gEngfuncs.GetClientTime();
-		for each (indicatorinfo_t var in m_HudArmorHealth.aryIndicators){
+		for (indicatorinfo_t& var : m_HudArmorHealth.aryIndicators) {
 			if (var.flKeepTime < flTime)
 				continue;
 			if (VectorCompare(var.vecFrom, vecFrom)) {
@@ -289,10 +289,10 @@ void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 }
 int CHudArmorHealth::DrawPain(float flTime){
 	int r, g, b, a;
-	for each (indicatorinfo_t var in aryIndicators){
+	for (indicatorinfo_t& var : aryIndicators) {
 		if (var.flKeepTime <= flTime)
 			continue;
-		if(var.iDamage <= 0 && var.iArmor <= 0)
+		if (var.iDamage <= 0 && var.iArmor <= 0)
 			PainIndicatorColorA.GetColor(r, g, b, a);
 		else
 			PainIndicatorColor.GetColor(r, g, b, a);

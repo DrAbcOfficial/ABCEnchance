@@ -58,8 +58,10 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf){
 			}
 			found = regex_search(stdSzBuf, matched, parttenPlayer);
 			if (found){
-				wstring e = matched.str(0);
-				m_HudDeathMsg.InsertNewMsg(matched.suffix().str(), e.substr(3, e.length() - 6), matched.prefix().str());
+				wstring e = matched.str();
+				wstring sub = e.substr(3, e.length() - 6);
+				wstring k = matched.prefix().str();
+				m_HudDeathMsg.InsertNewMsg(matched.suffix().str(), sub, k);
 				return 1;
 			}
 		}
@@ -89,7 +91,7 @@ int CHudDeathMsg::Draw(float flTime){
 	int w;
 	int h;
 	int r, g, b, a;
-	for each (deathmsgItem_t var in aryKeepMsg){
+	for (deathmsgItem_t& var: aryKeepMsg){
 		if (var.addTime <= 0)
 			continue;
 		if (var.addTime <= flTime)

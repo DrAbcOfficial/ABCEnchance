@@ -2,6 +2,7 @@
 
 #include "mathlib.h"
 #include "utility.h"
+#include "command.h"
 
 #include "hud.h"
 #include "weapon.h"
@@ -31,7 +32,7 @@ CWeaponMenuAnnular m_HudWMenuAnnular;
 void __UserCmd_OpenAnnularMenu(void) {
 	if (!m_HudWMenuAnnular.m_bOpeningMenu && !m_HudWMenuAnnular.m_bSelectMenuDisplay) {
 		if (m_HudWMenuAnnular.m_fFade <= gEngfuncs.GetClientTime())
-			gEngfuncs.pfnPlaySoundByName("common/wpn_hudon.wav", 1);
+			PlaySoundByName("common/wpn_hudon.wav", 1);
 		m_HudWMenuAnnular.m_bOpeningMenu = true;
 		gHudDelegate->m_iVisibleMouse = true;
 	}
@@ -58,8 +59,8 @@ void CWeaponMenuAnnular::Select() {
 	}
 }
 void CWeaponMenuAnnular::GLInit() {
-	gEngfuncs.pfnAddCommand("+annularmenu", __UserCmd_OpenAnnularMenu);
-	gEngfuncs.pfnAddCommand("-annularmenu", __UserCmd_CloseAnnularMenu);
+	ADD_COMMAND("+annularmenu", __UserCmd_OpenAnnularMenu);
+	ADD_COMMAND("-annularmenu", __UserCmd_CloseAnnularMenu);
 	pp_gaussianblurh.program = R_CompileShaderFileEx("renderer\\shader\\fullscreentriangle.vert.glsl", "renderer\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_HORIZONAL\n", NULL);
 	if (pp_gaussianblurh.program)
 		SHADER_UNIFORM(pp_gaussianblurh, du, "du");

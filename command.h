@@ -17,4 +17,5 @@ xcommand_t Cmd_HookCmd(char* cmd_name, xcommand_t newfuncs);
 cmd_function_t* Cmd_FindCmdPrev(char* cmd_name);
 char* Cmd_CompleteCommand(char* partial, qboolean next);
 
-#define HOOK_COMMAND(x, y) Cmd_HookCmd( x, __UserCmd_##y );
+#define HOOK_COMMAND(x, y) Cmd_HookCmd((char*)x, __UserCmd_##y)
+#define ADD_COMMAND(x, y) gEngfuncs.pfnAddCommand((char*)x, y)

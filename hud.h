@@ -3,7 +3,7 @@
 #define SPR_Load (*gEngfuncs.pfnSPR_Load)
 #define SPR_Set (*gEngfuncs.pfnSPR_Set)
 #define SPR_Frames (*gEngfuncs.pfnSPR_Frames)
-#define SPR_GetList (*gEngfuncs.pfnSPR_GetList)
+#define SPR_GetList(x, y) (*gEngfuncs.pfnSPR_GetList)((char*)x, y)
 // SPR_Draw  draws a the current sprite as solid
 #define SPR_Draw (*gEngfuncs.pfnSPR_Draw)
 // SPR_DrawHoles  draws the current sprites,  with color index255 not drawn (transparent)
@@ -20,9 +20,10 @@
 // ScreenWidth returns the width of the screen, in pixels
 #define ScreenWidth (gScreenInfo.iWidth)
 #define GetScreenInfo (*gEngfuncs.pfnGetScreenInfo)
-#define ServerCmd (*gEngfuncs.pfnServerCmd)
+#define ServerCmd(x) (*gEngfuncs.pfnServerCmd)((char*)x)
 #define EngineClientCmd (*gEngfuncs.pfnClientCmd)
 #define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
+#define PlaySoundByName(x, y) (*gEngfuncs.pfnPlaySoundByName)((char*)x, y)
 
 #define WEAPON_SUIT			31
 

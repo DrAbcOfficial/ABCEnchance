@@ -476,7 +476,7 @@ void CHudCustomAmmo::ChosePlayerWeapon(void){
 		if (!(wp->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(wp))
 			return;
 		ServerCmd(wp->szName);
-		gEngfuncs.pfnPlaySoundByName("common/wpn_select.wav", 1);
+		PlaySoundByName("common/wpn_select.wav", 1);
 		gWR.iNowSlot = -1;
 	}
 }
