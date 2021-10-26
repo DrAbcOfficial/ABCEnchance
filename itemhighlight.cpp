@@ -40,7 +40,7 @@ void CHudItemHighLight::Reset(){
 		if (aryHighLightList[i]->Index > 0)
 			m_mapHighLightTable[aryHighLightList[i]->Index] = aryHighLightList[i];
 	}
-	m_iHighLightMdl = PrecacheExtraModel("abcenchance/mdl/item_highlight.mdl");
+	m_iHighLightMdl = PrecacheExtraModel((char*)"abcenchance/mdl/item_highlight.mdl");
 }
 void HighLightTentCallBack(TEMPENTITY* ent, float frametime, float currenttime) {
 	cl_entity_t* var = gEngfuncs.GetEntityByIndex(ent->clientIndex);
@@ -129,10 +129,10 @@ void CHudItemHighLight::AddEntity(int type, cl_entity_s* ent, const char* modeln
 	}
 }
 void CHudItemHighLight::LoadItemList() {
-	char* pfile = (char*)gEngfuncs.COM_LoadFile(ITEM_LIST_PATH, 5, NULL);
+	char* pfile = (char*)gEngfuncs.COM_LoadFile((char*)ITEM_LIST_PATH, 5, NULL);
 	int i = 0, index = 0;
 	if (!pfile){
-		gEngfuncs.Con_DPrintf("CHudItemHighLight::LoadItemList: No item list file %s\n", ITEM_LIST_PATH);
+		gEngfuncs.Con_DPrintf((char*)"CHudItemHighLight::LoadItemList: No item list file %s\n", ITEM_LIST_PATH);
 		return;
 	}
 	while (true){

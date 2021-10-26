@@ -1,5 +1,6 @@
 #include <metahook.h>
 #include <cmath>
+#include <string>
 #include "hud.h"
 #include "weapon.h"
 #include "CColor.h"
@@ -17,6 +18,7 @@
 #include "utility.h"
 
 #include "eccomoney.h"
+
 CHudEccoMoney m_HudEccoMoney;
 int CHudEccoMoney::Init(void){
 	YOffset = GET_SCREEN_PIXEL(true, "Ecco.YOffset");
@@ -30,6 +32,11 @@ int CHudEccoMoney::Init(void){
 	MoneyIncreseColor = pScheme->GetColor("Ecco.MoneyIncreseColor", gDefaultColor);
 
 	HUDSmallFont = pScheme->GetFont("HUDSmallShitFont", true);
+
+	MessagePrefix = pLocalize->Find("Ecco_MessagePrefix");
+	MessagePostfix = pLocalize->Find("Ecco_MessagePostfix");
+	DifferMessagePrefix = pLocalize->Find("Ecco_DifferMessagePrefix");
+	DifferMessagePostfix = pLocalize->Find("Ecco_DifferMessagePostfix");
 
 	Reset();
 	return 0;
@@ -58,14 +65,13 @@ int CHudEccoMoney::Draw(float flTime){
 	int nowY = YOffset + BackgroundHeight;
 	gHudDelegate->surface()->DrawTexturedRect(nowX, YOffset, BackgroundLength, nowY);
 	int iTextHeight;
-	wchar_t buf[16];
 	int r, g, b, a;
-	wsprintfW(buf, L"$%d", iEcco);
-	GetStringSize(buf, NULL, &iTextHeight, HUDSmallFont);
+	std::wstring buf = MessagePrefix + std::to_wstring(iEcco) + MessagePostfix;
+	GetStringSize(buf.c_str(), NULL, &iTextHeight, HUDSmallFont);
 	nowX = BackgroundLength / 8;
 	nowY -= (BackgroundHeight + iTextHeight) / 2;
 	MoneyColor.GetColor(r, g, b, a);
-	DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont, true);
+	DrawVGUI2String((wchar_t*)buf.c_str(), nowX, nowY, r, g, b, HUDSmallFont, true);
 	if (iEcco != flStoreMoney && flTime > flNextUpdateTime) {
 		iDifferMoney = iEcco - flStoreMoney;
 		flStoreMoney = iEcco;
@@ -73,8 +79,9 @@ int CHudEccoMoney::Draw(float flTime){
 		flNextUpdateTime = flTime + 0.2F;
 	}
 	if (flTime < flDifferDisapearTime) {
-		wsprintfW(buf, iDifferMoney > 0 ? L"+$%d" : L"-$%d", abs(iDifferMoney));
-		GetStringSize(buf, NULL, &iTextHeight, HUDSmallFont);
+		buf = (iDifferMoney >= 0 ? L'+' : L'-') + 
+			DifferMessagePrefix + std::to_wstring(iDifferMoney) + DifferMessagePostfix;
+		GetStringSize(buf.c_str(), NULL, &iTextHeight, HUDSmallFont);
 		nowY -= iTextHeight + BackgroundHeight / 2;
 		if (iDifferMoney > 0)
 			MoneyIncreseColor.GetColor(r, g, b, a);
@@ -82,7 +89,7 @@ int CHudEccoMoney::Draw(float flTime){
 			MoneyDecreseColor.GetColor(r, g, b, a);
 		a *= flDifferDisapearTime - flTime;
 		ColorCalcuAlpha(r, g, b, a);
-		DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont, true);
+		DrawVGUI2String((wchar_t*)buf.c_str(), nowX, nowY, r, g, b, HUDSmallFont, true);
 	}
 	return 0;
 }

@@ -104,7 +104,7 @@ void Sys_ErrorEx(const char* fmt, ...){
 	va_end(argptr);
 
 	if (gEngfuncs.pfnClientCmd)
-		gEngfuncs.pfnClientCmd("escape\n");
+		gEngfuncs.pfnClientCmd((char*)"escape\n");
 
 	MessageBox(nullptr, msg, "Fatal Error", MB_ICONERROR);
 	TerminateProcess((HANDLE)(-1), 0);

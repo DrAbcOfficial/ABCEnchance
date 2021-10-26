@@ -4,6 +4,7 @@
 #include "mathlib.h"
 #include "pm_defs.h"
 #include "event_api.h"
+#include "command.h"
 
 #include "glew.h"
 #include "glutility.h"
@@ -41,8 +42,8 @@ void CHudRadar::GLInit(){
 	m_hRadarBufferTexDepth = GL_GenDepthStencilTexture(gScreenInfo.iWidth, gScreenInfo.iHeight);
 }
 int CHudRadar::Init(){
-	gEngfuncs.pfnAddCommand("+scaleradar", __UserCmd_StartSizeRadar);
-	gEngfuncs.pfnAddCommand("-scaleradar", __UserCmd_EndSizeRadar);
+	ADD_COMMAND("+scaleradar", __UserCmd_StartSizeRadar);
+	ADD_COMMAND("-scaleradar", __UserCmd_EndSizeRadar);
 
 	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_VALUE, NULL);
 	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_VALUE, NULL);

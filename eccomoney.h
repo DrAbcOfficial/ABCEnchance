@@ -10,6 +10,11 @@ private:
 	float flNextUpdateTime = 0;
 	int iDifferMoney = 0;
 
+	std::wstring MessagePrefix;
+	std::wstring MessagePostfix;
+	std::wstring DifferMessagePrefix;
+	std::wstring DifferMessagePostfix;
+
 	vgui::HFont HUDSmallFont;
 	GLint MoneyBackGround;
 	float YOffset;

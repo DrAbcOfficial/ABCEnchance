@@ -65,7 +65,7 @@ int WeaponsResource::CountMenuWeapons() {
 	return c;
 }
 int WeaponsResource::GetWeaponId(char* szName){
-	for each (WEAPON var in rgWeapons){
+	for (WEAPON var : rgWeapons) {
 		if (!var.iId)
 			continue;
 		if (strcmp(var.szName, szName) == 0) {

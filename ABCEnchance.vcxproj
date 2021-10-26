@@ -66,8 +66,9 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableSpecificWarnings>4311;4312;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <ConformanceMode>Default</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -91,10 +92,11 @@
       <DisableSpecificWarnings>4311;4312;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MinimalRebuild>true</MinimalRebuild>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

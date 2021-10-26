@@ -30,10 +30,10 @@ struct EfxVarible{
 };
 EfxVarible gEfxVarible;
 void EfxReset() {
-	gEfxVarible.iGaussBeam = PrecacheExtraModel(GAUSS_LASER_SPR);
-	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel(GAUSS_WAVE_SPR);
-	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel(GAUSS_CHARGE_SPR);
-	gEfxVarible.iGaussLoophole = gEngfuncs.hudGetModelByIndex(PrecacheExtraModel(GAUSS_LOOPHOLE_MDL));
+	gEfxVarible.iGaussBeam = PrecacheExtraModel((char*)GAUSS_LASER_SPR);
+	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel((char*)GAUSS_WAVE_SPR);
+	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel((char*)GAUSS_CHARGE_SPR);
+	gEfxVarible.iGaussLoophole = gEngfuncs.hudGetModelByIndex(PrecacheExtraModel((char*)GAUSS_LOOPHOLE_MDL));
 }
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size){
 	if(gCVars.pBloodEfx->value > 0){
