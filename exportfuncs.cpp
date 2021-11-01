@@ -110,7 +110,9 @@ void Sys_ErrorEx(const char* fmt, ...){
 	TerminateProcess((HANDLE)(-1), 0);
 }
 void CheckOtherPlugin(){
-	g_metaplugins.renderer = (HINTERFACEMODULE)GetModuleHandle("Renderer.dll");
+	mh_plugininfo_t info;
+	if (g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info))
+		g_metaplugins.renderer = true;
 }
 void FillEfxAddress(){
 	Fill_EfxFunc(CL_TempEntAllocHigh);
