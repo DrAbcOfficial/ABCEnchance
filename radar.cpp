@@ -4,7 +4,6 @@
 #include "mathlib.h"
 #include "pm_defs.h"
 #include "event_api.h"
-#include "command.h"
 
 #include "glew.h"
 #include "glutility.h"

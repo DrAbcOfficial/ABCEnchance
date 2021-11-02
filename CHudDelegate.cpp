@@ -7,7 +7,6 @@
 #include "weapon.h"
 #include "pm_defs.h"
 #include "parsemsg.h"
-#include "msghook.h"
 #include "glew.h"
 #include "drawElement.h"
 #include "local.h"

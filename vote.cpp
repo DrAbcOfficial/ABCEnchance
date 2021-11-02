@@ -2,7 +2,6 @@
 #include <string>
 
 #include "parsemsg.h"
-#include "msghook.h"
 #include "hud.h"
 #include "local.h"
 #include "vguilocal.h"

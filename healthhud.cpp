@@ -2,7 +2,6 @@
 #include <parsemsg.h>
 #include <cmath>
 #include "mathlib.h"
-#include "msghook.h"
 #include "glew.h"
 
 #include "hud.h"
