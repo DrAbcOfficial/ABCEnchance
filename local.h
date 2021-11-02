@@ -5,7 +5,7 @@
 typedef struct{
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
 	float*		(*GetClientColor)			(int clientIndex);
-	float(__fastcall* R_CrossHair_ReDraw)	(void* pthis, int dummy, int param_1);
+	int(__fastcall* R_CrossHair_ReDraw)	(void* pthis, int dummy, int param_1);
 	void		(*EVVectorScale)			(float* pucnangle1, float scale, float* pucnangle2);
 	void		(*R_NewMap)					(void);
 	int			(*CL_IsDevOverview)			(void);
