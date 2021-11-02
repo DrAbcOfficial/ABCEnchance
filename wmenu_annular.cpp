@@ -2,7 +2,6 @@
 
 #include "mathlib.h"
 #include "utility.h"
-#include "command.h"
 
 #include "hud.h"
 #include "weapon.h"

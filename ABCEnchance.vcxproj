@@ -126,7 +126,6 @@
     <ClCompile Include="itemhighlight.cpp" />
     <ClCompile Include="playertitle.cpp" />
     <ClCompile Include="radar.cpp" />
-    <ClCompile Include="command.cpp" />
     <ClCompile Include="deathmsg.cpp" />
     <ClCompile Include="drawElement.cpp" />
     <ClCompile Include="efxenchance.cpp" />
@@ -135,7 +134,6 @@
     <ClCompile Include="historyresource.cpp" />
     <ClCompile Include="local.cpp" />
     <ClCompile Include="mathlib.cpp" />
-    <ClCompile Include="msghook.cpp" />
     <ClCompile Include="parsemsg.cpp" />
     <ClCompile Include="plugins.cpp" />
     <ClCompile Include="utility.cpp" />
@@ -170,7 +168,6 @@
     <ClInclude Include="numdisplay.h" />
     <ClInclude Include="playertitle.h" />
     <ClInclude Include="radar.h" />
-    <ClInclude Include="command.h" />
     <ClInclude Include="deathmsg.h" />
     <ClInclude Include="drawElement.h" />
     <ClInclude Include="efxenchance.h" />
@@ -182,7 +179,6 @@
     <ClInclude Include="hud.h" />
     <ClInclude Include="local.h" />
     <ClInclude Include="mathlib.h" />
-    <ClInclude Include="msghook.h" />
     <ClInclude Include="palette.h" />
     <ClInclude Include="parsemsg.h" />
     <ClInclude Include="plugins.h" />

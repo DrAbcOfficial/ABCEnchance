@@ -1,8 +1,6 @@
 ﻿#include <metahook.h>
 #include "parsemsg.h"
 #include "pm_shared.h"
-#include "msghook.h"
-#include "command.h"
 
 #include <cmath>
 #include <mathlib.h>

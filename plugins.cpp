@@ -1,6 +1,5 @@
 #include <metahook.h>
 #include "exportfuncs.h"
-#include "command.h"
 
 cl_enginefunc_t gEnginefuncs;
 mh_interface_t *g_pInterface;
@@ -44,8 +43,6 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	g_dwEngineRdataBase = g_pMetaHookAPI->GetSectionByName(g_dwEngineBase, ".rdata\x0\x0", &g_dwEngineRdataSize);
 
 	memcpy(&gEngfuncs, pEngfuncs, sizeof(gEngfuncs));
-	Cmd_GetCmdBase = *(cmd_function_t * (**)(void))((DWORD)pEngfuncs + 0x198);
-
 	if (g_iEngineType != ENGINE_SVENGINE)
 		Sys_ErrorEx("%s can only run in SvenEngine!\nEngine type: %d\nEngine buildnum: %d", 
 			"ABCEnchance.dll", g_iEngineType, g_dwEngineBuildnum);
@@ -77,8 +74,6 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	FillEfxAddress();
 	FillAddress();
 	InstallHook();
-
-	MSG_Init();
 }
 void IPluginsV4::Shutdown(void){
 	HUD_Clear();

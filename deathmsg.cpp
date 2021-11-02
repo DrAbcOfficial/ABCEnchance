@@ -3,7 +3,6 @@
 
 #include "parsemsg.h"
 #include "pm_shared.h"
-#include "msghook.h"
 #include "cvar_hook.h"
 
 #include "local.h"
