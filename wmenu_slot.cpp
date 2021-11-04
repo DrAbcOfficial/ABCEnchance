@@ -54,7 +54,7 @@ void CWeaponMenuSlot::VidInit(){
 	}
 }
 int CWeaponMenuSlot::DrawBar(int x, int y, int width, int height, float f){
-	int r, g, b, a;
+	int r = 0, g = 0, b = 0, a = 0;
 	if (f < 0)
 		f = 0;
 	if (f > 1)
