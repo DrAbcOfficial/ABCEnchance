@@ -74,6 +74,7 @@ typedef struct{
 	cvar_t* pHudEfx;
 
 	cvar_t* pEccoCheckInfo;
+	cvar_t* pEccoEnable;
 
 	cvar_t* pItemHighLight;
 	cvar_t* pItemHighLightRange;

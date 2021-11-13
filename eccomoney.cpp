@@ -26,6 +26,7 @@ int CHudEccoMoney::Init(void){
 	BackgroundHeight = GET_SCREEN_PIXEL(true, "Ecco.BackgroundHeight");
 
 	gCVars.pEccoCheckInfo = CREATE_CVAR("cl_eccocheck", "0", FCVAR_VALUE, nullptr);
+	gCVars.pEccoEnable = CREATE_CVAR("cl_eccoenable", "1", FCVAR_VALUE, nullptr);
 
 	MoneyColor = pScheme->GetColor("Ecco.MoneyColor", gDefaultColor);
 	MoneyDecreseColor = pScheme->GetColor("Ecco.MoneyDecreseColor", gDefaultColor);
@@ -49,15 +50,18 @@ void CHudEccoMoney::Reset() {
 	flDifferDisapearTime = 0;
 }
 int CHudEccoMoney::Draw(float flTime){
+	if (gCVars.pEccoEnable->value <= 0)
+		return 1;
 	int iEcco = 0;
 	if (gCVars.pEccoCheckInfo->value > 0) {
 		iEcco = atoi(gEngfuncs.PhysInfo_ValueForKey("ecco_value"));
 		if (iEcco == 0)
 			iEcco = gHudDelegate->GetPlayerHUDInfo(gEngfuncs.GetLocalPlayer()->index)->frags;
 	}
+	else if (gCVars.pEccoEnable->value == 2)
+		return 1;
 	else
 		iEcco = gHudDelegate->GetPlayerHUDInfo(gEngfuncs.GetLocalPlayer()->index)->frags;
-
 	gHudDelegate->surface()->DrawSetTexture(-1);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 	gHudDelegate->surface()->DrawSetTexture(MoneyBackGround);
