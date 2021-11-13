@@ -17,6 +17,7 @@
 #include "weapon.h"
 #include "myconst.h"
 #include "extraprecache.h"
+#include "regquery.h"
 //HUD
 #include "ammo.h"
 #include "healthhud.h"
@@ -41,7 +42,6 @@ overviewInfo_t* gDevOverview;
 baseweapon_t* (*g_rgBaseSlots)[10][26] = nullptr;
 int* g_iVisibleMouse = nullptr;
 refdef_t* g_refdef = nullptr;
-
 //FINAL SHIT
 void R_NewMap(void){
 	ClearExtraPrecache();
@@ -111,8 +111,18 @@ void Sys_ErrorEx(const char* fmt, ...){
 }
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
-	if (g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info))
-		g_metaplugins.renderer = true;
+	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
+}
+
+char* CheckLanguage() {
+	char language[128] = { 0 };
+	Sys_GetRegKeyValue((char*)"Software\\Valve\\Steam", (char*)"Language", 
+		language, sizeof(language), (char*)"");
+	if(strlen(language) < 0)
+		strncpy_s(language, sizeof(language) - 1,
+			"english", sizeof(language) - 1);
+	language[sizeof(language) - 1] = 0;
+	return language;
 }
 void FillEfxAddress(){
 	Fill_EfxFunc(CL_TempEntAllocHigh);
@@ -235,24 +245,27 @@ void HUD_Init(void){
 	g_pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, nullptr);
 	pSchemeManager->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = pSchemeManager->GetIScheme(pSchemeManager->GetScheme("ABCEnchance"));
-	pLocalize->AddFile(g_pFileSystem, "abcenchance/Localize.txt");
 	gPluginVersion = atoi(pScheme->GetResourceString("Version"));
 	if (gPluginVersion < PLUGIN_VERSION)
 		Sys_ErrorEx("[ABCEnchance]:\nMissing Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, gPluginVersion);
-	
-	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
+	;
+	char szLocalFilePath[1024] = { 0 };
+	sprintf_s(szLocalFilePath, sizeof(szLocalFilePath) - 1, 
+		"abcenchance/localize/%s.txt", CheckLanguage());
+	if(!pLocalize->AddFile(g_pFileSystem, szLocalFilePath))
+		Sys_ErrorEx("[ABCEnchance]:\nMissing Localize file: %s\n", szLocalFilePath);
 
+	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_VALUE, nullptr);
 	gCVars.pBloodSpriteNumber = CREATE_CVAR("abc_bloodsprite_num", "32", FCVAR_VALUE, nullptr);
 	gCVars.pGaussEfx = CREATE_CVAR("abc_gaussefx", "1", FCVAR_VALUE, nullptr);
-	
 	gCVars.pModelLag = CREATE_CVAR("cl_modellag", "1", FCVAR_VALUE, nullptr);
 	gCVars.pModelLagAutoStop = CREATE_CVAR("cl_modellagautostop", "1", FCVAR_VALUE, nullptr);
 	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_VALUE, nullptr);
-
 	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, nullptr);
+
 	gHudDelegate = new CHudDelegate();
 	gExportfuncs.HUD_Init();
 	gHudDelegate->HUD_Init();

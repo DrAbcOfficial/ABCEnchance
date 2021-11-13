@@ -132,6 +132,9 @@
     <ClCompile Include="wmenu_slot.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="regquery.cpp">
+      <Filter>Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -328,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="wmenu_slot.h">
       <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="regquery.h">
+      <Filter>Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
