@@ -114,16 +114,6 @@ void CheckOtherPlugin(){
 	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
 }
 
-char* CheckLanguage() {
-	char language[128] = { 0 };
-	Sys_GetRegKeyValue((char*)"Software\\Valve\\Steam", (char*)"Language", 
-		language, sizeof(language), (char*)"");
-	if(strlen(language) < 0)
-		strncpy_s(language, sizeof(language) - 1,
-			"english", sizeof(language) - 1);
-	language[sizeof(language) - 1] = 0;
-	return language;
-}
 void FillEfxAddress(){
 	Fill_EfxFunc(CL_TempEntAllocHigh);
 	Fill_EfxFunc(CL_TempEntAlloc);
@@ -249,12 +239,9 @@ void HUD_Init(void){
 	if (gPluginVersion < PLUGIN_VERSION)
 		Sys_ErrorEx("[ABCEnchance]:\nMissing Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, gPluginVersion);
-	;
-	char szLocalFilePath[1024] = { 0 };
-	sprintf_s(szLocalFilePath, sizeof(szLocalFilePath) - 1, 
-		"abcenchance/localize/%s.txt", CheckLanguage());
-	if(!pLocalize->AddFile(g_pFileSystem, szLocalFilePath))
-		Sys_ErrorEx("[ABCEnchance]:\nMissing Localize file: %s\n", szLocalFilePath);
+
+	if(!pLocalize->AddFile(g_pFileSystem, "abcenchance/localize/%language%.txt"))
+		Sys_ErrorEx("[ABCEnchance]:\nMissing Localize file: abcenchance/localize/%language%.txt\n");
 
 	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);

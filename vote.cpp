@@ -16,12 +16,81 @@
 
 #include "vote.h"
 
+#include <regex>
+
 CHudVote m_HudVote;
 pfnUserMsgHook m_pfnVoteMenu;
 pfnUserMsgHook m_pfnEndVote;
 int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	m_HudVote.m_flKeepTime = gEngfuncs.GetClientTime() + READ_BYTE();
+
+	m_HudVote.m_VoteContend[0] = 0;
+	m_HudVote.m_VoteYes[0] = 0;
+	m_HudVote.m_VoteNo[0] = 0;
+
+	std::string voteContent = READ_STRING();
+	if(1)
+	{
+		std::regex pattern("Would you like to kill \"(.*)\"\\?");
+		std::smatch result;
+		if (std::regex_match(voteContent, result, pattern) && result.size() >= 2)
+		{
+			std::string playername = result[1];
+			wchar_t wPlayerName[256] = { 0 };
+			pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
+			pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find("Vote_VoteKill"), 1, wPlayerName);
+			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
+			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
+			return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
+		}
+	}
+	if (1)
+	{
+		std::regex pattern("Would you like to kick \"(.*)\" from the server\\?");
+		std::smatch result;
+		if (std::regex_match(voteContent, result, pattern) && result.size() >= 2)
+		{
+			std::string playername = result[1];
+			wchar_t wPlayerName[256] = { 0 };
+			pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
+			pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find("Vote_VoteKick"), 1, wPlayerName);
+			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
+			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
+			return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
+		}
+	}
+	if (1)
+	{
+		std::regex pattern("Do you wish to ban \"(.*)\" from the server\\?");
+		std::smatch result;
+		if (std::regex_match(voteContent, result, pattern) && result.size() >= 2)
+		{
+			std::string playername = result[1];
+			wchar_t wPlayerName[256] = { 0 };
+			pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
+			pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find("Vote_VoteBan"), 1, wPlayerName);
+			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
+			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
+			return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
+		}
+	}
+	if (1)
+	{
+		std::regex pattern("Would you like to change the map to \"(.*)\"\\?");
+		std::smatch result;
+		if (std::regex_match(voteContent, result, pattern) && result.size() >= 2)
+		{
+			std::string playername = result[1];
+			wchar_t wPlayerName[256] = { 0 };
+			pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
+			pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find("Vote_VoteMap"), 1, wPlayerName);
+			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
+			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
+			return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
+		}
+	}
+
 	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend));
 	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
 	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
@@ -45,9 +114,14 @@ int CHudVote::Init(){
 
 	HudFont = pScheme->GetFont("VoteShitFont");
 
-	VoteTitle = pLocalize->Find("Vote_DefaultMessage");
-	DefaultYes = pLocalize->Find("Vote_DefaultYes");
-	DefaultNo = pLocalize->Find("Vote_DefaultNo");
+	wcsncpy(VoteTitle, pLocalize->Find("Vote_DefaultMessage"), 255);
+	VoteTitle[255] = 0;
+
+	wcsncpy(DefaultYes, pLocalize->Find("Vote_DefaultYes"), 63);
+	DefaultYes[63] = 0;
+	
+	wcsncpy(DefaultNo, pLocalize->Find("Vote_DefaultNo"), 63);
+	DefaultNo[63] = 0;
 
 	Reset();
 	return 0;
@@ -56,20 +130,46 @@ void CHudVote::Reset(){
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iYesIconTga, "abcenchance/tga/vote_yes");
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iNoIconTga, "abcenchance/tga/vote_no");
 }
-void CHudVote::DrawMultiLineStr(const wchar_t *str, int limite, int x, int y, int r, int g, int b){
+void CHudVote::DrawMultiLineStr(const wchar_t *str, int limite, int x, int y, int r, int g, int b, int *tall){
 	int totalW, h;
-	std::wstring szbuf = str;
-	GetStringSize(str, &totalW, &h, HudFont);
-	int c = szbuf.size() * limite / totalW;
-	int iOriginC = szbuf.size();
-	for (int i = iOriginC; i > 0; i -= c){
-		szbuf.insert(i, L"\n");
-	}
-	wchar_t* token = wcstok((wchar_t*)szbuf.c_str(), L"\n");
-	while (token) {
-		DrawVGUI2String(token, x, y, r, g, b, HudFont);
-		y += h;
-		token = wcstok(NULL, L"\n");
+	wchar_t *p = (wchar_t *)str;
+	wchar_t buf[1024];
+	size_t len = 0;
+	while (*p && len < 1023)
+	{
+		buf[len] = *p;
+		buf[len + 1] = 0;
+		p++;
+		len++;
+
+		GetStringSize(buf, &totalW, &h, HudFont);
+
+		if (totalW > limite)
+		{
+			if (len > 0)
+			{
+				buf[len - 1] = 0;
+				p--;
+			}
+
+			DrawVGUI2String(buf, x, y, r, g, b, HudFont);
+
+			len = 0;
+			y += h; 
+			if (tall)
+				*tall += h;
+			continue;
+		}
+		else if ((*p) == 0)
+		{
+			DrawVGUI2String(buf, x, y, r, g, b, HudFont);
+
+			len = 0;
+			y += h;
+			if (tall)
+				*tall += h;
+			break;
+		}
 	}
 }
 int CHudVote::Draw(float flTime){
@@ -90,15 +190,19 @@ int CHudVote::Draw(float flTime){
 	gEngfuncs.pfnFillRGBABlend(x, y, w, h, r, g, b, a);
 
 	OutlineColor.GetColor(r, g, b, a);
-	GetStringSize(VoteTitle, &w, &h, HudFont);
-	x += h;
+
+	GetStringSize(VoteTitle, NULL, &h, HudFont);
+
 	y += 2;
-	DrawMultiLineStr(VoteTitle, w, x, y, r, g, b);
-	y += h + 2;
+	int tall = 0;
+	DrawMultiLineStr(VoteTitle, w, x + 12, y, r, g, b, &tall);
+
+	y += tall + 2;
 	gEngfuncs.pfnFillRGBABlend(x, y, w, 2, r, g, b, a);
-	y += h;
-	DrawMultiLineStr(m_VoteContend, w, x, y, r, g, b);
-	y = xywh[1] + xywh[3] - 6 * h;
+
+	int tall2 = 0;
+	DrawMultiLineStr(m_VoteContend, w, x + 12, y + 4, r, g, b, &tall2);
+	y = xywh[1] + xywh[3] - 6 * tall2;
 
 	x += 2.2 * h;
 	gHudDelegate->surface()->DrawSetTexture(-1);
@@ -114,7 +218,7 @@ int CHudVote::Draw(float flTime){
 	gHudDelegate->surface()->DrawSetTexture(m_iNoIconTga);
 	gHudDelegate->surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
 	x += 2.2 * h;
-	wsprintfW(buf, L"F2  %s", !m_VoteNo[0] ? DefaultNo : m_VoteNo);
+	_swprintf(buf, L"F2  %s", !m_VoteNo[0] ? DefaultNo : m_VoteNo);
 	DrawVGUI2String(buf, x, y, r, g, b, HudFont);
 	return 0;
 }
