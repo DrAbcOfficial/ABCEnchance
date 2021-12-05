@@ -14,7 +14,7 @@ public:
 
 	bool m_bInVoting;
 private:
-	void DrawMultiLineStr(const wchar_t* str, int limite, int x, int y, int r, int g, int b);
+	void DrawMultiLineStr(const wchar_t* str, int limite, int x, int y, int r, int g, int b, int *tall);
 	GLint m_iYesIconTga;
 	GLint m_iNoIconTga;
 
@@ -26,9 +26,9 @@ private:
 	Color OutlineColor;
 	Color BackGoundColor;
 
-	wchar_t* VoteTitle;
-	wchar_t* DefaultYes;
-	wchar_t* DefaultNo;
+	wchar_t VoteTitle[256];
+	wchar_t DefaultYes[64];
+	wchar_t DefaultNo[64];
 
 	vgui::HFont HudFont;
 };
