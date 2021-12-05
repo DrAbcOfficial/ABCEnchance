@@ -102,6 +102,7 @@ void CHudDelegate::HUD_VidInit(void){
 	m_HudArmorHealth.VidInit();
 	m_HudCustomAmmo.VidInit();
 	m_HudRadar.VidInit();
+	m_HudVote.VidInit();
 }
 void CHudDelegate::HUD_Draw(float flTime){
 	if (gCVars.pDynamicHUD->value <= 0)
