@@ -126,6 +126,9 @@ int CHudVote::Init(){
 	Reset();
 	return 0;
 }
+void CHudVote::VidInit() {
+	m_bInVoting = false;
+}
 void CHudVote::Reset(){
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iYesIconTga, "abcenchance/tga/vote_yes");
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iNoIconTga, "abcenchance/tga/vote_no");

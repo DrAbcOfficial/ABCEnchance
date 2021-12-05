@@ -3,6 +3,7 @@ class CHudVote {
 public:
 	int Init();
 	int Draw(float flTime);
+	void VidInit();
 	void Reset();
 	int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding);
 	int StartVote();
