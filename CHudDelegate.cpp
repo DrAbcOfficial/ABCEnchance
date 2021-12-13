@@ -109,9 +109,9 @@ void CHudDelegate::HUD_Draw(float flTime){
 		return;
 	m_HudEfx.Draw(flTime);
 	m_HudPlayerTitle.Draw(flTime);
-	m_HudCustomAmmo.Draw(flTime);
 	m_HudArmorHealth.Draw(flTime);
 	m_HudRadar.Draw(flTime);
+	m_HudCustomAmmo.Draw(flTime);
 	m_HudDeathMsg.Draw(flTime);
 	m_HudCrosshair.Draw(flTime);
 	m_HudVote.Draw(flTime);
