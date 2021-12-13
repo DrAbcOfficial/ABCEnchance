@@ -357,8 +357,12 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 		//¾­µäÑùÊ½
 		if (gCVars.pAmmoMenuStyle->value <= 0) {
 			wp = gWR.GetFirstPos(iNowSlot);
-			if (wp && wp->iId > 0)
-				gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
+			if (wp && wp->iId > 0) {
+				if (gWR.HasAmmo(wp))
+					gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
+				else
+					return;
+			}
 		}
 	}
 	gridDrawMenu[iNowSlot].iId = -1;
