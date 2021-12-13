@@ -12,8 +12,6 @@ void main()
         vColor.r = pow(vColor.r, gamma);
         vColor.g = pow(vColor.g, gamma);
         vColor.b = pow(vColor.b, gamma);
-        //if(vColor.r == 0 && vColor.g == 0 && vColor.b == 0)
-        //    vColor.a = 0;
     }
     gl_FragColor = vColor;
 }
