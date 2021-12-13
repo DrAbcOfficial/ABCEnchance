@@ -160,7 +160,10 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 				p = gWR.GetWeapon(id);
 				if (!p)
 					continue;
-				SelectColor.GetColor(r, g, b, a);
+				if (gWR.HasAmmo(p))
+					SelectColor.GetColor(r, g, b, a);
+				else
+					SelectEmptyColor.GetColor(r, g, b, a);
 				// if active, then we must have ammo.
 				if (gWR.gridDrawMenu[i].iPos == iPos){
 					a = 255 * flAlphaRatio;
