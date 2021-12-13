@@ -337,6 +337,10 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
 void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
+
+	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
+		gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
+
 	if (iSlot >= MAX_WEAPON_SLOTS)
 		iSlot = 0;
 	else if (iSlot < 0)
@@ -384,8 +388,6 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 			gridDrawMenu[iNowSlot].iPos = -1;
 		return;
 	}
-	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade = 
-		gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
 }
 WEAPON* WeaponsResource::GetFirstPos(int iSlot){
 	if (iSlot >= MAX_WEAPON_SLOTS)
