@@ -57,7 +57,7 @@ int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1){
 }
 void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
-	VectorCopy(punchangle1, gHudDelegate->m_vecClientEVPunch);
+	mathlib::VectorCopy(punchangle1, gHudDelegate->m_vecClientEVPunch);
 }
 int CL_IsDevOverview(void){
 	return gHudDelegate->m_iIsOverView ? 1 : gHookFuncs.CL_IsDevOverview();

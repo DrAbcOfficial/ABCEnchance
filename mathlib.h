@@ -16,6 +16,9 @@ typedef int fixed16_t;
 #define SIDE_BACK 1
 #define SIDE_CROSS -2
 
+#define RANDOM_LONG(a, b) gEngfuncs.pfnRandomLong(a, b)
+#define RANDOM_FLOAT(a, b) gEngfuncs.pfnRandomFloat(a, b)
+
 struct mplane_s;
 #define AngleIVectors AngleVectorsTranspose
 namespace mathlib {
@@ -32,32 +35,31 @@ namespace mathlib {
 	const float METERS_PER_INCH = 0.0254f;
 	constexpr int nanmask = 255 << 23;
 
-	constexpr bool IS_NAN(float x);
-	constexpr float DEG2RAD(float a);
-	constexpr float RAD2DEG(float r);
-	constexpr float clamp(float num, float minn, float maxn);
-	constexpr int clamp(int num, int minn, int maxn);
-	constexpr float METER2INCH(float x);
-	constexpr float INCH2METER(float x);
-	constexpr int RANDOM_LONG(int a, int b);
-	constexpr float RANDOM_FLOAT(float a, float b);
-	constexpr void VectorSubtract(vec3_t a, vec3_t b, vec3_t c);
-	constexpr void VectorAdd(vec3_t a, vec3_t b, vec3_t c);
-	constexpr void VectorAddFloat(vec3_t a, float f);
-	constexpr void VectorMultipiler(vec3_t a, float f);
-	constexpr void VectorCopy(vec3_t a, vec3_t b);
-	constexpr void VectorReverse(vec3_t a);
-	constexpr void Vector2Copy(vec2_t a, vec2_t b);
-	constexpr void VectorClear(vec3_t a);
-	constexpr float DotProduct(vec3_t x, vec3_t y);
-	constexpr float DotProduct(const vec3_t x, const vec3_t y);
-	constexpr void ColorCalcuAlpha(int& r, int& g, int& b, int a);
-	constexpr void Vector2Rotate(vec2_t out, float x, float y, float rotate);
-	constexpr void Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa);
-	constexpr float max3(float a, float b, float c);
-	constexpr int max3(int a, int b, int c);
-	constexpr float min3(float a, float b, float c);
-	constexpr int min3(int a, int b, int c);
+	bool IS_NAN(float x);
+	float DEG2RAD(float a);
+	float RAD2DEG(float r);
+	float clamp(float num, float minn, float maxn);
+	int clamp(int num, int minn, int maxn);
+	float METER2INCH(float x);
+	float INCH2METER(float x);
+	void VectorSubtract(vec3_t a, vec3_t b, vec3_t c);
+	void VectorAdd(vec3_t a, vec3_t b, vec3_t c);
+	void VectorAddFloat(vec3_t a, float f);
+	void VectorMultipiler(vec3_t a, float f);
+	void VectorCopy(vec3_t a, vec3_t b);
+	void VectorReverse(vec3_t a);
+	void Vector2Copy(vec2_t a, vec2_t b);
+	void VectorClear(vec3_t a);
+	float DotProduct(vec3_t x, vec3_t y);
+	float DotProduct(const vec3_t x, const vec3_t y);
+	void ColorCalcuAlpha(int& r, int& g, int& b, int a);
+	void Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa);
+	float max3(float a, float b, float c);
+	int max3(int a, int b, int c);
+	float min3(float a, float b, float c);
+	int min3(int a, int b, int c);
+
+	void Vector2Rotate(vec2_t out, float x, float y, float rotate);
 
 	void MatrixCopy(float in[4][3], float out[4][3]);
 	void VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc);

@@ -20,6 +20,8 @@
 #include "CHudDelegate.h"
 #include "wmenu_slot.h"
 
+using namespace mathlib;
+
 CWeaponMenuSlot m_HudWMenuSlot;
 
 void CWeaponMenuSlot::Init(){

@@ -505,7 +505,7 @@ void CHudCustomAmmo::IN_Accumulate(){
 		y -= gScreenInfo.iHeight / 2;
 		y = -y;
 		m_HudWMenuAnnular.m_fCursorAngle = atan2(y, x);
-		int s = m_HudWMenuAnnular.m_fCursorAngle / (0.2 * M_PI);
+		int s = m_HudWMenuAnnular.m_fCursorAngle / (0.2 * mathlib::M_PI);
 		s = m_HudWMenuAnnular.m_fCursorAngle >= 0 ? s : 9 + s;
 		if (gWR.gridDrawMenu[s].iId > -1)
 			gWR.iNowSlot = s;

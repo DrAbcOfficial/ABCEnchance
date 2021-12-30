@@ -20,6 +20,8 @@
 
 #include "playertitle.h"
 
+using namespace mathlib;
+
 CHudPlayerTitle m_HudPlayerTitle;
 int CHudPlayerTitle::Init(void){
 	

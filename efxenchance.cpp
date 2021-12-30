@@ -19,6 +19,8 @@
 #define GAUSS_WAVE_LENGTH 48
 #define GAUSS_LASER_P_WIDTH 2
 #define GAUSS_LASER_S_WIDTH 4
+using namespace mathlib;
+
 struct EfxVarible{
 	int iGaussBeam;
 	int iGaussWaveBeam;
@@ -217,8 +219,8 @@ void DoGaussFire(float fparam1, int bparam1) {
 						gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 						gEngfuncs.pEventAPI->EV_PlayerTrace(beam_tr.endpos, tr.endpos, PM_NORMAL, entignore, &beam_tr);
 						//求该射线长度为n
-						VectorSubtract(beam_tr.endpos, tr.endpos, vecLength)
-							n = VectorLength(vecLength);
+						VectorSubtract(beam_tr.endpos, tr.endpos, vecLength);
+						n = VectorLength(vecLength);
 						//如果长度比伤害小
 						//射线的后面一点做球
 						VectorCopy(beam_tr.endpos, vecRandomSrc);

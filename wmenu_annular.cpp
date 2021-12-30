@@ -24,6 +24,8 @@
 #include "CHudDelegate.h"
 #include "wmenu_annular.h"
 
+using namespace mathlib;
+
 SHADER_DEFINE(pp_gaussianblurh);
 SHADER_DEFINE(pp_gaussianblurv);
 CWeaponMenuAnnular m_HudWMenuAnnular;

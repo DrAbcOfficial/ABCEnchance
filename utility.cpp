@@ -6,6 +6,8 @@
 
 #include "utility.h"
 
+using namespace mathlib;
+
 void RGBToHSV(int r, int g, int b, float& h, float& s, float& v){
 	float fr = r / 255.0, fg = g / 255.0, fb = b / 255.0;
 	float max = max3(fr, fg, fb);
@@ -32,8 +34,8 @@ void HSVToRGB(float h, float s, float v, int& r, int& g, int& b){
 	//0<=s<=1
 	//0<=v<=1
 	h = fmod(h, 360);
-	s = clamp(s, 0, 1);
-	v = clamp(v, 0, 1);
+	s = clamp(s, 0.0, 1.0);
+	v = clamp(v, 0.0, 1.0);
 	float section = h / 60;
 	float c = v * s;
 	float x = c * (1 - abs(fmod(section, 2) - 1));

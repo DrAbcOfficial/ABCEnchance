@@ -5,6 +5,8 @@
 #include "exportfuncs.h"
 #include "viewmodellag.h"
 //copied and edited from here: https://github.com/SNMetamorph/PrimeXT/blob/master/client/r_view.cpp#L266
+
+using namespace mathlib;
 void V_CalcViewModelLag(ref_params_t* pparams){
 	//¼¦ÃçÎäÆ÷
 	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != gCVars.pCvarDefaultFOV->value)

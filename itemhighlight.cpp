@@ -18,12 +18,14 @@
 #include "itemhighlight.h"
 
 #define ITEM_LIST_PATH "abcenchance/ItemHighLightList.txt"
+using namespace mathlib;
+
 std::vector<cl_hightlight_s*> aryHighLightList;
 
 CHudItemHighLight m_HudItemHighLight;
 char szItemPraseBuf[256];
 void RangeSizeCallBack(cvar_t* cvar) {
-	cvar->value = clamp(cvar->value, 0, 344);
+	cvar->value = clamp(cvar->value, 0.0, 344.0);
 }
 int CHudItemHighLight::Init(){
 	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "1", FCVAR_VALUE, NULL);
