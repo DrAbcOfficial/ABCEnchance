@@ -18,6 +18,7 @@
 #include "utility.h"
 
 #include "eccomoney.h"
+using namespace mathlib;
 
 CHudEccoMoney m_HudEccoMoney;
 int CHudEccoMoney::Init(void){

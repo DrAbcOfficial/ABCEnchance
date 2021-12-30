@@ -43,7 +43,7 @@ int CHudEfx::Draw(float flTime){
 			flDyingFlincAdvanceTime = flTime;
 		}
 		gHudDelegate->surface()->DrawSetColor(255, 25, 25,
-			clamp((255 * (DAGER_HEALTH - m_HudArmorHealth.m_iHealth) / DAGER_HEALTH + iDyingFlinc - 30), 0, 255));
+			mathlib::clamp((255 * (DAGER_HEALTH - m_HudArmorHealth.m_iHealth) / DAGER_HEALTH + iDyingFlinc - 30), 0, 255));
 		gHudDelegate->surface()->DrawSetTexture(DarkconerImg);
 		gHudDelegate->surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 	}

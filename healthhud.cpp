@@ -16,6 +16,8 @@
 #include "healthhud.h"
 
 #define DAMAGE_NAME "sprites/%d_dmg.spr"
+using namespace mathlib;
+
 int aryDmgFlags[NUM_DMG_TYPES] ={
 	DMG_POISON,
 	DMG_ACID,

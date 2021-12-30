@@ -22,6 +22,7 @@ pfnUserMsgHook m_pfnTextMsg;
 pfnUserMsgHook m_pfnDeathMsg;
 
 using namespace std;
+using namespace mathlib;
 wregex parttenSuicide(MSG_SUICIDENOTIFY);
 wregex parttenKilled(MSG_KILLEDNOTIFY);
 wregex parttenPlayer(MSG_PLAYERKILLNOTIFY);

@@ -2,85 +2,78 @@
 #include <metahook.h>
 #include <mathlib.h>
 
-constexpr bool mathlib::IS_NAN(float x){
+bool mathlib::IS_NAN(float x){
 	return ((*(int*)&x) & nanmask) == nanmask;
 }
-constexpr float mathlib::DEG2RAD(float a) {
+float mathlib::DEG2RAD(float a) {
 	return (a * M_PI) / 180.0F;
 }
-constexpr float mathlib::RAD2DEG(float r) {
+float mathlib::RAD2DEG(float r) {
 	return (r * 180.0F) / M_PI;
 }
-constexpr float mathlib::clamp(float num, float minn, float maxn) {
+float mathlib::clamp(float num, float minn, float maxn) {
 	return max(min(num, maxn), minn);
 }
-constexpr int mathlib::clamp(int num, int minn, int maxn) {
+int mathlib::clamp(int num, int minn, int maxn) {
 	return max(min(num, maxn), minn);
 }
-constexpr float mathlib::METER2INCH(float x) {
+float mathlib::METER2INCH(float x) {
 	return (float)(x * (1.0f / mathlib::METERS_PER_INCH));
 }
-constexpr float mathlib::INCH2METER(float x) {
+float mathlib::INCH2METER(float x) {
 	return (float)(x * (mathlib::METERS_PER_INCH / 1.0f));
 }
-constexpr int mathlib::RANDOM_LONG(int a, int b) {
-	return gEngfuncs.pfnRandomLong(a, b);
-}
-constexpr float mathlib::RANDOM_FLOAT(float a, float b) {
-	return gEngfuncs.pfnRandomFloat(a, b);
-}
-constexpr void mathlib::VectorSubtract(vec3_t a, vec3_t b, vec3_t c) {
+void mathlib::VectorSubtract(vec3_t a, vec3_t b, vec3_t c) {
 	(c)[0] = (a)[0] - (b)[0]; (c)[1] = (a)[1] - (b)[1]; (c)[2] = (a)[2] - (b)[2];
 }
-constexpr void mathlib::VectorAdd(vec3_t a, vec3_t b, vec3_t c) {
+void mathlib::VectorAdd(vec3_t a, vec3_t b, vec3_t c) {
 	(c)[0] = (a)[0] + (b)[0]; (c)[1] = (a)[1] + (b)[1]; (c)[2] = (a)[2] + (b)[2];
 }
-constexpr void mathlib::VectorAddFloat(vec3_t a, float f) {
+void mathlib::VectorAddFloat(vec3_t a, float f) {
 	a[0] += f; a[1] += f; a[2] += f;
 }
-constexpr void mathlib::VectorMultipiler(vec3_t a, float f) {
+void mathlib::VectorMultipiler(vec3_t a, float f) {
 	a[0] *= f; a[1] *= f; a[2] *= f;
 }
-constexpr void mathlib::VectorCopy(vec3_t a, vec3_t b) {
+void mathlib::VectorCopy(vec3_t a, vec3_t b) {
 	(b)[0] = (a)[0]; (b)[1] = (a)[1]; (b)[2] = (a)[2];
 }
-constexpr void mathlib::VectorReverse(vec3_t a) {
+void mathlib::VectorReverse(vec3_t a) {
 	(a[0]) = -a[0]; (a[1]) = -a[1]; (a[2]) = -a[2];
 }
-constexpr void mathlib::Vector2Copy(vec2_t a, vec2_t b) {
+void mathlib::Vector2Copy(vec2_t a, vec2_t b) {
 	(b)[0] = (a)[0]; (b)[1] = (a)[1];
 }
-constexpr void mathlib::VectorClear(vec3_t a) {
+void mathlib::VectorClear(vec3_t a) {
 	(a)[0] = (a)[1] = (a)[2] = 0.0;
 }
-constexpr float mathlib::DotProduct(vec3_t x, vec3_t y) {
+float mathlib::DotProduct(vec3_t x, vec3_t y) {
 	return ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2]);
 }
-constexpr float mathlib::DotProduct(const vec3_t x, const vec3_t y) {
+float mathlib::DotProduct(const vec3_t x, const vec3_t y) {
 	return ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2]);
 }
-constexpr void  mathlib::ColorCalcuAlpha(int& r, int& g, int& b, int a) {
+void  mathlib::ColorCalcuAlpha(int& r, int& g, int& b, int a) {
 	(r) *= (float)(a) / 255; (g) *= (float)(a) / 255; (b) *= (float)(a) / 255;
 }
-constexpr void mathlib::Vector2Rotate(vec2_t out, float x, float y, float rotate) {
-	out[0] = x * cos(rotate) - y * sin(rotate); out[1] = x * sin(rotate) + y * cos(rotate);
-}
-constexpr void mathlib::Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa) {
+void mathlib::Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa) {
 	out[0] = x * ca - y * sa; out[1] = x * sa + y * ca;
 }
-constexpr float mathlib::max3(float a, float b, float c) {
+float mathlib::max3(float a, float b, float c) {
 	return max(a, max(b, c));
 }
-constexpr int mathlib::max3(int a, int b, int c) {
+int mathlib::max3(int a, int b, int c) {
 	return max(a, max(b, c));
 }
-constexpr float mathlib::min3(float a, float b, float c) {
+float mathlib::min3(float a, float b, float c) {
 	return min(a, min(b, c));
 }
-constexpr int mathlib::min3(int a, int b, int c) {
+int mathlib::min3(int a, int b, int c) {
 	return min(a, min(b, c));
 }
-
+void mathlib::Vector2Rotate(vec2_t out, float x, float y, float rotate) {
+	out[0] = x * cos(rotate) - y * sin(rotate); out[1] = x * sin(rotate) + y * cos(rotate);
+}
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal){
 	float d;
 	vec3_t n;

@@ -22,6 +22,7 @@
 #include "crosshair.h"
 
 CHudCustomCrosshair m_HudCrosshair;
+using namespace mathlib;
 
 int CHudCustomCrosshair::Init(void){
 	gCVars.pDynamicCrossHair = CREATE_CVAR("cl_crosshair", "1", FCVAR_VALUE, NULL);

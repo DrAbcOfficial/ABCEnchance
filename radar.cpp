@@ -21,6 +21,7 @@
 #include "weapon.h"
 #include "CHudDelegate.h"
 #include "radar.h"
+using namespace mathlib;
 
 CHudRadar m_HudRadar;
 SHADER_DEFINE(pp_radarlight);
@@ -169,8 +170,8 @@ void CHudRadar::Draw(float flTime){
 	//»æÖÆÖ¸±±Õë
 	float rotate = DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[YAW]);
 	h = gCVars.pRadar->value > 1 ? size / 2 : fsqrt(2 * pow(size, 2)) / 2;
-	stx = clamp(((iStartX + size / 2) + h * cos(rotate)), iStartX, iStartX + size);
-	sty = clamp(((iStartY + size / 2) + h * sin(rotate)), iStartY, iStartY + size);
+	stx = clamp(((iStartX + size / 2) + h * cos(rotate)), (float)iStartX, (float)iStartX + size);
+	sty = clamp(((iStartY + size / 2) + h * sin(rotate)), (float)iStartY, (float)iStartY + size);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
 	gHudDelegate->surface()->DrawSetTexture(NorthImg);
 	w = NorthPointerSize / 2;
