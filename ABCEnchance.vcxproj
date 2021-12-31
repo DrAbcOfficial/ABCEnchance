@@ -106,7 +106,8 @@
       <AdditionalDependencies>%(AdditionalDependencies);OpenGL32.lib;libglew32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "$(ProjectDir)..\..\Build\svencoop\metahook\plugins\"</Command>
+      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "$(ProjectDir)..\..\Build\svencoop\metahook\plugins\"
+copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
