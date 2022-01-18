@@ -22,6 +22,21 @@
 CHudVote m_HudVote;
 pfnUserMsgHook m_pfnVoteMenu;
 pfnUserMsgHook m_pfnEndVote;
+
+bool VotePatternCheck(std::string content, char* szpattern, char* localtoken) {
+	std::regex pattern(szpattern);
+	std::smatch result;
+	if (std::regex_match(content, result, pattern) && result.size() >= 2){
+		std::string playername = result[1];
+		wchar_t wPlayerName[256] = { 0 };
+		pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
+		pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find(localtoken), 1, wPlayerName);
+		pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
+		pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
+		return true;
+	}
+	return false;
+}
 int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	m_HudVote.m_flKeepTime = gEngfuncs.GetClientTime() + READ_BYTE();
@@ -31,66 +46,11 @@ int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf){
 	m_HudVote.m_VoteNo[0] = 0;
 
 	std::string voteContent = READ_STRING();
-	if(1)
-	{
-		std::regex pattern("Would you like to kill \"(.*)\"\\?");
-		std::smatch result;
-		if (std::regex_match(voteContent, result, pattern) && result.size() >= 2)
-		{
-			std::string playername = result[1];
-			wchar_t wPlayerName[256] = { 0 };
-			pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
-			pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find("Vote_VoteKill"), 1, wPlayerName);
-			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
-			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
-			return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
-		}
-	}
-	if (1)
-	{
-		std::regex pattern("Would you like to kick \"(.*)\" from the server\\?");
-		std::smatch result;
-		if (std::regex_match(voteContent, result, pattern) && result.size() >= 2)
-		{
-			std::string playername = result[1];
-			wchar_t wPlayerName[256] = { 0 };
-			pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
-			pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find("Vote_VoteKick"), 1, wPlayerName);
-			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
-			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
-			return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
-		}
-	}
-	if (1)
-	{
-		std::regex pattern("Do you wish to ban \"(.*)\" from the server\\?");
-		std::smatch result;
-		if (std::regex_match(voteContent, result, pattern) && result.size() >= 2)
-		{
-			std::string playername = result[1];
-			wchar_t wPlayerName[256] = { 0 };
-			pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
-			pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find("Vote_VoteBan"), 1, wPlayerName);
-			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
-			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
-			return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
-		}
-	}
-	if (1)
-	{
-		std::regex pattern("Would you like to change the map to \"(.*)\"\\?");
-		std::smatch result;
-		if (std::regex_match(voteContent, result, pattern) && result.size() >= 2)
-		{
-			std::string playername = result[1];
-			wchar_t wPlayerName[256] = { 0 };
-			pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
-			pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find("Vote_VoteMap"), 1, wPlayerName);
-			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
-			pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
-			return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
-		}
-	}
+	if( VotePatternCheck(voteContent, "Would you like to kill \"(.*)\"\\?", "Vote_VoteKill") ||
+		VotePatternCheck(voteContent, "Would you like to kick \"(.*)\" from the server\\?", "Vote_VoteKick")||
+		VotePatternCheck(voteContent, "Do you wish to ban \"(.*)\" from the server\\?", "Vote_VoteBan") ||
+		VotePatternCheck(voteContent, "Would you like to change the map to \"(.*)\"\\?", "Vote_VoteMap"))
+		return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
 
 	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend));
 	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
