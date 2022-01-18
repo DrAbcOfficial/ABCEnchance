@@ -282,12 +282,10 @@ void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 	Vector2RotateCASA(var.vecHUDC, -sprWidth, y1, ca, sa);
 	Vector2RotateCASA(var.vecHUDD, sprWidth, y1, ca, sa);
 	//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
-	int halfWidth = gScreenInfo.iWidth / 2;
-	int halfHeight = gScreenInfo.iHeight / 2;
-	CenterPos2OpenGLPos(var.vecHUDA, halfWidth, halfHeight);
-	CenterPos2OpenGLPos(var.vecHUDB, halfWidth, halfHeight);
-	CenterPos2OpenGLPos(var.vecHUDC, halfWidth, halfHeight);
-	CenterPos2OpenGLPos(var.vecHUDD, halfWidth, halfHeight);
+	CenterPos2OpenGLPos(var.vecHUDA);
+	CenterPos2OpenGLPos(var.vecHUDB);
+	CenterPos2OpenGLPos(var.vecHUDC);
+	CenterPos2OpenGLPos(var.vecHUDD);
 }
 int CHudArmorHealth::DrawPain(float flTime){
 	int r, g, b, a;
