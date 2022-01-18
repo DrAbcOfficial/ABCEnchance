@@ -56,15 +56,16 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 }
 
 void CHudDelegate::GL_Init(void){
-	pp_gaussianblurh.program = R_CompileShaderFileEx("renderer\\shader\\fullscreentriangle.vert.glsl", "renderer\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_HORIZONAL\n", NULL);
+	pp_gaussianblurh.program = R_CompileShaderFileEx("abcenchance\\shader\\fullscreentriangle.vert.glsl", "abcenchance\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_HORIZONAL\n", NULL);
 	if (pp_gaussianblurh.program)
 		SHADER_UNIFORM(pp_gaussianblurh, du, "du");
-	pp_gaussianblurv.program = R_CompileShaderFileEx("renderer\\shader\\fullscreentriangle.vert.glsl", "renderer\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_VERTICAL\n", NULL);
+	pp_gaussianblurv.program = R_CompileShaderFileEx("abcenchance\\shader\\fullscreentriangle.vert.glsl", "abcenchance\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_VERTICAL\n", NULL);
 	if (pp_gaussianblurv.program)
 		SHADER_UNIFORM(pp_gaussianblurv, du, "du");
 
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
+	m_HudEccoBuyMenu.GLInit();
 }
 void CHudDelegate::HUD_Init(void){
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);

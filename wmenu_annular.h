@@ -11,7 +11,6 @@ public:
 	float m_fCursorAngle = 0;
 	bool m_bOpeningMenu = false;
 private:
-	void DrawScreenQuad();
 	void DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index);
 
 	GLint iSelectCyclerSpr = 0;
