@@ -1,6 +1,7 @@
 #include <metahook.h>
 #include "cvardef.h"
 #include "glew.h"
+#include "gldef.h"
 #include "mathlib.h"
 
 #include "local.h"

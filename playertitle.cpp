@@ -3,6 +3,7 @@
 #include "mathlib.h"
 
 #include "glew.h"
+#include "gldef.h"
 #include "triangleapi.h"
 #include "gl_draw.h"
 

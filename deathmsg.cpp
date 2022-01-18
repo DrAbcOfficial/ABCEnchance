@@ -91,7 +91,7 @@ int CHudDeathMsg::Draw(float flTime){
 	int w;
 	int h;
 	int r, g, b, a;
-	for (deathmsgItem_t& var: aryKeepMsg){
+	for (deathmsgItem_t var: aryKeepMsg){
 		if (var.addTime <= 0)
 			continue;
 		if (var.addTime <= flTime)

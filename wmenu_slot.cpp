@@ -2,6 +2,7 @@
 
 #include "mathlib.h"
 #include "utility.h"
+#include "glew.h"
 
 #include "hud.h"
 #include "weapon.h"
@@ -9,13 +10,13 @@
 #include "vguilocal.h"
 #include "local.h"
 #include "myconst.h"
+#include "gldef.h"
 
 #include "cvardef.h"
 #include "weaponbank.h"
 
 #include "drawElement.h"
 
-#include "glew.h"
 #include "ammo.h"
 #include "CHudDelegate.h"
 #include "wmenu_slot.h"

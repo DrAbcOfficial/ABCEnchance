@@ -13,6 +13,7 @@
 #include "myconst.h"
 
 #include "glew.h"
+#include "gldef.h"
 #include "weapon.h"
 #include "ammo.h"
 

@@ -8,6 +8,7 @@
 #include "weapon.h"
 #include "vguilocal.h"
 #include "myconst.h"
+#include "gldef.h"
 
 #include "CHudDelegate.h"
 #include "drawElement.h"
@@ -290,7 +291,7 @@ void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 }
 int CHudArmorHealth::DrawPain(float flTime){
 	int r, g, b, a;
-	for (indicatorinfo_t& var : aryIndicators) {
+	for (indicatorinfo_t var : aryIndicators) {
 		if (var.flKeepTime <= flTime)
 			continue;
 		if (var.iDamage <= 0 && var.iArmor <= 0)

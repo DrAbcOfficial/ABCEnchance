@@ -8,6 +8,7 @@
 #include "weapon.h"
 #include "CColor.h"
 #include "glew.h"
+#include "gldef.h"
 
 #include "CHudDelegate.h"
 #include "drawElement.h"

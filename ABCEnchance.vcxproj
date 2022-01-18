@@ -116,6 +116,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClCompile Include="CHudDelegate.cpp" />
     <ClCompile Include="crosshair.cpp" />
     <ClCompile Include="cvar_hook.cpp" />
+    <ClCompile Include="eccobuymenu.cpp" />
     <ClCompile Include="eccomoney.cpp" />
     <ClCompile Include="efxhud.cpp" />
     <ClCompile Include="encode.cpp" />
@@ -154,6 +155,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClInclude Include="basemenu.h" />
     <ClInclude Include="CHudDelegate.h" />
     <ClInclude Include="CColor.h" />
+    <ClInclude Include="eccobuymenu.h" />
     <ClInclude Include="eccomoney.h" />
     <ClInclude Include="efxhud.h" />
     <ClInclude Include="encode.h" />
