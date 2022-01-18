@@ -57,15 +57,6 @@ void CWeaponMenuAnnular::Select() {
 	}
 }
 void CWeaponMenuAnnular::GLInit() {
-	ADD_COMMAND("+annularmenu", __UserCmd_OpenAnnularMenu);
-	ADD_COMMAND("-annularmenu", __UserCmd_CloseAnnularMenu);
-	pp_gaussianblurh.program = R_CompileShaderFileEx("renderer\\shader\\fullscreentriangle.vert.glsl", "renderer\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_HORIZONAL\n", NULL);
-	if (pp_gaussianblurh.program)
-		SHADER_UNIFORM(pp_gaussianblurh, du, "du");
-	pp_gaussianblurv.program = R_CompileShaderFileEx("renderer\\shader\\fullscreentriangle.vert.glsl", "renderer\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_VERTICAL\n", NULL);
-	if (pp_gaussianblurv.program)
-		SHADER_UNIFORM(pp_gaussianblurv, du, "du");
-
 	glGenFramebuffersEXT(1, &m_hGaussianBufferVFBO);
 	m_hGaussianBufferVTex = GL_GenTextureRGB8(gScreenInfo.iWidth, gScreenInfo.iHeight);
 	glGenFramebuffersEXT(1, &m_hGaussianBufferHFBO);
@@ -78,6 +69,9 @@ void CWeaponMenuAnnular::Clear(){
 		glDeleteTextures(1, &m_hGaussianBufferHTex);
 }
 void CWeaponMenuAnnular::Init() {
+	ADD_COMMAND("+annularmenu", __UserCmd_OpenAnnularMenu);
+	ADD_COMMAND("-annularmenu", __UserCmd_CloseAnnularMenu);
+
 	SelectColor = pScheme->GetColor("WMenuAnnular.SelectColor", gDefaultColor);
 	SelectRinColor = pScheme->GetColor("WMenuAnnular.SelectRinColor", gDefaultColor);
 	SelectIconColor = pScheme->GetColor("WMenuAnnular.SelectIconColor", gDefaultColor);
@@ -142,19 +136,6 @@ void CWeaponMenuAnnular::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, i
 	GetStringSize(buf, &iTextWidth, NULL, HUDFont);
 	DrawVGUI2String(buf, xpos - iTextWidth / 2, ypos + iHeight, r, g, b, HUDFont, true);
 }
-void CWeaponMenuAnnular::DrawScreenQuad() {
-	glColor4ub(255, 255, 255, 255);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0);
-	glVertex2f(0, 0);
-	glTexCoord2f(1, 0);
-	glVertex2f(gScreenInfo.iWidth, 0);
-	glTexCoord2f(1, 1);
-	glVertex2f(gScreenInfo.iWidth, gScreenInfo.iHeight);
-	glTexCoord2f(0, 1);
-	glVertex2f(0, gScreenInfo.iHeight);
-	glEnd();
-}
 int CWeaponMenuAnnular::DrawWList(float flTime) {
 	if (m_fFade <= flTime) {
 		if (m_bSelectMenuDisplay) {
@@ -181,8 +162,8 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 	vec2_t aryOut[10];
 	vec2_t aryIn[10];
 	WEAPON* wp;
-	int halfWidth = gScreenInfo.iWidth / 2;
-	int halfHeight = gScreenInfo.iHeight / 2;
+	int halfWidth = ScreenWidth / 2;
+	int halfHeight = ScreenHeight / 2;
 	int xpos;
 	int ypos;
 	vec2_t vecA, vecB, vecC, vecD;
@@ -226,7 +207,7 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
 		GL_UseProgram(pp_gaussianblurv.program);
 		glUniform1f(0, 1.0f / gScreenInfo.iHeight);
-		glUniform1f(pp_gaussianblurh.du, 2.0f / gScreenInfo.iHeight * flAnimationRatio);
+		glUniform1f(pp_gaussianblurv.du, 2.0f / gScreenInfo.iHeight * flAnimationRatio);
 		DrawScreenQuad();
 		GL_UseProgram(0);
 		//绘制鼠标指针
@@ -260,10 +241,10 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		Vector2Copy(aryOut[i == 9 ? 0 : i + 1], vecC);
 		Vector2Copy(aryOut[i], vecD);
 		//变换为OpenGL屏幕坐标
-		CenterPos2OpenGLPos(vecA, halfWidth, halfHeight);
-		CenterPos2OpenGLPos(vecB, halfWidth, halfHeight);
-		CenterPos2OpenGLPos(vecC, halfWidth, halfHeight);
-		CenterPos2OpenGLPos(vecD, halfWidth, halfHeight);
+		CenterPos2OpenGLPos(vecA);
+		CenterPos2OpenGLPos(vecB);
+		CenterPos2OpenGLPos(vecC);
+		CenterPos2OpenGLPos(vecD);
 		//CABD
 		SelectColor.GetColor(r, g, b, dummy);
 		if (gCVars.pAmmoMenuDrawRainbow->value > 1) {

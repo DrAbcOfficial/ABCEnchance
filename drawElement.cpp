@@ -1,6 +1,7 @@
 #include <metahook.h>
 #include <triangleapi.h>
 
+#include "glew.h"
 #include "vguilocal.h"
 void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame = 0){
 	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), frame);
@@ -167,4 +168,17 @@ void ScaleColors(int& r, int& g, int& b, int a){
 	r = (int)(r * x);
 	g = (int)(g * x);
 	b = (int)(b * x);
+}
+void DrawScreenQuad() {
+	glColor4ub(255, 255, 255, 255);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0);
+	glVertex2f(0, 0);
+	glTexCoord2f(1, 0);
+	glVertex2f(gScreenInfo.iWidth, 0);
+	glTexCoord2f(1, 1);
+	glVertex2f(gScreenInfo.iWidth, gScreenInfo.iHeight);
+	glTexCoord2f(0, 1);
+	glVertex2f(0, gScreenInfo.iHeight);
+	glEnd();
 }
