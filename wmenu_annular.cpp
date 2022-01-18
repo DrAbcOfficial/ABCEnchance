@@ -271,10 +271,10 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		Vector2Copy(aryIn[gWR.iNowSlot], vecB);
 		Vector2Copy(aryOut[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecC);
 		Vector2Copy(aryOut[gWR.iNowSlot], vecD);
-		CenterPos2OpenGLPos(vecA, halfWidth, halfHeight);
-		CenterPos2OpenGLPos(vecB, halfWidth, halfHeight);
-		CenterPos2OpenGLPos(vecC, halfWidth, halfHeight);
-		CenterPos2OpenGLPos(vecD, halfWidth, halfHeight);
+		CenterPos2OpenGLPos(vecA);
+		CenterPos2OpenGLPos(vecB);
+		CenterPos2OpenGLPos(vecC);
+		CenterPos2OpenGLPos(vecD);
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
 		DrawSelectIcon(wp, a, xpos, ypos, gWR.iNowSlot);
