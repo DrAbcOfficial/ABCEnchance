@@ -26,10 +26,7 @@
 
 using namespace mathlib;
 
-SHADER_DEFINE(pp_gaussianblurh);
-SHADER_DEFINE(pp_gaussianblurv);
 CWeaponMenuAnnular m_HudWMenuAnnular;
-
 void __UserCmd_OpenAnnularMenu(void) {
 	if (!m_HudWMenuAnnular.m_bOpeningMenu && !m_HudWMenuAnnular.m_bSelectMenuDisplay) {
 		if (m_HudWMenuAnnular.m_fFade <= gEngfuncs.GetClientTime())

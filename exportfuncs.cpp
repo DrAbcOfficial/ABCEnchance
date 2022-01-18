@@ -18,6 +18,7 @@
 #include "myconst.h"
 #include "extraprecache.h"
 #include "regquery.h"
+#include "gldef.h"
 //HUD
 #include "ammo.h"
 #include "healthhud.h"

@@ -11,6 +11,8 @@
 #include "vguilocal.h"
 #include "local.h"
 #include "myconst.h"
+#include "glew.h"
+#include "gldef.h"
 #include "CHudDelegate.h"
 
 #include "enginedef.h"
@@ -18,7 +20,6 @@
 #include "drawElement.h"
 #include "utility.h"
 
-#include "glew.h"
 #include "IWeaponSelect.h"
 #include "wmenu_annular.h"
 #include "wmenu_slot.h"

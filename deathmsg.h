@@ -7,10 +7,10 @@
 #define MSG_PLAYERKILLNOTIFY L" : (.*) : "
 
 typedef struct deathmsgItem_s{
-	wchar_t victim[MSG_BUF_SIZE];
-	wchar_t executioner[MSG_BUF_SIZE];
-	wchar_t killer[MSG_BUF_SIZE];
-	float addTime;
+	wchar_t victim[MSG_BUF_SIZE] = {};
+	wchar_t executioner[MSG_BUF_SIZE] = {};
+	wchar_t killer[MSG_BUF_SIZE] = {};
+	float addTime = 0;
 	int attackerIndex = -1;
 	bool isYou = false;
 	int damageType = 0;

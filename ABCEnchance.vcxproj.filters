@@ -135,6 +135,9 @@
     <ClCompile Include="regquery.cpp">
       <Filter>Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="eccobuymenu.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -334,6 +337,9 @@
     </ClInclude>
     <ClInclude Include="regquery.h">
       <Filter>Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="eccobuymenu.h">
+      <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

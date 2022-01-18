@@ -1,13 +1,17 @@
 #include <metahook.h>
 #include <string>
 #include <map>
+
+#include "glew.h"
+#include "gl_shader.h"
+#include "gldef.h"
+
 #include "pmtrace.h"
 #include "vguilocal.h"
 #include "hud.h"
 #include "weapon.h"
 #include "pm_defs.h"
 #include "parsemsg.h"
-#include "glew.h"
 #include "drawElement.h"
 #include "local.h"
 
@@ -22,11 +26,15 @@
 #include "eccomoney.h"
 #include "efxhud.h"
 #include "itemhighlight.h"
+#include "eccobuymenu.h"
 
 #include "CHudDelegate.h"
 
 CHudDelegate* gHudDelegate = NULL;
 cl_hookedHud gHookHud;
+
+SHADER_DEFINE(pp_gaussianblurh)
+SHADER_DEFINE(pp_gaussianblurv)
 
 pfnUserMsgHook m_pfnScoreInfo;
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
@@ -48,6 +56,13 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 }
 
 void CHudDelegate::GL_Init(void){
+	pp_gaussianblurh.program = R_CompileShaderFileEx("renderer\\shader\\fullscreentriangle.vert.glsl", "renderer\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_HORIZONAL\n", NULL);
+	if (pp_gaussianblurh.program)
+		SHADER_UNIFORM(pp_gaussianblurh, du, "du");
+	pp_gaussianblurv.program = R_CompileShaderFileEx("renderer\\shader\\fullscreentriangle.vert.glsl", "renderer\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_VERTICAL\n", NULL);
+	if (pp_gaussianblurv.program)
+		SHADER_UNIFORM(pp_gaussianblurv, du, "du");
+
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
 }
@@ -64,6 +79,7 @@ void CHudDelegate::HUD_Init(void){
 	m_HudEccoMoney.Init();
 	m_HudEfx.Init();
 	m_HudItemHighLight.Init();
+	m_HudEccoBuyMenu.Init();
 }
 void CHudDelegate::HUD_VidInit(void){
 	int iRes = ScreenWidth < 640 ? 320 : 640;
@@ -117,6 +133,7 @@ void CHudDelegate::HUD_Draw(float flTime){
 	m_HudVote.Draw(flTime);
 	m_HudEccoMoney.Draw(flTime);
 	m_HudItemHighLight.Draw(flTime);
+	m_HudEccoBuyMenu.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void){
 	m_iPlayerHealth = 100;
@@ -130,6 +147,7 @@ void CHudDelegate::HUD_Reset(void){
 	m_HudEccoMoney.Reset();
 	m_HudEfx.Reset();
 	m_HudItemHighLight.Reset();
+	m_HudEccoBuyMenu.Reset();
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time){
@@ -141,6 +159,7 @@ void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 void CHudDelegate::HUD_Clear(void){
 	m_HudRadar.Clear();
 	m_HudCustomAmmo.Clear();
+	m_HudEccoBuyMenu.Clear();
 }
 void CHudDelegate::HUD_PreRenderView(int a1){
 	if (gCVars.pDynamicHUD->value <= 0)

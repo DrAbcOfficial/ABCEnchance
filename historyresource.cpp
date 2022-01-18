@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include "glew.h"
 
 #include "CColor.h"
 #include "vguilocal.h"
@@ -7,6 +8,7 @@
 #include "weaponbank.h"
 #include "cvardef.h"
 #include "mathlib.h"
+#include "gldef.h"
 
 #include "drawElement.h"
 #include "CHudDelegate.h"

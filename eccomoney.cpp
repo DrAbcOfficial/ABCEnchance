@@ -5,12 +5,13 @@
 #include "weapon.h"
 #include "CColor.h"
 #include "mathlib.h"
+#include "glew.h"
 
 #include "local.h"
 #include "vguilocal.h"
 #include "myconst.h"
+#include "gldef.h"
 #include "CHudDelegate.h"
-#include "glew.h"
 
 #include "enginedef.h"
 #include "exportfuncs.h"

@@ -5,6 +5,7 @@
 #include "hud.h"
 #include "weapon.h"
 #include "glew.h"
+#include "gldef.h"
 #include "IWeaponSelect.h"
 #include "ammo.h"
 #include "CHudDelegate.h"

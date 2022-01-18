@@ -98,8 +98,7 @@ void CHudItemHighLight::Draw(float flTime){
 	if (gCVars.pItemHighLight->value <= 0)
 		return;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	std::map<int, cl_entity_t*>::iterator it;
-	for (it = m_mapToBeDraw.begin(); it != m_mapToBeDraw.end(); ){
+	for (auto it = m_mapToBeDraw.begin(); it != m_mapToBeDraw.end(); ){
 		cl_entity_t* var = (*it).second;
 		if (!var) {
 			EraseHighLight(var);
