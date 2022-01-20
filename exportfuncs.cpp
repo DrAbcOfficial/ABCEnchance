@@ -228,6 +228,7 @@ void GL_Init(void){
 		Sys_ErrorEx("glewInit failed, %s", glewGetErrorString(err));
 		return;
 	}
+	GL_ShaderInit();
 	gHudDelegate->GL_Init();
 }
 void HUD_Init(void){

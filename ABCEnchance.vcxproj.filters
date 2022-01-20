@@ -135,6 +135,9 @@
     <ClCompile Include="eccobuymenu.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="gl_def.cpp">
+      <Filter>Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -263,9 +266,6 @@
     <ClInclude Include="deathmsg.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="gl_def.h">
-      <Filter>Header\Var</Filter>
-    </ClInclude>
     <ClInclude Include="radar.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
@@ -334,6 +334,9 @@
     </ClInclude>
     <ClInclude Include="eccobuymenu.h">
       <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="gl_def.h">
+      <Filter>Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

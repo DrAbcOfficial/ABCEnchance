@@ -56,9 +56,11 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 
 void CHudEccoBuyMenu::GLInit(){
 	glGenFramebuffersEXT(1, &m_hGaussianBufferVFBO);
-	m_hGaussianBufferVTex = GL_GenTextureRGB8(gScreenInfo.iWidth, gScreenInfo.iHeight);
+	m_hGaussianBufferVTex = GL_GenTextureRGB8(ScreenWidth, ScreenHeight);
 	glGenFramebuffersEXT(1, &m_hGaussianBufferHFBO);
-	m_hGaussianBufferHTex = GL_GenTextureRGB8(gScreenInfo.iWidth, gScreenInfo.iHeight);
+	m_hGaussianBufferHTex = GL_GenTextureRGB8(ScreenWidth, ScreenHeight);
+	glGenFramebuffersEXT(1, &m_hGaussianBufferModelFBO);
+	m_hGaussianBufferModelTex = GL_GenTextureRGB8(ScreenWidth, ScreenHeight);
 }
 
 int CHudEccoBuyMenu::Init(){
@@ -89,33 +91,14 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		flAnimationRatio = (1 - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime)) / 100;
 	//背景模糊
 	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
-	//复制tex到H
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferHFBO);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferHTex, 0);
-	GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferHFBO,
-		gScreenInfo.iWidth, gScreenInfo.iHeight, gScreenInfo.iWidth, gScreenInfo.iHeight);
-	//绘制到V
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferVFBO);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferVTex, 0);
-	glEnable(GL_TEXTURE_2D);
-	glBind(m_hGaussianBufferHTex);
-	//H模糊
-	GL_UseProgram(pp_gaussianblurh.program);
-	glUniform1f(0, 1.0f / gScreenInfo.iWidth);
-	glUniform1f(pp_gaussianblurh.du, 2.0f / gScreenInfo.iWidth * flAnimationRatio);
-	glColor4ub(255, 255, 255, 255);
-	DrawScreenQuad();
-	//绘制到主画布
-	glBind(m_hGaussianBufferVTex);
+	GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferHFBO, ScreenWidth, ScreenHeight, ScreenWidth, ScreenHeight);
+	DrawGaussianBlur(m_hGaussianBufferVFBO, m_hGaussianBufferHTex, m_hGaussianBufferVTex, flAnimationRatio, true, ScreenWidth, ScreenHeight);
+	DrawGaussianBlur(m_hGaussianBufferHFBO, m_hGaussianBufferVTex, m_hGaussianBufferHTex, flAnimationRatio, false, ScreenWidth, ScreenHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
-	GL_UseProgram(pp_gaussianblurv.program);
-	glUniform1f(0, 1.0f / gScreenInfo.iHeight);
-	glUniform1f(pp_gaussianblurv.du, 2.0f / gScreenInfo.iHeight * flAnimationRatio);
-	DrawScreenQuad();
-	GL_UseProgram(0);
-
-	glLoadIdentity();
-
+	glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferHTex);
+	DrawQuad(ScreenWidth, ScreenHeight);
 	//变黑
 	gEngfuncs.pfnFillRGBABlend(0, 0, ScreenWidth, ScreenHeight, 0, 0, 0, 128 * flAnimationRatio);
 
@@ -166,6 +149,9 @@ int CHudEccoBuyMenu::Draw(float flTime){
 			DrawVGUI2String(buf, xpos - w / 2, ypos - h / 2, r, g, b, hFont);
 		}
 	}
+
+	//绘制模型
+
 	return 0;
 }
 
