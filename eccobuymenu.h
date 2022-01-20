@@ -44,14 +44,6 @@ private:
 	int BuyMenuOffset = 0;
 	int BuyMenuHeight = 0;
 
-	GLint m_hOldBuffer = 0;
-	GLuint m_hGaussianBufferVFBO = 0;
-	GLuint m_hGaussianBufferVTex = 0;
-	GLuint m_hGaussianBufferHFBO = 0;
-	GLuint m_hGaussianBufferHTex = 0;
-	GLuint m_hGaussianBufferModelFBO = 0;
-	GLuint m_hGaussianBufferModelTex = 0;
-
 	vgui::HFont hFont = 0;
 };
 extern CHudEccoBuyMenu m_HudEccoBuyMenu;
