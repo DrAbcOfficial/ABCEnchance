@@ -45,6 +45,7 @@ private:
 	TEMPENTITY* pAnimeEntity = nullptr;
 	TEMPENTITY* pShowEntity = nullptr;
 	TEMPENTITY* pWeaponEntity = nullptr;
+	int iNowSelectedId = -1;
 
 	float flOldCamYaw;
 	float flOldCamDist;

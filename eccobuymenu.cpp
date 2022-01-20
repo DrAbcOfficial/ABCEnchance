@@ -149,27 +149,9 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		bool bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
 		if (bIsChosen) {
 			iChosenSlot = i + 1;
-			if (MenuList[i] >= 0) {
-				buymenuitem_t* info = GetInfo(MenuList[i]);
-				cl_entity_t* player = gEngfuncs.GetLocalPlayer();
-				
-				switch (info->rendermode){
-					case PISTOL:
-					case RIFEL:
-					case GRENADE:
-					case KNIFE: {
-
-						break;
-					}
-					case ITEM:{
-						
-						break;
-					}
-					case NONE:
-					case INVALID:
-					default: break;
-				}
-			}
+			int iChosenId = -1;
+			if (MenuList[i] >= 0)
+				iNowSelectedId = MenuList[i];
 		}
 		//CABD
 		DrawSPRIconPos(iBackgroundSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, bIsChosen ? a : a * 0.5);
@@ -203,32 +185,49 @@ void CHudEccoBuyMenu::Clear() {
 	pWeaponEntity = nullptr;
 }
 bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelname){
+	//TODO: So ugly so shit
 	if (ent == gEngfuncs.GetLocalPlayer() && bOpenningMenu) {
+		if (iNowSelectedId < 0)
+			return true;
 		model_t* pModel = gEngfuncs.hudGetModelByIndex(iAnimModelIndex);
 		if (!pModel)
 			return true;
-		//TODO: 状态机和包装
-		vec3_t vec = { 0,0,0 };
 		if (!pAnimeEntity) {
-			pAnimeEntity = gHookFuncs.CL_TempEntAlloc(vec, pModel);
-			pAnimeEntity->flags = FTENT_FADEOUT;
-			pAnimeEntity->clientIndex = ent->index;
+			pAnimeEntity = gHookFuncs.CL_TempEntAlloc(ent->origin, pModel);
+			pAnimeEntity->flags = FTENT_NONE;
+			pAnimeEntity->entity.baseline.effects = EF_NODRAW;
 			pAnimeEntity->die = gEngfuncs.GetClientTime() + 99999.0f;
 		}
-		else {
-
-		}
 		if (!pShowEntity) {
-			pShowEntity = gHookFuncs.CL_TempEntAlloc(vec, pModel);
-			pShowEntity->flags = FTENT_FADEOUT;
-			pShowEntity->clientIndex = ent->index;
+			pShowEntity = gHookFuncs.CL_TempEntAlloc(ent->origin, pModel);
+			pShowEntity->flags = FTENT_NONE;
+			pShowEntity->entity.baseline.effects = EF_NODRAW;
 			pShowEntity->die = gEngfuncs.GetClientTime() + 99999.0f;
 		}
 		if (!pWeaponEntity) {
-			pWeaponEntity = gHookFuncs.CL_TempEntAlloc(vec, pModel);
-			pWeaponEntity->flags = FTENT_FADEOUT;
-			pWeaponEntity->clientIndex = ent->index;
+			pWeaponEntity = gHookFuncs.CL_TempEntAlloc(ent->origin, pModel);
+			pWeaponEntity->flags = FTENT_NONE;
+			pWeaponEntity->entity.baseline.effects = EF_NODRAW;
 			pWeaponEntity->die = gEngfuncs.GetClientTime() + 99999.0f;
+		}
+		buymenuitem_t* info = GetInfo(iNowSelectedId);
+		switch (info->rendermode) {
+		case PISTOL:
+		case RIFEL:
+		case GRENADE:
+		case KNIFE: {
+			break;
+		}
+		case ITEM: {
+			pShowEntity->entity.curstate.effects = 0;
+			pShowEntity->entity.model = gEngfuncs.hudGetModelByIndex(info->modelindex);
+			VectorCopy(ent->origin, pShowEntity->entity.origin);
+			VectorCopy(ent->angles, pShowEntity->entity.angles);
+			break;
+		}
+		case NONE:
+		case INVALID:
+		default: break;
 		}
 		return false;
 	}
