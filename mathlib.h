@@ -19,7 +19,7 @@ typedef int fixed16_t;
 #define RANDOM_LONG(a, b) gEngfuncs.pfnRandomLong(a, b)
 #define RANDOM_FLOAT(a, b) gEngfuncs.pfnRandomFloat(a, b)
 
-#define GET_SCREEN_PIXEL(h, str) mathlib::GetScreenPixel(h, atof(pScheme->GetResourceString(str)))
+#define GET_SCREEN_PIXEL(h, str) mathlib::GetScreenPixel(h ? ScreenHeight : ScreenWidth, atof(pScheme->GetResourceString(str)))
 
 struct mplane_s;
 #define AngleIVectors AngleVectorsTranspose
@@ -27,6 +27,7 @@ struct mplane_s;
 namespace mathlib {
 	const double M_PI = 3.14159265358979323846;
 	const double Q_PI = 3.14159265358979323846;
+	constexpr double DOUBLE_PI = 2 * 3.14159265358979323846;
 	const float EQUAL_EPSILON = 0.001;
 	const float COLINEAR_EPSILON = 0.001;
 	const int MAX_PLAYER_NAME_LENGTH = 128;
@@ -116,6 +117,8 @@ namespace mathlib {
 
 	void VectorRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
 	void VectorIRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
+
+	bool PointInPolygen(vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int x, int y);
 	float anglemod(float a);
 
 	void ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);

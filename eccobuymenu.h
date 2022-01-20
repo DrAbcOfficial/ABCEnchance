@@ -23,12 +23,15 @@ public:
 	void Clear();
 	void AddInfo(buymenuitem_t item);
 	void OpenMenu();
+	void CloseMenu();
+	bool SelectMenu();
 
 	int MenuList[10];
 private:
 	std::vector<buymenuitem_t> buymenuinfo;
 	bool bOpenningMenu = false;
 	float m_fAnimateTime = 0;
+	int iNowChosenSlot = 0;
 
 	GLuint iBackgroundSpr = 0;
 

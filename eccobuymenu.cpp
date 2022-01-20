@@ -1,6 +1,6 @@
 #include <metahook.h>
-
 #include "parsemsg.h"
+
 #include "glew.h"
 #include "gl_utility.h"
 #include "vguilocal.h"
@@ -10,6 +10,11 @@
 #include "gl_shader.h"
 #include "local.h"
 #include "gl_draw.h"
+#include "hud.h"
+#include "weapon.h"
+
+#include "exportfuncs.h"
+#include "CHudDelegate.h"
 
 #include "eccobuymenu.h"
 
@@ -57,7 +62,6 @@ void CHudEccoBuyMenu::GLInit(){
 	glGenFramebuffersEXT(1, &m_hGaussianBufferModelFBO);
 	m_hGaussianBufferModelTex = GL_GenTextureRGB8(ScreenWidth, ScreenHeight);
 }
-
 int CHudEccoBuyMenu::Init(){
 	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
@@ -77,7 +81,6 @@ int CHudEccoBuyMenu::Init(){
 	Reset();
 	return 0;
 }
-
 int CHudEccoBuyMenu::Draw(float flTime){
 	if (!bOpenningMenu)
 		return 1;
@@ -96,7 +99,13 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	DrawQuad(ScreenWidth, ScreenHeight);
 	//变黑
 	gEngfuncs.pfnFillRGBABlend(0, 0, ScreenWidth, ScreenHeight, 0, 0, 0, 128 * flAnimationRatio);
-
+	int mousex, mousey;
+	//获取鼠标指针位置
+	gEngfuncs.GetMousePosition(&mousex, &mousey);
+	gHudDelegate->surface()->DrawSetTexture(-1);
+	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
+	gHudDelegate->surface()->DrawSetTexture(gHudDelegate->m_iCursorTga);
+	gHudDelegate->surface()->DrawTexturedRect(mousex, mousey, mousex + gHudDelegate->m_flCursorSize, mousey + gHudDelegate->m_flCursorSize);
 	int i;
 	int r = 255, g = 255, b = 255, a = 255;
 	float ac, as;
@@ -104,14 +113,16 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	int iBackGroundHeight = BuyMenuHeight;
 	int iXDiffer = ScreenWidth / 2 - BuyMenuCenterX;
 	int iYDiffer = ScreenHeight / 2 - BuyMenuCenterY;
+	int iChosenSlot = 10;
 	vec2_t aryOut[9];
 	vec2_t aryIn[9];
 	vec2_t vecA, vecB, vecC, vecD;
 	float xpos, ypos;
 	//绘制九边形
 	for (i = 0; i < 9; i++) {
-		ac = cos(2 * M_PI * i / 9);
-		as = sin(2 * M_PI * i / 9);
+		double rnd = DOUBLE_PI * i / 9;
+		ac = cos(rnd);
+		as = sin(rnd);
 
 		aryIn[i][0] = iOffset * ac - iXDiffer;
 		aryIn[i][1] = iOffset * as - iYDiffer;
@@ -131,8 +142,11 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
 		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
 		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
+		bool bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
+		if (bIsChosen)
+			iChosenSlot = i+1;
 		//CABD
-		DrawSPRIconPos(iBackgroundSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, a * 0.5);
+		DrawSPRIconPos(iBackgroundSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, bIsChosen ? a : a * 0.5);
 		if (MenuList[i] >= 0) {
 			xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 			ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
@@ -144,17 +158,14 @@ int CHudEccoBuyMenu::Draw(float flTime){
 			DrawVGUI2String(buf, xpos - w / 2, ypos - h / 2, r, g, b, hFont);
 		}
 	}
-
+	iNowChosenSlot = iChosenSlot;
 	//绘制模型
-
 	return 0;
 }
-
 void CHudEccoBuyMenu::Reset() {
 	buymenuinfo.clear();
 	iBackgroundSpr = SPR_Load("abcenchance/spr/buymenu_background.spr");
 }
-
 void CHudEccoBuyMenu::Clear() {
 	buymenuinfo.clear();
 	if (m_hGaussianBufferVTex)
@@ -162,12 +173,25 @@ void CHudEccoBuyMenu::Clear() {
 	if (m_hGaussianBufferHTex)
 		glDeleteTextures(1, &m_hGaussianBufferHTex);
 }
-
 void CHudEccoBuyMenu::AddInfo(buymenuitem_t item){
 	buymenuinfo.push_back(item);
 }
-
 void CHudEccoBuyMenu::OpenMenu(){
 	m_fAnimateTime = gEngfuncs.GetClientTime() + BuyMenuAnimateTime;
 	bOpenningMenu = true;
+	gHudDelegate->m_iVisibleMouse = true;
+}
+void CHudEccoBuyMenu::CloseMenu() {
+	if (!bOpenningMenu)
+		return;
+	bOpenningMenu = false;
+	gHudDelegate->m_iVisibleMouse = false;
+}
+bool CHudEccoBuyMenu::SelectMenu() {
+	if (!bOpenningMenu)
+		return false;
+	char buf[8];
+	snprintf(buf, sizeof(buf), "slot%d", iNowChosenSlot);
+	EngineClientCmd(buf);
+	return true;
 }

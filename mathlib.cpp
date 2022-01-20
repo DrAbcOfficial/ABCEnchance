@@ -118,6 +118,13 @@ void mathlib::PerpendicularVector(vec3_t dst, const vec3_t src){
 
 	mathlib::VectorNormalize(dst);
 }
+bool mathlib::PointInPolygen(vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int x, int y) {
+	float z1 = (p2[0] - p1[0]) * (y - p1[1]) - (x - p1[0]) * (p2[1] - p1[1]);
+	float z2 = (p3[0] - p2[0]) * (y - p2[1]) - (x - p2[0]) * (p3[1] - p2[1]);
+	float z3 = (p4[0] - p3[0]) * (y - p3[1]) - (x - p3[0]) * (p4[1] - p3[1]);
+	float z4 = (p1[0] - p4[0]) * (y - p4[1]) - (x - p4[0]) * (p1[1] - p4[1]);
+	return z1 * z2 > 0 && z3 * z4 > 0 && z1 * z3 > 0;
+}
 
 #ifdef _WIN32
 #pragma optimize("", off)
