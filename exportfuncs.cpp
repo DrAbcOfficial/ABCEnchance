@@ -257,6 +257,7 @@ void HUD_Init(void){
 	gCVars.pModelLagAutoStop = CREATE_CVAR("cl_modellagautostop", "1", FCVAR_VALUE, nullptr);
 	gCVars.pModelLagValue = CREATE_CVAR("cl_modellagvalue", "1.0", FCVAR_VALUE, nullptr);
 	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, nullptr);
+	gCVars.pCamIdealRight = CREATE_CVAR("cam_idealright", "0", FCVAR_VALUE, nullptr);
 
 	gHudDelegate = new CHudDelegate();
 	gExportfuncs.HUD_Init();
@@ -328,8 +329,14 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 	gExportfuncs.V_CalcRefdef(pparams);
 	if(!gExportfuncs.CL_IsThirdPerson())
 		V_CalcViewModelLag(pparams);
-	else
-		pparams->vieworg[2] -= gCVars.pCamIdealHeight->value;
+	else {
+		vec3_t vecRight;
+		mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
+		mathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
+		pparams->vieworg[0] += vecRight[0];
+		pparams->vieworg[1] += vecRight[1];
+		pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
+	}
 }
 void IN_MouseEvent(int mstate){
 	gHudDelegate->IN_MouseEvent(mstate);

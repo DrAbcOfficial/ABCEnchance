@@ -94,6 +94,7 @@ typedef struct{
 	cvar_t* pModelLagValue;
 
 	cvar_t* pCamIdealHeight;
+	cvar_t* pCamIdealRight;
 
 	cvar_t* pRadar;
 	cvar_t* pRadarZoom;
