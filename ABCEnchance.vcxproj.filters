@@ -263,7 +263,7 @@
     <ClInclude Include="deathmsg.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="gldef.h">
+    <ClInclude Include="gl_def.h">
       <Filter>Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="radar.h">

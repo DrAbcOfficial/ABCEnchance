@@ -10,7 +10,7 @@
 #include "local.h"
 #include "vguilocal.h"
 #include "myconst.h"
-#include "gldef.h"
+#include "gl_def.h"
 #include "gl_draw.h"
 #include "CHudDelegate.h"
 
