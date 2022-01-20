@@ -84,21 +84,7 @@ int CHudEccoBuyMenu::Init(){
 int CHudEccoBuyMenu::Draw(float flTime){
 	if (!bOpenningMenu)
 		return 1;
-	float flAnimationRatio = 1.0f;
-	if (m_fAnimateTime > flTime)
-		flAnimationRatio = (1 - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime)) / 100;
-	//背景模糊
-	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferHFBO);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferHTex, 0);
-	GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferHFBO, ScreenWidth, ScreenHeight, ScreenWidth, ScreenHeight);
-	DrawGaussianBlur(m_hGaussianBufferVFBO, m_hGaussianBufferHTex, m_hGaussianBufferVTex, flAnimationRatio, true, ScreenWidth, ScreenHeight);
-	DrawGaussianBlur(m_hGaussianBufferHFBO, m_hGaussianBufferVTex, m_hGaussianBufferHTex, flAnimationRatio, false, ScreenWidth, ScreenHeight);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
-	glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferHTex);
-	DrawQuad(ScreenWidth, ScreenHeight);
-	//变黑
-	gEngfuncs.pfnFillRGBABlend(0, 0, ScreenWidth, ScreenHeight, 0, 0, 0, 128 * flAnimationRatio);
+	float flAnimationRatio = min(1.0f, (1 - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime) / 100));
 	int mousex, mousey;
 	//获取鼠标指针位置
 	gEngfuncs.GetMousePosition(&mousex, &mousey);
@@ -109,7 +95,7 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	int i;
 	int r = 255, g = 255, b = 255, a = 255;
 	float ac, as;
-	int iOffset = BuyMenuOffset;
+	float flOffset = flAnimationRatio * BuyMenuOffset;
 	int iBackGroundHeight = BuyMenuHeight;
 	int iXDiffer = ScreenWidth / 2 - BuyMenuCenterX;
 	int iYDiffer = ScreenHeight / 2 - BuyMenuCenterY;
@@ -124,11 +110,11 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		ac = cos(rnd);
 		as = sin(rnd);
 
-		aryIn[i][0] = iOffset * ac - iXDiffer;
-		aryIn[i][1] = iOffset * as - iYDiffer;
+		aryIn[i][0] = flOffset * ac - iXDiffer;
+		aryIn[i][1] = flOffset * as - iYDiffer;
 
-		aryOut[i][0] = (iOffset + iBackGroundHeight) * ac - iXDiffer;
-		aryOut[i][1] = (iOffset + iBackGroundHeight) * as - iYDiffer;
+		aryOut[i][0] = (flOffset + iBackGroundHeight) * ac - iXDiffer;
+		aryOut[i][1] = (flOffset + iBackGroundHeight) * as - iYDiffer;
 	}
 	for (i = 0; i < 9; i++) {
 		//CABD
