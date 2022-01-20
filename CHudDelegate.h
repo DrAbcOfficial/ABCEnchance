@@ -73,12 +73,15 @@ public:
 	float m_flOverViewYaw = 0;
 	float m_flOverViewZmax = 0;
 	float m_flOverViewZmin = 0;
+	float m_flCursorSize = 0;
 
 	vec3_t m_vecOverViewOrg;
 	vec3_t m_vecClientEVPunch;
 	vec2_t m_vecThirdPersonCrosshairPos;
 	
 	client_sprite_t* m_pSpriteList;
+
+	GLint m_iCursorTga = 0;
 private:
 	hud_playerinfo_t m_Playerinfo[33] = { 0 };
 	int m_iSpriteCountAllRes;

@@ -10,5 +10,3 @@ void ScaleColors(int& r, int& g, int& b, int a);
 void DrawQuad(int w, int h);
 void DrawScreenQuad();
 void DrawGaussianBlur(GLint dstfbo, GLint srctex, GLint dsttex, float ratio, bool v, int w, int h);
-void BeginDrawTriangles(GLint srcfbo, GLint dstfbo, int x, int y, int left, int top);
-void FinishDrawTrianglesInHUD();

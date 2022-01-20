@@ -160,80 +160,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 	}
 	return m_pfnCurWeapon(pszName, iSize, pbuf);
 }
-
-void(*UserCmd_Slot1)(void);
-void(*UserCmd_Slot2)(void);
-void(*UserCmd_Slot3)(void);
-void(*UserCmd_Slot4)(void);
-void(*UserCmd_Slot5)(void);
-void(*UserCmd_Slot6)(void);
-void(*UserCmd_Slot7)(void);
-void(*UserCmd_Slot8)(void);
-void(*UserCmd_Slot9)(void);
-void(*UserCmd_Slot10)(void);
-void(*UserCmd_SlotClose)(void);
-void(*UserCmd_NextWeapon)(void);
-void(*UserCmd_PrevWeapon)(void);
-void(*UserCmd_Attack1)(void);
-void __UserCmd_Slot1(void){
-	m_HudCustomAmmo.SlotInput(0,1);
-	return UserCmd_Slot1();
-}
-void __UserCmd_Slot2(void){
-	m_HudCustomAmmo.SlotInput(1,1);
-	return UserCmd_Slot2();
-}
-void __UserCmd_Slot3(void){
-	m_HudCustomAmmo.SlotInput(2,1);
-	return UserCmd_Slot3();
-}
-void __UserCmd_Slot4(void){
-	m_HudCustomAmmo.SlotInput(3,1);
-	return UserCmd_Slot4();
-}
-void __UserCmd_Slot5(void){
-	m_HudCustomAmmo.SlotInput(4,1);
-	return UserCmd_Slot5();
-}
-void __UserCmd_Slot6(void){
-	m_HudCustomAmmo.SlotInput(5,1);
-	return UserCmd_Slot6();
-}
-void __UserCmd_Slot7(void){
-	m_HudCustomAmmo.SlotInput(6,1);
-	return UserCmd_Slot7();
-}
-void __UserCmd_Slot8(void){
-	m_HudCustomAmmo.SlotInput(7,1);
-	return UserCmd_Slot8();
-}
-void __UserCmd_Slot9(void){
-	m_HudCustomAmmo.SlotInput(8,1);
-	return UserCmd_Slot9();
-}
-void __UserCmd_Slot10(void){
-	m_HudCustomAmmo.SlotInput(9,1);
-	return UserCmd_Slot10();
-}
-void __UserCmd_Close(void){
-
-	return UserCmd_SlotClose();
-}
-void __UserCmd_NextWeapon(void){
-	
-	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, 1);
-	return UserCmd_NextWeapon();
-}
-void __UserCmd_PrevWeapon(void){
-	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1);
-	return UserCmd_PrevWeapon();
-}
-void __UserCmd_Attack1(void){
-	m_HudCustomAmmo.m_pNowSelectMenu->Select();
-	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)
-		m_HudWMenuAnnular.Select();
-	return UserCmd_Attack1();
-}
 void CustomSlotSetCallBack(cvar_t* vars){
 	if (!vars->string || vars->string[0] == 0)
 		return;
@@ -260,21 +186,6 @@ int CHudCustomAmmo::Init(void){
 	m_pfnWeapPickup = HOOK_MESSAGE(WeapPickup);
 	m_pfnItemPickup = HOOK_MESSAGE(ItemPickup);
 	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
-
-	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
-	UserCmd_Slot2 = HOOK_COMMAND("slot2", Slot2);
-	UserCmd_Slot3 = HOOK_COMMAND("slot3", Slot3);
-	UserCmd_Slot4 = HOOK_COMMAND("slot4", Slot4);
-	UserCmd_Slot5 = HOOK_COMMAND("slot5", Slot5);
-	UserCmd_Slot6 = HOOK_COMMAND("slot6", Slot6);
-	UserCmd_Slot7 = HOOK_COMMAND("slot7", Slot7);
-	UserCmd_Slot8 = HOOK_COMMAND("slot8", Slot8);
-	UserCmd_Slot9 = HOOK_COMMAND("slot9", Slot9);
-	UserCmd_Slot10 = HOOK_COMMAND("slot10", Slot10);
-	UserCmd_SlotClose = HOOK_COMMAND("cancelselect", Close);
-	UserCmd_NextWeapon = HOOK_COMMAND("invnext", NextWeapon);
-	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
-	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 
 	gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_VALUE, CustomSlotSetCallBack);
