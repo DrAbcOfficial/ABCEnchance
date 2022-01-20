@@ -158,23 +158,11 @@ int CHudEccoBuyMenu::Draw(float flTime){
 					case RIFEL:
 					case GRENADE:
 					case KNIFE: {
-						//pShowEntity->entity.model = gEngfuncs.hudGetModelByIndex(iPlayerModelIndex);
-						//pWeaponEntity->entity.model = gEngfuncs.hudGetModelByIndex(info->modelindex);
-						//VectorCopy(player->origin, pShowEntity->entity.origin);
-						//VectorCopy(player->origin, pAnimeEntity->entity.origin);
-						//VectorCopy(player->origin, pWeaponEntity->entity.origin);
-						//pShowEntity->entity.curstate.movetype = 12;//MOVETYPE_FOLLOW
-						//pShowEntity->entity.curstate.aiment = pAnimeEntity->entity.index;
-						//pWeaponEntity->entity.curstate.movetype = 12;//MOVETYPE_FOLLOW
-						//pWeaponEntity->entity.curstate.aiment = pAnimeEntity->entity.index;
+
 						break;
 					}
 					case ITEM:{
-						//player->curstate.scale = 2;
-						//pShowEntity->entity.model = gEngfuncs.hudGetModelByIndex(info->modelindex);
-						//VectorCopy(player->origin, pShowEntity->entity.origin);
-						//pShowEntity->entity.origin[2] += 64;
-						//pShowEntity->entity.curstate.scale = 3;
+						
 						break;
 					}
 					case NONE:
@@ -214,6 +202,38 @@ void CHudEccoBuyMenu::Clear() {
 	pShowEntity = nullptr;
 	pWeaponEntity = nullptr;
 }
+bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelname){
+	if (ent == gEngfuncs.GetLocalPlayer() && bOpenningMenu) {
+		model_t* pModel = gEngfuncs.hudGetModelByIndex(iAnimModelIndex);
+		if (!pModel)
+			return true;
+		//TODO: 状态机和包装
+		vec3_t vec = { 0,0,0 };
+		if (!pAnimeEntity) {
+			pAnimeEntity = gHookFuncs.CL_TempEntAlloc(vec, pModel);
+			pAnimeEntity->flags = FTENT_FADEOUT;
+			pAnimeEntity->clientIndex = ent->index;
+			pAnimeEntity->die = gEngfuncs.GetClientTime() + 99999.0f;
+		}
+		else {
+
+		}
+		if (!pShowEntity) {
+			pShowEntity = gHookFuncs.CL_TempEntAlloc(vec, pModel);
+			pShowEntity->flags = FTENT_FADEOUT;
+			pShowEntity->clientIndex = ent->index;
+			pShowEntity->die = gEngfuncs.GetClientTime() + 99999.0f;
+		}
+		if (!pWeaponEntity) {
+			pWeaponEntity = gHookFuncs.CL_TempEntAlloc(vec, pModel);
+			pWeaponEntity->flags = FTENT_FADEOUT;
+			pWeaponEntity->clientIndex = ent->index;
+			pWeaponEntity->die = gEngfuncs.GetClientTime() + 99999.0f;
+		}
+		return false;
+	}
+	return true;
+}
 void CHudEccoBuyMenu::AddInfo(buymenuitem_t item){
 	buymenuinfo.push_back(item);
 }
@@ -225,24 +245,7 @@ buymenuitem_t* CHudEccoBuyMenu::GetInfo(int index) {
 void CHudEccoBuyMenu::OpenMenu(){
 	m_fAnimateTime = gEngfuncs.GetClientTime() + BuyMenuAnimateTime;
 	if (!bOpenningMenu) {
-		model_t* pModel = gEngfuncs.hudGetModelByIndex(iAnimModelIndex);
-		if (!pModel)
-			return;
-		vec3_t vec = { 0,0,0 };
-		if (!pAnimeEntity) {
-			pAnimeEntity = gHookFuncs.CL_TempEntAllocHigh(vec, pModel);
-			pAnimeEntity->flags = FTENT_NONE;
-		}
-		if (!pShowEntity) {
-			pShowEntity = gHookFuncs.CL_TempEntAllocHigh(vec, pModel);
-			pShowEntity->flags = FTENT_NONE;
-		}
-		if (!pWeaponEntity) {
-			pWeaponEntity = gHookFuncs.CL_TempEntAllocHigh(vec, pModel);
-			pWeaponEntity->flags = FTENT_NONE;
-		}
 		iPlayerModelIndex = gEngfuncs.GetLocalPlayer()->curstate.modelindex;
-
 		flOldCamYaw = pCVarIdealYaw->value;
 		flOldCamDist = pCVarIdealDist->value;
 		flOldCamHeight = gCVars.pCamIdealHeight->value;

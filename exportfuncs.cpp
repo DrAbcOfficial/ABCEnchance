@@ -365,7 +365,8 @@ void IN_Accumulate(void){
 		gExportfuncs.IN_Accumulate();
 }
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
-	gHudDelegate->HUD_AddEntity(type, ent, modelname);
+	if (!gHudDelegate->HUD_AddEntity(type, ent, modelname))
+		return 0;
 	return gExportfuncs.HUD_AddEntity(type, ent, modelname);
 }
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
