@@ -9,9 +9,10 @@
 #include "vguilocal.h"
 #include "myconst.h"
 #include "gldef.h"
+#include "gl_draw.h"
 
 #include "CHudDelegate.h"
-#include "drawElement.h"
+
 #include "utility.h"
 
 #include "healthhud.h"

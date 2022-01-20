@@ -9,9 +9,11 @@
 #include "vguilocal.h"
 #include "myconst.h"
 #include "hud.h"
+#include "glew.h"
+#include "gl_draw.h"
 
 #include "encode.h"
-#include "drawElement.h"
+
 #include "mathlib.h"
 #include "utility.h"
 

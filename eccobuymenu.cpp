@@ -4,9 +4,8 @@
 #include "glew.h"
 #include "hud.h"
 #include "weapon.h"
-#include "glutility.h"
+#include "gl_utility.h"
 #include "vguilocal.h"
-#include "drawElement.h"
 #include "mathlib.h"
 
 #include "gldef.h"
@@ -114,6 +113,8 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	glUniform1f(pp_gaussianblurv.du, 2.0f / gScreenInfo.iHeight * flAnimationRatio);
 	DrawScreenQuad();
 	GL_UseProgram(0);
+
+	glLoadIdentity();
 
 	//±äºÚ
 	gEngfuncs.pfnFillRGBABlend(0, 0, ScreenWidth, ScreenHeight, 0, 0, 0, 128 * flAnimationRatio);

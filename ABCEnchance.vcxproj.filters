@@ -57,9 +57,6 @@
     <ClCompile Include="healthhud.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="drawElement.cpp">
-      <Filter>Source\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="historyresource.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
@@ -87,7 +84,7 @@
     <ClCompile Include="radar.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="glutility.cpp">
+    <ClCompile Include="gl_utility.cpp">
       <Filter>Source\Utility</Filter>
     </ClCompile>
     <ClCompile Include="gl_shader.cpp">
@@ -248,9 +245,6 @@
     <ClInclude Include="CColor.h">
       <Filter>Header\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="drawElement.h">
-      <Filter>Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="mathlib.h">
       <Filter>Header\Utility</Filter>
     </ClInclude>
@@ -275,7 +269,7 @@
     <ClInclude Include="radar.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="glutility.h">
+    <ClInclude Include="gl_utility.h">
       <Filter>Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="palette.h">

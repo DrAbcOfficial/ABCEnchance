@@ -9,8 +9,9 @@
 #include "cvardef.h"
 #include "mathlib.h"
 #include "gldef.h"
+#include "gl_draw.h"
 
-#include "drawElement.h"
+
 #include "CHudDelegate.h"
 #include "utility.h"
 
