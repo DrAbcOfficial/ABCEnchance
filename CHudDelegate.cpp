@@ -134,7 +134,6 @@ void __UserCmd_Attack1(void) {
 void CHudDelegate::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
-	m_HudEccoBuyMenu.GLInit();
 }
 void CHudDelegate::HUD_Init(void){
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
@@ -206,6 +205,7 @@ void CHudDelegate::HUD_VidInit(void){
 	m_HudCustomAmmo.VidInit();
 	m_HudRadar.VidInit();
 	m_HudVote.VidInit();
+	m_HudEccoBuyMenu.VidInit();
 }
 void CHudDelegate::HUD_Draw(float flTime){
 	if (gCVars.pDynamicHUD->value <= 0)

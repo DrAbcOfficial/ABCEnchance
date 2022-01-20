@@ -9,6 +9,7 @@
 #define HOOK_COMMAND(x, y) g_pMetaHookAPI->HookCmd((char*)x, __UserCmd_##y)
 #define ADD_COMMAND(x, y) gEngfuncs.pfnAddCommand((char*)x, y)
 #define ConsoleWriteline(x) gEngfuncs.Con_Printf(x);
+#define CVAR_GET_POINTER(x) gEngfuncs.pfnGetCvarPointer(x)
 #define CVAR_GET_FLOAT(x) gEngfuncs.pfnGetCvarFloat(x)
 #define CVAR_GET_STRING(x) gEngfuncs.pfnGetCvarString(x)
 #define SPR_Load (*gEngfuncs.pfnSPR_Load)

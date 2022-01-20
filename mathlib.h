@@ -35,7 +35,7 @@ namespace mathlib {
 	const float DEGREE_PER_RADIAN = 0.017453292519943295769;
 	const float PERIGON_ANGLE = 360.0;
 	const float FLAT_ANGLE = 180.0;
-	const vec3_t vec3_origin = { 0, 0, 0 };
+	const vec3_t vecZero = { 0, 0, 0 };
 	const float METERS_PER_INCH = 0.0254f;
 	constexpr int nanmask = 255 << 23;
 
