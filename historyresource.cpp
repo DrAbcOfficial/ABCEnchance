@@ -32,7 +32,7 @@ void HistoryResource::Init(void){
 	vecItemPickUpPos[1] = GET_SCREEN_PIXEL(true, "AmmoHUD.ItemPickUpY");
 
 	hFont = pScheme->GetFont("HUDSmallShitFont", true);
-	pHudDrawTime = gEngfuncs.pfnGetCvarPointer("hud_drawhistory_time");
+	pHudDrawTime = CVAR_GET_POINTER("hud_drawhistory_time");
 	Reset();
 }
 void HistoryResource::Reset(void){

@@ -270,7 +270,7 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 }
 int HUD_VidInit(void){
 	//Fillup Default CVars
-	gCVars.pCvarDefaultFOV = gEngfuncs.pfnGetCvarPointer("default_fov");
+	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
 
 	int result = gExportfuncs.HUD_VidInit();
 	gHudDelegate->HUD_VidInit();

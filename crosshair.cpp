@@ -40,7 +40,7 @@ int CHudCustomCrosshair::Init(void){
 	gCVars.pDynamicCrossHairT = CREATE_CVAR("cl_crosshair_t", "0", FCVAR_VALUE, NULL);
 	gCVars.pDynamicCrossHairD = CREATE_CVAR("cl_crosshairdot", "0", FCVAR_VALUE, NULL);
 
-	pCvarDefaultCrosshair = gEngfuncs.pfnGetCvarPointer("crosshair");
+	pCvarDefaultCrosshair = CVAR_GET_POINTER("crosshair");
 	return 1;
 }
 int CHudCustomCrosshair::Draw(float flTime){

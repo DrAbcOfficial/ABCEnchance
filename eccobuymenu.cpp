@@ -6,12 +6,17 @@
 #include "vguilocal.h"
 #include "mathlib.h"
 
+#include "com_model.h"
 #include "gl_def.h"
 #include "gl_shader.h"
 #include "local.h"
 #include "gl_draw.h"
 #include "hud.h"
 #include "weapon.h"
+#include "cvardef.h"
+
+#include "extraprecache.h"
+#include "cl_entity.h"
 
 #include "exportfuncs.h"
 #include "CHudDelegate.h"
@@ -19,6 +24,12 @@
 #include "eccobuymenu.h"
 
 using namespace mathlib;
+
+#define CAM_YAW 220
+#define CAM_DIST 80
+#define CAM_HEIGHT -40
+#define CAM_RIGHT 50
+#define ANIM_MODEL_MDEL "abcenchance/mdl/ecco_animation.mdl"
 
 CHudEccoBuyMenu m_HudEccoBuyMenu;
 enum MetaHookMsgType {
@@ -54,14 +65,6 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	return 0;
 }
 
-void CHudEccoBuyMenu::GLInit(){
-	glGenFramebuffersEXT(1, &m_hGaussianBufferVFBO);
-	m_hGaussianBufferVTex = GL_GenTextureRGB8(ScreenWidth, ScreenHeight);
-	glGenFramebuffersEXT(1, &m_hGaussianBufferHFBO);
-	m_hGaussianBufferHTex = GL_GenTextureRGB8(ScreenWidth, ScreenHeight);
-	glGenFramebuffersEXT(1, &m_hGaussianBufferModelFBO);
-	m_hGaussianBufferModelTex = GL_GenTextureRGB8(ScreenWidth, ScreenHeight);
-}
 int CHudEccoBuyMenu::Init(){
 	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
@@ -76,15 +79,30 @@ int CHudEccoBuyMenu::Init(){
 	BuyMenuModelY = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuModelY");
 	BuyMenuModelY = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuModelY");
 
-	hFont = pScheme->GetFont("HUDSmallShitFont", true);
+	pCVarIdealYaw = CVAR_GET_POINTER("cam_idealyaw");
+	pCVarIdealDist = CVAR_GET_POINTER("cam_idealdist");
+	pCVarFollowAim = CVAR_GET_POINTER("cam_followaim");
 
-	Reset();
+	hFont = pScheme->GetFont("HUDSmallShitFont", true);
 	return 0;
+}
+void CHudEccoBuyMenu::VidInit() {
+	Reset();
+}
+void CHudEccoBuyMenu::Reset() {
+	if (bOpenningMenu)
+		CloseMenu();
+	buymenuinfo.clear();
+	iAnimModelIndex = PrecacheExtraModel((char*)ANIM_MODEL_MDEL);
+	iBackgroundSpr = SPR_Load("abcenchance/spr/buymenu_background.spr");
+	pAnimeEntity = nullptr;
+	pShowEntity = nullptr;
+	pWeaponEntity = nullptr;
 }
 int CHudEccoBuyMenu::Draw(float flTime){
 	if (!bOpenningMenu)
 		return 1;
-	float flAnimationRatio = min(1.0f, (1 - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime) / 100));
+	float flAnimationRatio = (1.0f - ((max(0.0f, m_fAnimateTime - flTime)) / BuyMenuAnimateTime) / 100);
 	int mousex, mousey;
 	//获取鼠标指针位置
 	gEngfuncs.GetMousePosition(&mousex, &mousey);
@@ -129,8 +147,42 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
 		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
 		bool bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
-		if (bIsChosen)
-			iChosenSlot = i+1;
+		if (bIsChosen) {
+			iChosenSlot = i + 1;
+			if (MenuList[i] >= 0) {
+				buymenuitem_t* info = GetInfo(MenuList[i]);
+				cl_entity_t* player = gEngfuncs.GetLocalPlayer();
+				
+				switch (info->rendermode){
+					case PISTOL:
+					case RIFEL:
+					case GRENADE:
+					case KNIFE: {
+						//pShowEntity->entity.model = gEngfuncs.hudGetModelByIndex(iPlayerModelIndex);
+						//pWeaponEntity->entity.model = gEngfuncs.hudGetModelByIndex(info->modelindex);
+						//VectorCopy(player->origin, pShowEntity->entity.origin);
+						//VectorCopy(player->origin, pAnimeEntity->entity.origin);
+						//VectorCopy(player->origin, pWeaponEntity->entity.origin);
+						//pShowEntity->entity.curstate.movetype = 12;//MOVETYPE_FOLLOW
+						//pShowEntity->entity.curstate.aiment = pAnimeEntity->entity.index;
+						//pWeaponEntity->entity.curstate.movetype = 12;//MOVETYPE_FOLLOW
+						//pWeaponEntity->entity.curstate.aiment = pAnimeEntity->entity.index;
+						break;
+					}
+					case ITEM:{
+						//player->curstate.scale = 2;
+						//pShowEntity->entity.model = gEngfuncs.hudGetModelByIndex(info->modelindex);
+						//VectorCopy(player->origin, pShowEntity->entity.origin);
+						//pShowEntity->entity.origin[2] += 64;
+						//pShowEntity->entity.curstate.scale = 3;
+						break;
+					}
+					case NONE:
+					case INVALID:
+					default: break;
+				}
+			}
+		}
 		//CABD
 		DrawSPRIconPos(iBackgroundSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, bIsChosen ? a : a * 0.5);
 		if (MenuList[i] >= 0) {
@@ -145,31 +197,79 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		}
 	}
 	iNowChosenSlot = iChosenSlot;
-	//绘制模型
+	//调整第三人称
+	if (!bOldCamThirdperson)
+		EngineClientCmd("thirdperson");
+	pCVarFollowAim->value = 0;
+	pCVarIdealYaw->value = CAM_YAW;
+	pCVarIdealDist->value = CAM_DIST;
+	gCVars.pCamIdealHeight->value = CAM_HEIGHT;
+	gCVars.pCamIdealRight->value = CAM_RIGHT;
+
 	return 0;
-}
-void CHudEccoBuyMenu::Reset() {
-	buymenuinfo.clear();
-	iBackgroundSpr = SPR_Load("abcenchance/spr/buymenu_background.spr");
 }
 void CHudEccoBuyMenu::Clear() {
 	buymenuinfo.clear();
-	if (m_hGaussianBufferVTex)
-		glDeleteTextures(1, &m_hGaussianBufferVTex);
-	if (m_hGaussianBufferHTex)
-		glDeleteTextures(1, &m_hGaussianBufferHTex);
+	pAnimeEntity = nullptr;
+	pShowEntity = nullptr;
+	pWeaponEntity = nullptr;
 }
 void CHudEccoBuyMenu::AddInfo(buymenuitem_t item){
 	buymenuinfo.push_back(item);
 }
+buymenuitem_t* CHudEccoBuyMenu::GetInfo(int index) {
+	if (index >= 0 && index < buymenuinfo.size())
+		return &buymenuinfo[index];
+	return nullptr;
+}
 void CHudEccoBuyMenu::OpenMenu(){
 	m_fAnimateTime = gEngfuncs.GetClientTime() + BuyMenuAnimateTime;
+	if (!bOpenningMenu) {
+		model_t* pModel = gEngfuncs.hudGetModelByIndex(iAnimModelIndex);
+		if (!pModel)
+			return;
+		vec3_t vec = { 0,0,0 };
+		if (!pAnimeEntity) {
+			pAnimeEntity = gHookFuncs.CL_TempEntAllocHigh(vec, pModel);
+			pAnimeEntity->flags = FTENT_NONE;
+		}
+		if (!pShowEntity) {
+			pShowEntity = gHookFuncs.CL_TempEntAllocHigh(vec, pModel);
+			pShowEntity->flags = FTENT_NONE;
+		}
+		if (!pWeaponEntity) {
+			pWeaponEntity = gHookFuncs.CL_TempEntAllocHigh(vec, pModel);
+			pWeaponEntity->flags = FTENT_NONE;
+		}
+		iPlayerModelIndex = gEngfuncs.GetLocalPlayer()->curstate.modelindex;
+
+		flOldCamYaw = pCVarIdealYaw->value;
+		flOldCamDist = pCVarIdealDist->value;
+		flOldCamHeight = gCVars.pCamIdealHeight->value;
+		flOldCamRight = gCVars.pCamIdealRight->value;
+		flOldFollowAim = pCVarFollowAim->value;
+		bOldCamThirdperson = gExportfuncs.CL_IsThirdPerson();
+	}
 	bOpenningMenu = true;
 	gHudDelegate->m_iVisibleMouse = true;
 }
 void CHudEccoBuyMenu::CloseMenu() {
 	if (!bOpenningMenu)
 		return;
+	if (pAnimeEntity)
+		pAnimeEntity->die = 0;
+	if (pShowEntity)
+		pShowEntity->die = 0;
+	if (pWeaponEntity)
+		pWeaponEntity->die = 0;
+	pCVarIdealYaw->value = flOldCamYaw;
+	pCVarIdealDist->value = flOldCamDist;
+	gCVars.pCamIdealHeight->value = flOldCamHeight;
+	gCVars.pCamIdealRight->value = flOldCamRight;
+	pCVarFollowAim->value = flOldFollowAim;
+	gEngfuncs.GetLocalPlayer()->curstate.modelindex = iPlayerModelIndex;
+	if (!bOldCamThirdperson)
+		EngineClientCmd("firstperson");
 	bOpenningMenu = false;
 	gHudDelegate->m_iVisibleMouse = false;
 }

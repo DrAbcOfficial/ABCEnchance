@@ -12,16 +12,18 @@ enum EccoBuyMenuRendermode{
 	ITEM,
 	PISTOL,
 	RIFEL,
-	GRENADE
+	GRENADE,
+	KNIFE
 };
 class CHudEccoBuyMenu {
 public:
-	void GLInit();
 	int Init();
+	void VidInit();
 	int Draw(float flTime);
 	void Reset();
 	void Clear();
 	void AddInfo(buymenuitem_t item);
+	buymenuitem_t* GetInfo(int index);
 	void OpenMenu();
 	void CloseMenu();
 	bool SelectMenu();
@@ -32,6 +34,23 @@ private:
 	bool bOpenningMenu = false;
 	float m_fAnimateTime = 0;
 	int iNowChosenSlot = 0;
+
+	cvar_t* pCVarIdealYaw = nullptr;
+	cvar_t* pCVarIdealDist = nullptr;
+	cvar_t* pCVarFollowAim = nullptr;
+
+	int iAnimModelIndex = 0;
+	int iPlayerModelIndex = 0;
+	TEMPENTITY* pAnimeEntity = nullptr;
+	TEMPENTITY* pShowEntity = nullptr;
+	TEMPENTITY* pWeaponEntity = nullptr;
+
+	float flOldCamYaw;
+	float flOldCamDist;
+	float flOldCamHeight;
+	float flOldCamRight;
+	float flOldFollowAim;
+	bool bOldCamThirdperson;
 
 	GLuint iBackgroundSpr = 0;
 

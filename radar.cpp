@@ -49,10 +49,10 @@ int CHudRadar::Init(){
 	gCVars.pRadarRoundRadius = CREATE_CVAR("cl_radarradius", "344", FCVAR_VALUE, NULL);
 
 	gCVars.pRadarUpdateInterval = CREATE_CVAR("cl_radarupdateint", "1", FCVAR_VALUE, NULL);
-	pCVarDevOverview = gEngfuncs.pfnGetCvarPointer("dev_overview");
-	pCVarDrawDynamic = gEngfuncs.pfnGetCvarPointer("r_dynamic");
-	pCVarDrawEntities = gEngfuncs.pfnGetCvarPointer("r_drawentities");
-	pCVarGamma = gEngfuncs.pfnGetCvarPointer("gamma");
+	pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
+	pCVarDrawDynamic = CVAR_GET_POINTER("r_dynamic");
+	pCVarDrawEntities = CVAR_GET_POINTER("r_drawentities");
+	pCVarGamma = CVAR_GET_POINTER("gamma");
 	
 	XOffset = GET_SCREEN_PIXEL(false, "Radar.XOffset");
 	YOffset = GET_SCREEN_PIXEL(true, "Radar.YOffset");
@@ -66,9 +66,9 @@ int CHudRadar::Init(){
 }
 void CHudRadar::VidInit(){
 	if(!pCVarFXAA)
-		pCVarFXAA = gEngfuncs.pfnGetCvarPointer("r_fxaa");
+		pCVarFXAA = CVAR_GET_POINTER("r_fxaa");
 	if(!pCVarWater)
-		pCVarWater = gEngfuncs.pfnGetCvarPointer("r_water");
+		pCVarWater = CVAR_GET_POINTER("r_water");
 }
 void CHudRadar::Reset(){
 	VGUI_CREATE_NEWTGA_TEXTURE(BackGroundImg, "abcenchance/tga/radar_background");
@@ -79,7 +79,7 @@ void CHudRadar::Reset(){
 
 	flNextUpdateTrTime = 0;
 	flFinishScaleTime = 0;
-	cvar_t* pCvarDevC = gEngfuncs.pfnGetCvarPointer("dev_overview_color");
+	cvar_t* pCvarDevC = CVAR_GET_POINTER("dev_overview_color");
 	if (pCvarDevC && g_metaplugins.renderer){
 		sscanf_s(pCvarDevC->string, "%d %d %d", &iOverviewR, &iOverviewG, &iOverviewB);
 		iOverviewR /= 255;
