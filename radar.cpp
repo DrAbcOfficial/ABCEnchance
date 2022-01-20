@@ -5,18 +5,19 @@
 #include "pm_defs.h"
 #include "event_api.h"
 
-#include "glew.h"
-#include "glutility.h"
-#include "gldef.h"
-#include "gl_shader.h"
-#include "gl_draw.h"
-
 #include "exportfuncs.h"
 
 #include "hud.h"
 #include "vguilocal.h"
 #include "myconst.h"
 #include "utility.h"
+
+
+#include "glew.h"
+#include "gl_utility.h"
+#include "gldef.h"
+#include "gl_shader.h"
+#include "gl_draw.h"
 
 #include "weapon.h"
 #include "CHudDelegate.h"

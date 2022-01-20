@@ -11,11 +11,12 @@
 #include "local.h"
 #include "myconst.h"
 #include "gldef.h"
+#include "gl_draw.h"
 
 #include "cvardef.h"
 #include "weaponbank.h"
 
-#include "drawElement.h"
+
 
 #include "ammo.h"
 #include "CHudDelegate.h"

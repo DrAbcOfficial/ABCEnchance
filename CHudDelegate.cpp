@@ -12,8 +12,9 @@
 #include "weapon.h"
 #include "pm_defs.h"
 #include "parsemsg.h"
-#include "drawElement.h"
+
 #include "local.h"
+#include "gl_draw.h"
 
 #include "ammo.h"
 #include "healthhud.h"

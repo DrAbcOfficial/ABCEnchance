@@ -9,9 +9,10 @@
 #include "CColor.h"
 #include "glew.h"
 #include "gldef.h"
+#include "gl_draw.h"
 
 #include "CHudDelegate.h"
-#include "drawElement.h"
+
 #include "mathlib.h"
 #include "utility.h"
 

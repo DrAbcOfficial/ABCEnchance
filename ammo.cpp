@@ -13,11 +13,12 @@
 #include "myconst.h"
 #include "glew.h"
 #include "gldef.h"
+#include "gl_draw.h"
 #include "CHudDelegate.h"
 
 #include "enginedef.h"
 #include "exportfuncs.h"
-#include "drawElement.h"
+
 #include "utility.h"
 
 #include "IWeaponSelect.h"

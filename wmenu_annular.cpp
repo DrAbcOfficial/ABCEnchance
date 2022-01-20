@@ -13,9 +13,9 @@
 #include "glew.h"
 #include "gl_shader.h"
 #include "gl_draw.h"
-#include "glutility.h"
+#include "gl_utility.h"
 #include "gldef.h"
-#include "drawElement.h"
+
 
 #include "cvardef.h"
 #include "weaponbank.h"

@@ -7,13 +7,14 @@
 #include "local.h"
 #include "vguilocal.h"
 #include "myconst.h"
+#include "gl_draw.h"
 
 #include "hud.h"
 #include "weapon.h"
 #include "healthhud.h"
 #include "CHudDelegate.h"
 
-#include "drawElement.h"
+
 #include "exportfuncs.h"
 
 #include "efxhud.h"

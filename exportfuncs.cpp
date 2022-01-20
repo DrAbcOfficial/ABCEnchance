@@ -7,7 +7,6 @@
 #include "com_model.h"
 #include "triangleapi.h"
 #include "pm_movevars.h"
-#include "glew.h"
 #include "cvar_hook.h"
 //Def
 #include "hud.h"
@@ -18,12 +17,17 @@
 #include "myconst.h"
 #include "extraprecache.h"
 #include "regquery.h"
+//GL
+#include "glew.h"
 #include "gldef.h"
+#include "gl_shader.h"
+#include "gl_utility.h"
+#include "gl_draw.h"
 //HUD
 #include "ammo.h"
 #include "healthhud.h"
 #include "basehealth.h"
-#include "drawElement.h"
+
 #include "CHudDelegate.h"
 #include "local.h"
 //efx

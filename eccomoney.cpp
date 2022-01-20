@@ -11,11 +11,12 @@
 #include "vguilocal.h"
 #include "myconst.h"
 #include "gldef.h"
+#include "gl_draw.h"
 #include "CHudDelegate.h"
 
 #include "enginedef.h"
 #include "exportfuncs.h"
-#include "drawElement.h"
+
 #include "utility.h"
 
 #include "eccomoney.h"

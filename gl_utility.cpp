@@ -1,5 +1,5 @@
 #include "glew.h"
-#include "glutility.h"
+#include "gl_utility.h"
 void GL_UploadDepthStencilTexture(int texId, int w, int h){
 	glBindTexture(GL_TEXTURE_2D, texId);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
