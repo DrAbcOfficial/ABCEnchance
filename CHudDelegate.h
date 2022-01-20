@@ -86,5 +86,3 @@ private:
 };
 extern CHudDelegate* gHudDelegate;
 extern cl_hookedHud gHookHud;
-extern pp_gaussianblurh_program_t pp_gaussianblurh;
-extern pp_gaussianblurv_program_t pp_gaussianblurv;

@@ -25,8 +25,6 @@
 using namespace mathlib;
 
 CHudRadar m_HudRadar;
-SHADER_DEFINE(pp_radarlight);
-
 void __UserCmd_StartSizeRadar(void){
 	if (m_HudRadar.flFinishScaleTime <= 0)
 		m_HudRadar.flFinishScaleTime = gEngfuncs.GetClientTime() + gCVars.pRadarSizeTime->value;
@@ -67,13 +65,6 @@ int CHudRadar::Init(){
 	MapAlpha = (GLubyte)atof(pScheme->GetResourceString("Radar.MapAlpha"));
 	CenterAlpha = atof(pScheme->GetResourceString("Radar.CenterAlpha"));
 	
-
-	pp_radarlight.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\radar.fsh", NULL);
-	if (pp_radarlight.program){
-		SHADER_UNIFORM(pp_radarlight, rad, "rad");
-		SHADER_UNIFORM(pp_radarlight, xys, "xys");
-		SHADER_UNIFORM(pp_radarlight, gamma, "gamma");
-	}
 	return 1;
 }
 void CHudRadar::VidInit(){
@@ -126,15 +117,15 @@ void CHudRadar::Draw(float flTime){
 	gHudDelegate->surface()->DrawSetTexture(gCVars.pRadar->value > 1 ? RoundBackGroundImg : BackGroundImg);
 	gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 	//shader
-	GL_UseProgram(pp_radarlight.program);
+	GL_UseProgram(pp_texround.program);
 	if (gCVars.pRadar->value > 1) {
-		glUniform1f(pp_radarlight.rad, min(1.0f, fabs(gCVars.pRadarRoundRadius->value) / sizeMap));
-		glUniform3f(pp_radarlight.xys, iStartX, iStartY, sizeMap);
+		glUniform1f(pp_texround.rad, min(1.0f, fabs(gCVars.pRadarRoundRadius->value) / sizeMap));
+		glUniform3f(pp_texround.xys, iStartX, iStartY, sizeMap);
 	}
 	else
-		glUniform1f(pp_radarlight.rad, 0);
+		glUniform1f(pp_texround.rad, 0);
 	if (g_metaplugins.renderer)
-		glUniform1f(pp_radarlight.gamma, 1 / pCVarGamma->value);
+		glUniform1f(pp_texround.gamma, 1 / pCVarGamma->value);
 
 	glEnable(GL_TEXTURE_2D);
 	glBind(m_hRadarBufferTex);

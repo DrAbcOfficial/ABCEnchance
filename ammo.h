@@ -14,8 +14,8 @@ public:
 	void Clear();
 
 	bool m_bIsOnTarget = false;
-	WEAPON* m_pWeapon;
-	IWeaponSelect* m_pNowSelectMenu;
+	WEAPON* m_pWeapon = nullptr;
+	IWeaponSelect* m_pNowSelectMenu = nullptr;
 
 	bool m_bAcceptDeadMessage = false;
 private:

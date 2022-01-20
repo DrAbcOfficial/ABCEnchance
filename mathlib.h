@@ -78,6 +78,17 @@ namespace mathlib {
 	void VectorScale(const vec3_t in, vec_t scale, vec3_t out);
 	int Q_log2(int val);
 	void ClearBounds(vec3_t mins, vec3_t maxs);
+	void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
+	void PerpendicularVector(vec3_t dst, const vec3_t src);
+	vec_t Q_rint(vec_t in);
+	void _VectorScale(vec3_t v, vec_t scale, vec3_t out);
+	vec_t Length(const vec3_t v);
+	void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs);
+	void AngleIMatrix(const vec3_t angles, float matrix[3][4]);
+	void AngleQuaternion(const vec3_t angles, vec4_t quaternion);
+	void QuaternionMatrix(const vec4_t quaternion, float(*matrix)[4]);
+	void QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt);
+	void SinCos(float radians, float* sine, float* cosine);
 
 	void R_ConcatRotations(float in1[3][3], float in2[3][3], float out[3][3]);
 	void R_ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
@@ -101,6 +112,8 @@ namespace mathlib {
 	void VectorRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
 	void VectorIRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
 	float anglemod(float a);
+
+	void ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
 
 	float fsqrt(float x);
 };

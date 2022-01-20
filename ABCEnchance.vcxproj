@@ -121,6 +121,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClCompile Include="efxhud.cpp" />
     <ClCompile Include="encode.cpp" />
     <ClCompile Include="extraprecache.cpp" />
+    <ClCompile Include="gl_def.cpp" />
     <ClCompile Include="gl_utility.cpp" />
     <ClCompile Include="gl_draw.cpp" />
     <ClCompile Include="gl_shader.cpp" />

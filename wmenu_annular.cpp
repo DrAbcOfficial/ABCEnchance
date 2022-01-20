@@ -185,31 +185,16 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		a *= flTimeDiffer / SelectFadeTime;
 
 	if (m_bOpeningMenu) {
+		//模糊
 		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
-		//复制tex到H
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferHFBO);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferHTex, 0);
-		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferHFBO,
-			gScreenInfo.iWidth, gScreenInfo.iHeight, gScreenInfo.iWidth, gScreenInfo.iHeight);
-		//绘制到V
-		glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferVFBO);
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferVTex, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBind(m_hGaussianBufferHTex);
-		//H模糊
-		GL_UseProgram(pp_gaussianblurh.program);
-		glUniform1f(0, 1.0f / gScreenInfo.iWidth);
-		glUniform1f(pp_gaussianblurh.du, 2.0f / gScreenInfo.iWidth * flAnimationRatio);
-		glColor4ub(255, 255, 255, 255);
-		DrawScreenQuad();
-		//绘制到主画布
-		glBind(m_hGaussianBufferVTex);
+		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferHFBO, ScreenWidth, ScreenHeight, ScreenWidth, ScreenHeight);
+		DrawGaussianBlur(m_hGaussianBufferVFBO, m_hGaussianBufferHTex, m_hGaussianBufferVTex, flAnimationRatio, true, ScreenWidth, ScreenHeight);
+		DrawGaussianBlur(m_hGaussianBufferHFBO, m_hGaussianBufferVTex, m_hGaussianBufferHTex, flAnimationRatio, false, ScreenWidth, ScreenHeight);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
-		GL_UseProgram(pp_gaussianblurv.program);
-		glUniform1f(0, 1.0f / gScreenInfo.iHeight);
-		glUniform1f(pp_gaussianblurv.du, 2.0f / gScreenInfo.iHeight * flAnimationRatio);
-		DrawScreenQuad();
-		GL_UseProgram(0);
+		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferHTex);
+		DrawQuad(ScreenWidth, ScreenHeight);
 		//绘制鼠标指针
 		SelectPointerColor.GetColor(r, g, b, dummy);
 		ac = cos(m_fCursorAngle - 0.45 * M_PI);

@@ -1,10 +1,20 @@
 #include <metahook.h>
 #include <triangleapi.h>
+#include "studio.h"
 
+#include "mathlib.h"
 #include "glew.h"
 #include "vguilocal.h"
+#include "gl_utility.h"
+#include "gl_shader.h"
+#include "gl_def.h"
+#include "hud.h"
+#include "local.h"
+#include "exportfuncs.h"
 
 #include "gl_draw.h"
+
+using namespace mathlib;
 
 void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame) {
 	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), frame);
@@ -172,16 +182,38 @@ void ScaleColors(int& r, int& g, int& b, int a) {
 	g = (int)(g * x);
 	b = (int)(b * x);
 }
-void DrawScreenQuad() {
-	glColor4ub(255, 255, 255, 255);
+void DrawQuad(int w, int h) {
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
-	glVertex2f(0, 0);
-	glTexCoord2f(1, 0);
-	glVertex2f(gScreenInfo.iWidth, 0);
-	glTexCoord2f(1, 1);
-	glVertex2f(gScreenInfo.iWidth, gScreenInfo.iHeight);
+	glVertex3f(0, h, -1);
 	glTexCoord2f(0, 1);
-	glVertex2f(0, gScreenInfo.iHeight);
+	glVertex3f(0, 0, -1);
+	glTexCoord2f(1, 1);
+	glVertex3f(w, 0, -1);
+	glTexCoord2f(1, 0);
+	glVertex3f(w, h, -1);
 	glEnd();
+}
+void DrawScreenQuad() {
+	DrawQuad(ScreenWidth, ScreenHeight);
+}
+void DrawGaussianBlur(GLint dstfbo, GLint srctex, GLint dsttex, float ratio, bool v, int w, int h) {
+	//¸´ÖÆtexµ½H
+	glBindFramebuffer(GL_FRAMEBUFFER, dstfbo);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dsttex, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBind(srctex);
+	if (v) {
+		GL_UseProgram(pp_gaussianblurv.program);
+		GL_Uniform1f(0, 1.0f / h);
+		GL_Uniform1f(pp_gaussianblurv.du, 200.0f / h * ratio);
+	}
+	else {
+		GL_UseProgram(pp_gaussianblurh.program);
+		GL_Uniform1f(0, 1.0f / w);
+		GL_Uniform1f(pp_gaussianblurh.du, 200.0f / w * ratio);
+	}
+	glColor4ub(255, 255, 255, 255);
+	DrawQuad(w, h);
+	GL_UseProgram(0);
 }
