@@ -8,7 +8,7 @@
 #include "weaponbank.h"
 #include "cvardef.h"
 #include "mathlib.h"
-#include "gldef.h"
+#include "gl_def.h"
 #include "gl_draw.h"
 
 

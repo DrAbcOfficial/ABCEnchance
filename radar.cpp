@@ -15,7 +15,7 @@
 
 #include "glew.h"
 #include "gl_utility.h"
-#include "gldef.h"
+#include "gl_def.h"
 #include "gl_shader.h"
 #include "gl_draw.h"
 

@@ -174,7 +174,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClInclude Include="efxenchance.h" />
     <ClInclude Include="enginedef.h" />
     <ClInclude Include="exportfuncs.h" />
-    <ClInclude Include="gldef.h" />
+    <ClInclude Include="gl_def.h" />
     <ClInclude Include="healthhud.h" />
     <ClInclude Include="historyresource.h" />
     <ClInclude Include="hud.h" />

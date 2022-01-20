@@ -3,7 +3,7 @@
 #include "mathlib.h"
 
 #include "glew.h"
-#include "gldef.h"
+#include "gl_def.h"
 #include "triangleapi.h"
 
 #include "cvar_hook.h"

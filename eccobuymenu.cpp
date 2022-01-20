@@ -8,7 +8,7 @@
 #include "vguilocal.h"
 #include "mathlib.h"
 
-#include "gldef.h"
+#include "gl_def.h"
 #include "gl_shader.h"
 #include "myconst.h"
 #include "local.h"

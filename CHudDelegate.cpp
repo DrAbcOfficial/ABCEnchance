@@ -4,7 +4,7 @@
 
 #include "glew.h"
 #include "gl_shader.h"
-#include "gldef.h"
+#include "gl_def.h"
 
 #include "pmtrace.h"
 #include "vguilocal.h"
