@@ -33,6 +33,7 @@ void GL_VertexAttrib3f(GLuint index, float x, float y, float z);
 void GL_VertexAttrib3fv(GLuint index, float* v);
 void GL_MultiTexCoord2f(GLenum target, float s, float t);
 void GL_MultiTexCoord3f(GLenum target, float s, float t, float r);
+void GL_FreeShaders();
 
 #define SHADER_DEFINE(name) name##_program_t name;
 #define SHADER_UNIFORM(name, loc, locstring) name##.loc = glGetUniformLocationARB(name.program, locstring);

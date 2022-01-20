@@ -2,20 +2,15 @@
 
 #include "parsemsg.h"
 #include "glew.h"
-#include "hud.h"
-#include "weapon.h"
 #include "gl_utility.h"
 #include "vguilocal.h"
 #include "mathlib.h"
 
 #include "gl_def.h"
 #include "gl_shader.h"
-#include "myconst.h"
 #include "local.h"
 #include "gl_draw.h"
-#include "utility.h"
 
-#include "CHudDelegate.h"
 #include "eccobuymenu.h"
 
 using namespace mathlib;
@@ -132,10 +127,10 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		Vector2Copy(aryOut[i == 8 ? 0 : i + 1], vecC);
 		Vector2Copy(aryOut[i], vecD);
 		//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
-		CenterPos2OpenGLPos(vecA);
-		CenterPos2OpenGLPos(vecB);
-		CenterPos2OpenGLPos(vecC);
-		CenterPos2OpenGLPos(vecD);
+		CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
+		CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
+		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
+		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
 		//CABD
 		DrawSPRIconPos(iBackgroundSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, a * 0.5);
 		if (MenuList[i] >= 0) {

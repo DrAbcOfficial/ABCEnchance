@@ -10,7 +10,6 @@
 #include "hud.h"
 #include "local.h"
 #include "vguilocal.h"
-#include "myconst.h"
 
 #include "glew.h"
 #include "gl_def.h"

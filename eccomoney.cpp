@@ -9,15 +9,12 @@
 
 #include "local.h"
 #include "vguilocal.h"
-#include "myconst.h"
 #include "gl_def.h"
 #include "gl_draw.h"
 #include "CHudDelegate.h"
 
 #include "enginedef.h"
 #include "exportfuncs.h"
-
-#include "utility.h"
 
 #include "eccomoney.h"
 using namespace mathlib;

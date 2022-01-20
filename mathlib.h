@@ -19,8 +19,11 @@ typedef int fixed16_t;
 #define RANDOM_LONG(a, b) gEngfuncs.pfnRandomLong(a, b)
 #define RANDOM_FLOAT(a, b) gEngfuncs.pfnRandomFloat(a, b)
 
+#define GET_SCREEN_PIXEL(h, str) mathlib::GetScreenPixel(h, atof(pScheme->GetResourceString(str)))
+
 struct mplane_s;
 #define AngleIVectors AngleVectorsTranspose
+
 namespace mathlib {
 	const double M_PI = 3.14159265358979323846;
 	const double Q_PI = 3.14159265358979323846;
@@ -59,6 +62,8 @@ namespace mathlib {
 	float min3(float a, float b, float c);
 	int min3(int a, int b, int c);
 
+	void CenterPos2OpenGLPos(vec2_t pos, int w, int h);
+	int GetScreenPixel(int length, float percent);
 	void Vector2Rotate(vec2_t out, float x, float y, float rotate);
 
 	void MatrixCopy(float in[4][3], float out[4][3]);
@@ -114,6 +119,7 @@ namespace mathlib {
 	float anglemod(float a);
 
 	void ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
-
+	void RGBToHSV(int r, int g, int b, float& h, float& s, float& v);
+	void HSVToRGB(float h, float s, float v, int& r, int& g, int& b);
 	float fsqrt(float x);
 };

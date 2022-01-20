@@ -2,6 +2,40 @@
 #include "cvar_hook.h"
 #include "com_model.h"
 
+#define DAGER_HEALTH 45
+#define FCVAR_VALUE (FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE)
+#define BASE_GWR_SELECTED 842100225
+#define BASE_GWR_UNSELECTED 842100224
+#define HOOK_COMMAND(x, y) g_pMetaHookAPI->HookCmd((char*)x, __UserCmd_##y)
+#define ADD_COMMAND(x, y) gEngfuncs.pfnAddCommand((char*)x, y)
+#define ConsoleWriteline(x) gEngfuncs.Con_Printf(x);
+#define CVAR_GET_FLOAT(x) gEngfuncs.pfnGetCvarFloat(x)
+#define CVAR_GET_STRING(x) gEngfuncs.pfnGetCvarString(x)
+#define SPR_Load (*gEngfuncs.pfnSPR_Load)
+#define SPR_Set (*gEngfuncs.pfnSPR_Set)
+#define SPR_Frames (*gEngfuncs.pfnSPR_Frames)
+#define SPR_GetList(x, y) (*gEngfuncs.pfnSPR_GetList)((char*)x, y)
+// SPR_Draw  draws a the current sprite as solid
+#define SPR_Draw (*gEngfuncs.pfnSPR_Draw)
+// SPR_DrawHoles  draws the current sprites,  with color index255 not drawn (transparent)
+#define SPR_DrawHoles (*gEngfuncs.pfnSPR_DrawHoles)
+// SPR_DrawAdditive  adds the sprites RGB values to the background  (additive transulency)
+#define SPR_DrawAdditive (*gEngfuncs.pfnSPR_DrawAdditive)
+// SPR_EnableScissor  sets a clipping rect for HUD sprites.  (0,0) is the top-left hand corner of the screen.
+#define SPR_EnableScissor (*gEngfuncs.pfnSPR_EnableScissor)
+// SPR_DisableScissor  disables the clipping rect
+#define SPR_DisableScissor (*gEngfuncs.pfnSPR_DisableScissor)
+#define FillRGBA (*gEngfuncs.pfnFillRGBA)
+// ScreenHeight returns the height of the screen, in pixels
+#define ScreenHeight (gScreenInfo.iHeight)
+// ScreenWidth returns the width of the screen, in pixels
+#define ScreenWidth (gScreenInfo.iWidth)
+#define GetScreenInfo (*gEngfuncs.pfnGetScreenInfo)
+#define ServerCmd(x) (*gEngfuncs.pfnServerCmd)((char*)x)
+#define EngineClientCmd (*gEngfuncs.pfnClientCmd)
+#define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
+#define PlaySoundByName(x, y) (*gEngfuncs.pfnPlaySoundByName)((char*)x, y)
+
 typedef struct{
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
 	float*		(*GetClientColor)			(int clientIndex);

@@ -1,14 +1,12 @@
 #include <metahook.h>
 
 #include "mathlib.h"
-#include "utility.h"
 
 #include "hud.h"
 #include "weapon.h"
 #include "CColor.h"
 #include "vguilocal.h"
 #include "local.h"
-#include "myconst.h"
 
 #include "glew.h"
 #include "gl_shader.h"
@@ -226,10 +224,10 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		Vector2Copy(aryOut[i == 9 ? 0 : i + 1], vecC);
 		Vector2Copy(aryOut[i], vecD);
 		//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
-		CenterPos2OpenGLPos(vecA);
-		CenterPos2OpenGLPos(vecB);
-		CenterPos2OpenGLPos(vecC);
-		CenterPos2OpenGLPos(vecD);
+		CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
+		CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
+		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
+		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
 		//CABD
 		SelectColor.GetColor(r, g, b, dummy);
 		if (gCVars.pAmmoMenuDrawRainbow->value > 1) {
@@ -256,10 +254,10 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		Vector2Copy(aryIn[gWR.iNowSlot], vecB);
 		Vector2Copy(aryOut[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecC);
 		Vector2Copy(aryOut[gWR.iNowSlot], vecD);
-		CenterPos2OpenGLPos(vecA);
-		CenterPos2OpenGLPos(vecB);
-		CenterPos2OpenGLPos(vecC);
-		CenterPos2OpenGLPos(vecD);
+		CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
+		CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
+		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
+		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
 		DrawSelectIcon(wp, a, xpos, ypos, gWR.iNowSlot);

@@ -9,9 +9,6 @@
 
 #include "hud.h"
 #include "vguilocal.h"
-#include "myconst.h"
-#include "utility.h"
-
 
 #include "glew.h"
 #include "gl_utility.h"

@@ -138,7 +138,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClCompile Include="parsemsg.cpp" />
     <ClCompile Include="plugins.cpp" />
     <ClCompile Include="regquery.cpp" />
-    <ClCompile Include="utility.cpp" />
     <ClCompile Include="vguilocal.cpp" />
     <ClCompile Include="viewmodellag.cpp" />
     <ClCompile Include="vote.cpp" />
@@ -163,7 +162,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClInclude Include="gl_draw.h" />
     <ClInclude Include="itemhighlight.h" />
     <ClInclude Include="IWeaponSelect.h" />
-    <ClInclude Include="myconst.h" />
     <ClInclude Include="crosshair.h" />
     <ClInclude Include="cvar_hook.h" />
     <ClInclude Include="gl_utility.h" />
@@ -185,7 +183,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClInclude Include="parsemsg.h" />
     <ClInclude Include="plugins.h" />
     <ClInclude Include="regquery.h" />
-    <ClInclude Include="utility.h" />
     <ClInclude Include="vguilocal.h" />
     <ClInclude Include="VGUI\Cursor.h" />
     <ClInclude Include="VGUI\Dar.h" />

@@ -71,6 +71,13 @@ float mathlib::min3(float a, float b, float c) {
 int mathlib::min3(int a, int b, int c) {
 	return min(a, min(b, c));
 }
+void mathlib::CenterPos2OpenGLPos(vec2_t pos, int w, int h){
+	pos[0] += w / 2; 
+	pos[1] = h / 2 - pos[1];
+}
+int mathlib::GetScreenPixel(int length, float percent) {
+	return (float)length * clamp(percent, 0.0f, 1.0f);
+}
 void mathlib::Vector2Rotate(vec2_t out, float x, float y, float rotate) {
 	out[0] = x * cos(rotate) - y * sin(rotate); out[1] = x * sin(rotate) + y * cos(rotate);
 }
@@ -815,6 +822,51 @@ void mathlib::ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]
 		in1[2][2] * in2[2][2];
 	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] +
 		in1[2][2] * in2[2][3] + in1[2][3];
+}
+void mathlib::RGBToHSV(int r, int g, int b, float& h, float& s, float& v) {
+	float fr = r / 255.0, fg = g / 255.0, fb = b / 255.0;
+	float max = max3(fr, fg, fb);
+	float min = min3(fr, fg, fb);
+	float range = max - min;
+	//H
+	if (range <= 0)
+		h = 0;
+	else if (max == r)
+		h = 60 * (fg - fb) / range + (g >= b ? 0 : 360);
+	else if (max == g)
+		h = 60 * (fb - fr) / range + 120;
+	else
+		h = 60 * (fr - fg) / range + 240;
+	if (abs(h) >= 360)
+		h = fmod(h, 360);
+	//S
+	s = max <= 0 ? 0 : range / max;
+	//V
+	v = max <= 0 ? 0 : max;
+}
+void mathlib::HSVToRGB(float h, float s, float v, int& r, int& g, int& b) {
+	//0<=h<360
+	//0<=s<=1
+	//0<=v<=1
+	h = fmod(h, 360);
+	s = clamp(s, 0.0, 1.0);
+	v = clamp(v, 0.0, 1.0);
+	float section = h / 60;
+	float c = v * s;
+	float x = c * (1 - abs(fmod(section, 2) - 1));
+	float hr = 0, hg = 0, hb = 0;
+	switch ((int)section) {
+	case 0:hr = c, hg = x, hb = 0; break;
+	case 1:hr = x; hg = c; hb = 0; break;
+	case 2:hr = 0; hg = c; hb = x; break;
+	case 3:hr = 0; hg = x; hb = c; break;
+	case 4:hr = x; hg = 0; hb = c; break;
+	case 5:hr = c; hg = 0; hb = x; break;
+	}
+	float m = v - c;
+	r = (hr + m) * 255;
+	g = (hg + m) * 255;
+	b = (hb + m) * 255;
 }
 //快速近似平方根
 float mathlib::fsqrt(float x){
