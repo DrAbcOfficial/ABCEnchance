@@ -99,9 +99,6 @@
     <ClCompile Include="vote.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="utility.cpp">
-      <Filter>Source\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="cvar_hook.cpp">
       <Filter>Source\Var</Filter>
     </ClCompile>
@@ -233,9 +230,6 @@
     <ClInclude Include="historyresource.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="hud.h">
-      <Filter>Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="weaponbank.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
@@ -290,17 +284,11 @@
     <ClInclude Include="cvar_hook.h">
       <Filter>Header\Var</Filter>
     </ClInclude>
-    <ClInclude Include="myconst.h">
-      <Filter>Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="eccomoney.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="numdisplay.h">
       <Filter>Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="utility.h">
-      <Filter>Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="efxhud.h">
       <Filter>Header\HUD</Filter>
@@ -337,6 +325,9 @@
     </ClInclude>
     <ClInclude Include="gl_def.h">
       <Filter>Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="hud.h">
+      <Filter>Header\Var</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -14,7 +14,6 @@
 #include "exportfuncs.h"
 #include "CColor.h"
 #include "weapon.h"
-#include "myconst.h"
 #include "extraprecache.h"
 #include "regquery.h"
 //GL
@@ -368,5 +367,6 @@ int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 }
 void HUD_Clear(void){
 	gHudDelegate->HUD_Clear();
+	GL_FreeShaders();
 	ClearExtraPrecache();
 }

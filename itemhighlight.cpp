@@ -13,7 +13,6 @@
 
 #include "vguilocal.h"
 #include "local.h"
-#include "myconst.h"
 
 #include "itemhighlight.h"
 

@@ -1,7 +1,6 @@
 #include <metahook.h>
 
 #include "mathlib.h"
-#include "utility.h"
 #include "glew.h"
 
 #include "hud.h"
@@ -9,14 +8,11 @@
 #include "CColor.h"
 #include "vguilocal.h"
 #include "local.h"
-#include "myconst.h"
 #include "gl_def.h"
 #include "gl_draw.h"
 
 #include "cvardef.h"
 #include "weaponbank.h"
-
-
 
 #include "ammo.h"
 #include "CHudDelegate.h"

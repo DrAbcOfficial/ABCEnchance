@@ -14,7 +14,6 @@
 #include "CHudDelegate.h"
 
 #include "mathlib.h"
-#include "utility.h"
 
 #include "vote.h"
 

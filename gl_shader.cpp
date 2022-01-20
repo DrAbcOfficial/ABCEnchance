@@ -10,12 +10,7 @@
 #include <regex>
 
 std::vector<glshader_t> g_ShaderTable;
-
-void GL_InitShaders(void){
-
-}
-
-void GL_FreeShaders(void){
+void GL_FreeShaders(){
 	for (size_t i = 0; i < g_ShaderTable.size(); ++i){
 		auto& objs = g_ShaderTable[i].shader_objects;
 		for (size_t j = 0; j < objs.size(); ++j){
@@ -24,7 +19,6 @@ void GL_FreeShaders(void){
 		}
 		glDeleteProgramsARB(1, &g_ShaderTable[i].program);
 	}
-
 	g_ShaderTable.clear();
 }
 

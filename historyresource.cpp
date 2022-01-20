@@ -10,10 +10,9 @@
 #include "mathlib.h"
 #include "gl_def.h"
 #include "gl_draw.h"
-
+#include "local.h"
 
 #include "CHudDelegate.h"
-#include "utility.h"
 
 #include "historyresource.h"
 

@@ -7,13 +7,11 @@
 #include "hud.h"
 #include "weapon.h"
 #include "vguilocal.h"
-#include "myconst.h"
 #include "gl_def.h"
 #include "gl_draw.h"
+#include "local.h"
 
 #include "CHudDelegate.h"
-
-#include "utility.h"
 
 #include "healthhud.h"
 
@@ -283,10 +281,10 @@ void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 	Vector2RotateCASA(var.vecHUDC, -sprWidth, y1, ca, sa);
 	Vector2RotateCASA(var.vecHUDD, sprWidth, y1, ca, sa);
 	//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
-	CenterPos2OpenGLPos(var.vecHUDA);
-	CenterPos2OpenGLPos(var.vecHUDB);
-	CenterPos2OpenGLPos(var.vecHUDC);
-	CenterPos2OpenGLPos(var.vecHUDD);
+	CenterPos2OpenGLPos(var.vecHUDA, ScreenWidth, ScreenHeight);
+	CenterPos2OpenGLPos(var.vecHUDB, ScreenWidth, ScreenHeight);
+	CenterPos2OpenGLPos(var.vecHUDC, ScreenWidth, ScreenHeight);
+	CenterPos2OpenGLPos(var.vecHUDD, ScreenWidth, ScreenHeight);
 }
 int CHudArmorHealth::DrawPain(float flTime){
 	int r, g, b, a;

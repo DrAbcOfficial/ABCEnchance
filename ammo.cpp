@@ -10,7 +10,6 @@
 #include "CColor.h"
 #include "vguilocal.h"
 #include "local.h"
-#include "myconst.h"
 #include "glew.h"
 #include "gl_def.h"
 #include "gl_draw.h"
@@ -18,8 +17,6 @@
 
 #include "enginedef.h"
 #include "exportfuncs.h"
-
-#include "utility.h"
 
 #include "IWeaponSelect.h"
 #include "wmenu_annular.h"

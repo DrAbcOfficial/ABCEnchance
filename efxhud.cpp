@@ -6,7 +6,6 @@
 
 #include "local.h"
 #include "vguilocal.h"
-#include "myconst.h"
 #include "gl_draw.h"
 
 #include "hud.h"
