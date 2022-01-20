@@ -22,6 +22,7 @@ public:
 	int Draw(float flTime);
 	void Reset();
 	void Clear();
+	bool AddEntity(int type, cl_entity_s* ent, const char* modelname);
 	void AddInfo(buymenuitem_t item);
 	buymenuitem_t* GetInfo(int index);
 	void OpenMenu();

@@ -272,10 +272,11 @@ void CHudDelegate::IN_Accumulate(void){
 		return;
 	m_HudCustomAmmo.IN_Accumulate();
 }
-int CHudDelegate::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
-{
+int CHudDelegate::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname){
+	bool result = true;
+	result = result && m_HudEccoBuyMenu.AddEntity(type, ent, modelname);
 	m_HudItemHighLight.AddEntity(type, ent, modelname);
-	return 0;
+	return result;
 }
 void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {
 }
