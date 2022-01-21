@@ -52,9 +52,6 @@ typedef struct{
 	void		(*R_ForceCVars)				(qboolean mp);
 	void		(*Cvar_DirectSet)			(cvar_t* var, char* value);
 	void		(*SetPunchAngle)				(int y, float value);
-	TEMPENTITY* (*CL_TempEntAllocHigh)		(float* org, struct model_s* model);
-	TEMPENTITY* (*CL_TempEntAlloc)			(float* org, struct model_s* model);
-
 	void		(*pfnPlaybackEvent)			(int flags, const struct edict_s* pInvoker, unsigned short eventindex, float delay, float* origin, float* angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2);
 }cl_refHookfunc_t;
 

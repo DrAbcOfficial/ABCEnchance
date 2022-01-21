@@ -46,6 +46,7 @@ overviewInfo_t* gDevOverview;
 baseweapon_t* (*g_rgBaseSlots)[10][26] = nullptr;
 int* g_iVisibleMouse = nullptr;
 refdef_t* g_refdef = nullptr;
+
 //FINAL SHIT
 void R_NewMap(void){
 	ClearExtraPrecache();
@@ -98,6 +99,7 @@ void Cvar_DirectSet(cvar_t* var, char* value) {
 		gCVarsHookMap[var](var);
 	}
 }
+
 void Sys_ErrorEx(const char* fmt, ...){
 	char msg[4096] = { 0 };
 
@@ -119,8 +121,7 @@ void CheckOtherPlugin(){
 }
 
 void FillEfxAddress(){
-	Fill_EfxFunc(CL_TempEntAllocHigh);
-	Fill_EfxFunc(CL_TempEntAlloc);
+
 }
 void FillAddress(){
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
@@ -263,8 +264,7 @@ void HUD_Init(void){
 	gExportfuncs.HUD_Init();
 	gHudDelegate->HUD_Init();
 }
-int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio)
-{
+int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
 	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }

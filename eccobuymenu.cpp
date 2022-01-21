@@ -14,6 +14,7 @@
 #include "hud.h"
 #include "weapon.h"
 #include "cvardef.h"
+#include "dlight.h"
 
 #include "extraprecache.h"
 #include "cl_entity.h"
@@ -25,6 +26,7 @@
 
 using namespace mathlib;
 
+#define BASE_INDEX_TEMP 7355608
 #define CAM_YAW 220
 #define CAM_DIST 80
 #define CAM_HEIGHT -40
@@ -38,6 +40,16 @@ enum MetaHookMsgType {
 	MHSV_CMD_ECCO_INFO = 7,
 	MHSV_CMD_ECCO_MENU = 8
 };
+enum EccoRenderMode {
+	INVALID = -4,
+	NONE = -3,
+	ITEM = -2
+};
+enum EccoMenuMode {
+	IVALID = -1,
+	BACKUP = -2,
+	NEXTPAGE = -3
+};
 int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int type = READ_BYTE();
@@ -47,15 +59,17 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 		item.id = READ_LONG();
 		item.price = READ_LONG();
 		item.modelindex = READ_LONG();
-		item.rendermode = READ_BYTE();
+		item.sequence = READ_LONG();
 		strcpy_s(item.name, READ_STRING());
 		m_HudEccoBuyMenu.AddInfo(item);
 		break;
 	}
 	case MHSV_CMD_ECCO_MENU: {
-		memset(m_HudEccoBuyMenu.MenuList, -1, sizeof(m_HudEccoBuyMenu.MenuList));
-		for (int l = READ_BYTE(); l > 0; l--) {
-			m_HudEccoBuyMenu.MenuList[l - 1] = READ_LONG();
+		m_HudEccoBuyMenu.MenuList.clear();
+		int pageLen = READ_BYTE();
+		m_HudEccoBuyMenu.MenuList.resize((size_t)pageLen);
+		for (int i = 0; i < pageLen; i++) {
+			m_HudEccoBuyMenu.MenuList[i] = READ_LONG();
 		}
 		m_HudEccoBuyMenu.OpenMenu();
 		break;
@@ -83,6 +97,9 @@ int CHudEccoBuyMenu::Init(){
 	pCVarIdealDist = CVAR_GET_POINTER("cam_idealdist");
 	pCVarFollowAim = CVAR_GET_POINTER("cam_followaim");
 
+	TextColor = pScheme->GetColor("BuyMenu.TextColor", gDefaultColor);
+	ButtonColor = pScheme->GetColor("BuyMenu.ButtonColor", gDefaultColor);
+
 	hFont = pScheme->GetFont("HUDSmallShitFont", true);
 	return 0;
 }
@@ -93,20 +110,26 @@ void CHudEccoBuyMenu::Reset() {
 	if (bOpenningMenu)
 		CloseMenu();
 	buymenuinfo.clear();
-	iAnimModelIndex = PrecacheExtraModel((char*)ANIM_MODEL_MDEL);
+	MenuList.clear();
 	iBackgroundSpr = SPR_Load("abcenchance/spr/buymenu_background.spr");
-	pAnimeEntity = nullptr;
-	pShowEntity = nullptr;
-	pWeaponEntity = nullptr;
+	VGUI_CREATE_NEWTGA_TEXTURE(iBackgroundTga, "abcenchance/tga/buymenu_background");
+	pShowEnt = nullptr;
+	pWeaponEnt = nullptr;
+	pLight = nullptr;
 }
 int CHudEccoBuyMenu::Draw(float flTime){
 	if (!bOpenningMenu)
 		return 1;
-	float flAnimationRatio = (1.0f - ((max(0.0f, m_fAnimateTime - flTime)) / BuyMenuAnimateTime) / 100);
+	
+	float flAnimationRatio = min(1.0f, 1.0f - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime));
+	//大背景
+	gHudDelegate->surface()->DrawSetTexture(-1);
+	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255 * flAnimationRatio);
+	gHudDelegate->surface()->DrawSetTexture(iBackgroundTga);
+	gHudDelegate->surface()->DrawTexturedRect(0, 0, ScreenWidth / 2, ScreenHeight);
 	int mousex, mousey;
 	//获取鼠标指针位置
 	gEngfuncs.GetMousePosition(&mousex, &mousey);
-	gHudDelegate->surface()->DrawSetTexture(-1);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
 	gHudDelegate->surface()->DrawSetTexture(gHudDelegate->m_iCursorTga);
 	gHudDelegate->surface()->DrawTexturedRect(mousex, mousey, mousex + gHudDelegate->m_flCursorSize, mousey + gHudDelegate->m_flCursorSize);
@@ -118,6 +141,7 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	int iXDiffer = ScreenWidth / 2 - BuyMenuCenterX;
 	int iYDiffer = ScreenHeight / 2 - BuyMenuCenterY;
 	int iChosenSlot = 10;
+	int iChosenId = -1;
 	vec2_t aryOut[9];
 	vec2_t aryIn[9];
 	vec2_t vecA, vecB, vecC, vecD;
@@ -149,11 +173,11 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		bool bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
 		if (bIsChosen) {
 			iChosenSlot = i + 1;
-			int iChosenId = -1;
 			if (MenuList[i] >= 0)
-				iNowSelectedId = MenuList[i];
+				iChosenId = MenuList[i];
 		}
 		//CABD
+		ButtonColor.GetColor(r, g, b, a);
 		DrawSPRIconPos(iBackgroundSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, bIsChosen ? a : a * 0.5);
 		if (MenuList[i] >= 0) {
 			xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
@@ -163,9 +187,13 @@ int CHudEccoBuyMenu::Draw(float flTime){
 			pLocalize->ConvertANSIToUnicode(item->name, buf, sizeof(buf));
 			int w, h;
 			GetStringSize(buf, &w, &h, hFont);
+			TextColor.GetColor(r, g, b, a);
 			DrawVGUI2String(buf, xpos - w / 2, ypos - h / 2, r, g, b, hFont);
+			if (bIsChosen)
+				DrawVGUI2String(buf, BuyMenuCenterX - w / 2, BuyMenuCenterY - h / 2, r, g, b, hFont);
 		}
 	}
+	iNowSelectedId = iChosenId;
 	iNowChosenSlot = iChosenSlot;
 	//调整第三人称
 	if (!bOldCamThirdperson)
@@ -180,54 +208,70 @@ int CHudEccoBuyMenu::Draw(float flTime){
 }
 void CHudEccoBuyMenu::Clear() {
 	buymenuinfo.clear();
-	pAnimeEntity = nullptr;
-	pShowEntity = nullptr;
-	pWeaponEntity = nullptr;
+	MenuList.clear();
+	pShowEnt = nullptr;
+	pWeaponEnt = nullptr;
+	pLight = nullptr;
 }
 bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelname){
-	//TODO: So ugly so shit
 	if (ent == gEngfuncs.GetLocalPlayer() && bOpenningMenu) {
+		ClearTempEnt();
+		if (!pLight)
+			CreateLight();
+		VectorCopy(ent->origin, pLight->origin);
 		if (iNowSelectedId < 0)
 			return true;
-		model_t* pModel = gEngfuncs.hudGetModelByIndex(iAnimModelIndex);
-		if (!pModel)
-			return true;
-		if (!pAnimeEntity) {
-			pAnimeEntity = gHookFuncs.CL_TempEntAlloc(ent->origin, pModel);
-			pAnimeEntity->flags = FTENT_NONE;
-			pAnimeEntity->entity.baseline.effects = EF_NODRAW;
-			pAnimeEntity->die = gEngfuncs.GetClientTime() + 99999.0f;
-		}
-		if (!pShowEntity) {
-			pShowEntity = gHookFuncs.CL_TempEntAlloc(ent->origin, pModel);
-			pShowEntity->flags = FTENT_NONE;
-			pShowEntity->entity.baseline.effects = EF_NODRAW;
-			pShowEntity->die = gEngfuncs.GetClientTime() + 99999.0f;
-		}
-		if (!pWeaponEntity) {
-			pWeaponEntity = gHookFuncs.CL_TempEntAlloc(ent->origin, pModel);
-			pWeaponEntity->flags = FTENT_NONE;
-			pWeaponEntity->entity.baseline.effects = EF_NODRAW;
-			pWeaponEntity->die = gEngfuncs.GetClientTime() + 99999.0f;
-		}
 		buymenuitem_t* info = GetInfo(iNowSelectedId);
-		switch (info->rendermode) {
-		case PISTOL:
-		case RIFEL:
-		case GRENADE:
-		case KNIFE: {
-			break;
-		}
-		case ITEM: {
-			pShowEntity->entity.curstate.effects = 0;
-			pShowEntity->entity.model = gEngfuncs.hudGetModelByIndex(info->modelindex);
-			VectorCopy(ent->origin, pShowEntity->entity.origin);
-			VectorCopy(ent->angles, pShowEntity->entity.angles);
-			break;
-		}
+		switch (info->sequence) {
 		case NONE:
-		case INVALID:
-		default: break;
+		case INVALID: break;
+		case ITEM: {
+			model_t* pModel = gEngfuncs.hudGetModelByIndex(info->modelindex);
+			if (!pModel)
+				return true;
+			if (!pShowEnt) {
+				pShowEnt = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(ent->origin, pModel);
+				pShowEnt->flags = FTENT_NONE;
+				pShowEnt->entity.curstate.effects = EF_FULLBRIGHT;
+				pShowEnt->die = gEngfuncs.GetClientTime() + 99999.0f;
+			}
+			VectorCopy(ent->origin, pShowEnt->entity.origin);
+			VectorCopy(ent->angles, pShowEnt->entity.angles);
+			pShowEnt->entity.curstate.scale = 2;
+			break;
+		}
+		default: {
+			ent->curstate.rendermode = kRenderTransAdd;
+			ent->curstate.renderamt = 0;
+			ent->curstate.sequence = info->sequence;
+			ent->curstate.gaitsequence = 0;
+			if (!pShowEnt) {
+				pShowEnt = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(ent->origin, ent->model);
+				pShowEnt->flags = FTENT_NONE;
+				pShowEnt->entity.curstate.effects = EF_FULLBRIGHT;
+				pShowEnt->entity.curstate.framerate = ent->curstate.framerate;
+				pShowEnt->entity.curstate.sequence = info->sequence;
+				pShowEnt->entity.curstate.renderfx = kRenderFxDeadPlayer;
+				pShowEnt->entity.curstate.renderamt = ent->index;
+				pShowEnt->entity.curstate.weaponmodel = info->modelindex;
+				pShowEnt->entity.curstate.weaponanim = ent->curstate.weaponanim;
+				pShowEnt->entity.curstate.framerate = ent->curstate.framerate;
+				pShowEnt->entity.curstate.frame = ent->curstate.frame;
+				pShowEnt->entity.curstate.colormap = ent->curstate.colormap;
+				pShowEnt->die = gEngfuncs.GetClientTime() + 99999.0f;
+			}
+			if (!pWeaponEnt) {
+				model_t* pModel = gEngfuncs.hudGetModelByIndex(info->modelindex);
+				if (!pModel)
+					return true;
+				pWeaponEnt = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(ent->origin, pModel);
+				pWeaponEnt->entity.curstate.movetype = MOVETYPE_FOLLOW;
+				pWeaponEnt->entity.curstate.aiment = ent->index;
+			}
+			VectorCopy(ent->origin, pShowEnt->entity.origin);
+			VectorCopy(ent->angles, pShowEnt->entity.angles);
+			return true;
+		}
 		}
 		return false;
 	}
@@ -244,13 +288,13 @@ buymenuitem_t* CHudEccoBuyMenu::GetInfo(int index) {
 void CHudEccoBuyMenu::OpenMenu(){
 	m_fAnimateTime = gEngfuncs.GetClientTime() + BuyMenuAnimateTime;
 	if (!bOpenningMenu) {
-		iPlayerModelIndex = gEngfuncs.GetLocalPlayer()->curstate.modelindex;
 		flOldCamYaw = pCVarIdealYaw->value;
 		flOldCamDist = pCVarIdealDist->value;
 		flOldCamHeight = gCVars.pCamIdealHeight->value;
 		flOldCamRight = gCVars.pCamIdealRight->value;
 		flOldFollowAim = pCVarFollowAim->value;
 		bOldCamThirdperson = gExportfuncs.CL_IsThirdPerson();
+		CreateLight();
 	}
 	bOpenningMenu = true;
 	gHudDelegate->m_iVisibleMouse = true;
@@ -258,18 +302,12 @@ void CHudEccoBuyMenu::OpenMenu(){
 void CHudEccoBuyMenu::CloseMenu() {
 	if (!bOpenningMenu)
 		return;
-	if (pAnimeEntity)
-		pAnimeEntity->die = 0;
-	if (pShowEntity)
-		pShowEntity->die = 0;
-	if (pWeaponEntity)
-		pWeaponEntity->die = 0;
+	ClearTempEnt();
 	pCVarIdealYaw->value = flOldCamYaw;
 	pCVarIdealDist->value = flOldCamDist;
 	gCVars.pCamIdealHeight->value = flOldCamHeight;
 	gCVars.pCamIdealRight->value = flOldCamRight;
 	pCVarFollowAim->value = flOldFollowAim;
-	gEngfuncs.GetLocalPlayer()->curstate.modelindex = iPlayerModelIndex;
 	if (!bOldCamThirdperson)
 		EngineClientCmd("firstperson");
 	bOpenningMenu = false;
@@ -282,4 +320,24 @@ bool CHudEccoBuyMenu::SelectMenu() {
 	snprintf(buf, sizeof(buf), "slot%d", iNowChosenSlot);
 	EngineClientCmd(buf);
 	return true;
+}
+void CHudEccoBuyMenu::CreateLight(){
+	if (pLight)
+		pLight->die = 0;
+	pLight = gEngfuncs.pEfxAPI->CL_AllocDlight(0);
+	pLight->color = { 255, 255 ,255 };
+	pLight->decay = 0;
+	pLight->die = gEngfuncs.GetClientTime() + 9999.0f;
+	pLight->radius = 48;
+}
+void CHudEccoBuyMenu::ClearTempEnt(){
+	if (pShowEnt)
+		pShowEnt->die = 0;
+	if (pWeaponEnt)
+		pWeaponEnt->die = 0;
+	if (pLight)
+		pLight->die = 0;
+	pLight = nullptr;
+	pShowEnt = nullptr;
+	pWeaponEnt = nullptr;
 }

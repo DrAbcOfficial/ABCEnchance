@@ -60,8 +60,8 @@ void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	model_t* mdl = gEngfuncs.hudGetModelByIndex(m_iHighLightMdl);
 	if (!mdl)
 		return;
-	TEMPENTITY* ent1 = gHookFuncs.CL_TempEntAllocHigh(var->curstate.origin, mdl);
-	TEMPENTITY* ent2 = gHookFuncs.CL_TempEntAllocHigh(var->curstate.origin, mdl);
+	TEMPENTITY* ent1 = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(var->curstate.origin, mdl);
+	TEMPENTITY* ent2 = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(var->curstate.origin, mdl);
 	if ((!ent1) || (!ent2))
 		return;
 	ent1->flags = ent2->flags = FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
