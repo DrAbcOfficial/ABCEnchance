@@ -3,18 +3,9 @@ typedef struct buymenuitem_s{
 	int id;
 	int price;
 	int modelindex;
-	int rendermode;
+	int sequence;
 	char name[64];
 }buymenuitem_t;
-enum EccoBuyMenuRendermode{
-	INVALID = 0,
-	NONE,
-	ITEM,
-	PISTOL,
-	RIFEL,
-	GRENADE,
-	KNIFE
-};
 class CHudEccoBuyMenu {
 public:
 	int Init();
@@ -29,22 +20,25 @@ public:
 	void CloseMenu();
 	bool SelectMenu();
 
-	int MenuList[10];
+	std::vector<int> MenuList;
 private:
+	void CreateLight();
+	void ClearTempEnt();
 	std::vector<buymenuitem_t> buymenuinfo;
 	bool bOpenningMenu = false;
 	float m_fAnimateTime = 0;
 	int iNowChosenSlot = 0;
 
+	Color TextColor;
+	Color ButtonColor;
+
 	cvar_t* pCVarIdealYaw = nullptr;
 	cvar_t* pCVarIdealDist = nullptr;
 	cvar_t* pCVarFollowAim = nullptr;
 
-	int iAnimModelIndex = 0;
-	int iPlayerModelIndex = 0;
-	TEMPENTITY* pAnimeEntity = nullptr;
-	TEMPENTITY* pShowEntity = nullptr;
-	TEMPENTITY* pWeaponEntity = nullptr;
+	dlight_t* pLight = nullptr;
+	TEMPENTITY* pShowEnt = nullptr;
+	TEMPENTITY* pWeaponEnt = nullptr;
 	int iNowSelectedId = -1;
 
 	float flOldCamYaw;
@@ -55,6 +49,7 @@ private:
 	bool bOldCamThirdperson;
 
 	GLuint iBackgroundSpr = 0;
+	GLuint iBackgroundTga = 0;
 
 	float BuyMenuAnimateTime = 0;
 	int BuyMenuCenterX = 0;

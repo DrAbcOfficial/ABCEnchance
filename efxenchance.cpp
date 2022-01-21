@@ -42,7 +42,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 		model_t* pModel = gEngfuncs.hudGetModelByIndex(modelIndex);
 		if (!pModel)
 			return;
-		TEMPENTITY* pTemp = gHookFuncs.CL_TempEntAllocHigh(org, pModel);
+		TEMPENTITY* pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(org, pModel);
 		if (pTemp){
 			int	i;
 			vec3_t	offset, dir;
@@ -65,7 +65,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 				VectorCopy(org, offset);
 				VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * size, right, offset);
 				VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * size, up, offset);
-				pTemp = gHookFuncs.CL_TempEntAllocHigh(org, gEngfuncs.hudGetModelByIndex(modelIndex2));
+				pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(org, gEngfuncs.hudGetModelByIndex(modelIndex2));
 				if (!pTemp)
 					return;
 				pTemp->flags = FTENT_COLLIDEWORLD | FTENT_SLOWGRAVITY;
@@ -99,7 +99,7 @@ void GaussChargeCallback(TEMPENTITY* ent, float frametime, float currenttime) {
 	ent->entity.curstate.scale = min(0.5, (currenttime - gEfxVarible.flGaussStartChargeTime) / 2);
 }
 void CreateGaussLoophole(pmtrace_t* tr) {
-	TEMPENTITY* pTemp = gHookFuncs.CL_TempEntAllocHigh(tr->endpos, gEfxVarible.iGaussLoophole);
+	TEMPENTITY* pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(tr->endpos, gEfxVarible.iGaussLoophole);
 	if (!pTemp)
 		return;
 	VectorAngles(tr->plane.normal, pTemp->entity.angles);

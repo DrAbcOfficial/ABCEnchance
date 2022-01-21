@@ -24,7 +24,6 @@ void CheckOtherPlugin();
 void FillEfxAddress();
 void FillAddress();
 void InstallHook();
-void MSG_Init(void);
 
 void GL_Init(void);
 void HUD_Init(void);
