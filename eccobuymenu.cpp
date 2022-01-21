@@ -46,9 +46,10 @@ enum EccoRenderMode {
 	ITEM = -2
 };
 enum EccoMenuMode {
-	IVALID = -1,
-	BACKUP = -2,
-	NEXTPAGE = -3
+	MENU_INVALID = -1,
+	MENU_BACK = -2,
+	MENU_NEXTPAGE = -3,
+	MENU_LASTPAGE = -4
 };
 int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
@@ -117,6 +118,11 @@ void CHudEccoBuyMenu::Reset() {
 	pWeaponEnt = nullptr;
 	pLight = nullptr;
 }
+int CHudEccoBuyMenu::GetMenuId(int i) {
+	int realId = i + (iNextPageBase * 9);
+	return realId >= 0 && realId < MenuList.size() ? MenuList[realId] : -1;
+}
+
 int CHudEccoBuyMenu::Draw(float flTime){
 	if (!bOpenningMenu)
 		return 1;
@@ -171,26 +177,40 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
 		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
 		bool bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
+		int realId = GetMenuId(i);
 		if (bIsChosen) {
 			iChosenSlot = i + 1;
-			if (MenuList[i] >= 0)
-				iChosenId = MenuList[i];
+			iChosenId = realId;
 		}
 		//CABD
 		ButtonColor.GetColor(r, g, b, a);
 		DrawSPRIconPos(iBackgroundSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, bIsChosen ? a : a * 0.5);
-		if (MenuList[i] >= 0) {
-			xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
-			ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
-			buymenuitem_t* item = &buymenuinfo[MenuList[i]];
+		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
+		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
+
+		int w, h;
+		if (realId >= 0) {
+			buymenuitem_t* item = &buymenuinfo[realId];
 			wchar_t buf[48];
 			pLocalize->ConvertANSIToUnicode(item->name, buf, sizeof(buf));
-			int w, h;
 			GetStringSize(buf, &w, &h, hFont);
 			TextColor.GetColor(r, g, b, a);
 			DrawVGUI2String(buf, xpos - w / 2, ypos - h / 2, r, g, b, hFont);
 			if (bIsChosen)
 				DrawVGUI2String(buf, BuyMenuCenterX - w / 2, BuyMenuCenterY - h / 2, r, g, b, hFont);
+		}
+		else {
+			wchar_t* buf = nullptr;
+			switch (realId){
+				case MENU_BACK: buf = pLocalize->Find("BuyMenu_LastMenu"); break;
+				case MENU_NEXTPAGE: buf = pLocalize->Find("BuyMenu_NextPage"); break;
+				case MENU_LASTPAGE: buf = pLocalize->Find("BuyMenu_LastPage"); break;
+			}
+			if (realId != MENU_INVALID) {
+				GetStringSize(buf, &w, &h, hFont);
+				TextColor.GetColor(r, g, b, a);
+				DrawVGUI2String(buf, xpos - w / 2, ypos - h / 2, r, g, b, hFont);
+			}
 		}
 	}
 	iNowSelectedId = iChosenId;
@@ -287,6 +307,7 @@ buymenuitem_t* CHudEccoBuyMenu::GetInfo(int index) {
 }
 void CHudEccoBuyMenu::OpenMenu(){
 	m_fAnimateTime = gEngfuncs.GetClientTime() + BuyMenuAnimateTime;
+	iNextPageBase = 0;
 	if (!bOpenningMenu) {
 		flOldCamYaw = pCVarIdealYaw->value;
 		flOldCamDist = pCVarIdealDist->value;
@@ -310,12 +331,19 @@ void CHudEccoBuyMenu::CloseMenu() {
 	pCVarFollowAim->value = flOldFollowAim;
 	if (!bOldCamThirdperson)
 		EngineClientCmd("firstperson");
+	iNextPageBase = 0;
 	bOpenningMenu = false;
 	gHudDelegate->m_iVisibleMouse = false;
 }
 bool CHudEccoBuyMenu::SelectMenu() {
 	if (!bOpenningMenu)
 		return false;
+	if (iNowSelectedId < 0) {
+		switch (iNowSelectedId) {
+			case MENU_NEXTPAGE: iNextPageBase++; break;
+			case MENU_LASTPAGE: iNextPageBase--; break;
+		}
+	}
 	char buf[8];
 	snprintf(buf, sizeof(buf), "slot%d", iNowChosenSlot);
 	EngineClientCmd(buf);
