@@ -24,10 +24,13 @@ public:
 private:
 	void CreateLight();
 	void ClearTempEnt();
+	int GetMenuId(int i);
+
 	std::vector<buymenuitem_t> buymenuinfo;
 	bool bOpenningMenu = false;
 	float m_fAnimateTime = 0;
 	int iNowChosenSlot = 0;
+	int iNextPageBase = 0;
 
 	Color TextColor;
 	Color ButtonColor;
