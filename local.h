@@ -112,6 +112,8 @@ typedef struct{
 	cvar_t* pItemHighLight;
 	cvar_t* pItemHighLightRange;
 
+	cvar_t* pEccoBuyMenu;
+
 	//Defualt CVars
 	cvar_t* pCvarDefaultFOV;
 }cl_cvars_t;

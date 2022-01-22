@@ -77,6 +77,10 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	}
 	return 0;
 }
+void EccoBuymenuSetCallBack(cvar_t* vars) {
+	if (vars->value <= 0 && m_HudEccoBuyMenu.IsOpen())
+		m_HudEccoBuyMenu.CloseMenu();
+}
 int CHudEccoBuyMenu::Init(){
 	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
@@ -94,6 +98,8 @@ int CHudEccoBuyMenu::Init(){
 	pCVarIdealYaw = CVAR_GET_POINTER("cam_idealyaw");
 	pCVarIdealDist = CVAR_GET_POINTER("cam_idealdist");
 	pCVarFollowAim = CVAR_GET_POINTER("cam_followaim");
+
+	gCVars.pEccoBuyMenu = CREATE_CVAR("cl_eccocmenu", "1", FCVAR_VALUE, EccoBuymenuSetCallBack);
 
 	TextColor = pScheme->GetColor("BuyMenu.TextColor", gDefaultColor);
 	ButtonColor = pScheme->GetColor("BuyMenu.ButtonColor", gDefaultColor);
@@ -121,6 +127,8 @@ int CHudEccoBuyMenu::GetMenuId(int i) {
 	return realId >= 0 && realId < MenuList.size() ? MenuList[realId] : -1;
 }
 int CHudEccoBuyMenu::Draw(float flTime){
+	if (gCVars.pEccoBuyMenu->value <= 0)
+		return 1;
 	if (!bOpenningMenu)
 		return 1;
 	if (gHookHud.m_Menu) {
@@ -130,7 +138,6 @@ int CHudEccoBuyMenu::Draw(float flTime){
 			return 1;
 		}
 	}
-		
 	float flAnimationRatio = min(1.0f, 1.0f - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime));
 	//´ó±³¾°
 	gHudDelegate->surface()->DrawSetTexture(-1);
@@ -255,6 +262,8 @@ void CHudEccoBuyMenu::Clear() {
 	pLight = nullptr;
 }
 bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelname){
+	if (gCVars.pEccoBuyMenu->value <= 0)
+		return true;
 	if (ent == gEngfuncs.GetLocalPlayer() && bOpenningMenu) {
 		ClearTempEnt();
 		if (!pLight)
@@ -327,6 +336,8 @@ buymenuitem_t* CHudEccoBuyMenu::GetInfo(int index) {
 	return nullptr;
 }
 void CHudEccoBuyMenu::OpenMenu(){
+	if (gCVars.pEccoBuyMenu->value <= 0)
+		return;
 	m_fAnimateTime = gEngfuncs.GetClientTime() + BuyMenuAnimateTime;
 	iNextPageBase = 0;
 	if (!bOpenningMenu) {
@@ -365,10 +376,15 @@ bool CHudEccoBuyMenu::SelectMenu() {
 	return true;
 }
 void CHudEccoBuyMenu::SlotCallBack(int slot){
+	if (gCVars.pEccoBuyMenu->value <= 0)
+		return;
 	if (!bOpenningMenu)
 		return;
 	iNowSelectedId = GetMenuId(slot);
 	ChangePage();
+}
+bool CHudEccoBuyMenu::IsOpen(){
+	return bOpenningMenu;
 }
 void CHudEccoBuyMenu::CreateLight(){
 	if (pLight)
