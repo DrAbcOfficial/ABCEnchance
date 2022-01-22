@@ -23,10 +23,9 @@ models/w_pipe_wrench.mdl 2
 models/w_rpg.mdl 2
 models/w_saw.mdl 2
 models/w_shock.mdl 2
-models/w_shock_rifle.mdl 2
 models/w_shotgun.mdl 2
 models/w_spore_launcher.mdl 2
-models/w_squeak.mdl 2
+models/w_sqknest.mdl 2
 models/w_uzi.mdl 2
 models/w_uzi_gold.mdl 2
 models/w_9mmarclip.mdl 1
