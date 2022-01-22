@@ -336,16 +336,17 @@ void CHudEccoBuyMenu::CloseMenu() {
 bool CHudEccoBuyMenu::SelectMenu() {
 	if (!bOpenningMenu)
 		return false;
-	if (iNowSelectedId < 0) {
-		switch (iNowSelectedId) {
-			case MENU_NEXTPAGE: iNextPageBase = min(iNextPageBase + 1, ceil((float)MenuList.size() / 9.0f)-1); break;
-			case MENU_LASTPAGE: iNextPageBase = max(iNextPageBase - 1, 0); break;
-		}
-	}
+	ChangePage();
 	char buf[8];
 	snprintf(buf, sizeof(buf), "slot%d", iNowChosenSlot);
 	EngineClientCmd(buf);
 	return true;
+}
+void CHudEccoBuyMenu::SlotCallBack(int slot){
+	if (!bOpenningMenu)
+		return;
+	iNowSelectedId = GetMenuId(slot);
+	ChangePage();
 }
 void CHudEccoBuyMenu::CreateLight(){
 	if (pLight)
@@ -366,4 +367,12 @@ void CHudEccoBuyMenu::ClearTempEnt(){
 	pLight = nullptr;
 	pShowEnt = nullptr;
 	pWeaponEnt = nullptr;
+}
+void CHudEccoBuyMenu::ChangePage(){
+	if (iNowSelectedId < 0) {
+		switch (iNowSelectedId) {
+		case MENU_NEXTPAGE: iNextPageBase = min(iNextPageBase + 1, ceil((float)MenuList.size() / 9.0f) - 1); break;
+		case MENU_LASTPAGE: iNextPageBase = max(iNextPageBase - 1, 0); break;
+		}
+	}
 }
