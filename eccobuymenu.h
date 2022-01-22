@@ -33,6 +33,7 @@ private:
 	float m_fAnimateTime = 0;
 	int iNowChosenSlot = 0;
 	int iNextPageBase = 0;
+	int iNowBackUpSlot = 0;
 
 	Color TextColor;
 	Color ButtonColor;
@@ -54,6 +55,7 @@ private:
 	bool bOldCamThirdperson;
 
 	GLuint iBackgroundSpr = 0;
+	GLuint iCenterSpr = 0;
 	GLuint iBackgroundTga = 0;
 
 	float BuyMenuAnimateTime = 0;
