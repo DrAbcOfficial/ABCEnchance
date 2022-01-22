@@ -131,13 +131,8 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		return 1;
 	if (!bOpenningMenu)
 		return 1;
-	if (gHookHud.m_Menu) {
+	if (gHookHud.m_Menu)
 		gHookHud.m_Menu->m_iFlags &= ~HUD_ACTIVE;
-		if (!gHookHud.m_Menu->m_fMenuDisplayed) {
-			CloseMenu();
-			return 1;
-		}
-	}
 	float flAnimationRatio = min(1.0f, 1.0f - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime));
 	//´ó±³¾°
 	gHudDelegate->surface()->DrawSetTexture(-1);
