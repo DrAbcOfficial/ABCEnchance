@@ -20,6 +20,7 @@ public:
 	void CloseMenu();
 	bool SelectMenu();
 	void SlotCallBack(int slot);
+	bool IsOpen();
 
 	std::vector<int> MenuList;
 private:
