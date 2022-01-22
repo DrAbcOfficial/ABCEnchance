@@ -26,12 +26,10 @@
 
 using namespace mathlib;
 
-#define BASE_INDEX_TEMP 7355608
 #define CAM_YAW 220
 #define CAM_DIST 80
 #define CAM_HEIGHT -40
 #define CAM_RIGHT 50
-#define ANIM_MODEL_MDEL "abcenchance/mdl/ecco_animation.mdl"
 
 CHudEccoBuyMenu m_HudEccoBuyMenu;
 enum MetaHookMsgType {
@@ -100,7 +98,7 @@ int CHudEccoBuyMenu::Init(){
 	TextColor = pScheme->GetColor("BuyMenu.TextColor", gDefaultColor);
 	ButtonColor = pScheme->GetColor("BuyMenu.ButtonColor", gDefaultColor);
 
-	hFont = pScheme->GetFont("HUDSmallShitFont", true);
+	hFont = pScheme->GetFont("BuyMenuShitFont", true);
 	return 0;
 }
 void CHudEccoBuyMenu::VidInit() {
@@ -112,6 +110,7 @@ void CHudEccoBuyMenu::Reset() {
 	buymenuinfo.clear();
 	MenuList.clear();
 	iBackgroundSpr = SPR_Load("abcenchance/spr/buymenu_background.spr");
+	iCenterSpr = SPR_Load("abcenchance/spr/buymenu_center.spr");
 	VGUI_CREATE_NEWTGA_TEXTURE(iBackgroundTga, "abcenchance/tga/buymenu_background");
 	pShowEnt = nullptr;
 	pWeaponEnt = nullptr;
@@ -124,7 +123,14 @@ int CHudEccoBuyMenu::GetMenuId(int i) {
 int CHudEccoBuyMenu::Draw(float flTime){
 	if (!bOpenningMenu)
 		return 1;
-	
+	if (gHookHud.m_Menu) {
+		gHookHud.m_Menu->m_iFlags &= ~HUD_ACTIVE;
+		if (!gHookHud.m_Menu->m_fMenuDisplayed) {
+			CloseMenu();
+			return 1;
+		}
+	}
+		
 	float flAnimationRatio = min(1.0f, 1.0f - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime));
 	//大背景
 	gHudDelegate->surface()->DrawSetTexture(-1);
@@ -139,13 +145,16 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	gHudDelegate->surface()->DrawTexturedRect(mousex, mousey, mousex + gHudDelegate->m_flCursorSize, mousey + gHudDelegate->m_flCursorSize);
 	int i;
 	int r = 255, g = 255, b = 255, a = 255;
+	int w, h;
 	float ac, as;
 	float flOffset = flAnimationRatio * BuyMenuOffset;
 	int iBackGroundHeight = BuyMenuHeight;
 	int iXDiffer = ScreenWidth / 2 - BuyMenuCenterX;
 	int iYDiffer = ScreenHeight / 2 - BuyMenuCenterY;
-	int iChosenSlot = 10;
+	int iChosenSlot = -1;
 	int iChosenId = -1;
+	int iBackSlot = 10;
+	bool bIsChosen;
 	vec2_t aryOut[9];
 	vec2_t aryIn[9];
 	vec2_t vecA, vecB, vecC, vecD;
@@ -174,7 +183,7 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
 		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
 		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
-		bool bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
+		bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
 		int realId = GetMenuId(i);
 		if (bIsChosen) {
 			iChosenSlot = i + 1;
@@ -185,8 +194,6 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		DrawSPRIconPos(iBackgroundSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, bIsChosen ? a : a * 0.5);
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
-
-		int w, h;
 		if (realId >= 0) {
 			buymenuitem_t* item = &buymenuinfo[realId];
 			char tbuf[96];
@@ -196,13 +203,11 @@ int CHudEccoBuyMenu::Draw(float flTime){
 			GetStringSize(buf, &w, &h, hFont);
 			TextColor.GetColor(r, g, b, a);
 			DrawVGUI2String(buf, xpos - w / 2, ypos - h / 2, r, g, b, hFont);
-			if (bIsChosen)
-				DrawVGUI2String(buf, BuyMenuCenterX - w / 2, BuyMenuCenterY - h / 2, r, g, b, hFont);
 		}
 		else {
 			wchar_t* buf = nullptr;
 			switch (realId){
-				case MENU_BACK: buf = pLocalize->Find("BuyMenu_LastMenu"); break;
+				case MENU_BACK: buf = pLocalize->Find("BuyMenu_LastMenu"); iBackSlot = i + 1; break;
 				case MENU_NEXTPAGE: buf = pLocalize->Find("BuyMenu_NextPage"); break;
 				case MENU_LASTPAGE: buf = pLocalize->Find("BuyMenu_LastPage"); break;
 			}
@@ -213,8 +218,24 @@ int CHudEccoBuyMenu::Draw(float flTime){
 			}
 		}
 	}
+	//绘制中心返回
+	float len = SQRT_TWO / 2 * 0.8f * flOffset;
+	vecA[0] = vecC[0] = BuyMenuCenterX - len;
+	vecB[0] = vecD[0] = BuyMenuCenterX + len;
+	vecC[1] = vecD[1] = BuyMenuCenterY - len;
+	vecA[1] = vecB[1] = BuyMenuCenterY + len;
+	bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
+	DrawSPRIconPos(iCenterSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, bIsChosen ? a : a * 0.5);
+	wchar_t* buf = pLocalize->Find("BuyMenu_LastMenu");
+	GetStringSize(buf, &w, &h, hFont);
+	TextColor.GetColor(r, g, b, a);
+	DrawVGUI2String(buf, BuyMenuCenterX - w / 2, BuyMenuCenterY - h / 2, r, g, b, hFont);
+	if (bIsChosen && iChosenSlot == -1)
+		iChosenSlot = iBackSlot < 10 ? iBackSlot : 10;
+
 	iNowSelectedId = iChosenId;
 	iNowChosenSlot = iChosenSlot;
+	iNowBackUpSlot = iBackSlot;
 	//调整第三人称
 	if (!bOldCamThirdperson)
 		EngineClientCmd("thirdperson");
@@ -257,7 +278,7 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 			}
 			VectorCopy(ent->origin, pShowEnt->entity.origin);
 			VectorCopy(ent->angles, pShowEnt->entity.angles);
-			pShowEnt->entity.curstate.scale = 2;
+			pShowEnt->entity.curstate.scale = 1.3;
 			break;
 		}
 		default: {
@@ -336,7 +357,7 @@ void CHudEccoBuyMenu::CloseMenu() {
 	gHudDelegate->m_iVisibleMouse = false;
 }
 bool CHudEccoBuyMenu::SelectMenu() {
-	if (!bOpenningMenu)
+	if (!bOpenningMenu || iNowChosenSlot < 0 || iNowChosenSlot > 10)
 		return false;
 	char buf[8];
 	snprintf(buf, sizeof(buf), "slot%d", iNowChosenSlot);

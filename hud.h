@@ -20,11 +20,26 @@ typedef struct {
 typedef struct {
 	unsigned char r, g, b, a;
 } RGBA;
-
+struct message_parms_t{
+	client_textmessage_t* pMessage;
+	float	time;
+	int x, y;
+	int	totalWidth, totalHeight;
+	int width;
+	int lines;
+	int lineLength;
+	int length;
+	int r, g, b;
+	int text;
+	int fadeBlend;
+	float charTime;
+	float fadeTime;
+};
 typedef struct cvar_s cvar_t;
-#define HUD_ACTIVE	1
-#define HUD_INTERMISSION 2
-#define	MAX_MOTD_LENGTH				1536
+#define HUD_ACTIVE			1
+#define HUD_INTERMISSION	2
+#define	MAX_MOTD_LENGTH		1536
+#define maxHUDMessages		16
 
 class CHudBase{
 public:
