@@ -36,13 +36,7 @@ namespace EccoABCEnchance{
     int EccoMenuType = 8;
 
     array<CExtraItemInfo@> aryExtraInfos = {
-        CExtraItemInfo("A", ITEM, "models/w_battery.mdl"),
-        CExtraItemInfo("B", RIFLE, "models/p_m16.mdl"),
-        CExtraItemInfo("C", GRENADE, "models/p_satchel.mdl"),
-        CExtraItemInfo("D", PISTOL, "models/p_357.mdl"),
-        CExtraItemInfo("E", KNIFE, "models/p_pipe_wrench.mdl"),
-        CExtraItemInfo("F", HEAVY, "models/p_rpg.mdl"),
-        CExtraItemInfo("G", ITEM, "models/w_longjump.mdl")
+        CExtraItemInfo("A",  ITEM,  "models/w_battery.mdl");
     };
     void PluginInit(){
         g_Hooks.RegisterHook(Hooks::Player::ClientPutInServer, @ClientPutInServer);
@@ -116,57 +110,33 @@ namespace EccoABCEnchance{
     */
     HookReturnCode OpenBuyMenu(const int iDisplayTime, const uint iPage, CBasePlayer@ pPlayer, CBaseMenuItem@ pMenu){
         array<int> temp = {};
-        for(uint i = 0; i < pMenu.length(); i++){
+        uint iLength = pMenu.length();
+        bool bIsRoot = pMenu.Name == EccoConfig::pConfig.BuyMenu.RootNodeName;
+
+        for(uint i = 0; i < iLength; i++){
+            if(iLength > 9 && i != 0){
+                if(!bIsRoot && i % 6 == 0){
+                    temp.insertLast(MENU_BACKUP);
+                    temp.insertLast(MENU_LASTPAGE);
+                    temp.insertLast(MENU_NEXTPAGE);
+                }
+                else if(bIsRoot && i % 7 == 0){
+                    temp.insertLast(MENU_LASTPAGE);
+                    temp.insertLast(MENU_NEXTPAGE);
+                }
+            }
             temp.insertLast(pMenu[i].Id);
         }
-        bool bIsRoot = pMenu.Name == EccoConfig::pConfig.BuyMenu.RootNodeName;
-        uint iLength = pMenu.length();
-        array<Vector2D> tobeinsertIndex = {};
-        for(uint i = 0; i < temp.length(); i++){
-            if(bIsRoot){
-                //每7个留两空
-                if(iLength > 9){
-                    if(i % 7 == 0)
-                        tobeinsertIndex.insertLast(Vector2D(i, MENU_LASTPAGE));
-                    else if(i % 8 == 0)
-                        tobeinsertIndex.insertLast(Vector2D(i-1, MENU_NEXTPAGE));
-                }
-            }
-            else{
-                //每6个留三空
-                if(iLength >= 9){
-                    if(i % 7 == 0)
-                        tobeinsertIndex.insertLast(Vector2D(i, MENU_LASTPAGE));
-                    else if(i % 8 == 0)
-                        tobeinsertIndex.insertLast(Vector2D(i-1, MENU_NEXTPAGE));
-                }
-            }
-        }
-        if(tobeinsertIndex.length() > 0){
-            for(uint i = tobeinsertIndex.length()-1; i > 0; i--){
-                temp.insertAt(uint(tobeinsertIndex[i].x), int(tobeinsertIndex[i].y));
-            }
-        }
-        if(bIsRoot){
-            if(iLength > 9){
-                for(uint i = 0; i < (temp.length() % 8);i++){
-                    temp.insertLast(MENU_INVALID);
-                }
-                temp.insertLast(MENU_LASTPAGE);
-                temp.insertLast(MENU_NEXTPAGE);
-            }
-        }
-        else{
+        if(!bIsRoot)
             temp.insertLast(MENU_BACKUP);
-            if(iLength >= 9){
-                for(uint i = 0; i < (temp.length() % 8);i++){
-                    temp.insertLast(MENU_INVALID);
-                }
-                temp.insertLast(MENU_LASTPAGE);
-                temp.insertLast(MENU_NEXTPAGE);
+        if(iLength >= 9){
+            uint addcount = 7 -(temp.length() % 9);
+            for(uint i = 0; i < addcount;i++){
+                temp.insertLast(MENU_INVALID);
             }
+            temp.insertLast(MENU_LASTPAGE);
+            temp.insertLast(MENU_NEXTPAGE);
         }
-
         NetworkMessage m(MSG_ONE, NetworkMessages::NetworkMessageType(MetaHookChannel), pPlayer.edict());
             m.WriteByte(EccoMenuType);
             m.WriteByte(temp.length());
