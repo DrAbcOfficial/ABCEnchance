@@ -189,8 +189,10 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		int w, h;
 		if (realId >= 0) {
 			buymenuitem_t* item = &buymenuinfo[realId];
+			char tbuf[96];
 			wchar_t buf[48];
-			pLocalize->ConvertANSIToUnicode(item->name, buf, sizeof(buf));
+			snprintf(tbuf, sizeof(tbuf), "%d: %s", (i + 1), item->name);
+			pLocalize->ConvertANSIToUnicode(tbuf, buf, sizeof(buf));
 			GetStringSize(buf, &w, &h, hFont);
 			TextColor.GetColor(r, g, b, a);
 			DrawVGUI2String(buf, xpos - w / 2, ypos - h / 2, r, g, b, hFont);
