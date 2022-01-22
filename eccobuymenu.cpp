@@ -338,7 +338,6 @@ void CHudEccoBuyMenu::CloseMenu() {
 bool CHudEccoBuyMenu::SelectMenu() {
 	if (!bOpenningMenu)
 		return false;
-	ChangePage();
 	char buf[8];
 	snprintf(buf, sizeof(buf), "slot%d", iNowChosenSlot);
 	EngineClientCmd(buf);
