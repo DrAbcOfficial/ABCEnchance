@@ -2,44 +2,44 @@ Scheme
 {
 	Colors
 	{
-		"HealthArmor.HealthIconColor"		"245 230 195 255"
-		"HealthArmor.HealthBarColor"		"245 230 195 255"
-		"HealthArmor.HealthTextColor"		"245 230 195 255"
+		"HealthArmor.HealthIconColor"		"0 255 0 255"
+		"HealthArmor.HealthBarColor"		"0 255 0 255"
+		"HealthArmor.HealthTextColor"		"0 255 0 255"
 		"HealthArmor.HealthPainColor"		"255 0 0 255"
 		"HealthArmor.HealthDangerColor"		"250 0 0 255"
 
-		"HealthArmor.ArmorIconColor"		"245 230 195 255"
-		"HealthArmor.ArmorBarColor"			"245 230 195 255"
-		"HealthArmor.ArmorTextColor"		"245 230 195 255"
+		"HealthArmor.ArmorIconColor"		"0 255 0 255"
+		"HealthArmor.ArmorBarColor"			"0 255 0 255"
+		"HealthArmor.ArmorTextColor"		"0 255 0 255"
 		"HealthArmor.ArmorPainColor"		"255 0 0 255"
 		"HealthArmor.ArmorDangerColor"		"0 125 0 255"
 
-		"HealthArmor.LongjumpIconColor"		"245 230 195 255"
+		"HealthArmor.LongjumpIconColor"		"0 255 0 255"
 
 		"HealthArmor.PainIndicatorColor"	"255 0 0 255"
 		"HealthArmor.PainIndicatorColorA"	"255 255 255 255"
-		"HealthArmor.BitDamageColor"		"245 230 195 255"
+		"HealthArmor.BitDamageColor"		"0 255 0 255"
 
-		"AmmoHUD.Ammo1IconColor"		"245 230 195 255"
-		"AmmoHUD.Ammo1BigTextColor"		"245 230 195 255"
-		"AmmoHUD.Ammo1TextColor"		"245 230 195 255"
-		"AmmoHUD.Ammo2IconColor"		"245 230 195 255"
-		"AmmoHUD.Ammo2BigTextColor"			"245 230 195 255"
-		"AmmoHUD.Ammo2TextColor"		"245 230 195 255"
-		"AmmoHUD.AmmoPickUpIconColor"		"245 230 195 255"
-		"AmmoHUD.AmmoPickUpTextColor"		"245 230 195 255"
-		"AmmoHUD.WeaponPickUpColor"		"245 230 195 255"
+		"AmmoHUD.Ammo1IconColor"		"0 255 0 255"
+		"AmmoHUD.Ammo1BigTextColor"		"0 255 0 255"
+		"AmmoHUD.Ammo1TextColor"		"0 255 0 255"
+		"AmmoHUD.Ammo2IconColor"		"0 255 0 255"
+		"AmmoHUD.Ammo2BigTextColor"			"0 255 0 255"
+		"AmmoHUD.Ammo2TextColor"		"0 255 0 255"
+		"AmmoHUD.AmmoPickUpIconColor"		"0 255 0 255"
+		"AmmoHUD.AmmoPickUpTextColor"		"0 255 0 255"
+		"AmmoHUD.WeaponPickUpColor"		"0 255 0 255"
 		"AmmoHUD.WeaponPickUpEmptyColor"		"255 0 0 255"
-		"AmmoHUD.ItemPickUpColor"		"245 230 195 255"
+		"AmmoHUD.ItemPickUpColor"		"0 255 0 255"
 
 		"WMenuAnnular.SelectColor"			"106 102 96 255"
-		"WMenuAnnular.SelectRinColor"		"245 230 195 255"
+		"WMenuAnnular.SelectRinColor"		"0 255 0 255"
 		"WMenuAnnular.SelectIconColor"		"128 255 0 255"
 		"WMenuAnnular.SelectEmptyColor"		"255 0 0 255"
 		"WMenuAnnular.SelectTextColor"		"128 255 0 255"
 		"WMenuAnnular.SelectPointerColor"		"255 128 0 255"
 
-		"WMenuBucket.SelectColor"			"245 230 195 255"
+		"WMenuBucket.SelectColor"			"0 255 0 255"
 		"WMenuBucket.SelectIconColor"		"255 255 0 255"
 		"WMenuBucket.SelectEmptyColor"		"255 0 0 255"
 
@@ -52,14 +52,19 @@ Scheme
 		"Vote.OutlineColor"		"255 255 255 180"
 		"Vote.BackGoundColor"		"139 137 137 180"
 
-		"Ecco.MoneyIncreseColor"		"245 230 195 255"
+		"Ecco.MoneyIncreseColor"		"0 255 0 255"
 		"Ecco.MoneyDecreseColor"		"255 0 0 255"
-		"Ecco.MoneyColor"		"245 230 195 255"
+		"Ecco.MoneyColor"		"0 255 0 255"
+
+		"BuyMenu.TextColor"		"255 255 255 255"
+		"BuyMenu.ButtonColor"		"125 125 125 125"
 	}
 
 	BaseSettings
 	{
-		"Version"						"100011"
+		"Version"						"100012"
+		"Common.CursorSize"             "0.03"
+
 		"HealthArmor.StartX"			"0.013"
 		"HealthArmor.IconSize"			"0.03"
 		"HealthArmor.BarLength"			"0.07"
@@ -123,6 +128,15 @@ Scheme
 		"Ecco.YOffset"		"0.4"
 		"Ecco.BackgroundLength"		"0.11"
 		"Ecco.BackgroundHeight"		"0.0325"
+
+		"EccoBuyMenu.BuyMenuAnimateTime"		"0.1"
+		"EccoBuyMenu.BuyMenuCenterX"		"0.3"
+		"EccoBuyMenu.BuyMenuCenterY"		"0.5"
+		"EccoBuyMenu.BuyMenuHeight"		"0.2"
+		"EccoBuyMenu.BuyMenuOffset"		"0.15"
+		"EccoBuyMenu.BuyMenuModelSize"		"0.7"
+		"EccoBuyMenu.BuyMenuModelX"		"0.8"
+		"EccoBuyMenu.BuyMenuModelY"		"0.8"
 	}
 
 	Fonts
@@ -292,6 +306,45 @@ Scheme
 			"5"
 			{
 				"name"		"Arial"
+				"tall"		"20"
+				"weight"	"0"
+				"yres"	"1200 6000"
+				"antialias"	"1"
+			}
+		}
+		"BuyMenuShitFont"
+		{
+			"1"
+			{
+				"name"		"Verdana"
+				"tall"		"14"
+				"weight"	"0"
+				"yres"	"480 599"
+			}
+			"2"
+			{
+				"name"		"Verdana"
+				"tall"		"15"
+				"weight"	"0"
+				"yres"	"600 767"
+			}
+			"3"
+			{
+				"name"		"Verdana"
+				"tall"		"16"
+				"weight"	"0"
+				"yres"	"768 1023"
+			}
+			"4"
+			{
+				"name"		"Verdana"
+				"tall"		"18"
+				"weight"	"0"
+				"yres"	"1024 1199"
+			}
+			"5"
+			{
+				"name"		"Verdana"
 				"tall"		"20"
 				"weight"	"0"
 				"yres"	"1200 6000"
