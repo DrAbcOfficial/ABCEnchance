@@ -72,42 +72,52 @@ void(*UserCmd_PrevWeapon)(void);
 void(*UserCmd_Attack1)(void);
 void __UserCmd_Slot1(void) {
 	m_HudCustomAmmo.SlotInput(0, 1);
+	m_HudEccoBuyMenu.SlotCallBack(0);
 	return UserCmd_Slot1();
 }
 void __UserCmd_Slot2(void) {
 	m_HudCustomAmmo.SlotInput(1, 1);
+	m_HudEccoBuyMenu.SlotCallBack(1);
 	return UserCmd_Slot2();
 }
 void __UserCmd_Slot3(void) {
 	m_HudCustomAmmo.SlotInput(2, 1);
+	m_HudEccoBuyMenu.SlotCallBack(2);
 	return UserCmd_Slot3();
 }
 void __UserCmd_Slot4(void) {
 	m_HudCustomAmmo.SlotInput(3, 1);
+	m_HudEccoBuyMenu.SlotCallBack(3);
 	return UserCmd_Slot4();
 }
 void __UserCmd_Slot5(void) {
 	m_HudCustomAmmo.SlotInput(4, 1);
+	m_HudEccoBuyMenu.SlotCallBack(4);
 	return UserCmd_Slot5();
 }
 void __UserCmd_Slot6(void) {
 	m_HudCustomAmmo.SlotInput(5, 1);
+	m_HudEccoBuyMenu.SlotCallBack(5);
 	return UserCmd_Slot6();
 }
 void __UserCmd_Slot7(void) {
 	m_HudCustomAmmo.SlotInput(6, 1);
+	m_HudEccoBuyMenu.SlotCallBack(6);
 	return UserCmd_Slot7();
 }
 void __UserCmd_Slot8(void) {
 	m_HudCustomAmmo.SlotInput(7, 1);
+	m_HudEccoBuyMenu.SlotCallBack(7);
 	return UserCmd_Slot8();
 }
 void __UserCmd_Slot9(void) {
 	m_HudCustomAmmo.SlotInput(8, 1);
+	m_HudEccoBuyMenu.SlotCallBack(8);
 	return UserCmd_Slot9();
 }
 void __UserCmd_Slot10(void) {
 	m_HudCustomAmmo.SlotInput(9, 1);
+	m_HudEccoBuyMenu.SlotCallBack(9);
 	m_HudEccoBuyMenu.CloseMenu();
 	return UserCmd_Slot10();
 }

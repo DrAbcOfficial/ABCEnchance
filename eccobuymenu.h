@@ -19,11 +19,13 @@ public:
 	void OpenMenu();
 	void CloseMenu();
 	bool SelectMenu();
+	void SlotCallBack(int slot);
 
 	std::vector<int> MenuList;
 private:
 	void CreateLight();
 	void ClearTempEnt();
+	void ChangePage();
 	int GetMenuId(int i);
 
 	std::vector<buymenuitem_t> buymenuinfo;
