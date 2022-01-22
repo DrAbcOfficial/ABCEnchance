@@ -275,9 +275,9 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 				pShowEnt->entity.curstate.renderamt = ent->index;
 				pShowEnt->entity.curstate.weaponmodel = info->modelindex;
 				pShowEnt->entity.curstate.weaponanim = ent->curstate.weaponanim;
-				pShowEnt->entity.curstate.framerate = ent->curstate.framerate;
-				pShowEnt->entity.curstate.frame = ent->curstate.frame;
 				pShowEnt->entity.curstate.colormap = ent->curstate.colormap;
+				pShowEnt->entity.curstate.movetype = MOVETYPE_FOLLOW;
+				pShowEnt->entity.curstate.aiment = ent->index;
 				pShowEnt->die = gEngfuncs.GetClientTime() + 99999.0f;
 			}
 			if (!pWeaponEnt) {
