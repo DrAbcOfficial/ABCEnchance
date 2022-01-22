@@ -99,11 +99,13 @@
 |---|---|---|---|
 |cl_eccoenable|启用Ecco显示|1|0(关闭)/1(总是开启)/2(检测到Ecoo时开启)|
 |cl_eccocheck|启用Ecco插件检查|0|0/1|
+|cl_eccobuymenu|启用增强Ecco菜单|1|0/1|
 |---|---|---|---|
 |cl_modellag|启用V模型延迟|1|0/1|
 |cl_modellagvalue|V模型延迟数值|1.0|0-9999|
 |---|---|---|---|
 |cam_idealheight|第三人称摄像机高度|0|-9999-9999|
+|cam_idealright|第三人称摄像机左右|0|-9999-9999|
 |---|---|---|---|
 |cl_curdebug|Curweapon Debug|0|0/1|
 
@@ -121,6 +123,9 @@
 
 ## 🗿 玩家名称和血条护甲浮动标签
 <img src="img/Playertitle1.png" width="100%">
+
+## 🛒 增强Ecco购买菜单
+<img src="img/buymenu.png" width="100%">
 
 ## 🏐 环形选枪菜单
 

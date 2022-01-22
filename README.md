@@ -105,11 +105,13 @@
 |---|---|---|---|
 |cl_eccoenable|Enable Ecco show|1|0(off)/1(always show)/2(only detected Ecco plugin)|
 |cl_eccocheck|Enable Ecco plugin check|0|0/1|
+|cl_eccobuymenu|Enable Ecco buymenu enhance|1|0/1|
 |---|---|---|---|
 |cl_modellag|View model lag|1|0/1|
 |cl_modellagvalue|View model lag value|1.0|0-9999|
 |---|---|---|---|
 |cam_idealheight|Change thirdperson camera height|0|-9999-9999|
+|cam_idealright|Change thirdperson camera right|0|-9999-9999|
 |---|---|---|---|
 |cl_curdebug|Curweapon Debug|0|0/1|
 
@@ -127,6 +129,9 @@
 
 ## 🗿 Player name title and hp/ap bar
 <img src="img/Playertitle1.png" width="100%">
+
+## 🛒 Enhanced Ecco buy menu
+<img src="img/buymenu.png" width="100%">
 
 ## 🏐 Annular selection menu
 
