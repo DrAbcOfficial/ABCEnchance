@@ -79,7 +79,6 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	}
 	return 0;
 }
-
 int CHudEccoBuyMenu::Init(){
 	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
@@ -122,7 +121,6 @@ int CHudEccoBuyMenu::GetMenuId(int i) {
 	int realId = i + (iNextPageBase * 9);
 	return realId >= 0 && realId < MenuList.size() ? MenuList[realId] : -1;
 }
-
 int CHudEccoBuyMenu::Draw(float flTime){
 	if (!bOpenningMenu)
 		return 1;
@@ -340,8 +338,8 @@ bool CHudEccoBuyMenu::SelectMenu() {
 		return false;
 	if (iNowSelectedId < 0) {
 		switch (iNowSelectedId) {
-			case MENU_NEXTPAGE: iNextPageBase++; break;
-			case MENU_LASTPAGE: iNextPageBase--; break;
+			case MENU_NEXTPAGE: iNextPageBase = min(iNextPageBase + 1, ceil((float)MenuList.size() / 9.0f)-1); break;
+			case MENU_LASTPAGE: iNextPageBase = max(iNextPageBase - 1, 0); break;
 		}
 	}
 	char buf[8];
