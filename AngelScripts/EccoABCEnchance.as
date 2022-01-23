@@ -1,6 +1,19 @@
-
+/*
+* Put in Ecco/addons/
+* Add #include "addons/EccoABCEnchance" in Ecco/Include.as
+* Enjoy
+*/
 namespace EccoAddon{
 namespace EccoABCEnchance{
+    const int MetaHookChannel = 146;
+    const int EccoInfoType = 7;
+    const int EccoMenuType = 8;
+    //Add menu item here
+    //ScriptFileName ModelSequence ModelPath
+    const array<CExtraItemInfo@> aryExtraInfos = {
+        CExtraItemInfo("A",  ITEM,  "models/w_battery.mdl");
+    };
+    
     class CExtraItemInfo{
         string ScriptName;
         int Seqence;
@@ -31,18 +44,10 @@ namespace EccoABCEnchance{
         MENU_NEXTPAGE = -3,
         MENU_LASTPAGE = -4
     }
-    int MetaHookChannel = 146;
-    int EccoInfoType = 7;
-    int EccoMenuType = 8;
-
-    array<CExtraItemInfo@> aryExtraInfos = {
-        CExtraItemInfo("A",  ITEM,  "models/w_battery.mdl");
-    };
     void PluginInit(){
         g_Hooks.RegisterHook(Hooks::Player::ClientPutInServer, @ClientPutInServer);
         EccoHook::RegisterHook(EccoHook::Economy::OpenBuyMenu, @OpenBuyMenu);
     }
-
     void MapInit(){
         for(uint i = 0; i < aryExtraInfos.length(); i++){
             aryExtraInfos[i].ModelIndex = g_Game.PrecacheModel(aryExtraInfos[i].ModelPath);
