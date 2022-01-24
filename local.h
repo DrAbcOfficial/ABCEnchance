@@ -65,6 +65,10 @@ typedef struct{
 	cvar_t* pPlayerTitleLength;
 	cvar_t* pPlayerTitleHeight;
 
+	cvar_t* pDamageScreenFilter;
+	cvar_t* pDamageScreenFactor;
+	cvar_t* pDamageScreenBase;
+
 	cvar_t* pDynamicCrossHair;
 	cvar_t* pDynamicCrossHairAH;
 	cvar_t* pDynamicCrossHairL;

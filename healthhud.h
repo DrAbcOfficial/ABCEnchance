@@ -60,6 +60,7 @@ typedef struct{
 
 class CHudArmorHealth{
 public:
+	void GLInit();
 	void Init(void);
 	int Draw(float flTime);
 	void Reset(void);
@@ -85,16 +86,23 @@ public:
 
 	float flPainColorKeepTime = 0;
 
-	int	m_bitsDamage;
+	int	m_bitsDamage = 0;
 
 	float PainColorTime = 0.5;
-	float PainIndicatorTime;
+	float PainIndicatorTime = 0;
+	float ShockIndicatorTime = 0;
 private:
 	void CalcuPainFade(int& r, int& g, int& b, Color* c, float timeDiffer);
 	int m_iDMGIconStart;
 	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
 	HSPRITE m_hSprite;
 	HSPRITE m_hDamage;
+
+	GLint m_hOldBuffer;
+	GLuint m_hFilterFBO;
+	GLuint m_hFilterTex;
+
+	indicatorinfo_t m_hScreenFilter;
 
 	float StartX = 48;
 	float IconSize = 0.5;

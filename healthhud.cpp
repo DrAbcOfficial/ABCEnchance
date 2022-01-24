@@ -9,6 +9,8 @@
 #include "vguilocal.h"
 #include "gl_def.h"
 #include "gl_draw.h"
+#include "gl_utility.h"
+#include "gl_shader.h"
 #include "local.h"
 
 #include "CHudDelegate.h"
@@ -73,10 +75,18 @@ int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf){
 		m_HudArmorHealth.m_iBattery = x;
 	return m_pfnBattery(pszName, iSize, pbuf);
 }
+void CHudArmorHealth::GLInit() {
+	glGenFramebuffersEXT(1, &m_hFilterFBO);
+	m_hFilterTex = GL_GenTextureRGBA8(ScreenWidth, ScreenHeight);
+}
 void CHudArmorHealth::Init(void){
 	m_pfnHealth = HOOK_MESSAGE(Health);
 	m_pfnDamage = HOOK_MESSAGE(Damage);
 	m_pfnBattery = HOOK_MESSAGE(Battery);
+
+	gCVars.pDamageScreenFilter = CREATE_CVAR("cl_damageshock", "0", FCVAR_VALUE, nullptr);
+	gCVars.pDamageScreenFactor = CREATE_CVAR("cl_damageshock_factor", "0.015", FCVAR_VALUE, nullptr);
+	gCVars.pDamageScreenBase = CREATE_CVAR("cl_damageshock_base", "30", FCVAR_VALUE, nullptr);
 
 	StartX = GET_SCREEN_PIXEL(false, "HealthArmor.StartX");
 	IconSize = GET_SCREEN_PIXEL(true, "HealthArmor.IconSize");
@@ -91,6 +101,7 @@ void CHudArmorHealth::Init(void){
 
 	PainColorTime = atof(pScheme->GetResourceString("HealthArmor.PainColorTime"));
 	PainIndicatorTime = atof(pScheme->GetResourceString("HealthArmor.PainIndicatorTime"));
+	ShockIndicatorTime = atof(pScheme->GetResourceString("HealthArmor.ShockIndicatorTime"));
 
 	HealthIconColor = pScheme->GetColor("HealthArmor.HealthIconColor", gDefaultColor);
 	HealthBarColor = pScheme->GetColor("HealthArmor.HealthBarColor", gDefaultColor);
@@ -240,6 +251,12 @@ int CHudArmorHealth::Draw(float flTime){
 	return DrawDamage(flTime);
 }
 void CHudArmorHealth::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
+	if (gCVars.pDamageScreenFilter->value > 0) {
+		m_hScreenFilter.iDamage = dmg;
+		m_hScreenFilter.iArmor = armor;
+		VectorCopy(vecFrom, m_hScreenFilter.vecFrom);
+		m_hScreenFilter.flKeepTime = gEngfuncs.GetClientTime() + ShockIndicatorTime;
+	}
 	indicatorinfo_t* pTarget = &aryIndicators[iNowSelectIndicator];
 	pTarget->iDamage = dmg;
 	pTarget->iArmor = armor;
@@ -288,6 +305,36 @@ void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 }
 int CHudArmorHealth::DrawPain(float flTime){
 	int r, g, b, a;
+	if (gCVars.pDamageScreenFilter->value > 0 && 
+		m_hScreenFilter.flKeepTime > flTime && 
+		m_hScreenFilter.iDamage >= gCVars.pDamageScreenBase->value) {
+
+		float fa = (m_hScreenFilter.flKeepTime - flTime) / ShockIndicatorTime;
+		float damagefactor = gCVars.pDamageScreenFactor->value * (m_hScreenFilter.iDamage / max(gCVars.pDamageScreenBase->value, 1));
+		int SizedScreenW = ScreenWidth * (1 + damagefactor) * (damagefactor * fa + 1);
+		int SizedScreenH = ScreenHeight * (1 + damagefactor) * (damagefactor * fa + 1);
+		fa *= 0.7;
+		int wDiffer = SizedScreenW - ScreenWidth;
+		int hDiffer = SizedScreenH - ScreenHeight;
+		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hFilterFBO);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hFilterTex, 0);
+		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hFilterFBO, ScreenWidth, ScreenHeight, ScreenWidth, ScreenHeight);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
+		glBindTexture(GL_TEXTURE_2D, m_hFilterTex);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GL_UseProgram(pp_coloraddictive.program);
+		GL_Uniform2f(pp_coloraddictive.ha, 0, fa);
+			DrawQuadPos(-wDiffer, -hDiffer, SizedScreenW, SizedScreenH);
+		GL_Uniform2f(pp_coloraddictive.ha, 0.3, fa);
+			DrawQuadPos(0, -hDiffer, SizedScreenW, SizedScreenH);
+		GL_Uniform2f(pp_coloraddictive.ha, 0.6, fa);
+			DrawQuadPos(-wDiffer, 0, SizedScreenW, SizedScreenH);
+		GL_UseProgram(0);
+		glDisable(GL_BLEND);
+	}
 	for (indicatorinfo_t var : aryIndicators) {
 		if (var.flKeepTime <= flTime)
 			continue;

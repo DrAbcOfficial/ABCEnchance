@@ -182,17 +182,20 @@ void ScaleColors(int& r, int& g, int& b, int a) {
 	g = (int)(g * x);
 	b = (int)(b * x);
 }
-void DrawQuad(int w, int h) {
+void DrawQuadPos(int x, int y, int w, int h) {
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
-	glVertex3f(0, h, -1);
+	glVertex3f(x, y + h, -1);
 	glTexCoord2f(0, 1);
-	glVertex3f(0, 0, -1);
+	glVertex3f(x, y, -1);
 	glTexCoord2f(1, 1);
-	glVertex3f(w, 0, -1);
+	glVertex3f(x + w, y, -1);
 	glTexCoord2f(1, 0);
-	glVertex3f(w, h, -1);
+	glVertex3f(x + w, y + h, -1);
 	glEnd();
+}
+void DrawQuad(int w, int h) {
+	DrawQuadPos(0, 0, w, h);
 }
 void DrawScreenQuad() {
 	DrawQuad(ScreenWidth, ScreenHeight);

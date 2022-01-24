@@ -49,6 +49,8 @@ enum EccoMenuMode {
 	MENU_NEXTPAGE = -3,
 	MENU_LASTPAGE = -4
 };
+
+pfnUserMsgHook m_pfnMetaHookMsg;
 int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int type = READ_BYTE();
@@ -259,7 +261,7 @@ void CHudEccoBuyMenu::Clear() {
 bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	if (gCVars.pEccoBuyMenu->value <= 0)
 		return true;
-	if (ent == gEngfuncs.GetLocalPlayer() && bOpenningMenu) {
+	if (bOpenningMenu && ent == gEngfuncs.GetLocalPlayer()) {
 		ClearTempEnt();
 		if (!pLight)
 			CreateLight();

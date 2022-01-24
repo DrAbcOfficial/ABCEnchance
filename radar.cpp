@@ -116,13 +116,13 @@ void CHudRadar::Draw(float flTime){
 	//shader
 	GL_UseProgram(pp_texround.program);
 	if (gCVars.pRadar->value > 1) {
-		glUniform1f(pp_texround.rad, min(1.0f, fabs(gCVars.pRadarRoundRadius->value) / sizeMap));
-		glUniform3f(pp_texround.xys, iStartX, iStartY, sizeMap);
+		GL_Uniform1f(pp_texround.rad, min(1.0f, fabs(gCVars.pRadarRoundRadius->value) / sizeMap));
+		GL_Uniform3f(pp_texround.xys, iStartX, iStartY, sizeMap);
 	}
 	else
-		glUniform1f(pp_texround.rad, 0);
+		GL_Uniform1f(pp_texround.rad, 0);
 	if (g_metaplugins.renderer)
-		glUniform1f(pp_texround.gamma, 1 / pCVarGamma->value);
+		GL_Uniform1f(pp_texround.gamma, 1 / pCVarGamma->value);
 
 	glEnable(GL_TEXTURE_2D);
 	glBind(m_hRadarBufferTex);
