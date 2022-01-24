@@ -165,6 +165,8 @@ void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeD
 int CHudArmorHealth::Draw(float flTime){
 	if (gHudDelegate->IsInSpectate())
 		return 1;
+	if (gHudDelegate->m_iHideHUDDisplay & (HIDEHUD_ALL | HIDEHUD_HEALTH))
+		return 1;
 	DrawPain(flTime);
 	int r, g, b, a;
 	float flBackGroundY = BackGroundY;
