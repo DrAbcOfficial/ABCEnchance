@@ -62,7 +62,7 @@ Scheme
 
 	BaseSettings
 	{
-		"Version"						"100012"
+		"Version"						"100013"
 		"Common.CursorSize"             "0.03"
 
 		"HealthArmor.StartX"			"0.013"
@@ -77,6 +77,7 @@ Scheme
 		"HealthArmor.DamageIconSize"	"0.08"
 		"HealthArmor.PainColorTime"		"0.5"
 		"HealthArmor.PainIndicatorTime"	"3"
+		"HealthArmor.ShockIndicatorTime""0.2"
 
 		"AmmoHUD.IconSize"			"0.03"
 		"AmmoHUD.ElementGap"		"0.01"
