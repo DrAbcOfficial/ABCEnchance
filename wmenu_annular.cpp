@@ -191,7 +191,7 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		DrawGaussianBlur(m_hGaussianBufferVFBO, m_hGaussianBufferHTex, m_hGaussianBufferVTex, flAnimationRatio, true, ScreenWidth, ScreenHeight);
 		DrawGaussianBlur(m_hGaussianBufferHFBO, m_hGaussianBufferVTex, m_hGaussianBufferHTex, flAnimationRatio, false, ScreenWidth, ScreenHeight);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
-		glBindTexture(GL_TEXTURE_2D, m_hGaussianBufferHTex);
+		glBind(m_hGaussianBufferHTex);
 		DrawQuad(ScreenWidth, ScreenHeight);
 		//ªÊ÷∆ Û±Í÷∏’Î
 		SelectPointerColor.GetColor(r, g, b, dummy);

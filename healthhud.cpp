@@ -322,7 +322,7 @@ int CHudArmorHealth::DrawPain(float flTime){
 		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hFilterFBO, ScreenWidth, ScreenHeight, ScreenWidth, ScreenHeight);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
-		glBindTexture(GL_TEXTURE_2D, m_hFilterTex);
+		glBind(m_hFilterTex);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GL_UseProgram(pp_colorlize.program);
