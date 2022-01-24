@@ -8,6 +8,7 @@
 SHADER_DEFINE(pp_texround)
 SHADER_DEFINE(pp_gaussianblurh)
 SHADER_DEFINE(pp_gaussianblurv)
+SHADER_DEFINE(pp_coloraddictive)
 
 void GL_ShaderInit() {
 	pp_texround.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\radar.fsh", nullptr);
@@ -22,4 +23,7 @@ void GL_ShaderInit() {
 	pp_gaussianblurv.program = R_CompileShaderFileEx("abcenchance\\shader\\fullscreentriangle.vert.glsl", "abcenchance\\shader\\gaussian_blur_16x.frag.glsl", "", "#define BLUR_VERTICAL\n", nullptr);
 	if (pp_gaussianblurv.program)
 		SHADER_UNIFORM(pp_gaussianblurv, du, "du");
+	pp_coloraddictive.program = R_CompileShaderFile("abcenchance\\shader\\pp_brightpass.vsh", "abcenchance\\shader\\addictive.fsh", nullptr);
+	if (pp_coloraddictive.program)
+		SHADER_UNIFORM(pp_coloraddictive, ha, "ha");
 }

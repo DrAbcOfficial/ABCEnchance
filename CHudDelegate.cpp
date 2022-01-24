@@ -144,6 +144,7 @@ void __UserCmd_Attack1(void) {
 void CHudDelegate::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
+	m_HudArmorHealth.GLInit();
 }
 void CHudDelegate::HUD_Init(void){
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
