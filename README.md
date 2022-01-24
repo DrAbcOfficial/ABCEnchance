@@ -72,6 +72,10 @@
 |cl_itemhighlight|Draw item high light|1|0/1|
 |cl_itemhighlightrange|Item high light range|344|0~500|
 |---|---|---|---|
+|cl_damageshock|Enable shock pain indicator|0|0/1|
+|cl_damageshock_factor|shock pain indicator strong|0.015|0~99999|
+|cl_damageshock_base|min damage to show shock pain indicator|30|0~99999|
+|---|---|---|---|
 |cl_radar|Radar|1|0/1/2|
 |cl_radarzoom|Radar Zoom|2.5|0.0001~9999|
 |cl_radarsize|Radar Size|344|0-9999|
