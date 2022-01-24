@@ -196,7 +196,7 @@ int CHudCustomAmmo::Init(void){
 	m_pfnWeapPickup = HOOK_MESSAGE(WeapPickup);
 	m_pfnItemPickup = HOOK_MESSAGE(ItemPickup);
 	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
-	m_pfnHideWeapon = 
+	m_pfnHideWeapon = HOOK_MESSAGE(HideWeapon);
 
 	gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_VALUE, CustomSlotSetCallBack);
