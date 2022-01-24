@@ -29,6 +29,7 @@
 #include "efxhud.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
+#include "cctv.h"
 
 #include "weaponbank.h"
 #include "wmenu_annular.h"
@@ -175,6 +176,7 @@ void CHudDelegate::HUD_Init(void){
 	m_HudEfx.Init();
 	m_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
+	m_HudCCTV.Init();
 
 	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
 }
@@ -232,6 +234,7 @@ void CHudDelegate::HUD_Draw(float flTime){
 	m_HudEccoMoney.Draw(flTime);
 	m_HudItemHighLight.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
+	m_HudCCTV.Draw(flTime);
 }
 void CHudDelegate::HUD_Reset(void){
 	m_iPlayerHealth = 100;
@@ -246,6 +249,7 @@ void CHudDelegate::HUD_Reset(void){
 	m_HudEfx.Reset();
 	m_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
+	m_HudCCTV.Reset();
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
 }

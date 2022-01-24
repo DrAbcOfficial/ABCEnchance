@@ -135,6 +135,9 @@
     <ClCompile Include="gl_def.cpp">
       <Filter>Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="cctv.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -328,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="hud.h">
       <Filter>Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="cctv.h">
+      <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
