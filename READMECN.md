@@ -64,6 +64,10 @@
 |cl_itemhighlight|是否显示物品高亮|1|0/1|
 |cl_itemhighlightrange|物品高亮范围|344|0~500|
 |---|---|---|---|
+|cl_damageshock|启用受伤色差|0|0/1|
+|cl_damageshock_factor|受伤色差强度|0.015|0~99999|
+|cl_damageshock_base|出现色差应受伤害|30|0~99999|
+|---|---|---|---|
 |hud_deathnotice_time|死亡提示保持时间|6|0~9999|
 |---|---|---|---|
 |cl_radar|启用雷达|1|0/1/2|
