@@ -84,9 +84,9 @@ void CHudArmorHealth::Init(void){
 	m_pfnDamage = HOOK_MESSAGE(Damage);
 	m_pfnBattery = HOOK_MESSAGE(Battery);
 
-	gCVars.pDamageScreenFilter = CREATE_CVAR("cl_damageshock", "0", FCVAR_VALUE, nullptr);
+	gCVars.pDamageScreenFilter = CREATE_CVAR("cl_damageshock", "1", FCVAR_VALUE, nullptr);
 	gCVars.pDamageScreenFactor = CREATE_CVAR("cl_damageshock_factor", "0.015", FCVAR_VALUE, nullptr);
-	gCVars.pDamageScreenBase = CREATE_CVAR("cl_damageshock_base", "30", FCVAR_VALUE, nullptr);
+	gCVars.pDamageScreenBase = CREATE_CVAR("cl_damageshock_base", "15", FCVAR_VALUE, nullptr);
 
 	StartX = GET_SCREEN_PIXEL(false, "HealthArmor.StartX");
 	IconSize = GET_SCREEN_PIXEL(true, "HealthArmor.IconSize");
