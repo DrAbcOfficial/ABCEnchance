@@ -52,7 +52,7 @@ int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf){
 		VotePatternCheck(voteContent, "Would you like to change the map to \"(.*)\"\\?", "Vote_VoteMap"))
 		return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
 
-	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend));
+	pLocalize->ConvertANSIToUnicode(voteContent.c_str(), m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend));
 	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
 	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
 	return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
