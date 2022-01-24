@@ -113,6 +113,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp" />
     <ClCompile Include="ammo.cpp" />
+    <ClCompile Include="cctv.cpp" />
     <ClCompile Include="CHudDelegate.cpp" />
     <ClCompile Include="crosshair.cpp" />
     <ClCompile Include="cvar_hook.cpp" />
@@ -152,6 +153,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClInclude Include="baseammo.h" />
     <ClInclude Include="basehealth.h" />
     <ClInclude Include="basemenu.h" />
+    <ClInclude Include="cctv.h" />
     <ClInclude Include="CHudDelegate.h" />
     <ClInclude Include="CColor.h" />
     <ClInclude Include="eccobuymenu.h" />
