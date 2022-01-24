@@ -14,7 +14,6 @@
 #include "gl_utility.h"
 #include "gl_def.h"
 
-
 #include "cvardef.h"
 #include "weaponbank.h"
 
