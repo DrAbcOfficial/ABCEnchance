@@ -12,11 +12,11 @@ typedef struct{
 typedef struct {
 	GLuint program;
 	GLuint ha;
-}pp_coloraddictive_program_t;
+}pp_colorlize_program_t;
 
 extern pp_texround_program_t pp_texround;
 extern pp_gaussianblurh_program_t pp_gaussianblurh;
 extern pp_gaussianblurv_program_t pp_gaussianblurv;
-extern pp_coloraddictive_program_t pp_coloraddictive;
+extern pp_colorlize_program_t pp_colorlize;
 
 void GL_ShaderInit();
