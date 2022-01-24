@@ -52,6 +52,8 @@ void CHudEccoMoney::Reset() {
 int CHudEccoMoney::Draw(float flTime){
 	if (gCVars.pEccoEnable->value <= 0)
 		return 1;
+	if (gHudDelegate->m_iHideHUDDisplay & (HIDEHUD_ALL | HIDEHUD_HEALTH))
+		return 1;
 	int iEcco = 0;
 	if (gCVars.pEccoCheckInfo->value > 0) {
 		iEcco = atoi(gEngfuncs.PhysInfo_ValueForKey("ecco_value"));

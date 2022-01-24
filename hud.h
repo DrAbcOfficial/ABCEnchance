@@ -13,6 +13,11 @@ typedef int HSPRITE;	// handle to a graphic
 
 #define		HUDELEM_ACTIVE	1
 
+constexpr int HIDEHUD_WEAPONS = ( 1<<0 );
+constexpr int HIDEHUD_FLASHLIGHT = ( 1<<1 );
+constexpr int HIDEHUD_ALL = ( 1<<2 );
+constexpr int HIDEHUD_HEALTH = ( 1<<3 );
+
 typedef struct {
 	int x, y;
 } POSITION;
