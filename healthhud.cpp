@@ -140,6 +140,7 @@ void CHudArmorHealth::Reset(void){
 	iPainIndicator = SPR_Load("abcenchance/spr/pain_indicator.spr");
 	VGUI_CREATE_NEWTGA_TEXTURE(iHealthBarBackground, "abcenchance/tga/healthbar_background");
 
+	memset(&m_hScreenFilter, 0, sizeof(m_hScreenFilter));
 	memset(aryIndicators, 0, sizeof(aryIndicators));
 	iNowSelectIndicator = 0;
 
