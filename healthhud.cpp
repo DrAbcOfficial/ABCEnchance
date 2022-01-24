@@ -325,12 +325,12 @@ int CHudArmorHealth::DrawPain(float flTime){
 		glBindTexture(GL_TEXTURE_2D, m_hFilterTex);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		GL_UseProgram(pp_coloraddictive.program);
-		GL_Uniform2f(pp_coloraddictive.ha, 0, fa);
+		GL_UseProgram(pp_colorlize.program);
+		GL_Uniform2f(pp_colorlize.ha, 0, fa);
 			DrawQuadPos(-wDiffer, -hDiffer, SizedScreenW, SizedScreenH);
-		GL_Uniform2f(pp_coloraddictive.ha, 0.3, fa);
+		GL_Uniform2f(pp_colorlize.ha, 0.3, fa);
 			DrawQuadPos(0, -hDiffer, SizedScreenW, SizedScreenH);
-		GL_Uniform2f(pp_coloraddictive.ha, 0.6, fa);
+		GL_Uniform2f(pp_colorlize.ha, 0.6, fa);
 			DrawQuadPos(-wDiffer, 0, SizedScreenW, SizedScreenH);
 		GL_UseProgram(0);
 		glDisable(GL_BLEND);
