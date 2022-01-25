@@ -142,33 +142,33 @@ Scheme
 		//色差伤害指示器持续时间
 		"HealthArmor.ShockIndicatorTime""0.2"
 
-        //子弹图标大小
+        //[尺寸]子弹图标大小
 		"AmmoHUD.IconSize"			"0.03"
-		//文字图标间隔
+		//[尺寸]文字图标间隔
 		"AmmoHUD.ElementGap"		"0.01"
-		//背景图片起始高
+		//[长度]背景图片起始高
 		"AmmoHUD.BackGroundY"		"0.95"
-		//背景图片长度
+		//[尺寸]背景图片长度
 		"AmmoHUD.BackGroundLength"	"0.2"
 
-        //拾取子弹起始宽
+        //[长度]拾取子弹起始宽
 		"AmmoHUD.AmmoPickUpX"	"0.45"
-		//拾取子弹起始高
+		//[长度]拾取子弹起始高
 		"AmmoHUD.AmmoPickUpY"	"0.55"
-		//拾取武器图标起始宽
+		//[长度]拾取武器图标起始宽
 		"AmmoHUD.WeaponPickUpX"	"1"
-		//拾取武器图标起始高
+		//[长度]拾取武器图标起始高
 		"AmmoHUD.WeaponPickUpY"	"0.85"
-		//拾取物品起始宽
+		//[长度]拾取物品起始宽
 		"AmmoHUD.ItemPickUpX"	"0.55"
-		//拾取物品起始高
+		//[长度]拾取物品起始高
 		"AmmoHUD.ItemPickUpY"	"0.55"
 
-        //环状菜单空心长度
+        //[尺寸]环状菜单空心长度
 		"WMenuAnnular.SelectOffset"	"0.25"
-		//环状菜单按钮长度
+		//[尺寸]环状菜单按钮长度
 		"WMenuAnnular.SelectSize"	"0.1"
-		//环状菜单指针尺寸
+		//[尺寸]环状菜单指针尺寸
 		"WMenuAnnular.SelectPointerSize"	"0.03"
 		//环状菜单起始选址度数（角度）
 		"WMenuAnnular.SelectRotate"	"0"
@@ -179,13 +179,13 @@ Scheme
 		//环状菜单保持时间
 		"WMenuAnnular.SelectHoldTime"	"5"
 
-        //经典菜单起始宽
+        //[长度]经典菜单起始宽
 		"WMenuBucket.SelectXOffset"	"0.005"
-		//经典菜单起始高
+		//[长度]经典菜单起始高
 		"WMenuBucket.SelectYOffset"	"0.01"
-		//经典菜单图标间隔宽
+		//[长度]经典菜单图标间隔宽
 		"WMenuBucket.SelectXGap"	"0.0025"
-		//经典菜单图标间隔高
+		//[长度]经典菜单图标间隔高
 		"WMenuBucket.SelectYGap"	"0.005"
 		//经典菜单保持时间
 		"WMenuBucket.SelectHoldTime"	"5"
@@ -194,13 +194,13 @@ Scheme
 		//经典菜单消失动画时间
 		"WMenuBucket.SelectFadeTime"	"0.2"
 
-        //雷达起始宽
+        //[长度]雷达起始宽
 		"Radar.XOffset"			"0.012"
-		//雷达起始高
+		//[长度]雷达起始高
 		"Radar.YOffset"			"0.0225"
-		//指北针N图标尺寸
+		//[尺寸]指北针N图标尺寸
 		"Radar.NorthPointerSize"	"0.0233"
-		//雷达中心图标尺寸
+		//[尺寸]雷达中心图标尺寸
 		"Radar.ViewAngleSize"	"0.125"
 		//雷达灰色背景图标不透明度
 		"Radar.OutLineAlpha"	"255"
@@ -209,36 +209,36 @@ Scheme
 		//雷达中心图标不透明度
 		"Radar.CenterAlpha"		"255"
 
-        //死亡消息起始宽
+        //[长度]死亡消息起始宽
 		"DeathMsg.XOffset"		"0.93"
-		//死亡消息起始高
+		//[长度]死亡消息起始高
 		"DeathMsg.YOffset"		"0.25"
 		//两条死亡消息间隔
 		"DeathMsg.GapOffset"	"0.012"
 		//死亡消息背景高度
 		"DeathMsg.BackGoundWidth"	"0.0070"
 
-        //投票菜单起始宽
+        //[长度]投票菜单起始宽
 		"Vote.XOffset"		"0.9"
-		//投票菜单起始高
+		//[长度]投票菜单起始高
 		"Vote.YOffset"		"0.233"
 		//投票菜单高
 		"Vote.Height"		"0.33"
 		//投票菜单宽
 		"Vote.Width"		"0.2"
 
-        //分数金钱起始高
+        //[长度]分数金钱起始高
 		"Ecco.YOffset"		"0.4"
-		//分数金钱背景长度
+		//[尺寸]分数金钱背景长度
 		"Ecco.BackgroundLength"		"0.11"
-		//分数金钱背景高度
+		//[尺寸]分数金钱背景高度
 		"Ecco.BackgroundHeight"		"0.0325"
 
         //购买菜单进入动画时间
 		"EccoBuyMenu.BuyMenuAnimateTime"		"0.1"
-		//购买菜单圆心起始宽
+		//[长度]购买菜单圆心起始宽
 		"EccoBuyMenu.BuyMenuCenterX"		"0.3"
-		//购买菜单圆心起始高
+		//[长度]购买菜单圆心起始高
 		"EccoBuyMenu.BuyMenuCenterY"		"0.5"
 		//购买菜单圆尺寸
 		"EccoBuyMenu.BuyMenuHeight"		"0.2"
