@@ -15,6 +15,7 @@
 #include "weapon.h"
 #include "cvardef.h"
 #include "dlight.h"
+#include "basemenu.h"
 
 #include "extraprecache.h"
 #include "cl_entity.h"
@@ -25,11 +26,6 @@
 #include "eccobuymenu.h"
 
 using namespace mathlib;
-
-#define CAM_YAW 220
-#define CAM_DIST 80
-#define CAM_HEIGHT -40
-#define CAM_RIGHT 50
 
 CHudEccoBuyMenu m_HudEccoBuyMenu;
 enum MetaHookMsgType {
@@ -87,15 +83,16 @@ int CHudEccoBuyMenu::Init(){
 	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
 	BuyMenuAnimateTime = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuAnimateTime"));
+	BuyMenuModelSize = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuModelSize"));
+	BuyMenuCamYaw = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuCamYaw"));
+	BuyMenuCamDist = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuCamDist"));
+	BuyMenuCamHeight = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuCamHeight"));
+	BuyMenuCamRight = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuCamRight"));
 
 	BuyMenuCenterX = GET_SCREEN_PIXEL(false, "EccoBuyMenu.BuyMenuCenterX");
 	BuyMenuCenterY = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuCenterY");
-	BuyMenuModelSize = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuModelSize");
 	BuyMenuOffset = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuOffset");
 	BuyMenuHeight = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuHeight");
-	BuyMenuModelX = GET_SCREEN_PIXEL(false, "EccoBuyMenu.BuyMenuModelX");
-	BuyMenuModelY = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuModelY");
-	BuyMenuModelY = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuModelY");
 
 	pCVarIdealYaw = CVAR_GET_POINTER("cam_idealyaw");
 	pCVarIdealDist = CVAR_GET_POINTER("cam_idealdist");
@@ -244,10 +241,10 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	if (!bOldCamThirdperson)
 		EngineClientCmd("thirdperson");
 	pCVarFollowAim->value = 0;
-	pCVarIdealYaw->value = CAM_YAW;
-	pCVarIdealDist->value = CAM_DIST;
-	gCVars.pCamIdealHeight->value = CAM_HEIGHT;
-	gCVars.pCamIdealRight->value = CAM_RIGHT;
+	pCVarIdealYaw->value = BuyMenuCamYaw;
+	pCVarIdealDist->value = BuyMenuCamDist;
+	gCVars.pCamIdealHeight->value = BuyMenuCamHeight;
+	gCVars.pCamIdealRight->value = BuyMenuCamRight;
 
 	return 0;
 }
@@ -286,7 +283,8 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 			}
 			VectorCopy(ent->origin, pShowEnt->entity.origin);
 			VectorCopy(ent->angles, pShowEnt->entity.angles);
-			pShowEnt->entity.curstate.scale = 1.3;
+			pShowEnt->entity.curstate.scale = BuyMenuModelSize;
+			pShowEnt->entity.angles[0] = 0;
 			break;
 		}
 		default: {

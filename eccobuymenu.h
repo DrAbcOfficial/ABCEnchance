@@ -60,11 +60,13 @@ private:
 	GLuint iBackgroundTga = 0;
 
 	float BuyMenuAnimateTime = 0;
+	float BuyMenuModelSize = 0;
+	float BuyMenuCamYaw = 0;
+	float BuyMenuCamDist = 0;
+	float BuyMenuCamHeight = 0;
+	float BuyMenuCamRight = 0;
 	int BuyMenuCenterX = 0;
 	int BuyMenuCenterY = 0;
-	int BuyMenuModelSize = 0;
-	int BuyMenuModelX = 0;
-	int BuyMenuModelY = 0;
 	int BuyMenuOffset = 0;
 	int BuyMenuHeight = 0;
 
