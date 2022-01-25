@@ -278,6 +278,8 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 				return true;
 			if (!pShowEnt) {
 				pShowEnt = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(ent->origin, pModel);
+				if (!pShowEnt)
+					return true;
 				pShowEnt->flags = FTENT_NONE;
 				pShowEnt->entity.curstate.effects = EF_FULLBRIGHT;
 				pShowEnt->die = gEngfuncs.GetClientTime() + 99999.0f;
@@ -294,6 +296,8 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 			ent->curstate.gaitsequence = 0;
 			if (!pShowEnt) {
 				pShowEnt = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(ent->origin, ent->model);
+				if (!pShowEnt)
+					return true;
 				pShowEnt->flags = FTENT_NONE;
 				pShowEnt->entity.curstate.effects = EF_FULLBRIGHT;
 				pShowEnt->entity.curstate.framerate = ent->curstate.framerate;
@@ -312,11 +316,14 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 				if (!pModel)
 					return true;
 				pWeaponEnt = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(ent->origin, pModel);
+				if (!pWeaponEnt)
+					return true;
 				pWeaponEnt->entity.curstate.movetype = MOVETYPE_FOLLOW;
 				pWeaponEnt->entity.curstate.aiment = ent->index;
 			}
 			VectorCopy(ent->origin, pShowEnt->entity.origin);
 			VectorCopy(ent->angles, pShowEnt->entity.angles);
+			pShowEnt->entity.angles[0] = 0;
 			return true;
 		}
 		}
