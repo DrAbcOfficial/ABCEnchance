@@ -111,7 +111,7 @@ Scheme
     //时间单位为秒
 	BaseSettings
 	{
-		"Version"						"100013"
+		"Version"						"100014"
 		//[尺寸]鼠标光标大小
 		"Common.CursorSize"             "0.03"
 
