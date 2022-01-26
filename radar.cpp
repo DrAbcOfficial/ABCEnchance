@@ -90,6 +90,8 @@ void CHudRadar::Reset(){
 void CHudRadar::Draw(float flTime){
 	if (gCVars.pRadar->value <= 0)
 		return;
+	if (!gHudDelegate->HasSuit())
+		return;
 	UpdateZmax(flTime);
 	float size = gCVars.pRadarSize->value;
 	int iStartY = YOffset;
