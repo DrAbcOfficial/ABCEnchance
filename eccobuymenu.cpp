@@ -79,6 +79,10 @@ void EccoBuymenuSetCallBack(cvar_t* vars) {
 	if (vars->value <= 0 && m_HudEccoBuyMenu.IsOpen())
 		m_HudEccoBuyMenu.CloseMenu();
 }
+void CHudEccoBuyMenu::GLInit(){
+	glGenFramebuffersEXT(1, &m_hGaussianBufferFBO);
+	m_hGaussianBufferTex = GL_GenTextureRGBA8(ScreenWidth / 2, ScreenHeight);
+}
 int CHudEccoBuyMenu::Init(){
 	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
@@ -133,6 +137,16 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	if (gHookHud.m_Menu)
 		gHookHud.m_Menu->m_iFlags &= ~HUD_ACTIVE;
 	float flAnimationRatio = min(1.0f, 1.0f - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime));
+	//Ä£ºý
+	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferFBO);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferTex, 0);
+	GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferFBO, ScreenWidth / 2, ScreenHeight, ScreenWidth / 2, ScreenHeight);
+	DrawGaussianBlur(m_hGaussianBufferTex, 1.0f * flAnimationRatio, ScreenWidth / 2, ScreenHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
+	glEnable(GL_TEXTURE_2D);
+	glColor4ub(255, 255, 255, 255);
+	DrawQuad(ScreenWidth / 2, ScreenHeight);
 	//´ó±³¾°
 	gHudDelegate->surface()->DrawSetTexture(-1);
 	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255 * flAnimationRatio);
@@ -254,6 +268,8 @@ void CHudEccoBuyMenu::Clear() {
 	pShowEnt = nullptr;
 	pWeaponEnt = nullptr;
 	pLight = nullptr;
+	if (m_hGaussianBufferTex)
+		glDeleteTextures(1, &m_hGaussianBufferTex);
 }
 bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	if (gCVars.pEccoBuyMenu->value <= 0)

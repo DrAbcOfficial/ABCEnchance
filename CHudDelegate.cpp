@@ -147,6 +147,7 @@ void CHudDelegate::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
 	m_HudArmorHealth.GLInit();
+	m_HudEccoBuyMenu.GLInit();
 	m_HudCCTV.GLInit();
 }
 void CHudDelegate::HUD_Init(void){
