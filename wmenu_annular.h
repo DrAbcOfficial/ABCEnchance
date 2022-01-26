@@ -18,9 +18,7 @@ private:
 	GLint iSelectCyclerCursorPointer = 0;
 
 	GLint m_hOldBuffer = 0;
-	GLuint m_hGaussianBufferVFBO = 0;
-	GLuint m_hGaussianBufferVTex = 0;
-	GLuint m_hGaussianBufferHFBO = 0;
-	GLuint m_hGaussianBufferHTex = 0;
+	GLuint m_hGaussianBufferFBO = 0;
+	GLuint m_hGaussianBufferTex = 0;
 };
 extern CWeaponMenuAnnular m_HudWMenuAnnular;

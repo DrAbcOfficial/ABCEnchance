@@ -1,6 +1,7 @@
 #pragma once
 class CHudCCTV {
 public:
+	void GLInit();
 	int Init();
 	int Draw(float flTime);
 	void Reset();
@@ -20,5 +21,6 @@ private:
 	int TileStartY;
 	int TileWidth;
 	int TileHeight;
+
 };
 extern CHudCCTV m_HudCCTV;

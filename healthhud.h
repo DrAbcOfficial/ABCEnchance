@@ -65,6 +65,7 @@ public:
 	int Draw(float flTime);
 	void Reset(void);
 	int VidInit(void);
+	void Clear();
 	int DrawPain(float fTime);
 	int DrawDamage(float fTime);
 	void CalcDamageDirection(indicatorinfo_s& var);

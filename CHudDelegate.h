@@ -71,6 +71,7 @@ public:
 	int m_iVisibleMouse = 0;
 	int m_iIsOverView = 0;
 	int m_iHideHUDDisplay = 0;
+	int m_iWeaponBits = 0;
 	float m_flOverViewScale = 0;
 	float m_flOverViewYaw = 0;
 	float m_flOverViewZmax = 0;
