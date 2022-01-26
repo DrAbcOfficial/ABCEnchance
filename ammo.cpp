@@ -286,9 +286,7 @@ void CHudCustomAmmo::SyncWeapon(){
 int CHudCustomAmmo::Draw(float flTime){
 	if (gHudDelegate->IsInSpectate())
 		return 1;
-	//IDK Why, this var is totally useless for sven coop
-	//but ghidra never lie
-	if (!(gClientData->weapons & 0x80000000))
+	if (!gHudDelegate->HasSuit())
 		return 1;
 	if (gClientData->health <= 0)
 		return 1;
@@ -401,6 +399,8 @@ void CHudCustomAmmo::ChosePlayerWeapon(void){
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
 	if (gHookHud.m_Menu->m_fMenuDisplayed)
+		return;
+	if (!gHudDelegate->HasSuit())
 		return;
 	gWR.SelectSlot(iSlot, fAdvance);
 }
