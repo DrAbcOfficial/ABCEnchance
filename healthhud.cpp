@@ -154,7 +154,7 @@ void CHudArmorHealth::Reset(void){
 }
 void CHudArmorHealth::Clear() {
 	if (m_hFilterTex)
-		glDeleteTextures(1, m_hFilterTex);
+		glDeleteTextures(1, &m_hFilterTex);
 }
 void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDiffer){
 	vec3_t hsv,thsv;
