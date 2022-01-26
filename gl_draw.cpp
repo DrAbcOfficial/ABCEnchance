@@ -200,22 +200,12 @@ void DrawQuad(int w, int h) {
 void DrawScreenQuad() {
 	DrawQuad(ScreenWidth, ScreenHeight);
 }
-void DrawGaussianBlur(GLint dstfbo, GLint srctex, GLint dsttex, float ratio, bool v, int w, int h) {
-	//¸´ÖÆtexµ½H
-	glBindFramebuffer(GL_FRAMEBUFFER, dstfbo);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dsttex, 0);
+void DrawGaussianBlur(GLint tex, float ratio, int w, int h) {
 	glEnable(GL_TEXTURE_2D);
-	glBind(srctex);
-	if (v) {
-		GL_UseProgram(pp_gaussianblurv.program);
-		GL_Uniform1f(0, 1.0f / h);
-		GL_Uniform1f(pp_gaussianblurv.du, 200.0f / h * ratio);
-	}
-	else {
-		GL_UseProgram(pp_gaussianblurh.program);
-		GL_Uniform1f(0, 1.0f / w);
-		GL_Uniform1f(pp_gaussianblurh.du, 200.0f / w * ratio);
-	}
+	glBind(tex);
+	GL_UseProgram(pp_gaussianblur.program);
+	GL_Uniform1f(pp_gaussianblur.du, ratio);
+	GL_Uniform2f(pp_gaussianblur.res, w, h);
 	glColor4ub(255, 255, 255, 255);
 	DrawQuad(w, h);
 	GL_UseProgram(0);

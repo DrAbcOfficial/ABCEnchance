@@ -46,7 +46,6 @@ overviewInfo_t* gDevOverview;
 baseweapon_t* (*g_rgBaseSlots)[10][26] = nullptr;
 int* g_iVisibleMouse = nullptr;
 refdef_t* g_refdef = nullptr;
-int* g_iWeaponBits = nullptr;
 
 //FINAL SHIT
 void R_NewMap(void){
@@ -178,7 +177,6 @@ void FillAddress(){
 			Sig_AddrNotFound(SetPunchAngle);
 			gHookFuncs.SetPunchAngle = (decltype(gHookFuncs.SetPunchAngle))GetCallAddress(addr + 8);
 		}
-		//Fill_Sig(R_SETPUNCHANGLE_SIG, g_dwClientBase, g_dwClientSize, SetPunchAngle);
 #define SC_UPDATECURSORSTATE_SIG "\x8B\x40\x28\xFF\xD0\x84\xC0\x2A\x2A\xC7\x05\x2A\x2A\x2A\x2A\x01\x00\x00\x00"
 		{
 			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_UPDATECURSORSTATE_SIG, Sig_Length(SC_UPDATECURSORSTATE_SIG));
@@ -190,12 +188,6 @@ void FillAddress(){
 			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_HUDAMMO_RESET_SIG, Sig_Length(SC_HUDAMMO_RESET_SIG));
 			Sig_AddrNotFound(g_rgBaseSlots);
 			g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 33);
-		}
-#define SC_HUD_WEAPONBIT_SIG "\xB8\xC8\x00\x00\x00\x89\x4C\x24\x0C\x33\xC9\x83\xFA\x19\x56\x0F\x4E\xC1\x89\x44\x24\x0C\x8D\x44\x24\x0C\x50\x8D\x44\x24\x14\x50\x8D\x44\x24\x1C\x50\xE8\x85\xDA\x00\x00\x83\xC4\x10"
-		{
-			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_HUD_WEAPONBIT_SIG, Sig_Length(SC_HUD_WEAPONBIT_SIG));
-			Sig_AddrNotFound(g_iWeaponBits);
-			g_iWeaponBits = *(decltype(g_iWeaponBits)*)(addr + 2);
 		}
 		if(1){
 			const char sigs1[] = "***PROTECTED***";

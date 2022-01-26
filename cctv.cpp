@@ -6,6 +6,12 @@
 #include "hud.h"
 #include "weapon.h"
 #include "CHudDelegate.h"
+
+#include "gl_shader.h"
+#include "gl_def.h"
+#include "gl_utility.h"
+#include "gl_draw.h"
+
 #include "cctv.h"
 
 #define DOWN_LOGO_STARTX 0.05
@@ -24,6 +30,10 @@
 #define TILE_HEIGHT 0.35
 
 CHudCCTV m_HudCCTV;
+
+void CHudCCTV::GLInit() {
+
+}
 int CHudCCTV::Init(){
 	gCVars.pCCTV = CREATE_CVAR("cl_cctvlogo", "0", FCVAR_VALUE, nullptr);
 

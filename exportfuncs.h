@@ -17,7 +17,6 @@ extern overviewInfo_t* gDevOverview;
 extern int* g_iVisibleMouse;
 extern baseweapon_t* (*g_rgBaseSlots)[10][26];
 extern refdef_t* g_refdef;
-extern int* g_iWeaponBits;
 extern metaplugins_t g_metaplugins;
 
 void Sys_ErrorEx(const char* fmt, ...);

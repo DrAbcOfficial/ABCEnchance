@@ -152,6 +152,10 @@ void CHudArmorHealth::Reset(void){
 		m_dmg[i].fExpire = 0;
 	}
 }
+void CHudArmorHealth::Clear() {
+	if (m_hFilterTex)
+		glDeleteTextures(1, m_hFilterTex);
+}
 void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDiffer){
 	vec3_t hsv,thsv;
 	int tr, tg, tb, ta;
@@ -328,9 +332,11 @@ int CHudArmorHealth::DrawPain(float flTime){
 		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hFilterFBO, ScreenWidth, ScreenHeight, ScreenWidth, ScreenHeight);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
+		glEnable(GL_TEXTURE_2D);
 		glBind(m_hFilterTex);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4ub(255, 255, 255, 255);
 		GL_UseProgram(pp_colorlize.program);
 		GL_Uniform2f(pp_colorlize.ha, 0, fa);
 			DrawQuadPos(-wDiffer, -hDiffer, SizedScreenW, SizedScreenH);

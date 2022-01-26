@@ -147,6 +147,7 @@ void CHudDelegate::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
 	m_HudArmorHealth.GLInit();
+	m_HudCCTV.GLInit();
 }
 void CHudDelegate::HUD_Init(void){
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
@@ -255,6 +256,7 @@ void CHudDelegate::HUD_Reset(void){
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
 }
 void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time){
+	m_iWeaponBits = cdata->iWeaponBits;
 	m_bPlayerLongjump = atoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
 }
 void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
@@ -264,6 +266,7 @@ void CHudDelegate::HUD_Clear(void){
 	m_HudRadar.Clear();
 	m_HudCustomAmmo.Clear();
 	m_HudEccoBuyMenu.Clear();
+	m_HudArmorHealth.Clear();
 }
 void CHudDelegate::HUD_PreRenderView(int a1){
 	if (gCVars.pDynamicHUD->value <= 0)
@@ -300,7 +303,7 @@ bool CHudDelegate::IsInSpectate() {
 	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
 }
 bool CHudDelegate::HasSuit() {
-	return (*g_iWeaponBits) & (1 << (WEAPON_SUIT));
+	return m_iWeaponBits & (1 << WEAPON_SUIT);
 }
 
 HSPRITE CHudDelegate::GetSprite(int index) {
