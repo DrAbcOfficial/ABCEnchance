@@ -48,6 +48,8 @@ int CHudCustomCrosshair::Draw(float flTime){
 		return 1;
 	if (gHudDelegate->m_iHideHUDDisplay & (HIDEHUD_ALL | HIDEHUD_WEAPONS))
 		return 1;
+	if (!gHudDelegate->HasSuit())
+		return 1;
 	int iCenterX;
 	int iCenterY;
 	if (gExportfuncs.CL_IsThirdPerson()){

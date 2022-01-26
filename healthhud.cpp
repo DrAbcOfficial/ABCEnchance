@@ -169,6 +169,9 @@ int CHudArmorHealth::Draw(float flTime){
 	if (gHudDelegate->m_iHideHUDDisplay & (HIDEHUD_ALL | HIDEHUD_HEALTH))
 		return 1;
 	DrawPain(flTime);
+
+	if (!gHudDelegate->HasSuit())
+		return 1;
 	int r, g, b, a;
 	float flBackGroundY = BackGroundY;
 	gHudDelegate->surface()->DrawSetTexture(-1);

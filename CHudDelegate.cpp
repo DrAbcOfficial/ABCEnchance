@@ -13,6 +13,7 @@
 #include "pm_defs.h"
 #include "parsemsg.h"
 #include "mathlib.h"
+#include "exportfuncs.h"
 
 #include "local.h"
 #include "gl_draw.h"
@@ -297,6 +298,9 @@ void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {
 }
 bool CHudDelegate::IsInSpectate() {
 	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
+}
+bool CHudDelegate::HasSuit() {
+	return (*g_iWeaponBits) & (1 << (WEAPON_SUIT));
 }
 
 HSPRITE CHudDelegate::GetSprite(int index) {
