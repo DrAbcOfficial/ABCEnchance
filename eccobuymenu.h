@@ -8,6 +8,7 @@ typedef struct buymenuitem_s{
 }buymenuitem_t;
 class CHudEccoBuyMenu {
 public:
+	void GLInit();
 	int Init();
 	void VidInit();
 	int Draw(float flTime);
@@ -71,5 +72,9 @@ private:
 	int BuyMenuHeight = 0;
 
 	vgui::HFont hFont = 0;
+
+	GLint m_hOldBuffer = 0;
+	GLuint m_hGaussianBufferFBO = 0;
+	GLuint m_hGaussianBufferTex = 0;
 };
 extern CHudEccoBuyMenu m_HudEccoBuyMenu;
