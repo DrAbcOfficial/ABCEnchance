@@ -166,9 +166,7 @@ int __MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	gHudDelegate->m_iHideHUDDisplay = READ_BYTE();
-	if (gEngfuncs.IsSpectateOnly())
-		return 1;
-	return 1;
+	return m_pfnHideWeapon(pszName, iSize, pbuf);
 }
 void CustomSlotSetCallBack(cvar_t* vars){
 	if (!vars->string || vars->string[0] == 0)
