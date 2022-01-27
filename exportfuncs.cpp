@@ -106,7 +106,7 @@ void Sys_ErrorEx(const char* fmt, ...){
 	va_list argptr;
 
 	va_start(argptr, fmt);
-	_vsnprintf(msg, sizeof(msg), fmt, argptr);
+	vsprintf_s(msg, sizeof(msg), fmt, argptr);
 	va_end(argptr);
 
 	if (gEngfuncs.pfnClientCmd)
@@ -220,6 +220,12 @@ void InstallHook(){
 	Install_InlineEngHook(CL_GetModelByIndex);
 }
 
+void CheckAsset() {
+	auto c = gEngfuncs.COM_LoadFile((char*)"abcenchance/ABCEnchance.res", 5, 0);
+	if(!c)
+		Sys_ErrorEx("[ABCEnchance]:\nMissing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
+	gEngfuncs.COM_FreeFile(c);
+}
 void GL_Init(void){
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
@@ -242,7 +248,7 @@ void HUD_Init(void){
 	pScheme = pSchemeManager->GetIScheme(pSchemeManager->GetScheme("ABCEnchance"));
 	gPluginVersion = atoi(pScheme->GetResourceString("Version"));
 	if (gPluginVersion < PLUGIN_VERSION)
-		Sys_ErrorEx("[ABCEnchance]:\nMissing Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
+		Sys_ErrorEx("[ABCEnchance]:\nMismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, gPluginVersion);
 	char localizePath[260];
 	snprintf(localizePath, sizeof(localizePath), "abcenchance/localize/%s.txt", 
