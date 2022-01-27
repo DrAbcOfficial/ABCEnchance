@@ -244,9 +244,11 @@ void HUD_Init(void){
 	if (gPluginVersion < PLUGIN_VERSION)
 		Sys_ErrorEx("[ABCEnchance]:\nMissing Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, gPluginVersion);
-
-	if(!pLocalize->AddFile(g_pFileSystem, "abcenchance/localize/%language%.txt"))
-		Sys_ErrorEx("[ABCEnchance]:\nMissing Localize file: abcenchance/localize/%language%.txt\n");
+	char localizePath[260];
+	snprintf(localizePath, sizeof(localizePath), "abcenchance/localize/%s.txt", 
+		(!strlen(pScheme->GetResourceString("Language"))) ? "%language%" : pScheme->GetResourceString("Language"));
+	if(!pLocalize->AddFile(g_pFileSystem, localizePath))
+		Sys_ErrorEx("[ABCEnchance]:\nMissing Localize file: %s\n", localizePath);
 
 	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
