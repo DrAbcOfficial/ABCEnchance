@@ -51,8 +51,10 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
 
-	g_dwClientBase = (PVOID)GetModuleHandleA("client.dll");
+	g_dwClientBase = (PVOID)GetModuleHandle("client.dll");
 	g_dwClientSize = g_pMetaHookAPI->GetModuleSize((HMODULE)g_dwClientBase);
+
+	CheckAsset();
 
 	GL_Init();
 
