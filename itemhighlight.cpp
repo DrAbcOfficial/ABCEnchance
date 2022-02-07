@@ -145,7 +145,7 @@ void CHudItemHighLight::LoadItemList() {
 			aryHighLightList.push_back(item);
 		}
 		else {
-			aryHighLightList[index]->Type = clamp(atoi(szItemPraseBuf), 0, 2);
+			aryHighLightList[index]->Type = clamp(mathlib::natoi(szItemPraseBuf), 0, 2);
 			index++;
 		}
 		i++;

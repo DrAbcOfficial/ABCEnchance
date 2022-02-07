@@ -58,7 +58,7 @@ int CHudEccoMoney::Draw(float flTime){
 		return 1;
 	int iEcco = 0;
 	if (gCVars.pEccoCheckInfo->value > 0) {
-		iEcco = atoi(gEngfuncs.PhysInfo_ValueForKey("ecco_value"));
+		iEcco = mathlib::natoi(gEngfuncs.PhysInfo_ValueForKey("ecco_value"));
 		if (iEcco == 0)
 			iEcco = gHudDelegate->GetPlayerHUDInfo(gEngfuncs.GetLocalPlayer()->index)->frags;
 	}
