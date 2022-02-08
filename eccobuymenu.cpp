@@ -148,16 +148,16 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	glColor4ub(255, 255, 255, 255);
 	DrawQuad(ScreenWidth / 2, ScreenHeight);
 	//大背景
-	gHudDelegate->surface()->DrawSetTexture(-1);
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255 * flAnimationRatio);
-	gHudDelegate->surface()->DrawSetTexture(iBackgroundTga);
-	gHudDelegate->surface()->DrawTexturedRect(0, 0, ScreenWidth / 2, ScreenHeight);
+	gCustomHud.surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255 * flAnimationRatio);
+	gCustomHud.surface()->DrawSetTexture(iBackgroundTga);
+	gCustomHud.surface()->DrawTexturedRect(0, 0, ScreenWidth / 2, ScreenHeight);
 	int mousex, mousey;
 	//获取鼠标指针位置
 	gEngfuncs.GetMousePosition(&mousex, &mousey);
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-	gHudDelegate->surface()->DrawSetTexture(gHudDelegate->m_iCursorTga);
-	gHudDelegate->surface()->DrawTexturedRect(mousex, mousey, mousex + gHudDelegate->m_flCursorSize, mousey + gHudDelegate->m_flCursorSize);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+	gCustomHud.surface()->DrawSetTexture(gCustomHud.m_iCursorTga);
+	gCustomHud.surface()->DrawTexturedRect(mousex, mousey, mousex + gCustomHud.m_flCursorSize, mousey + gCustomHud.m_flCursorSize);
 	int i;
 	int r = 255, g = 255, b = 255, a = 255;
 	int w, h;
@@ -368,7 +368,7 @@ void CHudEccoBuyMenu::OpenMenu(){
 		CreateLight();
 	}
 	bOpenningMenu = true;
-	gHudDelegate->m_iVisibleMouse = true;
+	gCustomHud.m_iVisibleMouse = true;
 }
 void CHudEccoBuyMenu::CloseMenu() {
 	if (!bOpenningMenu)
@@ -383,7 +383,7 @@ void CHudEccoBuyMenu::CloseMenu() {
 		EngineClientCmd("firstperson");
 	iNextPageBase = 0;
 	bOpenningMenu = false;
-	gHudDelegate->m_iVisibleMouse = false;
+	gCustomHud.m_iVisibleMouse = false;
 }
 bool CHudEccoBuyMenu::SelectMenu() {
 	if (!bOpenningMenu || iNowChosenSlot < 0 || iNowChosenSlot > 10)

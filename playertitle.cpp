@@ -87,7 +87,7 @@ int CHudPlayerTitle::Draw(float flTime){
 					nowX = vecHUD[0] - flTitleLength / 2;
 					nowY = vecHUD[1] - flTitleHeight / 2;
 					if (gCVars.pPlayerTitle->value < 2){
-						hud_playerinfo_t* info = gHudDelegate->GetPlayerHUDInfo(i);
+						hud_playerinfo_t* info = gCustomHud.GetPlayerHUDInfo(i);
 						flHealthRatio = clamp((info->health / 100.0f), 0.0f, 1.0f);
 						flArmorRatio = clamp((info->armor / 100.0f), 0.0f, 1.0f);
 
@@ -138,13 +138,13 @@ int CHudPlayerTitle::Draw(float flTime){
 							glEnd();
 						glDisable(GL_BLEND);
 						
-						gHudDelegate->surface()->DrawSetTexture(-1);
+						gCustomHud.surface()->DrawSetTexture(-1);
 						if (flHealthRatio <= 0.45f || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64){
-							gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-							gHudDelegate->surface()->DrawSetTexture(
+							gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+							gCustomHud.surface()->DrawSetTexture(
 								flHealthRatio < 0.4 ? (
 									flHealthRatio <= 0 ? iDeathIconTga : iMedkitIconTga) : iCrouchIconTga);
-							gHudDelegate->surface()->DrawTexturedRect(nowX, nowY, nowX + flTitleHeight / 2, nowY + flTitleHeight / 2);
+							gCustomHud.surface()->DrawTexturedRect(nowX, nowY, nowX + flTitleHeight / 2, nowY + flTitleHeight / 2);
 						}
 						nowX += flTitleHeight / 2;
 					}

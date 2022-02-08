@@ -169,18 +169,18 @@ int CHudVote::Draw(float flTime){
 	y = xywh[1] + xywh[3] - 6 * tall2;
 
 	x += 2.2 * h;
-	gHudDelegate->surface()->DrawSetTexture(-1);
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-	gHudDelegate->surface()->DrawSetTexture(m_iYesIconTga);
-	gHudDelegate->surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
+	gCustomHud.surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+	gCustomHud.surface()->DrawSetTexture(m_iYesIconTga);
+	gCustomHud.surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
 	x += 2.2 * h;
 	wsprintfW(buf, L"F1  %s", !m_VoteYes[0] ? DefaultYes : m_VoteYes);
 	DrawVGUI2String(buf, x, y, r, g, b, HudFont);
 	y += 2.2 * h;
 	x -= 2.2 * h;
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-	gHudDelegate->surface()->DrawSetTexture(m_iNoIconTga);
-	gHudDelegate->surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+	gCustomHud.surface()->DrawSetTexture(m_iNoIconTga);
+	gCustomHud.surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
 	x += 2.2 * h;
 	_swprintf(buf, L"F2  %s", !m_VoteNo[0] ? DefaultNo : m_VoteNo);
 	DrawVGUI2String(buf, x, y, r, g, b, HudFont);

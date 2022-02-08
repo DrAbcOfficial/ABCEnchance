@@ -29,14 +29,14 @@ void __UserCmd_OpenAnnularMenu(void) {
 		if (m_HudWMenuAnnular.m_fFade <= gEngfuncs.GetClientTime())
 			PlaySoundByName("common/wpn_hudon.wav", 1);
 		m_HudWMenuAnnular.m_bOpeningMenu = true;
-		gHudDelegate->m_iVisibleMouse = true;
+		gCustomHud.m_iVisibleMouse = true;
 	}
 }
 void __UserCmd_CloseAnnularMenu(void) {
 	if (m_HudWMenuAnnular.m_bOpeningMenu && m_HudWMenuAnnular.m_bSelectMenuDisplay) {
 		m_HudWMenuAnnular.m_bOpeningMenu = false;
 		m_HudWMenuAnnular.m_fFade = 0;
-		gHudDelegate->m_iVisibleMouse = false;
+		gCustomHud.m_iVisibleMouse = false;
 		m_HudWMenuAnnular.m_bSetedCursor = false;
 		m_HudWMenuAnnular.m_bSelectMenuDisplay = false;
 	}

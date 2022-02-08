@@ -135,7 +135,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 		}
 		int iClip = READ_LONG();
 		int iClip2 = READ_LONG();
-		if(gHudDelegate->m_iPlayerHealth > 0)
+		if(gCustomHud.m_iPlayerHealth > 0)
 			m_HudCustomAmmo.m_bAcceptDeadMessage = FALSE;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
@@ -154,7 +154,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 		case 0X1FE:{
 			if(m_HudCustomAmmo.m_bAcceptDeadMessage)
 				gWR.DropAllWeapons();
-			if(gHudDelegate->m_iPlayerHealth <= 0)
+			if(gCustomHud.m_iPlayerHealth <= 0)
 				m_HudCustomAmmo.m_bAcceptDeadMessage = TRUE;
 			break;
 		} 
@@ -166,13 +166,13 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 int __MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
-	gHudDelegate->m_iHideHUDDisplay = READ_BYTE();
+	gCustomHud.m_iHideHUDDisplay = READ_BYTE();
 	return m_pfnHideWeapon(pszName, iSize, pbuf);
 }
 int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
-	gHudDelegate->m_iHideHUDDisplay = READ_BYTE();
+	gCustomHud.m_iHideHUDDisplay = READ_BYTE();
 	return m_pfnHideHUD(pszName, iSize, pbuf);
 }
 void CustomSlotSetCallBack(cvar_t* vars){
@@ -292,11 +292,11 @@ void CHudCustomAmmo::SyncWeapon(){
 	}
 }
 int CHudCustomAmmo::Draw(float flTime){
-	if (gHudDelegate->IsInSpectate())
+	if (gCustomHud.IsInSpectate())
 		return 1;
-	if (gHudDelegate->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
+	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return 1;
-	if (!gHudDelegate->HasSuit())
+	if (!gCustomHud.HasSuit())
 		return 1;
 	if (gClientData->health <= 0)
 		return 1;
@@ -324,10 +324,10 @@ int CHudCustomAmmo::Draw(float flTime){
 	int iTextWidth;
 	wchar_t buf[16];
 	if (pw->iAmmoType > 0){
-		gHudDelegate->surface()->DrawSetTexture(-1);
-		gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-		gHudDelegate->surface()->DrawSetTexture(iBackGroundTga);
-		gHudDelegate->surface()->DrawTexturedRect(nowX, BackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
+		gCustomHud.surface()->DrawSetTexture(-1);
+		gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+		gCustomHud.surface()->DrawSetTexture(iBackGroundTga);
+		gCustomHud.surface()->DrawTexturedRect(nowX, BackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
  		nowX = flCenterX;
 		nowY = flCenterY;
 
@@ -406,16 +406,16 @@ void CHudCustomAmmo::ChosePlayerWeapon(void){
 	}
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
-	if (!gHudDelegate->IsHudEnable())
+	if (!gCustomHud.IsHudEnable())
 		return;
 	if (gHookHud.m_Menu->m_fMenuDisplayed)
 		return;
-	if (!gHudDelegate->HasSuit())
+	if (!gCustomHud.HasSuit())
 		return;
 	gWR.SelectSlot(iSlot, fAdvance);
 }
 int CHudCustomAmmo::DrawWList(float flTime){
-	if (gHudDelegate->IsHudHide(HUD_HIDEALL | HUD_HIDESELECTION))
+	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDESELECTION))
 		return 1;
 	m_pNowSelectMenu->DrawWList(flTime);
 	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)

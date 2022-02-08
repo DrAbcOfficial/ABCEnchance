@@ -29,10 +29,10 @@ int CHudEfx::Draw(float flTime){
 	if (gCVars.pHudEfx->value < 1)
 		return 0;
 	//观察者
-	if (gHudDelegate->IsInSpectate())
+	if (gCustomHud.IsInSpectate())
 		return 0;
 	//低血量
-	gHudDelegate->surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetTexture(-1);
 	if (m_HudArmorHealth.m_iHealth < gCVars.pDangerHealth->value) {
 		if ((double)flTime - flDyingFlincAdvanceTime >= FRAME_ADVANCE_INTERVAL) {
 			if (iDyingFlinc >= 60)
@@ -42,10 +42,10 @@ int CHudEfx::Draw(float flTime){
 			iDyingFlinc += bDyingFlincDir ? -1 : 1;
 			flDyingFlincAdvanceTime = flTime;
 		}
-		gHudDelegate->surface()->DrawSetColor(255, 25, 25,
+		gCustomHud.surface()->DrawSetColor(255, 25, 25,
 			mathlib::clamp((int)(255 * (gCVars.pDangerHealth->value - m_HudArmorHealth.m_iHealth) / gCVars.pDangerHealth->value + iDyingFlinc - 30), 0, 255));
-		gHudDelegate->surface()->DrawSetTexture(DarkconerImg);
-		gHudDelegate->surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
+		gCustomHud.surface()->DrawSetTexture(DarkconerImg);
+		gCustomHud.surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 	}
 	//水下
 	if (iOldWaterType == WATERLEVEL_HEAD && gClientData->waterlevel != WATERLEVEL_HEAD) {
@@ -62,7 +62,7 @@ int CHudEfx::Draw(float flTime){
 				iFrameLeft = 0;
 			flFrameLeftAdvanceTime = flTime;
 		}
-		gHudDelegate->surface()->DrawSetTexture(-1);
+		gCustomHud.surface()->DrawSetTexture(-1);
 		DrawSPRIcon(WaterLeftSpr, kRenderTransAdd, 
 			0, 0, ScreenWidth / 3, ScreenHeight,
 			255, 255, 255, a, iFrameLeft);
@@ -78,10 +78,10 @@ int CHudEfx::Draw(float flTime){
 			255, 255, 255, a, iFrameRight);
 	}
 	if (gClientData->waterlevel == WATERLEVEL_HEAD) {
-		gHudDelegate->surface()->DrawSetTexture(-1);
-		gHudDelegate->surface()->DrawSetColor(0, 0, 0, 125);
-		gHudDelegate->surface()->DrawSetTexture(DarkconerImg);
-		gHudDelegate->surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
+		gCustomHud.surface()->DrawSetTexture(-1);
+		gCustomHud.surface()->DrawSetColor(0, 0, 0, 125);
+		gCustomHud.surface()->DrawSetTexture(DarkconerImg);
+		gCustomHud.surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 	}
 	iOldWaterType = gClientData->waterlevel;
 	return 1;

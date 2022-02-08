@@ -3,7 +3,7 @@
 #include <VGUI/ISurface.h>
 #include <VGUI/ILocalize.h>
 
-#define VGUI_CREATE_NEWTGA_TEXTURE(tex, path) tex=gHudDelegate->surface()->CreateNewTextureID();gHudDelegate->surface()->DrawSetTextureFile(tex, path, true, false)
+#define VGUI_CREATE_NEWTGA_TEXTURE(tex, path) tex=gCustomHud.surface()->CreateNewTextureID();gCustomHud.surface()->DrawSetTextureFile(tex, path, true, false)
 
 typedef struct ScreenInfo_s{
 	int iWidth;
