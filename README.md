@@ -72,6 +72,8 @@
 |cl_itemhighlight|Draw item high light|1|0/1|
 |cl_itemhighlightrange|Item high light range|344|0~500|
 |---|---|---|---|
+|cl_dangerhealth|Danger health value|45|0~9999|
+|cl_dangerarmor|Danger armor value|45|0~9999|
 |cl_damageshock|Enable shock pain indicator|0|0/1|
 |cl_damageshock_factor|shock pain indicator strong|0.015|0~99999|
 |cl_damageshock_base|min damage to show shock pain indicator|30|0~99999|
