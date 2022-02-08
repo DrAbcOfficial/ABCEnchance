@@ -1,3 +1,4 @@
+#ifdef  _DEBUG
 #include <metahook.h>
 #include "glew.h"
 #include "mathlib.h"
@@ -73,3 +74,4 @@ void CHudCCTV::Reset(){
 	VGUI_CREATE_NEWTGA_TEXTURE(CCTVLogoTga, "abcenchance/tga/cctv/cctv_logo");
 	VGUI_CREATE_NEWTGA_TEXTURE(CCTVTileTga, "abcenchance/tga/cctv/cctv_tile");
 }
+#endif
