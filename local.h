@@ -2,7 +2,6 @@
 #include "cvar_hook.h"
 #include "com_model.h"
 
-#define DAGER_HEALTH 45
 #define FCVAR_VALUE (FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE)
 #define BASE_GWR_SELECTED 842100225
 #define BASE_GWR_UNSELECTED 842100224
@@ -65,6 +64,8 @@ typedef struct{
 	cvar_t* pPlayerTitleLength;
 	cvar_t* pPlayerTitleHeight;
 
+	cvar_t* pDangerHealth;
+	cvar_t* pDangerArmor;
 	cvar_t* pDamageScreenFilter;
 	cvar_t* pDamageScreenFactor;
 	cvar_t* pDamageScreenBase;
