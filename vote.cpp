@@ -11,7 +11,7 @@
 #include "gl_def.h"
 #include "gl_draw.h"
 
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 
 #include "mathlib.h"
 

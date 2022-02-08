@@ -13,7 +13,7 @@
 #include "gl_draw.h"
 #include "hud.h"
 #include "weapon.h"
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 
 #include "exportfuncs.h"
 

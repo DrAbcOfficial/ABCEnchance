@@ -10,7 +10,7 @@
 
 #include "hud.h"
 #include "weapon.h"
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 #include "healthhud.h"
 
 #include "exportfuncs.h"

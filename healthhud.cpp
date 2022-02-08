@@ -13,7 +13,7 @@
 #include "gl_shader.h"
 #include "local.h"
 
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 
 #include "healthhud.h"
 

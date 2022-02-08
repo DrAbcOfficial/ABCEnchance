@@ -8,7 +8,7 @@
 #include "gl_def.h"
 #include "IWeaponSelect.h"
 #include "ammo.h"
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 #include "historyresource.h"
 #include "weaponbank.h"
 
