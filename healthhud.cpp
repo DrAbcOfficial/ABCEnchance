@@ -189,7 +189,7 @@ int CHudArmorHealth::Draw(float flTime) {
 	int iBattery = m_iBattery;
 	wchar_t wideName[8];
 	int iTextWidth, iTextHeight;
-	//HP ICON
+	//HP
 	if (!gHudDelegate->IsHudHide(HUD_HIDEHEALTH)) {
 		if (iHealth <= DAGER_HEALTH)
 			HealthDangerColor.GetColor(r, g, b, a);
@@ -253,9 +253,9 @@ int CHudArmorHealth::Draw(float flTime) {
 			BarLength, BarWidth, r / 2, g / 2, b / 2, a);
 		gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
 			BarLength * clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
+		iStartX += BarLength + ElementGap * 2;
 	}
 	if (gHudDelegate->m_bPlayerLongjump) {
-		iStartX += BarLength + ElementGap * 2;
 		LongjumpIconColor.GetColor(r, g, b, a);
 		DrawSPRIcon(iLongjumpIcon, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
 	}
