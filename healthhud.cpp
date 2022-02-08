@@ -87,6 +87,8 @@ void CHudArmorHealth::Init(void){
 	gCVars.pDamageScreenFilter = CREATE_CVAR("cl_damageshock", "1", FCVAR_VALUE, nullptr);
 	gCVars.pDamageScreenFactor = CREATE_CVAR("cl_damageshock_factor", "0.015", FCVAR_VALUE, nullptr);
 	gCVars.pDamageScreenBase = CREATE_CVAR("cl_damageshock_base", "15", FCVAR_VALUE, nullptr);
+	gCVars.pDangerHealth = CREATE_CVAR("cl_dangerhealth", "45", FCVAR_VALUE, nullptr);
+	gCVars.pDangerArmor = CREATE_CVAR("cl_dangerarmor", "45", FCVAR_VALUE, nullptr);
 
 	StartX = GET_SCREEN_PIXEL(false, "HealthArmor.StartX");
 	IconSize = GET_SCREEN_PIXEL(true, "HealthArmor.IconSize");
@@ -185,13 +187,12 @@ int CHudArmorHealth::Draw(float flTime) {
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
 	float flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
 	int iStartX = StartX;
-	int iHealth = m_iHealth;
-	int iBattery = m_iBattery;
 	wchar_t wideName[8];
 	int iTextWidth, iTextHeight;
 	//HP
 	if (!gHudDelegate->IsHudHide(HUD_HIDEHEALTH)) {
-		if (iHealth <= DAGER_HEALTH)
+		int iHealth = m_iHealth;
+		if (iHealth <= gCVars.pDangerHealth->value)
 			HealthDangerColor.GetColor(r, g, b, a);
 		else
 			HealthIconColor.GetColor(r, g, b, a);
@@ -199,7 +200,7 @@ int CHudArmorHealth::Draw(float flTime) {
 		wsprintfW(wideName, L"%d", iHealth);
 		GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
 		iStartX += IconSize + ElementGap;
-		if (iHealth <= DAGER_HEALTH)
+		if (iHealth <= gCVars.pDangerHealth->value)
 			HealthDangerColor.GetColor(r, g, b, a);
 		else
 			HealthTextColor.GetColor(r, g, b, a);
@@ -210,7 +211,7 @@ int CHudArmorHealth::Draw(float flTime) {
 			CalcuPainFade(r, g, b, &HealthBarColor, flPainColorKeepTime - flTime);
 		}
 		else {
-			if (iHealth <= DAGER_HEALTH)
+			if (iHealth <= gCVars.pDangerHealth->value)
 				HealthDangerColor.GetColor(r, g, b, a);
 			else
 				HealthBarColor.GetColor(r, g, b, a);
@@ -223,7 +224,8 @@ int CHudArmorHealth::Draw(float flTime) {
 	}
 	//AP
 	if(!gHudDelegate->IsHudHide(HUD_HIDEBATTERY)) {
-		if (iBattery <= DAGER_HEALTH)
+		int iBattery = m_iBattery;
+		if (iBattery <= gCVars.pDangerArmor->value)
 			ArmorDangerColor.GetColor(r, g, b, a);
 		else
 			ArmorIconColor.GetColor(r, g, b, a);
@@ -232,7 +234,7 @@ int CHudArmorHealth::Draw(float flTime) {
 		wsprintfW(wideName, L"%d", iBattery);
 		GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
 		iStartX += IconSize + ElementGap;
-		if (iBattery <= DAGER_HEALTH)
+		if (iBattery <= gCVars.pDangerArmor->value)
 			ArmorDangerColor.GetColor(r, g, b, a);
 		else
 			ArmorTextColor.GetColor(r, g, b, a);
@@ -244,7 +246,7 @@ int CHudArmorHealth::Draw(float flTime) {
 			CalcuPainFade(r, g, b, &ArmorBarColor, flPainColorKeepTime - flTime);
 		}
 		else {
-			if (iBattery <= DAGER_HEALTH)
+			if (iBattery <= gCVars.pDangerArmor->value)
 				ArmorDangerColor.GetColor(r, g, b, a);
 			else
 				ArmorBarColor.GetColor(r, g, b, a);
