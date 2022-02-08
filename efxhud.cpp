@@ -34,7 +34,7 @@ int CHudEfx::Draw(float flTime){
 		return 0;
 	//低血量
 	gHudDelegate->surface()->DrawSetTexture(-1);
-	if (m_HudArmorHealth.m_iHealth < DAGER_HEALTH) {
+	if (m_HudArmorHealth.m_iHealth < gCVars.pDangerHealth->value) {
 		if ((double)flTime - flDyingFlincAdvanceTime >= FRAME_ADVANCE_INTERVAL) {
 			if (iDyingFlinc >= 60)
 				bDyingFlincDir = true;
@@ -44,7 +44,7 @@ int CHudEfx::Draw(float flTime){
 			flDyingFlincAdvanceTime = flTime;
 		}
 		gHudDelegate->surface()->DrawSetColor(255, 25, 25,
-			mathlib::clamp((255 * (DAGER_HEALTH - m_HudArmorHealth.m_iHealth) / DAGER_HEALTH + iDyingFlinc - 30), 0, 255));
+			mathlib::clamp((int)(255 * (gCVars.pDangerHealth->value - m_HudArmorHealth.m_iHealth) / gCVars.pDangerHealth->value + iDyingFlinc - 30), 0, 255));
 		gHudDelegate->surface()->DrawSetTexture(DarkconerImg);
 		gHudDelegate->surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 	}
