@@ -1,4 +1,5 @@
 #pragma once
+#ifdef  _DEBUG
 class CHudCCTV {
 public:
 	void GLInit();
@@ -24,3 +25,4 @@ private:
 
 };
 extern CHudCCTV m_HudCCTV;
+#endif
