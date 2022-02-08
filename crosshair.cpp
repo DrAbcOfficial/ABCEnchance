@@ -46,7 +46,7 @@ int CHudCustomCrosshair::Init(void){
 int CHudCustomCrosshair::Draw(float flTime){
 	if (gHudDelegate->IsInSpectate())
 		return 1;
-	if (gHudDelegate->m_iHideHUDDisplay & (HIDEHUD_ALL | HIDEHUD_WEAPONS))
+	if (gHudDelegate->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return 1;
 	if (!gHudDelegate->HasSuit())
 		return 1;

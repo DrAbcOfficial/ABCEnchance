@@ -304,7 +304,10 @@ bool CHudDelegate::IsInSpectate() {
 	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
 }
 bool CHudDelegate::HasSuit() {
-	return m_iWeaponBits & (1 << WEAPON_SUIT);
+	return (m_iWeaponBits & (1 << WEAPON_SUIT)) != 0;
+}
+bool CHudDelegate::IsHudHide(int HideToken) {
+	return (m_iHideHUDDisplay & HideToken) != 0;
 }
 
 HSPRITE CHudDelegate::GetSprite(int index) {

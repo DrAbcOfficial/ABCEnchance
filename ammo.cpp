@@ -36,6 +36,7 @@ pfnUserMsgHook m_pfnWeapPickup;
 pfnUserMsgHook m_pfnItemPickup;
 pfnUserMsgHook m_pfnAmmoX;
 pfnUserMsgHook m_pfnHideWeapon;
+pfnUserMsgHook m_pfnHideHUD;
 
 int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
@@ -168,6 +169,12 @@ int __MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf)
 	gHudDelegate->m_iHideHUDDisplay = READ_BYTE();
 	return m_pfnHideWeapon(pszName, iSize, pbuf);
 }
+int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf)
+{
+	BEGIN_READ(pbuf, iSize);
+	gHudDelegate->m_iHideHUDDisplay = READ_BYTE();
+	return m_pfnHideHUD(pszName, iSize, pbuf);
+}
 void CustomSlotSetCallBack(cvar_t* vars){
 	if (!vars->string || vars->string[0] == 0)
 		return;
@@ -195,6 +202,7 @@ int CHudCustomAmmo::Init(void){
 	m_pfnItemPickup = HOOK_MESSAGE(ItemPickup);
 	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
 	m_pfnHideWeapon = HOOK_MESSAGE(HideWeapon);
+	m_pfnHideHUD = HOOK_MESSAGE(HideHUD);
 
 	gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_VALUE, CustomSlotSetCallBack);
@@ -286,11 +294,11 @@ void CHudCustomAmmo::SyncWeapon(){
 int CHudCustomAmmo::Draw(float flTime){
 	if (gHudDelegate->IsInSpectate())
 		return 1;
+	if (gHudDelegate->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
+		return 1;
 	if (!gHudDelegate->HasSuit())
 		return 1;
 	if (gClientData->health <= 0)
-		return 1;
-	if (gHudDelegate->m_iHideHUDDisplay & (HIDEHUD_ALL | HIDEHUD_WEAPONS))
 		return 1;
 	//0.5s 进行一次武器同步
 	if (gEngfuncs.GetClientTime() > m_fNextSyncTime) {
@@ -405,6 +413,8 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
 	gWR.SelectSlot(iSlot, fAdvance);
 }
 int CHudCustomAmmo::DrawWList(float flTime){
+	if (gHudDelegate->IsHudHide(HUD_HIDEALL | HUD_HIDESELECTION))
+		return 1;
 	m_pNowSelectMenu->DrawWList(flTime);
 	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)
 		m_HudWMenuAnnular.DrawWList(flTime);
