@@ -3,6 +3,7 @@
 #include <vector>
 #include "baseammo.h"
 #include "basemenu.h"
+#include "basehealth.h"
 
 typedef struct hud_playerinfo_s {
 	int index;
@@ -15,6 +16,8 @@ typedef struct hud_playerinfo_s {
 	char admin;
 }hud_playerinfo_t;
 typedef struct {
+	CHudBattery* m_Battery;
+	CHudHealth* m_Health;
 	CHudMenu* m_Menu;
 	CHudAmmo* m_Ammo;
 } cl_hookedHud;
@@ -57,6 +60,7 @@ public:
 	bool IsInSpectate();
 	bool HasSuit();
 	bool IsHudHide(int HideToken);
+	bool IsHudEnable();
 
 	HSPRITE GetSprite(int index);
 	wrect_t* GetSpriteRect(int index);
@@ -87,6 +91,7 @@ public:
 
 	GLint m_iCursorTga = 0;
 private:
+	void SetBaseHudActivity();
 	hud_playerinfo_t m_Playerinfo[33] = { 0 };
 	int m_iSpriteCountAllRes;
 	std::vector<cl_spritem_s*> m_arySprites; // the sprites loaded from hud.txt

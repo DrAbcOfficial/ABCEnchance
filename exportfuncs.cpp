@@ -22,13 +22,12 @@
 #include "gl_shader.h"
 #include "gl_utility.h"
 #include "gl_draw.h"
+//Base HUD
+#include "CHudDelegate.h"
+#include "local.h"
 //HUD
 #include "ammo.h"
 #include "healthhud.h"
-#include "basehealth.h"
-
-#include "CHudDelegate.h"
-#include "local.h"
 //efx
 #include "efxenchance.h"
 #include "viewmodellag.h"
@@ -37,6 +36,7 @@ cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 metaplugins_t g_metaplugins;
 engine_studio_api_t gEngineStudio;
+DWORD g_dwHUDListAddr;
 int gPluginVersion;
 
 const clientdata_t* gClientData;
@@ -189,7 +189,8 @@ void FillAddress(){
 			Sig_AddrNotFound(g_rgBaseSlots);
 			g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 33);
 		}
-		if(1){
+		if(1)
+		{
 			const char sigs1[] = "***PROTECTED***";
 			auto Cvar_DirectSet_String = Search_Pattern_Data(sigs1);
 			if (!Cvar_DirectSet_String)
@@ -201,6 +202,11 @@ void FillAddress(){
 			Sig_VarNotFound(Cvar_DirectSet_Call);
 			gHookFuncs.Cvar_DirectSet = (decltype(gHookFuncs.Cvar_DirectSet))g_pMetaHookAPI->ReverseSearchFunctionBegin(Cvar_DirectSet_Call, 0x500);
 			Sig_FuncNotFound(Cvar_DirectSet);
+		}
+		if (1)
+		{
+			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
+			g_dwHUDListAddr = *(DWORD*)(addr + 0x1);
 		}
 	}
 }
@@ -256,7 +262,6 @@ void HUD_Init(void){
 	if(!pLocalize->AddFile(g_pFileSystem, localizePath))
 		Sys_ErrorEx("[ABCEnchance]:\nMissing Localize file: %s\n", localizePath);
 
-	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_VALUE, nullptr);
 	gCVars.pBloodSpriteNumber = CREATE_CVAR("abc_bloodsprite_num", "32", FCVAR_VALUE, nullptr);
@@ -276,6 +281,21 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
 int HUD_VidInit(void){
+	//Search and destory vanillia HUDs
+	if (g_dwHUDListAddr && gCVars.pDynamicHUD->value > 0) {
+		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(g_dwHUDListAddr + 0x0));
+		while (pHudList) {
+			if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr)
+				gHookHud.m_Battery = (dynamic_cast<CHudBattery*>(pHudList->p));
+			else if (dynamic_cast<CHudHealth*>(pHudList->p) != nullptr)
+				gHookHud.m_Health = (dynamic_cast<CHudHealth*>(pHudList->p));
+			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != nullptr)
+				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
+			else if (dynamic_cast<CHudMenu*>(pHudList->p) != nullptr)
+				gHookHud.m_Menu = (dynamic_cast<CHudMenu*>(pHudList->p));
+			pHudList = pHudList->pNext;
+		}
+	}
 	//Fillup Default CVars
 	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
 
@@ -284,35 +304,6 @@ int HUD_VidInit(void){
 	return result;
 }
 int HUD_Redraw(float time, int intermission){
-	DWORD dwAddress = (DWORD)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
-	if (dwAddress){
-		static DWORD pHUD = *(DWORD*)(dwAddress + 0x1);
-		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(pHUD + 0x0));
-		while (pHudList){
-			if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr){
-				if (gCVars.pDynamicHUD->value <= 0)
-					pHudList->p->m_iFlags &= HUD_ACTIVE;
-				else
-					pHudList->p->m_iFlags &= ~HUD_ACTIVE;
-			}
-			else if (dynamic_cast<CHudHealth*>(pHudList->p) != nullptr){
-				if (gCVars.pDynamicHUD->value <= 0)
-					pHudList->p->m_iFlags &= HUD_ACTIVE;
-				else
-					pHudList->p->m_iFlags &= ~HUD_ACTIVE;
-			}
-			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != nullptr){
-				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
-				if (gCVars.pDynamicHUD->value <= 0)
-					pHudList->p->m_iFlags &= HUD_ACTIVE;
-				else
-					pHudList->p->m_iFlags &= ~HUD_ACTIVE;
-			}
-			else if (dynamic_cast<CHudMenu*>(pHudList->p) != nullptr)
-				gHookHud.m_Menu = (dynamic_cast<CHudMenu*>(pHudList->p));
-			pHudList = pHudList->pNext;
-		}
-	}
 	gHudDelegate->HUD_Draw(time);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
