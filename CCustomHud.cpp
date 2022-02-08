@@ -18,7 +18,7 @@
 #include "local.h"
 #include "gl_draw.h"
 
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 
 #include "ammo.h"
 #include "healthhud.h"

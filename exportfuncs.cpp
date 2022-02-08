@@ -23,7 +23,7 @@
 #include "gl_utility.h"
 #include "gl_draw.h"
 //Base HUD
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 #include "local.h"
 //HUD
 #include "ammo.h"

@@ -17,7 +17,7 @@
 #include "gl_draw.h"
 
 #include "weapon.h"
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 #include "radar.h"
 using namespace mathlib;
 

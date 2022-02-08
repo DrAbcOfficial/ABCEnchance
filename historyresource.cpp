@@ -12,7 +12,7 @@
 #include "gl_draw.h"
 #include "local.h"
 
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 
 #include "historyresource.h"
 

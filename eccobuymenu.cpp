@@ -21,7 +21,7 @@
 #include "cl_entity.h"
 
 #include "exportfuncs.h"
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 
 #include "eccobuymenu.h"
 

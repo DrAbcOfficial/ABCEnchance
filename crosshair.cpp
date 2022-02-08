@@ -16,7 +16,7 @@
 #include "weapon.h"
 #include "ammo.h"
 
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 #include "exportfuncs.h"
 
 #include "crosshair.h"

@@ -15,7 +15,7 @@
 #include "weaponbank.h"
 
 #include "ammo.h"
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 #include "wmenu_slot.h"
 
 using namespace mathlib;

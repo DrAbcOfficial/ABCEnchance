@@ -5,7 +5,7 @@
 #include "vguilocal.h"
 #include "hud.h"
 #include "weapon.h"
-#include "CHudDelegate.h"
+#include "CCustomHud.h"
 
 #include "gl_shader.h"
 #include "gl_def.h"

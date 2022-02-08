@@ -51,7 +51,7 @@
     <ClCompile Include="ammo.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="CHudDelegate.cpp">
+    <ClCompile Include="CCustomHud.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
     <ClCompile Include="healthhud.cpp">
@@ -224,7 +224,7 @@
     <ClInclude Include="basemenu.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="CHudDelegate.h">
+    <ClInclude Include="CCustomHud.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="healthhud.h">
