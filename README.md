@@ -51,7 +51,7 @@
 # 📊 CVars
 |CVar|uses|default|range|
 |---|---|---|---|
-|cl_hud_csgo|Use now hud or not(restart map to take effect)|1|0/1|
+|cl_hud_csgo|Use now hud or not|1|0/1|
 |---|---|---|---|
 |hud_deathnotice_time|the death message keep time|6|0~9999|
 |---|---|---|---|
