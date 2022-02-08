@@ -1,4 +1,10 @@
 #pragma once
+typedef struct {
+	float fExpire;
+	float fBaseline;
+	int	x, y;
+} DAMAGE_IMAGE;
+
 class CHudBattery : public CHudBase{
 public:
 	int Init(void);

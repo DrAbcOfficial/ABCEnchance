@@ -18,6 +18,8 @@
 #include "local.h"
 #include "gl_draw.h"
 
+#include "CHudDelegate.h"
+
 #include "ammo.h"
 #include "healthhud.h"
 #include "deathmsg.h"
@@ -37,8 +39,6 @@
 
 #include "weaponbank.h"
 #include "wmenu_annular.h"
-
-#include "CHudDelegate.h"
 
 CHudDelegate* gHudDelegate = nullptr;
 cl_hookedHud gHookHud;
@@ -173,6 +173,8 @@ void CHudDelegate::HUD_Init(void){
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 
+	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
+
 	m_HudArmorHealth.Init();
 	m_HudCustomAmmo.Init();
 	m_HudRadar.Init();
@@ -231,7 +233,8 @@ void CHudDelegate::HUD_VidInit(void){
 	m_HudEccoBuyMenu.VidInit();
 }
 void CHudDelegate::HUD_Draw(float flTime){
-	if (gCVars.pDynamicHUD->value <= 0)
+	SetBaseHudActivity();
+	if (!IsHudEnable())
 		return;
 	m_HudEfx.Draw(flTime);
 	m_HudPlayerTitle.Draw(flTime);
@@ -319,6 +322,27 @@ bool CHudDelegate::HasSuit() {
 }
 bool CHudDelegate::IsHudHide(int HideToken) {
 	return (m_iHideHUDDisplay & HideToken) != 0;
+}
+bool CHudDelegate::IsHudEnable() {
+	return gCVars.pDynamicHUD->value > 0;
+}
+void CHudDelegate::SetBaseHudActivity() {
+	if (IsHudEnable()) {
+		if (gHookHud.m_Ammo)
+			gHookHud.m_Ammo->m_iFlags &= ~HUD_ACTIVE;
+		if (gHookHud.m_Battery)
+			gHookHud.m_Battery->m_iFlags &= ~HUD_ACTIVE;
+		if (gHookHud.m_Health)
+			gHookHud.m_Health->m_iFlags &= ~HUD_ACTIVE;
+	}
+	else {
+		if (gHookHud.m_Ammo)
+			gHookHud.m_Ammo->m_iFlags |= HUD_ACTIVE;
+		if (gHookHud.m_Battery)
+			gHookHud.m_Battery->m_iFlags |= HUD_ACTIVE;
+		if (gHookHud.m_Health)
+			gHookHud.m_Health->m_iFlags |= HUD_ACTIVE;
+	}
 }
 
 HSPRITE CHudDelegate::GetSprite(int index) {

@@ -10,9 +10,8 @@
 
 #include "hud.h"
 #include "weapon.h"
-#include "healthhud.h"
 #include "CHudDelegate.h"
-
+#include "healthhud.h"
 
 #include "exportfuncs.h"
 

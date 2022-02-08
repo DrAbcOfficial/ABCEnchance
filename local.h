@@ -119,8 +119,9 @@ typedef struct{
 
 	cvar_t* pEccoBuyMenu;
 
+#ifdef _DEBUG
 	cvar_t* pCCTV;
-
+#endif
 	//Defualt CVars
 	cvar_t* pCvarDefaultFOV;
 }cl_cvars_t;
