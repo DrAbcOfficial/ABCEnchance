@@ -64,6 +64,8 @@
 |cl_itemhighlight|是否显示物品高亮|1|0/1|
 |cl_itemhighlightrange|物品高亮范围|344|0~500|
 |---|---|---|---|
+|cl_dangerhealth|濒死生命值|45|0~9999|
+|cl_dangerarmor|濒死护甲值|45|0~9999|
 |cl_damageshock|启用受伤色差|0|0/1|
 |cl_damageshock_factor|受伤色差强度|0.015|0~99999|
 |cl_damageshock_base|出现色差应受伤害|30|0~99999|
