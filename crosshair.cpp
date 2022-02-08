@@ -44,11 +44,11 @@ int CHudCustomCrosshair::Init(void){
 	return 1;
 }
 int CHudCustomCrosshair::Draw(float flTime){
-	if (gHudDelegate->IsInSpectate())
+	if (gCustomHud.IsInSpectate())
 		return 1;
-	if (gHudDelegate->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
+	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return 1;
-	if (!gHudDelegate->HasSuit())
+	if (!gCustomHud.HasSuit())
 		return 1;
 	int iCenterX;
 	int iCenterY;
@@ -86,7 +86,7 @@ int CHudCustomCrosshair::Draw(float flTime){
 		if (gCVars.pDynamicCrossHairAH->value > 0 && gCVars.pCvarDefaultFOV->value != m_hfov)
 			return 0;
 		int iOffset = gCVars.pDynamicCrossHairO->value;
-		int iDrift = fabs(gHudDelegate->m_vecClientEVPunch[0]) + fabs(gHudDelegate->m_vecClientEVPunch[1]);
+		int iDrift = fabs(gCustomHud.m_vecClientEVPunch[0]) + fabs(gCustomHud.m_vecClientEVPunch[1]);
 		if (iDrift <= 0)
 			iDrift = fabs(gClientData->punchangle[0]) + fabs(gClientData->punchangle[1]);
 		iDrift = iDrift * 5 * gCVars.pDynamicCrossHairM->value;

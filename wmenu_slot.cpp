@@ -36,14 +36,14 @@ void CWeaponMenuSlot::Init(){
 	SelectHoldTime = atof(pScheme->GetResourceString("WMenuBucket.SelectHoldTime"));
 }
 void CWeaponMenuSlot::VidInit(){
-	iBucket0Spr = gHudDelegate->GetSpriteIndex("bucket1");
-	iSelectionSpr = gHudDelegate->GetSpriteIndex("selection");
-	pRcSelection = gHudDelegate->GetSpriteRect(iSelectionSpr);
-	pBucketSpr = gHudDelegate->GetSprite(iBucket0Spr);
-	SelectBucketWidth = gHudDelegate->GetSpriteRect(iBucket0Spr)->right -
-		gHudDelegate->GetSpriteRect(iBucket0Spr)->left;
-	SelectBucketHeight = gHudDelegate->GetSpriteRect(iBucket0Spr)->bottom -
-		gHudDelegate->GetSpriteRect(iBucket0Spr)->top;
+	iBucket0Spr = gCustomHud.GetSpriteIndex("bucket1");
+	iSelectionSpr = gCustomHud.GetSpriteIndex("selection");
+	pRcSelection = gCustomHud.GetSpriteRect(iSelectionSpr);
+	pBucketSpr = gCustomHud.GetSprite(iBucket0Spr);
+	SelectBucketWidth = gCustomHud.GetSpriteRect(iBucket0Spr)->right -
+		gCustomHud.GetSpriteRect(iBucket0Spr)->left;
+	SelectBucketHeight = gCustomHud.GetSpriteRect(iBucket0Spr)->bottom -
+		gCustomHud.GetSpriteRect(iBucket0Spr)->top;
 	if (ScreenWidth >= 640) {
 		SelectABWidth = 20;
 		SelectABHeight = 4;
@@ -125,7 +125,7 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 		else
 			a = 192 * flAlphaRatio;
 		SelectColor.GetColor(r, g, b, dummy);
-		SPR_Set(gHudDelegate->GetSprite(iBucket0Spr + i), r, g, b);
+		SPR_Set(gCustomHud.GetSprite(iBucket0Spr + i), r, g, b);
 		// make active slot wide enough to accomodate gun pictures
 		if (i == gWR.iNowSlot)
 		{
@@ -137,7 +137,7 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 		}
 		else
 			iWidth = SelectBucketWidth;
-		SPR_DrawAdditive(0, x, y, gHudDelegate->GetSpriteRect(iBucket0Spr + i));
+		SPR_DrawAdditive(0, x, y, gCustomHud.GetSpriteRect(iBucket0Spr + i));
 		x += iWidth + (iXGap);
 	}
 	x = iXStart;
@@ -170,8 +170,8 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 					ScaleColors(r, g, b, a);
 					SPR_Set(p->hActive, r, g, b);
 					SPR_DrawAdditive(0, x, y, &p->rcActive);
-					SPR_Set(gHudDelegate->GetSprite(iSelectionSpr), r, g, b);
-					SPR_DrawAdditive(0, x, y, gHudDelegate->GetSpriteRect(iSelectionSpr));
+					SPR_Set(gCustomHud.GetSprite(iSelectionSpr), r, g, b);
+					SPR_DrawAdditive(0, x, y, gCustomHud.GetSpriteRect(iSelectionSpr));
 				}
 				else{
 					// Draw Weapon if Red if no ammo

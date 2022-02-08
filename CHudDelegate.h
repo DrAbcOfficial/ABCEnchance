@@ -40,7 +40,7 @@ enum SC_ADMIN_ICON {
 	ADMIN_SERVER_OWNER
 };
 
-class CHudDelegate{
+class CCustomHud{
 public:
 	void GL_Init(void);
 	void HUD_Init(void);
@@ -69,7 +69,7 @@ public:
 	hud_playerinfo_t* GetPlayerHUDInfo(int index);
 
 	vgui::ISurface* surface();
-	~CHudDelegate();			// destructor, frees allocated memory
+	~CCustomHud();			// destructor, frees allocated memory
 
 	int m_iPlayerHealth = 0;
 	bool m_bPlayerLongjump = false;
@@ -96,5 +96,5 @@ private:
 	int m_iSpriteCountAllRes;
 	std::vector<cl_spritem_s*> m_arySprites; // the sprites loaded from hud.txt
 };
-extern CHudDelegate* gHudDelegate;
+extern CCustomHud gCustomHud;
 extern cl_hookedHud gHookHud;

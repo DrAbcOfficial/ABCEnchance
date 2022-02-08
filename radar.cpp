@@ -90,7 +90,7 @@ void CHudRadar::Reset(){
 void CHudRadar::Draw(float flTime){
 	if (gCVars.pRadar->value <= 0)
 		return;
-	if (!gHudDelegate->HasSuit())
+	if (!gCustomHud.HasSuit())
 		return;
 	UpdateZmax(flTime);
 	float size = gCVars.pRadarSize->value;
@@ -111,10 +111,10 @@ void CHudRadar::Draw(float flTime){
 	stx = (1 - w) / 2;
 	sty = (1 - h) / 2;
 	//绘制背景
-	gHudDelegate->surface()->DrawSetTexture(-1);
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
-	gHudDelegate->surface()->DrawSetTexture(gCVars.pRadar->value > 1 ? RoundBackGroundImg : BackGroundImg);
-	gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
+	gCustomHud.surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+	gCustomHud.surface()->DrawSetTexture(gCVars.pRadar->value > 1 ? RoundBackGroundImg : BackGroundImg);
+	gCustomHud.surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 	//shader
 	GL_UseProgram(pp_texround.program);
 	if (gCVars.pRadar->value > 1) {
@@ -144,16 +144,16 @@ void CHudRadar::Draw(float flTime){
 	glDisable(GL_BLEND);
 	GL_UseProgram(0);
 	//绘制前景
-	gHudDelegate->surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetTexture(-1);
 	if (gCVars.pRadar->value == 1) {
-		gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
-		gHudDelegate->surface()->DrawSetTexture(UpGroundImg);
-		gHudDelegate->surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
+		gCustomHud.surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+		gCustomHud.surface()->DrawSetTexture(UpGroundImg);
+		gCustomHud.surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 	}
 	//绘制箭头
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-	gHudDelegate->surface()->DrawSetTexture(ViewAngleImg);
-	gHudDelegate->surface()->DrawTexturedRect(
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+	gCustomHud.surface()->DrawSetTexture(ViewAngleImg);
+	gCustomHud.surface()->DrawTexturedRect(
 		iStartX + (size - ViewAngleSize) / 2,
 		iStartY + (size - ViewAngleSize) / 2,
 		iStartX + (size + ViewAngleSize) / 2,
@@ -163,10 +163,10 @@ void CHudRadar::Draw(float flTime){
 	h = gCVars.pRadar->value > 1 ? size / 2 : fsqrt(2 * pow(size, 2)) / 2;
 	stx = clamp(((iStartX + size / 2) + h * cos(rotate)), (float)iStartX, (float)iStartX + size);
 	sty = clamp(((iStartY + size / 2) + h * sin(rotate)), (float)iStartY, (float)iStartY + size);
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
-	gHudDelegate->surface()->DrawSetTexture(NorthImg);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+	gCustomHud.surface()->DrawSetTexture(NorthImg);
 	w = NorthPointerSize / 2;
-	gHudDelegate->surface()->DrawTexturedRect(stx - w, sty - w, stx + w, sty + w);
+	gCustomHud.surface()->DrawTexturedRect(stx - w, sty - w, stx + w, sty + w);
 }
 void CHudRadar::PreRenderView(int a1){
 	if (gCVars.pRadar->value <= 0)
@@ -195,13 +195,13 @@ void CHudRadar::DrawRadarTexture(){
 	VectorCopy(g_refdef->viewangles, m_oldViewAng);
 
 	//设置到玩家脑袋上朝下看
-	gHudDelegate->m_flOverViewScale = gCVars.pRadarZoom->value;
+	gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	gHudDelegate->m_vecOverViewOrg[0] = local->curstate.origin[0];
-	gHudDelegate->m_vecOverViewOrg[1] = local->curstate.origin[1];
-	gHudDelegate->m_flOverViewYaw = local->curstate.angles[YAW];
+	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
+	gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
+	gCustomHud.m_flOverViewYaw = local->curstate.angles[YAW];
 
-	gHudDelegate->m_iIsOverView = 1;
+	gCustomHud.m_iIsOverView = 1;
 		vec5_t vecOldValue;
 		vecOldValue[0] = pCVarDevOverview->value;
 		vecOldValue[1] = pCVarDrawEntities->value;
@@ -255,7 +255,7 @@ void CHudRadar::DrawRadarTexture(){
 			pCVarFXAA->value = vecOldValue[3];
 			pCVarWater->value = vecOldValue[4];
 		}
-	gHudDelegate->m_iIsOverView = 0;
+	gCustomHud.m_iIsOverView = 0;
 
 	VectorCopy(m_oldViewOrg, g_refdef->vieworg);
 	VectorCopy(m_oldViewAng, g_refdef->viewangles);
@@ -273,7 +273,7 @@ void CHudRadar::UpdateZmax(float flTime){
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
 	//16，去除大多数烦人的天花板灯泡
-	gHudDelegate->m_flOverViewZmax = m_hRadarTr.endpos[2] - 16;
+	gCustomHud.m_flOverViewZmax = m_hRadarTr.endpos[2] - 16;
 	vecEndpos[2] = -9999;
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
@@ -281,7 +281,7 @@ void CHudRadar::UpdateZmax(float flTime){
 	//半双人高，可以满足大多数地图的需求
 	m_hRadarTr.endpos[2] -= 144;
 	gEngfuncs.pEventAPI->EV_PlayerTrace(m_hRadarTr.endpos, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
-	gHudDelegate->m_flOverViewZmin = m_hRadarTr.startsolid ? m_hRadarTr.endpos[2] : flOldStart;
+	gCustomHud.m_flOverViewZmin = m_hRadarTr.startsolid ? m_hRadarTr.endpos[2] : flOldStart;
 	flNextUpdateTrTime = flTime + abs(gCVars.pRadarUpdateInterval->value);
 }
 void CHudRadar::Clear(){

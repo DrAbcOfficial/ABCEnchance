@@ -40,7 +40,7 @@
 #include "weaponbank.h"
 #include "wmenu_annular.h"
 
-CHudDelegate* gHudDelegate = nullptr;
+CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
 pfnUserMsgHook m_pfnScoreInfo;
@@ -49,7 +49,7 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	int clientIndex = READ_BYTE();
 	//wtf is not this shit
 	if (clientIndex >= 1 && clientIndex <= 33) {
-		hud_playerinfo_t* info = gHudDelegate->GetPlayerHUDInfo(clientIndex);
+		hud_playerinfo_t* info = gCustomHud.GetPlayerHUDInfo(clientIndex);
 		info->index = clientIndex;
 		info->frags = READ_FLOAT();
 		info->death = READ_LONG();
@@ -146,7 +146,7 @@ void __UserCmd_Attack1(void) {
 	return UserCmd_Attack1();
 }
 
-void CHudDelegate::GL_Init(void){
+void CCustomHud::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
 	m_HudArmorHealth.GLInit();
@@ -155,7 +155,7 @@ void CHudDelegate::GL_Init(void){
 	m_HudCCTV.GLInit();
 #endif
 }
-void CHudDelegate::HUD_Init(void){
+void CCustomHud::HUD_Init(void){
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
@@ -192,7 +192,7 @@ void CHudDelegate::HUD_Init(void){
 
 	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
 }
-void CHudDelegate::HUD_VidInit(void){
+void CCustomHud::HUD_VidInit(void){
 	int iRes = ScreenWidth < 640 ? 320 : 640;
 	if (!m_pSpriteList){
 		m_pSpriteList = SPR_GetList("sprites/hud.txt", &m_iSpriteCountAllRes);
@@ -232,7 +232,7 @@ void CHudDelegate::HUD_VidInit(void){
 	m_HudVote.VidInit();
 	m_HudEccoBuyMenu.VidInit();
 }
-void CHudDelegate::HUD_Draw(float flTime){
+void CCustomHud::HUD_Draw(float flTime){
 	SetBaseHudActivity();
 	if (!IsHudEnable())
 		return;
@@ -251,7 +251,7 @@ void CHudDelegate::HUD_Draw(float flTime){
 	m_HudCCTV.Draw(flTime);
 #endif
 }
-void CHudDelegate::HUD_Reset(void){
+void CCustomHud::HUD_Reset(void){
 	m_iPlayerHealth = 100;
 	m_flOverViewScale = 0;
 	m_HudArmorHealth.Reset();
@@ -270,63 +270,63 @@ void CHudDelegate::HUD_Reset(void){
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
 }
-void CHudDelegate::HUD_UpdateClientData(client_data_t* cdata, float time){
+void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 	m_iWeaponBits = cdata->iWeaponBits;
 	m_bPlayerLongjump = atoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
 }
-void CHudDelegate::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
+void CCustomHud::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	m_HudCustomAmmo.ClientMove(ppmove, server);
 }
-void CHudDelegate::HUD_Clear(void){
+void CCustomHud::HUD_Clear(void){
 	m_HudRadar.Clear();
 	m_HudCustomAmmo.Clear();
 	m_HudEccoBuyMenu.Clear();
 	m_HudArmorHealth.Clear();
 }
-void CHudDelegate::HUD_PreRenderView(int a1){
+void CCustomHud::HUD_PreRenderView(int a1){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 	m_HudRadar.PreRenderView(a1);
 }
-void CHudDelegate::HUD_PostRenderView(int a1){
+void CCustomHud::HUD_PostRenderView(int a1){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 }
-void CHudDelegate::IN_MouseEvent(int mstate){
+void CCustomHud::IN_MouseEvent(int mstate){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 }
-int CHudDelegate::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
+int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	int result = 1;
 	result &= m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
 	return result;
 }
-void CHudDelegate::IN_Accumulate(void){
+void CCustomHud::IN_Accumulate(void){
 	if (gCVars.pDynamicHUD->value <= 0)
 		return;
 	m_HudCustomAmmo.IN_Accumulate();
 }
-int CHudDelegate::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname){
+int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	bool result = true;
 	result = result && m_HudEccoBuyMenu.AddEntity(type, ent, modelname);
 	m_HudItemHighLight.AddEntity(type, ent, modelname);
 	return result;
 }
-void CHudDelegate::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {
+void CCustomHud::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {
 }
-bool CHudDelegate::IsInSpectate() {
+bool CCustomHud::IsInSpectate() {
 	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
 }
-bool CHudDelegate::HasSuit() {
+bool CCustomHud::HasSuit() {
 	return (m_iWeaponBits & (1 << WEAPON_SUIT)) != 0;
 }
-bool CHudDelegate::IsHudHide(int HideToken) {
+bool CCustomHud::IsHudHide(int HideToken) {
 	return (m_iHideHUDDisplay & HideToken) != 0;
 }
-bool CHudDelegate::IsHudEnable() {
+bool CCustomHud::IsHudEnable() {
 	return gCVars.pDynamicHUD->value > 0;
 }
-void CHudDelegate::SetBaseHudActivity() {
+void CCustomHud::SetBaseHudActivity() {
 	if (IsHudEnable()) {
 		if (gHookHud.m_Ammo)
 			gHookHud.m_Ammo->m_iFlags &= ~HUD_ACTIVE;
@@ -345,29 +345,29 @@ void CHudDelegate::SetBaseHudActivity() {
 	}
 }
 
-HSPRITE CHudDelegate::GetSprite(int index) {
+HSPRITE CCustomHud::GetSprite(int index) {
 	return (index < 0) ? 0 : m_arySprites[index]->spr;
 }
-wrect_t* CHudDelegate::GetSpriteRect(int index) {
+wrect_t* CCustomHud::GetSpriteRect(int index) {
 	if(index >= 0 && index < m_arySprites.size())
 		return &m_arySprites[index]->rect;
 	return nullptr;
 }
-int CHudDelegate::GetSpriteIndex(const char* SpriteName){
+int CCustomHud::GetSpriteIndex(const char* SpriteName){
 	for (int i = 0; i < m_arySprites.size(); i++){
 		if (strncmp(SpriteName, m_arySprites[i]->name, MAX_SPRITE_NAME_LENGTH) == 0)
 			return i;
 	}
 	return -1; // invalid sprite
 }
-hud_playerinfo_t* CHudDelegate::GetPlayerHUDInfo(int index){
+hud_playerinfo_t* CCustomHud::GetPlayerHUDInfo(int index){
 	if (index > 0 && index <= 33)
 		return &m_Playerinfo[index];
 	return nullptr;
 }
-vgui::ISurface* CHudDelegate::surface(){
+vgui::ISurface* CCustomHud::surface(){
 	return g_pSurface;
 }
-CHudDelegate :: ~CHudDelegate(){
+CCustomHud :: ~CCustomHud(){
 	m_arySprites.clear();
 }

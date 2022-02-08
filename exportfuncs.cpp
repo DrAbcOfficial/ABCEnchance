@@ -51,7 +51,7 @@ refdef_t* g_refdef = nullptr;
 void R_NewMap(void){
 	ClearExtraPrecache();
 
-	gHudDelegate->HUD_Reset();
+	gCustomHud.HUD_Reset();
 	EfxReset();
 	gHookFuncs.R_NewMap();
 }
@@ -62,26 +62,26 @@ int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1){
 }
 void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
-	mathlib::VectorCopy(punchangle1, gHudDelegate->m_vecClientEVPunch);
+	mathlib::VectorCopy(punchangle1, gCustomHud.m_vecClientEVPunch);
 }
 int CL_IsDevOverview(void){
-	return gHudDelegate->m_iIsOverView ? 1 : gHookFuncs.CL_IsDevOverview();
+	return gCustomHud.m_iIsOverView ? 1 : gHookFuncs.CL_IsDevOverview();
 }
 void CL_SetDevOverView(int param1){
 	gHookFuncs.CL_SetDevOverView(param1);
-	if (gHudDelegate->m_iIsOverView){
-		(*(vec3_t*)(param1 + 0x1C))[YAW] = gHudDelegate->m_flOverViewYaw;
-		*(float *)(param1 + 0x10) = gHudDelegate->m_vecOverViewOrg[0];
-		*(float *)(param1 + 0x14) = gHudDelegate->m_vecOverViewOrg[1];
-		gDevOverview->z_max = gHudDelegate->m_flOverViewZmax;
-		gDevOverview->z_min = gHudDelegate->m_flOverViewZmin;
-		gDevOverview->zoom = gHudDelegate->m_flOverViewScale;
+	if (gCustomHud.m_iIsOverView){
+		(*(vec3_t*)(param1 + 0x1C))[YAW] = gCustomHud.m_flOverViewYaw;
+		*(float *)(param1 + 0x10) = gCustomHud.m_vecOverViewOrg[0];
+		*(float *)(param1 + 0x14) = gCustomHud.m_vecOverViewOrg[1];
+		gDevOverview->z_max = gCustomHud.m_flOverViewZmax;
+		gDevOverview->z_min = gCustomHud.m_flOverViewZmin;
+		gDevOverview->zoom = gCustomHud.m_flOverViewScale;
 	}	
 }
 void R_RenderView(int a1){
-	gHudDelegate->HUD_PreRenderView(a1);
+	gCustomHud.HUD_PreRenderView(a1);
 	gHookFuncs.R_RenderView(a1);
-	gHudDelegate->HUD_PostRenderView(a1);
+	gCustomHud.HUD_PostRenderView(a1);
 }
 void R_ForceCVars(qboolean mp){
 	if (CL_IsDevOverview())
@@ -240,7 +240,7 @@ void GL_Init(void){
 		return;
 	}
 	GL_ShaderInit();
-	gHudDelegate->GL_Init();
+	gCustomHud.GL_Init();
 }
 void HUD_Init(void){
 	HINTERFACEMODULE hVGUI2 = (HINTERFACEMODULE)GetModuleHandle("vgui2.dll");
@@ -272,9 +272,8 @@ void HUD_Init(void){
 	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, nullptr);
 	gCVars.pCamIdealRight = CREATE_CVAR("cam_idealright", "0", FCVAR_VALUE, nullptr);
 
-	gHudDelegate = new CHudDelegate();
 	gExportfuncs.HUD_Init();
-	gHudDelegate->HUD_Init();
+	gCustomHud.HUD_Init();
 }
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
 	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
@@ -300,11 +299,11 @@ int HUD_VidInit(void){
 	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
 
 	int result = gExportfuncs.HUD_VidInit();
-	gHudDelegate->HUD_VidInit();
+	gCustomHud.HUD_VidInit();
 	return result;
 }
 int HUD_Redraw(float time, int intermission){
-	gHudDelegate->HUD_Draw(time);
+	gCustomHud.HUD_Draw(time);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
 void HUD_Reset(void){
@@ -316,11 +315,11 @@ void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientda
 }
 int HUD_UpdateClientData (struct client_data_s* c, float f){
 	m_hfov = c->fov;
-	gHudDelegate->HUD_UpdateClientData(c,f);
+	gCustomHud.HUD_UpdateClientData(c,f);
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
-	gHudDelegate->HUD_ClientMove(ppmove, server);
+	gCustomHud.HUD_ClientMove(ppmove, server);
 	return gExportfuncs.HUD_PlayerMove(ppmove, server);
 }
 void V_CalcRefdef(struct ref_params_s* pparams){
@@ -337,42 +336,42 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 	}
 }
 void IN_MouseEvent(int mstate){
-	gHudDelegate->IN_MouseEvent(mstate);
+	gCustomHud.IN_MouseEvent(mstate);
 	gExportfuncs.IN_MouseEvent(mstate);
 }
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
-	if (g_iVisibleMouse && gHudDelegate->m_iVisibleMouse) {
+	if (g_iVisibleMouse && gCustomHud.m_iVisibleMouse) {
 		int iVisibleMouse = *g_iVisibleMouse;
 		*g_iVisibleMouse = 1;
 		gExportfuncs.CL_CreateMove(frametime, cmd, active);
-		gHudDelegate->CL_CreateMove(frametime, cmd, active);
+		gCustomHud.CL_CreateMove(frametime, cmd, active);
 		*g_iVisibleMouse = iVisibleMouse;
 	}
 	else
 		gExportfuncs.CL_CreateMove(frametime, cmd, active);
 }
 void IN_Accumulate(void){
-	if (g_iVisibleMouse && gHudDelegate->m_iVisibleMouse){
+	if (g_iVisibleMouse && gCustomHud.m_iVisibleMouse){
 		int iVisibleMouse = *g_iVisibleMouse;
 		*g_iVisibleMouse = 1;
 		gExportfuncs.IN_Accumulate();
-		gHudDelegate->IN_Accumulate();
+		gCustomHud.IN_Accumulate();
 		*g_iVisibleMouse = iVisibleMouse;
 	}
 	else
 		gExportfuncs.IN_Accumulate();
 }
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
-	if (!gHudDelegate->HUD_AddEntity(type, ent, modelname))
+	if (!gCustomHud.HUD_AddEntity(type, ent, modelname))
 		return 0;
 	return gExportfuncs.HUD_AddEntity(type, ent, modelname);
 }
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
-	return gHudDelegate->HUD_KeyEvent(eventcode, keynum, pszCurrentBinding) ? 
+	return gCustomHud.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding) ? 
 		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
 }
 void HUD_Clear(void){
-	gHudDelegate->HUD_Clear();
+	gCustomHud.HUD_Clear();
 	GL_FreeShaders();
 	ClearExtraPrecache();
 }

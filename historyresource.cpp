@@ -60,7 +60,7 @@ void HistoryResource::AddToHistory(int iType, int iId, int iCount){
 void HistoryResource::AddToHistory(int iType, const char* szName, int iCount){
 	if (iType != HISTSLOT_ITEM)
 		return;
-	int i = gHudDelegate->GetSpriteIndex(szName);
+	int i = gCustomHud.GetSpriteIndex(szName);
 	if (i == -1)
 		return;
 	SetFreeSlot(iType, i, iCount);
@@ -126,7 +126,7 @@ int HistoryResource::DrawAmmoHistory(float flTime){
 			case HISTSLOT_ITEM: {
 				if (!item->iId)
 					continue;
-				wrect_t* rect = gHudDelegate->GetSpriteRect(item->iId);
+				wrect_t* rect = gCustomHud.GetSpriteRect(item->iId);
 				ItemPickUpColor.GetColor(r, g, b, a);
 				float scale = GetAlphaScale(a, item->DisplayTime - flTime);
 				r *= scale;
@@ -135,7 +135,7 @@ int HistoryResource::DrawAmmoHistory(float flTime){
 				xpos = vecItemPickUpPos[0] + rect->right - rect->left;
 				ypos = vecItemPickUpPos[1] - (rect->bottom - rect->top) * j;
 
-				SPR_Set(gHudDelegate->GetSprite(item->iId), r, g, b);
+				SPR_Set(gCustomHud.GetSprite(item->iId), r, g, b);
 				SPR_DrawAdditive(0, xpos, ypos, rect);
 				break;
 			}

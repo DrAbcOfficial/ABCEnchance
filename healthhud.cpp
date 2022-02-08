@@ -41,7 +41,7 @@ int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf){
 	int x = READ_LONG();
 	if (x != m_HudArmorHealth.m_iHealth){
 		m_HudArmorHealth.m_iHealth = x;
-		gHudDelegate->m_iPlayerHealth = x;
+		gCustomHud.m_iPlayerHealth = x;
 	}
 	return m_pfnHealth(pszName, iSize, pbuf);
 }
@@ -131,7 +131,7 @@ void CHudArmorHealth::Init(void){
 }
 int CHudArmorHealth::VidInit(void){
 	m_hSprite = 0;
-	m_iDMGIconStart = gHudDelegate->GetSpriteIndex("dmg_bio") + 1;
+	m_iDMGIconStart = gCustomHud.GetSpriteIndex("dmg_bio") + 1;
 	return 1;
 }
 void CHudArmorHealth::Reset(void){
@@ -170,19 +170,19 @@ void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeD
 	HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
 }
 int CHudArmorHealth::Draw(float flTime) {
-	if (gHudDelegate->IsInSpectate())
+	if (gCustomHud.IsInSpectate())
 		return 1;
-	if (gHudDelegate->IsHudHide(HUD_HIDEALL))
+	if (gCustomHud.IsHudHide(HUD_HIDEALL))
 		return 1;
 	DrawPain(flTime);
-	if (!gHudDelegate->HasSuit())
+	if (!gCustomHud.HasSuit())
 		return 1;
 	int r, g, b, a;
 	float flBackGroundY = BackGroundY;
-	gHudDelegate->surface()->DrawSetTexture(-1);
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-	gHudDelegate->surface()->DrawSetTexture(iHealthBarBackground);
-	gHudDelegate->surface()->DrawTexturedRect(0, flBackGroundY, BackGroundLength, gScreenInfo.iHeight);
+	gCustomHud.surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+	gCustomHud.surface()->DrawSetTexture(iHealthBarBackground);
+	gCustomHud.surface()->DrawTexturedRect(0, flBackGroundY, BackGroundLength, gScreenInfo.iHeight);
 
 	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
 	float flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
@@ -190,7 +190,7 @@ int CHudArmorHealth::Draw(float flTime) {
 	wchar_t wideName[8];
 	int iTextWidth, iTextHeight;
 	//HP
-	if (!gHudDelegate->IsHudHide(HUD_HIDEHEALTH)) {
+	if (!gCustomHud.IsHudHide(HUD_HIDEHEALTH)) {
 		int iHealth = m_iHealth;
 		if (iHealth <= gCVars.pDangerHealth->value)
 			HealthDangerColor.GetColor(r, g, b, a);
@@ -223,7 +223,7 @@ int CHudArmorHealth::Draw(float flTime) {
 		iStartX += BarLength + ElementGap * 4;
 	}
 	//AP
-	if(!gHudDelegate->IsHudHide(HUD_HIDEBATTERY)) {
+	if(!gCustomHud.IsHudHide(HUD_HIDEBATTERY)) {
 		int iBattery = m_iBattery;
 		if (iBattery <= gCVars.pDangerArmor->value)
 			ArmorDangerColor.GetColor(r, g, b, a);
@@ -257,7 +257,7 @@ int CHudArmorHealth::Draw(float flTime) {
 			BarLength * clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
 		iStartX += BarLength + ElementGap * 2;
 	}
-	if (gHudDelegate->m_bPlayerLongjump) {
+	if (gCustomHud.m_bPlayerLongjump) {
 		LongjumpIconColor.GetColor(r, g, b, a);
 		DrawSPRIcon(iLongjumpIcon, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
 	}
@@ -374,8 +374,8 @@ int CHudArmorHealth::DrawDamage(float flTime){
 	for (i = 0; i < NUM_DMG_TYPES; i++){
 		if (m_bitsDamage & aryDmgFlags[i]){
 			pdmg = &m_dmg[i];
-			SPR_Set(gHudDelegate->GetSprite(m_iDMGIconStart + i), r, g, b);
-			SPR_DrawAdditive(0, pdmg->x, pdmg->y, gHudDelegate->GetSpriteRect(m_iDMGIconStart + i));
+			SPR_Set(gCustomHud.GetSprite(m_iDMGIconStart + i), r, g, b);
+			SPR_DrawAdditive(0, pdmg->x, pdmg->y, gCustomHud.GetSpriteRect(m_iDMGIconStart + i));
 		}
 	}
 	for (i = 0; i < NUM_DMG_TYPES; i++){

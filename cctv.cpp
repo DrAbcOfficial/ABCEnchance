@@ -56,16 +56,16 @@ int CHudCCTV::Draw(float flTime){
 	if (gCVars.pCCTV->value <= 0)
 		return 1;
 
-	gHudDelegate->surface()->DrawSetTexture(-1);
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-	gHudDelegate->surface()->DrawSetTexture(CCTVDownTga);
-	gHudDelegate->surface()->DrawTexturedRect(DownLogoStartX, DownLogoStartY, DownLogoStartX + DownLogoSize, DownLogoStartY + DownLogoSize);
+	gCustomHud.surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+	gCustomHud.surface()->DrawSetTexture(CCTVDownTga);
+	gCustomHud.surface()->DrawTexturedRect(DownLogoStartX, DownLogoStartY, DownLogoStartX + DownLogoSize, DownLogoStartY + DownLogoSize);
 
-	gHudDelegate->surface()->DrawSetTexture(CCTVLogoTga);
-	gHudDelegate->surface()->DrawTexturedRect(LogoStartX, LogoStartY, LogoStartX + LogoWidth, LogoStartY + LogoHeight);
+	gCustomHud.surface()->DrawSetTexture(CCTVLogoTga);
+	gCustomHud.surface()->DrawTexturedRect(LogoStartX, LogoStartY, LogoStartX + LogoWidth, LogoStartY + LogoHeight);
 
-	gHudDelegate->surface()->DrawSetTexture(CCTVTileTga);
-	gHudDelegate->surface()->DrawTexturedRect(TileStartX, TileStartY, TileStartX + TileWidth, TileStartY + TileHeight);
+	gCustomHud.surface()->DrawSetTexture(CCTVTileTga);
+	gCustomHud.surface()->DrawTexturedRect(TileStartX, TileStartY, TileStartX + TileWidth, TileStartY + TileHeight);
 	return 0;
 }
 void CHudCCTV::Reset(){

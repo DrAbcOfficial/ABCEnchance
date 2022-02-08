@@ -52,26 +52,26 @@ void CHudEccoMoney::Reset() {
 int CHudEccoMoney::Draw(float flTime){
 	if (gCVars.pEccoEnable->value <= 0)
 		return 1;
-	if (gHudDelegate->IsHudHide(HUD_HIDEALL | HUD_HIDEHEALTH))
+	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDEHEALTH))
 		return 1;
-	if (!gHudDelegate->HasSuit())
+	if (!gCustomHud.HasSuit())
 		return 1;
 	int iEcco = 0;
 	if (gCVars.pEccoCheckInfo->value > 0) {
 		iEcco = mathlib::natoi(gEngfuncs.PhysInfo_ValueForKey("ecco_value"));
 		if (iEcco == 0)
-			iEcco = gHudDelegate->GetPlayerHUDInfo(gEngfuncs.GetLocalPlayer()->index)->frags;
+			iEcco = gCustomHud.GetPlayerHUDInfo(gEngfuncs.GetLocalPlayer()->index)->frags;
 	}
 	else if (gCVars.pEccoEnable->value == 2)
 		return 1;
 	else
-		iEcco = gHudDelegate->GetPlayerHUDInfo(gEngfuncs.GetLocalPlayer()->index)->frags;
-	gHudDelegate->surface()->DrawSetTexture(-1);
-	gHudDelegate->surface()->DrawSetColor(255, 255, 255, 255);
-	gHudDelegate->surface()->DrawSetTexture(MoneyBackGround);
+		iEcco = gCustomHud.GetPlayerHUDInfo(gEngfuncs.GetLocalPlayer()->index)->frags;
+	gCustomHud.surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+	gCustomHud.surface()->DrawSetTexture(MoneyBackGround);
 	int nowX = 0;
 	int nowY = YOffset + BackgroundHeight;
-	gHudDelegate->surface()->DrawTexturedRect(nowX, YOffset, BackgroundLength, nowY);
+	gCustomHud.surface()->DrawTexturedRect(nowX, YOffset, BackgroundLength, nowY);
 	int iTextHeight;
 	int r, g, b, a;
 	std::wstring buf = MessagePrefix + std::to_wstring(iEcco) + MessagePostfix;
