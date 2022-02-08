@@ -56,6 +56,7 @@ public:
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 	bool IsInSpectate();
 	bool HasSuit();
+	bool IsHudHide(int HideToken);
 
 	HSPRITE GetSprite(int index);
 	wrect_t* GetSpriteRect(int index);

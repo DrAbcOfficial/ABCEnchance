@@ -1,27 +1,28 @@
-#define WEAPON_SUIT			31
-
-#ifndef _WIN32
-#define _cdecl 
-#endif
+constexpr int WEAPON_SUIT = 31;
 
 typedef int HSPRITE;	// handle to a graphic
 
-#define DHN_DRAWZERO 1
-#define DHN_2DIGITS  2
-#define DHN_3DIGITS  4
-#define MIN_ALPHA	 100	
-
-#define		HUDELEM_ACTIVE	1
-
-#define HIDEHUD_WEAPONS ( 1<<0 )
-#define HIDEHUD_FLASHLIGHT ( 1<<1 )
-#define HIDEHUD_ALL ( 1<<2 )
-#define HIDEHUD_HEALTH ( 1<<3 )
+const enum {
+	DHN_DRAWZERO = (1 << 0),
+	DHN_2DIGITS = (1 << 1),
+	DHN_3DIGITS = (1 << 2)
+};
+const enum {
+	HUD_HIDEWEAPONS = (1 << 0),
+	HUD_HIDEFLASHLIGHT = (1 << 1),
+	HUD_HIDEALL = (1 << 2),
+	HUD_HIDEHEALTH = (1 << 3),
+	HUD_HIDESELECTION = (1 << 4),
+	HUD_HIDEBATTERY = (1 << 5),
+	HUD_HIDECUSTOM1 = (1 << 6),
+	HUD_HIDECUSTOM2 = (1 << 7)
+};
+constexpr auto MIN_ALPHA = 100	;
+constexpr auto HUDELEM_ACTIVE = 1;
 
 typedef struct {
 	int x, y;
 } POSITION;
-
 typedef struct {
 	unsigned char r, g, b, a;
 } RGBA;

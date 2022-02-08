@@ -52,7 +52,7 @@ void CHudEccoMoney::Reset() {
 int CHudEccoMoney::Draw(float flTime){
 	if (gCVars.pEccoEnable->value <= 0)
 		return 1;
-	if (gHudDelegate->m_iHideHUDDisplay & (HIDEHUD_ALL | HIDEHUD_HEALTH))
+	if (gHudDelegate->IsHudHide(HUD_HIDEALL | HUD_HIDEHEALTH))
 		return 1;
 	if (!gHudDelegate->HasSuit())
 		return 1;

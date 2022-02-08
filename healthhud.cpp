@@ -167,13 +167,12 @@ void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeD
 	}
 	HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
 }
-int CHudArmorHealth::Draw(float flTime){
+int CHudArmorHealth::Draw(float flTime) {
 	if (gHudDelegate->IsInSpectate())
 		return 1;
-	if (gHudDelegate->m_iHideHUDDisplay & (HIDEHUD_ALL | HIDEHUD_HEALTH))
+	if (gHudDelegate->IsHudHide(HUD_HIDEALL))
 		return 1;
 	DrawPain(flTime);
-
 	if (!gHudDelegate->HasSuit())
 		return 1;
 	int r, g, b, a;
@@ -188,71 +187,73 @@ int CHudArmorHealth::Draw(float flTime){
 	int iStartX = StartX;
 	int iHealth = m_iHealth;
 	int iBattery = m_iBattery;
-	//HP ICON
-	if (iHealth <= DAGER_HEALTH)
-		HealthDangerColor.GetColor(r, g, b, a);
-	else
-		HealthIconColor.GetColor(r, g, b, a);
-	DrawSPRIcon(iHealthIcon, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
-
 	wchar_t wideName[8];
-	wsprintfW(wideName, L"%d", iHealth);
 	int iTextWidth, iTextHeight;
-	GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
-	iStartX += IconSize + ElementGap;
-	if(iHealth <= DAGER_HEALTH)
-		HealthDangerColor.GetColor(r, g, b, a);
-	else
-		HealthTextColor.GetColor(r, g, b, a);
-	DrawVGUI2String(wideName, iStartX, flCenterY - iTextHeight / 2, r, g, b, HUDFont);
-	iStartX += iTextWidth + ElementGap;
-	if (flTime < flPainColorKeepTime){
-		HealthPainColor.GetColor(r, g, b, a);
-		CalcuPainFade(r, g, b, &HealthBarColor, flPainColorKeepTime - flTime);
-	}
-	else{
+	//HP ICON
+	if (!gHudDelegate->IsHudHide(HUD_HIDEHEALTH)) {
 		if (iHealth <= DAGER_HEALTH)
 			HealthDangerColor.GetColor(r, g, b, a);
 		else
-			HealthBarColor.GetColor(r, g, b, a);
+			HealthIconColor.GetColor(r, g, b, a);
+		DrawSPRIcon(iHealthIcon, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
+		wsprintfW(wideName, L"%d", iHealth);
+		GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
+		iStartX += IconSize + ElementGap;
+		if (iHealth <= DAGER_HEALTH)
+			HealthDangerColor.GetColor(r, g, b, a);
+		else
+			HealthTextColor.GetColor(r, g, b, a);
+		DrawVGUI2String(wideName, iStartX, flCenterY - iTextHeight / 2, r, g, b, HUDFont);
+		iStartX += iTextWidth + ElementGap;
+		if (flTime < flPainColorKeepTime) {
+			HealthPainColor.GetColor(r, g, b, a);
+			CalcuPainFade(r, g, b, &HealthBarColor, flPainColorKeepTime - flTime);
+		}
+		else {
+			if (iHealth <= DAGER_HEALTH)
+				HealthDangerColor.GetColor(r, g, b, a);
+			else
+				HealthBarColor.GetColor(r, g, b, a);
+		}
+		gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
+			BarLength, BarWidth, r / 2, g / 2, b / 2, a);
+		gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
+			BarLength * clamp((float)iHealth / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
+		iStartX += BarLength + ElementGap * 4;
 	}
-	gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-		BarLength, BarWidth, r / 2, g / 2, b / 2, a);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-		BarLength * clamp((float)iHealth / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
-	iStartX += BarLength + ElementGap * 4;
-
 	//AP
-	if (iBattery <= DAGER_HEALTH)
-		ArmorDangerColor.GetColor(r, g, b, a);
-	else
-		ArmorIconColor.GetColor(r, g, b, a);
-	DrawSPRIcon(iBattery > 0 ? iArmorIconFull : iArmorIconNull, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
-
-	wsprintfW(wideName, L"%d", iBattery);
-	GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
-	iStartX += IconSize + ElementGap;
-	if (iBattery <= DAGER_HEALTH)
-		ArmorDangerColor.GetColor(r, g, b, a);
-	else
-		ArmorTextColor.GetColor(r, g, b, a);
-	DrawVGUI2String(wideName, iStartX, flCenterY - iTextHeight / 2, r, g, b, HUDFont);
-	iStartX += iTextWidth + ElementGap;
-
-	if (flTime < flPainColorKeepTime){
-		ArmorPainColor.GetColor(r, g, b, a);
-		CalcuPainFade(r, g, b, &ArmorBarColor, flPainColorKeepTime - flTime);
-	}
-	else{
+	if(!gHudDelegate->IsHudHide(HUD_HIDEBATTERY)) {
 		if (iBattery <= DAGER_HEALTH)
 			ArmorDangerColor.GetColor(r, g, b, a);
 		else
-			ArmorBarColor.GetColor(r, g, b, a);
+			ArmorIconColor.GetColor(r, g, b, a);
+		DrawSPRIcon(iBattery > 0 ? iArmorIconFull : iArmorIconNull, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
+
+		wsprintfW(wideName, L"%d", iBattery);
+		GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
+		iStartX += IconSize + ElementGap;
+		if (iBattery <= DAGER_HEALTH)
+			ArmorDangerColor.GetColor(r, g, b, a);
+		else
+			ArmorTextColor.GetColor(r, g, b, a);
+		DrawVGUI2String(wideName, iStartX, flCenterY - iTextHeight / 2, r, g, b, HUDFont);
+		iStartX += iTextWidth + ElementGap;
+
+		if (flTime < flPainColorKeepTime) {
+			ArmorPainColor.GetColor(r, g, b, a);
+			CalcuPainFade(r, g, b, &ArmorBarColor, flPainColorKeepTime - flTime);
+		}
+		else {
+			if (iBattery <= DAGER_HEALTH)
+				ArmorDangerColor.GetColor(r, g, b, a);
+			else
+				ArmorBarColor.GetColor(r, g, b, a);
+		}
+		gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
+			BarLength, BarWidth, r / 2, g / 2, b / 2, a);
+		gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
+			BarLength * clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
 	}
-	gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-		BarLength, BarWidth, r / 2, g / 2, b / 2, a);
-	gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-		BarLength * clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
 	if (gHudDelegate->m_bPlayerLongjump) {
 		iStartX += BarLength + ElementGap * 2;
 		LongjumpIconColor.GetColor(r, g, b, a);
