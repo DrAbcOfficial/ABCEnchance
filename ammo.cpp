@@ -49,19 +49,19 @@ int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
-	gHR.AddToHistory(HISTSLOT_AMMO, iIndex, abs(iCount));
+	gHR.AddToHistory(HistoryResource::HISTSLOT_AMMO, iIndex, abs(iCount));
 	return m_pfnAmmoPickup(pszName, iSize, pbuf);
 }
 int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_SHORT();
-	gHR.AddToHistory(HISTSLOT_WEAP, iIndex);
+	gHR.AddToHistory(HistoryResource::HISTSLOT_WEAP, iIndex);
 	return m_pfnWeapPickup(pszName, iSize, pbuf);
 }
 int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	const char* szName = READ_STRING();
-	gHR.AddToHistory(HISTSLOT_ITEM, szName);
+	gHR.AddToHistory(HistoryResource::HISTSLOT_ITEM, szName);
 	return m_pfnItemPickup(pszName, iSize, pbuf);
 }
 int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){

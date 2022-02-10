@@ -421,7 +421,7 @@ void WeaponsResource::FillMenuGrid(){
 		else{
 			for (size_t j = 0; j < MAX_WEAPON_POSITIONS_USER; j++){
 				if (gridSlotMap[i][j] > 0){
-					gridDrawMenu[i] = { gridSlotMap[i][j],j };
+					gridDrawMenu[i] = { gridSlotMap[i][j],(int)j };
 					break;
 				}
 				else

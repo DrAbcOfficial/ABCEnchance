@@ -28,30 +28,12 @@
 using namespace mathlib;
 
 CHudEccoBuyMenu m_HudEccoBuyMenu;
-enum MetaHookMsgType {
-	MHSV_CMD_QUERY_PLUGIN = 1,
-	MHSV_CMD_QUERY_CVAR,
-	MHSV_CMD_ECCO_INFO = 7,
-	MHSV_CMD_ECCO_MENU = 8
-};
-enum EccoRenderMode {
-	INVALID = -4,
-	NONE = -3,
-	ITEM = -2
-};
-enum EccoMenuMode {
-	MENU_INVALID = -1,
-	MENU_BACK = -2,
-	MENU_NEXTPAGE = -3,
-	MENU_LASTPAGE = -4
-};
-
 pfnUserMsgHook m_pfnMetaHookMsg;
 int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int type = READ_BYTE();
 	switch (type) {
-	case MHSV_CMD_ECCO_INFO: {
+	case CHudEccoBuyMenu::MetaHookMsgType::MHSV_CMD_ECCO_INFO: {
 		buymenuitem_t item;
 		item.id = READ_LONG();
 		item.price = READ_LONG();
@@ -61,7 +43,7 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 		m_HudEccoBuyMenu.AddInfo(item);
 		break;
 	}
-	case MHSV_CMD_ECCO_MENU: {
+	case CHudEccoBuyMenu::MetaHookMsgType::MHSV_CMD_ECCO_MENU: {
 		m_HudEccoBuyMenu.MenuList.clear();
 		int pageLen = (size_t)READ_BYTE();
 		m_HudEccoBuyMenu.MenuList.resize(pageLen);

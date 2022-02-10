@@ -23,6 +23,24 @@ public:
 	void SlotCallBack(int slot);
 	bool IsOpen();
 
+	enum MetaHookMsgType {
+		MHSV_CMD_QUERY_PLUGIN = 1,
+		MHSV_CMD_QUERY_CVAR,
+		MHSV_CMD_ECCO_INFO = 7,
+		MHSV_CMD_ECCO_MENU = 8
+	};
+	enum EccoRenderMode {
+		INVALID = -4,
+		NONE = -3,
+		ITEM = -2
+	};
+	enum EccoMenuMode {
+		MENU_INVALID = -1,
+		MENU_BACK = -2,
+		MENU_NEXTPAGE = -3,
+		MENU_LASTPAGE = -4
+	};
+
 	std::vector<int> MenuList;
 private:
 	void CreateLight();
