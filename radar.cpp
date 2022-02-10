@@ -1,7 +1,10 @@
 #include <metahook.h>
-#include "local.h"
+
 #include <cmath>
 #include "mathlib.h"
+#include "Vector.h"
+
+#include "local.h"
 #include "pm_defs.h"
 #include "event_api.h"
 
@@ -267,14 +270,13 @@ void CHudRadar::UpdateZmax(float flTime){
 	if (flTime < flNextUpdateTrTime)
 		return;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	vec3_t vecEndpos;
-	VectorCopy(local->curstate.origin, vecEndpos);
-	vecEndpos[2] = 9999;
+	Vector vecEndpos = local->curstate.origin;
+	vecEndpos.z = 9999;
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
 	//16，去除大多数烦人的天花板灯泡
 	gCustomHud.m_flOverViewZmax = m_hRadarTr.endpos[2] - 16;
-	vecEndpos[2] = -9999;
+	vecEndpos.z = -9999;
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
 	float flOldStart = m_hRadarTr.endpos[2] - 1;

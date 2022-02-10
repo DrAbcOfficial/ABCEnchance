@@ -1,6 +1,7 @@
 #include <metahook.h>
 #include <cmath>
 #include "mathlib.h"
+#include "Vector.h"
 
 #include "glew.h"
 #include "gl_def.h"
@@ -43,13 +44,13 @@ int CHudPlayerTitle::Draw(float flTime){
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		float* localColor = gHookFuncs.GetClientColor(local->index);
 		GLfloat nowX, nowY;
-		vec3_t vecHUD;
+		Vector vecHUD;
 		//夹角
-		vec3_t vecAngle;
+		Vector vecAngle;
 		//夹角点积
 		float angledotResult = 0;
 		//绘制高度
-		vec3_t vecEntityOrigin;
+		Vector vecEntityOrigin;
 		//绘制相关
 		wchar_t wideName[MAX_PLAYER_NAME_LENGTH];
 		float* color;
@@ -59,7 +60,7 @@ int CHudPlayerTitle::Draw(float flTime){
 		float flTitleLength = gCVars.pPlayerTitleLength->value;
 		float flTitleHeight = gCVars.pPlayerTitleHeight->value;
 		//视角角度
-		vec3_t vecView;
+		Vector vecView;
 		gEngfuncs.GetViewAngles(vecView);
 		AngleVectors(vecView, vecView, nullptr, nullptr);
 		for (int i = 1; i <= 32; i++){
@@ -71,21 +72,19 @@ int CHudPlayerTitle::Draw(float flTime){
 			//计算我和目标的相对偏移
 			VectorSubtract(entity->curstate.origin, local->curstate.origin, vecAngle);
 			color = gHookFuncs.GetClientColor(i);
-			if (FVectorLength(vecAngle) >= 1024 || color != localColor)
+			if (vecAngle.FLength() >= 1024 || color != localColor)
 				continue;
-			VectorNormalize(vecAngle);
+			vecAngle = vecAngle.Normalize();
 			angledotResult = DotProduct(vecAngle, vecView);
 			//cos 60
 			if (angledotResult > 0.5){
-				VectorCopy(entity->curstate.origin, vecEntityOrigin);
-				vecEntityOrigin[2] += 45;
-				gEngfuncs.pTriAPI->WorldToScreen(vecEntityOrigin, vecHUD);
-				vecHUD[0] = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
-				vecHUD[1] = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
+				vecEntityOrigin = entity->curstate.origin;
+				vecEntityOrigin.z += 45;
+				VEC_WorldToScreen(vecEntityOrigin, vecHUD);
 				gEngfuncs.pfnGetPlayerInfo(i, &playerinfo);
 				if (playerinfo.name){
-					nowX = vecHUD[0] - flTitleLength / 2;
-					nowY = vecHUD[1] - flTitleHeight / 2;
+					nowX = vecHUD.x - flTitleLength / 2;
+					nowY = vecHUD.y - flTitleHeight / 2;
 					if (gCVars.pPlayerTitle->value < 2){
 						hud_playerinfo_t* info = gCustomHud.GetPlayerHUDInfo(i);
 						flHealthRatio = clamp((info->health / 100.0f), 0.0f, 1.0f);
