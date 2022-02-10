@@ -127,5 +127,5 @@ namespace mathlib {
 	void RGBToHSV(int r, int g, int b, float& h, float& s, float& v);
 	void HSVToRGB(float h, float s, float v, int& r, int& g, int& b);
 	float fsqrt(float x);
-	int natoi(const char* src);
+	int fatoi(const char* src);
 };
