@@ -52,7 +52,7 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf){
 	m_HudArmorHealth.UpdateTiles(gEngfuncs.GetClientTime(), READ_LONG());
 	if (damageTaken > 0 || armor > 0) {
 		vec3_t vecFrom;
-		for (int i = 0; i < 3; i++) {
+		for (size_t i = 0; i < 3; i++) {
 			vecFrom[i] = READ_COORD();
 		}
 		float flTime = gEngfuncs.GetClientTime();
@@ -150,7 +150,7 @@ void CHudArmorHealth::Reset(void){
 	m_iBattery = 0;
 	m_bitsDamage = 0;
 	flPainColorKeepTime = 0.0f;
-	for (int i = 0; i < NUM_DMG_TYPES; i++){
+	for (size_t i = 0; i < NUM_DMG_TYPES; i++){
 		m_dmg[i].fExpire = 0;
 	}
 }
@@ -164,7 +164,7 @@ void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeD
 	c->GetColor(tr, tg, tb, ta);
 	RGBToHSV(r, g, b, hsv[0], hsv[1], hsv[2]);
 	RGBToHSV(tr, tg, tb, thsv[0], thsv[1], thsv[2]);
-	for (int i = 0; i < 3; i++) {
+	for (size_t i = 0; i < 3; i++) {
 		thsv[i] -= (thsv[i] - hsv[i]) * timeDiffer / PainColorTime;
 	}
 	HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
@@ -370,7 +370,7 @@ int CHudArmorHealth::DrawDamage(float flTime){
 		return 1;
 	BitDamageColor.GetColor(r, g, b, a);
 	a = (int)(fabs(sin(flTime * 2)) * 256.0);
-	int i;
+	size_t i;
 	for (i = 0; i < NUM_DMG_TYPES; i++){
 		if (m_bitsDamage & aryDmgFlags[i]){
 			pdmg = &m_dmg[i];
@@ -400,7 +400,7 @@ int CHudArmorHealth::DrawDamage(float flTime){
 void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage){
 	DAMAGE_IMAGE* pdmg;
 	long bitsOn = ~m_bitsDamage & bitsDamage;
-	for (int i = 0; i < NUM_DMG_TYPES; i++){
+	for (size_t i = 0; i < NUM_DMG_TYPES; i++){
 		pdmg = &m_dmg[i];
 		if (m_bitsDamage & aryDmgFlags[i]){
 			pdmg->fExpire = flTime + DMG_IMAGE_LIFE;
@@ -411,7 +411,7 @@ void CHudArmorHealth::UpdateTiles(float flTime, long bitsDamage){
 			pdmg->x = DamageIconX;
 			pdmg->y = DamageIconY - DamageIconSize * 2;
 			pdmg->fExpire = flTime + DMG_IMAGE_LIFE;
-			for (int j = 0; j < NUM_DMG_TYPES; j++){
+			for (size_t j = 0; j < NUM_DMG_TYPES; j++){
 				if (j == i)
 					continue;
 				pdmg = &m_dmg[j];

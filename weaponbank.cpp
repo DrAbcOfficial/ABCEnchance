@@ -39,8 +39,9 @@ void WeaponsResource::Reset(void){
 	memset(gridSlotMap, -1, sizeof gridSlotMap);
 	memset(gridDrawMenu, -1, sizeof gridDrawMenu);
 }
-int WeaponsResource::CountGridWeapons() {
-	int i, j, c = 0;
+size_t WeaponsResource::CountGridWeapons() {
+	size_t i, j;
+	size_t c = 0;
 	for (i = 0; i < MAX_WEAPON_SLOTS; i++){
 		for (j = 0; j < MAX_WEAPON_POSITIONS; j++){
 			if (gridSlotMap[i][j] >= 0)
@@ -49,16 +50,16 @@ int WeaponsResource::CountGridWeapons() {
 	}
 	return c;
 }
-int WeaponsResource::CountWeapons() {
-	int i, c = 0;
+size_t WeaponsResource::CountWeapons() {
+	size_t i, c = 0;
 	for (i = 0; i < MAX_WEAPONS; i++){
 		if (GetWeapon(i)->iId > 0)
 			c++;
 	}
 	return c;
 }
-int WeaponsResource::CountMenuWeapons() {
-	int i, c = 0;
+size_t WeaponsResource::CountMenuWeapons() {
+	size_t i, c = 0;
 	for (i = 0; i < MAX_WEAPON_SLOTS; i++){
 		if (gridDrawMenu[i].iId > 0)
 			c++;
@@ -66,7 +67,7 @@ int WeaponsResource::CountMenuWeapons() {
 	return c;
 }
 int WeaponsResource::GetWeaponId(char* szName){
-	for (WEAPON var : rgWeapons) {
+	for (const WEAPON& var : rgWeapons) {
 		if (!var.iId)
 			continue;
 		if (strcmp(var.szName, szName) == 0) {
@@ -100,7 +101,7 @@ int WeaponsResource::GetWeaponIdBySlot(int slot, int pos){
 	return gridSlotPosDataMap[slot][pos];
 }
 void WeaponsResource::LoadAllWeaponSprites(void){
-	for (int i = 0; i < MAX_WEAPONS; i++){
+	for (size_t i = 0; i < MAX_WEAPONS; i++){
 		if (rgWeapons[i].iId)
 			LoadWeaponSprites(&rgWeapons[i]);
 	}
@@ -322,7 +323,7 @@ void WeaponsResource::LoadScriptWeaponSprites(int iId, char* cust){
 
 }
 HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
-	for (int i = 0; i < MAX_WEAPONS; i++){
+	for (size_t i = 0; i < MAX_WEAPONS; i++){
 		if (rgWeapons[i].iAmmoType == iAmmoId){
 			rect = rgWeapons[i].rcAmmo;
 			return &rgWeapons[i].hAmmo;
@@ -371,7 +372,7 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 		}
 	}
 	gridDrawMenu[iNowSlot].iId = -1;
-	for (int i = gridDrawMenu[iNowSlot].iPos; i < MAX_WEAPON_POSITIONS_USER; i++) {
+	for (size_t i = gridDrawMenu[iNowSlot].iPos; i < MAX_WEAPON_POSITIONS_USER; i++) {
 		if (gWR.HasWeapon(iNowSlot, i)) {
 			wp = gWR.GetWeaponSlot(iNowSlot, i);
 			gridDrawMenu[iNowSlot].iId = wp->iId;
@@ -394,7 +395,7 @@ WEAPON* WeaponsResource::GetFirstPos(int iSlot){
 	if (iSlot >= MAX_WEAPON_SLOTS)
 		return nullptr;
 	WEAPON* now = nullptr;
-	for (int i = 0; i < MAX_WEAPON_POSITIONS_USER; i++){
+	for (size_t i = 0; i < MAX_WEAPON_POSITIONS_USER; i++){
 		now = GetWeaponSlot(iSlot, i);
 		if (HasWeapon(iSlot,i) && HasAmmo(now))
 			return now;
@@ -405,7 +406,7 @@ WEAPON* WeaponsResource::GetLastPos(int iSlot) {
 	if (iSlot >= MAX_WEAPON_SLOTS)
 		return nullptr;
 	WEAPON* now = nullptr;
-	for (int i = MAX_WEAPON_POSITIONS_USER - 1; i >= 0 ; i--){
+	for (size_t i = MAX_WEAPON_POSITIONS_USER - 1; i >= 0 ; i--){
 		now = GetWeaponSlot(iSlot, i);
 		if (HasWeapon(iSlot, i) && HasAmmo(now))
 			return now;
@@ -413,13 +414,12 @@ WEAPON* WeaponsResource::GetLastPos(int iSlot) {
 	return nullptr;
 }
 void WeaponsResource::FillMenuGrid(){
-	int i,j;
-	for (i = 0; i < MAX_WEAPON_SLOTS; i++){
+	for (size_t i = 0; i < MAX_WEAPON_SLOTS; i++){
 		if (gridDrawMenu[i].iId > 0 && gridSlotMap[i][gridDrawMenu[i].iPos] > 0){
 				continue;
 		}
 		else{
-			for (j = 0; j < MAX_WEAPON_POSITIONS_USER; j++){
+			for (size_t j = 0; j < MAX_WEAPON_POSITIONS_USER; j++){
 				if (gridSlotMap[i][j] > 0){
 					gridDrawMenu[i] = { gridSlotMap[i][j],j };
 					break;

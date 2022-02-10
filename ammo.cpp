@@ -85,7 +85,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
 	Weapon.iFlags = READ_BYTE();
 	Weapon.iClip = 0;
 	
-	for (int i = 0; i < MAX_WEAPON_SLOTS; i++) {
+	for (size_t i = 0; i < MAX_WEAPON_SLOTS; i++) {
 		if (!gCVars.pAmmoCSlot[i]->string || gCVars.pAmmoCSlot[i]->string[0] == 0)
 			continue;
 		if (strcmp(Weapon.szName, gCVars.pAmmoCSlot[i]->string) == 0) {
@@ -265,8 +265,8 @@ int CHudCustomAmmo::VidInit(void){
 	return 1;
 }
 void CHudCustomAmmo::SyncWeapon(){
-	for (int i = 0; i < MAX_WEAPON_OLDSLOTS; i++){
-		for (int j = 0; j < MAX_WEAPON_OLDPOSITIONS; j++){
+	for (size_t i = 0; i < MAX_WEAPON_OLDSLOTS; i++){
+		for (size_t j = 0; j < MAX_WEAPON_OLDPOSITIONS; j++){
 			//没有WeaponList信息，丢弃
 			if (gWR.GetWeaponIdBySlot(i, j) <= 0)
 				continue;

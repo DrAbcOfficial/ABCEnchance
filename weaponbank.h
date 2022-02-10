@@ -26,9 +26,9 @@ public:
 
 	void Init(void);
 	void Reset(void);
-	int CountGridWeapons();
-	int CountWeapons();
-	int CountMenuWeapons();
+	size_t CountGridWeapons();
+	size_t CountWeapons();
+	size_t CountMenuWeapons();
 	int GetWeaponId(char* szName);
 	WEAPON* GetWeapon(int iId);
 	void AddWeapon(WEAPON* wp);

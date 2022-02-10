@@ -39,7 +39,7 @@ void HistoryResource::Reset(void){
 	memset(rgHistory, 0, sizeof(rgHistory));
 }
 void HistoryResource::SetFreeSlot(int iType, int iId, int iCount){
-	for (int i = 0; i < MAX_HISTORY; i++) {
+	for (size_t i = 0; i < MAX_HISTORY; i++) {
 		HIST_ITEM a = rgHistory[iType][MAX_HISTORY - 1];
 		rgHistory[iType][MAX_HISTORY - 1] = rgHistory[iType][i];
 		rgHistory[iType][i] = a;
@@ -66,8 +66,8 @@ void HistoryResource::AddToHistory(int iType, const char* szName, int iCount){
 	SetFreeSlot(iType, i, iCount);
 }
 int HistoryResource::DrawAmmoHistory(float flTime){
-	for (int i = 0; i < 3; i++) {
-		for (int j = 0; j < MAX_HISTORY; j++) {
+	for (size_t i = 0; i < 3; i++) {
+		for (size_t j = 0; j < MAX_HISTORY; j++) {
 			HIST_ITEM* item = &rgHistory[i][j];
 			if (item->DisplayTime < flTime)
 				item->type = HISTSLOT_EMPTY;
