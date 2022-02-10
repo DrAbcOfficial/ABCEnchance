@@ -885,7 +885,7 @@ float mathlib::fsqrt(float x){
 	return x;
 }
 
-int mathlib::natoi(const char* src)
+int mathlib::fatoi(const char* src)
 {
 	const char* p = src;
 	static const int a[][10] =
