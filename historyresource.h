@@ -1,11 +1,5 @@
 #pragma once
 #define MAX_HISTORY 16
-enum {
-	HISTSLOT_AMMO,
-	HISTSLOT_ITEM,
-	HISTSLOT_WEAP,
-	HISTSLOT_EMPTY
-};
 struct HIST_ITEM {
 	int type;
 	float DisplayTime;  // the time at which this item should be removed from the history
@@ -19,6 +13,12 @@ public:
 	void AddToHistory(int iType, int iId, int iCount = 0);
 	void AddToHistory(int iType, const char* szName, int iCount = 0);
 	int DrawAmmoHistory(float flTime);
+	enum {
+		HISTSLOT_AMMO,
+		HISTSLOT_ITEM,
+		HISTSLOT_WEAP,
+		HISTSLOT_EMPTY
+	};
 private:
 	void SetFreeSlot(int iType, int iId, int iCount);
 	float GetAlphaScale(float a, float flTimediffer);
