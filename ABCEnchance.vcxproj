@@ -185,6 +185,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClInclude Include="parsemsg.h" />
     <ClInclude Include="plugins.h" />
     <ClInclude Include="regquery.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="vguilocal.h" />
     <ClInclude Include="VGUI\Cursor.h" />
     <ClInclude Include="VGUI\Dar.h" />

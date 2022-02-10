@@ -7,6 +7,7 @@
 #include "event_api.h"
 #include "triangleapi.h"
 #include "mathlib.h"
+#include "Vector.h"
 #include "cvardef.h"
 #include "extraprecache.h"
 #include "exportfuncs.h"
@@ -67,13 +68,13 @@ void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	ent1->flags = ent2->flags = FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
 	ent1->clientIndex = ent2->clientIndex = var->index;
 	ent1->die = ent2->die = gEngfuncs.GetClientTime() + 999.0f;
-	vec3_t vecTemp;
+	Vector vecTemp;
 	if (FVectorLength(var->curstate.mins) <= 3.2) {
-		vecTemp[0] = vecTemp[1] = -16;
-		vecTemp[2] = 0;
+		vecTemp.x = vecTemp.y = -16;
+		vecTemp.z = 0;
 	}
 	else
-		VectorCopy(var->curstate.mins, vecTemp);
+		vecTemp = var->curstate.mins;
 	VectorCopy(vecTemp, ent1->tentOffset);
 	
 	if (FVectorLength(var->curstate.maxs) <= 3.2)
@@ -104,10 +105,10 @@ void CHudItemHighLight::Draw(float flTime){
 			it = m_mapToBeDraw.erase(it);
 			continue;
 		}
-		vec3_t len;
+		Vector len;
 		VectorSubtract(var->curstate.origin, local->curstate.origin, len);
 		if (var->curstate.messagenum != local->curstate.messagenum || 
-			VectorLength(len) > gCVars.pItemHighLightRange->value) {
+			len.Length() > gCVars.pItemHighLightRange->value) {
 			EraseHighLight(var);
 			it = m_mapToBeDraw.erase(it);
 		}

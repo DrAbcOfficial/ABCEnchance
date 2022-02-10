@@ -35,6 +35,7 @@
 #define EngineClientCmd (*gEngfuncs.pfnClientCmd)
 #define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
 #define PlaySoundByName(x, y) (*gEngfuncs.pfnPlaySoundByName)((char*)x, y)
+#define VEC_WorldToScreen(w, s) (*gEngfuncs.pTriAPI->WorldToScreen)(w, s);s[0]=(1.0f+s[0])*ScreenWidth/2;s[1]=(1.0f-s[1])*ScreenHeight/2
 
 typedef struct{
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);

@@ -6,6 +6,7 @@
 
 #include "cvar_hook.h"
 #include "mathlib.h"
+#include "Vector.h"
 
 #include "hud.h"
 #include "local.h"
@@ -54,28 +55,26 @@ int CHudCustomCrosshair::Draw(float flTime){
 	int iCenterY;
 	if (gExportfuncs.CL_IsThirdPerson()){
 		pmtrace_t tr;
-		vec3_t vForward;
-		vec3_t vViewAngle;
-		gEngfuncs.GetViewAngles(vViewAngle);
+		Vector vViewAngleForward;
+		gEngfuncs.GetViewAngles(vViewAngleForward);
 		cl_entity_s* local = gEngfuncs.GetLocalPlayer();
-		AngleVectors(vViewAngle, vForward, NULL, NULL);
-		vec3_t vecSrc, viewOfs, vecEnd;
-		VectorCopy(local->curstate.origin, vecSrc);
+		AngleVectors(vViewAngleForward, vViewAngleForward, nullptr, nullptr);
+		Vector vecSrc = local->curstate.origin;
+		Vector viewOfs;
 		gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
-		VectorAdd(vecSrc, viewOfs, vecSrc);
-		VectorMultipiler(vForward, 8192);
-		VectorAdd(vecSrc, vForward, vecEnd);
+		vecSrc += viewOfs;
+		vViewAngleForward *= 8192;
+		Vector vecEnd = vecSrc + vViewAngleForward;
 		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_NORMAL, local->index, &tr);
-
-		vec3_t vecHUD;
+		Vector vecHUD;
 		gEngfuncs.pTriAPI->WorldToScreen(tr.endpos, vecHUD);
-		iCenterX = (1.0f + vecHUD[0]) * gScreenInfo.iWidth / 2;
-		iCenterY = (1.0f - vecHUD[1]) * gScreenInfo.iHeight / 2;
+		iCenterX = (1.0f + vecHUD[0]) * ScreenWidth / 2;
+		iCenterY = (1.0f - vecHUD[1]) * ScreenHeight / 2;
 	}
 	else{
-		iCenterX = gScreenInfo.iWidth / 2;
-		iCenterY = gScreenInfo.iHeight / 2;
+		iCenterX = ScreenWidth / 2;
+		iCenterY = ScreenHeight / 2;
 	}
 	//Ä¬ÈÏ×¼ÐÄ
 	if (pCvarDefaultCrosshair->value > 0)

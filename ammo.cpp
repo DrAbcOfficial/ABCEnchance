@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <mathlib.h>
+#include <Vector.h>
 
 #include "hud.h"
 #include "weapon.h"
