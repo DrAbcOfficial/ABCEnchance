@@ -354,7 +354,7 @@ wrect_t* CCustomHud::GetSpriteRect(int index) {
 	return nullptr;
 }
 int CCustomHud::GetSpriteIndex(const char* SpriteName){
-	for (int i = 0; i < m_arySprites.size(); i++){
+	for (size_t i = 0; i < m_arySprites.size(); i++){
 		if (strncmp(SpriteName, m_arySprites[i]->name, MAX_SPRITE_NAME_LENGTH) == 0)
 			return i;
 	}

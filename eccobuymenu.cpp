@@ -63,9 +63,9 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	}
 	case MHSV_CMD_ECCO_MENU: {
 		m_HudEccoBuyMenu.MenuList.clear();
-		int pageLen = READ_BYTE();
-		m_HudEccoBuyMenu.MenuList.resize((size_t)pageLen);
-		for (int i = 0; i < pageLen; i++) {
+		int pageLen = (size_t)READ_BYTE();
+		m_HudEccoBuyMenu.MenuList.resize(pageLen);
+		for (size_t i = 0; i < pageLen; i++) {
 			m_HudEccoBuyMenu.MenuList[i] = READ_LONG();
 		}
 		m_HudEccoBuyMenu.OpenMenu();

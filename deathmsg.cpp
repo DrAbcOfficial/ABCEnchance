@@ -91,7 +91,7 @@ int CHudDeathMsg::Draw(float flTime){
 	int w;
 	int h;
 	int r, g, b, a;
-	for (deathmsgItem_t var: aryKeepMsg){
+	for (const deathmsgItem_t& var: aryKeepMsg){
 		if (var.addTime <= 0)
 			continue;
 		if (var.addTime <= flTime)
@@ -164,7 +164,7 @@ void CHudDeathMsg::PushDeathNotice(wchar_t* v, wchar_t* e, wchar_t* k) {
 		gEngfuncs.Con_Printf((char*)cl.c_str(), (char*)cv.c_str(), 
 			ck[0] == 0 ? "something" : (char*)ck.c_str(), (char*)ce.c_str());
 	}
-	for (int i = 0; i < MAX_KEEP_DEATHMSG; i++) {
+	for (size_t i = 0; i < MAX_KEEP_DEATHMSG; i++) {
 		deathmsgItem_t a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];
 		aryKeepMsg[MAX_KEEP_DEATHMSG - 1] = aryKeepMsg[i];
 		aryKeepMsg[i] = a;

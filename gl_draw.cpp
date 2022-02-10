@@ -73,12 +73,10 @@ void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m
 		*height = 0;
 	if (!m_hFont)
 		return;
-
-	int len = wcslen(string);
-
+	size_t len = wcslen(string);
 	if (width) {
 		int a, b, c;
-		for (int i = 0; i < len; i++) {
+		for (size_t i = 0; i < len; i++) {
 			g_pSurface->GetCharABCwide(m_hFont, string[i], a, b, c);
 			*width += a + b + c;
 		}
