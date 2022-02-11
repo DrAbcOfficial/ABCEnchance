@@ -217,7 +217,7 @@ int CHudCustomAmmo::Init(void){
 	gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
-	gCVars.pAmmoMenuStyle = CREATE_CVAR("cl_wmenustyle", "1", FCVAR_VALUE, ChangeWMenuStyleCallBack);
+	gCVars.pAmmoMenuStyle = CREATE_CVAR("cl_wmenustyle", "0", FCVAR_VALUE, ChangeWMenuStyleCallBack);
 	
 	IconSize = GET_SCREEN_PIXEL(true, "AmmoHUD.IconSize");
 	ElementGap = GET_SCREEN_PIXEL(true, "AmmoHUD.ElementGap");
