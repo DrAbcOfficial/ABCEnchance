@@ -113,8 +113,8 @@ void CWeaponMenuAnnular::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, i
 	}
 	ColorCalcuAlpha(r, g, b, a);
 	if (gCVars.pAmmoMenuDrawPos->value > 0) {
-		wsprintfW(buf, L"¡¤%d", wp->iSlotPos);
-		GetStringSize(buf, &iTextWidth, NULL, HUDSmallFont);
+		wsprintfW(buf, L"* %d", wp->iSlotPos);
+		GetStringSize(buf, &iTextWidth, nullptr, HUDSmallFont);
 		DrawVGUI2String(buf, xpos - iTextWidth - iWidth / 2, ypos - iHeight / 2, r, g, b, HUDSmallFont, true);
 	}
 
@@ -126,7 +126,7 @@ void CWeaponMenuAnnular::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, i
 	}
 	else
 		wsprintfW(buf, L"");
-	GetStringSize(buf, &iTextWidth, NULL, HUDFont);
+	GetStringSize(buf, &iTextWidth, nullptr, HUDFont);
 	DrawVGUI2String(buf, xpos - iTextWidth / 2, ypos + iHeight, r, g, b, HUDFont, true);
 }
 int CWeaponMenuAnnular::DrawWList(float flTime) {

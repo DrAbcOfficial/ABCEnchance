@@ -32,7 +32,7 @@
 #define ScreenWidth (gScreenInfo.iWidth)
 #define GetScreenInfo (*gEngfuncs.pfnGetScreenInfo)
 #define ServerCmd(x) (*gEngfuncs.pfnServerCmd)((char*)x)
-#define EngineClientCmd (*gEngfuncs.pfnClientCmd)
+#define EngineClientCmd(x) (*gEngfuncs.pfnClientCmd)((char*)x)
 #define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
 #define PlaySoundByName(x, y) (*gEngfuncs.pfnPlaySoundByName)((char*)x, y)
 #define VEC_WorldToScreen(w, s) (*gEngfuncs.pTriAPI->WorldToScreen)(w, s);s[0]=(1.0f+s[0])*ScreenWidth/2;s[1]=(1.0f-s[1])*ScreenHeight/2

@@ -1,17 +1,19 @@
 #pragma once
-#pragma once
 
 #include <vector>
 
-typedef struct glshader_s{
-	struct glshader_s(GLuint prog, GLuint* objs, int used){
-		program = prog;
-		shader_objects.resize(used);
-		memcpy(shader_objects.data(), objs, used * sizeof(GLuint));
-	}
-	GLuint program;
-	std::vector<GLuint> shader_objects;
-}glshader_t;
+class glshader_t{
+	public:
+		GLuint program;
+		std::vector<GLuint> shader_objects;
+
+		glshader_t (GLuint prog, GLuint* objs, int used){
+			program = prog;
+			shader_objects.resize(used);
+			memcpy(shader_objects.data(), objs, used * sizeof(GLuint));
+		}
+		
+};
 
 typedef void(*ExtraShaderStageCallback)(GLuint* objs, int* used);
 GLuint R_CompileShaderObject(int type, const char* code, const char* filename);
