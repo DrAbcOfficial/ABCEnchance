@@ -396,7 +396,7 @@ int CHudCustomAmmo::Draw(float flTime){
 	}
 	return 1;
 }
-void CHudCustomAmmo::ChosePlayerWeapon(void){
+void CHudCustomAmmo::ChosePlayerWeapon(){
 	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1) {
 		WEAPON* wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
 		if (!(wp->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(wp))
