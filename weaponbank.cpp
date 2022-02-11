@@ -339,7 +339,7 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
