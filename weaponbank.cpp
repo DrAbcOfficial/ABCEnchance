@@ -1,4 +1,6 @@
 #include <metahook.h>
+#include <cmath>
+#include "mathlib.h"
 #include "cvardef.h"
 #include "vguilocal.h"
 #include "local.h"
@@ -14,7 +16,7 @@
 
 client_sprite_t* GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount){
 	if (!pList)
-		return NULL;
+		return nullptr;
 
 	int i = iCount;
 	client_sprite_t* p = pList;
@@ -25,7 +27,7 @@ client_sprite_t* GetSpriteList(client_sprite_t* pList, const char* psz, int iRes
 		p++;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void WeaponsResource::Init(void){
@@ -95,7 +97,10 @@ void WeaponsResource::DropAllWeapons(void){
 	memset(gridSlotMap, -1, sizeof gridSlotMap);
 }
 WEAPON* WeaponsResource::GetWeaponSlot(int slot, int pos){
-	return &rgWeapons[gridSlotMap[slot][pos]];
+	int id = gridSlotMap[slot][pos];
+	if (id <= 0)
+		return nullptr;
+	return &rgWeapons[id];
 }
 int WeaponsResource::GetWeaponIdBySlot(int slot, int pos){
 	return gridSlotPosDataMap[slot][pos];
@@ -339,56 +344,52 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
 void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
-
 	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
 		gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
 
-	if (iSlot >= MAX_WEAPON_SLOTS)
-		iSlot = 0;
-	else if (iSlot < 0)
-		iSlot = MAX_WEAPON_SLOTS - 1;
-
+	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOTS - 1);
 	WEAPON* wp = nullptr;
+	//如果是当前slot
 	if (iSlot == iNowSlot) {
-		gridDrawMenu[iNowSlot].iPos += fAdvance;
-		if (gridDrawMenu[iNowSlot].iPos < 0)
-			wp = gWR.GetLastPos(iNowSlot);
-		else if (gridDrawMenu[iNowSlot].iPos >= MAX_WEAPON_POSITIONS_USER)
+		int menuPos = mathlib::clamp(gridDrawMenu[iNowSlot].iPos + fAdvance, 0, MAX_WEAPON_POSITIONS_USER - 1);
+		while (menuPos < MAX_WEAPON_POSITIONS_USER) {
+			wp = GetWeaponSlot(iSlot, menuPos);
+			menuPos++;
+			if (wp) {
+				//经典样式
+				if (gCVars.pAmmoMenuStyle->value <= 0 && HasAmmo(wp))
+					break;
+				//环形样式
+				else if(gCVars.pAmmoMenuStyle->value >0)
+					break;
+			}
+		}
+		if(!wp)
 			wp = gWR.GetFirstPos(iNowSlot);
-		if(wp && wp->iId > 0)
+		if (wp && wp->iId > 0) {
 			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
+			gridDrawMenu[iNowSlot].iId = wp->iId;
+		}
+		else if (gCVars.pAmmoMenuStyle->value <= 0) {
+			gridDrawMenu[iNowSlot].iPos = -1;
+			return;
+		}
 	}
+	//如果不是
 	else {
 		iNowSlot = iSlot;
 		//经典样式
 		if (gCVars.pAmmoMenuStyle->value <= 0) {
 			wp = gWR.GetFirstPos(iNowSlot);
 			if (wp && wp->iId > 0) {
-				if (gWR.HasAmmo(wp))
-					gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
-				else
-					return;
+				gridDrawMenu[iNowSlot].iId = wp->iId;
+				gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
+			}
+			else{
+				gridDrawMenu[iNowSlot].iPos = -1;
+				return;
 			}
 		}
-	}
-	gridDrawMenu[iNowSlot].iId = -1;
-	for (size_t i = gridDrawMenu[iNowSlot].iPos; i < MAX_WEAPON_POSITIONS_USER; i++) {
-		if (gWR.HasWeapon(iNowSlot, i)) {
-			wp = gWR.GetWeaponSlot(iNowSlot, i);
-			gridDrawMenu[iNowSlot].iId = wp->iId;
-			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
-			break;
-		}
-	}
-	if (gridDrawMenu[iNowSlot].iId <= 0) {
-		wp = gWR.GetFirstPos(iNowSlot);
-		if (wp && wp->iId > 0) {
-			gridDrawMenu[iNowSlot].iId = wp->iId;
-			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
-		}
-		else
-			gridDrawMenu[iNowSlot].iPos = -1;
-		return;
 	}
 }
 WEAPON* WeaponsResource::GetFirstPos(int iSlot){
@@ -446,7 +447,7 @@ int WeaponsResource::HasAmmo(WEAPON* p){
 	if (p->iAmmoType > -1){
 		bool bFlag = (p->iClip > 0) || CountAmmo(p->iAmmoType);
 		if (p->iAmmo2Type > -1 && !bFlag)
-			return CountAmmo(p->iAmmo2Type) || (p->iClip2 > 0);
+			return CountAmmo(p->iAmmo2Type) > 0 || (p->iClip2 > 0);
 		else
 			return bFlag;
 	}
