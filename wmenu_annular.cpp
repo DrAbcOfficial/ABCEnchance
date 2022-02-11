@@ -137,7 +137,7 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		}
 		return 1;
 	}
-	gWR.FillMenuGrid();
+	gWR.FillDrawMenuGrid();
 	float flTimeDiffer = m_fFade - flTime;
 	float flStartRot = SelectRotate;
 	int iBackGroundHeight = SelectSize;
