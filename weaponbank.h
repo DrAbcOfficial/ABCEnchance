@@ -16,16 +16,21 @@ class WeaponsResource{
 private:
 	//同步到的所有武器数据
 	WEAPON rgWeapons[MAX_WEAPONS];
-	int gridSlotPosDataMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
+	//所有武器依照Slot Pos填充的ID列表
 	int gridSlotMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS_USER];
+	//玩家持有的武器Slot Pos填充的ID列表
+	int gridSlotPosDataMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
+	//玩家持有的所有子弹数据
 	int	riAmmo[MAX_AMMO];
 
 public:
+	//等待绘制的图标
 	gridmenuitem_t gridDrawMenu[MAX_WEAPON_SLOTS];
+	//目前选择的Slot
 	int iNowSlot;
 
-	void Init(void);
-	void Reset(void);
+	void Init();
+	void Reset();
 	size_t CountGridWeapons();
 	size_t CountWeapons();
 	size_t CountMenuWeapons();
@@ -43,10 +48,11 @@ public:
 	void LoadScriptWeaponSprites(int iId, char* cust);
 	void LoadAllWeaponSprites(void);
 	void SelectSlot(int iSlot, int fAdvance);
-	void FillMenuGrid();
 	void SetUserSlot(int iSlot, int iId);
 	WEAPON* GetFirstPos(int iSlot);
 	WEAPON* GetLastPos(int iSlot);
+	gridmenuitem_t* GetDrawMenuItem(size_t iSlot);
+	void FillDrawMenuGrid();
 
 	AMMO GetAmmo(int iId);
 	void SetAmmo(int iId, int iCount);

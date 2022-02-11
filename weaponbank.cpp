@@ -352,9 +352,11 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 	//如果是当前slot
 	if (iSlot == iNowSlot) {
 		int menuPos = mathlib::clamp(gridDrawMenu[iNowSlot].iPos + fAdvance, 0, MAX_WEAPON_POSITIONS_USER - 1);
-		while (menuPos < MAX_WEAPON_POSITIONS_USER) {
+		while (menuPos != gridDrawMenu[iNowSlot].iPos) {
 			wp = GetWeaponSlot(iSlot, menuPos);
 			menuPos++;
+			if (menuPos >= MAX_WEAPON_POSITIONS_USER)
+				menuPos = 0;
 			if (wp) {
 				//经典样式
 				if (gCVars.pAmmoMenuStyle->value <= 0 && HasAmmo(wp))
@@ -414,23 +416,6 @@ WEAPON* WeaponsResource::GetLastPos(int iSlot) {
 	}
 	return nullptr;
 }
-void WeaponsResource::FillMenuGrid(){
-	for (size_t i = 0; i < MAX_WEAPON_SLOTS; i++){
-		if (gridDrawMenu[i].iId > 0 && gridSlotMap[i][gridDrawMenu[i].iPos] > 0){
-				continue;
-		}
-		else{
-			for (size_t j = 0; j < MAX_WEAPON_POSITIONS_USER; j++){
-				if (gridSlotMap[i][j] > 0){
-					gridDrawMenu[i] = { gridSlotMap[i][j],(int)j };
-					break;
-				}
-				else
-					gridDrawMenu[i] = { -1,-1 };
-			}
-		}
-	}
-}
 int WeaponsResource::CountAmmo(int iId){
 	if (iId < 0)
 		return 0;
@@ -458,5 +443,29 @@ AMMO WeaponsResource::GetAmmo(int iId){
 }
 void WeaponsResource::SetAmmo(int iId, int iCount){
 	riAmmo[iId] = iCount;
+}
+gridmenuitem_t* WeaponsResource::GetDrawMenuItem(size_t iSlot) {
+	return &gridDrawMenu[iSlot];
+}
+void WeaponsResource::FillDrawMenuGrid() {
+	gridmenuitem_t* pItem = nullptr;
+	for (size_t i = 0; i < MAX_WEAPON_SLOTS; i++) {
+		pItem = GetDrawMenuItem(i);
+		if (pItem->iId > 0 && HasWeapon(i, pItem->iPos))
+			continue;
+		else {
+			for (size_t j = 0; j < MAX_WEAPON_POSITIONS_USER; j++) {
+				if (HasWeapon(i, j)) {
+					gridDrawMenu[i].iId = gridSlotMap[i][j];
+					gridDrawMenu[i].iPos = (int)j;
+					break;
+				}
+				else {
+					gridDrawMenu[i].iId = -1;
+					gridDrawMenu[i].iPos = -1;
+				}
+			}
+		}
+	}
 }
 WeaponsResource gWR;
