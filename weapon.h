@@ -23,7 +23,7 @@ struct WEAPON{
 	int		iSlot;
 	int		iSlotPos;
 	int		iFlags;
-	int		iId;
+	int		iId = -1;
 	int		iClip;
 	int		iClip2;
 
