@@ -351,12 +351,17 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 	WEAPON* wp = nullptr;
 	//如果是当前slot
 	if (iSlot == iNowSlot) {
+		//避免死循环
+		if (gridDrawMenu[iNowSlot].iPos < 0 && gridDrawMenu[iNowSlot].iId < 0)
+			return;
 		int menuPos = mathlib::clamp(gridDrawMenu[iNowSlot].iPos + fAdvance, 0, MAX_WEAPON_POSITIONS_USER - 1);
 		while (menuPos != gridDrawMenu[iNowSlot].iPos) {
 			wp = GetWeaponSlot(iSlot, menuPos);
-			menuPos++;
+			menuPos += fAdvance;
 			if (menuPos >= MAX_WEAPON_POSITIONS_USER)
 				menuPos = 0;
+			else if (menuPos < 0)
+				menuPos = MAX_WEAPON_POSITIONS_USER - 1;
 			if (wp) {
 				//经典样式
 				if (gCVars.pAmmoMenuStyle->value <= 0 && HasAmmo(wp))
@@ -366,14 +371,15 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 					break;
 			}
 		}
-		if(!wp)
-			wp = gWR.GetFirstPos(iNowSlot);
+		if (!wp)
+			wp = fAdvance > 0 ? gWR.GetFirstPos(iNowSlot) : gWR.GetLastPos(iNowSlot);
+			
 		if (wp && wp->iId > 0) {
-			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
 			gridDrawMenu[iNowSlot].iId = wp->iId;
+			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
 		}
 		else if (gCVars.pAmmoMenuStyle->value <= 0) {
-			gridDrawMenu[iNowSlot].iPos = -1;
+			gridDrawMenu[iNowSlot].iId = gridDrawMenu[iNowSlot].iPos = -1;
 			return;
 		}
 	}
@@ -388,7 +394,7 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 				gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
 			}
 			else{
-				gridDrawMenu[iNowSlot].iPos = -1;
+				gridDrawMenu[iNowSlot].iId = gridDrawMenu[iNowSlot].iPos = -1;
 				return;
 			}
 		}
