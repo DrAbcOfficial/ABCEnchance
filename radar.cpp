@@ -44,7 +44,7 @@ int CHudRadar::Init(){
 	ADD_COMMAND("+scaleradar", __UserCmd_StartSizeRadar);
 	ADD_COMMAND("-scaleradar", __UserCmd_EndSizeRadar);
 
-	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_VALUE, NULL);
+	gCVars.pRadar = CREATE_CVAR("cl_radar", "2", FCVAR_VALUE, NULL);
 	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_VALUE, NULL);
 	gCVars.pRadarSize = CREATE_CVAR("cl_radarsize", "344", FCVAR_VALUE, NULL);
 	gCVars.pRadarSizeTime = CREATE_CVAR("cl_radarsizetime", "0.25", FCVAR_VALUE, NULL);
