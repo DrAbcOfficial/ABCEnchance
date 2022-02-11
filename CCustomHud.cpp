@@ -138,9 +138,11 @@ void __UserCmd_PrevWeapon(void) {
 	return UserCmd_PrevWeapon();
 }
 void __UserCmd_Attack1(void) {
-	m_HudCustomAmmo.m_pNowSelectMenu->Select();
-	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)
+	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu) {
 		m_HudWMenuAnnular.Select();
+		return;
+	}
+	m_HudCustomAmmo.m_pNowSelectMenu->Select();
 	if (m_HudEccoBuyMenu.SelectMenu())
 		return;
 	return UserCmd_Attack1();
