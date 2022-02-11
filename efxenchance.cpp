@@ -272,17 +272,17 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 	//高斯flag 3, index 12
 	//高斯蓄力flag1, index 13
 	switch (eventindex) {
-	case 12: {
-		if (gCVars.pGaussEfx->value > 0) {
-			gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
-			gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
-			gHookFuncs.SetPunchAngle(0, -1.5f);
-			//f1 伤害
-			//b1 是否左键
-			DoGaussFire(fparam1, bparam1);
-			break;
+		case 12: {
+			if (gCVars.pGaussEfx->value > 0) {
+				gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
+				gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
+				gHookFuncs.SetPunchAngle(0, -1.5f);
+				//f1 伤害
+				//b1 是否左键
+				DoGaussFire(fparam1, bparam1);
+				return;
+			}
 		}
 	}
-	default:gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2); break;
-	}
+	gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2);
 }
