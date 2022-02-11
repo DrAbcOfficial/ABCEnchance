@@ -324,8 +324,10 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 }
 void V_CalcRefdef(struct ref_params_s* pparams){
 	gExportfuncs.V_CalcRefdef(pparams);
-	if(!gExportfuncs.CL_IsThirdPerson())
+	if (!gExportfuncs.CL_IsThirdPerson()) {
 		V_CalcViewModelLag(pparams);
+		V_CalcModelSlide(pparams);
+	}
 	else {
 		vec3_t vecRight;
 		mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);

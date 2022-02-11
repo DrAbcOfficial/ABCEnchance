@@ -1,6 +1,7 @@
 #include <metahook.h>
 #include <cmath>
 #include "mathlib.h"
+#include "Vector.h"
 #include "local.h"
 #include "exportfuncs.h"
 #include "viewmodellag.h"
@@ -57,4 +58,17 @@ void V_CalcViewModelLag(ref_params_t* pparams){
 			view->origin[i] += (up[i] * (-pitch * 0.02f));
 		}
 	}
+}
+void V_CalcModelSlide(ref_params_t* pparams) {
+	float flViewHeight = clamp(pparams->viewheight[2], 12.0f, 28.0f);
+	//12 Duck
+	//28 Stand
+	float flSlideRatio = 1 - ((flViewHeight - 12) / 16);
+	cl_entity_t* view = gEngfuncs.GetViewModel();
+	Vector vecRight;
+	AngleVectors(view->angles, nullptr, vecRight, nullptr);
+	vecRight = -vecRight.Normalize() * 12 * flSlideRatio;
+	view->curstate.angles[2] = -30 * flSlideRatio;
+	VectorAdd(view->origin, vecRight, view->origin);
+	view->origin[2] -= 12 * flSlideRatio;
 }
