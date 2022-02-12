@@ -96,6 +96,10 @@ typedef struct{
 	cvar_t* pModelLag;
 	cvar_t* pModelLagAutoStop;
 	cvar_t* pModelLagValue;
+	cvar_t* pModelSlide;
+	cvar_t* pModelSlideAngle;
+	cvar_t* pModelSlideLength;
+	cvar_t* pModelSlideHeight;
 
 	cvar_t* pCamIdealHeight;
 	cvar_t* pCamIdealRight;
