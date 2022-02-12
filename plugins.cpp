@@ -24,8 +24,6 @@ int g_iEngineType;
 
 char g_szPluginVersion[64];
 
-#define PLUGIN_VERSION 100016
-
 void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave){
 	g_pInterface = pInterface;
 	g_pMetaHookAPI = pAPI;
