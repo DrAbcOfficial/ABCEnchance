@@ -126,6 +126,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClCompile Include="gl_utility.cpp" />
     <ClCompile Include="gl_draw.cpp" />
     <ClCompile Include="gl_shader.cpp" />
+    <ClCompile Include="grenadeindicator.cpp" />
     <ClCompile Include="itemhighlight.cpp" />
     <ClCompile Include="playertitle.cpp" />
     <ClCompile Include="radar.cpp" />
@@ -162,6 +163,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     <ClInclude Include="encode.h" />
     <ClInclude Include="extraprecache.h" />
     <ClInclude Include="gl_draw.h" />
+    <ClInclude Include="grenadeindicator.h" />
     <ClInclude Include="itemhighlight.h" />
     <ClInclude Include="IWeaponSelect.h" />
     <ClInclude Include="crosshair.h" />

@@ -134,6 +134,9 @@
     <ClCompile Include="cctv.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="grenadeindicator.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -333,6 +336,9 @@
     </ClInclude>
     <ClInclude Include="Vector.h">
       <Filter>Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="grenadeindicator.h">
+      <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

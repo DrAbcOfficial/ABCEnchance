@@ -124,6 +124,10 @@ typedef struct{
 
 	cvar_t* pEccoBuyMenu;
 
+	cvar_t* pGrenadeIndicator;
+	cvar_t* pGrenadeIndicatorRange;
+	cvar_t* pGrenadeInicatorTime;
+
 #ifdef _DEBUG
 	cvar_t* pCCTV;
 #endif

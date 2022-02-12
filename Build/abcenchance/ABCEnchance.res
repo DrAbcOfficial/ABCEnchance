@@ -111,7 +111,7 @@ Scheme
     //时间单位为秒
 	BaseSettings
 	{
-		"Version"						"100015"
+		"Version"						"100016"
 		"Language"                      ""
 		//[尺寸]鼠标光标大小
 		"Common.CursorSize"             "0.03"
@@ -255,6 +255,9 @@ Scheme
 		"EccoBuyMenu.BuyMenuCamHeight"		"-40"
 		//购买菜单第三人称摄像机左右平移
 		"EccoBuyMenu.BuyMenuCamRight"		"50"
+
+		//手雷指示器尺寸
+		"GrenadeIndicator.Size"      "0.03"
 	}
 
 	Fonts

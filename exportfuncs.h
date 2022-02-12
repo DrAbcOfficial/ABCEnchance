@@ -4,8 +4,6 @@
 #include "enginedef.h"
 #include "r_studioint.h"
 
-#define PLUGIN_VERSION 100015
-
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
 extern engine_studio_api_t gEngineStudio;
