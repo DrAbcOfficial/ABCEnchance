@@ -108,7 +108,11 @@
 |cl_eccobuymenu|启用增强Ecco菜单|1|0/1|
 |---|---|---|---|
 |cl_modellag|启用V模型延迟|1|0/1|
-|cl_modellagvalue|V模型延迟数值|1.0|0-9999|
+|cl_modellag_value|V模型延迟数值|1.0|0-9999|
+|cl_modelslide|启用V模蹲下偏转|1|0/1|
+|cl_modelslide_length|V模蹲下偏转右偏移|12|0-9999|
+|cl_modelslide_height|V模蹲下偏转下偏移|12|0-9999|
+|cl_modelslide_angle|V模蹲下偏转角度|24|0-360|
 |---|---|---|---|
 |cam_idealheight|第三人称摄像机高度|0|-9999-9999|
 |cam_idealright|第三人称摄像机左右|0|-9999-9999|

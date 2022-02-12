@@ -114,7 +114,11 @@
 |cl_eccobuymenu|Enable Ecco buymenu enhance|1|0/1|
 |---|---|---|---|
 |cl_modellag|View model lag|1|0/1|
-|cl_modellagvalue|View model lag value|1.0|0-9999|
+|cl_modellag_value|View model lag value|1.0|0-9999|
+|cl_modelslide|View model rotate when crouch|1|0/1|
+|cl_modelslide_length|View model rotate left offset|12|0-9999|
+|cl_modelslide_height|View model rotate down offset|12|0-9999|
+|cl_modelslide_angle|View model rotate degree|24|0-360|
 |---|---|---|---|
 |cam_idealheight|Change thirdperson camera height|0|-9999-9999|
 |cam_idealright|Change thirdperson camera right|0|-9999-9999|
