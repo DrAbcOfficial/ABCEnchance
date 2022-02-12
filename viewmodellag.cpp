@@ -2,6 +2,11 @@
 #include <cmath>
 #include "mathlib.h"
 #include "Vector.h"
+
+#include "pm_defs.h"
+#include "pmtrace.h"
+#include "event_api.h"
+
 #include "local.h"
 #include "exportfuncs.h"
 #include "viewmodellag.h"
@@ -9,6 +14,8 @@
 
 using namespace mathlib;
 void V_CalcViewModelLag(ref_params_t* pparams){
+	if (gCVars.pModelLag->value <= 0)
+		return;
 	//¼¦ÃçÎäÆ÷
 	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != gCVars.pCvarDefaultFOV->value)
 		return;
@@ -60,6 +67,16 @@ void V_CalcViewModelLag(ref_params_t* pparams){
 	}
 }
 void V_CalcModelSlide(ref_params_t* pparams) {
+	if (gCVars.pModelSlide->value <= 0)
+		return;
+	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+	pmtrace_t tr{};
+	Vector vecEnd = local->curstate.origin;
+	vecEnd.z += -4;
+	gEngfuncs.pEventAPI->EV_SetTraceHull(0);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEnd, PM_STUDIO_IGNORE, local->index, &tr);
+	if (tr.fraction >= 1)
+		return;
 	float flViewHeight = clamp(pparams->viewheight[2], 12.0f, 28.0f);
 	//12 Duck
 	//28 Stand
@@ -67,8 +84,8 @@ void V_CalcModelSlide(ref_params_t* pparams) {
 	cl_entity_t* view = gEngfuncs.GetViewModel();
 	Vector vecRight;
 	AngleVectors(view->angles, nullptr, vecRight, nullptr);
-	vecRight = -vecRight.Normalize() * 12 * flSlideRatio;
-	view->curstate.angles[2] = -30 * flSlideRatio;
+	vecRight = -vecRight.Normalize() * gCVars.pModelSlideLength->value * flSlideRatio;
+	view->curstate.angles[2] = -gCVars.pModelSlideAngle->value * flSlideRatio;
 	VectorAdd(view->origin, vecRight, view->origin);
-	view->origin[2] -= 12 * flSlideRatio;
+	view->origin[2] -= gCVars.pModelSlideHeight->value * flSlideRatio;
 }
