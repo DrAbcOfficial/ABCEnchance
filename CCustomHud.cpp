@@ -32,6 +32,7 @@
 #include "efxhud.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
+#include "grenadeindicator.h"
 
 #ifdef _DEBUG
 #include "cctv.h"
@@ -188,6 +189,7 @@ void CCustomHud::HUD_Init(void){
 	m_HudEfx.Init();
 	m_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
+	m_HudGrenadeIndicator.Init();
 #ifdef _DEBUG
 	m_HudCCTV.Init();
 #endif
@@ -249,6 +251,7 @@ void CCustomHud::HUD_Draw(float flTime){
 	m_HudEccoMoney.Draw(flTime);
 	m_HudItemHighLight.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
+	m_HudGrenadeIndicator.Draw(flTime);
 #ifdef _DEBUG
 	m_HudCCTV.Draw(flTime);
 #endif
@@ -266,6 +269,7 @@ void CCustomHud::HUD_Reset(void){
 	m_HudEfx.Reset();
 	m_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
+	m_HudGrenadeIndicator.Reset();
 #ifdef _DEBUG
 	m_HudCCTV.Reset();
 #endif
@@ -273,10 +277,14 @@ void CCustomHud::HUD_Reset(void){
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
 }
 void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
+	if (!IsHudEnable())
+		return;
 	m_iWeaponBits = cdata->iWeaponBits;
-	m_bPlayerLongjump = atoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
+	m_bPlayerLongjump = mathlib::fatoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
 }
 void CCustomHud::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
+	if (!IsHudEnable())
+		return;
 	m_HudCustomAmmo.ClientMove(ppmove, server);
 }
 void CCustomHud::HUD_Clear(void){
@@ -284,34 +292,40 @@ void CCustomHud::HUD_Clear(void){
 	m_HudCustomAmmo.Clear();
 	m_HudEccoBuyMenu.Clear();
 	m_HudArmorHealth.Clear();
+	m_HudGrenadeIndicator.Clear();
 }
 void CCustomHud::HUD_PreRenderView(int a1){
-	if (gCVars.pDynamicHUD->value <= 0)
+	if (!IsHudEnable())
 		return;
 	m_HudRadar.PreRenderView(a1);
 }
 void CCustomHud::HUD_PostRenderView(int a1){
-	if (gCVars.pDynamicHUD->value <= 0)
+	if (!IsHudEnable())
 		return;
 }
 void CCustomHud::IN_MouseEvent(int mstate){
-	if (gCVars.pDynamicHUD->value <= 0)
+	if (!IsHudEnable())
 		return;
 }
 int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
+	if (!IsHudEnable())
+		return 1;
 	int result = 1;
 	result &= m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
 	return result;
 }
 void CCustomHud::IN_Accumulate(void){
-	if (gCVars.pDynamicHUD->value <= 0)
+	if (!IsHudEnable())
 		return;
 	m_HudCustomAmmo.IN_Accumulate();
 }
 int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname){
+	if (!IsHudEnable())
+		return true;
 	bool result = true;
 	result = result && m_HudEccoBuyMenu.AddEntity(type, ent, modelname);
 	m_HudItemHighLight.AddEntity(type, ent, modelname);
+	m_HudGrenadeIndicator.HUD_AddEntity(type, ent, modelname);
 	return result;
 }
 void CCustomHud::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {

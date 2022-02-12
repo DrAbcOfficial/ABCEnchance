@@ -31,14 +31,14 @@ public:
 	{
 	}
 
-	[[nodiscard]] constexpr Vector2D operator+(const Vector2D& v) const { return Vector2D(x + v.x, y + v.y); }
-	[[nodiscard]] constexpr Vector2D operator-(const Vector2D& v) const { return Vector2D(x - v.x, y - v.y); }
-	[[nodiscard]] constexpr Vector2D operator*(float fl) const { return Vector2D(x * fl, y * fl); }
-	[[nodiscard]] constexpr Vector2D operator/(float fl) const { return Vector2D(x / fl, y / fl); }
+	[[nodiscard]] inline constexpr Vector2D operator+(const Vector2D& v) const { return Vector2D(x + v.x, y + v.y); }
+	[[nodiscard]] inline constexpr Vector2D operator-(const Vector2D& v) const { return Vector2D(x - v.x, y - v.y); }
+	[[nodiscard]] inline constexpr Vector2D operator*(float fl) const { return Vector2D(x * fl, y * fl); }
+	[[nodiscard]] inline constexpr Vector2D operator/(float fl) const { return Vector2D(x / fl, y / fl); }
 
-	[[nodiscard]] float Length() const { return static_cast<float>(sqrt(x * x + y * y)); }
+	[[nodiscard]] inline float Length() const { return static_cast<float>(sqrt(x * x + y * y)); }
 
-	[[nodiscard]] Vector2D Normalize() const
+	[[nodiscard]] inline Vector2D Normalize() const
 	{
 		float flLen = Length();
 		if (flLen == 0)
@@ -98,9 +98,8 @@ public:
 	[[nodiscard]] inline constexpr bool operator!=(const float* v) const { return !(*this == v); }
 	[[nodiscard]] inline constexpr Vector operator+(const float* v) const { return Vector(x + v[0], y + v[1], z + v[2]); }
 	[[nodiscard]] inline constexpr Vector operator-(const float* v) const { return Vector(x - v[0], y - v[1], z - v[2]); }
-	inline constexpr void operator+=(const float* v) const { x + v[0], y + v[1], z + v[2]; }
-	inline constexpr void operator*=(const float v) const { x * v, y * v, z * v; }
-
+	inline constexpr void operator *= (const float v) const { this->x* v; this->y* v; this->z* v; }
+	inline constexpr void operator += (const float* v) const { this->x* v[0]; this->y* v[1]; this->z* v[2]; }
 	// Methods
 	inline constexpr void CopyToArray(float* rgfl) const { rgfl[0] = x, rgfl[1] = y, rgfl[2] = z; }
 
@@ -110,7 +109,7 @@ public:
 	[[nodiscard]] inline constexpr operator float* () { return &x; }			 // Vectors will now automatically convert to float * when needed
 	[[nodiscard]] inline constexpr operator const float* () const { return &x; } // Vectors will now automatically convert to float * when needed
 
-	[[nodiscard]] Vector Normalize() const
+	[[nodiscard]] inline Vector Normalize() const
 	{
 		float flLen = Length();
 		if (flLen == 0)
@@ -119,12 +118,12 @@ public:
 		return Vector(x * flLen, y * flLen, z * flLen);
 	}
 
-	[[nodiscard]] constexpr Vector2D Make2D() const
+	[[nodiscard]] inline constexpr Vector2D Make2D() const
 	{
 		return { x, y };
 	}
 
-	[[nodiscard]] float Length2D() const { return static_cast<float>(sqrt(x * x + y * y)); }
+	[[nodiscard]] inline float Length2D() const { return static_cast<float>(sqrt(x * x + y * y)); }
 
 	// Members
 	vec_t x = 0, y = 0, z = 0;

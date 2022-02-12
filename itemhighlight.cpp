@@ -123,7 +123,8 @@ void CHudItemHighLight::AddEntity(int type, cl_entity_s* ent, const char* modeln
 	if (gCVars.pItemHighLight->value <= 0)
 		return;
 	//mdlÄ£ÐÍ
-	if ((ent) && (ent->model) && (ent->model->type == mod_studio) &&
+	if ((ent) && (ent->model) && (ent->curstate.movetype == MOVETYPE_TOSS) &&
+		(ent->curstate.solid == SOLID_TRIGGER) && (ent->model->type == mod_studio) &&
 		m_mapHighLightTable.count(ent->curstate.modelindex) && 
 		!m_mapToBeDraw.count(ent->index)) {
 		m_mapToBeDraw[ent->index] = ent;
