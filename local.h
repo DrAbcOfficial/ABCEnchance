@@ -65,6 +65,7 @@ typedef struct{
 	cvar_t* pPlayerTitleLength;
 	cvar_t* pPlayerTitleHeight;
 
+	cvar_t* pHealthArmorStyle;
 	cvar_t* pDangerHealth;
 	cvar_t* pDangerArmor;
 	cvar_t* pDamageScreenFilter;

@@ -89,6 +89,7 @@ void CHudArmorHealth::Init(void){
 	gCVars.pDamageScreenBase = CREATE_CVAR("cl_damageshock_base", "15", FCVAR_VALUE, nullptr);
 	gCVars.pDangerHealth = CREATE_CVAR("cl_dangerhealth", "45", FCVAR_VALUE, nullptr);
 	gCVars.pDangerArmor = CREATE_CVAR("cl_dangerarmor", "45", FCVAR_VALUE, nullptr);
+	gCVars.pHealthArmorStyle = CREATE_CVAR("cl_hud_healthammo_style", "0", FCVAR_VALUE, nullptr);
 
 	StartX = GET_SCREEN_PIXEL(false, "HealthArmor.StartX");
 	IconSize = GET_SCREEN_PIXEL(true, "HealthArmor.IconSize");
@@ -177,18 +178,26 @@ int CHudArmorHealth::Draw(float flTime) {
 	DrawPain(flTime);
 	if (!gCustomHud.HasSuit())
 		return 1;
+
 	int r, g, b, a;
 	float flBackGroundY = BackGroundY;
-	gCustomHud.surface()->DrawSetTexture(-1);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-	gCustomHud.surface()->DrawSetTexture(iHealthBarBackground);
-	gCustomHud.surface()->DrawTexturedRect(0, flBackGroundY, BackGroundLength, gScreenInfo.iHeight);
-
-	float flBackGroundHeight = gScreenInfo.iHeight - flBackGroundY;
-	float flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
+	float flBackGroundHeight = ScreenHeight - flBackGroundY;
+	float flCenterY = ScreenHeight - flBackGroundHeight / 2;
 	int iStartX = StartX;
 	wchar_t wideName[8];
 	int iTextWidth, iTextHeight;
+
+	float flBackGroundLength = 4 * (IconSize + ElementGap); 
+	GetStringSize(L"100", &iTextWidth, &iTextHeight, HUDFont);
+	flBackGroundLength += 2 * (iTextWidth + ElementGap);
+	if (gCVars.pHealthArmorStyle->value <= 0)
+		flBackGroundLength += 2 * (BarLength + ElementGap);
+	if (flBackGroundLength > BackGroundLength)
+		flBackGroundLength = BackGroundLength;
+	gCustomHud.surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+	gCustomHud.surface()->DrawSetTexture(iHealthBarBackground);
+	gCustomHud.surface()->DrawTexturedRect(0, flBackGroundY, flBackGroundLength, ScreenHeight);
 	//HP
 	if (!gCustomHud.IsHudHide(HUD_HIDEHEALTH)) {
 		int iHealth = m_iHealth;
@@ -206,21 +215,24 @@ int CHudArmorHealth::Draw(float flTime) {
 			HealthTextColor.GetColor(r, g, b, a);
 		DrawVGUI2String(wideName, iStartX, flCenterY - iTextHeight / 2, r, g, b, HUDFont);
 		iStartX += iTextWidth + ElementGap;
-		if (flTime < flPainColorKeepTime) {
-			HealthPainColor.GetColor(r, g, b, a);
-			CalcuPainFade(r, g, b, &HealthBarColor, flPainColorKeepTime - flTime);
+		if (gCVars.pHealthArmorStyle->value <= 0) {
+			if (flTime < flPainColorKeepTime) {
+				HealthPainColor.GetColor(r, g, b, a);
+				CalcuPainFade(r, g, b, &HealthBarColor, flPainColorKeepTime - flTime);
+			}
+			else {
+				if (iHealth <= gCVars.pDangerHealth->value)
+					HealthDangerColor.GetColor(r, g, b, a);
+				else
+					HealthBarColor.GetColor(r, g, b, a);
+			}
+			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
+				BarLength, BarWidth, r / 2, g / 2, b / 2, a);
+			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
+				BarLength * clamp((float)iHealth / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
+			iStartX += BarLength + 2 * ElementGap;
 		}
-		else {
-			if (iHealth <= gCVars.pDangerHealth->value)
-				HealthDangerColor.GetColor(r, g, b, a);
-			else
-				HealthBarColor.GetColor(r, g, b, a);
-		}
-		gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-			BarLength, BarWidth, r / 2, g / 2, b / 2, a);
-		gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-			BarLength * clamp((float)iHealth / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
-		iStartX += BarLength + ElementGap * 4;
+		iStartX += 2 * ElementGap;
 	}
 	//AP
 	if(!gCustomHud.IsHudHide(HUD_HIDEBATTERY)) {
@@ -240,22 +252,23 @@ int CHudArmorHealth::Draw(float flTime) {
 			ArmorTextColor.GetColor(r, g, b, a);
 		DrawVGUI2String(wideName, iStartX, flCenterY - iTextHeight / 2, r, g, b, HUDFont);
 		iStartX += iTextWidth + ElementGap;
-
-		if (flTime < flPainColorKeepTime) {
-			ArmorPainColor.GetColor(r, g, b, a);
-			CalcuPainFade(r, g, b, &ArmorBarColor, flPainColorKeepTime - flTime);
+		if (gCVars.pHealthArmorStyle->value <= 0) {
+			if (flTime < flPainColorKeepTime) {
+				ArmorPainColor.GetColor(r, g, b, a);
+				CalcuPainFade(r, g, b, &ArmorBarColor, flPainColorKeepTime - flTime);
+			}
+			else {
+				if (iBattery <= gCVars.pDangerArmor->value)
+					ArmorDangerColor.GetColor(r, g, b, a);
+				else
+					ArmorBarColor.GetColor(r, g, b, a);
+			}
+			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
+				BarLength, BarWidth, r / 2, g / 2, b / 2, a);
+			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
+				BarLength * clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
+			iStartX += BarLength + ElementGap * 2;
 		}
-		else {
-			if (iBattery <= gCVars.pDangerArmor->value)
-				ArmorDangerColor.GetColor(r, g, b, a);
-			else
-				ArmorBarColor.GetColor(r, g, b, a);
-		}
-		gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-			BarLength, BarWidth, r / 2, g / 2, b / 2, a);
-		gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-			BarLength * clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
-		iStartX += BarLength + ElementGap * 2;
 	}
 	if (gCustomHud.m_bPlayerLongjump) {
 		LongjumpIconColor.GetColor(r, g, b, a);

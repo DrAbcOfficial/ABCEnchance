@@ -64,6 +64,7 @@
 |cl_itemhighlight|是否显示物品高亮|1|0/1|
 |cl_itemhighlightrange|物品高亮范围|344|0~500|
 |---|---|---|---|
+|cl_hud_healthammo_style|隐藏血条护甲条|0|0/1|
 |cl_dangerhealth|濒死生命值|45|0~9999|
 |cl_dangerarmor|濒死护甲值|45|0~9999|
 |cl_damageshock|启用受伤色差|0|0/1|
@@ -72,7 +73,7 @@
 |---|---|---|---|
 |hud_deathnotice_time|死亡提示保持时间|6|0~9999|
 |---|---|---|---|
-|cl_radar|启用雷达|1|0/1/2|
+|cl_radar|启用雷达|2|0/1/2|
 |cl_radarzoom|雷达缩放倍数|2.5|0.0001~9999|
 |cl_radarsize|雷达绘制尺寸|344|0-9999|
 |cl_radarsizetime|雷达放大动画时间|0.25|0~9999|
