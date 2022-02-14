@@ -72,6 +72,7 @@
 |cl_itemhighlight|Draw item high light|1|0/1|
 |cl_itemhighlightrange|Item high light range|344|0~500|
 |---|---|---|---|
+|cl_hud_healthammo_style|Hide health and armor bar|0|0/1|
 |cl_dangerhealth|Danger health value|45|0~9999|
 |cl_dangerarmor|Danger armor value|45|0~9999|
 |cl_damageshock|Enable shock pain indicator|0|0/1|
