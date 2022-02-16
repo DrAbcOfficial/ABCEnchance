@@ -55,13 +55,9 @@ void CWeaponMenuSlot::VidInit(){
 }
 int CWeaponMenuSlot::DrawBar(int x, int y, int width, int height, float f){
 	int r = 0, g = 0, b = 0, a = 0;
-	if (f < 0)
-		f = 0;
-	if (f > 1)
-		f = 1;
+	f = clamp(f, 0.0f, 1.0f);
 	if (f){
 		int w = f * width;
-		// Always show at least one pixel if we have ammo.
 		if (w <= 0)
 			w = 1;
 		SelectIconColor.GetColor(r, g, b, a);
