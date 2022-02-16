@@ -97,7 +97,6 @@ void CHudArmorHealth::Init(void){
 	BarWidth = GET_SCREEN_PIXEL(true, "HealthArmor.BarWidth");
 	ElementGap = GET_SCREEN_PIXEL(true, "HealthArmor.ElementGap");
 	BackGroundY = GET_SCREEN_PIXEL(true, "HealthArmor.BackGroundY");
-	BackGroundLength = GET_SCREEN_PIXEL(false, "HealthArmor.BackGroundLength");
 	DamageIconX = GET_SCREEN_PIXEL(false, "HealthArmor.DamageIconX");
 	DamageIconY = GET_SCREEN_PIXEL(true, "HealthArmor.DamageIconY");
 	DamageIconSize = GET_SCREEN_PIXEL(true, "HealthArmor.DamageIconSize");
@@ -187,13 +186,20 @@ int CHudArmorHealth::Draw(float flTime) {
 	wchar_t wideName[8];
 	int iTextWidth, iTextHeight;
 
-	float flBackGroundLength = 4 * (IconSize + ElementGap); 
+	float flBackGroundLength = 0; 
 	GetStringSize(L"100", &iTextWidth, &iTextHeight, HUDFont);
-	flBackGroundLength += 2 * (iTextWidth + ElementGap);
-	if (gCVars.pHealthArmorStyle->value <= 0)
-		flBackGroundLength += 2 * (BarLength + ElementGap);
-	if (flBackGroundLength > BackGroundLength)
-		flBackGroundLength = BackGroundLength;
+	if (!gCustomHud.IsHudHide(HUD_HIDEHEALTH)) {
+		flBackGroundLength += IconSize + iTextWidth + 2 * ElementGap;
+		if (gCVars.pHealthArmorStyle->value <= 0)
+			flBackGroundLength += BarLength + ElementGap;
+	}
+	if (!gCustomHud.IsHudHide(HUD_HIDEBATTERY)) {
+		flBackGroundLength += IconSize + iTextWidth + 2 * ElementGap;
+		if (gCVars.pHealthArmorStyle->value <= 0)
+			flBackGroundLength += BarLength + ElementGap;
+	}
+	flBackGroundLength += 2 * (IconSize + ElementGap);
+
 	gCustomHud.surface()->DrawSetTexture(-1);
 	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
 	gCustomHud.surface()->DrawSetTexture(iHealthBarBackground);

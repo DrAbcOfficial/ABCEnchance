@@ -128,8 +128,6 @@ Scheme
 		"HealthArmor.ElementGap"		"0.01"
 		//[长度]血条护甲条背景图片起始高
 		"HealthArmor.BackGroundY"		"0.95"
-		//[尺寸]背景图片长度
-		"HealthArmor.BackGroundLength"	"0.333"
 		//[长度]伤害类型图标起始宽
 		"HealthArmor.DamageIconX"		"0"
 		//[长度]伤害类型图标起始高
@@ -143,8 +141,6 @@ Scheme
 		//色差伤害指示器持续时间
 		"HealthArmor.ShockIndicatorTime""0.2"
 
-        //子弹图标大小
-		"AmmoHUD.IconSize"			"0.03"
 		//文字图标间隔
 		"AmmoHUD.ElementGap"		"0.01"
 		//背景图片起始高

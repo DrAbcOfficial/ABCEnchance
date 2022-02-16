@@ -219,7 +219,6 @@ int CHudCustomAmmo::Init(void){
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuStyle = CREATE_CVAR("cl_wmenustyle", "0", FCVAR_VALUE, ChangeWMenuStyleCallBack);
 	
-	IconSize = GET_SCREEN_PIXEL(true, "AmmoHUD.IconSize");
 	ElementGap = GET_SCREEN_PIXEL(true, "AmmoHUD.ElementGap");
 	BackGroundY = GET_SCREEN_PIXEL(true, "AmmoHUD.BackGroundY");
 	BackGroundLength = GET_SCREEN_PIXEL(false, "AmmoHUD.BackGroundLength");
@@ -301,10 +300,10 @@ int CHudCustomAmmo::Draw(float flTime){
 		return 1;
 	if (gClientData->health <= 0)
 		return 1;
-	//0.5s 进行一次武器同步
-	if (gEngfuncs.GetClientTime() > m_fNextSyncTime) {
+	//0.3s 进行一次武器同步
+	if (flTime > m_fNextSyncTime) {
 		SyncWeapon();
-		m_fNextSyncTime = gEngfuncs.GetClientTime() + 0.5F;
+		m_fNextSyncTime = flTime + 0.3f;
 	}
 	// Draw Weapon Menu
 	DrawWList(flTime);
@@ -316,35 +315,75 @@ int CHudCustomAmmo::Draw(float flTime){
 		return 0;
 	if ((pw->iAmmoType < 0) && (pw->iAmmo2Type < 0))
 		return 0;
+
 	int r, g, b, a;
-	float nowX = gScreenInfo.iWidth - BackGroundLength;
-	float flBackGroundHeight = gScreenInfo.iHeight - BackGroundY;
-	float flCenterX = nowX + (gScreenInfo.iWidth - nowX) / 2, flCenterY = gScreenInfo.iHeight - flBackGroundHeight / 2;
-	int nowY;
+	int nowX = ScreenWidth;
+	int nowY = ScreenHeight;
+	int HalfY = ScreenHeight - ((ScreenHeight - BackGroundY) / 2);
 	int iTextHeight;
 	int iTextWidth;
 	wchar_t buf[16];
-	if (pw->iAmmoType > 0){
-		gCustomHud.surface()->DrawSetTexture(-1);
-		gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-		gCustomHud.surface()->DrawSetTexture(iBackGroundTga);
-		gCustomHud.surface()->DrawTexturedRect(nowX, BackGroundY, gScreenInfo.iWidth, gScreenInfo.iHeight);
- 		nowX = flCenterX;
-		nowY = flCenterY;
+	//从右往左绘制
+	gCustomHud.surface()->DrawSetTexture(-1);
+	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
+	gCustomHud.surface()->DrawSetTexture(iBackGroundTga);
+	gCustomHud.surface()->DrawTexturedRect(nowX - BackGroundLength, BackGroundY, ScreenWidth, ScreenHeight);
 
+	nowX -= BackGroundLength / 6;
+	if (pw->iAmmo2Type > 0) {
+		Ammo2IconColor.GetColor(r, g, b, a);
+		nowX -= (m_pWeapon->rcAmmo2.right - m_pWeapon->rcAmmo2.left);
+		nowY = HalfY - (m_pWeapon->rcAmmo2.bottom - m_pWeapon->rcAmmo2.top) / 2;
+		SPR_Set(m_pWeapon->hAmmo2, r, g, b);
+		SPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo2);
+		nowX -= ElementGap;
+		if (pw->iClip2 >= 0) {
+			Ammo2TextColor.GetColor(r, g, b, a);
+			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
+			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
+			nowY = HalfY - iTextHeight / 2;
+			nowX -= iTextWidth;
+			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
+
+			Ammo2BigTextColor.GetColor(r, g, b, a);
+			wsprintfW(buf, L"%d/", pw->iClip2);
+			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
+			nowY = HalfY - iTextHeight / 2;
+			nowX -= iTextWidth;
+			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
+		}
+		else {
+			Ammo2BigTextColor.GetColor(r, g, b, a);
+			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
+			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
+			nowY = HalfY - iTextHeight / 2;
+			nowX -= iTextWidth;
+			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
+		}
+		nowX -= ElementGap;
+		wsprintfW(buf, L"|");
+		GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
+		nowY = HalfY - iTextHeight / 2;
+		nowX -= iTextWidth;
+		DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
+		nowX -= ElementGap;
+	}
+	if (pw->iAmmoType > 0){
+		if (pw->iAmmo2Type <= 0)
+			nowX = ScreenWidth - (BackGroundLength / 3);
 		if (pw->iClip >= 0){
 			Ammo1TextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
 			nowX -= iTextWidth;
-			nowY -= iTextHeight / 2;
+			nowY = HalfY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
 
 			Ammo1BigTextColor.GetColor(r, g, b, a);
 			wsprintfW(buf, L"%d/", pw->iClip);
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
 			nowX -= iTextWidth;
-			nowY = flCenterY - iTextHeight / 2;
+			nowY = HalfY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
 		else{
@@ -352,47 +391,15 @@ int CHudCustomAmmo::Draw(float flTime){
 			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
 			nowX -= iTextWidth;
-			nowY -= iTextHeight / 2;
+			nowY = HalfY - iTextHeight / 2;
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
 		}
-
+		nowX -= ElementGap;
 		Ammo1IconColor.GetColor(r, g, b, a);
-		nowY = flCenterY - (m_pWeapon->rcAmmo.bottom - m_pWeapon->rcAmmo.top) / 2;
-		nowX -= ElementGap + IconSize;
-		gEngfuncs.pfnSPR_Set(m_pWeapon->hAmmo, r, g, b);
-		gEngfuncs.pfnSPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo);
-	}
-
-	if (pw->iAmmo2Type > 0){
-		nowX = flCenterX + ElementGap * 2;
-		if (pw->iClip2 >= 0){
-			Ammo2BigTextColor.GetColor(r, g, b, a);
-			wsprintfW(buf, L"%d/", pw->iClip2);
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = flCenterY - iTextHeight / 2;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-			nowX += iTextWidth;
-	
-			Ammo2TextColor.GetColor(r, g, b, a);
-			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
-			nowY = flCenterY - iTextHeight / 2;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
-			nowX += iTextWidth;
-		}
-		else{
-			Ammo2BigTextColor.GetColor(r, g, b, a);
-			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = flCenterY - iTextHeight / 2;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-			nowX += iTextWidth;
-		}
-		Ammo2IconColor.GetColor(r, g, b, a);
-		nowX += ElementGap;
-		nowY = flCenterY - (m_pWeapon->rcAmmo2.bottom - m_pWeapon->rcAmmo2.top) / 2;
-		gEngfuncs.pfnSPR_Set(m_pWeapon->hAmmo2, r, g, b);
-		gEngfuncs.pfnSPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo2);
+		nowX -= (m_pWeapon->rcAmmo.right - m_pWeapon->rcAmmo.left);
+		nowY = HalfY - (m_pWeapon->rcAmmo.bottom - m_pWeapon->rcAmmo.top) / 2;
+		SPR_Set(m_pWeapon->hAmmo, r, g, b);
+		SPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo);
 	}
 	return 1;
 }
