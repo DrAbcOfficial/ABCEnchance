@@ -23,10 +23,9 @@ private:
 	void SyncWeapon();
 	float m_fNextSyncTime = 0;
 
-	float IconSize = 0.5F;
-	float ElementGap = 0.2F;
-	float BackGroundY = 0.95F;
-	float BackGroundLength = 3.0F;
+	float ElementGap = 0.2f;
+	float BackGroundY = 0.95f;
+	float BackGroundLength = 3.0f;
 
 	GLint iBackGroundTga = 0;
 
