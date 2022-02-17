@@ -98,11 +98,11 @@ public:
 	[[nodiscard]] inline constexpr bool operator!=(const float* v) const { return !(*this == v); }
 	[[nodiscard]] inline constexpr Vector operator+(const float* v) const { return Vector(x + v[0], y + v[1], z + v[2]); }
 	[[nodiscard]] inline constexpr Vector operator-(const float* v) const { return Vector(x - v[0], y - v[1], z - v[2]); }
-	[[nodiscard]] inline constexpr Vector operator+=(const Vector& v) { this->x += v.x; this->y += v.y; this->z += v.z; return *this; }
-	[[nodiscard]] inline constexpr Vector operator+=(const float* v) { this->x += v[0]; this->y += v[1]; this->z += v[2]; return *this; }
-	[[nodiscard]] inline constexpr Vector operator*=(const float v) { this->x *= v; this->y *= v; this->z *= v; return *this; }
-	[[nodiscard]] inline constexpr Vector operator-=(const Vector& v) { this->x -= v.x; this->y -= v.y; this->z -= v.z; return *this; }
-	[[nodiscard]] inline constexpr Vector operator-=(const float* v) { this->x -= v[0]; this->y -= v[1]; this->z -= v[2]; return *this; }
+	inline constexpr Vector operator+=(const Vector& v) { this->x += v.x; this->y += v.y; this->z += v.z; return *this; }
+	inline constexpr Vector operator+=(const float* v) { this->x += v[0]; this->y += v[1]; this->z += v[2]; return *this; }
+	inline constexpr Vector operator*=(const float v) { this->x *= v; this->y *= v; this->z *= v; return *this; }
+	inline constexpr Vector operator-=(const Vector& v) { this->x -= v.x; this->y -= v.y; this->z -= v.z; return *this; }
+	inline constexpr Vector operator-=(const float* v) { this->x -= v[0]; this->y -= v[1]; this->z -= v[2]; return *this; }
 	// Methods
 	inline constexpr void CopyToArray(float* rgfl) const { rgfl[0] = x, rgfl[1] = y, rgfl[2] = z; }
 
