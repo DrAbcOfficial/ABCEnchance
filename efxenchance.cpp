@@ -52,9 +52,9 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 			nColor = clamp(nColor, 0, 255);
 			pTemp->entity.curstate.scale = gEngfuncs.pfnRandomFloat((size / 25.0f), (size / 35.0f));
 			pTemp->flags = FTENT_SPRANIMATE;
-			pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r;
-			pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g;
-			pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b;
+			pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r();
+			pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g();
+			pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b();
 			pTemp->entity.curstate.framerate = pModel->numframes * 10; //1s
 			pTemp->die = gEngfuncs.GetClientTime() + (pModel->numframes / pTemp->entity.curstate.framerate);
 			pTemp->entity.angles[2] = gEngfuncs.pfnRandomFloat(0, 360);
@@ -71,9 +71,9 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 					return;
 				pTemp->flags = FTENT_COLLIDEWORLD | FTENT_SLOWGRAVITY;
 				pTemp->entity.curstate.scale = gEngfuncs.pfnRandomFloat((size / 25.0f), (size / 35.0f));
-				pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r;
-				pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g;
-				pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b;
+				pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r();
+				pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g();
+				pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b();
 				pTemp->die = gEngfuncs.GetClientTime() + gEngfuncs.pfnRandomFloat(1.0f, 3.0f);
 				pTemp->entity.angles[2] = gEngfuncs.pfnRandomLong(0, 360);
 				pTemp->bounceFactor = 0;
