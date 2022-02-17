@@ -100,15 +100,15 @@ private:
 
 	indicatorinfo_t m_hScreenFilter;
 
-	float StartX = 48;
-	float IconSize = 0.5;
-	float BarLength = 2;
-	float BarWidth = 0.334;
-	float ElementGap = 0.2;
-	float BackGroundY = 0.95;
-	float DamageIconX = 0;
-	float DamageIconY = 0;
-	float DamageIconSize = 96;
+	size_t StartX = 0;
+	size_t IconSize = 0;
+	size_t BarLength = 0;
+	size_t BarWidth = 0;
+	size_t ElementGap = 0;
+	size_t BackGroundY = 0;
+	size_t DamageIconX = 0;
+	size_t DamageIconY = 0;
+	size_t DamageIconSize = 0;
 
 	Color HealthIconColor;
 	Color HealthBarColor;

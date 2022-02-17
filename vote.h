@@ -19,18 +19,16 @@ private:
 	GLint m_iYesIconTga;
 	GLint m_iNoIconTga;
 
-	float XOffset;
-	float YOffset;
-	float Height;
-	float Width;
-
-	Color OutlineColor;
-	Color BackGoundColor;
-
 	wchar_t VoteTitle[256];
 	wchar_t DefaultYes[64];
 	wchar_t DefaultNo[64];
 
+	size_t XOffset = 0;
+	size_t YOffset = 0;
+	size_t Height = 0;
+	size_t Width = 0;
+	Color OutlineColor;
+	Color BackGoundColor;
 	vgui::HFont HudFont;
 };
 extern CHudVote m_HudVote;

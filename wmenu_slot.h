@@ -10,17 +10,17 @@ private:
 	int DrawBar(int x, int y, int width, int height, float f);
 	void DrawAmmoBar(WEAPON* p, int x, int y, int width, int height);
 
-	float SelectXOffset;
-	float SelectYOffset;
-	float SelectXGap;
-	float SelectYGap;
-	int SelectBucketHeight;
-	int SelectBucketWidth;
-	int SelectABHeight;
-	int SelectABWidth;
+	size_t SelectXOffset;
+	size_t SelectYOffset;
+	size_t SelectXGap;
+	size_t SelectYGap;
+	size_t SelectBucketHeight;
+	size_t SelectBucketWidth;
+	size_t SelectABHeight;
+	size_t SelectABWidth;
 
-	int iBucket0Spr;
-	int iSelectionSpr;
+	GLint iBucket0Spr;
+	GLint iSelectionSpr;
 	wrect_t* pRcSelection;
 	HSPRITE pBucketSpr; // Sprite for top row of weapons menu
 };

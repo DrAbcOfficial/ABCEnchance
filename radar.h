@@ -34,17 +34,17 @@ private:
 	pmtrace_t m_hRadarTr;
 	float flNextUpdateTrTime;
 
-	float XOffset;
-	float YOffset;
-	float OutLineAlpha;
-	GLubyte MapAlpha;
-	float CenterAlpha;
-	float NorthPointerSize;
-	float ViewAngleSize;
+	size_t XOffset = 0;
+	size_t YOffset = 0;
+	size_t OutLineAlpha = 0;
+	size_t MapAlpha = 0;
+	size_t CenterAlpha = 0;
+	size_t NorthPointerSize = 0;
+	size_t ViewAngleSize = 0;
 	
-	int iOverviewR;
-	int iOverviewG;
-	int iOverviewB;
+	size_t iOverviewR = 0;
+	size_t iOverviewG = 0;
+	size_t iOverviewB = 0;
 
 	vec3_t m_oldViewOrg;
 	vec3_t m_oldViewAng;

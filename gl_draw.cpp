@@ -85,13 +85,12 @@ void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m
 	if (height)
 		*height = GetHudFontHeight(m_hFont);
 }
+int DrawVGUI2String(wchar_t* msg, int x, int y, int r, int g, int b, vgui::HFont m_hFont, bool add) {
+	return DrawVGUI2String(msg, x, y, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, m_hFont, add);
+}
+
 int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui::HFont m_hFont, bool add) {
-	if (r > 1.0)
-		r /= 255;
-	if (g > 1.0)
-		g /= 255;
-	if (b > 1.0)
-		b /= 255;
+	
 	int iOriginalX;
 	int iTotalLines;
 	int iCurrentLine;
@@ -160,7 +159,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 
 		for (j = 0; j < iTempCount; j++) {
 			if (add)
-				gEngfuncs.pfnVGUI2DrawCharacterAdd(x, y, line[j], r * 255, g * 255, b * 255, m_hFont);
+				gEngfuncs.pfnVGUI2DrawCharacterAdd(x, y, line[j], (int)(r * 255.0f), (int)(g * 255.0f), (int)(b * 255.0f), m_hFont);
 			else
 				gEngfuncs.pfnVGUI2DrawCharacter(x, y, line[j], m_hFont);
 			g_pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
@@ -182,14 +181,14 @@ void ScaleColors(int& r, int& g, int& b, int a) {
 }
 void DrawQuadPos(int x, int y, int w, int h) {
 	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0);
-	glVertex3f(x, y + h, -1);
-	glTexCoord2f(0, 1);
-	glVertex3f(x, y, -1);
-	glTexCoord2f(1, 1);
-	glVertex3f(x + w, y, -1);
-	glTexCoord2f(1, 0);
-	glVertex3f(x + w, y + h, -1);
+	glTexCoord2i(0, 0);
+	glVertex3i(x, y + h, -1);
+	glTexCoord2i(0, 1);
+	glVertex3i(x, y, -1);
+	glTexCoord2i(1, 1);
+	glVertex3i(x + w, y, -1);
+	glTexCoord2i(1, 0);
+	glVertex3i(x + w, y + h, -1);
 	glEnd();
 }
 void DrawQuad(int w, int h) {

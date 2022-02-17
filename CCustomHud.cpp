@@ -361,10 +361,10 @@ void CCustomHud::SetBaseHudActivity() {
 	}
 }
 
-HSPRITE CCustomHud::GetSprite(int index) {
+HSPRITE CCustomHud::GetSprite(size_t index) {
 	return (index < 0) ? 0 : m_arySprites[index]->spr;
 }
-wrect_t* CCustomHud::GetSpriteRect(int index) {
+wrect_t* CCustomHud::GetSpriteRect(size_t index) {
 	if(index >= 0 && index < m_arySprites.size())
 		return &m_arySprites[index]->rect;
 	return nullptr;

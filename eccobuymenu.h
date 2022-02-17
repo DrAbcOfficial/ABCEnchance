@@ -84,10 +84,10 @@ private:
 	float BuyMenuCamDist = 0;
 	float BuyMenuCamHeight = 0;
 	float BuyMenuCamRight = 0;
-	int BuyMenuCenterX = 0;
-	int BuyMenuCenterY = 0;
-	int BuyMenuOffset = 0;
-	int BuyMenuHeight = 0;
+	size_t BuyMenuCenterX = 0;
+	size_t BuyMenuCenterY = 0;
+	size_t BuyMenuOffset = 0;
+	size_t BuyMenuHeight = 0;
 
 	vgui::HFont hFont = 0;
 

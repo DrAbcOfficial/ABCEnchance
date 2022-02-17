@@ -11,8 +11,8 @@ private:
 	//https://game-icons.net/1x1/lorc/grenade.html
 	GLint GrenadeIconTga;
 
-	GLuint IconHalfSize;
-	GLuint GrenadeIndex;
+	size_t IconHalfSize;
+	size_t GrenadeIndex;
 	std::vector<cl_entity_t*> aryGrenades;
 };
 extern CHudGrenadeIndicator m_HudGrenadeIndicator;
