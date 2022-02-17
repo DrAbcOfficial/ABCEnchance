@@ -75,8 +75,8 @@ void mathlib::CenterPos2OpenGLPos(vec2_t pos, int w, int h){
 	pos[0] += w / 2; 
 	pos[1] = h / 2 - pos[1];
 }
-int mathlib::GetScreenPixel(int length, float percent) {
-	return (float)length * clamp(percent, 0.0f, 1.0f);
+size_t mathlib::GetScreenPixel(int length, double percent) {
+	return (size_t)((float)length * clamp(percent, 0.0f, 1.0f));
 }
 void mathlib::Vector2Rotate(vec2_t out, float x, float y, float rotate) {
 	out[0] = x * cos(rotate) - y * sin(rotate); out[1] = x * sin(rotate) + y * cos(rotate);

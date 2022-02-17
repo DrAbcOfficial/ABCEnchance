@@ -45,7 +45,7 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	}
 	case CHudEccoBuyMenu::MetaHookMsgType::MHSV_CMD_ECCO_MENU: {
 		m_HudEccoBuyMenu.MenuList.clear();
-		int pageLen = (size_t)READ_BYTE();
+		size_t pageLen = (size_t)READ_BYTE();
 		m_HudEccoBuyMenu.MenuList.resize(pageLen);
 		for (size_t i = 0; i < pageLen; i++) {
 			m_HudEccoBuyMenu.MenuList[i] = READ_LONG();

@@ -139,7 +139,7 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 	}
 	gWR.FillDrawMenuGrid();
 	float flTimeDiffer = m_fFade - flTime;
-	float flStartRot = SelectRotate;
+	float flStartRot = (float)SelectRotate;
 	int iBackGroundHeight = SelectSize;
 	int iOffset = SelectOffset;
 	float flAnimationRatio = 1.0f;
@@ -236,8 +236,8 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		wp = gWR.GetWeapon(gWR.gridDrawMenu[i].iId);
 		if (!wp)
 			continue;
-		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
-		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
+		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4.0f;
+		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4.0f;
 		DrawSelectIcon(wp, a, xpos, ypos, i);
 	}
 	//ªÊ÷∆“——°

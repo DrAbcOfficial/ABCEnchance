@@ -67,12 +67,12 @@ private:
 	TEMPENTITY* pWeaponEnt = nullptr;
 	int iNowSelectedId = -1;
 
-	float flOldCamYaw;
-	float flOldCamDist;
-	float flOldCamHeight;
-	float flOldCamRight;
-	float flOldFollowAim;
-	bool bOldCamThirdperson;
+	float flOldCamYaw = 0;
+	float flOldCamDist = 0;
+	float flOldCamHeight = 0;
+	float flOldCamRight = 0;
+	float flOldFollowAim = 0;
+	bool bOldCamThirdperson = false;
 
 	GLuint iBackgroundSpr = 0;
 	GLuint iCenterSpr = 0;
