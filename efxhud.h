@@ -20,8 +20,8 @@ private:
 	float flDyingFlincAdvanceTime;
 
 	int iOldWaterType;
-	int iFrameLeft;
-	int iFrameRight;
+	size_t iFrameLeft;
+	size_t iFrameRight;
 	float flFrameLeftAdvanceTime;
 	float flFrameRightAdvanceTime;
 	float flWaterFaceDisapearTime;

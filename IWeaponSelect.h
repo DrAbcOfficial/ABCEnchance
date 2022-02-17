@@ -10,12 +10,12 @@ public:
 	bool m_bSelectMenuDisplay = false;
 	bool m_bSetedCursor = false;
 
-	float SelectOffset = 0;
-	float SelectSize = 0;
-	float SelectRotate = 0;
+	size_t SelectOffset = 0;
+	size_t SelectSize = 0;
+	size_t SelectRotate = 0;
+	size_t SelectPointerSize = 0;
 	float SelectAnimateTime = 0;
 	float SelectFadeTime = 0;
-	float SelectPointerSize = 0;
 	float SelectHoldTime = 0;
 protected:
 	float m_fAnimateTime = 0;

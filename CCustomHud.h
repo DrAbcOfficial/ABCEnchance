@@ -62,8 +62,8 @@ public:
 	bool IsHudHide(int HideToken);
 	bool IsHudEnable();
 
-	HSPRITE GetSprite(int index);
-	wrect_t* GetSpriteRect(int index);
+	HSPRITE GetSprite(size_t index);
+	wrect_t* GetSpriteRect(size_t index);
 	int GetSpriteIndex(const char* SpriteName);
 
 	hud_playerinfo_t* GetPlayerHUDInfo(int index);
@@ -81,7 +81,8 @@ public:
 	float m_flOverViewYaw = 0;
 	float m_flOverViewZmax = 0;
 	float m_flOverViewZmin = 0;
-	float m_flCursorSize = 0;
+
+	size_t m_flCursorSize = 0;
 
 	vec3_t m_vecOverViewOrg;
 	vec3_t m_vecClientEVPunch;

@@ -28,8 +28,8 @@ namespace mathlib {
 	const double M_PI = 3.14159265358979323846;
 	const double Q_PI = 3.14159265358979323846;
 	constexpr double DOUBLE_PI = 2 * 3.14159265358979323846;
-	const float EQUAL_EPSILON = 0.001;
-	const float COLINEAR_EPSILON = 0.001;
+	const float EQUAL_EPSILON = 0.001f;
+	const float COLINEAR_EPSILON = 0.001f;
 	const int MAX_PLAYER_NAME_LENGTH = 128;
 	const double RADIAN_PER_DEGREE = 57.29577951308232087684;
 	const double DEGREE_PER_RADIAN = 0.017453292519943295769;

@@ -35,10 +35,10 @@ private:
 	Color AttackerColor;
 	Color InflictorColor;
 
-	float XOffset;
-	float YOffset;
-	float GapOffset;
-	float BackGoundWidth;
+	size_t XOffset = 0;
+	size_t YOffset = 0;
+	size_t GapOffset = 0;
+	size_t BackGoundWidth = 0;
 
 	void PushDeathNotice(wchar_t* v, wchar_t* e, wchar_t* k);
 };

@@ -16,10 +16,11 @@ private:
 	std::wstring DifferMessagePostfix;
 
 	vgui::HFont HUDSmallFont;
-	GLint MoneyBackGround;
-	float YOffset;
-	float BackgroundLength;
-	float BackgroundHeight;
+
+	size_t MoneyBackGround;
+	size_t YOffset;
+	size_t BackgroundLength;
+	size_t BackgroundHeight;
 	Color MoneyColor;
 	Color MoneyDecreseColor;
 	Color MoneyIncreseColor;

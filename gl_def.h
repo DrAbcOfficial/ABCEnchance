@@ -7,7 +7,7 @@ typedef struct pp_texround_program_s {
 }pp_texround_program_t;
 typedef struct{
 	GLuint program;
-	GLfloat du;
+	GLuint du;
 	GLuint res;
 }pp_gaussianblur_program_t;
 typedef struct {

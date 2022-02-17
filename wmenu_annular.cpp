@@ -186,17 +186,18 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
 		DrawGaussianBlur(m_hGaussianBufferTex, flAnimationRatio, ScreenWidth, ScreenHeight);
 		//ªÊ÷∆ Û±Í÷∏’Î
+		float flPointerSize = (float)SelectPointerSize;
 		SelectPointerColor.GetColor(r, g, b, dummy);
 		ac = cos(m_fCursorAngle - 0.45 * M_PI);
 		as = sin(m_fCursorAngle - 0.45 * M_PI);
-		vecA[0] = -SelectPointerSize * ac - (iOffset - SelectPointerSize) * as;
-		vecA[1] = -SelectPointerSize * as + (iOffset - SelectPointerSize) * ac;
-		vecB[0] = SelectPointerSize * ac - (iOffset - SelectPointerSize) * as;
-		vecB[1] = SelectPointerSize * as + (iOffset - SelectPointerSize) * ac;
-		vecC[0] = -SelectPointerSize * ac - iOffset * as;
-		vecC[1] = -SelectPointerSize * as + iOffset * ac;
-		vecD[0] = SelectPointerSize * ac - iOffset * as;
-		vecD[1] = SelectPointerSize * as + iOffset * ac;
+		vecA[0] = -flPointerSize * ac - (iOffset - flPointerSize) * as;
+		vecA[1] = -flPointerSize * as + (iOffset - flPointerSize) * ac;
+		vecB[0] = flPointerSize * ac - (iOffset - flPointerSize) * as;
+		vecB[1] = flPointerSize * as + (iOffset - flPointerSize) * ac;
+		vecC[0] = -flPointerSize * ac - iOffset * as;
+		vecC[1] = -flPointerSize * as + iOffset * ac;
+		vecD[0] = flPointerSize * ac - iOffset * as;
+		vecD[1] = flPointerSize * as + iOffset * ac;
 		vecA[0] += halfWidth;
 		vecA[1] = halfHeight - vecA[1];
 		vecB[0] += halfWidth;
