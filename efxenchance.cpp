@@ -50,31 +50,31 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 			vec3_t	forward, right, up;
 			int nColor = colorindex;
 			nColor = clamp(nColor, 0, 255);
-			pTemp->entity.curstate.scale = gEngfuncs.pfnRandomFloat((size / 25.0f), (size / 35.0f));
+			pTemp->entity.curstate.scale = RANDOM_FLOAT((size / 25.0f), (size / 35.0f));
 			pTemp->flags = FTENT_SPRANIMATE;
 			pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r();
 			pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g();
 			pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b();
 			pTemp->entity.curstate.framerate = pModel->numframes * 10; //1s
 			pTemp->die = gEngfuncs.GetClientTime() + (pModel->numframes / pTemp->entity.curstate.framerate);
-			pTemp->entity.angles[2] = gEngfuncs.pfnRandomFloat(0, 360);
+			pTemp->entity.angles[2] = RANDOM_FLOAT(0, 360);
 			pTemp->bounceFactor = 0;
 			up[0] = right[0] = forward[0] = 0.0f;
 			up[1] = right[1] = forward[1] = 0.0f;
 			up[2] = right[2] = forward[2] = 1.0f;
 			for (i = 0; i < gCVars.pBloodSpriteNumber->value; i++){
 				VectorCopy(org, offset);
-				VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * size, right, offset);
-				VectorMA(offset, gEngfuncs.pfnRandomFloat(-0.5f, 0.5f) * size, up, offset);
+				VectorMA(offset, RANDOM_FLOAT(-0.5f, 0.5f) * size, right, offset);
+				VectorMA(offset, RANDOM_FLOAT(-0.5f, 0.5f) * size, up, offset);
 				pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(org, gEngfuncs.hudGetModelByIndex(modelIndex2));
 				if (!pTemp)
 					return;
 				pTemp->flags = FTENT_COLLIDEWORLD | FTENT_SLOWGRAVITY;
-				pTemp->entity.curstate.scale = gEngfuncs.pfnRandomFloat((size / 25.0f), (size / 35.0f));
+				pTemp->entity.curstate.scale = RANDOM_FLOAT((size / 25.0f), (size / 35.0f));
 				pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r();
 				pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g();
 				pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b();
-				pTemp->die = gEngfuncs.GetClientTime() + gEngfuncs.pfnRandomFloat(1.0f, 3.0f);
+				pTemp->die = gEngfuncs.GetClientTime() + RANDOM_FLOAT(1.0f, 3.0f);
 				pTemp->entity.angles[2] = gEngfuncs.pfnRandomLong(0, 360);
 				pTemp->bounceFactor = 0;
 				srand((unsigned int)gEngfuncs.GetClientTime() * i - i);
@@ -82,10 +82,10 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 				srand((unsigned int)gEngfuncs.GetClientTime() * i + i);
 				dir[1] = forward[1] + rand() / double(RAND_MAX) * 2 - 1;
 				dir[2] = forward[2];
-				VectorScale(dir, gEngfuncs.pfnRandomFloat(8.0f * size, 20.0f * size), pTemp->entity.baseline.origin);
-				pTemp->entity.baseline.origin[0] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pBloodSpriteSpeed->value) * (size);
-				pTemp->entity.baseline.origin[1] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 2);
-				pTemp->entity.baseline.origin[2] += gEngfuncs.pfnRandomFloat(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 4);
+				VectorScale(dir, RANDOM_FLOAT(8.0f * size, 20.0f * size), pTemp->entity.baseline.origin);
+				pTemp->entity.baseline.origin[0] += RANDOM_FLOAT(4.0f, gCVars.pBloodSpriteSpeed->value) * (size);
+				pTemp->entity.baseline.origin[1] += RANDOM_FLOAT(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 2);
+				pTemp->entity.baseline.origin[2] += RANDOM_FLOAT(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 4);
 			}
 		}
 	}
