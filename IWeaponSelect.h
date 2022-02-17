@@ -6,7 +6,7 @@ public:
 	virtual void Reset() = 0;
 	virtual void Select() = 0;
 
-	float m_fFade;
+	float m_fFade = 0;
 	bool m_bSelectMenuDisplay = false;
 	bool m_bSetedCursor = false;
 

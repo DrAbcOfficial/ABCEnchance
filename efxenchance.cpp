@@ -5,6 +5,7 @@
 #include "cl_entity.h"
 #include "mathlib.h"
 #include "com_model.h"
+#include "CColor.h"
 #include "palette.h"
 #include "extraprecache.h"
 #include "exportfuncs.h"

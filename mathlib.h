@@ -66,7 +66,7 @@ namespace mathlib {
 	int min3(int a, int b, int c);
 
 	void CenterPos2OpenGLPos(vec2_t pos, int w, int h);
-	int GetScreenPixel(int length, float percent);
+	size_t GetScreenPixel(int length, double percent);
 	void Vector2Rotate(vec2_t out, float x, float y, float rotate);
 
 	void MatrixCopy(float in[4][3], float out[4][3]);

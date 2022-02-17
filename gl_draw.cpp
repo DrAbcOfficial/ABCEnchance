@@ -202,7 +202,7 @@ void DrawGaussianBlur(GLint tex, float ratio, int w, int h) {
 	glBind(tex);
 	GL_UseProgram(pp_gaussianblur.program);
 	GL_Uniform1f(pp_gaussianblur.du, ratio);
-	GL_Uniform2f(pp_gaussianblur.res, w, h);
+	GL_Uniform2f(pp_gaussianblur.res, (float)w, (float)h);
 	glColor4ub(255, 255, 255, 255);
 	DrawQuad(w, h);
 	GL_UseProgram(0);
