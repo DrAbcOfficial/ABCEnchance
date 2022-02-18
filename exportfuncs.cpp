@@ -216,6 +216,7 @@ void InstallHook(){
 	Fill_EngFunc(pfnPlaybackEvent);
 
 	Install_InlineEngHook(pfnPlaybackEvent);
+
 	Install_InlineEngHook(R_NewMap);
 	Install_InlineEngHook(R_RenderView);
 	Install_InlineEngHook(CL_IsDevOverview);
@@ -249,10 +250,12 @@ void HUD_Init(void){
 		pSchemeManager = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, nullptr);
 		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, nullptr);
 	}
+
 	g_pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, nullptr);
 	pSchemeManager->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = pSchemeManager->GetIScheme(pSchemeManager->GetScheme("ABCEnchance"));
 	gPluginVersion = atoi(pScheme->GetResourceString("Version"));
+
 	if (gPluginVersion < PLUGIN_VERSION)
 		Sys_ErrorEx("[ABCEnchance]:\nMismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, gPluginVersion);
