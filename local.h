@@ -39,6 +39,7 @@
 
 typedef struct{
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
+
 	float*		(*GetClientColor)			(int clientIndex);
 	int(__fastcall* R_CrossHair_ReDraw)	(void* pthis, int dummy, int param_1);
 	void		(*EVVectorScale)			(float* pucnangle1, float scale, float* pucnangle2);
@@ -52,6 +53,7 @@ typedef struct{
 	void		(*R_ForceCVars)				(qboolean mp);
 	void		(*Cvar_DirectSet)			(cvar_t* var, char* value);
 	void		(*SetPunchAngle)				(int y, float value);
+
 	void		(*pfnPlaybackEvent)			(int flags, const struct edict_s* pInvoker, unsigned short eventindex, float delay, float* origin, float* angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2);
 }cl_refHookfunc_t;
 
