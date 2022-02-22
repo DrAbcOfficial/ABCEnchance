@@ -255,7 +255,8 @@ void HUD_Init(void){
 	pSchemeManager->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	pScheme = pSchemeManager->GetIScheme(pSchemeManager->GetScheme("ABCEnchance"));
 	gPluginVersion = atoi(pScheme->GetResourceString("Version"));
-
+	if(gPluginVersion <= 0)
+		Sys_ErrorEx("[ABCEnchance]:\nOoops! Can not load resource file!\nHave you installed it correctly?\n");
 	if (gPluginVersion < PLUGIN_VERSION)
 		Sys_ErrorEx("[ABCEnchance]:\nMismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, gPluginVersion);
