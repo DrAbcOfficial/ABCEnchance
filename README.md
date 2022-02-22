@@ -1,8 +1,17 @@
-# <img src="img/icon.png" width="6%"><a>&emsp;**ABCEnchance**</a>
+
+# ABCEnchance <img src="img/icon.png" align="right" width="120" />
+
+<!-- badges: start -->
+
 ![Codacy Badge](https://img.shields.io/codacy/grade/d58f0a4ca9e649ffa5d1b97bb668598c?style=for-the-badge)
 ![Repo Size](https://img.shields.io/github/repo-size/DrAbcrealone/ABCEnchance?style=for-the-badge)
 ![Last Commit](https://img.shields.io/github/last-commit/DrAbcrealone/ABCEnchance?style=for-the-badge)
-###  ABCEnchance is a metahook plugin that provides experience improvement for Sven co-op
+
+<!-- badges: end -->
+
+`ABCEnchance` is a metahook plugin that provides experience improvement for Sven co-op
+
+##  
 
 <img src="img/cover.png" width="200%">
 
@@ -28,7 +37,26 @@
 
 # 🖥️ Install
  1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
- 2. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory.
+ 2. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory. The results will be as follows.
+   
+```
+
+    Sven Coop
+    ├─svencoop
+    │  ├─abcenchance
+    │  │  ├─localize
+    │  │  ├─mdl
+    │  │  ├─shader
+    │  │  ├─spr
+    │  │  ├─tga
+    │  │  ABCEnchance.res
+    │  └─metahook
+    │     └─plugins
+    │        └─ABCEnchance.dll       
+    svencoop.exe
+
+```
+
  3. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
  4. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
 
