@@ -1,9 +1,15 @@
-# <img src="img/icon.png" width="6%"><a>&emsp;**ABCEnchance**</a>
-![Codacy Badge](https://img.shields.io/codacy/grade/d58f0a4ca9e649ffa5d1b97bb668598c?label=%E4%BB%A3%E7%A0%81%E8%B4%A8%E9%87%8F&style=for-the-badge)
-![Repo Size](https://img.shields.io/github/repo-size/DrAbcrealone/ABCEnchance?label=%E5%82%A8%E5%AD%98%E5%BA%93%E5%A4%A7%E5%B0%8F&style=for-the-badge)
-![Last Commit](https://img.shields.io/github/last-commit/DrAbcrealone/ABCEnchance?label=%E6%9C%80%E5%90%8E%E6%8F%90%E4%BA%A4%E6%97%B6%E9%97%B4&style=for-the-badge)
 
-###  ABCEnchance 是一个旨在提升Sven coop游玩体验并加入更多(花里胡哨)功能的metahook插件
+# ABCEnchance <img src="img/icon.png" align="right" width="120" />
+
+<!-- badges: start -->
+![Codacy Badge](https://img.shields.io/codacy/grade/d58f0a4ca9e649ffa5d1b97bb668598c?style=for-the-badge)
+![Repo Size](https://img.shields.io/github/repo-size/DrAbcrealone/ABCEnchance?style=for-the-badge)
+![Last Commit](https://img.shields.io/github/last-commit/DrAbcrealone/ABCEnchance?style=for-the-badge)
+<!-- badges: end -->
+
+`ABCEnchance` 是一个旨在提升Sven coop游玩体验并加入更多(花里胡哨)功能的metahook插件
+
+## 
 
 <img src="img/cover.png" width="200%">
 
@@ -22,7 +28,25 @@
 
 # 🖥️ 安装
  1. 下载并依照指示安装 [MetahookSV](https://github.com/hzqst/MetaHookSv)
- 2. 下载`Build`文件夹, 并把 `abcenchance` 文件夹放入 `svencoop` 文件夹内, 把 `ABCEnchance.dll` 文件放入 `svencoop/metahook/plugins` 内.
+ 2. 下载`Build`文件夹, 并把 `abcenchance` 文件夹放入 `svencoop` 文件夹内, 把 `ABCEnchance.dll` 文件放入 `svencoop/metahook/plugins` 内, 放置完毕后的文件夹将如下所示
+   
+```
+    Sven Coop
+    ├─svencoop
+    │  ├─abcenchance
+    │  │  ├─localize
+    │  │  ├─mdl
+    │  │  ├─shader
+    │  │  ├─spr
+    │  │  ├─tga
+    │  │  ABCEnchance.res
+    │  └─metahook
+    │     └─plugins
+    │        └─ABCEnchance.dll       
+    svencoop.exe
+
+```
+
  3. 用记事本或其他工具打开 `svencoop/metahook/configs/plugins.lst`文件，新建一行添加 `ABCEnchance.dll`
  4. 用记事本或其他工具依照个人喜好编辑 `svencoop/abcenchance/ABCEnchance.res` 文件
 
