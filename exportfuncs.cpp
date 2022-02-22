@@ -250,13 +250,16 @@ void HUD_Init(void){
 		pSchemeManager = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, nullptr);
 		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, nullptr);
 	}
-
 	g_pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, nullptr);
-	pSchemeManager->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
-	pScheme = pSchemeManager->GetIScheme(pSchemeManager->GetScheme("ABCEnchance"));
-	gPluginVersion = atoi(pScheme->GetResourceString("Version"));
-	if(gPluginVersion <= 0)
+	vgui::HScheme iScheme = pSchemeManager->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
+	if (iScheme > 0) {
+		pScheme = pSchemeManager->GetIScheme(pSchemeManager->GetScheme("ABCEnchance"));
+		gPluginVersion = atoi(pScheme->GetResourceString("Version"));
+	}
+	else {
 		Sys_ErrorEx("[ABCEnchance]:\nOoops! Can not load resource file!\nHave you installed it correctly?\n");
+		return;
+	}	
 	if (gPluginVersion < PLUGIN_VERSION)
 		Sys_ErrorEx("[ABCEnchance]:\nMismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, gPluginVersion);
