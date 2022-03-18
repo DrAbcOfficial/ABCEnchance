@@ -413,14 +413,14 @@ void CHudCustomAmmo::ChosePlayerWeapon(){
 		gWR.iNowSlot = -1;
 	}
 }
-void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
+void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bJump = false){
 	if (!gCustomHud.IsHudEnable())
 		return;
 	if (gHookHud.m_Menu->m_fMenuDisplayed)
 		return;
 	if (!gCustomHud.HasSuit())
 		return;
-	gWR.SelectSlot(iSlot, fAdvance);
+	gWR.SelectSlot(iSlot, fAdvance, bJump);
 }
 int CHudCustomAmmo::DrawWList(float flTime){
 	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDESELECTION))
