@@ -347,27 +347,21 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bJump){
 	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
 		gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
 
-	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOTS - 1);
 	WEAPON* wp = nullptr;
+	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT_INDEX);
 	//如果是当前slot
 	if (iSlot == iNowSlot) {
 		//避免死循环
 		if (gridDrawMenu[iNowSlot].iPos < 0 && gridDrawMenu[iNowSlot].iId < 0)
 			return;
-		int menuPos = mathlib::clamp(gridDrawMenu[iNowSlot].iPos + fAdvance, 0, MAX_WEAPON_POSITIONS_USER - 1);
+		int menuPos = mathlib::clamp(gridDrawMenu[iNowSlot].iPos + fAdvance, 0, MAX_WEAPON_POSUSER_INDEX);
 		while (menuPos != gridDrawMenu[iNowSlot].iPos) {
 			wp = GetWeaponSlot(iSlot, menuPos);
 			menuPos += fAdvance;
-			if (menuPos >= MAX_WEAPON_POSITIONS_USER) {
-				//if(bJump)
-				//	iSlot = mathlib::clamp(iSlot++, 0, MAX_WEAPON_SLOTS - 1);
+			if (menuPos >= MAX_WEAPON_POSITIONS_USER)
 				menuPos = 0;
-			}	
-			else if (menuPos < 0) {
-				//if (bJump)
-				//	iSlot = mathlib::clamp(iSlot++, 0, MAX_WEAPON_SLOTS - 1);
-				menuPos = MAX_WEAPON_POSITIONS_USER - 1;
-			}
+			else if (menuPos < 0) 
+				menuPos = MAX_WEAPON_POSUSER_INDEX;
 			if (wp) {
 				//经典样式
 				if (gCVars.pAmmoMenuStyle->value <= 0 && HasAmmo(wp))
@@ -421,7 +415,7 @@ WEAPON* WeaponsResource::GetLastPos(int iSlot) {
 	if (iSlot >= MAX_WEAPON_SLOTS)
 		return nullptr;
 	WEAPON* now = nullptr;
-	for (size_t i = MAX_WEAPON_POSITIONS_USER - 1; i >= 0 ; i--){
+	for (size_t i = MAX_WEAPON_POSUSER_INDEX; i > 0; i--) {
 		now = GetWeaponSlot(iSlot, i);
 		if (HasWeapon(iSlot, i) && HasAmmo(now))
 			return now;
@@ -434,7 +428,7 @@ int WeaponsResource::CountAmmo(int iId){
 	return  riAmmo[iId];
 }
 void WeaponsResource::SetUserSlot(int iSlot, int iId){
-	gridSlotMap[iSlot][MAX_WEAPON_POSITIONS_USER - 1] = iId;
+	gridSlotMap[iSlot][MAX_WEAPON_POSUSER_INDEX] = iId;
 }
 int WeaponsResource::HasAmmo(WEAPON* p){
 	if (!p)
