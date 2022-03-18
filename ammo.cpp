@@ -101,7 +101,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
 	while (tw > 0){
 		posFlag++;
 		//草你真的应该去找服主排查下冲突
-		if (Weapon.iSlotPos >= MAX_WEAPON_POSITIONS - 1) {
+		if (Weapon.iSlotPos >= MAX_WEAPON_POS_INDEX) {
 			posFlag = Weapon.iSlotPos;
 			break;
 		}
@@ -413,7 +413,7 @@ void CHudCustomAmmo::ChosePlayerWeapon(){
 		gWR.iNowSlot = -1;
 	}
 }
-void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bJump = false){
+void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bJump){
 	if (!gCustomHud.IsHudEnable())
 		return;
 	if (gHookHud.m_Menu->m_fMenuDisplayed)
