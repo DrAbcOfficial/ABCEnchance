@@ -230,7 +230,7 @@ void CWeaponMenuSlot::Select(){
 			return;
 		m_HudCustomAmmo.ChosePlayerWeapon();
 	}
-	gWR.iNowSlot = 0;
+	gWR.iNowSlot = -1;
 	m_fFade = 0;
 	m_bSelectMenuDisplay = false;
 }

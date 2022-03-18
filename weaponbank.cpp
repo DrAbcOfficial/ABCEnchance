@@ -341,7 +341,7 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
 
 	return nullptr;
 }
-void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
+void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bJump){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
 	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
@@ -358,10 +358,16 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 		while (menuPos != gridDrawMenu[iNowSlot].iPos) {
 			wp = GetWeaponSlot(iSlot, menuPos);
 			menuPos += fAdvance;
-			if (menuPos >= MAX_WEAPON_POSITIONS_USER)
+			if (menuPos >= MAX_WEAPON_POSITIONS_USER) {
+				//if(bJump)
+				//	iSlot = mathlib::clamp(iSlot++, 0, MAX_WEAPON_SLOTS - 1);
 				menuPos = 0;
-			else if (menuPos < 0)
+			}	
+			else if (menuPos < 0) {
+				//if (bJump)
+				//	iSlot = mathlib::clamp(iSlot++, 0, MAX_WEAPON_SLOTS - 1);
 				menuPos = MAX_WEAPON_POSITIONS_USER - 1;
+			}
 			if (wp) {
 				//¾­µäÑùÊ½
 				if (gCVars.pAmmoMenuStyle->value <= 0 && HasAmmo(wp))

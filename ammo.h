@@ -7,7 +7,7 @@ public:
 	int VidInit(void);
 	int Draw(float flTime);
 	void Reset(void);
-	void SlotInput(int iSlot, int fAdvance);
+	void SlotInput(int iSlot, int fAdvance, bool bJump = false);
 	void ChosePlayerWeapon(void);
 	void ClientMove(struct playermove_s* ppmove, qboolean server);
 	void IN_Accumulate();
