@@ -52,10 +52,20 @@
 
 # 🏗️ 构建
  1. 克隆或下载 [MetahookSV](https://github.com/hzqst/MetaHookSv)
+   
  2. 克隆或下载本储存库
+   
  3. 复制 `ABCEnchance-master` 文件夹放入 `MetaHookSv-master/Plugins`
- 4. 依照`MetahookSV`指示构建`glew`或`glew-debug`
- 5. 构建本储存库
+   
+    自动构建：
+
+    1. 以Powershell运行`build-ABCEnchance.ps1`
+   
+    手动构建：
+
+    1. 依照`MetahookSV`指示构建`glew`或`glew-debug`
+   
+    2. 构建本储存库
  
  ----
 

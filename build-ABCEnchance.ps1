@@ -1,8 +1,8 @@
-Write-Host "[Chose your building target]"
-Write-Host "#1 Release"
-Write-Host "#2 Release_AVX2"
-Write-Host "#3 Release_AVX512"
-Write-Host "#4 Debug"
+Write-Output "[Chose your building target]"
+Write-Output "#1 Release"
+Write-Output "#2 Release_AVX2"
+Write-Output "#3 Release_AVX512"
+ "#4 Debug"
 $Chosen = Read-Host
 switch ($Chosen) {
     "1" { $BuildTarget = "Release" }
@@ -15,18 +15,18 @@ switch ($Chosen) {
     }
 }
 if(!(Test-Path("../../global.props"))){
-    Write-Host "Init build enviroment..."
+    Write-Output "Init build enviroment..."
     &"../../build-initdeps.bat"
 }
 if($BuildTarget -eq "Debug"){
     if(!(Test-Path("../../glew/build/lib/Debug/libglew32.lib"))){
-        Write-Host "Building glew..."
+        Write-Output "Building glew..."
         &"../../build-glew-debug.bat"
     }
 }
 else{
     if(!(Test-Path("../../glew/build/lib/Release/libglew32.lib"))){
-        Write-Host "Building glew..."
+        Write-Output "Building glew..."
         &"../../build-glew.bat"
     }
 }
@@ -36,8 +36,7 @@ if(Test-Path("$($vsLocation)\Common7\Tools\vsdevcmd.bat")){
     &"$($vsLocation)\Msbuild\Current\Bin\MSBuild.exe" "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)/ABCEnchance.vcxproj" /p:Configuration=$($BuildTarget) /p:Platform="Win32"
 }
 else {
-    Write-Host "Can not found VS..."
+    Write-Output "Can not found VS..."
 }
-Write-Host
 Read-Host "Press any key to exit." | Out-Null
 Exit
