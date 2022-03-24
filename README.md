@@ -62,10 +62,20 @@
 
 # 🏗️ Build
  1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
+   
  2. clone or download repository
+   
  3. copy `ABCEnchance-master` into `MetaHookSv-master/Plugins`
- 4. build `glew` or `glew-debug`
- 5. build repository
+
+    Automatic:
+
+    1. Run `build-ABCEnchance.ps1` in PowerShell
+   
+    Manual:
+
+    1. build `glew` or `glew-debug`
+   
+    2. build repository
  
  ----
 
