@@ -37,28 +37,42 @@
 
 # 🖥️ Install
  1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
- 2. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory. The results will be as follows.
+ 2. Install
+    
+    Automatic:
+
+    1. Run `install-ABCEnchance.ps1` in PowerShell
    
-```
+    2. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
 
-    Sven Coop
-    ├─svencoop
-    │  ├─abcenchance
-    │  │  ├─localize
-    │  │  ├─mdl
-    │  │  ├─shader
-    │  │  ├─spr
-    │  │  ├─tga
-    │  │  ABCEnchance.res
-    │  └─metahook
-    │     └─plugins
-    │        └─ABCEnchance.dll       
-    svencoop.exe
+    Manual:
 
-```
+    1. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory. The results will be as follows.
+   
+    ```
+        Sven Coop
+        ├─svencoop
+        │  ├─abcenchance
+        │  │  ├─localize
+        │  │  ├─mdl
+        │  │  ├─shader
+        │  │  ├─spr
+        │  │  ├─tga
+        │  │  ABCEnchance.res
+        │  └─metahook
+        │     └─plugins
+        │        └─ABCEnchance.dll       
+        svencoop.exe
 
- 3. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
- 4. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
+    ```
+
+    1. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
+    
+    2. Open `svencoop/metahook/configs/plugins_svencoop.lst`, add `ABCEnchance.dll` as a new line.
+
+    3. Open `svencoop/metahook/configs/plugins_svencoop_avx2.lst`, add `ABCEnchance_AVX2.dll` as a new line.
+
+    4. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
 
 # 🏗️ Build
  1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
