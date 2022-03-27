@@ -66,13 +66,13 @@
 
     ```
 
-    1. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
+    2. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
     
-    2. Open `svencoop/metahook/configs/plugins_svencoop.lst`, add `ABCEnchance.dll` as a new line.
+    3. Open `svencoop/metahook/configs/plugins_svencoop.lst`, add `ABCEnchance.dll` as a new line.
 
-    3. Open `svencoop/metahook/configs/plugins_svencoop_avx2.lst`, add `ABCEnchance_AVX2.dll` as a new line.
+    4. Open `svencoop/metahook/configs/plugins_svencoop_avx2.lst`, add `ABCEnchance_AVX2.dll` as a new line.
 
-    4. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
+    5. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
 
 # 🏗️ Build
  1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
