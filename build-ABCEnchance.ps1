@@ -2,7 +2,7 @@ Write-Output "[Chose your building target]"
 Write-Output "#1 Release"
 Write-Output "#2 Release_AVX2"
 Write-Output "#3 Release_AVX512"
- "#4 Debug"
+Write-Output "#4 Debug"
 $Chosen = Read-Host
 switch ($Chosen) {
     "1" { $BuildTarget = "Release" }
