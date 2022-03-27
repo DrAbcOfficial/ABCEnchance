@@ -15,18 +15,18 @@ switch ($Chosen) {
     }
 }
 if(!(Test-Path("../../global.props"))){
-    Write-Output "Init build enviroment..."
+    Write-Warning "Init build enviroment..."
     &"../../build-initdeps.bat"
 }
 if($BuildTarget -eq "Debug"){
     if(!(Test-Path("../../glew/build/lib/Debug/libglew32.lib"))){
-        Write-Output "Building glew..."
+        Write-Warning "Can not find glew, building..."
         &"../../build-glew-debug.bat"
     }
 }
 else{
     if(!(Test-Path("../../glew/build/lib/Release/libglew32.lib"))){
-        Write-Output "Building glew..."
+        Write-Warning "Can not find glew, building..."
         &"../../build-glew.bat"
     }
 }
@@ -36,7 +36,12 @@ if(Test-Path("$($vsLocation)\Common7\Tools\vsdevcmd.bat")){
     &"$($vsLocation)\Msbuild\Current\Bin\MSBuild.exe" "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)/ABCEnchance.vcxproj" /p:Configuration=$($BuildTarget) /p:Platform="Win32"
 }
 else {
-    Write-Output "Can not found VS..."
+    Write-Error "`n`
+        -------------------------------------------------`n`
+        (¨s¨F¡õ¡ä)¨s¦à©ß©¥©ß Can not find Visual Studio`n`
+        Is the plugin folder in the correct location?`n`
+        Eg: ./Github/MetaHookSv/Plugins/ABCEnchance`n`
+        -------------------------------------------------`n"
 }
 Read-Host "Press any key to exit." | Out-Null
 Exit
