@@ -78,11 +78,6 @@ void CL_SetDevOverView(int param1){
 		gDevOverview->zoom = gCustomHud.m_flOverViewScale;
 	}	
 }
-void R_RenderView(int a1){
-	gCustomHud.HUD_PreRenderView(a1);
-	gHookFuncs.R_RenderView(a1);
-	gCustomHud.HUD_PostRenderView(a1);
-}
 void R_ForceCVars(qboolean mp){
 	if (CL_IsDevOverview())
 		return;
@@ -100,21 +95,6 @@ void Cvar_DirectSet(cvar_t* var, char* value) {
 	}
 }
 
-void Sys_ErrorEx(const char* fmt, ...){
-	char msg[4096] = { 0 };
-
-	va_list argptr;
-
-	va_start(argptr, fmt);
-	vsprintf_s(msg, sizeof(msg), fmt, argptr);
-	va_end(argptr);
-
-	if (gEngfuncs.pfnClientCmd)
-		gEngfuncs.pfnClientCmd((char*)"escape\n");
-
-	MessageBox(nullptr, msg, "Fatal Error", MB_ICONERROR);
-	TerminateProcess((HANDLE)(-1), 0);
-}
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
@@ -218,7 +198,7 @@ void InstallHook(){
 	Install_InlineEngHook(pfnPlaybackEvent);
 
 	Install_InlineEngHook(R_NewMap);
-	Install_InlineEngHook(R_RenderView);
+	//Install_InlineEngHook(R_RenderView);
 	Install_InlineEngHook(CL_IsDevOverview);
 	Install_InlineEngHook(CL_SetDevOverView);
 	Install_InlineEngHook(EVVectorScale);
@@ -230,14 +210,14 @@ void InstallHook(){
 void CheckAsset() {
 	auto c = gEngfuncs.COM_LoadFile((char*)"abcenchance/ABCEnchance.res", 5, 0);
 	if(!c)
-		Sys_ErrorEx("[ABCEnchance]:\nMissing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
+		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMissing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
 	gEngfuncs.COM_FreeFile(c);
 }
 void GL_Init(void){
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
 	if (GLEW_OK != err){
-		Sys_ErrorEx("glewInit failed, %s", glewGetErrorString(err));
+		g_pMetaHookAPI->SysError("glewInit failed, %s", glewGetErrorString(err));
 		return;
 	}
 	GL_ShaderInit();
@@ -257,17 +237,17 @@ void HUD_Init(void){
 		gPluginVersion = atoi(pScheme->GetResourceString("Version"));
 	}
 	else {
-		Sys_ErrorEx("[ABCEnchance]:\nOoops! Can not load resource file!\nHave you installed it correctly?\n");
+		g_pMetaHookAPI->SysError("[ABCEnchance]:\nOoops! Can not load resource file!\nHave you installed it correctly?\n");
 		return;
 	}	
 	if (gPluginVersion < PLUGIN_VERSION)
-		Sys_ErrorEx("[ABCEnchance]:\nMismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
+		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, gPluginVersion);
 	char localizePath[260];
 	snprintf(localizePath, sizeof(localizePath), "abcenchance/localize/%s.txt", 
 		(!strlen(pScheme->GetResourceString("Language"))) ? "%language%" : pScheme->GetResourceString("Language"));
 	if(!pLocalize->AddFile(g_pFileSystem, localizePath))
-		Sys_ErrorEx("[ABCEnchance]:\nMissing Localize file: %s\n", localizePath);
+		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMissing Localize file: %s\n", localizePath);
 
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_VALUE, nullptr);
@@ -337,20 +317,90 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	return gExportfuncs.HUD_PlayerMove(ppmove, server);
 }
 void V_CalcRefdef(struct ref_params_s* pparams){
+	
 	gExportfuncs.V_CalcRefdef(pparams);
-	if (!gExportfuncs.CL_IsThirdPerson()) {
-		V_CalcViewModelLag(pparams);
-		V_CalcModelSlide(pparams);
+
+	if (gCVars.pRadar->value)
+	{
+		if (pparams->nextView == 0 && !gCustomHud.m_bRenderRadarView)
+		{
+			//Tell engine to render twice
+			pparams->nextView = 1;
+
+			gCustomHud.m_bRenderRadarView = true;
+
+			//设置到玩家脑袋上朝下看
+			gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
+			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+			gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
+			gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
+			gCustomHud.m_flOverViewYaw = local->curstate.angles[YAW];
+
+			gCustomHud.m_iIsOverView = 1;
+
+			gCustomHud.m_flSavedCvars[0] = gCVars.pCVarDevOverview->value;
+			gCustomHud.m_flSavedCvars[1] = gCVars.pCVarDrawEntities->value;
+			gCustomHud.m_flSavedCvars[2] = gCVars.pCVarDrawDynamic->value;
+			if (gCVars.pCVarFXAA)
+				gCustomHud.m_flSavedCvars[3] = gCVars.pCVarFXAA->value;
+			if (gCVars.pCVarWater)
+				gCustomHud.m_flSavedCvars[4] = gCVars.pCVarWater->value;
+			if (gCVars.pCVarShadow)
+				gCustomHud.m_flSavedCvars[5] = gCVars.pCVarShadow->value;
+
+			gCVars.pCVarDevOverview->value = 2;
+			gCVars.pCVarDrawEntities->value = 0;
+			gCVars.pCVarDrawDynamic->value = 0;
+			if (gCVars.pCVarFXAA)
+				gCVars.pCVarFXAA->value = 0;
+			if (gCVars.pCVarWater)
+				gCVars.pCVarWater->value = 0;
+			if (gCVars.pCVarShadow)
+				gCVars.pCVarShadow->value = 0;
+		}
+		else if (pparams->nextView == 0 && gCustomHud.m_bRenderRadarView)
+		{
+			//Blit radar overview from final buffer into texture
+			gCustomHud.HUD_BlitRadarFramebuffer();
+
+			gCustomHud.m_bRenderRadarView = false;
+
+			gCustomHud.m_iIsOverView = 0;
+
+			gCVars.pCVarDevOverview->value = gCustomHud.m_flSavedCvars[0];
+			gCVars.pCVarDrawEntities->value = gCustomHud.m_flSavedCvars[1];
+			gCVars.pCVarDrawDynamic->value = gCustomHud.m_flSavedCvars[2];
+			if (gCVars.pCVarFXAA)
+				gCVars.pCVarFXAA->value = gCustomHud.m_flSavedCvars[3];
+			if (gCVars.pCVarWater)
+				gCVars.pCVarWater->value = gCustomHud.m_flSavedCvars[4];
+			if (gCVars.pCVarShadow)
+				 gCVars.pCVarShadow->value = gCustomHud.m_flSavedCvars[5];
+		}
 	}
-	else {
-		vec3_t vecRight;
-		mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
-		mathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
-		pparams->vieworg[0] += vecRight[0];
-		pparams->vieworg[1] += vecRight[1];
-		pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
+
+	if (!gCustomHud.m_bRenderRadarView)
+	{
+		if (!gExportfuncs.CL_IsThirdPerson()) {
+			V_CalcViewModelLag(pparams);
+			V_CalcModelSlide(pparams);
+		}
+		else {
+			vec3_t vecRight;
+			mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
+			mathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
+			pparams->vieworg[0] += vecRight[0];
+			pparams->vieworg[1] += vecRight[1];
+			pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
+		}
 	}
 }
+
+void HUD_DrawTransparentTriangles(void)
+{
+	gExportfuncs.HUD_DrawTransparentTriangles();
+}
+
 void IN_MouseEvent(int mstate){
 	gCustomHud.IN_MouseEvent(mstate);
 	gExportfuncs.IN_MouseEvent(mstate);

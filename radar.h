@@ -6,8 +6,8 @@ public:
 	void VidInit();
 	void Reset();
 	void Draw(float flTime);
-	void PreRenderView(int a1);
 	void Clear();
+	void BlitFramebuffer();
 
 	GLint BackGroundImg;
 	GLint UpGroundImg;
@@ -17,19 +17,10 @@ public:
 
 	float flFinishScaleTime;
 private:
-	void DrawRadarTexture();
 	void UpdateZmax(float flTime);
-
-	cvar_t* pCVarDevOverview;
-	cvar_t* pCVarGamma;
-	cvar_t* pCVarDrawEntities;
-	cvar_t* pCVarDrawDynamic;
-	cvar_t* pCVarFXAA;
-	cvar_t* pCVarWater;
 
 	GLuint m_hRadarBufferFBO;
 	GLuint m_hRadarBufferTex;
-	GLuint m_hRadarBufferTexDepth;
 
 	pmtrace_t m_hRadarTr;
 	float flNextUpdateTrTime;
