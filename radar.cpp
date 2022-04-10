@@ -51,9 +51,9 @@ int CHudRadar::Init(){
 	ADD_COMMAND("+scaleradar", __UserCmd_StartSizeRadar);
 	ADD_COMMAND("-scaleradar", __UserCmd_EndSizeRadar);
 
-	gCVars.pCVarGamma = CVAR_GET_POINTER("gamma");
 	gCVars.pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
 	gCVars.pCVarDrawEntities = CVAR_GET_POINTER("r_drawentities");
+	gCVars.pCVarDrawViewModel = CVAR_GET_POINTER("r_drawviewmodel");
 	gCVars.pCVarDrawDynamic = CVAR_GET_POINTER("r_dynamic");
 	gCVars.pCVarFXAA = CVAR_GET_POINTER("r_fxaa");
 	gCVars.pCVarWater = CVAR_GET_POINTER("r_water");
@@ -65,13 +65,8 @@ int CHudRadar::Init(){
 	gCVars.pRadarSizeTime = CREATE_CVAR("cl_radarsizetime", "0.25", FCVAR_VALUE, NULL);
 	gCVars.pRadarGap = CREATE_CVAR("cl_radargap", "0.98", FCVAR_VALUE, NULL);
 	gCVars.pRadarRoundRadius = CREATE_CVAR("cl_radarradius", "344", FCVAR_VALUE, NULL);
-
 	gCVars.pRadarUpdateInterval = CREATE_CVAR("cl_radarupdateint", "1", FCVAR_VALUE, NULL);
-	//pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
-	//pCVarDrawDynamic = CVAR_GET_POINTER("r_dynamic");
-	//pCVarDrawEntities = CVAR_GET_POINTER("r_drawentities");
-	//pCVarGamma = CVAR_GET_POINTER("gamma");
-	
+
 	XOffset = GET_SCREEN_PIXEL(false, "Radar.XOffset");
 	YOffset = GET_SCREEN_PIXEL(true, "Radar.YOffset");
 	NorthPointerSize = GET_SCREEN_PIXEL(true, "Radar.NorthPointerSize");
@@ -143,8 +138,6 @@ void CHudRadar::Draw(float flTime){
 	}
 	else
 		GL_Uniform1f(pp_texround.rad, 0);
-	//if (g_metaplugins.renderer)
-	//	GL_Uniform1f(pp_texround.gamma, 1 / gCVars.pCVarGamma->value);
 
 	glEnable(GL_TEXTURE_2D);
 	glBind(m_hRadarBufferTex);
