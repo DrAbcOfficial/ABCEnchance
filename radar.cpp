@@ -22,6 +22,7 @@
 #include "weapon.h"
 #include "CCustomHud.h"
 #include "radar.h"
+
 using namespace mathlib;
 
 CHudRadar m_HudRadar;
@@ -34,15 +35,29 @@ void __UserCmd_EndSizeRadar(void){
 		m_HudRadar.flFinishScaleTime = 0;
 }
 
-void CHudRadar::GLInit(){
-	if(!g_metaplugins.renderer)
-		glGenFramebuffersEXT(1, &m_hRadarBufferFBO);
+void CHudRadar::GLInit()
+{
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+
+	glGenFramebuffers(1, &m_hRadarBufferFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
 	m_hRadarBufferTex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
-	m_hRadarBufferTexDepth = GL_GenDepthStencilTexture(gScreenInfo.iWidth, gScreenInfo.iHeight);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hRadarBufferTex, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
+
 int CHudRadar::Init(){
 	ADD_COMMAND("+scaleradar", __UserCmd_StartSizeRadar);
 	ADD_COMMAND("-scaleradar", __UserCmd_EndSizeRadar);
+
+	gCVars.pCVarGamma = CVAR_GET_POINTER("gamma");
+	gCVars.pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
+	gCVars.pCVarDrawEntities = CVAR_GET_POINTER("r_drawentities");
+	gCVars.pCVarDrawDynamic = CVAR_GET_POINTER("r_dynamic");
+	gCVars.pCVarFXAA = CVAR_GET_POINTER("r_fxaa");
+	gCVars.pCVarWater = CVAR_GET_POINTER("r_water");
+	gCVars.pCVarShadow = CVAR_GET_POINTER("r_shadow");
 
 	gCVars.pRadar = CREATE_CVAR("cl_radar", "2", FCVAR_VALUE, NULL);
 	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_VALUE, NULL);
@@ -52,10 +67,10 @@ int CHudRadar::Init(){
 	gCVars.pRadarRoundRadius = CREATE_CVAR("cl_radarradius", "344", FCVAR_VALUE, NULL);
 
 	gCVars.pRadarUpdateInterval = CREATE_CVAR("cl_radarupdateint", "1", FCVAR_VALUE, NULL);
-	pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
-	pCVarDrawDynamic = CVAR_GET_POINTER("r_dynamic");
-	pCVarDrawEntities = CVAR_GET_POINTER("r_drawentities");
-	pCVarGamma = CVAR_GET_POINTER("gamma");
+	//pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
+	//pCVarDrawDynamic = CVAR_GET_POINTER("r_dynamic");
+	//pCVarDrawEntities = CVAR_GET_POINTER("r_drawentities");
+	//pCVarGamma = CVAR_GET_POINTER("gamma");
 	
 	XOffset = GET_SCREEN_PIXEL(false, "Radar.XOffset");
 	YOffset = GET_SCREEN_PIXEL(true, "Radar.YOffset");
@@ -68,10 +83,12 @@ int CHudRadar::Init(){
 	return 1;
 }
 void CHudRadar::VidInit(){
-	if(!pCVarFXAA)
-		pCVarFXAA = CVAR_GET_POINTER("r_fxaa");
-	if(!pCVarWater)
-		pCVarWater = CVAR_GET_POINTER("r_water");
+	if(!gCVars.pCVarFXAA)
+		gCVars.pCVarFXAA = CVAR_GET_POINTER("r_fxaa");
+	if(!gCVars.pCVarWater)
+		gCVars.pCVarWater = CVAR_GET_POINTER("r_water");
+	if (!gCVars.pCVarShadow)
+		gCVars.pCVarShadow = CVAR_GET_POINTER("r_shadow");
 }
 void CHudRadar::Reset(){
 	VGUI_CREATE_NEWTGA_TEXTURE(BackGroundImg, "abcenchance/tga/radar_background");
@@ -126,8 +143,8 @@ void CHudRadar::Draw(float flTime){
 	}
 	else
 		GL_Uniform1f(pp_texround.rad, 0);
-	if (g_metaplugins.renderer)
-		GL_Uniform1f(pp_texround.gamma, 1 / pCVarGamma->value);
+	//if (g_metaplugins.renderer)
+	//	GL_Uniform1f(pp_texround.gamma, 1 / gCVars.pCVarGamma->value);
 
 	glEnable(GL_TEXTURE_2D);
 	glBind(m_hRadarBufferTex);
@@ -171,101 +188,18 @@ void CHudRadar::Draw(float flTime){
 	w = NorthPointerSize / 2;
 	gCustomHud.surface()->DrawTexturedRect(stx - w, sty - w, stx + w, sty + w);
 }
-void CHudRadar::PreRenderView(int a1){
-	if (gCVars.pRadar->value <= 0)
-		return;
-	if(!a1)
-		DrawRadarTexture();
+
+void CHudRadar::BlitFramebuffer()
+{
+	//Blit color from current framebuffer into texture
+
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+
+	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hRadarBufferFBO, gScreenInfo.iWidth, gScreenInfo.iHeight, gScreenInfo.iWidth, gScreenInfo.iHeight);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
-void CHudRadar::DrawRadarTexture(){
-	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	if (!m_oldFrameBuffer && !g_metaplugins.renderer)
-		glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
 
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hRadarBufferTex, 0);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, m_hRadarBufferTexDepth, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-	//设置背景透明
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glStencilMask(0xFF);
-	glClearStencil(0);
-	glDepthMask(GL_TRUE);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glStencilMask(0);
-
-	VectorCopy(g_refdef->vieworg, m_oldViewOrg);
-	VectorCopy(g_refdef->viewangles, m_oldViewAng);
-
-	//设置到玩家脑袋上朝下看
-	gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
-	gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
-	gCustomHud.m_flOverViewYaw = local->curstate.angles[YAW];
-
-	gCustomHud.m_iIsOverView = 1;
-		vec5_t vecOldValue;
-		vecOldValue[0] = pCVarDevOverview->value;
-		vecOldValue[1] = pCVarDrawEntities->value;
-		vecOldValue[2] = pCVarDrawDynamic->value;
-		if (g_metaplugins.renderer){
-			vecOldValue[3] = pCVarFXAA->value;
-			vecOldValue[4] = pCVarWater->value;
-		}
-		pCVarDevOverview->value = 2;
-		pCVarDrawEntities->value = 0;
-		pCVarDrawDynamic->value = 0;
-		GLint riFogMode;
-		vec3_t vecFogControl;
-		VectorClear(vecFogControl);
-		vec4_t vecFogColor;
-		bool bIsFog;
-		if (g_metaplugins.renderer) {
-			pCVarFXAA->value = 0;
-			pCVarWater->value = 0;
-			bIsFog = glIsEnabled(GL_FOG);
-			if (bIsFog) {
-				glGetIntegerv(GL_FOG_MODE, &riFogMode);
-				if (riFogMode == GL_LINEAR) {
-					glGetFloatv(GL_FOG_START, &vecFogControl[0]);
-					glGetFloatv(GL_FOG_END, &vecFogControl[1]);
-					glGetFloatv(GL_FOG_COLOR, vecFogColor);
-				}
-				else if (riFogMode == GL_EXP2) {
-					glGetFloatv(GL_FOG_START, &vecFogControl[0]);
-					glGetFloatv(GL_FOG_END, &vecFogControl[1]);
-					glGetFloatv(GL_FOG_DENSITY, &vecFogControl[2]);
-					glGetFloatv(GL_FOG_COLOR, vecFogColor);
-				}
-			}
-		}
-		gHookFuncs.R_RenderScene();
-		pCVarDevOverview->value = vecOldValue[0];
-		pCVarDrawEntities->value = vecOldValue[1];
-		pCVarDrawDynamic->value = vecOldValue[2];
-		if (g_metaplugins.renderer) {
-			if (bIsFog) {
-				glEnable(GL_FOG);
-				glFogi(GL_FOG_MODE, riFogMode);
-				if (riFogMode == GL_EXP2)
-					glFogf(GL_FOG_DENSITY, vecFogControl[2]);
-				glHint(GL_FOG_HINT, GL_NICEST);
-				glFogfv(GL_FOG_COLOR, vecFogColor);
-				glFogf(GL_FOG_START, vecFogControl[0]);
-				glFogf(GL_FOG_END, vecFogControl[1]);
-			}
-			pCVarFXAA->value = vecOldValue[3];
-			pCVarWater->value = vecOldValue[4];
-		}
-	gCustomHud.m_iIsOverView = 0;
-
-	VectorCopy(m_oldViewOrg, g_refdef->vieworg);
-	VectorCopy(m_oldViewAng, g_refdef->viewangles);
-
-	if (!m_oldFrameBuffer && !g_metaplugins.renderer)
-		glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
-}
 void CHudRadar::UpdateZmax(float flTime){
 	if (flTime < flNextUpdateTrTime)
 		return;
@@ -286,9 +220,11 @@ void CHudRadar::UpdateZmax(float flTime){
 	gCustomHud.m_flOverViewZmin = m_hRadarTr.startsolid ? m_hRadarTr.endpos[2] : flOldStart;
 	flNextUpdateTrTime = flTime + abs(gCVars.pRadarUpdateInterval->value);
 }
-void CHudRadar::Clear(){
+void CHudRadar::Clear()
+{
+	if (m_hRadarBufferFBO)
+		glDeleteFramebuffers(1, &m_hRadarBufferFBO);
+
 	if (m_hRadarBufferTex)
 		glDeleteTextures(1, &m_hRadarBufferTex);
-	if (m_hRadarBufferTexDepth)
-		glDeleteTextures(1, &m_hRadarBufferTexDepth);
 }

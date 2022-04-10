@@ -155,6 +155,6 @@ void CHudItemHighLight::LoadItemList() {
 			i = 0;
 	}
 	if (i != 0)
-		Sys_ErrorEx("Error in parsing file:%s\nLine:%d\nBuf is not end with even.", ITEM_LIST_PATH, index);
+		g_pMetaHookAPI->SysError("Error in parsing file:%s\nLine:%d\nBuf is not end with even.", ITEM_LIST_PATH, index);
 	gEngfuncs.COM_FreeFile(pfile);
 }
