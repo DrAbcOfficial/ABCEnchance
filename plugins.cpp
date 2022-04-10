@@ -70,7 +70,6 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_PlayerMove = HUD_ClientMove;
 	pExportFunc->HUD_AddEntity = HUD_AddEntity;
 	pExportFunc->V_CalcRefdef = V_CalcRefdef;
-	//pExportFunc->HUD_DrawTransparentTriangles = HUD_DrawTransparentTriangles;
 
 	FillEfxAddress();
 	FillAddress();
