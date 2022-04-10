@@ -131,6 +131,14 @@ typedef struct{
 	cvar_t* pGrenadeIndicatorRange;
 	cvar_t* pGrenadeInicatorTime;
 
+	cvar_t* pCVarGamma;
+	cvar_t* pCVarDevOverview;
+	cvar_t* pCVarDrawEntities;
+	cvar_t* pCVarDrawDynamic;
+	cvar_t* pCVarFXAA;
+	cvar_t* pCVarWater;
+	cvar_t* pCVarShadow;
+
 #ifdef _DEBUG
 	cvar_t* pCCTV;
 #endif

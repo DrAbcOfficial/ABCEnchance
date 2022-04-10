@@ -50,8 +50,7 @@ public:
 	void HUD_UpdateClientData(client_data_t* cdata, float time);
 	void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
 	void HUD_Clear(void);
-	void HUD_PreRenderView(int a1);
-	void HUD_PostRenderView(int a1);
+	void HUD_BlitRadarFramebuffer();
 	void IN_MouseEvent(int mstate);
 	int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding);
 	void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
@@ -82,6 +81,8 @@ public:
 	float m_flOverViewZmax = 0;
 	float m_flOverViewZmin = 0;
 
+	float m_flSavedCvars[16] = {0};
+
 	size_t m_flCursorSize = 0;
 
 	vec3_t m_vecOverViewOrg;
@@ -91,6 +92,8 @@ public:
 	client_sprite_t* m_pSpriteList;
 
 	GLint m_iCursorTga = 0;
+
+	bool m_bRenderRadarView = false;
 private:
 	void SetBaseHudActivity();
 	hud_playerinfo_t m_Playerinfo[33] = { 0 };
