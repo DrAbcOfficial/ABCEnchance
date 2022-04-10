@@ -294,14 +294,9 @@ void CCustomHud::HUD_Clear(void){
 	m_HudArmorHealth.Clear();
 	m_HudGrenadeIndicator.Clear();
 }
-void CCustomHud::HUD_PreRenderView(int a1){
-	if (!IsHudEnable())
-		return;
-	m_HudRadar.PreRenderView(a1);
-}
-void CCustomHud::HUD_PostRenderView(int a1){
-	if (!IsHudEnable())
-		return;
+void CCustomHud::HUD_BlitRadarFramebuffer()
+{
+	m_HudRadar.BlitFramebuffer();
 }
 void CCustomHud::IN_MouseEvent(int mstate){
 	if (!IsHudEnable())

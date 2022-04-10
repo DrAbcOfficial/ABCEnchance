@@ -22,15 +22,13 @@ PVOID g_dwEngineRdataBase;
 DWORD g_dwEngineRdataSize;
 int g_iEngineType;
 
-char g_szPluginVersion[64];
-
 void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave){
 	g_pInterface = pInterface;
 	g_pMetaHookAPI = pAPI;
 	g_pMetaSave = pSave;
 	g_hInstance = GetModuleHandle(nullptr);
-	sprintf_s(g_szPluginVersion, "Dr.Abc|Version:%x", PLUGIN_VERSION);
 }
+
 void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	g_pFileSystem = g_pInterface->FileSystem;
 	g_iEngineType = g_pMetaHookAPI->GetEngineType();
@@ -44,7 +42,7 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 
 	memcpy(&gEngfuncs, pEngfuncs, sizeof(gEngfuncs));
 	if (g_iEngineType != ENGINE_SVENGINE)
-		Sys_ErrorEx("%s can only run in SvenEngine!\nEngine type: %d\nEngine buildnum: %d", 
+		g_pMetaHookAPI->SysError("%s can only run in SvenEngine!\nEngine type: %d\nEngine buildnum: %d", 
 			"ABCEnchance.dll", g_iEngineType, g_dwEngineBuildnum);
 	CheckOtherPlugin();
 }
@@ -72,6 +70,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_PlayerMove = HUD_ClientMove;
 	pExportFunc->HUD_AddEntity = HUD_AddEntity;
 	pExportFunc->V_CalcRefdef = V_CalcRefdef;
+	//pExportFunc->HUD_DrawTransparentTriangles = HUD_DrawTransparentTriangles;
 
 	FillEfxAddress();
 	FillAddress();
@@ -82,7 +81,11 @@ void IPluginsV4::Shutdown(void){
 }
 void IPluginsV4::ExitGame(int iResult){
 }
+
+#define STR1(R) #R
+#define STR2(R) STR1(R)
+
 const char* IPluginsV4::GetVersion(void){
-	return g_szPluginVersion;
+	return "Dr.Abc|Version:" STR2(PLUGIN_VERSION);
 }
 EXPOSE_SINGLE_INTERFACE(IPluginsV4, IPluginsV4, METAHOOK_PLUGIN_API_VERSION_V4);

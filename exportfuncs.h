@@ -19,7 +19,6 @@ extern baseweapon_t* (*g_rgBaseSlots)[10][26];
 extern refdef_t* g_refdef;
 extern metaplugins_t g_metaplugins;
 
-void Sys_ErrorEx(const char* fmt, ...);
 void CheckOtherPlugin();
 void FillEfxAddress();
 void FillAddress();
@@ -36,6 +35,7 @@ void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientda
 int HUD_UpdateClientData(struct client_data_s* c, float f);
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
 void HUD_Clear(void);
+void HUD_DrawTransparentTriangles(void);
 void V_CalcRefdef(struct ref_params_s* pparams);
 void IN_MouseEvent(int mstate);
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
@@ -48,7 +48,7 @@ void R_RenderView(int a1);
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
-#define Sig_NotFound(name) Sys_ErrorEx("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
+#define Sig_NotFound(name) g_pMetaHookAPI->SysError("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
 #define Sig_FuncNotFound(name) if(!gHookFuncs.name) Sig_NotFound(name)
 #define Sig_AddrNotFound(name) if(!addr) Sig_NotFound(name)
 #define Sig_AddrFoundOrFill(name) Sig_AddrNotFound(name) else name = (decltype(name))addr;
