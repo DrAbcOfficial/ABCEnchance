@@ -60,6 +60,8 @@ public:
 	bool HasSuit();
 	bool IsHudHide(int HideToken);
 	bool IsHudEnable();
+	bool IsSpectator(int client);
+	void SetSpectator(int client, bool value);
 
 	HSPRITE GetSprite(size_t index);
 	wrect_t* GetSpriteRect(size_t index);
@@ -96,6 +98,7 @@ public:
 	bool m_bRenderRadarView = false;
 private:
 	void SetBaseHudActivity();
+	bool m_SpectatePlayer[33] = { 0 };
 	hud_playerinfo_t m_Playerinfo[33] = { 0 };
 	int m_iSpriteCountAllRes;
 	std::vector<cl_spritem_s*> m_arySprites; // the sprites loaded from hud.txt
