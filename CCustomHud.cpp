@@ -45,6 +45,7 @@ CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
 pfnUserMsgHook m_pfnScoreInfo;
+pfnUserMsgHook m_pfnSpectator;
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
@@ -61,6 +62,13 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 		info->admin = READ_CHAR();
 	}
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
+}
+int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int clientIndex = READ_BYTE();
+	int beSpectator = READ_BYTE();
+	gCustomHud.SetSpectator(clientIndex, true);
+	return m_pfnSpectator(pszName, iSize, pbuf);
 }
 void(*UserCmd_Slot1)(void);
 void(*UserCmd_Slot2)(void);
@@ -160,6 +168,7 @@ void CCustomHud::GL_Init(void){
 }
 void CCustomHud::HUD_Init(void){
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
+	m_pfnSpectator = HOOK_MESSAGE(Spectator);
 
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
 	UserCmd_Slot2 = HOOK_COMMAND("slot2", Slot2);
@@ -273,6 +282,7 @@ void CCustomHud::HUD_Reset(void){
 #ifdef _DEBUG
 	m_HudCCTV.Reset();
 #endif
+	memset(m_SpectatePlayer, 0, sizeof(m_SpectatePlayer));
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
 }
@@ -336,6 +346,12 @@ bool CCustomHud::IsHudHide(int HideToken) {
 }
 bool CCustomHud::IsHudEnable() {
 	return gCVars.pDynamicHUD->value > 0;
+}
+bool CCustomHud::IsSpectator(int client){
+	return m_SpectatePlayer[client];
+}
+void CCustomHud::SetSpectator(int client, bool value){
+	m_SpectatePlayer[client] = value;
 }
 void CCustomHud::SetBaseHudActivity() {
 	if (IsHudEnable()) {

@@ -69,6 +69,9 @@ int CHudPlayerTitle::Draw(float flTime){
 				entity->curstate.messagenum != local->curstate.messagenum || 
 				!entity->player || !entity->model || entity == local)
 				continue;
+			//观察者，跳过
+			if (gCustomHud.IsSpectator(i))
+				continue;
 			//计算我和目标的相对偏移
 			VectorSubtract(entity->curstate.origin, local->curstate.origin, vecAngle);
 			color = gHookFuncs.GetClientColor(i);
