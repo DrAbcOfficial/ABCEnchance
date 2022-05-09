@@ -198,7 +198,7 @@ void InstallHook(){
 	Install_InlineEngHook(pfnPlaybackEvent);
 
 	Install_InlineEngHook(R_NewMap);
-	//Install_InlineEngHook(R_RenderView);
+	Install_InlineEngHook(R_ForceCVars);
 	Install_InlineEngHook(CL_IsDevOverview);
 	Install_InlineEngHook(CL_SetDevOverView);
 	Install_InlineEngHook(EVVectorScale);
@@ -318,11 +318,12 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 }
 void V_CalcRefdef(struct ref_params_s* pparams){
 	
+	//pparams->nextView will be zeroed by client dll
 	gExportfuncs.V_CalcRefdef(pparams);
 
 	if (gCVars.pRadar->value)
 	{
-		if (pparams->nextView == 0 && !gCustomHud.m_bRenderRadarView)
+		if (!gCustomHud.m_bRenderRadarView)
 		{
 			//Tell engine to render twice
 			pparams->nextView = 1;
@@ -340,16 +341,19 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 
 			gCustomHud.m_flSavedCvars[0] = gCVars.pCVarDevOverview->value;
 			gCustomHud.m_flSavedCvars[1] = gCVars.pCVarDrawEntities->value;
-			gCustomHud.m_flSavedCvars[2] = gCVars.pCVarDrawDynamic->value;
+			gCustomHud.m_flSavedCvars[2] = gCVars.pCVarDrawViewModel->value;
+			gCustomHud.m_flSavedCvars[3] = gCVars.pCVarDrawDynamic->value;
+
 			if (gCVars.pCVarFXAA)
-				gCustomHud.m_flSavedCvars[3] = gCVars.pCVarFXAA->value;
+				gCustomHud.m_flSavedCvars[4] = gCVars.pCVarFXAA->value;
 			if (gCVars.pCVarWater)
-				gCustomHud.m_flSavedCvars[4] = gCVars.pCVarWater->value;
+				gCustomHud.m_flSavedCvars[5] = gCVars.pCVarWater->value;
 			if (gCVars.pCVarShadow)
-				gCustomHud.m_flSavedCvars[5] = gCVars.pCVarShadow->value;
+				gCustomHud.m_flSavedCvars[6] = gCVars.pCVarShadow->value;
 
 			gCVars.pCVarDevOverview->value = 2;
 			gCVars.pCVarDrawEntities->value = 0;
+			gCVars.pCVarDrawViewModel->value = 0;
 			gCVars.pCVarDrawDynamic->value = 0;
 			if (gCVars.pCVarFXAA)
 				gCVars.pCVarFXAA->value = 0;
@@ -358,9 +362,11 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 			if (gCVars.pCVarShadow)
 				gCVars.pCVarShadow->value = 0;
 		}
-		else if (pparams->nextView == 0 && gCustomHud.m_bRenderRadarView)
+		else
 		{
-			//Blit radar overview from final buffer into texture
+			//The first render pass is done
+			//Now blit the radar overview from final buffer into radar texture
+
 			gCustomHud.HUD_BlitRadarFramebuffer();
 
 			gCustomHud.m_bRenderRadarView = false;
@@ -369,23 +375,26 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 
 			gCVars.pCVarDevOverview->value = gCustomHud.m_flSavedCvars[0];
 			gCVars.pCVarDrawEntities->value = gCustomHud.m_flSavedCvars[1];
-			gCVars.pCVarDrawDynamic->value = gCustomHud.m_flSavedCvars[2];
+			gCVars.pCVarDrawViewModel->value = gCustomHud.m_flSavedCvars[2];
+			gCVars.pCVarDrawDynamic->value = gCustomHud.m_flSavedCvars[3];
 			if (gCVars.pCVarFXAA)
-				gCVars.pCVarFXAA->value = gCustomHud.m_flSavedCvars[3];
+				gCVars.pCVarFXAA->value = gCustomHud.m_flSavedCvars[4];
 			if (gCVars.pCVarWater)
-				gCVars.pCVarWater->value = gCustomHud.m_flSavedCvars[4];
+				gCVars.pCVarWater->value = gCustomHud.m_flSavedCvars[5];
 			if (gCVars.pCVarShadow)
-				 gCVars.pCVarShadow->value = gCustomHud.m_flSavedCvars[5];
+				gCVars.pCVarShadow->value = gCustomHud.m_flSavedCvars[6];
 		}
 	}
 
 	if (!gCustomHud.m_bRenderRadarView)
 	{
-		if (!gExportfuncs.CL_IsThirdPerson()) {
+		if (!gExportfuncs.CL_IsThirdPerson())
+		{
 			V_CalcViewModelLag(pparams);
 			V_CalcModelSlide(pparams);
 		}
-		else {
+		else
+		{
 			vec3_t vecRight;
 			mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
 			mathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
