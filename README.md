@@ -141,6 +141,7 @@
 |cl_playertitle|Show Player name|1|0/1/2|
 |cl_playertitleheight|Player name bar height|48|0~9999|
 |cl_playertitlelength|Player name bar length|196|0~9999|
+|cl_playertitledanger|player danger health|30|0~9999|
 |---|---|---|---|
 |cl_crosshair|Show dynamic crosshair|1|0/1|
 |cl_crosshairautohide|Auto hide crosshair when zoomed|1|0/1|

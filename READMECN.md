@@ -129,6 +129,7 @@
 |cl_playertitle|展示玩家状态栏|1|0/1/2|
 |cl_playertitleheight|玩家状态栏高度|48|0~9999|
 |cl_playertitlelength|玩家状态栏长度|196|0~9999|
+|cl_playertitledanger|玩家状态栏危险血量|30|0~9999|
 |---|---|---|---|
 |cl_crosshair|绘制动态准心|1|0/1|
 |cl_crosshairautohide|开镜自动隐藏动态准心|1|0/1|
