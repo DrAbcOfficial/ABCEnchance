@@ -25,9 +25,10 @@ using namespace mathlib;
 CHudPlayerTitle m_HudPlayerTitle;
 int CHudPlayerTitle::Init(void){
 	
-	gCVars.pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, NULL);
-	gCVars.pPlayerTitleLength = CREATE_CVAR("cl_playertitlelength", "196", FCVAR_VALUE, NULL);
-	gCVars.pPlayerTitleHeight = CREATE_CVAR("cl_playertitleheight", "48", FCVAR_VALUE, NULL);
+	gCVars.pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, nullptr);
+	gCVars.pPlayerTitleLength = CREATE_CVAR("cl_playertitlelength", "196", FCVAR_VALUE, nullptr);
+	gCVars.pPlayerTitleHeight = CREATE_CVAR("cl_playertitleheight", "48", FCVAR_VALUE, nullptr);
+	gCVars.pPlayerTitleDangerHealth = CREATE_CVAR("cl_playertitledanger", "30", FCVAR_VALUE, nullptr);
 	Reset();
 	return 0;
 }
@@ -141,11 +142,11 @@ int CHudPlayerTitle::Draw(float flTime){
 						glDisable(GL_BLEND);
 						
 						gCustomHud.surface()->DrawSetTexture(-1);
-						if (flHealthRatio <= 0.45f || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64){
+						if (info->health <= gCVars.pPlayerTitleDangerHealth->value || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64){
 							gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
 							gCustomHud.surface()->DrawSetTexture(
-								flHealthRatio < 0.4 ? (
-									flHealthRatio <= 0 ? iDeathIconTga : iMedkitIconTga) : iCrouchIconTga);
+								info->health <= gCVars.pPlayerTitleDangerHealth->value ? (
+									info->health <= 0 ? iDeathIconTga : iMedkitIconTga) : iCrouchIconTga);
 							gCustomHud.surface()->DrawTexturedRect(nowX, nowY, nowX + flTitleHeight / 2, nowY + flTitleHeight / 2);
 						}
 						nowX += flTitleHeight / 2;
