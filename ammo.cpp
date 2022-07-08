@@ -137,7 +137,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 		int iClip = READ_LONG();
 		int iClip2 = READ_LONG();
 		if(gCustomHud.m_iPlayerHealth > 0)
-			m_HudCustomAmmo.m_bAcceptDeadMessage = FALSE;
+			m_HudCustomAmmo.m_bAcceptDeadMessage = false;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
 			return m_pfnCurWeapon(pszName, iSize, pbuf);
@@ -156,7 +156,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 			if(m_HudCustomAmmo.m_bAcceptDeadMessage)
 				gWR.DropAllWeapons();
 			if(gCustomHud.m_iPlayerHealth <= 0)
-				m_HudCustomAmmo.m_bAcceptDeadMessage = TRUE;
+				m_HudCustomAmmo.m_bAcceptDeadMessage = true;
 			break;
 		} 
 		case 0:gWR.DropAllWeapons();
@@ -413,14 +413,14 @@ void CHudCustomAmmo::ChosePlayerWeapon(){
 		gWR.iNowSlot = -1;
 	}
 }
-void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bJump){
+void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
 	if (!gCustomHud.IsHudEnable())
 		return;
 	if (gHookHud.m_Menu->m_fMenuDisplayed)
 		return;
 	if (!gCustomHud.HasSuit())
 		return;
-	gWR.SelectSlot(iSlot, fAdvance, bJump);
+	gWR.SelectSlot(iSlot, fAdvance);
 }
 int CHudCustomAmmo::DrawWList(float flTime){
 	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDESELECTION))

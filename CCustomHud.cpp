@@ -66,8 +66,10 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
-	int beSpectator = READ_BYTE();
-	gCustomHud.SetSpectator(clientIndex, true);
+	if (clientIndex - 1 < 32) {
+		int beSpectator = READ_BYTE();
+		gCustomHud.SetSpectator(clientIndex, beSpectator != 0);
+	}
 	return m_pfnSpectator(pszName, iSize, pbuf);
 }
 void(*UserCmd_Slot1)(void);
@@ -139,11 +141,11 @@ void __UserCmd_Close(void) {
 	return UserCmd_SlotClose();
 }
 void __UserCmd_NextWeapon(void) {
-	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, 1, true);
+	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, 1);
 	return UserCmd_NextWeapon();
 }
 void __UserCmd_PrevWeapon(void) {
-	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1, true);
+	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1);
 	return UserCmd_PrevWeapon();
 }
 void __UserCmd_Attack1(void) {

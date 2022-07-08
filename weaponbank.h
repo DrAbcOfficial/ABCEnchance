@@ -52,7 +52,7 @@ public:
 	void LoadWeaponSprites(WEAPON* wp);
 	void LoadScriptWeaponSprites(int iId, char* cust);
 	void LoadAllWeaponSprites(void);
-	void SelectSlot(int iSlot, int fAdvance, bool bJump);
+	void SelectSlot(int iSlot, int fAdvance);
 	void SetUserSlot(int iSlot, int iId);
 	WEAPON* GetFirstPos(int iSlot);
 	WEAPON* GetLastPos(int iSlot);
