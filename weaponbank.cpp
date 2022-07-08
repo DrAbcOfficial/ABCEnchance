@@ -97,6 +97,10 @@ void WeaponsResource::DropAllWeapons(void){
 	memset(gridSlotMap, -1, sizeof gridSlotMap);
 }
 WEAPON* WeaponsResource::GetWeaponSlot(int slot, int pos){
+	if (slot < 0 || slot > MAX_WEAPON_SLOT_INDEX)
+		return nullptr;
+	if (pos < 0 || pos > MAX_WEAPON_POSUSER_INDEX)
+		return nullptr;
 	int id = gridSlotMap[slot][pos];
 	if (id <= 0)
 		return nullptr;
@@ -341,7 +345,7 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
 
 	return nullptr;
 }
-void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bJump){
+void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
 	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
@@ -354,26 +358,40 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bJump){
 		//避免死循环
 		if (gridDrawMenu[iNowSlot].iPos < 0 && gridDrawMenu[iNowSlot].iId < 0)
 			return;
-		int menuPos = mathlib::clamp(gridDrawMenu[iNowSlot].iPos + fAdvance, 0, MAX_WEAPON_POSUSER_INDEX);
-		while (menuPos != gridDrawMenu[iNowSlot].iPos) {
-			wp = GetWeaponSlot(iSlot, menuPos);
-			menuPos += fAdvance;
-			if (menuPos >= MAX_WEAPON_POSITIONS_USER)
-				menuPos = 0;
-			else if (menuPos < 0) 
-				menuPos = MAX_WEAPON_POSUSER_INDEX;
+		int menuPos = gridDrawMenu[iNowSlot].iPos + fAdvance;
+		int iTempSlot = iNowSlot;
+		while (wp == nullptr) {
+			wp = GetWeaponSlot(iTempSlot, menuPos);
+
 			if (wp) {
-				//经典样式
-				if (gCVars.pAmmoMenuStyle->value <= 0 && HasAmmo(wp))
-					break;
-				//环形样式
-				else if(gCVars.pAmmoMenuStyle->value >0)
+				if (gCVars.pAmmoMenuStyle->value <= 0 && !HasAmmo(wp))
+					wp = nullptr;
+				else if (gCVars.pAmmoMenuStyle->value > 0)
 					break;
 			}
-		}
-		if (!wp)
-			wp = fAdvance > 0 ? gWR.GetFirstPos(iNowSlot) : gWR.GetLastPos(iNowSlot);
+
+			menuPos += fAdvance;
+			if (wp && menuPos < 0)
+				break;
+			if (menuPos > (int)MAX_WEAPON_POSUSER_INDEX) {
+				if (gCVars.pAmmoMenuStyle->value <= 0)
+					iTempSlot++;
+				menuPos = 0;
+			}
+			else if (menuPos < 0) {
+				if (gCVars.pAmmoMenuStyle->value <= 0)
+					iTempSlot--;
+				menuPos = MAX_WEAPON_POSUSER_INDEX;
+			}
 			
+			if (gCVars.pAmmoMenuStyle->value <= 0){
+				if (iTempSlot > (int)MAX_WEAPON_SLOT_INDEX)
+					iTempSlot = 0;
+				else if (iTempSlot < 0)
+					iTempSlot = MAX_WEAPON_SLOT_INDEX;
+			}
+		}
+		iNowSlot = iTempSlot;
 		if (wp && wp->iId > 0) {
 			gridDrawMenu[iNowSlot].iId = wp->iId;
 			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
