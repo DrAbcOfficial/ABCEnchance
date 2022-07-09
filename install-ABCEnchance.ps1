@@ -22,8 +22,20 @@ function WritePluginLine($path, $avx){
     Clear-Content $path
     $newLines >> $path
 }
-
-$svenLocation = (Get-ItemPropertyValue -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 225840" -Name "InstallLocation" -ErrorAction Continue)
+$svenLocation = (Get-ItemPropertyValue -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 225840" -Name "InstallLocation" -ErrorAction SilentlyContinue)
+if([String]::IsNullOrEmpty($svenLocation)){
+    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+    $pinfo.FileName = "../../SteamAppsLocation/SteamAppsLocation.exe"
+    $pinfo.RedirectStandardOutput = $true
+    $pinfo.UseShellExecute = $false
+    $pinfo.Arguments = ("225840", "InstallDir")
+    $p = New-Object System.Diagnostics.Process
+    $p.StartInfo = $pinfo
+    $p.Start() | Out-Null
+    $p.WaitForExit()
+    $svenLocation = $p.StandardOutput.ReadToEnd()
+    $svenLocation = $svenLocation.Substring(0,$svenLocation.Length-2)
+}
 $metaLocation = "$($svenLocation)/svencoop/metahook/"
 if(Test-Path("$($svenLocation)/svencoop")){
     Write-Output "Copying dlls"
