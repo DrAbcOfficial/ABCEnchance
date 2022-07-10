@@ -21,7 +21,9 @@ extern metaplugins_t g_metaplugins;
 
 void CheckOtherPlugin();
 void FillEfxAddress();
+void FillEngineAddress();
 void FillAddress();
+void InstallEngineHook();
 void InstallHook();
 void CheckAsset();
 
