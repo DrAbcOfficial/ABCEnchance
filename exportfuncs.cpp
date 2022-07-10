@@ -103,9 +103,9 @@ void CheckOtherPlugin(){
 void FillEfxAddress(){
 
 }
-void FillAddress(){
+void FillEngineAddress() {
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
-	if (engineFactory && engineFactory("EngineSurface007", nullptr)){
+	if (engineFactory && engineFactory("EngineSurface007", nullptr)) {
 #define R_NEWMAP_SIG "\x55\x8B\xEC\x51\xC7\x45\xFC\x00\x00\x00\x00\xEB\x2A\x8B\x45\xFC\x83\xC0\x01\x89\x45\xFC\x81\x7D\xFC\x00\x01\x00\x00"
 		Fill_Sig(R_NEWMAP_SIG, g_dwEngineBase, g_dwEngineSize, R_NewMap);
 #define R_ISCLOVERVIEW_SIG "\xD9\x05\x2A\x2A\x2A\x2A\xD9\xEE\xDA\xE9\xDF\xE0\xF6\xC4\x44\x2A\x2A\x83\x3D\x2A\x2A\x2A\x2A\x00\x2A\x2A\xB8\x01\x00\x00\x00\xC3\x2A\x2A"
@@ -141,7 +141,22 @@ void FillAddress(){
 			Sig_AddrNotFound(gDevOverview);
 			gDevOverview = (decltype(gDevOverview))(*(DWORD*)(addr + 9) - 0xC);
 		}
+		if (1){
+			const char sigs1[] = "***PROTECTED***";
+			auto Cvar_DirectSet_String = Search_Pattern_Data(sigs1);
+			if (!Cvar_DirectSet_String)
+				Cvar_DirectSet_String = Search_Pattern_Rdata(sigs1);
+			Sig_VarNotFound(Cvar_DirectSet_String);
+			char pattern[] = "\x68\x2A\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\xE8";
+			*(DWORD*)(pattern + 1) = (DWORD)Cvar_DirectSet_String;
+			auto Cvar_DirectSet_Call = Search_Pattern(pattern);
+			Sig_VarNotFound(Cvar_DirectSet_Call);
+			gHookFuncs.Cvar_DirectSet = (decltype(gHookFuncs.Cvar_DirectSet))g_pMetaHookAPI->ReverseSearchFunctionBegin(Cvar_DirectSet_Call, 0x500);
+			Sig_FuncNotFound(Cvar_DirectSet);
+		}
 	}
+}
+void FillAddress(){
 	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
 	if (pfnClientCreateInterface && pfnClientCreateInterface("SCClientDLL001", 0)){
 #define SC_GETCLIENTCOLOR_SIG "\x8B\x4C\x24\x04\x85\xC9\x2A\x2A\x6B\xC1\x58"
@@ -169,20 +184,6 @@ void FillAddress(){
 			Sig_AddrNotFound(g_rgBaseSlots);
 			g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 33);
 		}
-		if(1)
-		{
-			const char sigs1[] = "***PROTECTED***";
-			auto Cvar_DirectSet_String = Search_Pattern_Data(sigs1);
-			if (!Cvar_DirectSet_String)
-				Cvar_DirectSet_String = Search_Pattern_Rdata(sigs1);
-			Sig_VarNotFound(Cvar_DirectSet_String);
-			char pattern[] = "\x68\x2A\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\xE8";
-			*(DWORD*)(pattern + 1) = (DWORD)Cvar_DirectSet_String;
-			auto Cvar_DirectSet_Call = Search_Pattern(pattern);
-			Sig_VarNotFound(Cvar_DirectSet_Call);
-			gHookFuncs.Cvar_DirectSet = (decltype(gHookFuncs.Cvar_DirectSet))g_pMetaHookAPI->ReverseSearchFunctionBegin(Cvar_DirectSet_Call, 0x500);
-			Sig_FuncNotFound(Cvar_DirectSet);
-		}
 		if (1)
 		{
 			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
@@ -190,7 +191,7 @@ void FillAddress(){
 		}
 	}
 }
-void InstallHook(){
+void InstallEngineHook() {
 	Fill_InlineEfxHook(R_BloodSprite);
 
 	Fill_EngFunc(pfnPlaybackEvent);
@@ -205,6 +206,9 @@ void InstallHook(){
 	Install_InlineEngHook(R_CrossHair_ReDraw);
 	Install_InlineEngHook(Cvar_DirectSet);
 	Install_InlineEngHook(CL_GetModelByIndex);
+}
+void InstallHook(){
+	
 }
 
 void CheckAsset() {

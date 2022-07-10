@@ -44,6 +44,9 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	if (g_iEngineType != ENGINE_SVENGINE)
 		g_pMetaHookAPI->SysError("%s can only run in SvenEngine!\nEngine type: %d\nEngine buildnum: %d", 
 			"ABCEnchance.dll", g_iEngineType, g_dwEngineBuildnum);
+
+	FillEngineAddress();
+	InstallEngineHook();
 	CheckOtherPlugin();
 }
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
