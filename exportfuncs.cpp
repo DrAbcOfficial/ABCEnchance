@@ -234,6 +234,7 @@ void HUD_Init(void){
 		pSchemeManager = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, nullptr);
 		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, nullptr);
 	}
+
 	g_pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, nullptr);
 	vgui::HScheme iScheme = pSchemeManager->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	if (iScheme > 0) {

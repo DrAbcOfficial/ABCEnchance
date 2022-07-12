@@ -137,6 +137,9 @@
     <ClCompile Include="grenadeindicator.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="scoreboard.cpp">
+      <Filter>Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -338,6 +341,9 @@
       <Filter>Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="grenadeindicator.h">
+      <Filter>Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="scoreboard.h">
       <Filter>Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
