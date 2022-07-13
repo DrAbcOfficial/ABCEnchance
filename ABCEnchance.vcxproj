@@ -241,6 +241,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClCompile Include="plugins.cpp" />
     <ClCompile Include="regquery.cpp" />
     <ClCompile Include="scoreboard.cpp" />
+    <ClCompile Include="steamid.cpp" />
     <ClCompile Include="vguilocal.cpp" />
     <ClCompile Include="viewmodellag.cpp" />
     <ClCompile Include="vote.cpp" />
