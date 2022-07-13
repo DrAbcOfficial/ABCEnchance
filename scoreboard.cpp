@@ -34,7 +34,6 @@ void CHudCustomScoreboard::GetPlayerAvatar(size_t uiIndex){
 			aryFriendStats[uiIndex] |= (int)EPlayerStatus::Friend;
 		if (iSteamFriend->HasFriend(pId, EFriendFlags::k_EFriendFlagClanMember))
 			aryFriendStats[uiIndex] |= (int)EPlayerStatus::Clan;
-		delete &pId;
 	}
 	
 }

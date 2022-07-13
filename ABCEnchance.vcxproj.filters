@@ -140,6 +140,9 @@
     <ClCompile Include="scoreboard.cpp">
       <Filter>Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="steamid.cpp">
+      <Filter>Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
