@@ -3,13 +3,14 @@
 #include "pm_shared.h"
 
 #include <cmath>
-#include <mathlib.h>
-#include <Vector.h>
+#include <mymathlib.h>
+#include <mathlib/Vector.h>
 
 #include "hud.h"
 #include "weapon.h"
-#include "CColor.h"
+#include "Color.h"
 #include "vguilocal.h"
+#include "vgui_controls/Controls.h"
 #include "local.h"
 #include "glew.h"
 #include "gl_def.h"
@@ -223,15 +224,15 @@ int CHudCustomAmmo::Init(void){
 	BackGroundY = GET_SCREEN_PIXEL(true, "AmmoHUD.BackGroundY");
 	BackGroundLength = GET_SCREEN_PIXEL(false, "AmmoHUD.BackGroundLength");
 
-	Ammo1IconColor = pScheme->GetColor("AmmoHUD.Ammo1IconColor", gDefaultColor);
-	Ammo1BigTextColor = pScheme->GetColor("AmmoHUD.Ammo1BigTextColor", gDefaultColor);
-	Ammo1TextColor = pScheme->GetColor("AmmoHUD.Ammo1TextColor", gDefaultColor);
-	Ammo2IconColor = pScheme->GetColor("AmmoHUD.Ammo2IconColor", gDefaultColor);
-	Ammo2BigTextColor = pScheme->GetColor("AmmoHUD.Ammo2BigTextColor", gDefaultColor);
-	Ammo2TextColor = pScheme->GetColor("AmmoHUD.Ammo2TextColor", gDefaultColor);
+	Ammo1IconColor = pSchemeData->GetColor("AmmoHUD.Ammo1IconColor", gDefaultColor);
+	Ammo1BigTextColor = pSchemeData->GetColor("AmmoHUD.Ammo1BigTextColor", gDefaultColor);
+	Ammo1TextColor = pSchemeData->GetColor("AmmoHUD.Ammo1TextColor", gDefaultColor);
+	Ammo2IconColor = pSchemeData->GetColor("AmmoHUD.Ammo2IconColor", gDefaultColor);
+	Ammo2BigTextColor = pSchemeData->GetColor("AmmoHUD.Ammo2BigTextColor", gDefaultColor);
+	Ammo2TextColor = pSchemeData->GetColor("AmmoHUD.Ammo2TextColor", gDefaultColor);
 
-	HUDFont = pScheme->GetFont("HUDShitFont", true);
-	HUDSmallFont = pScheme->GetFont("HUDSmallShitFont", true);
+	HUDFont = pSchemeData->GetFont("HUDShitFont", true);
+	HUDSmallFont = pSchemeData->GetFont("HUDSmallShitFont", true);
 
 	//所有选择菜单都要加载
 	m_HudWMenuAnnular.Init();
@@ -324,10 +325,10 @@ int CHudCustomAmmo::Draw(float flTime){
 	int iTextWidth;
 	wchar_t buf[16];
 	//从右往左绘制
-	gCustomHud.surface()->DrawSetTexture(-1);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-	gCustomHud.surface()->DrawSetTexture(iBackGroundTga);
-	gCustomHud.surface()->DrawTexturedRect(nowX - BackGroundLength, BackGroundY, ScreenWidth, ScreenHeight);
+	vgui::surface()->DrawSetTexture(-1);
+	vgui::surface()->DrawSetColor(255, 255, 255, 255);
+	vgui::surface()->DrawSetTexture(iBackGroundTga);
+	vgui::surface()->DrawTexturedRect(nowX - BackGroundLength, BackGroundY, ScreenWidth, ScreenHeight);
 
 	nowX -= BackGroundLength / 6;
 	if (pw->iAmmo2Type > 0) {
@@ -446,7 +447,7 @@ void CHudCustomAmmo::IN_Accumulate(){
 		y -= gScreenInfo.iHeight / 2;
 		y = -y;
 		m_HudWMenuAnnular.m_fCursorAngle = atan2(y, x);
-		int s = m_HudWMenuAnnular.m_fCursorAngle / (0.2 * mathlib::M_PI);
+		int s = m_HudWMenuAnnular.m_fCursorAngle / (0.2 * mathlib::Q_PI);
 		s = m_HudWMenuAnnular.m_fCursorAngle >= 0 ? s : 9 + s;
 		if (gWR.gridDrawMenu[s].iId > -1)
 			gWR.iNowSlot = s;

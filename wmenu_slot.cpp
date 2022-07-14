@@ -1,11 +1,11 @@
 #include <metahook.h>
 
-#include "mathlib.h"
+#include "mymathlib.h"
 #include "glew.h"
 
 #include "hud.h"
 #include "weapon.h"
-#include "CColor.h"
+#include "Color.h"
 #include "vguilocal.h"
 #include "local.h"
 #include "gl_def.h"
@@ -18,22 +18,20 @@
 #include "CCustomHud.h"
 #include "wmenu_slot.h"
 
-using namespace mathlib;
-
 CWeaponMenuSlot m_HudWMenuSlot;
 
 void CWeaponMenuSlot::Init(){
-	SelectColor = pScheme->GetColor("WMenuBucket.SelectColor", gDefaultColor);
-	SelectIconColor = pScheme->GetColor("WMenuBucket.SelectIconColor", gDefaultColor);
-	SelectEmptyColor = pScheme->GetColor("WMenuBucket.SelectEmptyColor", gDefaultColor);
+	SelectColor = pSchemeData->GetColor("WMenuBucket.SelectColor", gDefaultColor);
+	SelectIconColor = pSchemeData->GetColor("WMenuBucket.SelectIconColor", gDefaultColor);
+	SelectEmptyColor = pSchemeData->GetColor("WMenuBucket.SelectEmptyColor", gDefaultColor);
 
 	SelectXOffset = GET_SCREEN_PIXEL(false, "WMenuBucket.SelectXOffset");
 	SelectYOffset = GET_SCREEN_PIXEL(true, "WMenuBucket.SelectYOffset");
 	SelectXGap = GET_SCREEN_PIXEL(false, "WMenuBucket.SelectXGap");
 	SelectYGap = GET_SCREEN_PIXEL(true, "WMenuBucket.SelectYGap");
-	SelectAnimateTime = atof(pScheme->GetResourceString("WMenuBucket.SelectAnimateTime"));
-	SelectFadeTime = atof(pScheme->GetResourceString("WMenuBucket.SelectFadeTime"));
-	SelectHoldTime = atof(pScheme->GetResourceString("WMenuBucket.SelectHoldTime"));
+	SelectAnimateTime = atof(pSchemeData->GetResourceString("WMenuBucket.SelectAnimateTime"));
+	SelectFadeTime = atof(pSchemeData->GetResourceString("WMenuBucket.SelectFadeTime"));
+	SelectHoldTime = atof(pSchemeData->GetResourceString("WMenuBucket.SelectHoldTime"));
 }
 void CWeaponMenuSlot::VidInit(){
 	iBucket0Spr = gCustomHud.GetSpriteIndex("bucket1");
@@ -55,7 +53,7 @@ void CWeaponMenuSlot::VidInit(){
 }
 int CWeaponMenuSlot::DrawBar(int x, int y, int width, int height, float f){
 	int r = 0, g = 0, b = 0, a = 0;
-	f = clamp(f, 0.0f, 1.0f);
+	f = mathlib::Q_clamp(f, 0.0f, 1.0f);
 	if (f){
 		int w = f * width;
 		if (w <= 0)

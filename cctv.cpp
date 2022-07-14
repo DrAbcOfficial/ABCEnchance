@@ -1,9 +1,10 @@
 #ifdef  _DEBUG
 #include <metahook.h>
 #include "glew.h"
-#include "mathlib.h"
+#include "mymathlib.h"
 #include "local.h"
 #include "vguilocal.h"
+#include "vgui_controls/Controls.h"
 #include "hud.h"
 #include "weapon.h"
 #include "CCustomHud.h"
@@ -57,16 +58,16 @@ int CHudCCTV::Draw(float flTime){
 	if (gCVars.pCCTV->value <= 0)
 		return 1;
 
-	gCustomHud.surface()->DrawSetTexture(-1);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-	gCustomHud.surface()->DrawSetTexture(CCTVDownTga);
-	gCustomHud.surface()->DrawTexturedRect(DownLogoStartX, DownLogoStartY, DownLogoStartX + DownLogoSize, DownLogoStartY + DownLogoSize);
+	vgui::surface()->DrawSetTexture(-1);
+	vgui::surface()->DrawSetColor(255, 255, 255, 255);
+	vgui::surface()->DrawSetTexture(CCTVDownTga);
+	vgui::surface()->DrawTexturedRect(DownLogoStartX, DownLogoStartY, DownLogoStartX + DownLogoSize, DownLogoStartY + DownLogoSize);
 
-	gCustomHud.surface()->DrawSetTexture(CCTVLogoTga);
-	gCustomHud.surface()->DrawTexturedRect(LogoStartX, LogoStartY, LogoStartX + LogoWidth, LogoStartY + LogoHeight);
+	vgui::surface()->DrawSetTexture(CCTVLogoTga);
+	vgui::surface()->DrawTexturedRect(LogoStartX, LogoStartY, LogoStartX + LogoWidth, LogoStartY + LogoHeight);
 
-	gCustomHud.surface()->DrawSetTexture(CCTVTileTga);
-	gCustomHud.surface()->DrawTexturedRect(TileStartX, TileStartY, TileStartX + TileWidth, TileStartY + TileHeight);
+	vgui::surface()->DrawSetTexture(CCTVTileTga);
+	vgui::surface()->DrawTexturedRect(TileStartX, TileStartY, TileStartX + TileWidth, TileStartY + TileHeight);
 	return 0;
 }
 void CHudCCTV::Reset(){

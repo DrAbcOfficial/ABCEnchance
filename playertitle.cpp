@@ -1,7 +1,7 @@
 #include <metahook.h>
 #include <cmath>
-#include "mathlib.h"
-#include "Vector.h"
+#include "mymathlib.h"
+#include "CVector.h"
 
 #include "glew.h"
 #include "gl_def.h"
@@ -17,10 +17,9 @@
 #include "CCustomHud.h"
 
 #include "exportfuncs.h"
+#include "vgui_controls/Controls.h"
 
 #include "playertitle.h"
-
-using namespace mathlib;
 
 CHudPlayerTitle m_HudPlayerTitle;
 int CHudPlayerTitle::Init(void){
@@ -45,15 +44,15 @@ int CHudPlayerTitle::Draw(float flTime){
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 		float* localColor = gHookFuncs.GetClientColor(local->index);
 		GLfloat nowX, nowY;
-		Vector vecHUD;
+		CVector vecHUD;
 		//夹角
-		Vector vecAngle;
+		CVector vecAngle;
 		//夹角点积
 		float angledotResult = 0;
 		//绘制高度
-		Vector vecEntityOrigin;
+		CVector vecEntityOrigin;
 		//绘制相关
-		wchar_t wideName[MAX_PLAYER_NAME_LENGTH];
+		wchar_t wideName[mathlib::MAX_PLAYER_NAME_LENGTH];
 		float* color;
 		float flArmorRatio, flArmorLength;
 		float flHealthRatio, flHealthLength;
@@ -61,9 +60,9 @@ int CHudPlayerTitle::Draw(float flTime){
 		float flTitleLength = gCVars.pPlayerTitleLength->value;
 		float flTitleHeight = gCVars.pPlayerTitleHeight->value;
 		//视角角度
-		Vector vecView;
+		CVector vecView;
 		gEngfuncs.GetViewAngles(vecView);
-		AngleVectors(vecView, vecView, nullptr, nullptr);
+		mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 		for (int i = 1; i <= 32; i++){
 			cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i);
 			if (!entity || 
@@ -74,7 +73,7 @@ int CHudPlayerTitle::Draw(float flTime){
 			if (gCustomHud.IsSpectator(i))
 				continue;
 			//计算我和目标的相对偏移
-			VectorSubtract(entity->curstate.origin, local->curstate.origin, vecAngle);
+			mathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecAngle);
 			color = gHookFuncs.GetClientColor(i);
 			if (vecAngle.FLength() >= 1024 || color != localColor)
 				continue;
@@ -91,8 +90,8 @@ int CHudPlayerTitle::Draw(float flTime){
 					nowY = vecHUD.y - flTitleHeight / 2;
 					if (gCVars.pPlayerTitle->value < 2){
 						hud_playerinfo_t* info = gCustomHud.GetPlayerHUDInfo(i);
-						flHealthRatio = clamp((info->health / 100.0f), 0.0f, 1.0f);
-						flArmorRatio = clamp((info->armor / 100.0f), 0.0f, 1.0f);
+						flHealthRatio = mathlib::Q_clamp((info->health / 100.0f), 0.0f, 1.0f);
+						flArmorRatio = mathlib::Q_clamp((info->armor / 100.0f), 0.0f, 1.0f);
 
 						flHealthLength = nowX + (flTitleLength * flHealthRatio);
 						flArmorLength = nowX + (flTitleLength * flArmorRatio);
@@ -141,18 +140,18 @@ int CHudPlayerTitle::Draw(float flTime){
 							glEnd();
 						glDisable(GL_BLEND);
 						
-						gCustomHud.surface()->DrawSetTexture(-1);
+						vgui::surface()->DrawSetTexture(-1);
 						if (info->health <= gCVars.pPlayerTitleDangerHealth->value || fabs(entity->curstate.maxs[2] - entity->curstate.mins[2]) < 64){
-							gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-							gCustomHud.surface()->DrawSetTexture(
+							vgui::surface()->DrawSetColor(255, 255, 255, 255);
+							vgui::surface()->DrawSetTexture(
 								info->health <= gCVars.pPlayerTitleDangerHealth->value ? (
 									info->health <= 0 ? iDeathIconTga : iMedkitIconTga) : iCrouchIconTga);
-							gCustomHud.surface()->DrawTexturedRect(nowX, nowY, nowX + flTitleHeight / 2, nowY + flTitleHeight / 2);
+							vgui::surface()->DrawTexturedRect(nowX, nowY, nowX + flTitleHeight / 2, nowY + flTitleHeight / 2);
 						}
 						nowX += flTitleHeight / 2;
 					}
-					pLocalize->ConvertANSIToUnicode(playerinfo.name, wideName, sizeof(wideName));
-					vgui::HFont hFont = pScheme->GetFont("MainShitFont", true);
+					vgui::localize()->ConvertANSIToUnicode(playerinfo.name, wideName, sizeof(wideName));
+					vgui::HFont hFont = pSchemeData->GetFont("MainShitFont", true);
 					DrawVGUI2String(wideName, nowX, nowY, color[0], color[1], color[2], hFont);
 				}
 			}

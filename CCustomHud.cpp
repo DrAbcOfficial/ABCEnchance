@@ -12,7 +12,7 @@
 #include "weapon.h"
 #include "pm_defs.h"
 #include "parsemsg.h"
-#include "mathlib.h"
+#include "mymathlib.h"
 #include "exportfuncs.h"
 
 #include "local.h"
@@ -33,6 +33,8 @@
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
 #include "grenadeindicator.h"
+
+#include "vgui_controls/Controls.h"
 
 #ifdef _DEBUG
 #include "cctv.h"
@@ -393,9 +395,6 @@ hud_playerinfo_t* CCustomHud::GetPlayerHUDInfo(int index){
 	if (index > 0 && index <= 33)
 		return &m_Playerinfo[index];
 	return nullptr;
-}
-vgui::ISurface* CCustomHud::surface(){
-	return g_pSurface;
 }
 CCustomHud :: ~CCustomHud(){
 	m_arySprites.clear();

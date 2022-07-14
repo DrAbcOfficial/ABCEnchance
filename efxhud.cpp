@@ -2,7 +2,7 @@
 #include "cvardef.h"
 #include "glew.h"
 #include "gl_def.h"
-#include "mathlib.h"
+#include "mymathlib.h"
 
 #include "local.h"
 #include "vguilocal.h"
@@ -16,6 +16,8 @@
 #include "exportfuncs.h"
 
 #include "efxhud.h"
+
+#include "vgui_controls/Controls.h"
 
 #define FRAME_ADVANCE_INTERVAL 0.05F
 
@@ -32,7 +34,7 @@ int CHudEfx::Draw(float flTime){
 	if (gCustomHud.IsInSpectate())
 		return 0;
 	//低血量
-	gCustomHud.surface()->DrawSetTexture(-1);
+	vgui::surface()->DrawSetTexture(-1);
 	if (m_HudArmorHealth.m_iHealth < gCVars.pDangerHealth->value) {
 		if ((double)flTime - flDyingFlincAdvanceTime >= FRAME_ADVANCE_INTERVAL) {
 			if (iDyingFlinc >= 60)
@@ -42,10 +44,10 @@ int CHudEfx::Draw(float flTime){
 			iDyingFlinc += bDyingFlincDir ? -1 : 1;
 			flDyingFlincAdvanceTime = flTime;
 		}
-		gCustomHud.surface()->DrawSetColor(255, 25, 25,
-			mathlib::clamp((int)(255 * (gCVars.pDangerHealth->value - m_HudArmorHealth.m_iHealth) / gCVars.pDangerHealth->value + iDyingFlinc - 30), 0, 255));
-		gCustomHud.surface()->DrawSetTexture(DarkconerImg);
-		gCustomHud.surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
+		vgui::surface()->DrawSetColor(255, 25, 25,
+			mathlib::Q_clamp((int)(255 * (gCVars.pDangerHealth->value - m_HudArmorHealth.m_iHealth) / gCVars.pDangerHealth->value + iDyingFlinc - 30), 0, 255));
+		vgui::surface()->DrawSetTexture(DarkconerImg);
+		vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 	}
 	//水下
 	if (iOldWaterType == WATERLEVEL_HEAD && gClientData->waterlevel != WATERLEVEL_HEAD) {
@@ -62,7 +64,7 @@ int CHudEfx::Draw(float flTime){
 				iFrameLeft = 0;
 			flFrameLeftAdvanceTime = flTime;
 		}
-		gCustomHud.surface()->DrawSetTexture(-1);
+		vgui::surface()->DrawSetTexture(-1);
 		DrawSPRIcon(WaterLeftSpr, kRenderTransAdd, 
 			0, 0, ScreenWidth / 3, ScreenHeight,
 			255, 255, 255, a, iFrameLeft);
@@ -78,10 +80,10 @@ int CHudEfx::Draw(float flTime){
 			255, 255, 255, a, iFrameRight);
 	}
 	if (gClientData->waterlevel == WATERLEVEL_HEAD) {
-		gCustomHud.surface()->DrawSetTexture(-1);
-		gCustomHud.surface()->DrawSetColor(0, 0, 0, 125);
-		gCustomHud.surface()->DrawSetTexture(DarkconerImg);
-		gCustomHud.surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
+		vgui::surface()->DrawSetTexture(-1);
+		vgui::surface()->DrawSetColor(0, 0, 0, 125);
+		vgui::surface()->DrawSetTexture(DarkconerImg);
+		vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 	}
 	iOldWaterType = gClientData->waterlevel;
 	return 1;

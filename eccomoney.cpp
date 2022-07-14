@@ -3,8 +3,8 @@
 #include <string>
 #include "hud.h"
 #include "weapon.h"
-#include "CColor.h"
-#include "mathlib.h"
+#include "Color.h"
+#include "mymathlib.h"
 #include "glew.h"
 
 #include "local.h"
@@ -16,8 +16,9 @@
 #include "enginedef.h"
 #include "exportfuncs.h"
 
+#include "vgui_controls/Controls.h"
+
 #include "eccomoney.h"
-using namespace mathlib;
 
 CHudEccoMoney m_HudEccoMoney;
 int CHudEccoMoney::Init(void){
@@ -28,16 +29,16 @@ int CHudEccoMoney::Init(void){
 	gCVars.pEccoCheckInfo = CREATE_CVAR("cl_eccocheck", "0", FCVAR_VALUE, nullptr);
 	gCVars.pEccoEnable = CREATE_CVAR("cl_eccoenable", "1", FCVAR_VALUE, nullptr);
 
-	MoneyColor = pScheme->GetColor("Ecco.MoneyColor", gDefaultColor);
-	MoneyDecreseColor = pScheme->GetColor("Ecco.MoneyDecreseColor", gDefaultColor);
-	MoneyIncreseColor = pScheme->GetColor("Ecco.MoneyIncreseColor", gDefaultColor);
+	MoneyColor = pSchemeData->GetColor("Ecco.MoneyColor", gDefaultColor);
+	MoneyDecreseColor = pSchemeData->GetColor("Ecco.MoneyDecreseColor", gDefaultColor);
+	MoneyIncreseColor = pSchemeData->GetColor("Ecco.MoneyIncreseColor", gDefaultColor);
 
-	HUDSmallFont = pScheme->GetFont("HUDSmallShitFont", true);
+	HUDSmallFont = pSchemeData->GetFont("HUDSmallShitFont", true);
 
-	MessagePrefix = pLocalize->Find("Ecco_MessagePrefix");
-	MessagePostfix = pLocalize->Find("Ecco_MessagePostfix");
-	DifferMessagePrefix = pLocalize->Find("Ecco_DifferMessagePrefix");
-	DifferMessagePostfix = pLocalize->Find("Ecco_DifferMessagePostfix");
+	MessagePrefix = vgui::localize()->Find("Ecco_MessagePrefix");
+	MessagePostfix = vgui::localize()->Find("Ecco_MessagePostfix");
+	DifferMessagePrefix = vgui::localize()->Find("Ecco_DifferMessagePrefix");
+	DifferMessagePostfix = vgui::localize()->Find("Ecco_DifferMessagePostfix");
 
 	Reset();
 	return 0;
@@ -66,12 +67,12 @@ int CHudEccoMoney::Draw(float flTime){
 		return 1;
 	else
 		iEcco = gCustomHud.GetPlayerHUDInfo(gEngfuncs.GetLocalPlayer()->index)->frags;
-	gCustomHud.surface()->DrawSetTexture(-1);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-	gCustomHud.surface()->DrawSetTexture(MoneyBackGround);
+	vgui::surface()->DrawSetTexture(-1);
+	vgui::surface()->DrawSetColor(255, 255, 255, 255);
+	vgui::surface()->DrawSetTexture(MoneyBackGround);
 	int nowX = 0;
 	int nowY = YOffset + BackgroundHeight;
-	gCustomHud.surface()->DrawTexturedRect(nowX, YOffset, BackgroundLength, nowY);
+	vgui::surface()->DrawTexturedRect(nowX, YOffset, BackgroundLength, nowY);
 	int iTextHeight;
 	int r, g, b, a;
 	std::wstring buf = MessagePrefix + std::to_wstring(iEcco) + MessagePostfix;
@@ -96,7 +97,7 @@ int CHudEccoMoney::Draw(float flTime){
 		else
 			MoneyDecreseColor.GetColor(r, g, b, a);
 		a *= flDifferDisapearTime - flTime;
-		ColorCalcuAlpha(r, g, b, a);
+		mathlib::ColorCalcuAlpha(r, g, b, a);
 		DrawVGUI2String((wchar_t*)buf.c_str(), nowX, nowY, r, g, b, HUDSmallFont, true);
 	}
 	return 0;

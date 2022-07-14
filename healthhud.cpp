@@ -1,7 +1,7 @@
 #include <metahook.h>
 #include <parsemsg.h>
 #include <cmath>
-#include "mathlib.h"
+#include "mymathlib.h"
 #include "glew.h"
 
 #include "hud.h"
@@ -14,12 +14,11 @@
 #include "local.h"
 
 #include "CCustomHud.h"
+#include "vgui_controls/Controls.h"
 
 #include "healthhud.h"
 
 #define DAMAGE_NAME "sprites/%d_dmg.spr"
-using namespace mathlib;
-
 int aryDmgFlags[NUM_DMG_TYPES] ={
 	DMG_POISON,
 	DMG_ACID,
@@ -59,7 +58,7 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf){
 		for (indicatorinfo_t& var : m_HudArmorHealth.aryIndicators) {
 			if (var.flKeepTime < flTime)
 				continue;
-			if (VectorCompare(var.vecFrom, vecFrom)) {
+			if (mathlib::VectorCompare(var.vecFrom, vecFrom)) {
 				var.flKeepTime = flTime + m_HudArmorHealth.PainColorTime;
 				return m_pfnDamage(pszName, iSize, pbuf);
 			}
@@ -101,29 +100,29 @@ void CHudArmorHealth::Init(void){
 	DamageIconY = GET_SCREEN_PIXEL(true, "HealthArmor.DamageIconY");
 	DamageIconSize = GET_SCREEN_PIXEL(true, "HealthArmor.DamageIconSize");
 
-	PainColorTime = atof(pScheme->GetResourceString("HealthArmor.PainColorTime"));
-	PainIndicatorTime = atof(pScheme->GetResourceString("HealthArmor.PainIndicatorTime"));
-	ShockIndicatorTime = atof(pScheme->GetResourceString("HealthArmor.ShockIndicatorTime"));
+	PainColorTime = atof(pSchemeData->GetResourceString("HealthArmor.PainColorTime"));
+	PainIndicatorTime = atof(pSchemeData->GetResourceString("HealthArmor.PainIndicatorTime"));
+	ShockIndicatorTime = atof(pSchemeData->GetResourceString("HealthArmor.ShockIndicatorTime"));
 
-	HealthIconColor = pScheme->GetColor("HealthArmor.HealthIconColor", gDefaultColor);
-	HealthBarColor = pScheme->GetColor("HealthArmor.HealthBarColor", gDefaultColor);
-	HealthTextColor = pScheme->GetColor("HealthArmor.HealthTextColor", gDefaultColor);
-	BitDamageColor = pScheme->GetColor("HealthArmor.BitDamageColor", gDefaultColor);
-	HealthPainColor = pScheme->GetColor("HealthArmor.HealthPainColor", gDefaultColor);
-	HealthDangerColor = pScheme->GetColor("HealthArmor.HealthDangerColor", gDefaultColor);
+	HealthIconColor = pSchemeData->GetColor("HealthArmor.HealthIconColor", gDefaultColor);
+	HealthBarColor = pSchemeData->GetColor("HealthArmor.HealthBarColor", gDefaultColor);
+	HealthTextColor = pSchemeData->GetColor("HealthArmor.HealthTextColor", gDefaultColor);
+	BitDamageColor = pSchemeData->GetColor("HealthArmor.BitDamageColor", gDefaultColor);
+	HealthPainColor = pSchemeData->GetColor("HealthArmor.HealthPainColor", gDefaultColor);
+	HealthDangerColor = pSchemeData->GetColor("HealthArmor.HealthDangerColor", gDefaultColor);
 
-	ArmorIconColor = pScheme->GetColor("HealthArmor.ArmorIconColor", gDefaultColor);
-	ArmorBarColor = pScheme->GetColor("HealthArmor.ArmorBarColor", gDefaultColor);
-	ArmorTextColor = pScheme->GetColor("HealthArmor.ArmorTextColor", gDefaultColor);
-	ArmorPainColor = pScheme->GetColor("HealthArmor.ArmorPainColor", gDefaultColor);
-	ArmorDangerColor = pScheme->GetColor("HealthArmor.ArmorDangerColor", gDefaultColor);
+	ArmorIconColor = pSchemeData->GetColor("HealthArmor.ArmorIconColor", gDefaultColor);
+	ArmorBarColor = pSchemeData->GetColor("HealthArmor.ArmorBarColor", gDefaultColor);
+	ArmorTextColor = pSchemeData->GetColor("HealthArmor.ArmorTextColor", gDefaultColor);
+	ArmorPainColor = pSchemeData->GetColor("HealthArmor.ArmorPainColor", gDefaultColor);
+	ArmorDangerColor = pSchemeData->GetColor("HealthArmor.ArmorDangerColor", gDefaultColor);
 
-	LongjumpIconColor = pScheme->GetColor("HealthArmor.LongjumpIconColor", gDefaultColor);
+	LongjumpIconColor = pSchemeData->GetColor("HealthArmor.LongjumpIconColor", gDefaultColor);
 
-	PainIndicatorColor = pScheme->GetColor("HealthArmor.PainIndicatorColor", gDefaultColor);
-	PainIndicatorColorA = pScheme->GetColor("HealthArmor.PainIndicatorColorA", gDefaultColor);
+	PainIndicatorColor = pSchemeData->GetColor("HealthArmor.PainIndicatorColor", gDefaultColor);
+	PainIndicatorColorA = pSchemeData->GetColor("HealthArmor.PainIndicatorColorA", gDefaultColor);
 
-	HUDFont = pScheme->GetFont("HUDShitFont", true);
+	HUDFont = pSchemeData->GetFont("HUDShitFont", true);
 
 	memset(m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES);
 
@@ -162,12 +161,12 @@ void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeD
 	vec3_t hsv,thsv;
 	int tr, tg, tb, ta;
 	c->GetColor(tr, tg, tb, ta);
-	RGBToHSV(r, g, b, hsv[0], hsv[1], hsv[2]);
-	RGBToHSV(tr, tg, tb, thsv[0], thsv[1], thsv[2]);
+	mathlib::RGBToHSV(r, g, b, hsv[0], hsv[1], hsv[2]);
+	mathlib::RGBToHSV(tr, tg, tb, thsv[0], thsv[1], thsv[2]);
 	for (size_t i = 0; i < 3; i++) {
 		thsv[i] -= (thsv[i] - hsv[i]) * timeDiffer / PainColorTime;
 	}
-	HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
+	mathlib::HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
 }
 int CHudArmorHealth::Draw(float flTime) {
 	if (gCustomHud.IsInSpectate())
@@ -200,10 +199,10 @@ int CHudArmorHealth::Draw(float flTime) {
 	}
 	flBackGroundLength += 2 * (IconSize + ElementGap);
 
-	gCustomHud.surface()->DrawSetTexture(-1);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-	gCustomHud.surface()->DrawSetTexture(iHealthBarBackground);
-	gCustomHud.surface()->DrawTexturedRect(0, flBackGroundY, flBackGroundLength, ScreenHeight);
+	vgui::surface()->DrawSetTexture(-1);
+	vgui::surface()->DrawSetColor(255, 255, 255, 255);
+	vgui::surface()->DrawSetTexture(iHealthBarBackground);
+	vgui::surface()->DrawTexturedRect(0, flBackGroundY, flBackGroundLength, ScreenHeight);
 	//HP
 	if (!gCustomHud.IsHudHide(HUD_HIDEHEALTH)) {
 		int iHealth = m_iHealth;
@@ -235,7 +234,7 @@ int CHudArmorHealth::Draw(float flTime) {
 			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
 				BarLength, BarWidth, r / 2, g / 2, b / 2, a);
 			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-				BarLength * clamp((float)iHealth / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
+				BarLength * mathlib::Q_clamp((float)iHealth / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
 			iStartX += BarLength + 2 * ElementGap;
 		}
 		iStartX += 2 * ElementGap;
@@ -272,7 +271,7 @@ int CHudArmorHealth::Draw(float flTime) {
 			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
 				BarLength, BarWidth, r / 2, g / 2, b / 2, a);
 			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-				BarLength * clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
+				BarLength * mathlib::Q_clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
 			iStartX += BarLength + ElementGap * 2;
 		}
 	}
@@ -286,13 +285,13 @@ void CHudArmorHealth::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
 	if (gCVars.pDamageScreenFilter->value > 0) {
 		m_hScreenFilter.iDamage = dmg;
 		m_hScreenFilter.iArmor = armor;
-		VectorCopy(vecFrom, m_hScreenFilter.vecFrom);
+		mathlib::VectorCopy(vecFrom, m_hScreenFilter.vecFrom);
 		m_hScreenFilter.flKeepTime = gEngfuncs.GetClientTime() + ShockIndicatorTime;
 	}
 	indicatorinfo_t* pTarget = &aryIndicators[iNowSelectIndicator];
 	pTarget->iDamage = dmg;
 	pTarget->iArmor = armor;
-	VectorCopy(vecFrom, pTarget->vecFrom);
+	mathlib::VectorCopy(vecFrom, pTarget->vecFrom);
 	pTarget->flKeepTime = gEngfuncs.GetClientTime() + PainIndicatorTime;
 	iNowSelectIndicator++;
 	if (iNowSelectIndicator >= NUM_MAX_INDICATOR)
@@ -305,9 +304,9 @@ void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 	vecFinal[0] = var.vecFrom[0] - local->curstate.origin[0];
 	vecFinal[1] = var.vecFrom[1] - local->curstate.origin[1];
 	vecFinal[2] = var.vecFrom[2] - local->curstate.origin[2];
-	VectorAngles(vecFinal, vecFinal);
-	vecFinal[YAW] -= local->curstate.angles[YAW];
-	float angle = DEG2RAD(vecFinal[YAW]);
+	mathlib::VectorAngles(vecFinal, vecFinal);
+	vecFinal[Q_YAW] -= local->curstate.angles[Q_YAW];
+	float angle = mathlib::Q_DEG2RAD(vecFinal[Q_YAW]);
 	float ca = cos(angle);
 	float sa = sin(angle);
 	//以屏幕中心为坐标轴的坐标系
@@ -325,15 +324,15 @@ void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 	*/
 	//x2 = x1 * cos(alpha) - y1 * sin(alpha);
 	//y2 = x1 * sin(alpha) + y1 * cos(alpha);
-	Vector2RotateCASA(var.vecHUDA, -sprWidth, y2, ca, sa);
-	Vector2RotateCASA(var.vecHUDB, sprWidth, y2, ca, sa);
-	Vector2RotateCASA(var.vecHUDC, -sprWidth, y1, ca, sa);
-	Vector2RotateCASA(var.vecHUDD, sprWidth, y1, ca, sa);
+	mathlib::Vector2RotateCASA(var.vecHUDA, -sprWidth, y2, ca, sa);
+	mathlib::Vector2RotateCASA(var.vecHUDB, sprWidth, y2, ca, sa);
+	mathlib::Vector2RotateCASA(var.vecHUDC, -sprWidth, y1, ca, sa);
+	mathlib::Vector2RotateCASA(var.vecHUDD, sprWidth, y1, ca, sa);
 	//变换为OpenGL屏幕坐标
-	CenterPos2OpenGLPos(var.vecHUDA, ScreenWidth, ScreenHeight);
-	CenterPos2OpenGLPos(var.vecHUDB, ScreenWidth, ScreenHeight);
-	CenterPos2OpenGLPos(var.vecHUDC, ScreenWidth, ScreenHeight);
-	CenterPos2OpenGLPos(var.vecHUDD, ScreenWidth, ScreenHeight);
+	mathlib::CenterPos2OpenGLPos(var.vecHUDA, ScreenWidth, ScreenHeight);
+	mathlib::CenterPos2OpenGLPos(var.vecHUDB, ScreenWidth, ScreenHeight);
+	mathlib::CenterPos2OpenGLPos(var.vecHUDC, ScreenWidth, ScreenHeight);
+	mathlib::CenterPos2OpenGLPos(var.vecHUDD, ScreenWidth, ScreenHeight);
 }
 int CHudArmorHealth::DrawPain(float flTime){
 	int r, g, b, a;

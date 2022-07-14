@@ -3,7 +3,7 @@
 #include "cmath"
 #include "malloc.h"
 #include "cl_entity.h"
-#include "mathlib.h"
+#include "mymathlib.h"
 #include "com_model.h"
 #include "triangleapi.h"
 #include "pm_movevars.h"
@@ -12,10 +12,11 @@
 #include "hud.h"
 #include "vguilocal.h"
 #include "exportfuncs.h"
-#include "CColor.h"
+#include "Color.h"
 #include "weapon.h"
 #include "extraprecache.h"
 #include "regquery.h"
+#include "vgui_controls/Controls.h"
 //GL
 #include "glew.h"
 #include "gl_def.h"
@@ -70,7 +71,7 @@ int CL_IsDevOverview(void){
 void CL_SetDevOverView(int param1){
 	gHookFuncs.CL_SetDevOverView(param1);
 	if (gCustomHud.m_iIsOverView){
-		(*(vec3_t*)(param1 + 0x1C))[YAW] = gCustomHud.m_flOverViewYaw;
+		(*(vec3_t*)(param1 + 0x1C))[Q_YAW] = gCustomHud.m_flOverViewYaw;
 		*(float *)(param1 + 0x10) = gCustomHud.m_vecOverViewOrg[0];
 		*(float *)(param1 + 0x14) = gCustomHud.m_vecOverViewOrg[1];
 		gDevOverview->z_max = gCustomHud.m_flOverViewZmax;
@@ -93,6 +94,9 @@ void Cvar_DirectSet(cvar_t* var, char* value) {
 	if (gCVarsHookMap.count(var) && gCVarsHookMap[var]) {
 		gCVarsHookMap[var](var);
 	}
+}
+void* NewClientFactory(void){
+	return Sys_GetFactoryThis();
 }
 
 void CheckOtherPlugin(){
@@ -228,18 +232,11 @@ void GL_Init(void){
 	gCustomHud.GL_Init();
 }
 void HUD_Init(void){
-	HINTERFACEMODULE hVGUI2 = (HINTERFACEMODULE)GetModuleHandle("vgui2.dll");
-	if (hVGUI2){
-		CreateInterfaceFn fnVGUI2CreateInterface = Sys_GetFactory(hVGUI2);
-		pSchemeManager = (vgui::ISchemeManager*)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, nullptr);
-		pLocalize = (vgui::ILocalize*)fnVGUI2CreateInterface(VGUI_LOCALIZE_INTERFACE_VERSION, nullptr);
-	}
 
-	g_pSurface = (vgui::ISurface*)Sys_GetFactory((HINTERFACEMODULE)g_hEngineModule)(VGUI_SURFACE_INTERFACE_VERSION, nullptr);
-	vgui::HScheme iScheme = pSchemeManager->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
+	vgui::HScheme iScheme = vgui::scheme()->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
 	if (iScheme > 0) {
-		pScheme = pSchemeManager->GetIScheme(pSchemeManager->GetScheme("ABCEnchance"));
-		gPluginVersion = atoi(pScheme->GetResourceString("Version"));
+		pSchemeData = vgui::scheme()->GetIScheme(vgui::scheme()->GetScheme("ABCEnchance"));
+		gPluginVersion = atoi(pSchemeData->GetResourceString("Version"));
 	}
 	else {
 		g_pMetaHookAPI->SysError("[ABCEnchance]:\nOoops! Can not load resource file!\nHave you installed it correctly?\n");
@@ -250,8 +247,8 @@ void HUD_Init(void){
 			PLUGIN_VERSION, gPluginVersion);
 	char localizePath[260];
 	snprintf(localizePath, sizeof(localizePath), "abcenchance/localize/%s.txt", 
-		(!strlen(pScheme->GetResourceString("Language"))) ? "%language%" : pScheme->GetResourceString("Language"));
-	if(!pLocalize->AddFile(g_pFileSystem, localizePath))
+		(!strlen(pSchemeData->GetResourceString("Language"))) ? "%language%" : pSchemeData->GetResourceString("Language"));
+	if(!vgui::localize()->AddFile(g_pFileSystem, localizePath))
 		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMissing Localize file: %s\n", localizePath);
 
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
@@ -340,7 +337,7 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 			gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
 			gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
-			gCustomHud.m_flOverViewYaw = local->curstate.angles[YAW];
+			gCustomHud.m_flOverViewYaw = local->curstate.angles[Q_YAW];
 
 			gCustomHud.m_iIsOverView = 1;
 

@@ -21,6 +21,7 @@ DWORD g_dwEngineDataSize;
 PVOID g_dwEngineRdataBase;
 DWORD g_dwEngineRdataSize;
 int g_iEngineType;
+bool g_IsClientVGUI2 = false;
 
 void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave){
 	g_pInterface = pInterface;

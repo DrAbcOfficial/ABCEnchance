@@ -6,8 +6,8 @@
 #include "cl_entity.h"
 #include "event_api.h"
 #include "triangleapi.h"
-#include "mathlib.h"
-#include "Vector.h"
+#include "mymathlib.h"
+#include "CVector.h"
 #include "cvardef.h"
 #include "extraprecache.h"
 #include "exportfuncs.h"
@@ -18,14 +18,13 @@
 #include "itemhighlight.h"
 
 #define ITEM_LIST_PATH "abcenchance/ItemHighLightList.txt"
-using namespace mathlib;
 
 std::vector<cl_hightlight_s*> aryHighLightList;
 
 CHudItemHighLight m_HudItemHighLight;
 char szItemPraseBuf[256];
 void RangeSizeCallBack(cvar_t* cvar) {
-	cvar->value = clamp(cvar->value, 0.0, 344.0);
+	cvar->value = mathlib::Q_clamp(cvar->value, 0.0, 344.0);
 }
 int CHudItemHighLight::Init(){
 	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "1", FCVAR_VALUE, NULL);
@@ -50,8 +49,8 @@ void HighLightTentCallBack(TEMPENTITY* ent, float frametime, float currenttime) 
 		ent->die = 0;
 		return;
 	}
-	VectorCopy(var->curstate.origin, ent->entity.origin);
-	VectorAdd(ent->entity.origin, ent->tentOffset, ent->entity.origin);
+	mathlib::VectorCopy(var->curstate.origin, ent->entity.origin);
+	mathlib::VectorAdd(ent->entity.origin, ent->tentOffset, ent->entity.origin);
 	ent->entity.angles[0] = var->curstate.angles[0];
 	ent->entity.angles[2] = var->curstate.angles[2];
 }
@@ -68,20 +67,20 @@ void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	ent1->flags = ent2->flags = FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
 	ent1->clientIndex = ent2->clientIndex = var->index;
 	ent1->die = ent2->die = gEngfuncs.GetClientTime() + 999.0f;
-	Vector vecTemp;
-	if (FVectorLength(var->curstate.mins) <= 3.2) {
+	CVector vecTemp;
+	if (mathlib::FVectorLength(var->curstate.mins) <= 3.2) {
 		vecTemp.x = vecTemp.y = -16;
 		vecTemp.z = 0;
 	}
 	else
 		vecTemp = var->curstate.mins;
-	VectorCopy(vecTemp, ent1->tentOffset);
+	mathlib::VectorCopy(vecTemp, ent1->tentOffset);
 	
-	if (FVectorLength(var->curstate.maxs) <= 3.2)
+	if (mathlib::FVectorLength(var->curstate.maxs) <= 3.2)
 		vecTemp[0] = vecTemp[1] = vecTemp[2] = 16;
 	else
-		VectorCopy(var->curstate.maxs, vecTemp);
-	VectorCopy(vecTemp, ent2->tentOffset);
+		mathlib::VectorCopy(var->curstate.maxs, vecTemp);
+	mathlib::VectorCopy(vecTemp, ent2->tentOffset);
 	ent2->entity.angles[1] = 180;
 	ent1->entity.curstate.skin = ent2->entity.curstate.skin = m_mapHighLightTable[var->curstate.modelindex]->Type;
 	ent1->callback = ent2->callback = HighLightTentCallBack;
@@ -105,8 +104,8 @@ void CHudItemHighLight::Draw(float flTime){
 			it = m_mapToBeDraw.erase(it);
 			continue;
 		}
-		Vector len;
-		VectorSubtract(var->curstate.origin, local->curstate.origin, len);
+		CVector len;
+		mathlib::VectorSubtract(var->curstate.origin, local->curstate.origin, len);
 		if (var->curstate.messagenum != local->curstate.messagenum || 
 			len.Length() > gCVars.pItemHighLightRange->value) {
 			EraseHighLight(var);
@@ -147,7 +146,7 @@ void CHudItemHighLight::LoadItemList() {
 			aryHighLightList.push_back(item);
 		}
 		else {
-			aryHighLightList[index]->Type = clamp(mathlib::fatoi(szItemPraseBuf), 0, 2);
+			aryHighLightList[index]->Type = mathlib::Q_clamp(mathlib::fatoi(szItemPraseBuf), 0, 2);
 			index++;
 		}
 		i++;

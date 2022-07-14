@@ -2,7 +2,7 @@
 #include <triangleapi.h>
 #include "studio.h"
 
-#include "mathlib.h"
+#include "mymathlib.h"
 #include "glew.h"
 #include "vguilocal.h"
 #include "gl_utility.h"
@@ -11,10 +11,9 @@
 #include "hud.h"
 #include "local.h"
 #include "exportfuncs.h"
+#include "vgui_controls/Controls.h"
 
 #include "gl_draw.h"
-
-using namespace mathlib;
 
 void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame) {
 	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), frame);
@@ -64,7 +63,7 @@ int GetHudFontHeight(vgui::HFont m_hFont) {
 	if (!m_hFont)
 		return 0;
 
-	return g_pSurface->GetFontTall(m_hFont);
+	return vgui::surface()->GetFontTall(m_hFont);
 }
 void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m_hFont) {
 	if (width)
@@ -77,7 +76,7 @@ void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m
 	if (width) {
 		int a, b, c;
 		for (size_t i = 0; i < len; i++) {
-			g_pSurface->GetCharABCwide(m_hFont, string[i], a, b, c);
+			vgui::surface()->GetCharABCwide(m_hFont, string[i], a, b, c);
 			*width += a + b + c;
 		}
 	}
@@ -115,7 +114,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 		bHorzCenter = true;
 
 	if (y == -1)
-		y = (gScreenInfo.iHeight - g_pSurface->GetFontTall(m_hFont)) / 2;
+		y = (gScreenInfo.iHeight - vgui::surface()->GetFontTall(m_hFont)) / 2;
 
 	for (int i = 0; i < iTotalLines; i++) {
 		wchar_t line[1024];
@@ -150,7 +149,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 			int shadow_x = x;
 			for (j = 0; j < iTempCount; j++) {
 				gEngfuncs.pfnVGUI2DrawCharacter(shadow_x, y, line[j], m_hFont);
-				g_pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
+				vgui::surface()->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
 				shadow_x += w1 + w2 + w3;
 			}
 		}
@@ -162,7 +161,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 				gEngfuncs.pfnVGUI2DrawCharacterAdd(x, y, line[j], (int)(r * 255.0f), (int)(g * 255.0f), (int)(b * 255.0f), m_hFont);
 			else
 				gEngfuncs.pfnVGUI2DrawCharacter(x, y, line[j], m_hFont);
-			g_pSurface->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
+			vgui::surface()->GetCharABCwide(m_hFont, line[j], w1, w2, w3);
 
 			x += w1 + w2 + w3;
 		}

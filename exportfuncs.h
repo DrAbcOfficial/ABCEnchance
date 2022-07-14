@@ -46,7 +46,20 @@ void IN_Accumulate(void);
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 
 void R_NewMap(void);
-void R_RenderView(int a1);
+
+void* NewClientFactory(void);
+
+void BaseUI_InstallHook(void);
+void GameUI_InstallHooks(void);
+void GameUI_UninstallHooks(void);
+void ClientVGUI_InstallHook(void);
+void ClientVGUI_Shutdown(void);
+void VGUI1_InstallHook(void);
+void VGUI1_Shutdown(void);
+void Surface_InstallHooks(void);
+void Surface_UninstallHooks(void);
+void Scheme_InstallHook(void);
+void KeyValuesSystem_InstallHook(void);
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
@@ -65,6 +78,7 @@ void R_RenderView(int a1);
 #define Fill_Func(dest, src) gHookFuncs.dest = *src
 #define Fill_EfxFunc(fn) gHookFuncs.fn = *gEngfuncs.pEfxAPI->fn
 #define Fill_EngFunc(fn) gHookFuncs.fn = *gEngfuncs.fn
-#define Install_InlineHook(fn) g_pMetaHookAPI->InlineHook((void *)gRefFuncs.fn, fn, (void **)&gRefFuncs.fn)
+#define Install_InlineHook(fn) g_pMetaHookAPI->InlineHook((void *)gHookFuncs.fn, fn, (void **)&gHookFuncs.fn)
 #define Install_InlineEngHook(fn) g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn)
 #define Fill_InlineEfxHook(fn) Fill_EfxFunc(fn);Install_InlineEngHook(fn)
+#define Uninstall_Hook(fn) if(g_phook_##fn){g_pMetaHookAPI->UnHook(g_phook_##fn);g_phook_##fn = NULL;}
