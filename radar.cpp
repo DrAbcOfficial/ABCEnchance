@@ -1,8 +1,8 @@
 #include <metahook.h>
 
 #include <cmath>
-#include "mathlib.h"
-#include "Vector.h"
+#include "mymathlib.h"
+#include "CVector.h"
 
 #include "local.h"
 #include "pm_defs.h"
@@ -21,9 +21,8 @@
 
 #include "weapon.h"
 #include "CCustomHud.h"
+#include "vgui_controls/Controls.h"
 #include "radar.h"
-
-using namespace mathlib;
 
 CHudRadar m_HudRadar;
 void __UserCmd_StartSizeRadar(void){
@@ -71,9 +70,9 @@ int CHudRadar::Init(){
 	YOffset = GET_SCREEN_PIXEL(true, "Radar.YOffset");
 	NorthPointerSize = GET_SCREEN_PIXEL(true, "Radar.NorthPointerSize");
 	ViewAngleSize = GET_SCREEN_PIXEL(true, "Radar.ViewAngleSize");
-	OutLineAlpha = atof(pScheme->GetResourceString("Radar.OutLineAlpha"));
-	MapAlpha = (GLubyte)atof(pScheme->GetResourceString("Radar.MapAlpha"));
-	CenterAlpha = atof(pScheme->GetResourceString("Radar.CenterAlpha"));
+	OutLineAlpha = atof(pSchemeData->GetResourceString("Radar.OutLineAlpha"));
+	MapAlpha = (GLubyte)atof(pSchemeData->GetResourceString("Radar.MapAlpha"));
+	CenterAlpha = atof(pSchemeData->GetResourceString("Radar.CenterAlpha"));
 	
 	return 1;
 }
@@ -126,10 +125,10 @@ void CHudRadar::Draw(float flTime){
 	stx = (1 - w) / 2;
 	sty = (1 - h) / 2;
 	//绘制背景
-	gCustomHud.surface()->DrawSetTexture(-1);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
-	gCustomHud.surface()->DrawSetTexture(gCVars.pRadar->value > 1 ? RoundBackGroundImg : BackGroundImg);
-	gCustomHud.surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
+	vgui::surface()->DrawSetTexture(-1);
+	vgui::surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+	vgui::surface()->DrawSetTexture(gCVars.pRadar->value > 1 ? RoundBackGroundImg : BackGroundImg);
+	vgui::surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 	//shader
 	GL_UseProgram(pp_texround.program);
 	if (gCVars.pRadar->value > 1) {
@@ -157,29 +156,29 @@ void CHudRadar::Draw(float flTime){
 	glDisable(GL_BLEND);
 	GL_UseProgram(0);
 	//绘制前景
-	gCustomHud.surface()->DrawSetTexture(-1);
+	vgui::surface()->DrawSetTexture(-1);
 	if (gCVars.pRadar->value == 1) {
-		gCustomHud.surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
-		gCustomHud.surface()->DrawSetTexture(UpGroundImg);
-		gCustomHud.surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
+		vgui::surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+		vgui::surface()->DrawSetTexture(UpGroundImg);
+		vgui::surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
 	}
 	//绘制箭头
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-	gCustomHud.surface()->DrawSetTexture(ViewAngleImg);
-	gCustomHud.surface()->DrawTexturedRect(
+	vgui::surface()->DrawSetColor(255, 255, 255, 255);
+	vgui::surface()->DrawSetTexture(ViewAngleImg);
+	vgui::surface()->DrawTexturedRect(
 		iStartX + (size - ViewAngleSize) / 2,
 		iStartY + (size - ViewAngleSize) / 2,
 		iStartX + (size + ViewAngleSize) / 2,
 		iStartY + (size + ViewAngleSize) / 2);
 	//绘制指北针
-	float rotate = DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[YAW]);
-	h = gCVars.pRadar->value > 1 ? size / 2 : fsqrt(2 * pow(size, 2)) / 2;
-	stx = clamp(((iStartX + size / 2) + h * cos(rotate)), (float)iStartX, (float)iStartX + size);
-	sty = clamp(((iStartY + size / 2) + h * sin(rotate)), (float)iStartY, (float)iStartY + size);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
-	gCustomHud.surface()->DrawSetTexture(NorthImg);
+	float rotate = mathlib::Q_DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[Q_YAW]);
+	h = gCVars.pRadar->value > 1 ? size / 2 : mathlib::fsqrt(2 * pow(size, 2)) / 2;
+	stx = mathlib::Q_clamp(((iStartX + size / 2) + h * cos(rotate)), (float)iStartX, (float)iStartX + size);
+	sty = mathlib::Q_clamp(((iStartY + size / 2) + h * sin(rotate)), (float)iStartY, (float)iStartY + size);
+	vgui::surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
+	vgui::surface()->DrawSetTexture(NorthImg);
 	w = NorthPointerSize / 2;
-	gCustomHud.surface()->DrawTexturedRect(stx - w, sty - w, stx + w, sty + w);
+	vgui::surface()->DrawTexturedRect(stx - w, sty - w, stx + w, sty + w);
 }
 
 void CHudRadar::BlitFramebuffer()
@@ -197,7 +196,7 @@ void CHudRadar::UpdateZmax(float flTime){
 	if (flTime < flNextUpdateTrTime)
 		return;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	Vector vecEndpos = local->curstate.origin;
+	CVector vecEndpos = local->curstate.origin;
 	vecEndpos.z = 9999;
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);

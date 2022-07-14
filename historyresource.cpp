@@ -1,13 +1,13 @@
 #include <metahook.h>
 #include "glew.h"
 
-#include "CColor.h"
+#include "Color.h"
 #include "vguilocal.h"
 #include "hud.h"
 #include "weapon.h"
 #include "weaponbank.h"
 #include "cvardef.h"
-#include "mathlib.h"
+#include "mymathlib.h"
 #include "gl_def.h"
 #include "gl_draw.h"
 #include "local.h"
@@ -18,11 +18,11 @@
 
 HistoryResource gHR;
 void HistoryResource::Init(void){
-	AmmoIconColor = pScheme->GetColor("AmmoHUD.AmmoPickUpIconColor", gDefaultColor);
-	AmmoTextColor = pScheme->GetColor("AmmoHUD.AmmoPickUpTextColor", gDefaultColor);
-	WeaponPickUpColor = pScheme->GetColor("AmmoHUD.WeaponPickUpColor", gDefaultColor);
-	WeaponPickUpEmptyColor = pScheme->GetColor("AmmoHUD.WeaponPickUpEmptyColor", gDefaultColor);
-	ItemPickUpColor = pScheme->GetColor("AmmoHUD.ItemPickUpColor", gDefaultColor);
+	AmmoIconColor = pSchemeData->GetColor("AmmoHUD.AmmoPickUpIconColor", gDefaultColor);
+	AmmoTextColor = pSchemeData->GetColor("AmmoHUD.AmmoPickUpTextColor", gDefaultColor);
+	WeaponPickUpColor = pSchemeData->GetColor("AmmoHUD.WeaponPickUpColor", gDefaultColor);
+	WeaponPickUpEmptyColor = pSchemeData->GetColor("AmmoHUD.WeaponPickUpEmptyColor", gDefaultColor);
+	ItemPickUpColor = pSchemeData->GetColor("AmmoHUD.ItemPickUpColor", gDefaultColor);
 
 	vecAmmoPickUpPos[0] = GET_SCREEN_PIXEL(false, "AmmoHUD.AmmoPickUpX");
 	vecAmmoPickUpPos[1] = GET_SCREEN_PIXEL(true, "AmmoHUD.AmmoPickUpY");
@@ -31,7 +31,7 @@ void HistoryResource::Init(void){
 	vecItemPickUpPos[0] = GET_SCREEN_PIXEL(false, "AmmoHUD.ItemPickUpX");
 	vecItemPickUpPos[1] = GET_SCREEN_PIXEL(true, "AmmoHUD.ItemPickUpY");
 
-	hFont = pScheme->GetFont("HUDSmallShitFont", true);
+	hFont = pSchemeData->GetFont("HUDSmallShitFont", true);
 	pHudDrawTime = CVAR_GET_POINTER("hud_drawhistory_time");
 	Reset();
 }

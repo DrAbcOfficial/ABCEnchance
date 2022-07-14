@@ -1,10 +1,10 @@
 #include <metahook.h>
 
-#include "mathlib.h"
+#include "mymathlib.h"
 
 #include "hud.h"
 #include "weapon.h"
-#include "CColor.h"
+#include "Color.h"
 #include "vguilocal.h"
 #include "local.h"
 
@@ -20,8 +20,6 @@
 #include "ammo.h"
 #include "CCustomHud.h"
 #include "wmenu_annular.h"
-
-using namespace mathlib;
 
 CWeaponMenuAnnular m_HudWMenuAnnular;
 void __UserCmd_OpenAnnularMenu(void) {
@@ -65,23 +63,23 @@ void CWeaponMenuAnnular::Init() {
 	ADD_COMMAND("+annularmenu", __UserCmd_OpenAnnularMenu);
 	ADD_COMMAND("-annularmenu", __UserCmd_CloseAnnularMenu);
 
-	SelectColor = pScheme->GetColor("WMenuAnnular.SelectColor", gDefaultColor);
-	SelectRinColor = pScheme->GetColor("WMenuAnnular.SelectRinColor", gDefaultColor);
-	SelectIconColor = pScheme->GetColor("WMenuAnnular.SelectIconColor", gDefaultColor);
-	SelectTextColor = pScheme->GetColor("WMenuAnnular.SelectTextColor", gDefaultColor);
-	SelectEmptyColor = pScheme->GetColor("WMenuAnnular.SelectEmptyColor", gDefaultColor);
-	SelectPointerColor = pScheme->GetColor("WMenuAnnular.SelectPointerColor", gDefaultColor);
+	SelectColor = pSchemeData->GetColor("WMenuAnnular.SelectColor", gDefaultColor);
+	SelectRinColor = pSchemeData->GetColor("WMenuAnnular.SelectRinColor", gDefaultColor);
+	SelectIconColor = pSchemeData->GetColor("WMenuAnnular.SelectIconColor", gDefaultColor);
+	SelectTextColor = pSchemeData->GetColor("WMenuAnnular.SelectTextColor", gDefaultColor);
+	SelectEmptyColor = pSchemeData->GetColor("WMenuAnnular.SelectEmptyColor", gDefaultColor);
+	SelectPointerColor = pSchemeData->GetColor("WMenuAnnular.SelectPointerColor", gDefaultColor);
 
 	SelectOffset = GET_SCREEN_PIXEL(true, "WMenuAnnular.SelectOffset");
 	SelectSize = GET_SCREEN_PIXEL(true, "WMenuAnnular.SelectSize");
 	SelectPointerSize = GET_SCREEN_PIXEL(true, "WMenuAnnular.SelectPointerSize");
-	SelectRotate = atof(pScheme->GetResourceString("WMenuAnnular.SelectRotate"));
-	SelectAnimateTime = atof(pScheme->GetResourceString("WMenuAnnular.SelectAnimateTime"));
-	SelectFadeTime = atof(pScheme->GetResourceString("WMenuAnnular.SelectFadeTime"));
-	SelectHoldTime = atof(pScheme->GetResourceString("WMenuAnnular.SelectHoldTime"));
+	SelectRotate = atof(pSchemeData->GetResourceString("WMenuAnnular.SelectRotate"));
+	SelectAnimateTime = atof(pSchemeData->GetResourceString("WMenuAnnular.SelectAnimateTime"));
+	SelectFadeTime = atof(pSchemeData->GetResourceString("WMenuAnnular.SelectFadeTime"));
+	SelectHoldTime = atof(pSchemeData->GetResourceString("WMenuAnnular.SelectHoldTime"));
 
-	HUDFont = pScheme->GetFont("HUDShitFont", true);
-	HUDSmallFont = pScheme->GetFont("HUDSmallShitFont", true);
+	HUDFont = pSchemeData->GetFont("HUDShitFont", true);
+	HUDSmallFont = pSchemeData->GetFont("HUDSmallShitFont", true);
 
 	if (SelectHoldTime <= 0)
 		SelectHoldTime = 5;
@@ -98,20 +96,20 @@ void CWeaponMenuAnnular::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, i
 	else
 		SelectEmptyColor.GetColor(r, g, b, dummy);
 	if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
-		RGBToHSV(r, g, b, h, s, v);
+		mathlib::RGBToHSV(r, g, b, h, s, v);
 		h += 36 * index + 120;
-		HSVToRGB(h, s, v, r, g, b);
+		mathlib::HSVToRGB(h, s, v, r, g, b);
 	}
-	ColorCalcuAlpha(r, g, b, a);
+	mathlib::ColorCalcuAlpha(r, g, b, a);
 	SPR_Set(wp->hInactive, r, g, b);
 	SPR_DrawAdditive(0, xpos - iWidth / 2, ypos - iHeight / 2, &wp->rcInactive);
 	SelectTextColor.GetColor(r, g, b, dummy);
 	if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
-		RGBToHSV(r, g, b, h, s, v);
+		mathlib::RGBToHSV(r, g, b, h, s, v);
 		h += 36 * index + 120;
-		HSVToRGB(h, s, v, r, g, b);
+		mathlib::HSVToRGB(h, s, v, r, g, b);
 	}
-	ColorCalcuAlpha(r, g, b, a);
+	mathlib::ColorCalcuAlpha(r, g, b, a);
 	if (gCVars.pAmmoMenuDrawPos->value > 0) {
 		wsprintfW(buf, L"* %d", wp->iSlotPos);
 		GetStringSize(buf, &iTextWidth, nullptr, HUDSmallFont);
@@ -164,8 +162,8 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 	int r, g, b, dummy;
 	//填充十边形坐标数组
 	for (i = 0; i < 10; i++) {
-		ac = cos(2 * M_PI * i / 10 + flStartRot);
-		as = sin(2 * M_PI * i / 10 + flStartRot);
+		ac = cos(2 * mathlib::Q_PI * i / 10 + flStartRot);
+		as = sin(2 * mathlib::Q_PI * i / 10 + flStartRot);
 
 		aryIn[i][0] = iOffset * ac;
 		aryIn[i][1] = iOffset * as;
@@ -188,8 +186,8 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		//绘制鼠标指针
 		float flPointerSize = (float)SelectPointerSize;
 		SelectPointerColor.GetColor(r, g, b, dummy);
-		ac = cos(m_fCursorAngle - 0.45 * M_PI);
-		as = sin(m_fCursorAngle - 0.45 * M_PI);
+		ac = cos(m_fCursorAngle - 0.45 * mathlib::Q_PI);
+		as = sin(m_fCursorAngle - 0.45 * mathlib::Q_PI);
 		vecA[0] = -flPointerSize * ac - (iOffset - flPointerSize) * as;
 		vecA[1] = -flPointerSize * as + (iOffset - flPointerSize) * ac;
 		vecB[0] = flPointerSize * ac - (iOffset - flPointerSize) * as;
@@ -212,23 +210,23 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 	for (i = 0; i < 10; i++) {
 		//CABD
 		//↓→↑
-		Vector2Copy(aryIn[i == 9 ? 0 : i + 1], vecA);
-		Vector2Copy(aryIn[i], vecB);
-		Vector2Copy(aryOut[i == 9 ? 0 : i + 1], vecC);
-		Vector2Copy(aryOut[i], vecD);
+		mathlib::Q_Vector2Copy(aryIn[i == 9 ? 0 : i + 1], vecA);
+		mathlib::Q_Vector2Copy(aryIn[i], vecB);
+		mathlib::Q_Vector2Copy(aryOut[i == 9 ? 0 : i + 1], vecC);
+		mathlib::Q_Vector2Copy(aryOut[i], vecD);
 		//变换为OpenGL屏幕坐标
-		CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
-		CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
-		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
-		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
 		//CABD
 		SelectColor.GetColor(r, g, b, dummy);
 		if (gCVars.pAmmoMenuDrawRainbow->value > 1) {
 			float h, s, v;
-			RGBToHSV(r, g, b, h, s, v);
+			mathlib::RGBToHSV(r, g, b, h, s, v);
 			h += 36 * i;
 			s = 1;
-			HSVToRGB(h, s, v, r, g, b);
+			mathlib::HSVToRGB(h, s, v, r, g, b);
 		}
 		DrawSPRIconPos(iSelectCyclerSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, a * 0.5);
 		if (gWR.gridDrawMenu[i].iId <= 0 || i == gWR.iNowSlot)
@@ -243,14 +241,14 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 	//绘制已选
 	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1 && gWR.iNowSlot >= 0) {
 		wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
-		Vector2Copy(aryIn[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecA);
-		Vector2Copy(aryIn[gWR.iNowSlot], vecB);
-		Vector2Copy(aryOut[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecC);
-		Vector2Copy(aryOut[gWR.iNowSlot], vecD);
-		CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
-		CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
-		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
-		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
+		mathlib::Q_Vector2Copy(aryIn[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecA);
+		mathlib::Q_Vector2Copy(aryIn[gWR.iNowSlot], vecB);
+		mathlib::Q_Vector2Copy(aryOut[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecC);
+		mathlib::Q_Vector2Copy(aryOut[gWR.iNowSlot], vecD);
+		mathlib::CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
 		DrawSelectIcon(wp, a, xpos, ypos, gWR.iNowSlot);

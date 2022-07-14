@@ -5,8 +5,8 @@
 #include "triangleapi.h"
 
 #include "cvar_hook.h"
-#include "mathlib.h"
-#include "Vector.h"
+#include "mymathlib.h"
+#include "CVector.h"
 
 #include "hud.h"
 #include "local.h"
@@ -23,7 +23,6 @@
 #include "crosshair.h"
 
 CHudCustomCrosshair m_HudCrosshair;
-using namespace mathlib;
 
 int CHudCustomCrosshair::Init(void){
 	gCVars.pDynamicCrossHair = CREATE_CVAR("cl_crosshair", "1", FCVAR_VALUE, NULL);
@@ -55,19 +54,19 @@ int CHudCustomCrosshair::Draw(float flTime){
 	int iCenterY;
 	if (gExportfuncs.CL_IsThirdPerson()){
 		pmtrace_t tr;
-		Vector vViewAngleForward;
+		CVector vViewAngleForward;
 		gEngfuncs.GetViewAngles(vViewAngleForward);
 		cl_entity_s* local = gEngfuncs.GetLocalPlayer();
-		AngleVectors(vViewAngleForward, vViewAngleForward, nullptr, nullptr);
-		Vector vecSrc = local->curstate.origin;
-		Vector viewOfs;
+		mathlib::AngleVectors(vViewAngleForward, vViewAngleForward, nullptr, nullptr);
+		CVector vecSrc = local->curstate.origin;
+		CVector viewOfs;
 		gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
 		vecSrc += viewOfs;
 		vViewAngleForward *= 8192;
-		Vector vecEnd = vecSrc + vViewAngleForward;
+		CVector vecEnd = vecSrc + vViewAngleForward;
 		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_NORMAL, local->index, &tr);
-		Vector vecHUD;
+		CVector vecHUD;
 		gEngfuncs.pTriAPI->WorldToScreen(tr.endpos, vecHUD);
 		iCenterX = (1.0f + vecHUD[0]) * ScreenWidth / 2;
 		iCenterY = (1.0f - vecHUD[1]) * ScreenHeight / 2;

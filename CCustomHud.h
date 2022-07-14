@@ -69,7 +69,6 @@ public:
 
 	hud_playerinfo_t* GetPlayerHUDInfo(int index);
 
-	vgui::ISurface* surface();
 	~CCustomHud();			// destructor, frees allocated memory
 
 	int m_iPlayerHealth = 0;

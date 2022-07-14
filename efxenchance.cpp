@@ -3,9 +3,9 @@
 #include "pmtrace.h"
 #include "event_api.h"
 #include "cl_entity.h"
-#include "mathlib.h"
+#include "mymathlib.h"
 #include "com_model.h"
-#include "CColor.h"
+#include "Color.h"
 #include "palette.h"
 #include "extraprecache.h"
 #include "exportfuncs.h"
@@ -20,7 +20,6 @@
 #define GAUSS_WAVE_LENGTH 48
 #define GAUSS_LASER_P_WIDTH 2
 #define GAUSS_LASER_S_WIDTH 4
-using namespace mathlib;
 
 struct EfxVarible{
 	int iGaussBeam;
@@ -49,7 +48,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 			vec3_t	offset, dir;
 			vec3_t	forward, right, up;
 			int nColor = colorindex;
-			nColor = clamp(nColor, 0, 255);
+			nColor = mathlib::Q_clamp(nColor, 0, 255);
 			pTemp->entity.curstate.scale = RANDOM_FLOAT((size / 25.0f), (size / 35.0f));
 			pTemp->flags = FTENT_SPRANIMATE;
 			pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r();
@@ -63,9 +62,9 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 			up[1] = right[1] = forward[1] = 0.0f;
 			up[2] = right[2] = forward[2] = 1.0f;
 			for (i = 0; i < gCVars.pBloodSpriteNumber->value; i++){
-				VectorCopy(org, offset);
-				VectorMA(offset, RANDOM_FLOAT(-0.5f, 0.5f) * size, right, offset);
-				VectorMA(offset, RANDOM_FLOAT(-0.5f, 0.5f) * size, up, offset);
+				mathlib::VectorCopy(org, offset);
+				mathlib::VectorMA(offset, RANDOM_FLOAT(-0.5f, 0.5f) * size, right, offset);
+				mathlib::VectorMA(offset, RANDOM_FLOAT(-0.5f, 0.5f) * size, up, offset);
 				pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(org, gEngfuncs.hudGetModelByIndex(modelIndex2));
 				if (!pTemp)
 					return;
@@ -82,7 +81,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 				srand((unsigned int)gEngfuncs.GetClientTime() * i + i);
 				dir[1] = forward[1] + rand() / double(RAND_MAX) * 2 - 1;
 				dir[2] = forward[2];
-				VectorScale(dir, RANDOM_FLOAT(8.0f * size, 20.0f * size), pTemp->entity.baseline.origin);
+				mathlib::VectorScale(dir, RANDOM_FLOAT(8.0f * size, 20.0f * size), pTemp->entity.baseline.origin);
 				pTemp->entity.baseline.origin[0] += RANDOM_FLOAT(4.0f, gCVars.pBloodSpriteSpeed->value) * (size);
 				pTemp->entity.baseline.origin[1] += RANDOM_FLOAT(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 2);
 				pTemp->entity.baseline.origin[2] += RANDOM_FLOAT(4.0f, gCVars.pBloodSpriteSpeed->value) * (size / 4);
@@ -96,14 +95,14 @@ void GaussLoopholeCallback(TEMPENTITY* ent, float frametime, float currenttime) 
 }
 void GaussChargeCallback(TEMPENTITY* ent, float frametime, float currenttime) {
 	cl_entity_t* view = gEngfuncs.GetViewModel();
-	VectorCopy(view->attachment[0], ent->entity.origin);
+	mathlib::VectorCopy(view->attachment[0], ent->entity.origin);
 	ent->entity.curstate.scale = min(0.5, (currenttime - gEfxVarible.flGaussStartChargeTime) / 2);
 }
 void CreateGaussLoophole(pmtrace_t* tr) {
 	TEMPENTITY* pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(tr->endpos, gEfxVarible.iGaussLoophole);
 	if (!pTemp)
 		return;
-	VectorAngles(tr->plane.normal, pTemp->entity.angles);
+	mathlib::VectorAngles(tr->plane.normal, pTemp->entity.angles);
 	pTemp->entity.angles[0] += 90;
 	pTemp->entity.angles[2] += 180;
 	pTemp->die = gEngfuncs.GetClientTime() + 1.0f;
@@ -124,16 +123,16 @@ void DoGaussFire(float fparam1, int bparam1) {
 
 	gEngfuncs.GetViewAngles(vecViewAngle);
 
-	AngleVectors(vecViewAngle, vecForward, nullptr, nullptr);
-	VectorCopy(vecForward, vecDir);
-	VectorNormalize(vecDir);
+	mathlib::AngleVectors(vecViewAngle, vecForward, nullptr, nullptr);
+	mathlib::VectorCopy(vecForward, vecDir);
+	mathlib::VectorNormalize(vecDir);
 
-	AngleVectors(vecViewAngle, vecForward, NULL, NULL);
-	VectorCopy(local->curstate.origin, vecSrc);
+	mathlib::AngleVectors(vecViewAngle, vecForward, NULL, NULL);
+	mathlib::VectorCopy(local->curstate.origin, vecSrc);
 	gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
-	VectorAdd(vecSrc, viewOfs, vecSrc);
-	VectorMultipiler(vecForward, 8192);
-	VectorAdd(vecSrc, vecForward, vecDest);
+	mathlib::VectorAdd(vecSrc, viewOfs, vecSrc);
+	mathlib::VectorMultipiler(vecForward, 8192);
+	mathlib::VectorAdd(vecSrc, vecForward, vecDest);
 
 	while (flDamage > 10 && nMaxHits > 0) {
 		//减一次反射次数
@@ -167,8 +166,8 @@ void DoGaussFire(float fparam1, int bparam1) {
 			entignore = -1;
 			//与击中面法线做点乘，取负数，判断入射角
 			
-			VectorCopy(tr.plane.normal, vecNormal);
-			float n = -DotProduct(vecNormal, vecDir);
+			mathlib::VectorCopy(tr.plane.normal, vecNormal);
+			float n = -mathlib::DotProduct(vecNormal, vecDir);
 			//角度小于60°
 			if (n < 0.5) {
 				// reflect
@@ -177,8 +176,8 @@ void DoGaussFire(float fparam1, int bparam1) {
 				vecReflect[1] = 2.0 * vecNormal[1] * n + vecDir[1];
 				vecReflect[2] = 2.0 * vecNormal[2] * n + vecDir[2];
 				//取得新的射线坐标和方向
-				VectorCopy(vecReflect, vecDir);
-				VectorCopy(tr.endpos, vecSrc);
+				mathlib::VectorCopy(vecReflect, vecDir);
+				mathlib::VectorCopy(tr.endpos, vecSrc);
 				vecDest[0] = vecSrc[0] + vecDir[0] * 8192;
 				vecDest[1] = vecSrc[1] + vecDir[1] * 8192;
 				vecDest[2] = vecSrc[2] + vecDir[2] * 8192;
@@ -220,11 +219,11 @@ void DoGaussFire(float fparam1, int bparam1) {
 						gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 						gEngfuncs.pEventAPI->EV_PlayerTrace(beam_tr.endpos, tr.endpos, PM_NORMAL, entignore, &beam_tr);
 						//求该射线长度为n
-						VectorSubtract(beam_tr.endpos, tr.endpos, vecLength);
-						n = VectorLength(vecLength);
+						mathlib::VectorSubtract(beam_tr.endpos, tr.endpos, vecLength);
+						n = mathlib::VectorLength(vecLength);
 						//如果长度比伤害小
 						//射线的后面一点做球
-						VectorCopy(beam_tr.endpos, vecRandomSrc);
+						mathlib::VectorCopy(beam_tr.endpos, vecRandomSrc);
 						vecRandomSrc[0] += vecDir[0] * flDamage;
 						vecRandomSrc[1] += vecDir[1] * flDamage;
 						vecRandomSrc[2] += vecDir[2] * flDamage;
@@ -262,7 +261,7 @@ void DoGaussFire(float fparam1, int bparam1) {
 		else {
 			//不可反射表面
 			//以终点向前尝试一次穿透后停止
-			VectorAdd(tr.endpos, vecDir, vecSrc);
+			mathlib::VectorAdd(tr.endpos, vecDir, vecSrc);
 			entignore = tr.ent;
 		}
 	}

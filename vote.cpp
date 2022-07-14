@@ -6,14 +6,15 @@
 #include "local.h"
 #include "vguilocal.h"
 #include "weapon.h"
-#include "CColor.h"
+#include "Color.h"
 #include "glew.h"
 #include "gl_def.h"
 #include "gl_draw.h"
 
 #include "CCustomHud.h"
 
-#include "mathlib.h"
+#include "mymathlib.h"
+#include "vgui_controls/Controls.h"
 
 #include "vote.h"
 
@@ -29,10 +30,10 @@ bool VotePatternCheck(std::string content, char* szpattern, char* localtoken) {
 	if (std::regex_match(content, result, pattern) && result.size() >= 2){
 		std::string playername = result[1];
 		wchar_t wPlayerName[256] = { 0 };
-		pLocalize->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
-		pLocalize->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), pLocalize->Find(localtoken), 1, wPlayerName);
-		pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
-		pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
+		vgui::localize()->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
+		vgui::localize()->ConstructString(m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend), vgui::localize()->Find(localtoken), 1, wPlayerName);
+		vgui::localize()->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
+		vgui::localize()->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
 		return true;
 	}
 	return false;
@@ -52,9 +53,9 @@ int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf){
 		VotePatternCheck(voteContent, "Would you like to change the map to \"(.*)\"\\?", "Vote_VoteMap"))
 		return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
 
-	pLocalize->ConvertANSIToUnicode(voteContent.c_str(), m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend));
-	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
-	pLocalize->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
+	vgui::localize()->ConvertANSIToUnicode(voteContent.c_str(), m_HudVote.m_VoteContend, sizeof(m_HudVote.m_VoteContend));
+	vgui::localize()->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteYes, sizeof(m_HudVote.m_VoteYes));
+	vgui::localize()->ConvertANSIToUnicode(READ_STRING(), m_HudVote.m_VoteNo, sizeof(m_HudVote.m_VoteNo));
 	return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
 }
 int __MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf){
@@ -70,18 +71,18 @@ int CHudVote::Init(){
 	Height = GET_SCREEN_PIXEL(true, "Vote.Height");
 	Width = GET_SCREEN_PIXEL(false, "Vote.Width");
 
-	OutlineColor = pScheme->GetColor("Vote.OutlineColor", gDefaultColor);
-	BackGoundColor = pScheme->GetColor("Vote.BackGoundColor", gDefaultColor);
+	OutlineColor = pSchemeData->GetColor("Vote.OutlineColor", gDefaultColor);
+	BackGoundColor = pSchemeData->GetColor("Vote.BackGoundColor", gDefaultColor);
 
-	HudFont = pScheme->GetFont("VoteShitFont");
+	HudFont = pSchemeData->GetFont("VoteShitFont");
 
-	wcsncpy_s(VoteTitle, pLocalize->Find("Vote_DefaultMessage"), 255);
+	wcsncpy_s(VoteTitle, vgui::localize()->Find("Vote_DefaultMessage"), 255);
 	VoteTitle[255] = 0;
 
-	wcsncpy_s(DefaultYes, pLocalize->Find("Vote_DefaultYes"), 63);
+	wcsncpy_s(DefaultYes, vgui::localize()->Find("Vote_DefaultYes"), 63);
 	DefaultYes[63] = 0;
 	
-	wcsncpy_s(DefaultNo, pLocalize->Find("Vote_DefaultNo"), 63);
+	wcsncpy_s(DefaultNo, vgui::localize()->Find("Vote_DefaultNo"), 63);
 	DefaultNo[63] = 0;
 
 	Reset();
@@ -169,18 +170,18 @@ int CHudVote::Draw(float flTime){
 	y = xywh[1] + xywh[3] - 6 * tall2;
 
 	x += 2.2 * h;
-	gCustomHud.surface()->DrawSetTexture(-1);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-	gCustomHud.surface()->DrawSetTexture(m_iYesIconTga);
-	gCustomHud.surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
+	vgui::surface()->DrawSetTexture(-1);
+	vgui::surface()->DrawSetColor(255, 255, 255, 255);
+	vgui::surface()->DrawSetTexture(m_iYesIconTga);
+	vgui::surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
 	x += 2.2 * h;
 	wsprintfW(buf, L"F1  %s", !m_VoteYes[0] ? DefaultYes : m_VoteYes);
 	DrawVGUI2String(buf, x, y, r, g, b, HudFont);
 	y += 2.2 * h;
 	x -= 2.2 * h;
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-	gCustomHud.surface()->DrawSetTexture(m_iNoIconTga);
-	gCustomHud.surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
+	vgui::surface()->DrawSetColor(255, 255, 255, 255);
+	vgui::surface()->DrawSetTexture(m_iNoIconTga);
+	vgui::surface()->DrawTexturedRect(x, y, x + 2 * h, y + 2 * h);
 	x += 2.2 * h;
 	_swprintf(buf, L"F2  %s", !m_VoteNo[0] ? DefaultNo : m_VoteNo);
 	DrawVGUI2String(buf, x, y, r, g, b, HudFont);

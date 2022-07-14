@@ -13,7 +13,8 @@
 
 #include "encode.h"
 
-#include "mathlib.h"
+#include "mymathlib.h"
+#include "vgui_controls/Controls.h"
 
 #include "deathmsg.h"
 
@@ -22,7 +23,6 @@ pfnUserMsgHook m_pfnTextMsg;
 pfnUserMsgHook m_pfnDeathMsg;
 
 using namespace std;
-using namespace mathlib;
 wregex parttenSuicide(MSG_SUICIDENOTIFY);
 wregex parttenKilled(MSG_KILLEDNOTIFY);
 wregex parttenPlayer(MSG_PLAYERKILLNOTIFY);
@@ -36,7 +36,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf){
 			if (msg_text == (char*)0)
 				return m_pfnTextMsg(pszName, iSize, pbuf);
 			wchar_t wideBuf[MSG_BUF_SIZE];
-			pLocalize->ConvertANSIToUnicode(msg_text, wideBuf, sizeof(wideBuf));
+			vgui::localize()->ConvertANSIToUnicode(msg_text, wideBuf, sizeof(wideBuf));
 			wstring stdSzBuf = wideBuf;
 			//剩下的老子才没兴趣
 			//正则捕获匹配
@@ -44,14 +44,14 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf){
 			bool found = false;
 			found = regex_search(stdSzBuf, matched, parttenSuicide);
 			if (found){
-				wstring suicidebuf = pLocalize->Find("DeathMsg_Suicide"), empty = L"";
+				wstring suicidebuf = vgui::localize()->Find("DeathMsg_Suicide"), empty = L"";
 				m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), suicidebuf, empty);
 				return 1;
 			}
 			found = regex_search(stdSzBuf, matched, parttenKilled);
 			if (found){
 				wstring k = matched.suffix().str();
-				wstring killBuf = pLocalize->Find("DeathMsg_MonsterKill");
+				wstring killBuf = vgui::localize()->Find("DeathMsg_MonsterKill");
 				k.erase(k.end() - 2);
 				m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), killBuf, k);
 				return 1;
@@ -76,9 +76,9 @@ int __MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf) {
 	else {
 		int iAttacker = READ_SHORT();
 		wchar_t vbuf[MSG_BUF_SIZE], ebuf[MSG_BUF_SIZE], kbuf[MSG_BUF_SIZE];
-		pLocalize->ConvertANSIToUnicode(READ_STRING(), kbuf, sizeof(kbuf));
-		pLocalize->ConvertANSIToUnicode(READ_STRING(), ebuf, sizeof(ebuf));
-		pLocalize->ConvertANSIToUnicode(READ_STRING(), vbuf, sizeof(vbuf));
+		vgui::localize()->ConvertANSIToUnicode(READ_STRING(), kbuf, sizeof(kbuf));
+		vgui::localize()->ConvertANSIToUnicode(READ_STRING(), ebuf, sizeof(ebuf));
+		vgui::localize()->ConvertANSIToUnicode(READ_STRING(), vbuf, sizeof(vbuf));
 		int iDMGType = READ_LONG();
 		m_HudDeathMsg.InsertNewDeathMsg(vbuf, ebuf, kbuf, iAttacker, iType == 2, iDMGType);
 	}
@@ -125,21 +125,21 @@ int CHudDeathMsg::Draw(float flTime){
 			w + BackGoundWidth * 2, h + BackGoundWidth * 2, br, bg, bb, a / 2);
 		
 		AttackerColor.GetColor(r, g, b, ba);
-		ColorCalcuAlpha(r, g, b, a);
+		mathlib::ColorCalcuAlpha(r, g, b, a);
 		wsprintfW(buf, L"%s", var.killer);
 		DrawVGUI2String(buf, x, y, r, g, b, HUDFont, true);
 		GetStringSize(buf, &w, NULL, HUDFont);
 		x += w;
 
 		InflictorColor.GetColor(r, g, b, ba);
-		ColorCalcuAlpha(r, g, b, a);
+		mathlib::ColorCalcuAlpha(r, g, b, a);
 		wsprintfW(buf, L"[%s]", var.executioner);
 		DrawVGUI2String(buf, x, y, r, g, b, HUDFont, true);
 		GetStringSize(buf, &w, NULL, HUDFont);
 		x += w;
 
 		VictimColor.GetColor(r, g, b, ba);
-		ColorCalcuAlpha(r, g, b, a);
+		mathlib::ColorCalcuAlpha(r, g, b, a);
 		wsprintfW(buf, L"%s", var.victim);
 		DrawVGUI2String(buf, x, y, r, g, b, HUDFont, true);
 		GetStringSize(buf, &w, &h, HUDFont);
@@ -157,7 +157,7 @@ void CHudDeathMsg::PushDeathNotice(wchar_t* v, wchar_t* e, wchar_t* k) {
 	//无插件服务器输出控制台
 	if (!bIsDeathMsgOn) {
 		string cl, cv, ce, ck;
-		UnicodeToUTF8((wstring)pLocalize->Find("DeathMsg_ConsolePrint"), cl);
+		UnicodeToUTF8((wstring)vgui::localize()->Find("DeathMsg_ConsolePrint"), cl);
 		UnicodeToUTF8((wstring)v, cv);
 		UnicodeToUTF8((wstring)e, ce);
 		UnicodeToUTF8((wstring)k, ck);
@@ -189,13 +189,13 @@ void CHudDeathMsg::InsertNewDeathMsg(wchar_t* v, wchar_t* e, wchar_t* k, int kIn
 		}
 		char buf[26];
 		sprintf_s(buf, sizeof(buf), "DeathMsg_DMGType_%d", iDamageType);
-		wcscpy_s(aryKeepMsg[0].executioner, pLocalize->Find(buf));
+		wcscpy_s(aryKeepMsg[0].executioner, vgui::localize()->Find(buf));
 	}
 	else if (kIndex == gEngfuncs.GetLocalPlayer()->index)
-		wcscpy_s(aryKeepMsg[0].executioner, pLocalize->Find("DeathMsg_Suicide"));
+		wcscpy_s(aryKeepMsg[0].executioner, vgui::localize()->Find("DeathMsg_Suicide"));
 	//Monster
 	else if(kIndex > 33){
-		wcscpy_s(aryKeepMsg[0].executioner, pLocalize->Find("DeathMsg_MonsterKill"));
+		wcscpy_s(aryKeepMsg[0].executioner, vgui::localize()->Find("DeathMsg_MonsterKill"));
 		wcscpy_s(aryKeepMsg[0].killer, k);
 	}
 	wcscpy_s(aryKeepMsg[0].victim, v);
@@ -220,16 +220,16 @@ int CHudDeathMsg::Init(void){
 	m_pfnDeathMsg = HOOK_MESSAGE(DeathMsg);
 	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_VALUE, NULL);
 
-	HUDFont = pScheme->GetFont("MainShitFont", true);
+	HUDFont = pSchemeData->GetFont("MainShitFont", true);
 	XOffset = GET_SCREEN_PIXEL(false, "DeathMsg.XOffset");
 	YOffset = GET_SCREEN_PIXEL(true, "DeathMsg.YOffset");
 	GapOffset = GET_SCREEN_PIXEL(true, "DeathMsg.GapOffset");
 	BackGoundWidth = GET_SCREEN_PIXEL(true, "DeathMsg.BackGoundWidth");
 
-	BackGoundColor = pScheme->GetColor("DeathMsg.BackGoundColor", gDefaultColor);
-	BackGoundOutLineColor = pScheme->GetColor("DeathMsg.BackGoundOutLineColor", gDefaultColor);
-	VictimColor = pScheme->GetColor("DeathMsg.VictimColor", gDefaultColor);
-	AttackerColor = pScheme->GetColor("DeathMsg.AttackerColor", gDefaultColor);
-	InflictorColor = pScheme->GetColor("DeathMsg.InflictorColor", gDefaultColor);
+	BackGoundColor = pSchemeData->GetColor("DeathMsg.BackGoundColor", gDefaultColor);
+	BackGoundOutLineColor = pSchemeData->GetColor("DeathMsg.BackGoundOutLineColor", gDefaultColor);
+	VictimColor = pSchemeData->GetColor("DeathMsg.VictimColor", gDefaultColor);
+	AttackerColor = pSchemeData->GetColor("DeathMsg.AttackerColor", gDefaultColor);
+	InflictorColor = pSchemeData->GetColor("DeathMsg.InflictorColor", gDefaultColor);
 	return 1;
 }

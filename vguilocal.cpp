@@ -1,11 +1,7 @@
 #include <metahook.h>
-#include "mathlib.h"
+#include "mymathlib.h"
 #include "vguilocal.h"
 
-vgui::ISchemeManager* pSchemeManager;
-vgui::ISurface* g_pSurface;
-vgui::ILocalize* pLocalize;
-vgui::IScheme* pScheme;
-vgui::IScheme* pSchemeLang;
+vgui::IScheme* pSchemeData;
 ScreenInfo_t gScreenInfo;
 Color gDefaultColor = Color(245, 230, 195, 255);

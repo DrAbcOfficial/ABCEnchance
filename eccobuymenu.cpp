@@ -4,7 +4,7 @@
 #include "glew.h"
 #include "gl_utility.h"
 #include "vguilocal.h"
-#include "mathlib.h"
+#include "mymathlib.h"
 
 #include "com_model.h"
 #include "gl_def.h"
@@ -17,6 +17,8 @@
 #include "dlight.h"
 #include "basemenu.h"
 
+#include "vgui_controls/Controls.h"
+
 #include "extraprecache.h"
 #include "cl_entity.h"
 
@@ -24,8 +26,6 @@
 #include "CCustomHud.h"
 
 #include "eccobuymenu.h"
-
-using namespace mathlib;
 
 CHudEccoBuyMenu m_HudEccoBuyMenu;
 pfnUserMsgHook m_pfnMetaHookMsg;
@@ -68,12 +68,12 @@ void CHudEccoBuyMenu::GLInit(){
 int CHudEccoBuyMenu::Init(){
 	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
-	BuyMenuAnimateTime = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuAnimateTime"));
-	BuyMenuModelSize = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuModelSize"));
-	BuyMenuCamYaw = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuCamYaw"));
-	BuyMenuCamDist = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuCamDist"));
-	BuyMenuCamHeight = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuCamHeight"));
-	BuyMenuCamRight = atof(pScheme->GetResourceString("EccoBuyMenu.BuyMenuCamRight"));
+	BuyMenuAnimateTime = atof(pSchemeData->GetResourceString("EccoBuyMenu.BuyMenuAnimateTime"));
+	BuyMenuModelSize = atof(pSchemeData->GetResourceString("EccoBuyMenu.BuyMenuModelSize"));
+	BuyMenuCamYaw = atof(pSchemeData->GetResourceString("EccoBuyMenu.BuyMenuCamYaw"));
+	BuyMenuCamDist = atof(pSchemeData->GetResourceString("EccoBuyMenu.BuyMenuCamDist"));
+	BuyMenuCamHeight = atof(pSchemeData->GetResourceString("EccoBuyMenu.BuyMenuCamHeight"));
+	BuyMenuCamRight = atof(pSchemeData->GetResourceString("EccoBuyMenu.BuyMenuCamRight"));
 
 	BuyMenuCenterX = GET_SCREEN_PIXEL(false, "EccoBuyMenu.BuyMenuCenterX");
 	BuyMenuCenterY = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuCenterY");
@@ -86,10 +86,10 @@ int CHudEccoBuyMenu::Init(){
 
 	gCVars.pEccoBuyMenu = CREATE_CVAR("cl_eccocmenu", "1", FCVAR_VALUE, EccoBuymenuSetCallBack);
 
-	TextColor = pScheme->GetColor("BuyMenu.TextColor", gDefaultColor);
-	ButtonColor = pScheme->GetColor("BuyMenu.ButtonColor", gDefaultColor);
+	TextColor = pSchemeData->GetColor("BuyMenu.TextColor", gDefaultColor);
+	ButtonColor = pSchemeData->GetColor("BuyMenu.ButtonColor", gDefaultColor);
 
-	hFont = pScheme->GetFont("BuyMenuShitFont", true);
+	hFont = pSchemeData->GetFont("BuyMenuShitFont", true);
 	return 0;
 }
 void CHudEccoBuyMenu::VidInit() {
@@ -130,16 +130,16 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	glColor4ub(255, 255, 255, 255);
 	DrawQuad(ScreenWidth / 2, ScreenHeight);
 	//大背景
-	gCustomHud.surface()->DrawSetTexture(-1);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255 * flAnimationRatio);
-	gCustomHud.surface()->DrawSetTexture(iBackgroundTga);
-	gCustomHud.surface()->DrawTexturedRect(0, 0, ScreenWidth / 2, ScreenHeight);
+	vgui::surface()->DrawSetTexture(-1);
+	vgui::surface()->DrawSetColor(255, 255, 255, 255 * flAnimationRatio);
+	vgui::surface()->DrawSetTexture(iBackgroundTga);
+	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth / 2, ScreenHeight);
 	int mousex, mousey;
 	//获取鼠标指针位置
 	gEngfuncs.GetMousePosition(&mousex, &mousey);
-	gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-	gCustomHud.surface()->DrawSetTexture(gCustomHud.m_iCursorTga);
-	gCustomHud.surface()->DrawTexturedRect(mousex, mousey, mousex + gCustomHud.m_flCursorSize, mousey + gCustomHud.m_flCursorSize);
+	vgui::surface()->DrawSetColor(255, 255, 255, 255);
+	vgui::surface()->DrawSetTexture(gCustomHud.m_iCursorTga);
+	vgui::surface()->DrawTexturedRect(mousex, mousey, mousex + gCustomHud.m_flCursorSize, mousey + gCustomHud.m_flCursorSize);
 	int i;
 	int r = 255, g = 255, b = 255, a = 255;
 	int w, h;
@@ -158,7 +158,7 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	float xpos, ypos;
 	//绘制九边形
 	for (i = 0; i < 9; i++) {
-		double rnd = DOUBLE_PI * i / 9;
+		double rnd = mathlib::DOUBLE_PI * i / 9;
 		ac = cos(rnd);
 		as = sin(rnd);
 
@@ -171,16 +171,16 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	for (i = 0; i < 9; i++) {
 		//CABD
 		//↓→↑
-		Vector2Copy(aryIn[i == 8 ? 0 : i + 1], vecA);
-		Vector2Copy(aryIn[i], vecB);
-		Vector2Copy(aryOut[i == 8 ? 0 : i + 1], vecC);
-		Vector2Copy(aryOut[i], vecD);
+		mathlib::Q_Vector2Copy(aryIn[i == 8 ? 0 : i + 1], vecA);
+		mathlib::Q_Vector2Copy(aryIn[i], vecB);
+		mathlib::Q_Vector2Copy(aryOut[i == 8 ? 0 : i + 1], vecC);
+		mathlib::Q_Vector2Copy(aryOut[i], vecD);
 		//变换为OpenGL屏幕坐标
-		CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
-		CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
-		CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
-		CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
-		bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
+		mathlib::CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
+		bIsChosen = mathlib::PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
 		int realId = GetMenuId(i);
 		if (bIsChosen) {
 			iChosenSlot = i + 1;
@@ -196,7 +196,7 @@ int CHudEccoBuyMenu::Draw(float flTime){
 			char tbuf[96];
 			wchar_t buf[48];
 			snprintf(tbuf, sizeof(tbuf), "%d: %s", (i + 1), item->name);
-			pLocalize->ConvertANSIToUnicode(tbuf, buf, sizeof(buf));
+			vgui::localize()->ConvertANSIToUnicode(tbuf, buf, sizeof(buf));
 			GetStringSize(buf, &w, &h, hFont);
 			TextColor.GetColor(r, g, b, a);
 			DrawVGUI2String(buf, xpos - w / 2, ypos - h / 2, r, g, b, hFont);
@@ -204,9 +204,9 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		else {
 			wchar_t* buf = nullptr;
 			switch (realId){
-				case MENU_BACK: buf = pLocalize->Find("BuyMenu_LastMenu"); iBackSlot = i + 1; break;
-				case MENU_NEXTPAGE: buf = pLocalize->Find("BuyMenu_NextPage"); break;
-				case MENU_LASTPAGE: buf = pLocalize->Find("BuyMenu_LastPage"); break;
+				case MENU_BACK: buf = vgui::localize()->Find("BuyMenu_LastMenu"); iBackSlot = i + 1; break;
+				case MENU_NEXTPAGE: buf = vgui::localize()->Find("BuyMenu_NextPage"); break;
+				case MENU_LASTPAGE: buf = vgui::localize()->Find("BuyMenu_LastPage"); break;
 			}
 			if (realId != MENU_INVALID) {
 				GetStringSize(buf, &w, &h, hFont);
@@ -216,14 +216,14 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		}
 	}
 	//绘制中心返回
-	float len = SQRT_TWO / 2 * 0.8f * flOffset;
+	float len = mathlib::SQRT_TWO / 2 * 0.8f * flOffset;
 	vecA[0] = vecC[0] = BuyMenuCenterX - len;
 	vecB[0] = vecD[0] = BuyMenuCenterX + len;
 	vecC[1] = vecD[1] = BuyMenuCenterY - len;
 	vecA[1] = vecB[1] = BuyMenuCenterY + len;
-	bIsChosen = PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
+	bIsChosen = mathlib::PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
 	DrawSPRIconPos(iCenterSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, bIsChosen ? a : a * 0.5);
-	wchar_t* buf = pLocalize->Find("BuyMenu_LastMenu");
+	wchar_t* buf = vgui::localize()->Find("BuyMenu_LastMenu");
 	GetStringSize(buf, &w, &h, hFont);
 	TextColor.GetColor(r, g, b, a);
 	DrawVGUI2String(buf, BuyMenuCenterX - w / 2, BuyMenuCenterY - h / 2, r, g, b, hFont);
@@ -260,7 +260,7 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 		ClearTempEnt();
 		if (!pLight)
 			CreateLight();
-		VectorCopy(ent->origin, pLight->origin);
+		mathlib::VectorCopy(ent->origin, pLight->origin);
 		if (iNowSelectedId < 0)
 			return true;
 		buymenuitem_t* info = GetInfo(iNowSelectedId);
@@ -279,8 +279,8 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 				pShowEnt->entity.curstate.effects = EF_FULLBRIGHT;
 				pShowEnt->die = gEngfuncs.GetClientTime() + 99999.0f;
 			}
-			VectorCopy(ent->origin, pShowEnt->entity.origin);
-			VectorCopy(ent->angles, pShowEnt->entity.angles);
+			mathlib::VectorCopy(ent->origin, pShowEnt->entity.origin);
+			mathlib::VectorCopy(ent->angles, pShowEnt->entity.angles);
 			pShowEnt->entity.curstate.scale = BuyMenuModelSize;
 			pShowEnt->entity.angles[0] = 0;
 			break;
@@ -317,8 +317,8 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 				pWeaponEnt->entity.curstate.movetype = MOVETYPE_FOLLOW;
 				pWeaponEnt->entity.curstate.aiment = ent->index;
 			}
-			VectorCopy(ent->origin, pShowEnt->entity.origin);
-			VectorCopy(ent->angles, pShowEnt->entity.angles);
+			mathlib::VectorCopy(ent->origin, pShowEnt->entity.origin);
+			mathlib::VectorCopy(ent->angles, pShowEnt->entity.angles);
 			pShowEnt->entity.angles[0] = 0;
 			return true;
 		}

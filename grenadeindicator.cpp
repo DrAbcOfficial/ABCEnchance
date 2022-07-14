@@ -4,14 +4,16 @@
 #include "glew.h"
 #include "hud.h"
 #include "weapon.h"
-#include "mathlib.h"
-#include "Vector.h"
+#include "mymathlib.h"
+#include "CVector.h"
 #include "local.h"
 #include "triangleapi.h"
 #include "vguilocal.h"
 #include "event_api.h"
 #include "CCustomHud.h"
 #include "grenadeindicator.h"
+
+#include "vgui_controls/Controls.h"
 
 #define GRENADE_MODEL_PATH "models/w_grenade.mdl"
 CHudGrenadeIndicator m_HudGrenadeIndicator;
@@ -33,23 +35,23 @@ int CHudGrenadeIndicator::Draw(float flTime){
 			it = aryGrenades.erase(it);
 			continue;
 		}
-		Vector len;
+		CVector len;
 		mathlib::VectorSubtract(local->curstate.origin, ent->curstate.origin, len);
-		Vector vecView;
+		CVector vecView;
 		gEngfuncs.GetViewAngles(vecView);
 		gEngfuncs.pfnAngleVectors(vecView, vecView, nullptr, nullptr);
 		vecView = vecView.Normalize();
-		Vector vecAngle = len.Normalize();
+		CVector vecAngle = len.Normalize();
 		if(DotProduct(vecAngle, vecView) < 0.5 && len.FLength() < gCVars.pGrenadeIndicatorRange->value) {
 			//Draw icon
-			Vector vecHUD;
+			CVector vecHUD;
 			VEC_WorldToScreen(ent->curstate.origin, vecHUD);
-			vecHUD.x = mathlib::clamp((int)vecHUD.x, IconHalfSize, ScreenWidth - IconHalfSize);
-			vecHUD.y = mathlib::clamp((int)vecHUD.y, IconHalfSize, ScreenHeight - IconHalfSize);
-			gCustomHud.surface()->DrawSetTexture(-1);
-			gCustomHud.surface()->DrawSetColor(255, 255, 255, 255);
-			gCustomHud.surface()->DrawSetTexture(GrenadeIconTga);
-			gCustomHud.surface()->DrawTexturedRect(vecHUD.x - IconHalfSize, vecHUD.y - IconHalfSize, vecHUD.x + IconHalfSize, vecHUD.y + IconHalfSize);
+			vecHUD.x = mathlib::Q_clamp((int)vecHUD.x, IconHalfSize, ScreenWidth - IconHalfSize);
+			vecHUD.y = mathlib::Q_clamp((int)vecHUD.y, IconHalfSize, ScreenHeight - IconHalfSize);
+			vgui::surface()->DrawSetTexture(-1);
+			vgui::surface()->DrawSetColor(255, 255, 255, 255);
+			vgui::surface()->DrawSetTexture(GrenadeIconTga);
+			vgui::surface()->DrawTexturedRect(vecHUD.x - IconHalfSize, vecHUD.y - IconHalfSize, vecHUD.x + IconHalfSize, vecHUD.y + IconHalfSize);
 			it++;
 		}
 		else
@@ -73,7 +75,7 @@ int CHudGrenadeIndicator::HUD_AddEntity(int type, cl_entity_s* ent, const char* 
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	if (ent->curstate.messagenum != local->curstate.messagenum)
 		return true;
-	Vector len;
+	CVector len;
 	mathlib::VectorSubtract(local->curstate.origin, ent->curstate.origin, len);
 	if (len.FLength() > gCVars.pGrenadeIndicatorRange->value)
 		return true;

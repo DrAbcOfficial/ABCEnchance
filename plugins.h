@@ -16,3 +16,4 @@ extern int g_iEngineType;
 extern IFileSystem *g_pFileSystem;
 extern PVOID g_dwClientBase;
 extern DWORD g_dwClientSize;
+extern bool g_IsClientVGUI2;
