@@ -503,6 +503,27 @@
     <ClCompile Include="VGUI2\SurfaceHook.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
+    <ClCompile Include="VGUI2\Surface.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\Scheme.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\Bitmap.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\Border.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\SchemeHook.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\Win32Font.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\VPanelWrapper.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -1187,6 +1208,15 @@
       <Filter>VGUI2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\SurfaceHook.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\Bitmap.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\Border.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\Win32Font.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
   </ItemGroup>

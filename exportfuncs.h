@@ -19,6 +19,15 @@ extern baseweapon_t* (*g_rgBaseSlots)[10][26];
 extern refdef_t* g_refdef;
 extern metaplugins_t g_metaplugins;
 
+//VGUI2
+extern HWND g_MainWnd;
+extern WNDPROC g_MainWndProc;
+extern bool g_bIMEComposing;
+extern double g_flImeComposingTime;
+ICommandLine* CommandLine(void);
+double GetAbsoluteTime();
+LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 void CheckOtherPlugin();
 void FillEfxAddress();
 void FillEngineAddress();
@@ -48,14 +57,11 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 void R_NewMap(void);
 
 void* NewClientFactory(void);
+char* NewV_strncpy(char* a1, const char* a2, size_t a3);
 
 void BaseUI_InstallHook(void);
-void GameUI_InstallHooks(void);
-void GameUI_UninstallHooks(void);
 void ClientVGUI_InstallHook(void);
 void ClientVGUI_Shutdown(void);
-void VGUI1_InstallHook(void);
-void VGUI1_Shutdown(void);
 void Surface_InstallHooks(void);
 void Surface_UninstallHooks(void);
 void Scheme_InstallHook(void);

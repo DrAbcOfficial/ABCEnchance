@@ -2,6 +2,7 @@
 
 class IFileSystem;
 
+extern HMODULE g_hClientDll;
 extern HINSTANCE g_hInstance, g_hThisModule, g_hEngineModule;
 extern PVOID g_dwEngineBase;
 extern DWORD g_dwEngineSize;

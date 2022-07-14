@@ -62,6 +62,9 @@ typedef struct{
 
 	//ClientDLL
 	void* (**pfnClientFactory)(void);
+
+	//VGUI2
+	char* (*V_strncpy)(char* a1, const char* a2, size_t a3);
 }cl_refHookfunc_t;
 
 typedef struct{
@@ -156,3 +159,4 @@ typedef struct{
 
 extern cl_refHookfunc_t gHookFuncs;
 extern cl_cvars_t gCVars;
+extern char m_szCurrentLanguage[128];
