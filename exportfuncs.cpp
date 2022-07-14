@@ -32,6 +32,7 @@
 //efx
 #include "efxenchance.h"
 #include "viewmodellag.h"
+#include <capstone.h>
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -47,6 +48,140 @@ overviewInfo_t* gDevOverview;
 baseweapon_t* (*g_rgBaseSlots)[10][26] = nullptr;
 int* g_iVisibleMouse = nullptr;
 refdef_t* g_refdef = nullptr;
+
+
+//VGUI2
+HWND g_MainWnd = nullptr;
+WNDPROC g_MainWndProc = nullptr;
+bool g_bIMEComposing = false;
+double g_flImeComposingTime = 0;
+ICommandLine* CommandLine(void){
+	return g_pInterface->CommandLine;
+}
+double GetAbsoluteTime(){
+	return gEngfuncs.GetAbsoluteTime();
+}
+LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
+	static HWND s_hLastHWnd;
+	if (hWnd != s_hLastHWnd)
+	{
+		s_hLastHWnd = hWnd;
+		vgui::input()->SetIMEWindow(hWnd);
+	}
+
+	switch (uMsg)
+	{
+	case WM_SYSCHAR:
+	case WM_CHAR:
+	{
+		if (g_bIMEComposing)
+			return 1;
+
+		break;
+	}
+	case WM_KEYDOWN:
+	case WM_KEYUP:
+	{
+		if (wParam == VK_BACK)
+		{
+			if (g_bIMEComposing)
+				return 1;
+		}
+
+		break;
+	}
+	case WM_INPUTLANGCHANGE:
+	{
+		vgui::input()->OnInputLanguageChanged();
+		//break;
+		return 1;
+	}
+
+	case WM_IME_STARTCOMPOSITION:
+	{
+		g_bIMEComposing = true;
+		g_flImeComposingTime = GetAbsoluteTime();
+		vgui::input()->OnIMEStartComposition();
+		return 1;
+	}
+
+	case WM_IME_COMPOSITION:
+	{
+		int flags = (int)lParam;
+		vgui::input()->OnIMEComposition(flags);
+		return 1;
+	}
+
+	case WM_IME_ENDCOMPOSITION:
+	{
+		g_bIMEComposing = false;
+		g_flImeComposingTime = GetAbsoluteTime();
+		vgui::input()->OnIMEEndComposition();
+		return 1;
+	}
+
+	case WM_IME_NOTIFY:
+	{
+		switch (wParam)
+		{
+		case IMN_OPENCANDIDATE:
+		{
+			vgui::input()->OnIMEShowCandidates();
+			return 1;
+		}
+
+		case IMN_CHANGECANDIDATE:
+		{
+			vgui::input()->OnIMEChangeCandidates();
+			return 1;
+		}
+
+		case IMN_CLOSECANDIDATE:
+		{
+			vgui::input()->OnIMECloseCandidates();
+			//break;
+			return 1;
+		}
+
+		case IMN_SETCONVERSIONMODE:
+		case IMN_SETSENTENCEMODE:
+		case IMN_SETOPENSTATUS:
+		{
+			vgui::input()->OnIMERecomputeModes();
+			break;
+		}
+
+		case IMN_CLOSESTATUSWINDOW:
+		case IMN_GUIDELINE:
+		case IMN_OPENSTATUSWINDOW:
+		case IMN_SETCANDIDATEPOS:
+		case IMN_SETCOMPOSITIONFONT:
+		case IMN_SETCOMPOSITIONWINDOW:
+		case IMN_SETSTATUSWINDOWPOS:
+		{
+			break;
+		}
+		}
+
+		break;
+	}
+
+	case WM_IME_SETCONTEXT:
+	{
+		lParam &= ~ISC_SHOWUICOMPOSITIONWINDOW;
+		lParam &= ~ISC_SHOWUIGUIDELINE;
+		lParam &= ~ISC_SHOWUIALLCANDIDATEWINDOW;
+		break;
+	}
+
+	case WM_IME_CHAR:
+	{
+		return 0;
+	}
+	}
+
+	return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
+}
 
 //FINAL SHIT
 void R_NewMap(void){
@@ -97,6 +232,28 @@ void Cvar_DirectSet(cvar_t* var, char* value) {
 }
 void* NewClientFactory(void){
 	return Sys_GetFactoryThis();
+}
+char* NewV_strncpy(char* a1, const char* a2, size_t a3){
+	char language[128] = { 0 };
+	const char* lang = NULL;
+	auto gamedir = gEngfuncs.pfnGetGameDirectory();
+	if (CommandLine()->CheckParm("-forcelang", &lang) && lang && lang[0])
+	{
+		a2 = lang;
+	}
+	else if ((gamedir && !strcmp(gamedir, "svencoop")) || CommandLine()->CheckParm("-steamlang"))
+	{
+		Sys_GetRegKeyValue("Software\\Valve\\Steam", "Language", language, sizeof(language), "");
+		if ((Q_strlen(language) > 0) && (Q_stricmp(language, "english")))
+		{
+			a2 = language;
+		}
+	}
+
+	gHookFuncs.V_strncpy(m_szCurrentLanguage, a2, sizeof(m_szCurrentLanguage) - 1);
+	m_szCurrentLanguage[sizeof(m_szCurrentLanguage) - 1] = 0;
+
+	return gHookFuncs.V_strncpy(a1, a2, a3);
 }
 
 void CheckOtherPlugin(){
@@ -157,6 +314,82 @@ void FillEngineAddress() {
 			Sig_VarNotFound(Cvar_DirectSet_Call);
 			gHookFuncs.Cvar_DirectSet = (decltype(gHookFuncs.Cvar_DirectSet))g_pMetaHookAPI->ReverseSearchFunctionBegin(Cvar_DirectSet_Call, 0x500);
 			Sig_FuncNotFound(Cvar_DirectSet);
+		}
+		if (1)
+		{
+			PUCHAR SearchBegin = (PUCHAR)g_dwEngineTextBase;
+			PUCHAR SearchEnd = SearchBegin + g_dwEngineTextSize;
+			while (1)
+			{
+#define LANGUAGESTRNCPY_SIG "\x68\x80\x00\x00\x00\x50\x8D"
+				PUCHAR LanguageStrncpy = (PUCHAR)g_pMetaHookAPI->SearchPattern(SearchBegin, SearchEnd - SearchBegin, LANGUAGESTRNCPY_SIG, sizeof(LANGUAGESTRNCPY_SIG) - 1);
+				if (LanguageStrncpy)
+				{
+					typedef struct
+					{
+						bool bHasPushEax;
+					}LanguageStrncpy_ctx;
+
+					LanguageStrncpy_ctx ctx = { 0 };
+
+					g_pMetaHookAPI->DisasmRanges(LanguageStrncpy, 0x30, [](void* inst, PUCHAR address, size_t instLen, int instCount, int depth, PVOID context)
+						{
+							auto ctx = (LanguageStrncpy_ctx*)context;
+							auto pinst = (cs_insn*)inst;
+
+							if (pinst->id == X86_INS_PUSH &&
+								pinst->detail->x86.op_count == 1 &&
+								pinst->detail->x86.operands[0].type == X86_OP_REG &&
+								pinst->detail->x86.operands[0].reg == X86_REG_EAX)
+							{
+								ctx->bHasPushEax = true;
+							}
+
+							if (ctx->bHasPushEax)
+							{
+								if (address[0] == 0xE8)
+								{
+									gHookFuncs.V_strncpy = (decltype(gHookFuncs.V_strncpy))GetCallAddress(address);
+									PUCHAR pfnNewV_strncpy = (PUCHAR)NewV_strncpy;
+									int rva = pfnNewV_strncpy - (address + 5);
+									g_pMetaHookAPI->WriteMemory(address + 1, (BYTE*)&rva, 4);
+									return TRUE;
+								}
+								else if (address[0] == 0xEB)
+								{
+									char jmprva = *(char*)(address + 1);
+									PUCHAR jmptarget = address + 2 + jmprva;
+
+									if (jmptarget[0] == 0xE8)
+									{
+										gHookFuncs.V_strncpy = (decltype(gHookFuncs.V_strncpy))GetCallAddress(jmptarget);
+										PUCHAR pfnNewV_strncpy = (PUCHAR)NewV_strncpy;
+										int rva = pfnNewV_strncpy - (jmptarget + 5);
+										g_pMetaHookAPI->WriteMemory(jmptarget + 1, (BYTE*)&rva, 4);
+										return TRUE;
+									}
+								}
+							}
+
+							if (instCount > 5)
+								return TRUE;
+
+							if (address[0] == 0xCC)
+								return TRUE;
+
+							if (pinst->id == X86_INS_RET)
+								return TRUE;
+
+							return FALSE;
+						}, 0, &ctx);
+
+					SearchBegin = LanguageStrncpy + sizeof(LANGUAGESTRNCPY_SIG) - 1;
+				}
+				else
+				{
+					break;
+				}
+			}
 		}
 	}
 }

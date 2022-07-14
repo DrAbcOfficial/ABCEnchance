@@ -799,10 +799,7 @@ void CSurfaceProxy::SetAllowHTMLJavaScript(bool state)
 
 void CSurfaceProxy::SetLanguage(const char *pchLang)
 {
-	if(m_szCurrentLanguage[0] && 0 != strcmp(m_szCurrentLanguage, "english"))
-		m_pfnSetLanguage(this, 0, m_szCurrentLanguage);
-	else
-		m_pfnSetLanguage(this, 0, pchLang);
+	m_pfnSetLanguage(this, 0, pchLang);
 }
 
 const char *CSurfaceProxy::GetLanguage(void)

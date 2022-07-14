@@ -1,5 +1,6 @@
 #include <metahook.h>
 #include "exportfuncs.h"
+#include <vgui_controls/Controls.h>
 
 cl_enginefunc_t gEnginefuncs;
 mh_interface_t *g_pInterface;
@@ -7,6 +8,7 @@ metahook_api_t *g_pMetaHookAPI;
 mh_enginesave_t *g_pMetaSave;
 IFileSystem *g_pFileSystem;
 
+HMODULE g_hClientDll = nullptr;
 HINSTANCE g_hInstance, g_hThisModule;
 DWORD g_dwEngineBuildnum;
 HINSTANCE g_hEngineModule;
@@ -32,6 +34,8 @@ void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_engin
 
 void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	g_pFileSystem = g_pInterface->FileSystem;
+	g_pFullFileSystem = g_pFileSystem;
+	g_pFileSystem = g_pInterface->FileSystem;
 	g_iEngineType = g_pMetaHookAPI->GetEngineType();
 	g_dwEngineBuildnum = g_pMetaHookAPI->GetEngineBuildnum();
 	g_hEngineModule = g_pMetaHookAPI->GetEngineModule();
@@ -48,13 +52,15 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 
 	FillEngineAddress();
 	InstallEngineHook();
+	BaseUI_InstallHook();
 	CheckOtherPlugin();
 }
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
 
-	g_dwClientBase = (PVOID)GetModuleHandle("client.dll");
-	g_dwClientSize = g_pMetaHookAPI->GetModuleSize((HMODULE)g_dwClientBase);
+	g_hClientDll = g_pMetaHookAPI->GetClientModule();
+	g_dwClientBase = g_pMetaHookAPI->GetClientBase();
+	g_dwClientSize = g_pMetaHookAPI->GetClientSize();
 
 	CheckAsset();
 
@@ -78,6 +84,27 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	FillEfxAddress();
 	FillAddress();
 	InstallHook();
+	ClientVGUI_InstallHook();
+
+	EnumWindows([](HWND hwnd, LPARAM lParam
+		)
+		{
+			DWORD pid = 0;
+			if (GetWindowThreadProcessId(hwnd, &pid) && pid == GetCurrentProcessId())
+			{
+				char windowClass[256] = { 0 };
+				RealGetWindowClassA(hwnd, windowClass, sizeof(windowClass));
+				if (!strcmp(windowClass, "Valve001") || !strcmp(windowClass, "SDL_app"))
+				{
+					g_MainWnd = hwnd;
+					return FALSE;
+				}
+			}
+			return TRUE;
+		}, NULL);
+
+	g_MainWndProc = (WNDPROC)GetWindowLong(g_MainWnd, GWL_WNDPROC);
+	SetWindowLong(g_MainWnd, GWL_WNDPROC, (LONG)VID_MainWndProc);
 }
 void IPluginsV4::Shutdown(void){
 	HUD_Clear();
