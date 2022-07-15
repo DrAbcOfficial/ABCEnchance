@@ -7,8 +7,8 @@
 #define BASE_GWR_SELECTED 842100225
 #define BASE_GWR_UNSELECTED 842100224
 
+//Lazy Dizzy Short Marco
 #define V_snprintf sprintf_s
-
 #define HOOK_COMMAND(x, y) g_pMetaHookAPI->HookCmd((char*)x, __UserCmd_##y)
 #define ADD_COMMAND(x, y) gEngfuncs.pfnAddCommand((char*)x, y)
 #define ConsoleWriteline(x) gEngfuncs.Con_Printf(x)
@@ -41,6 +41,7 @@
 #define PlaySoundByName(x, y) (*gEngfuncs.pfnPlaySoundByName)((char*)x, y)
 #define VEC_WorldToScreen(w, s) (*gEngfuncs.pTriAPI->WorldToScreen)(w, s);s[0]=(1.0f+s[0])*ScreenWidth/2;s[1]=(1.0f-s[1])*ScreenHeight/2
 
+//Hooked Address
 typedef struct{
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
 
@@ -65,6 +66,7 @@ typedef struct{
 	PVOID(*VGUIClient001_CreateInterface)(HINTERFACEMODULE hModule);
 }cl_refHookfunc_t;
 
+//CVars
 typedef struct{
 	cvar_t* pBloodEfx;
 	cvar_t* pBloodSpriteSpeed;

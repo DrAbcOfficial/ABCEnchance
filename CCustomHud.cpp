@@ -1,6 +1,7 @@
 #include <metahook.h>
 #include <string>
 #include <map>
+#include <vector>
 
 #include "glew.h"
 #include "gl_shader.h"
@@ -17,6 +18,7 @@
 
 #include "local.h"
 #include "gl_draw.h"
+#include "player_info.h"
 
 #include "CCustomHud.h"
 
@@ -36,6 +38,9 @@
 
 #include "vgui_controls/Controls.h"
 
+#include "scoreboard.h"
+#include "Viewport.h"
+
 #ifdef _DEBUG
 #include "cctv.h"
 #endif
@@ -48,6 +53,7 @@ cl_hookedHud gHookHud;
 
 pfnUserMsgHook m_pfnScoreInfo;
 pfnUserMsgHook m_pfnSpectator;
+pfnUserMsgHook m_pfnServerName;
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
@@ -74,6 +80,15 @@ int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {
 	}
 	return m_pfnSpectator(pszName, iSize, pbuf);
 }
+int __MsgFunc_ServerName(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	char buf[MAX_SERVERNAME_LENGTH];
+	strncpy_s(buf, READ_STRING(), MAX_SERVERNAME_LENGTH);
+	buf[MAX_SERVERNAME_LENGTH - 1] = 0;
+	snprintf(g_pViewPort->GetServerName(), MAX_SERVERNAME_LENGTH, "%s", buf);
+	g_pViewPort->GetScoreBoard()->UpdateServerName();
+}
+
 void(*UserCmd_Slot1)(void);
 void(*UserCmd_Slot2)(void);
 void(*UserCmd_Slot3)(void);
@@ -88,6 +103,8 @@ void(*UserCmd_SlotClose)(void);
 void(*UserCmd_NextWeapon)(void);
 void(*UserCmd_PrevWeapon)(void);
 void(*UserCmd_Attack1)(void);
+void(*UserCmd_ShowScores)(void);
+void(*UserCmd_HideScores)(void);
 void __UserCmd_Slot1(void) {
 	m_HudCustomAmmo.SlotInput(0, 1);
 	m_HudEccoBuyMenu.SlotCallBack(0);
@@ -160,6 +177,12 @@ void __UserCmd_Attack1(void) {
 		return;
 	return UserCmd_Attack1();
 }
+void __UserCmd_OpenScoreboard(void) {
+	g_pViewPort->ShowScoreBoard();
+}
+void __UserCmd_CloseScoreboard(void) {
+	g_pViewPort->HideScoreBoard();
+}
 
 void CCustomHud::GL_Init(void){
 	m_HudRadar.GLInit();
@@ -173,6 +196,7 @@ void CCustomHud::GL_Init(void){
 void CCustomHud::HUD_Init(void){
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 	m_pfnSpectator = HOOK_MESSAGE(Spectator);
+	m_pfnServerName = HOOK_MESSAGE(ServerName);
 
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
 	UserCmd_Slot2 = HOOK_COMMAND("slot2", Slot2);
@@ -188,6 +212,8 @@ void CCustomHud::HUD_Init(void){
 	UserCmd_NextWeapon = HOOK_COMMAND("invnext", NextWeapon);
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
+	UserCmd_ShowScores = HOOK_COMMAND("+showscores", OpenScoreboard);
+	UserCmd_HideScores = HOOK_COMMAND("-showscores", CloseScoreboard);
 
 	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
 

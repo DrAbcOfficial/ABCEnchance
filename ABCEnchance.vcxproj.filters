@@ -479,9 +479,6 @@
     <ClCompile Include="VGUI2\ClientVGUI.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
-    <ClCompile Include="VGUI2\Viewport.cpp">
-      <Filter>VGUI2</Filter>
-    </ClCompile>
     <ClCompile Include="VGUI2\VPanel.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
@@ -523,6 +520,21 @@
     </ClCompile>
     <ClCompile Include="VGUI2\VPanelWrapper.cpp">
       <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\avatar_image.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\tga_image.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="player_info.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="client_steam_context.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Viewport.cpp">
+      <Filter>Public\Source\HUD</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1183,9 +1195,6 @@
     <ClInclude Include="VGUI2\IClientVGUI.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
-    <ClInclude Include="VGUI2\Viewport.h">
-      <Filter>VGUI2</Filter>
-    </ClInclude>
     <ClInclude Include="VGUI2\VPanel.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
@@ -1218,6 +1227,36 @@
     </ClInclude>
     <ClInclude Include="VGUI2\Win32Font.h">
       <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\IViewportPanel.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\avatar_image.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\tga_image.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\viewport_panel_names.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="player_info.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceSDK\tier1\utldelegate.h">
+      <Filter>SourceSDK\tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceSDK\tier1\utldelegateimpl.h">
+      <Filter>SourceSDK\tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceSDK\tier1\UtlSortVector.h">
+      <Filter>SourceSDK\tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="client_steam_context.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Viewport.h">
+      <Filter>Public\Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

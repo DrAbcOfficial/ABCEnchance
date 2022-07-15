@@ -1044,7 +1044,7 @@ void MatrixBuildRotationAboutAxis( const Vector &vAxisOfRot, float angleDegrees,
 //-----------------------------------------------------------------------------
 void MatrixTranspose( matrix3x4_t& mat )
 {
-	vec_t tmp;
+	v_vec_t tmp;
 	tmp = mat[0][1]; mat[0][1] = mat[1][0]; mat[1][0] = tmp;
 	tmp = mat[0][2]; mat[0][2] = mat[2][0]; mat[2][0] = tmp;
 	tmp = mat[1][2]; mat[1][2] = mat[2][1]; mat[2][1] = tmp;
@@ -1190,7 +1190,7 @@ void AddPointToBounds (const Vector& v, Vector& mins, Vector& maxs)
 {
 	Assert( s_bMathlibInitialized );
 	int		i;
-	vec_t	val;
+	v_vec_t	val;
 
 	for (i=0 ; i<3 ; i++)
 	{
@@ -3471,7 +3471,7 @@ void ComputeTrianglePlane( const Vector& v1, const Vector& v2, const Vector& v3,
 int PolyFromPlane( Vector *outVerts, const Vector& normal, float dist, float fHalfScale )
 {
 	int		i, x;
-	vec_t	max, v;
+	v_vec_t	max, v;
 	Vector	org, vright, vup;
 
 	// find the major axis
@@ -3548,10 +3548,10 @@ int PolyFromPlane( Vector *outVerts, const Vector& normal, float dist, float fHa
 
 int ClipPolyToPlane( Vector *inVerts, int vertCount, Vector *outVerts, const Vector& normal, float dist, float fOnPlaneEpsilon )
 {
-	vec_t	*dists = (vec_t *)stackalloc( sizeof(vec_t) * vertCount * 4 ); //4x vertcount should cover all cases
-	int		*sides = (int *)stackalloc( sizeof(vec_t) * vertCount * 4 );
+	v_vec_t	*dists = (v_vec_t *)stackalloc( sizeof(v_vec_t) * vertCount * 4 ); //4x vertcount should cover all cases
+	int		*sides = (int *)stackalloc( sizeof(v_vec_t) * vertCount * 4 );
 	int		counts[3];
-	vec_t	dot;
+	v_vec_t	dot;
 	int		i, j;
 	Vector	mid = vec3_origin;
 	int		outCount;

@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -16,7 +16,7 @@
 #include <math.h>
 #include <float.h>
 
-// For vec_t, put this somewhere else?
+// For v_vec_t, put this somewhere else?
 #include "tier0/basetypes.h"
 
 // For rand(). We really need a library!
@@ -33,26 +33,26 @@ class Vector2D
 {
 public:
 	// Members
-	vec_t x, y;
+	v_vec_t x, y;
 
 	// Construction/destruction
 	Vector2D(void);
-	Vector2D(vec_t X, vec_t Y);
+	Vector2D(v_vec_t X, v_vec_t Y);
 	Vector2D(const float *pFloat);
 
 	// Initialization
-	void Init(vec_t ix=0.0f, vec_t iy=0.0f);
+	void Init(v_vec_t ix=0.0f, v_vec_t iy=0.0f);
 
 	// Got any nasty NAN's?
 	bool IsValid() const;
 
 	// array access...
-	vec_t operator[](int i) const;
-	vec_t& operator[](int i);
+	v_vec_t operator[](int i) const;
+	v_vec_t& operator[](int i);
 
 	// Base address...
-	vec_t* Base();
-	vec_t const* Base() const;
+	v_vec_t* Base();
+	v_vec_t const* Base() const;
 
 	// Initialization methods
 	void Random( float minVal, float maxVal );
@@ -73,10 +73,10 @@ public:
 	void	Negate(); 
 
 	// Get the Vector2D's magnitude.
-	vec_t	Length() const;
+	v_vec_t	Length() const;
 
 	// Get the Vector2D's magnitude squared.
-	vec_t	LengthSqr(void) const;
+	v_vec_t	LengthSqr(void) const;
 
 	// return true if this vector is (0,0) within tolerance
 	bool IsZero( float tolerance = 0.01f ) const
@@ -86,17 +86,17 @@ public:
 	}
 
 	// Normalize in place and return the old length.
-	vec_t	NormalizeInPlace();
+	v_vec_t	NormalizeInPlace();
 
 	// Compare length.
 	bool	IsLengthGreaterThan( float val ) const;
 	bool	IsLengthLessThan( float val ) const;
 
 	// Get the distance from this Vector2D to the other one.
-	vec_t	DistTo(const Vector2D &vOther) const;
+	v_vec_t	DistTo(const Vector2D &vOther) const;
 
 	// Get the distance from this Vector2D to the other one squared.
-	vec_t	DistToSqr(const Vector2D &vOther) const;		
+	v_vec_t	DistToSqr(const Vector2D &vOther) const;		
 
 	// Copy
 	void	CopyToArray(float* rgfl) const;	
@@ -107,7 +107,7 @@ public:
 	void	MulAdd(const Vector2D& a, const Vector2D& b, float scalar);	
 
 	// Dot product.
-	vec_t	Dot(const Vector2D& vOther) const;			
+	v_vec_t	Dot(const Vector2D& vOther) const;			
 
 	// assignment
 	Vector2D& operator=(const Vector2D &vOther);
@@ -159,9 +159,9 @@ void Vector2DCopy( const Vector2D& src, Vector2D& dst );
 // Vector2D arithmetic
 void Vector2DAdd( const Vector2D& a, const Vector2D& b, Vector2D& result );
 void Vector2DSubtract( const Vector2D& a, const Vector2D& b, Vector2D& result );
-void Vector2DMultiply( const Vector2D& a, vec_t b, Vector2D& result );
+void Vector2DMultiply( const Vector2D& a, v_vec_t b, Vector2D& result );
 void Vector2DMultiply( const Vector2D& a, const Vector2D& b, Vector2D& result );
-void Vector2DDivide( const Vector2D& a, vec_t b, Vector2D& result );
+void Vector2DDivide( const Vector2D& a, v_vec_t b, Vector2D& result );
 void Vector2DDivide( const Vector2D& a, const Vector2D& b, Vector2D& result );
 void Vector2DMA( const Vector2D& start, float s, const Vector2D& dir, Vector2D& result );
 
@@ -172,16 +172,16 @@ void Vector2DMax( const Vector2D &a, const Vector2D &b, Vector2D &result );
 #define Vector2DExpand( v ) (v).x, (v).y
 
 // Normalization
-vec_t Vector2DNormalize( Vector2D& v );
+v_vec_t Vector2DNormalize( Vector2D& v );
 
 // Length
-vec_t Vector2DLength( const Vector2D& v );
+v_vec_t Vector2DLength( const Vector2D& v );
 
 // Dot Product
-vec_t DotProduct2D(const Vector2D& a, const Vector2D& b);
+v_vec_t DotProduct2D(const Vector2D& a, const Vector2D& b);
 
 // Linearly interpolate between two vectors
-void Vector2DLerp(const Vector2D& src1, const Vector2D& src2, vec_t t, Vector2D& dest );
+void Vector2DLerp(const Vector2D& src1, const Vector2D& src2, v_vec_t t, Vector2D& dest );
 
 
 //-----------------------------------------------------------------------------
@@ -203,7 +203,7 @@ inline Vector2D::Vector2D(void)
 #endif
 }
 
-inline Vector2D::Vector2D(vec_t X, vec_t Y)						
+inline Vector2D::Vector2D(v_vec_t X, v_vec_t Y)						
 { 
 	x = X; y = Y;
 	Assert( IsValid() );
@@ -231,7 +231,7 @@ inline Vector2D::Vector2D(const Vector2D &vOther)
 // initialization
 //-----------------------------------------------------------------------------
 
-inline void Vector2D::Init( vec_t ix, vec_t iy )    
+inline void Vector2D::Init( v_vec_t ix, v_vec_t iy )    
 { 
 	x = ix; y = iy;
 	Assert( IsValid() );
@@ -263,30 +263,30 @@ inline Vector2D& Vector2D::operator=(const Vector2D &vOther)
 // Array access
 //-----------------------------------------------------------------------------
 
-inline vec_t& Vector2D::operator[](int i)
+inline v_vec_t& Vector2D::operator[](int i)
 {
 	Assert( (i >= 0) && (i < 2) );
-	return ((vec_t*)this)[i];
+	return ((v_vec_t*)this)[i];
 }
 
-inline vec_t Vector2D::operator[](int i) const
+inline v_vec_t Vector2D::operator[](int i) const
 {
 	Assert( (i >= 0) && (i < 2) );
-	return ((vec_t*)this)[i];
+	return ((v_vec_t*)this)[i];
 }
 
 //-----------------------------------------------------------------------------
 // Base address...
 //-----------------------------------------------------------------------------
 
-inline vec_t* Vector2D::Base()
+inline v_vec_t* Vector2D::Base()
 {
-	return (vec_t*)this;
+	return (v_vec_t*)this;
 }
 
-inline vec_t const* Vector2D::Base() const
+inline v_vec_t const* Vector2D::Base() const
 {
-	return (vec_t const*)this;
+	return (v_vec_t const*)this;
 }
 
 //-----------------------------------------------------------------------------
@@ -406,7 +406,7 @@ inline void Vector2DSubtract( const Vector2D& a, const Vector2D& b, Vector2D& c 
 	c.y = a.y - b.y;
 }
 
-inline void Vector2DMultiply( const Vector2D& a, vec_t b, Vector2D& c )
+inline void Vector2DMultiply( const Vector2D& a, v_vec_t b, Vector2D& c )
 {
 	Assert( a.IsValid() && IsFinite(b) );
 	c.x = a.x * b;
@@ -421,11 +421,11 @@ inline void Vector2DMultiply( const Vector2D& a, const Vector2D& b, Vector2D& c 
 }
 
 
-inline void Vector2DDivide( const Vector2D& a, vec_t b, Vector2D& c )
+inline void Vector2DDivide( const Vector2D& a, v_vec_t b, Vector2D& c )
 {
 	Assert( a.IsValid() );
 	Assert( b != 0.0f );
-	vec_t oob = 1.0f / b;
+	v_vec_t oob = 1.0f / b;
 	c.x = a.x * oob;
 	c.y = a.y * oob;
 }
@@ -453,7 +453,7 @@ inline void	Vector2D::MulAdd(const Vector2D& a, const Vector2D& b, float scalar)
 	y = a.y + b.y * scalar;
 }
 
-inline void Vector2DLerp(const Vector2D& src1, const Vector2D& src2, vec_t t, Vector2D& dest )
+inline void Vector2DLerp(const Vector2D& src1, const Vector2D& src2, v_vec_t t, Vector2D& dest )
 {
 	dest[0] = src1[0] + (src2[0] - src1[0]) * t;
 	dest[1] = src1[1] + (src2[1] - src1[1]) * t;
@@ -462,14 +462,14 @@ inline void Vector2DLerp(const Vector2D& src1, const Vector2D& src2, vec_t t, Ve
 //-----------------------------------------------------------------------------
 // dot, cross
 //-----------------------------------------------------------------------------
-inline vec_t DotProduct2D(const Vector2D& a, const Vector2D& b) 
+inline v_vec_t DotProduct2D(const Vector2D& a, const Vector2D& b) 
 { 
 	Assert( a.IsValid() && b.IsValid() );
 	return( a.x*b.x + a.y*b.y ); 
 }
 
 // for backwards compatability
-inline vec_t Vector2D::Dot( const Vector2D& vOther ) const
+inline v_vec_t Vector2D::Dot( const Vector2D& vOther ) const
 {
 	return DotProduct2D( *this, vOther );
 }
@@ -478,19 +478,19 @@ inline vec_t Vector2D::Dot( const Vector2D& vOther ) const
 //-----------------------------------------------------------------------------
 // length
 //-----------------------------------------------------------------------------
-inline vec_t Vector2DLength( const Vector2D& v )
+inline v_vec_t Vector2DLength( const Vector2D& v )
 {
 	Assert( v.IsValid() );
-	return (vec_t)FastSqrt(v.x*v.x + v.y*v.y);		
+	return (v_vec_t)FastSqrt(v.x*v.x + v.y*v.y);		
 }
 
-inline vec_t Vector2D::LengthSqr(void) const	
+inline v_vec_t Vector2D::LengthSqr(void) const	
 { 
 	Assert( IsValid() );
 	return (x*x + y*y);		
 }
 
-inline vec_t Vector2D::NormalizeInPlace()
+inline v_vec_t Vector2D::NormalizeInPlace()
 {
 	return Vector2DNormalize( *this );
 }
@@ -505,7 +505,7 @@ inline bool Vector2D::IsLengthLessThan( float val ) const
 	return LengthSqr() < val*val;
 }
 
-inline vec_t Vector2D::Length(void) const	
+inline v_vec_t Vector2D::Length(void) const	
 {
 	return Vector2DLength( *this );
 }
@@ -528,10 +528,10 @@ inline void Vector2DMax( const Vector2D &a, const Vector2D &b, Vector2D &result 
 //-----------------------------------------------------------------------------
 // Normalization
 //-----------------------------------------------------------------------------
-inline vec_t Vector2DNormalize( Vector2D& v )
+inline v_vec_t Vector2DNormalize( Vector2D& v )
 {
 	Assert( v.IsValid() );
-	vec_t l = v.Length();
+	v_vec_t l = v.Length();
 	if (l != 0.0f)
 	{
 		v /= l;
@@ -547,14 +547,14 @@ inline vec_t Vector2DNormalize( Vector2D& v )
 //-----------------------------------------------------------------------------
 // Get the distance from this Vector2D to the other one 
 //-----------------------------------------------------------------------------
-inline vec_t Vector2D::DistTo(const Vector2D &vOther) const
+inline v_vec_t Vector2D::DistTo(const Vector2D &vOther) const
 {
 	Vector2D delta;
 	Vector2DSubtract( *this, vOther, delta );
 	return delta.Length();
 }
 
-inline vec_t Vector2D::DistToSqr(const Vector2D &vOther) const
+inline v_vec_t Vector2D::DistToSqr(const Vector2D &vOther) const
 {
 	Vector2D delta;
 	Vector2DSubtract( *this, vOther, delta );

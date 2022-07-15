@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include <vector>
 #include <vgui/VGUI.h>
 #include <vgui/ISurface.h>
 #include <vgui/ILocalize.h>
@@ -10,8 +11,10 @@
 #include <VGUI_controls/Frame.h>
 #include <IClientVGUI.h>
 #include "plugins.h"
-#include "Viewport.h"
 #include "vguilocal.h"
+#include "player_info.h"
+#include "scoreboard.h"
+#include "Viewport.h"
 #include "exportfuncs.h"
 
 #include <vgui.h>

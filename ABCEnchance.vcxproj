@@ -95,7 +95,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -212,6 +212,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClCompile Include="ammo.cpp" />
     <ClCompile Include="cctv.cpp" />
     <ClCompile Include="CCustomHud.cpp" />
+    <ClCompile Include="client_steam_context.cpp" />
     <ClCompile Include="crosshair.cpp" />
     <ClCompile Include="cvar_hook.cpp" />
     <ClCompile Include="eccobuymenu.cpp" />
@@ -226,6 +227,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClCompile Include="grenadeindicator.cpp" />
     <ClCompile Include="itemhighlight.cpp" />
     <ClCompile Include="playertitle.cpp" />
+    <ClCompile Include="player_info.cpp" />
     <ClCompile Include="radar.cpp" />
     <ClCompile Include="deathmsg.cpp" />
     <ClCompile Include="efxenchance.cpp" />
@@ -269,6 +271,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
     <ClCompile Include="steamid.cpp" />
+    <ClCompile Include="VGUI2\avatar_image.cpp" />
     <ClCompile Include="VGUI2\BaseUI.cpp" />
     <ClCompile Include="VGUI2\Bitmap.cpp" />
     <ClCompile Include="VGUI2\Border.cpp" />
@@ -281,7 +284,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClCompile Include="VGUI2\SchemeHook.cpp" />
     <ClCompile Include="VGUI2\Surface.cpp" />
     <ClCompile Include="VGUI2\SurfaceHook.cpp" />
-    <ClCompile Include="VGUI2\Viewport.cpp" />
+    <ClCompile Include="VGUI2\tga_image.cpp" />
     <ClCompile Include="VGUI2\VPanel.cpp" />
     <ClCompile Include="VGUI2\VPanelWrapper.cpp" />
     <ClCompile Include="VGUI2\Win32Font.cpp" />
@@ -357,6 +360,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClCompile Include="vgui_controls\WizardPanel.cpp" />
     <ClCompile Include="vgui_controls\WizardSubPanel.cpp" />
     <ClCompile Include="viewmodellag.cpp" />
+    <ClCompile Include="Viewport.cpp" />
     <ClCompile Include="vote.cpp" />
     <ClCompile Include="weaponbank.cpp" />
     <ClCompile Include="wmenu_annular.cpp" />
@@ -371,6 +375,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClInclude Include="basemenu.h" />
     <ClInclude Include="cctv.h" />
     <ClInclude Include="CCustomHud.h" />
+    <ClInclude Include="client_steam_context.h" />
     <ClInclude Include="eccobuymenu.h" />
     <ClInclude Include="eccomoney.h" />
     <ClInclude Include="efxhud.h" />
@@ -387,6 +392,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClInclude Include="gl_shader.h" />
     <ClInclude Include="numdisplay.h" />
     <ClInclude Include="playertitle.h" />
+    <ClInclude Include="player_info.h" />
     <ClInclude Include="radar.h" />
     <ClInclude Include="deathmsg.h" />
     <ClInclude Include="efxenchance.h" />
@@ -461,6 +467,8 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClInclude Include="SourceSDK\tier1\tier1.h" />
     <ClInclude Include="SourceSDK\tier1\utlblockmemory.h" />
     <ClInclude Include="SourceSDK\tier1\utlbuffer.h" />
+    <ClInclude Include="SourceSDK\tier1\utldelegate.h" />
+    <ClInclude Include="SourceSDK\tier1\utldelegateimpl.h" />
     <ClInclude Include="SourceSDK\tier1\utldict.h" />
     <ClInclude Include="SourceSDK\tier1\utlfixedmemory.h" />
     <ClInclude Include="SourceSDK\tier1\utlflags.h" />
@@ -470,6 +478,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClInclude Include="SourceSDK\tier1\utlmemory.h" />
     <ClInclude Include="SourceSDK\tier1\utlqueue.h" />
     <ClInclude Include="SourceSDK\tier1\utlrbtree.h" />
+    <ClInclude Include="SourceSDK\tier1\UtlSortVector.h" />
     <ClInclude Include="SourceSDK\tier1\utlstring.h" />
     <ClInclude Include="SourceSDK\tier1\UtlStringMap.h" />
     <ClInclude Include="SourceSDK\tier1\utlsymbol.h" />
@@ -479,6 +488,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
     <ClInclude Include="CVector.h" />
+    <ClInclude Include="VGUI2\avatar_image.h" />
     <ClInclude Include="VGUI2\BaseUI.h" />
     <ClInclude Include="VGUI2\Bitmap.h" />
     <ClInclude Include="VGUI2\Border.h" />
@@ -488,8 +498,10 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClInclude Include="VGUI2\IClientVGUI.h" />
     <ClInclude Include="VGUI2\igameui.h" />
     <ClInclude Include="VGUI2\IGameUIFuncs.h" />
+    <ClInclude Include="VGUI2\IViewportPanel.h" />
     <ClInclude Include="VGUI2\SurfaceHook.h" />
-    <ClInclude Include="VGUI2\Viewport.h" />
+    <ClInclude Include="VGUI2\tga_image.h" />
+    <ClInclude Include="VGUI2\viewport_panel_names.h" />
     <ClInclude Include="VGUI2\VPanel.h" />
     <ClInclude Include="VGUI2\Win32Font.h" />
     <ClInclude Include="vguilocal.h" />
@@ -589,6 +601,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX51
     <ClInclude Include="vgui_controls\WizardSubPanel.h" />
     <ClInclude Include="vgui_internal.h" />
     <ClInclude Include="viewmodellag.h" />
+    <ClInclude Include="Viewport.h" />
     <ClInclude Include="vote.h" />
     <ClInclude Include="weapon.h" />
     <ClInclude Include="weaponbank.h" />
