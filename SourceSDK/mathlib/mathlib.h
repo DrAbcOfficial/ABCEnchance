@@ -194,34 +194,34 @@ extern	const int nanmask;
 
 #define	IS_NAN(x) (((*(int *)&x)&nanmask)==nanmask)
 
-FORCEINLINE vec_t DotProduct(const vec_t *v1, const vec_t *v2)
+FORCEINLINE v_vec_t DotProduct(const v_vec_t *v1, const v_vec_t *v2)
 {
 	return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 }
-FORCEINLINE void VectorSubtract(const vec_t *a, const vec_t *b, vec_t *c)
+FORCEINLINE void VectorSubtract(const v_vec_t *a, const v_vec_t *b, v_vec_t *c)
 {
 	c[0]=a[0]-b[0];
 	c[1]=a[1]-b[1];
 	c[2]=a[2]-b[2];
 }
-FORCEINLINE void VectorAdd(const vec_t *a, const vec_t *b, vec_t *c)
+FORCEINLINE void VectorAdd(const v_vec_t *a, const v_vec_t *b, v_vec_t *c)
 {
 	c[0]=a[0]+b[0];
 	c[1]=a[1]+b[1];
 	c[2]=a[2]+b[2];
 }
-FORCEINLINE void VectorCopy(const vec_t *a, vec_t *b)
+FORCEINLINE void VectorCopy(const v_vec_t *a, v_vec_t *b)
 {
 	b[0]=a[0];
 	b[1]=a[1];
 	b[2]=a[2];
 }
-FORCEINLINE void VectorClear(vec_t *a)
+FORCEINLINE void VectorClear(v_vec_t *a)
 {
 	a[0]=a[1]=a[2]=0;
 }
 
-FORCEINLINE float VectorMaximum(const vec_t *v)
+FORCEINLINE float VectorMaximum(const v_vec_t *v)
 {
 	return max( v[0], max( v[1], v[2] ) );
 }
@@ -231,7 +231,7 @@ FORCEINLINE float VectorMaximum(const Vector& v)
 	return max( v.x, max( v.y, v.z ) );
 }
 
-FORCEINLINE void VectorScale (const float* in, vec_t scale, float* out)
+FORCEINLINE void VectorScale (const float* in, v_vec_t scale, float* out)
 {
 	out[0] = in[0]*scale;
 	out[1] = in[1]*scale;
@@ -240,12 +240,12 @@ FORCEINLINE void VectorScale (const float* in, vec_t scale, float* out)
 
 
 // Cannot be forceinline as they have overloads:
-inline void VectorFill(vec_t *a, float b)
+inline void VectorFill(v_vec_t *a, float b)
 {
 	a[0]=a[1]=a[2]=b;
 }
 
-inline void VectorNegate(vec_t *a)
+inline void VectorNegate(v_vec_t *a)
 {
 	a[0]=-a[0];
 	a[1]=-a[1];
@@ -261,7 +261,7 @@ inline void VectorNegate(vec_t *a)
 #define Vector2Add(a,b,c)		{(c)[0]=(a)[0]+(b)[0];(c)[1]=(a)[1]+(b)[1];}
 #define Vector2Scale(a,b,c)		{(c)[0]=(b)*(a)[0];(c)[1]=(b)*(a)[1];}
 
-// NJS: Some functions in VBSP still need to use these for dealing with mixing vec4's and shorts with vec_t's.
+// NJS: Some functions in VBSP still need to use these for dealing with mixing vec4's and shorts with v_vec_t's.
 // remove when no longer needed.
 #define VECTOR_COPY( A, B ) do { (B)[0] = (A)[0]; (B)[1] = (A)[1]; (B)[2]=(A)[2]; } while(0)
 #define DOT_PRODUCT( A, B ) ( (A)[0]*(B)[0] + (A)[1]*(B)[1] + (A)[2]*(B)[2] )
@@ -302,7 +302,7 @@ void CrossProduct (const float *v1, const float *v2, float *cross);
 
 qboolean VectorsEqual( const float *v1, const float *v2 );
 
-inline vec_t RoundInt (vec_t in)
+inline v_vec_t RoundInt (v_vec_t in)
 {
 	return floor(in + 0.5f);
 }
@@ -793,7 +793,7 @@ inline void VectorNegate(Vector& a)
 	a[2] = -a[2];
 }
 
-inline vec_t VectorAvg(Vector& a)
+inline v_vec_t VectorAvg(Vector& a)
 {
 	return ( a[0] + a[1] + a[2] ) / 3;
 }

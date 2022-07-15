@@ -819,9 +819,9 @@ float (__cdecl *pfVectorMA)(Vector& v) = _VectorMA;
 //   this, but when inlined, and instruction scheduled, the C version is faster.  
 //   Verified this via VTune
 /*
-vec_t DotProduct (const vec_t *a, const vec_t *c)
+v_vec_t DotProduct (const v_vec_t *a, const v_vec_t *c)
 {
-	vec_t temp;
+	v_vec_t temp;
 
 	__asm
 	{

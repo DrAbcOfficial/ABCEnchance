@@ -119,7 +119,7 @@ enum ThreeState_t
 	TRS_NONE,
 };
 
-typedef float vec_t;
+typedef float v_vec_t;
 
 
 // FIXME: this should move 
@@ -135,32 +135,32 @@ typedef float vec_t;
 
 #ifdef __cplusplus
 
-inline unsigned long& FloatBits( vec_t& f )
+inline unsigned long& FloatBits( v_vec_t& f )
 {
 	return *reinterpret_cast<unsigned long*>(&f);
 }
 
-inline unsigned long const& FloatBits( vec_t const& f )
+inline unsigned long const& FloatBits( v_vec_t const& f )
 {
 	return *reinterpret_cast<unsigned long const*>(&f);
 }
 
-inline vec_t BitsToFloat( unsigned long i )
+inline v_vec_t BitsToFloat( unsigned long i )
 {
-	return *reinterpret_cast<vec_t*>(&i);
+	return *reinterpret_cast<v_vec_t*>(&i);
 }
 
-inline bool IsFinite( vec_t f )
+inline bool IsFinite( v_vec_t f )
 {
 	return ((FloatBits(f) & 0x7F800000) != 0x7F800000);
 }
 
-inline unsigned long FloatAbsBits( vec_t f )
+inline unsigned long FloatAbsBits( v_vec_t f )
 {
 	return FloatBits(f) & 0x7FFFFFFF;
 }
 
-inline float FloatMakeNegative( vec_t f )
+inline float FloatMakeNegative( v_vec_t f )
 {
 	return BitsToFloat( FloatBits(f) | 0x80000000 );
 }
@@ -182,18 +182,18 @@ extern "C"
 #pragma intrinsic( fabs )
 // Also, alias float make positive to use fabs, too
 // NOTE:  Is there a perf issue with double<->float conversion?
-inline float FloatMakePositive( vec_t f )
+inline float FloatMakePositive( v_vec_t f )
 {
 	return (float)fabs( f );
 }
 #else
-inline float FloatMakePositive( vec_t f )
+inline float FloatMakePositive( v_vec_t f )
 {
 	return BitsToFloat( FloatBits(f) & 0x7FFFFFFF );
 }
 #endif
 
-inline float FloatNegate( vec_t f )
+inline float FloatNegate( v_vec_t f )
 {
 	return BitsToFloat( FloatBits(f) ^ 0x80000000 );
 }
@@ -208,7 +208,7 @@ inline float FloatNegate( vec_t f )
 
 // FIXME: why are these here?  Hardly anyone actually needs them.
 #ifndef CONST_H
-struct color24
+struct v_color24
 {
 	byte r, g, b;
 };
@@ -227,7 +227,7 @@ inline bool color32::operator!=( const color32 &other ) const
 }
 
 #ifndef CONST_H
-struct colorVec
+struct v_colorVec
 {
 	unsigned r, g, b, a;
 };

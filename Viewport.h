@@ -10,13 +10,10 @@
 #include <vgui/IScheme.h>
 #include <vgui/IVGui.h>
 #include <vgui/IInput.h>
+#include <VGUI2/IViewportPanel.h>
 #include <VGUI_controls/Controls.h>
 #include <VGUI_controls/Panel.h>
 #include <VGUI_controls/Frame.h>
-#include <sequence.h>
-#include <regex>
-
-#define HUDMESSAGE_MAXLENGTH 2048
 
 class ISchemel;
 
@@ -36,10 +33,21 @@ public:
 	void Think(void);
 	void Paint(void);
 	void SetParent(vgui::VPANEL vPanel);
+	void AddNewPanel(IViewportPanel* panel);
 	void ActivateClientUI(void);
 	void HideClientUI(void);
+	bool IsScoreBoardVisible();
+	void ShowScoreBoard();
+	void HideScoreBoard();
+	char* GetServerName();
+	CScorePanel* GetScoreBoard();
+	Color GetPlayerColor(int index);
 private:
+	std::vector<IViewportPanel*> m_Panels;
+
 	char m_szLevelName[256];
+	CScorePanel* m_pScorePanel = nullptr;
+	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 };
 
 extern CViewport *g_pViewPort;

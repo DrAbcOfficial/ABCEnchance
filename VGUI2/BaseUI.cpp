@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include <vector>
 #include "BaseUI.h"
 #include <IGameUI.h>
 #include <VGUI\IScheme.h>
@@ -9,10 +10,8 @@
 #include <IEngineSurface.h>
 #include "vgui_internal.h"
 #include "IKeyValuesSystem.h"
-#include "ViewPort.h"
 
 #include "exportfuncs.h"
-#include "local.h"
 #include <plugins.h>
 
 extern IGameUI *g_pGameUI;
@@ -146,7 +145,6 @@ void BaseUI_InstallHook(void)
 	CreateInterfaceFn fnCreateInterface = g_pMetaHookAPI->GetEngineFactory();
 	baseuifuncs = (IBaseUI *)fnCreateInterface(BASEUI_INTERFACE_VERSION, NULL);
 	gameuifuncs = (IGameUIFuncs *)fnCreateInterface(VENGINE_GAMEUIFUNCS_VERSION, NULL);
-	//Search CBaseUI::Initialize for ClientFactory
 #define CLIENTFACTORY_SIG_SVENGINE "\x83\xC4\x0C\x83\x3D"
 	DWORD *pVFTable = *(DWORD **)&s_BaseUI;
 	g_pMetaHookAPI->VFTHook(baseuifuncs, 0, 1, (void *)pVFTable[1], (void **)&m_pfnCBaseUI_Initialize);
