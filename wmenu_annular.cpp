@@ -63,6 +63,10 @@ void CWeaponMenuAnnular::Init() {
 	ADD_COMMAND("+annularmenu", __UserCmd_OpenAnnularMenu);
 	ADD_COMMAND("-annularmenu", __UserCmd_CloseAnnularMenu);
 
+	if (SelectHoldTime <= 0)
+		SelectHoldTime = 5;
+}
+void CWeaponMenuAnnular::VidInit(){
 	SelectColor = pSchemeData->GetColor("WMenuAnnular.SelectColor", gDefaultColor);
 	SelectRinColor = pSchemeData->GetColor("WMenuAnnular.SelectRinColor", gDefaultColor);
 	SelectIconColor = pSchemeData->GetColor("WMenuAnnular.SelectIconColor", gDefaultColor);
@@ -80,9 +84,6 @@ void CWeaponMenuAnnular::Init() {
 
 	HUDFont = pSchemeData->GetFont("HUDShitFont", true);
 	HUDSmallFont = pSchemeData->GetFont("HUDSmallShitFont", true);
-
-	if (SelectHoldTime <= 0)
-		SelectHoldTime = 5;
 }
 void CWeaponMenuAnnular::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, int index) {
 	wchar_t buf[64];

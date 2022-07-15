@@ -66,6 +66,9 @@ int CHudRadar::Init(){
 	gCVars.pRadarRoundRadius = CREATE_CVAR("cl_radarradius", "344", FCVAR_VALUE, NULL);
 	gCVars.pRadarUpdateInterval = CREATE_CVAR("cl_radarupdateint", "1", FCVAR_VALUE, NULL);
 
+	return 1;
+}
+void CHudRadar::VidInit(){
 	XOffset = GET_SCREEN_PIXEL(false, "Radar.XOffset");
 	YOffset = GET_SCREEN_PIXEL(true, "Radar.YOffset");
 	NorthPointerSize = GET_SCREEN_PIXEL(true, "Radar.NorthPointerSize");
@@ -73,10 +76,7 @@ int CHudRadar::Init(){
 	OutLineAlpha = atof(pSchemeData->GetResourceString("Radar.OutLineAlpha"));
 	MapAlpha = (GLubyte)atof(pSchemeData->GetResourceString("Radar.MapAlpha"));
 	CenterAlpha = atof(pSchemeData->GetResourceString("Radar.CenterAlpha"));
-	
-	return 1;
-}
-void CHudRadar::VidInit(){
+
 	if(!gCVars.pCVarFXAA)
 		gCVars.pCVarFXAA = CVAR_GET_POINTER("r_fxaa");
 	if(!gCVars.pCVarWater)

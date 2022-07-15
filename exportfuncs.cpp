@@ -39,7 +39,6 @@ cl_exportfuncs_t gExportfuncs;
 metaplugins_t g_metaplugins;
 engine_studio_api_t gEngineStudio;
 DWORD g_dwHUDListAddr;
-int gPluginVersion;
 
 const clientdata_t* gClientData;
 float m_hfov;
@@ -259,10 +258,27 @@ char* NewV_strncpy(char* a1, const char* a2, size_t a3){
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
+	g_metaplugins.captionmod = g_pMetaHookAPI->GetPluginInfo("CaptionMod.dll", &info);
 }
 
 void FillEfxAddress(){
 
+}
+IBaseInterface* NewCreateInterface(const char* pName, int* pReturnCode){
+	auto fnCreateInterface = (decltype(NewCreateInterface)*)Sys_GetFactoryThis();
+	auto fn = fnCreateInterface(pName, pReturnCode);
+	if (fn)
+		return fn;
+	fnCreateInterface = (decltype(NewCreateInterface)*)GetProcAddress(g_hClientDll, CREATEINTERFACE_PROCNAME);
+	fn = fnCreateInterface(pName, pReturnCode);
+	if (fn)
+		return fn;
+	return nullptr;
+}
+PVOID VGUIClient001_CreateInterface(HINTERFACEMODULE hModule){
+	if (hModule == (HINTERFACEMODULE)g_hClientDll && !g_IsClientVGUI2)
+		return NewCreateInterface;
+	return Sys_GetFactory(hModule);
 }
 void FillEngineAddress() {
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
@@ -391,6 +407,31 @@ void FillEngineAddress() {
 				}
 			}
 		}
+		if (!g_metaplugins.captionmod){
+			const char sigs1[] = "VClientVGUI001";
+			auto VClientVGUI001_String = Search_Pattern_Data(sigs1);
+			if (!VClientVGUI001_String)
+				VClientVGUI001_String = Search_Pattern_Rdata(sigs1);
+			Sig_VarNotFound(VClientVGUI001_String);
+			char pattern[] = "\x8B\x2A\x2A\x6A\x00\x68\x2A\x2A\x2A\x2A\x89";
+			*(DWORD*)(pattern + 6) = (DWORD)VClientVGUI001_String;
+			auto VClientVGUI001_PushString = Search_Pattern(pattern);
+			Sig_VarNotFound(VClientVGUI001_PushString);
+
+			const char sigs2[] = "\x83\x3D\x2A\x2A\x2A\x2A\x00\x2A\x2A\xFF\x35\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x83\xC4\x04\x85\xC0";
+			auto Call_VClientVGUI001_CreateInterface = g_pMetaHookAPI->ReverseSearchPattern(VClientVGUI001_PushString, 0x50, sigs2, sizeof(sigs2) - 1);
+			Sig_VarNotFound(Call_VClientVGUI001_CreateInterface);
+
+			PUCHAR address = (PUCHAR)Call_VClientVGUI001_CreateInterface + 15;
+
+			gHookFuncs.VGUIClient001_CreateInterface = (decltype(gHookFuncs.VGUIClient001_CreateInterface))GetCallAddress(address);
+
+			PUCHAR pfnVGUIClient001_CreateInterface = (PUCHAR)VGUIClient001_CreateInterface;
+
+			int rva = pfnVGUIClient001_CreateInterface - (address + 5);
+
+			g_pMetaHookAPI->WriteMemory(address + 1, (BYTE*)&rva, 4);
+		}
 	}
 }
 void FillAddress(){
@@ -465,25 +506,7 @@ void GL_Init(void){
 	gCustomHud.GL_Init();
 }
 void HUD_Init(void){
-
-	vgui::HScheme iScheme = vgui::scheme()->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
-	if (iScheme > 0) {
-		pSchemeData = vgui::scheme()->GetIScheme(vgui::scheme()->GetScheme("ABCEnchance"));
-		gPluginVersion = atoi(pSchemeData->GetResourceString("Version"));
-	}
-	else {
-		g_pMetaHookAPI->SysError("[ABCEnchance]:\nOoops! Can not load resource file!\nHave you installed it correctly?\n");
-		return;
-	}	
-	if (gPluginVersion < PLUGIN_VERSION)
-		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
-			PLUGIN_VERSION, gPluginVersion);
-	char localizePath[260];
-	snprintf(localizePath, sizeof(localizePath), "abcenchance/localize/%s.txt", 
-		(!strlen(pSchemeData->GetResourceString("Language"))) ? "%language%" : pSchemeData->GetResourceString("Language"));
-	if(!vgui::localize()->AddFile(g_pFileSystem, localizePath))
-		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMissing Localize file: %s\n", localizePath);
-
+	//VGUI init
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_VALUE, nullptr);
 	gCVars.pBloodSpriteNumber = CREATE_CVAR("abc_bloodsprite_num", "32", FCVAR_VALUE, nullptr);

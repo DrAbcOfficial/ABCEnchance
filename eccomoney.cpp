@@ -22,6 +22,10 @@
 
 CHudEccoMoney m_HudEccoMoney;
 int CHudEccoMoney::Init(void){
+	Reset();
+	return 0;
+}
+void CHudEccoMoney::VidInit(void){
 	YOffset = GET_SCREEN_PIXEL(true, "Ecco.YOffset");
 	BackgroundLength = GET_SCREEN_PIXEL(false, "Ecco.BackgroundLength");
 	BackgroundHeight = GET_SCREEN_PIXEL(true, "Ecco.BackgroundHeight");
@@ -39,9 +43,6 @@ int CHudEccoMoney::Init(void){
 	MessagePostfix = vgui::localize()->Find("Ecco_MessagePostfix");
 	DifferMessagePrefix = vgui::localize()->Find("Ecco_DifferMessagePrefix");
 	DifferMessagePostfix = vgui::localize()->Find("Ecco_DifferMessagePostfix");
-
-	Reset();
-	return 0;
 }
 void CHudEccoMoney::Reset() {
 	VGUI_CREATE_NEWTGA_TEXTURE(MoneyBackGround, "abcenchance/tga/ecco_background");

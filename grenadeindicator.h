@@ -2,6 +2,7 @@
 class CHudGrenadeIndicator {
 public:
 	int Init();
+	void VidInit();
 	int Draw(float flTime);
 	void Reset();
 	void Clear();

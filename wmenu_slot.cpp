@@ -21,6 +21,9 @@
 CWeaponMenuSlot m_HudWMenuSlot;
 
 void CWeaponMenuSlot::Init(){
+	
+}
+void CWeaponMenuSlot::VidInit(){
 	SelectColor = pSchemeData->GetColor("WMenuBucket.SelectColor", gDefaultColor);
 	SelectIconColor = pSchemeData->GetColor("WMenuBucket.SelectIconColor", gDefaultColor);
 	SelectEmptyColor = pSchemeData->GetColor("WMenuBucket.SelectEmptyColor", gDefaultColor);
@@ -32,8 +35,7 @@ void CWeaponMenuSlot::Init(){
 	SelectAnimateTime = atof(pSchemeData->GetResourceString("WMenuBucket.SelectAnimateTime"));
 	SelectFadeTime = atof(pSchemeData->GetResourceString("WMenuBucket.SelectFadeTime"));
 	SelectHoldTime = atof(pSchemeData->GetResourceString("WMenuBucket.SelectHoldTime"));
-}
-void CWeaponMenuSlot::VidInit(){
+
 	iBucket0Spr = gCustomHud.GetSpriteIndex("bucket1");
 	iSelectionSpr = gCustomHud.GetSpriteIndex("selection");
 	pRcSelection = gCustomHud.GetSpriteRect(iSelectionSpr);

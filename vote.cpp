@@ -66,6 +66,10 @@ int CHudVote::Init(){
 	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
 	m_pfnEndVote = HOOK_MESSAGE(EndVote);
 	
+	Reset();
+	return 0;
+}
+void CHudVote::VidInit() {
 	XOffset = GET_SCREEN_PIXEL(false, "Vote.XOffset");
 	YOffset = GET_SCREEN_PIXEL(true, "Vote.YOffset");
 	Height = GET_SCREEN_PIXEL(true, "Vote.Height");
@@ -81,14 +85,10 @@ int CHudVote::Init(){
 
 	wcsncpy_s(DefaultYes, vgui::localize()->Find("Vote_DefaultYes"), 63);
 	DefaultYes[63] = 0;
-	
+
 	wcsncpy_s(DefaultNo, vgui::localize()->Find("Vote_DefaultNo"), 63);
 	DefaultNo[63] = 0;
 
-	Reset();
-	return 0;
-}
-void CHudVote::VidInit() {
 	m_bInVoting = false;
 }
 void CHudVote::Reset(){

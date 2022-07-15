@@ -220,20 +220,6 @@ int CHudCustomAmmo::Init(void){
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuStyle = CREATE_CVAR("cl_wmenustyle", "0", FCVAR_VALUE, ChangeWMenuStyleCallBack);
 	
-	ElementGap = GET_SCREEN_PIXEL(true, "AmmoHUD.ElementGap");
-	BackGroundY = GET_SCREEN_PIXEL(true, "AmmoHUD.BackGroundY");
-	BackGroundLength = GET_SCREEN_PIXEL(false, "AmmoHUD.BackGroundLength");
-
-	Ammo1IconColor = pSchemeData->GetColor("AmmoHUD.Ammo1IconColor", gDefaultColor);
-	Ammo1BigTextColor = pSchemeData->GetColor("AmmoHUD.Ammo1BigTextColor", gDefaultColor);
-	Ammo1TextColor = pSchemeData->GetColor("AmmoHUD.Ammo1TextColor", gDefaultColor);
-	Ammo2IconColor = pSchemeData->GetColor("AmmoHUD.Ammo2IconColor", gDefaultColor);
-	Ammo2BigTextColor = pSchemeData->GetColor("AmmoHUD.Ammo2BigTextColor", gDefaultColor);
-	Ammo2TextColor = pSchemeData->GetColor("AmmoHUD.Ammo2TextColor", gDefaultColor);
-
-	HUDFont = pSchemeData->GetFont("HUDShitFont", true);
-	HUDSmallFont = pSchemeData->GetFont("HUDSmallShitFont", true);
-
 	//所有选择菜单都要加载
 	m_HudWMenuAnnular.Init();
 	m_HudWMenuSlot.Init();
@@ -261,7 +247,23 @@ void CHudCustomAmmo::Reset(void){
 	gHR.Reset();
 }
 int CHudCustomAmmo::VidInit(void){
+	ElementGap = GET_SCREEN_PIXEL(true, "AmmoHUD.ElementGap");
+	BackGroundY = GET_SCREEN_PIXEL(true, "AmmoHUD.BackGroundY");
+	BackGroundLength = GET_SCREEN_PIXEL(false, "AmmoHUD.BackGroundLength");
+
+	Ammo1IconColor = pSchemeData->GetColor("AmmoHUD.Ammo1IconColor", gDefaultColor);
+	Ammo1BigTextColor = pSchemeData->GetColor("AmmoHUD.Ammo1BigTextColor", gDefaultColor);
+	Ammo1TextColor = pSchemeData->GetColor("AmmoHUD.Ammo1TextColor", gDefaultColor);
+	Ammo2IconColor = pSchemeData->GetColor("AmmoHUD.Ammo2IconColor", gDefaultColor);
+	Ammo2BigTextColor = pSchemeData->GetColor("AmmoHUD.Ammo2BigTextColor", gDefaultColor);
+	Ammo2TextColor = pSchemeData->GetColor("AmmoHUD.Ammo2TextColor", gDefaultColor);
+
+	HUDFont = pSchemeData->GetFont("HUDShitFont", true);
+	HUDSmallFont = pSchemeData->GetFont("HUDSmallShitFont", true);
+
+	gHR.VidInit();
 	gWR.LoadAllWeaponSprites();
+	m_HudWMenuAnnular.VidInit();
 	m_HudWMenuSlot.VidInit();
 	return 1;
 }

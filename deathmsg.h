@@ -20,6 +20,7 @@ typedef struct deathmsgItem_s{
 class CHudDeathMsg{
 public:
 	int Init(void);
+	void VidInit();
 	int Draw(float flTime);
 	void Reset(void);
 	void InsertNewDeathMsg(wchar_t* v, wchar_t* e, wchar_t* k, int kIndex, bool bIsYou, int iDamageType);

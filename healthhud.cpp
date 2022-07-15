@@ -90,6 +90,11 @@ void CHudArmorHealth::Init(void){
 	gCVars.pDangerArmor = CREATE_CVAR("cl_dangerarmor", "45", FCVAR_VALUE, nullptr);
 	gCVars.pHealthArmorStyle = CREATE_CVAR("cl_hud_healthammo_style", "0", FCVAR_VALUE, nullptr);
 
+	memset(m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES);
+
+	Reset();
+}
+int CHudArmorHealth::VidInit(void){
 	StartX = GET_SCREEN_PIXEL(false, "HealthArmor.StartX");
 	IconSize = GET_SCREEN_PIXEL(true, "HealthArmor.IconSize");
 	BarLength = GET_SCREEN_PIXEL(false, "HealthArmor.BarLength");
@@ -124,11 +129,6 @@ void CHudArmorHealth::Init(void){
 
 	HUDFont = pSchemeData->GetFont("HUDShitFont", true);
 
-	memset(m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES);
-
-	Reset();
-}
-int CHudArmorHealth::VidInit(void){
 	m_hSprite = 0;
 	m_iDMGIconStart = gCustomHud.GetSpriteIndex("dmg_bio") + 1;
 	return 1;
