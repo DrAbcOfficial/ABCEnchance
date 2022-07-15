@@ -33,7 +33,9 @@ void FillEfxAddress();
 void FillEngineAddress();
 void FillAddress();
 void InstallEngineHook();
-void InstallHook();
+void InstallClientHook();
+void UninstallEngineHook();
+void UninstallClientHook();
 void CheckAsset();
 
 void GL_Init(void);
@@ -84,7 +86,7 @@ void KeyValuesSystem_InstallHook(void);
 #define Fill_Func(dest, src) gHookFuncs.dest = *src
 #define Fill_EfxFunc(fn) gHookFuncs.fn = *gEngfuncs.pEfxAPI->fn
 #define Fill_EngFunc(fn) gHookFuncs.fn = *gEngfuncs.fn
-#define Install_InlineHook(fn) g_pMetaHookAPI->InlineHook((void *)gHookFuncs.fn, fn, (void **)&gHookFuncs.fn)
-#define Install_InlineEngHook(fn) g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn)
+#define Install_InlineHook(fn) aryClientHook.push_back(g_pMetaHookAPI->InlineHook((void *)gHookFuncs.fn, fn, (void **)&gHookFuncs.fn))
+#define Install_InlineEngHook(fn) aryEngineHook.push_back(g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn))
 #define Fill_InlineEfxHook(fn) Fill_EfxFunc(fn);Install_InlineEngHook(fn)
-#define Uninstall_Hook(fn) if(g_phook_##fn){g_pMetaHookAPI->UnHook(g_phook_##fn);g_phook_##fn = NULL;}
+#define Uninstall_Hook(fn) if(##fn){g_pMetaHookAPI->UnHook(##fn);##fn = NULL;}

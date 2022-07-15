@@ -9,7 +9,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Release_AVX2|Win32 = Release_AVX2|Win32
-		Release_AVX512|Win32 = Release_AVX512|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -17,8 +16,6 @@ Global
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Debug|Win32.Build.0 = Debug|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Win32.ActiveCfg = Release_AVX2|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Win32.Build.0 = Release_AVX2|Win32
-		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX512|Win32.ActiveCfg = Release_AVX512|Win32
-		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX512|Win32.Build.0 = Release_AVX512|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Win32.ActiveCfg = Release|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection

@@ -86,7 +86,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 
 	FillEfxAddress();
 	FillAddress();
-	InstallHook();
+	InstallClientHook();
 	ClientVGUI_InstallHook();
 
 	EnumWindows([](HWND hwnd, LPARAM lParam
@@ -113,6 +113,8 @@ void IPluginsV4::Shutdown(void){
 	HUD_Clear();
 }
 void IPluginsV4::ExitGame(int iResult){
+	UninstallClientHook();
+	UninstallEngineHook();
 }
 
 #define STR1(R) #R

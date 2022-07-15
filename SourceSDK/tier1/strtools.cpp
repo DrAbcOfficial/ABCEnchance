@@ -73,7 +73,7 @@
 #if defined( _X360 )
 #include "xbox/xbox_win32stubs.h"
 #endif
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 
 void _V_memset (const char* file, int line, void *dest, int fill, int count)
 {
