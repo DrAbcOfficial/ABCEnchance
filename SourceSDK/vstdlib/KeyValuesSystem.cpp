@@ -10,7 +10,7 @@
 
 #include <vgui/ILocalize.h>
 
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 
 using namespace vgui;
 

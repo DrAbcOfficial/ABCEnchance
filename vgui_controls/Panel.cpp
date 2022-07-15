@@ -39,7 +39,7 @@
 #include <filesystem.h>
 
 // memdbgon must be the last include file in a .cpp file!!!
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 
 using namespace vgui;
 
@@ -6608,7 +6608,7 @@ PanelMessageMap *CPanelMessageMapDictionary::FindOrAddPanelMessageMap( char cons
 	m_MessageMaps.Insert( StripNamespace( className ), entry );
 	return entry.map;
 }
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 
 #if defined( VGUI_USEKEYBINDINGMAPS )
 //-----------------------------------------------------------------------------
@@ -6678,7 +6678,7 @@ PanelKeyBindingMap *CPanelKeyBindingMapDictionary::FindOrAddPanelKeyBindingMap( 
 	return entry.map;
 }
 
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 
 CPanelKeyBindingMapDictionary& GetPanelKeyBindingMapDictionary()
 {

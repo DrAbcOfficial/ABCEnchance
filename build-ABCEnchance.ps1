@@ -1,14 +1,12 @@
 Write-Output "[Chose your building target]"
 Write-Output "#1 Release"
 Write-Output "#2 Release_AVX2"
-Write-Output "#3 Release_AVX512"
-Write-Output "#4 Debug"
+Write-Output "#3 Debug"
 $Chosen = Read-Host
 switch ($Chosen) {
     "1" { $BuildTarget = "Release" }
     "2" { $BuildTarget = "Release_AVX2" }
-    "3" { $BuildTarget = "Release_AVX512" }
-    "4" { $BuildTarget = "Debug" }
+    "3" { $BuildTarget = "Debug" }
     Default {
         Read-Host "Ivalid Input, exiting.." | Out-Null
         Exit
@@ -19,7 +17,7 @@ if(!(Test-Path("../../global.props"))){
     &"../../build-initdeps.bat"
 }
 if($BuildTarget -eq "Debug"){
-    if(!(Test-Path("../../glew/build/lib/Debug/libglew32.lib"))){
+    if(!(Test-Path("../../glew/build/lib/Debug/libglew32d.lib"))){
         Write-Warning "Can not find glew, building..."
         &"../../build-glew-debug.bat"
     }

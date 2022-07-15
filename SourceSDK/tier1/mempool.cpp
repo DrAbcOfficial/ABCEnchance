@@ -13,7 +13,7 @@
 #include "strtools.h"
 
 // Should be last include
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 
 MemoryPoolReportFunc_t CMemoryPool::g_ReportFunc = 0;
 

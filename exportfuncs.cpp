@@ -1,4 +1,5 @@
 #include "plugins.h"
+#include <vector>
 //Lib
 #include "cmath"
 #include "malloc.h"
@@ -469,24 +470,35 @@ void FillAddress(){
 		}
 	}
 }
+std::vector<hook_t*> aryEngineHook = {};
+std::vector<hook_t*> aryClientHook = {};
 void InstallEngineHook() {
 	Fill_InlineEfxHook(R_BloodSprite);
-
 	Fill_EngFunc(pfnPlaybackEvent);
 
 	Install_InlineEngHook(pfnPlaybackEvent);
-
 	Install_InlineEngHook(R_NewMap);
 	Install_InlineEngHook(R_ForceCVars);
 	Install_InlineEngHook(CL_IsDevOverview);
 	Install_InlineEngHook(CL_SetDevOverView);
-	Install_InlineEngHook(EVVectorScale);
-	Install_InlineEngHook(R_CrossHair_ReDraw);
 	Install_InlineEngHook(Cvar_DirectSet);
 	Install_InlineEngHook(CL_GetModelByIndex);
 }
-void InstallHook(){
-	
+void InstallClientHook(){
+	Install_InlineHook(EVVectorScale);
+	Install_InlineHook(R_CrossHair_ReDraw);
+}
+void UninstallEngineHook() {
+	for (hook_t* h : aryEngineHook) {
+		Uninstall_Hook(h);
+	}
+	aryEngineHook.clear();
+}
+void UninstallClientHook() {
+	for (hook_t* h : aryClientHook) {
+		Uninstall_Hook(h);
+	}
+	aryClientHook.clear();
 }
 
 void CheckAsset() {

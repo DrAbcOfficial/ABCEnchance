@@ -12,12 +12,6 @@
     <LocalDebuggerCommandArguments>$(MetaHookLaunchCommnand)</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>$(MetaHookGameDirectory)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX512|Win32'">
-    <LocalDebuggerCommand>$(MetaHookLaunchName)</LocalDebuggerCommand>
-    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>$(MetaHookLaunchCommnand)</LocalDebuggerCommandArguments>
-    <LocalDebuggerWorkingDirectory>$(MetaHookGameDirectory)</LocalDebuggerWorkingDirectory>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerCommand>$(MetaHookLaunchName)</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>

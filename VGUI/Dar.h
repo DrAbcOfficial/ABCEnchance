@@ -17,7 +17,7 @@
 #include "VGUI.h"
 #include <tier1/utlvector.h>
 
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 
 namespace vgui
 {

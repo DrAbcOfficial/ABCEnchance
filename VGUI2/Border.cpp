@@ -11,7 +11,7 @@
 #include "Border.h"
 #include "vgui_internal.h"
 
-#include "tier0/memdbgon.h"
+//#include "tier0/memdbgon.h"
 
 using namespace vgui;
 

@@ -29,7 +29,7 @@
 #include <tier0/dbg.h>
 // for SRC
 #include <vstdlib/random.h>
-#include <tier0/memdbgon.h>
+////#include <tier0/memdbgon.h>
 
 using namespace vgui;
 

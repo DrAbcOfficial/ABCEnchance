@@ -11,11 +11,11 @@
 #include "utlsymbol.h"
 #include "KeyValues.h"
 #include <tier0/threadtools.h>
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 #include "stringpool.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 
 #define INVALID_STRING_INDEX CStringPoolIndex( 0xFFFF, 0xFFFF )
 

@@ -8,7 +8,7 @@
 #include "pch_vgui_controls.h"
 
 // memdbgon must be the last include file in a .cpp file
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 #define MENU_SEPARATOR_HEIGHT 3
 
 using namespace vgui;
@@ -209,7 +209,7 @@ int Menu::AddMenuItemKeyValuesCommand( MenuItem *item, KeyValues *message, Panel
 //-----------------------------------------------------------------------------
 int Menu::AddMenuItem( const char *itemName, const char *itemText, const char *command, Panel *target, const KeyValues *userData  )
 {
-	MenuItem *item = new MenuItem(this, itemName, itemText );
+	MenuItem *item = new MenuItem(this, itemName, vgui::localize()->Find(itemText));
 	return AddMenuItemCharCommand(item, command, target, userData);
 }
 

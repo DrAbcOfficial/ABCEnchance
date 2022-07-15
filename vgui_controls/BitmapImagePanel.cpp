@@ -16,7 +16,7 @@
 #include <tier1/KeyValues.h>
 
 // memdbgon must be the last include file in a .cpp file!!!
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 
 #ifndef min
 #define min(a, b)  (((a) < (b)) ? (a) : (b))

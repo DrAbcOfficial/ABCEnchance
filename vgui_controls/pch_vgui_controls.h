@@ -20,7 +20,7 @@
 #include <tier0/valve_off.h>
 #include <tier1/KeyValues.h>
 #include <tier0/valve_on.h>
-#include <tier0/memdbgon.h>
+//#include <tier0/memdbgon.h>
 #include <tier0/validator.h>
 
 #include <filesystem.h>
