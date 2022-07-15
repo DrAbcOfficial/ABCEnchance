@@ -2,6 +2,7 @@
 class CWeaponMenuAnnular : public IWeaponSelect {
 public:
 	void Init();
+	void VidInit();
 	int DrawWList(float flTime);
 	void Reset();
 	void GLInit();

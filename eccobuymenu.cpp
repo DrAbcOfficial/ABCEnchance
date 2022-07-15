@@ -68,6 +68,14 @@ void CHudEccoBuyMenu::GLInit(){
 int CHudEccoBuyMenu::Init(){
 	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
+	pCVarIdealYaw = CVAR_GET_POINTER("cam_idealyaw");
+	pCVarIdealDist = CVAR_GET_POINTER("cam_idealdist");
+	pCVarFollowAim = CVAR_GET_POINTER("cam_followaim");
+
+	gCVars.pEccoBuyMenu = CREATE_CVAR("cl_eccocmenu", "1", FCVAR_VALUE, EccoBuymenuSetCallBack);
+	return 0;
+}
+void CHudEccoBuyMenu::VidInit() {
 	BuyMenuAnimateTime = atof(pSchemeData->GetResourceString("EccoBuyMenu.BuyMenuAnimateTime"));
 	BuyMenuModelSize = atof(pSchemeData->GetResourceString("EccoBuyMenu.BuyMenuModelSize"));
 	BuyMenuCamYaw = atof(pSchemeData->GetResourceString("EccoBuyMenu.BuyMenuCamYaw"));
@@ -80,19 +88,11 @@ int CHudEccoBuyMenu::Init(){
 	BuyMenuOffset = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuOffset");
 	BuyMenuHeight = GET_SCREEN_PIXEL(true, "EccoBuyMenu.BuyMenuHeight");
 
-	pCVarIdealYaw = CVAR_GET_POINTER("cam_idealyaw");
-	pCVarIdealDist = CVAR_GET_POINTER("cam_idealdist");
-	pCVarFollowAim = CVAR_GET_POINTER("cam_followaim");
-
-	gCVars.pEccoBuyMenu = CREATE_CVAR("cl_eccocmenu", "1", FCVAR_VALUE, EccoBuymenuSetCallBack);
-
 	TextColor = pSchemeData->GetColor("BuyMenu.TextColor", gDefaultColor);
 	ButtonColor = pSchemeData->GetColor("BuyMenu.ButtonColor", gDefaultColor);
 
 	hFont = pSchemeData->GetFont("BuyMenuShitFont", true);
-	return 0;
-}
-void CHudEccoBuyMenu::VidInit() {
+
 	Reset();
 }
 void CHudEccoBuyMenu::Reset() {

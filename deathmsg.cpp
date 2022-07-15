@@ -219,7 +219,10 @@ int CHudDeathMsg::Init(void){
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
 	m_pfnDeathMsg = HOOK_MESSAGE(DeathMsg);
 	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_VALUE, NULL);
+	return 1;
+}
 
+void CHudDeathMsg::VidInit(){
 	HUDFont = pSchemeData->GetFont("MainShitFont", true);
 	XOffset = GET_SCREEN_PIXEL(false, "DeathMsg.XOffset");
 	YOffset = GET_SCREEN_PIXEL(true, "DeathMsg.YOffset");
@@ -231,5 +234,4 @@ int CHudDeathMsg::Init(void){
 	VictimColor = pSchemeData->GetColor("DeathMsg.VictimColor", gDefaultColor);
 	AttackerColor = pSchemeData->GetColor("DeathMsg.AttackerColor", gDefaultColor);
 	InflictorColor = pSchemeData->GetColor("DeathMsg.InflictorColor", gDefaultColor);
-	return 1;
 }

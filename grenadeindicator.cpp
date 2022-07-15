@@ -22,8 +22,10 @@ int CHudGrenadeIndicator::Init(){
 	gCVars.pGrenadeIndicator = CREATE_CVAR("cl_grenadeindicator", "1", FCVAR_VALUE, nullptr);
 	gCVars.pGrenadeIndicatorRange = CREATE_CVAR("cl_grenadeindicator_range", "256", FCVAR_VALUE, nullptr);
 	gCVars.pGrenadeInicatorTime = CREATE_CVAR("cl_grenadeindicator_time", "4", FCVAR_VALUE, nullptr);
-	IconHalfSize = GET_SCREEN_PIXEL(false, "GrenadeIndicator.Size") / 2;
 	return 0;
+}
+void CHudGrenadeIndicator::VidInit(){
+	IconHalfSize = GET_SCREEN_PIXEL(false, "GrenadeIndicator.Size") / 2;
 }
 int CHudGrenadeIndicator::Draw(float flTime){
 	if (gCVars.pGrenadeIndicator->value <= 0)

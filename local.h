@@ -65,6 +65,7 @@ typedef struct{
 
 	//VGUI2
 	char* (*V_strncpy)(char* a1, const char* a2, size_t a3);
+	PVOID(*VGUIClient001_CreateInterface)(HINTERFACEMODULE hModule);
 }cl_refHookfunc_t;
 
 typedef struct{

@@ -206,8 +206,6 @@ void CCustomHud::HUD_Init(void){
 #ifdef _DEBUG
 	m_HudCCTV.Init();
 #endif
-
-	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
 }
 void CCustomHud::HUD_VidInit(void){
 	int iRes = ScreenWidth < 640 ? 320 : 640;
@@ -243,11 +241,16 @@ void CCustomHud::HUD_VidInit(void){
 			p++;
 		}
 	}
+	m_HudGrenadeIndicator.VidInit();
+	m_HudEccoMoney.VidInit();
+	m_HudDeathMsg.VidInit();
 	m_HudArmorHealth.VidInit();
 	m_HudCustomAmmo.VidInit();
 	m_HudRadar.VidInit();
 	m_HudVote.VidInit();
 	m_HudEccoBuyMenu.VidInit();
+
+	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
 }
 void CCustomHud::HUD_Draw(float flTime){
 	SetBaseHudActivity();

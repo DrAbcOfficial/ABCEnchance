@@ -9,6 +9,7 @@ struct HIST_ITEM {
 class HistoryResource{
 public:
 	void Init(void);
+	void VidInit(void);
 	void Reset(void);
 	void AddToHistory(int iType, int iId, int iCount = 0);
 	void AddToHistory(int iType, const char* szName, int iCount = 0);

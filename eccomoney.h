@@ -2,6 +2,7 @@
 class CHudEccoMoney {
 public:
 	int Init(void);
+	void VidInit(void);
 	int Draw(float flTime);
 	void Reset();
 private:

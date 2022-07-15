@@ -18,6 +18,11 @@
 
 HistoryResource gHR;
 void HistoryResource::Init(void){
+	pHudDrawTime = CVAR_GET_POINTER("hud_drawhistory_time");
+	Reset();
+}
+
+void HistoryResource::VidInit(void){
 	AmmoIconColor = pSchemeData->GetColor("AmmoHUD.AmmoPickUpIconColor", gDefaultColor);
 	AmmoTextColor = pSchemeData->GetColor("AmmoHUD.AmmoPickUpTextColor", gDefaultColor);
 	WeaponPickUpColor = pSchemeData->GetColor("AmmoHUD.WeaponPickUpColor", gDefaultColor);
@@ -32,9 +37,8 @@ void HistoryResource::Init(void){
 	vecItemPickUpPos[1] = GET_SCREEN_PIXEL(true, "AmmoHUD.ItemPickUpY");
 
 	hFont = pSchemeData->GetFont("HUDSmallShitFont", true);
-	pHudDrawTime = CVAR_GET_POINTER("hud_drawhistory_time");
-	Reset();
 }
+
 void HistoryResource::Reset(void){
 	memset(rgHistory, 0, sizeof(rgHistory));
 }
