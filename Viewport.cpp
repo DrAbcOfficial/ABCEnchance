@@ -12,6 +12,7 @@
 #include "local.h"
 #include "vguilocal.h"
 #include <string>
+#include "steam_api.h"
 #include "player_info.h"
 #include "scoreboard.h"
 #include "Viewport.h"

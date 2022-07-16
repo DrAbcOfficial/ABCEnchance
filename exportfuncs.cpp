@@ -29,6 +29,7 @@
 #include "CCustomHud.h"
 #include "local.h"
 #include <string>
+#include "steam_api.h"
 #include "player_info.h"
 //HUD
 #include "ammo.h"
