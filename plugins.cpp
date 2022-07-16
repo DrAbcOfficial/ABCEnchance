@@ -2,7 +2,6 @@
 #include "exportfuncs.h"
 #include <vgui_controls/Controls.h>
 #include <svc_hook.h>
-#include <SteamSDK/steam_api.h>
 
 cl_enginefunc_t gEnginefuncs;
 mh_interface_t *g_pInterface;
@@ -32,7 +31,6 @@ void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_engin
 	g_pMetaHookAPI = pAPI;
 	g_pMetaSave = pSave;
 	g_hInstance = GetModuleHandle(nullptr);
-	SteamAPI_Init();
 }
 
 void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
@@ -93,8 +91,6 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	InstallClientHook();
 	ClientVGUI_InstallHook();
 
-	
-
 	EnumWindows([](HWND hwnd, LPARAM lParam
 		)
 		{
@@ -117,7 +113,6 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 }
 void IPluginsV4::Shutdown(void){
 	HUD_Clear();
-	SteamAPI_Shutdown();
 }
 void IPluginsV4::ExitGame(int iResult){
 	UninstallClientHook();
