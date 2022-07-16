@@ -178,8 +178,16 @@ CPlayerInfo *CPlayerInfo::Update()
 	{
 		if (!m_pSteamId.IsValid())
 		{
-			if (m_iIndex == 1)
-				m_pSteamId = SteamUser()->GetSteamID();	
+			if (m_iIndex == gEngfuncs.GetLocalPlayer()->index)
+				m_pSteamId = SteamUser()->GetSteamID();
+			else {
+				int iIp = g_pConnectingServer->ip[0] + 
+					g_pConnectingServer->ip[1] << 8 + 
+					g_pConnectingServer->ip[2] << 16 + 
+					g_pConnectingServer->ip[3] << 24;
+				ISteamMatchmakingPlayersResponse* pRespons;
+				auto query = SteamMatchmakingServers()->PlayerDetails(iIp, g_pConnectingServer->port, pRespons);			
+			}
 		}
 
 		hud_playerinfo_t* extraInfo = gCustomHud.GetPlayerHUDInfo(m_iIndex);
