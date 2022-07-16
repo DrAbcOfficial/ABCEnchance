@@ -12,6 +12,7 @@ extern engine_studio_api_t gEngineStudio;
 
 extern const clientdata_t* gClientData;
 extern float m_hfov;
+extern netadr_s* g_pConnectingServer;
 
 extern overviewInfo_t* gDevOverview;
 extern int* g_iVisibleMouse;

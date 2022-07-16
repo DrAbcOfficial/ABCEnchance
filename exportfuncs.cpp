@@ -53,7 +53,7 @@ overviewInfo_t* gDevOverview;
 baseweapon_t* (*g_rgBaseSlots)[10][26] = nullptr;
 int* g_iVisibleMouse = nullptr;
 refdef_t* g_refdef = nullptr;
-
+netadr_s* g_pConnectingServer = nullptr;
 
 //VGUI2
 HWND g_MainWnd = nullptr;
@@ -244,22 +244,20 @@ char* NewV_strncpy(char* a1, const char* a2, size_t a3){
 	const char* lang = NULL;
 	auto gamedir = gEngfuncs.pfnGetGameDirectory();
 	if (CommandLine()->CheckParm("-forcelang", &lang) && lang && lang[0])
-	{
 		a2 = lang;
-	}
-	else if ((gamedir && !strcmp(gamedir, "svencoop")) || CommandLine()->CheckParm("-steamlang"))
-	{
+	else if ((gamedir && !strcmp(gamedir, "svencoop")) || CommandLine()->CheckParm("-steamlang")){
 		Sys_GetRegKeyValue("Software\\Valve\\Steam", "Language", language, sizeof(language), "");
 		if ((Q_strlen(language) > 0) && (Q_stricmp(language, "english")))
-		{
 			a2 = language;
-		}
 	}
-
 	gHookFuncs.V_strncpy(m_szCurrentLanguage, a2, sizeof(m_szCurrentLanguage) - 1);
 	m_szCurrentLanguage[sizeof(m_szCurrentLanguage) - 1] = 0;
-
 	return gHookFuncs.V_strncpy(a1, a2, a3);
+}
+bool NET_StringToAdr(char* param_1, netadr_s* param_2) {
+	bool result = gHookFuncs.NET_StringToAdr(param_1, param_2);
+	g_pConnectingServer = param_2;
+	return result;
 }
 
 void CheckOtherPlugin(){
@@ -267,7 +265,6 @@ void CheckOtherPlugin(){
 	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
 	g_metaplugins.captionmod = g_pMetaHookAPI->GetPluginInfo("CaptionMod.dll", &info);
 }
-
 void FillEfxAddress(){
 
 }
@@ -302,6 +299,8 @@ void FillEngineAddress() {
 		Fill_Sig(R_FORCECVAR_SIG, g_dwEngineBase, g_dwEngineSize, R_ForceCVars);
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
+#define NET_STRINGTOADR_SIG "\x56\x57\x8B\x7C\x24\x0C\x68\x2A\x2A\x2A\x2A\x57\xE8\xDF\x5C\xFC\xFF\x83\xC4\x08\x85\xC0"
+		Fill_Sig(NET_STRINGTOADR_SIG, g_dwEngineBase, g_dwEngineSize, NET_StringToAdr);
 
 		DWORD addr;
 #define R_VIEWREFDEF_SIG "\x68\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68"
@@ -497,6 +496,7 @@ void InstallEngineHook() {
 	Install_InlineEngHook(CL_SetDevOverView);
 	Install_InlineEngHook(Cvar_DirectSet);
 	Install_InlineEngHook(CL_GetModelByIndex);
+	Install_InlineEngHook(NET_StringToAdr);
 }
 void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);

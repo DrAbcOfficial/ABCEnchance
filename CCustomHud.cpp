@@ -187,15 +187,6 @@ void __UserCmd_OpenScoreboard(void) {
 void __UserCmd_CloseScoreboard(void) {
 	g_pViewPort->HideScoreBoard();
 }
-
-bool g_bInRecevingAnser =false;
-bool g_bInProccessingAnser = false;
-void __SVCHook_Print(void) {
-	BEGIN_READ(SVC_GetBuffer(), SVC_GetBufferSize());
-	char* str = READ_STRING();
-	m_pfnSVCPrint();
-}
-
 void CCustomHud::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
