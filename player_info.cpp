@@ -10,9 +10,20 @@
 #include "player_info.h"
 #include "scoreboard.h"
 #include <Viewport.h>
+#include "net_api.h"
+#include <exportfuncs.h>
+
+typedef int GLint;
+#include "hud.h"
+#include "weapon.h"
+#include <CCustomHud.h>
 
 CPlayerInfo CPlayerInfo::m_sPlayerInfo[SC_MAX_PLAYERS + 1];
 static CPlayerInfo *s_ThisPlayerInfo = nullptr;
+bool g_bInPing = false;
+std::wstring g_szPingBuffer;
+
+#define UNDEFINEDTEAM_LOCALIZE_TOKEN "Scores_UndifinedTeam"
 
 namespace
 {
@@ -191,6 +202,12 @@ CPlayerInfo *GetThisPlayerInfo()
 	return s_ThisPlayerInfo;
 }
 
+void CPlayerInfo::InitPlayerInfos() {
+	// Set player info IDs
+	for (int i = 1; i < SC_MAX_PLAYERS; i++)
+		CPlayerInfo::m_sPlayerInfo[i].m_iIndex = i;
+}
+
 int CPlayerInfo::GetIndex()
 {
 	return m_iIndex;
@@ -204,48 +221,48 @@ bool CPlayerInfo::IsConnected()
 const char *CPlayerInfo::GetName()
 {
 	Assert(m_bIsConnected);
-	return m_EngineInfo.name;
+	return szName;
 }
 
 int CPlayerInfo::GetPing()
 {
 	Assert(m_bIsConnected);
-	return m_EngineInfo.ping;
+	return iPing;
 }
 
 int CPlayerInfo::GetPacketLoss()
 {
 	Assert(m_bIsConnected);
-	return m_EngineInfo.packetloss;
+	return iLoss;
 }
 
 bool CPlayerInfo::IsThisPlayer()
 {
 	Assert(m_bIsConnected);
-	return m_EngineInfo.thisplayer;
+	return m_iIndex == 1;
 }
 
 const char *CPlayerInfo::GetModel()
 {
 	Assert(m_bIsConnected);
-	return m_EngineInfo.model;
+	return szModel;
 }
 
 int CPlayerInfo::GetTopColor()
 {
 	Assert(m_bIsConnected);
-	return m_EngineInfo.topcolor;
+	return iTopColor;
 }
 
 int CPlayerInfo::GetBottomColor()
 {
 	Assert(m_bIsConnected);
-	return m_EngineInfo.bottomcolor;
+	return iBottomColor;
 }
 
 uint64 CPlayerInfo::GetValidSteamID64()
 {
-	return CSteamID(m_szSteamID, k_EUniversePublic).ConvertToUint64();
+	return CSteamID(m_szSteamID,k_EUniversePublic).ConvertToUint64();
 }
 
 uint64 CPlayerInfo::GetStatusSteamID64()
@@ -264,6 +281,18 @@ int CPlayerInfo::GetDeaths()
 {
 	Assert(m_bIsConnected);
 	return m_ExtraInfo.deaths;
+}
+
+int CPlayerInfo::GetHealth()
+{
+	Assert(m_bIsConnected);
+	return m_ExtraInfo.health;
+}
+
+int CPlayerInfo::GetArmor()
+{
+	Assert(m_bIsConnected);
+	return m_ExtraInfo.armor;
 }
 
 int CPlayerInfo::GetPlayerClass()
@@ -286,7 +315,7 @@ const char *CPlayerInfo::GetTeamName()
 
 bool CPlayerInfo::IsSpectator()
 {
-	return m_bIsSpectator || m_EngineInfo.spectator;
+	return m_bIsSpectator;
 }
 
 const char *CPlayerInfo::GetDisplayName()
@@ -299,21 +328,20 @@ const char *CPlayerInfo::GetDisplayName()
 	return name;
 }
 
-const char *CPlayerInfo::GetSteamID()
+const char* CPlayerInfo::GetSteamIDString()
 {
 	return m_szSteamID;
 }
-
 CPlayerInfo *CPlayerInfo::Update()
 {
-	gEngfuncs.pfnGetPlayerInfo(m_iIndex, &m_EngineInfo);
+	hud_player_info_t hInfo;
+	gEngfuncs.pfnGetPlayerInfo(m_iIndex, &hInfo);
 	bool bWasConnected = m_bIsConnected;
-	bool bIsConnected = m_EngineInfo.name != nullptr;
+	bool bIsConnected = hInfo.name != nullptr;
 	m_bIsConnected = bIsConnected;
 
 	if (bIsConnected != bWasConnected)
 	{
-		// Player connected or disconnected
 		m_szSteamID[0] = '\0';
 		m_szRealName[0] = '\0';
 		m_bRealNameChecked = false;
@@ -328,15 +356,33 @@ CPlayerInfo *CPlayerInfo::Update()
 		{
 			// Player has no SteamID, update it
 			float period = (m_iStatusPenalty < STATUS_PENALTY_THRESHOLD) ? STATUS_PERIOD : STATUS_BUGGED_PERIOD;
-			if (m_flLastStatusRequest + period < gEngfuncs.GetAbsoluteTime())
+			if (!g_bInPing && m_flLastStatusRequest + period < gEngfuncs.GetAbsoluteTime())
 			{
-				//CSvcMessages::Get().SendStatusRequest();
+				g_bInPing = true;
 				ServerCmd("status");
 				m_flLastStatusRequest = gEngfuncs.GetAbsoluteTime();
 			}
 		}
 
-		if (!m_bRealNameChecked && m_szSteamID[0])
+		hud_playerinfo_t* extraInfo = gCustomHud.GetPlayerHUDInfo(m_iIndex);
+		//Ping loss
+		player_info_t* info = gEngineStudio.PlayerInfo(m_iIndex);
+		iPing = info->ping;
+		iLoss = info->packet_loss;
+		iTopColor = info->topcolor;
+		iBottomColor = info->bottomcolor;
+		strcpy_s(szName, hInfo.name);
+		m_bIsSpectator = gCustomHud.IsSpectator(m_iIndex);
+
+		m_ExtraInfo.armor = extraInfo->armor;
+		m_ExtraInfo.frags = extraInfo->frags;
+		m_ExtraInfo.deaths = extraInfo->death;
+		m_ExtraInfo.health = extraInfo->health;
+		m_ExtraInfo.teamnumber = extraInfo->team;
+		Q_strcpy(m_ExtraInfo.teamname, GetTeamInfo(0)->GetNameByIndex(extraInfo->team));
+		
+		//RealNameGet
+		if (!m_bRealNameChecked && m_szSteamID[0] != '\0')
 		{
 			m_bRealNameChecked = true;
 
@@ -360,6 +406,11 @@ CPlayerInfo *CPlayerInfo::Update()
 	return this;
 }
 
+void CPlayerInfo::UpdateAll() {
+	for (int i = 1; i < SC_MAX_PLAYERS; i++)
+		CPlayerInfo::m_sPlayerInfo[i].Update();
+}
+
 bool CPlayerInfo::HasRealName()
 {
 	return m_szRealName[0] != '\0';
@@ -374,24 +425,107 @@ void CPlayerInfo::ClearRealName()
 player_info_t *CPlayerInfo::GetEnginePlayerInfo()
 {
 	Assert(m_bIsConnected);
-	if (!m_EngineInfo.name)
+	if (!szName)
 		return nullptr;
-	player_info_t *ptr = reinterpret_cast<player_info_t *>(m_EngineInfo.name - offsetof(player_info_t, name));
+	player_info_t *ptr = reinterpret_cast<player_info_t *>(szName - offsetof(player_info_t, name));
 	return ptr;
 }
 
 void CPlayerInfo::Reset()
 {
-	m_EngineInfo = hud_player_info_t();
 	m_ExtraInfo = extra_player_info_t();
 	m_bIsConnected = false;
 	m_bIsSpectator = false;
-	m_szSteamID[0] = '\0';
+	memset(m_szSteamID, 0, sizeof(m_szSteamID));
+}
+void CPlayerInfo::ResetAll() {
+	for (int i = 1; i < SC_MAX_PLAYERS; i++)
+		CPlayerInfo::m_sPlayerInfo[i].Reset();
 }
 
 //-----------------------------------------------------
 
 CTeamInfo CTeamInfo::m_sTeamInfo[SC_MAX_TEAMS + 1];
+enum {
+	CLASS_FORCE_NONE = -1,
+	CLASS_NONE,
+	CLASS_MACHINE,
+	CLASS_PLAYER,
+	CLASS_HUMAN_PASSIVE,
+	CLASS_HUMAN_MILITARY,
+	CLASS_ALIEN_MILITARY,
+	CLASS_ALIEN_PASSIVE,
+	CLASS_ALIEN_MONSTER,
+	CLASS_ALIEN_PREY,
+	CLASS_ALIEN_PREDATOR,
+	CLASS_INSECT,
+	CLASS_PLAYER_ALLY,
+	CLASS_PLAYER_BIOWEAPON,
+	CLASS_ALIEN_BIOWEAPON,
+	CLASS_XRACE_PITDRONE,
+	CLASS_XRACE_SHOCK,
+	CLASS_TEAM1,
+	CLASS_TEAM2,
+	CLASS_TEAM3,
+	CLASS_TEAM4,
+	CLASS_BARNACLE = 99
+};
+#define CLASS_NONE_TOKEN "Team_None"
+#define CLASS_PLAYER_TOKEN "Team_Player"
+#define CLASS_OTHER_TOKEN "Team_Other"
+#define CLASS_RED_TOKEN "Team_Red"
+#define CLASS_BLUE_TOKEN "Team_Blue"
+#define CLASS_GREEN_TOKEN "Team_Green"
+#define CLASS_YELLOW_TOKEN "Team_Yellow"
+const char* CTeamInfo::GetNameByIndex(uint i) {
+	switch (i) {
+		case CLASS_FORCE_NONE:
+		case CLASS_NONE: {
+			return CLASS_NONE_TOKEN;
+			break;
+		}
+		case CLASS_PLAYER: {
+			return CLASS_PLAYER_TOKEN;
+			break;
+		}
+		case CLASS_TEAM1: {
+			return CLASS_BLUE_TOKEN;
+			break;
+		}
+		case CLASS_TEAM2: {
+			return CLASS_RED_TOKEN;
+			break;
+		}
+		case CLASS_TEAM3: {
+			return CLASS_YELLOW_TOKEN;
+			break;
+		}
+		case CLASS_TEAM4: {
+			return CLASS_GREEN_TOKEN;
+			break;
+		}
+		default:
+		case CLASS_MACHINE:
+		case CLASS_HUMAN_PASSIVE:
+		case CLASS_HUMAN_MILITARY:
+		case CLASS_ALIEN_MILITARY:
+		case CLASS_ALIEN_PASSIVE:
+		case CLASS_ALIEN_MONSTER:
+		case CLASS_ALIEN_PREY:
+		case CLASS_ALIEN_PREDATOR:
+		case CLASS_INSECT:
+		case CLASS_PLAYER_ALLY:
+		case CLASS_PLAYER_BIOWEAPON:
+		case CLASS_ALIEN_BIOWEAPON:
+		case CLASS_XRACE_PITDRONE:
+		case CLASS_XRACE_SHOCK:
+		case CLASS_BARNACLE: {
+			return CLASS_OTHER_TOKEN;
+			break;
+		}
+	}
+	return CLASS_OTHER_TOKEN;
+}
 
 int CTeamInfo::GetNumber()
 {
@@ -401,11 +535,6 @@ int CTeamInfo::GetNumber()
 const char *CTeamInfo::GetName()
 {
 	return m_Name;
-}
-
-const char *CTeamInfo::GetDisplayName()
-{
-	return m_DisplayName[0] != '\0' ? m_DisplayName : m_Name;
 }
 
 bool CTeamInfo::IsScoreOverriden()
@@ -425,14 +554,23 @@ int CTeamInfo::GetDeaths()
 	return m_iDeaths;
 }
 
-void CTeamInfo::Reset(int number)
+void CTeamInfo::InitTeamInfos() {
+	for(size_t i = 0; i < SC_MAX_TEAMS;i++){
+		strcpy_s(m_sTeamInfo[i].m_Name, GetNameByIndex(i));
+	}
+}
+
+void CTeamInfo::Reset()
 {
-	m_iNumber = number;
-	Q_strncpy(m_Name, "< undefined >", sizeof(m_Name));
-	Q_strncpy(m_DisplayName, "", sizeof(m_DisplayName));
 	m_bScoreOverriden = false;
 	m_iFrags = 0;
 	m_iDeaths = 0;
+}
+
+void CTeamInfo::ResetAll() {
+	for (CTeamInfo t : m_sTeamInfo) {
+		t.Reset();
+	}
 }
 
 void CTeamInfo::UpdateAllTeams()
@@ -446,8 +584,5 @@ void CTeamInfo::UpdateAllTeams()
 
 		if (pi->GetTeamNumber() < 0 || pi->GetTeamNumber() > SC_MAX_TEAMS)
 			continue;
-
-		CTeamInfo *ti = GetTeamInfo(pi->GetTeamNumber());
-		Q_strncpy(ti->m_Name, pi->GetTeamName(), sizeof(ti->m_Name));
 	}
 }

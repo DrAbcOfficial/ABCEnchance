@@ -956,12 +956,12 @@ void Label::ApplySchemeSettings(IScheme *pScheme)
 		// use the custom specified font since we have one set
 		SetFont(pScheme->GetFont(_fontOverrideName, IsProportional()));
 	}
-	if ( GetFont() == INVALID_FONT )
+	if (GetFont() == INVALID_FONT)
 	{
-		SetFont( pScheme->GetFont( "Default", IsProportional() ) );
-	}	
+		SetFont(pScheme->GetFont("Default", IsProportional()));
+	}
 
-	if ( m_bWrap )
+	if (m_bWrap)
 	{
 		//tell it how big it is
 		int wide, tall;
@@ -982,7 +982,7 @@ void Label::ApplySchemeSettings(IScheme *pScheme)
 	// clear out any the images, since they will have been invalidated
 	for (int i = 0; i < _imageDar.Count(); i++)
 	{
-		IImage *image = _imageDar[i].image;
+		IImage* image = _imageDar[i].image;
 		if (!image)
 			continue; // skip over null images
 
@@ -992,25 +992,25 @@ void Label::ApplySchemeSettings(IScheme *pScheme)
 		_imageDar[i].image = NULL;
 	}
 
-	SetDisabledFgColor1(GetSchemeColor("DisabledFgColor1", pScheme));
-	SetDisabledFgColor2(GetSchemeColor("DisabledFgColor2", pScheme));
-	SetBgColor(GetSchemeColor("LabelBgColor", pScheme));
+	SetDisabledFgColor1(GetSchemeColor("Label.DisabledFgColor1", pScheme));
+	SetDisabledFgColor2(GetSchemeColor("Label.DisabledFgColor2", pScheme));
+	SetBgColor(GetSchemeColor("Label.BgColor", pScheme));
 
 	switch (_textColorState)
 	{
 	case CS_DULL:
-		SetFgColor(GetSchemeColor("LabelDimText", pScheme));
+		SetFgColor(GetSchemeColor("Label.TextDullColor", pScheme));
 		break;
 	case CS_BRIGHT:
-		SetFgColor(GetSchemeColor("BrightControlText", pScheme));
+		SetFgColor(GetSchemeColor("Label.TextBrightColor", pScheme));
 		break;
 	case CS_NORMAL:
 	default:
-		SetFgColor(GetSchemeColor("BaseText", pScheme));
+		SetFgColor(GetSchemeColor("Label.TextColor", pScheme));
 		break;
 	}
 
-	_associateColor = GetSchemeColor("BrightControlText", pScheme);
+	_associateColor = GetSchemeColor("Label.SelectedTextColor", pScheme);
 }
 
 //-----------------------------------------------------------------------------

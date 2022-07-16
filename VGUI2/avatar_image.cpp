@@ -6,6 +6,7 @@
 #pragma once
 #include <metahook.h>
 #include <vguilocal.h>
+#include <string>
 #include <player_info.h>
 
 #include <vgui_controls/Panel.h>

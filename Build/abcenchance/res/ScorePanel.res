@@ -1,13 +1,13 @@
-"ui/resource/ScorePanel.res"
+"abcenchance/res/ScorePanel.res"
 {
 	"ScorePanel"
 	{
 		"ControlName"		"CScorePanel"
 		"fieldName"		"ScorePanel"
 		"xpos"		"c-276"
-		"ypos"		"c-224"
+		"ypos"		"c-324"
 		"wide"		"552"
-		"tall"		"448"
+		"tall"		"488"
 		"autoResize"		"0"
 		"pinCorner"		"0"
 		"visible"		"1"
@@ -27,10 +27,10 @@
 		"column_ping"		"80"
 		
 		// Icon of muted players (without .tga)
-		"muted_icon"		"ui/gfx/muted_icon32"
+		"muted_icon"		"abcenchance/tga/muted_icon32"
 		
 		// Minimum height of the score panel
-		"min_height"		"200"
+		"min_height"		"300"
 		
 		// Minimum distance between vertical edges of the score panel and vertical edges of the screen
 		"vertical_margin"	"30"
@@ -51,7 +51,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"		"0"
-		"labelText"		"A Half-Life Server"
+		"labelText"		"Sven Co-op Server"
 		"textAlignment"		"west"
 		"dulltext"		"0"
 		"brighttext"		"1"
@@ -71,7 +71,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"		"0"
-		"labelText"		"Map: crossfire"
+		"labelText"		""
 		"textAlignment"		"west"
 		"dulltext"		"0"
 		"brighttext"		"0"
@@ -90,7 +90,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"		"0"
-		"labelText"		"2/32"
+		"labelText"		"666/666"
 		"textAlignment"		"east"
 		"dulltext"		"0"
 		"brighttext"		"0"
@@ -103,7 +103,7 @@
 		"xpos"		"4"
 		"ypos"		"24"
 		"wide"		"544"
-		"tall"		"420"
+		"tall"		"640"
 		"autoResize"		"0"
 		"pinCorner"		"0"
 		"visible"		"1"

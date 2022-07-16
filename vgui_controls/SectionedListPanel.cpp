@@ -1222,10 +1222,10 @@ void SectionedListPanel::RemoveAllSections()
 bool SectionedListPanel::AddColumnToSection(int sectionID, const char* columnName, const char* columnText, int columnFlags, int width, HFont fallbackFont /*= INVALID_FONT*/)
 {
 	wchar_t wtext[64];
-	wchar_t* pwtext = g_pVGuiLocalize->Find(columnText);
+	wchar_t* pwtext = vgui::localize()->Find(columnText);
 	if (!pwtext)
 	{
-		g_pVGuiLocalize->ConvertANSIToUnicode(columnText, wtext, sizeof(wtext));
+		vgui::localize()->ConvertANSIToUnicode(columnText, wtext, sizeof(wtext));
 		pwtext = wtext;
 	}
 	return AddColumnToSection(sectionID, columnName, pwtext, columnFlags, width, fallbackFont);

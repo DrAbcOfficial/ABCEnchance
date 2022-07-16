@@ -1,5 +1,6 @@
 #include <metahook.h>
 #include <vector>
+#include <string>
 #include <vgui/VGUI.h>
 #include <vgui/ISurface.h>
 #include <vgui/ILocalize.h>

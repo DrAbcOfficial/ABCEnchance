@@ -23,8 +23,9 @@ struct extra_player_info_t
 	short frags;
 	short deaths;
 	short playerclass;
-	short health; // UNUSED currently, spectator UI would like this
-	bool dead; // UNUSED currently, spectator UI would like this
+	short armor;
+	short health;
+	bool dead;
 	short teamnumber;
 	char teamname[SC_MAX_TEAM_NAME];
 };
@@ -35,9 +36,13 @@ class CPlayerInfo;
 CPlayerInfo *GetPlayerInfo(int idx);
 CPlayerInfo *GetThisPlayerInfo();
 
+extern bool g_bInPing;
+extern std::wstring g_szPingBuffer;
+
 class CPlayerInfo
 {
 public:
+	void InitPlayerInfos();
 	int GetIndex();
 	bool IsConnected();
 
@@ -55,6 +60,8 @@ public:
 	// Extra info (from HUD messages)
 	int GetFrags();
 	int GetDeaths();
+	int GetHealth();
+	int GetArmor();
 	int GetPlayerClass();
 	int GetTeamNumber();
 	const char *GetTeamName();
@@ -70,11 +77,13 @@ public:
 	/**
 	 * Returns SteamID string. Requires SVC hook.
 	 */
-	const char *GetSteamID();
-
+	const char* GetSteamID();
+	const char* GetSteamIDString();
 	// Should be called before reading engine info.
 	// Returns this
 	CPlayerInfo *Update();
+
+	void UpdateAll();
 
 	/**
 	 * Returns whether the player has a real name.
@@ -85,6 +94,10 @@ public:
 	 * Clears saved realname. Should be called when realnames are unloaded.
 	 */
 	void ClearRealName();
+	void ResetAll();
+
+	char m_szSteamID[SC_MAX_STEAMID];
+	int m_iStatusPenalty; //!< This var is incremented every time player is not found in status output
 
 private:
 	/**
@@ -97,14 +110,17 @@ private:
 	static constexpr float STATUS_BUGGED_PERIOD = 10.f;
 
 	int m_iIndex = -1;
-	hud_player_info_t m_EngineInfo;
+	char szName[SC_MAX_PLAYER_NAME];
+	int iPing;
+	int iLoss;
+	char szModel[SC_MAX_PLAYER_NAME];
+	int iTopColor;
+	int iBottomColor;
 	extra_player_info_t m_ExtraInfo;
 	bool m_bIsConnected;
 	bool m_bIsSpectator;
-	char m_szSteamID[SC_MAX_STEAMID + 1];
 	char m_szRealName[SC_MAX_PLAYER_NAME + 1];
 	bool m_bRealNameChecked = false;
-	int m_iStatusPenalty; //!< This var is incremented every time player is not found in status output
 	float m_flLastStatusRequest = 0;
 
 	player_info_t *GetEnginePlayerInfo();
@@ -112,10 +128,7 @@ private:
 
 	static CPlayerInfo m_sPlayerInfo[SC_MAX_PLAYERS + 1];
 	friend CPlayerInfo *GetPlayerInfo(int idx);
-	friend class CHud;
-	friend class CClientViewport;
 	friend class CSvcMessages;
-	friend class AgHudGlobal;
 };
 
 inline CPlayerInfo *GetPlayerInfo(int idx)
@@ -132,6 +145,7 @@ CTeamInfo *GetTeamInfo(int number);
 class CTeamInfo
 {
 public:
+	const char* GetNameByIndex(uint index);
 	/**
 	 * Returns team number.
 	 */
@@ -141,13 +155,6 @@ public:
 	 * Returns name of the team. This is the one returned by CPlayerInfo::GetTeamName().
 	 */
 	const char *GetName();
-
-	/**
-	 * Returns display name. It should be used in text displayed to the player.
-	 * It can be overriden by TeamNames message.
-	 */
-	const char *GetDisplayName();
-
 	/**
 	 * Returns whether TeamScore message was used to override the scores.
 	 * If true, use GetFrags and GetDeaths instead of calculated values.
@@ -165,11 +172,12 @@ public:
 	 * Only valid if IsScoreOverriden() == true.
 	 */
 	int GetDeaths();
+	void ResetAll();
+	void InitTeamInfos();
 
 private:
 	int m_iNumber = -1;
-	char m_Name[SC_MAX_TEAM_NAME] = "< undefined >";
-	char m_DisplayName[SC_MAX_TEAM_DISPLAY_NAME] = "< undefined >";
+	char m_Name[SC_MAX_TEAM_NAME];
 	bool m_bScoreOverriden = false;
 	int m_iFrags = 0;
 	int m_iDeaths = 0;
@@ -178,7 +186,7 @@ private:
 	 * Called during VidInit to reset internal data.
 	 * @param	number	Number of the team (used to set m_iNumber).
 	 */
-	void Reset(int number);
+	void Reset();
 
 	/**
 	 * Updates state of all teams.
@@ -187,8 +195,6 @@ private:
 
 	static CTeamInfo m_sTeamInfo[SC_MAX_TEAMS + 1];
 	friend CTeamInfo *GetTeamInfo(int number);
-	friend class CHud;
-	friend class CClientViewport;
 };
 
 inline CTeamInfo *GetTeamInfo(int number)

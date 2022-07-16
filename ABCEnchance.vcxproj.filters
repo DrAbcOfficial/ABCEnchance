@@ -536,6 +536,9 @@
     <ClCompile Include="Viewport.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="svc_hook.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -1257,6 +1260,9 @@
     </ClInclude>
     <ClInclude Include="Viewport.h">
       <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="svc_hook.h">
+      <Filter>Public\Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
