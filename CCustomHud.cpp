@@ -18,6 +18,7 @@
 
 #include "local.h"
 #include "gl_draw.h"
+#include "steam_api.h"
 #include "player_info.h"
 #include "svc_hook.h"
 
@@ -208,7 +209,7 @@ void CCustomHud::HUD_Init(void){
 	GetThisPlayerInfo()->InitPlayerInfos();
 	GetTeamInfo(0)->InitTeamInfos();
 
-	m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
+	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 	m_pfnSpectator = HOOK_MESSAGE(Spectator);
 	m_pfnServerName = HOOK_MESSAGE(ServerName);

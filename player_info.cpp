@@ -7,10 +7,10 @@
 #include "plugins.h"
 #include "local.h"
 #include "vguilocal.h"
+#include "steam_api.h"
 #include "player_info.h"
 #include "scoreboard.h"
 #include <Viewport.h>
-#include "net_api.h"
 #include <exportfuncs.h>
 
 typedef int GLint;
@@ -20,182 +20,8 @@ typedef int GLint;
 
 CPlayerInfo CPlayerInfo::m_sPlayerInfo[SC_MAX_PLAYERS + 1];
 static CPlayerInfo *s_ThisPlayerInfo = nullptr;
-bool g_bInPing = false;
-std::wstring g_szPingBuffer;
 
 #define UNDEFINEDTEAM_LOCALIZE_TOKEN "Scores_UndifinedTeam"
-
-namespace
-{
-
-std::map<uint64_t, std::string> s_RealNames;
-
-// UTF-friendly version instead of platform-specific ones
-bool IsSpace(char c)
-{
-	// Everything before space is either whitespace or invalid.
-	// UTF-8 chars all have bit 7 set to high
-	return static_cast<unsigned char>(c) <= ' ';
-}
-
-/**
- * Parses string into a SteamID64. Returns 0 if failed.
- * Credits to voogru
- * https://forums.alliedmods.net/showthread.php?t=60899?t=60899
- */
-uint64 ParseSteamID(const char *pszAuthID)
-{
-	if (!pszAuthID)
-		return 0;
-
-	int iServer = 0;
-	int iAuthID = 0;
-
-	char szAuthID[64];
-	strncpy(szAuthID, pszAuthID, sizeof(szAuthID) - 1);
-	szAuthID[sizeof(szAuthID) - 1] = '\0';
-
-	char *szTmp = strtok(szAuthID, ":");
-	while (szTmp = strtok(NULL, ":"))
-	{
-		char *szTmp2 = strtok(NULL, ":");
-		if (szTmp2)
-		{
-			iServer = atoi(szTmp);
-			iAuthID = atoi(szTmp2);
-		}
-	}
-
-	if (iAuthID == 0)
-		return 0;
-
-	uint64 i64friendID = (long long)iAuthID * 2;
-
-	//Friend ID's with even numbers are the 0 auth server.
-	//Friend ID's with odd numbers are the 1 auth server.
-	i64friendID += 76561197960265728 + iServer;
-
-	return i64friendID;
-}
-
-void UnloadAuthID()
-{
-	s_RealNames.clear();
-
-	for (int i = 1; i <= SC_MAX_PLAYERS; i++)
-	{
-		GetPlayerInfo(i)->ClearRealName();
-	}
-}
-
-void LoadAuthID()
-{
-	UnloadAuthID();
-	FileHandle_t hFile = g_pFullFileSystem->Open("realnames.txt", "r");
-
-	if (hFile == FILESYSTEM_INVALID_HANDLE)
-	{
-		ConsoleWriteline("Failed to open realnames.txt");
-		return;
-	}
-
-	char linebuf[512];
-
-	for (int linenum = 1; g_pFullFileSystem->ReadLine(linebuf, sizeof(linebuf), hFile); linenum++)
-	{
-		char steamid[64];
-		char name[64];
-		int idx = 0;
-
-		if (!linebuf[idx])
-			continue; // Empty line
-
-		// Skip spaces
-		while (linebuf[idx] && IsSpace(linebuf[idx]))
-			idx++;
-
-		if (!linebuf[idx])
-			continue; // Empty line
-
-		// Find next space
-		int steamidbegin = idx;
-		while (linebuf[idx] && !IsSpace(linebuf[idx]))
-			idx++;
-
-		if (!linebuf[idx])
-		{
-			ConsoleWriteline("Line %d: unexpected end of line [1]\n", linenum);
-			continue;
-		}
-
-		// Copy SteamID
-		int steamidend = idx;
-		int steamidlen = steamidend - steamidbegin;
-
-		if (steamidlen >= 2)
-		{
-			if (linebuf[steamidbegin + 0] == '/' && linebuf[steamidbegin + 1] == '/')
-			{
-				// Skip comment
-				continue;
-			}
-		}
-
-		if (steamidlen >= sizeof(steamid))
-		{
-			ConsoleWriteline("Line %d: SteamID too long (%d > %d)\n", linenum, steamidlen, sizeof(steamid) - 1);
-			continue;
-		}
-
-		memcpy(steamid, linebuf + steamidbegin, steamidlen);
-		steamid[steamidlen] = '\0';
-
-		// Skip spaces
-		while (linebuf[idx] && IsSpace(linebuf[idx]))
-			idx++;
-
-		if (!linebuf[idx])
-		{
-			ConsoleWriteline("Line %d: unexpected end of line [2]\n", linenum);
-			continue;
-		}
-
-		int namebegin = idx;
-
-		// Find end of the string
-		while (linebuf[idx])
-			idx++;
-		int nameend = idx;
-		int namelen = nameend - namebegin;
-
-		if (namelen >= sizeof(name))
-		{
-			ConsoleWriteline("Line %d: name too long (%d > %d)\n", linenum, namelen, sizeof(name) - 1);
-			continue;
-		}
-
-		memcpy(name, linebuf + namebegin, namelen);
-		name[namelen] = '\0';
-
-		if (name[namelen - 1] == '\n')
-			name[namelen - 1] = '\0';
-
-		// Parse SteamID
-		uint64_t steamid64 = ParseSteamID(steamid);
-
-		if (steamid64 == 0)
-		{
-			ConsoleWriteline("Line %d: failed to parse SteamID\n", linenum);
-			continue;
-		}
-
-		s_RealNames.insert({ steamid64, name });
-	}
-
-	ConsoleWriteline("Loaded %d realnames\n", s_RealNames.size());
-}
-
-}
 
 CPlayerInfo *GetThisPlayerInfo()
 {
@@ -260,15 +86,14 @@ int CPlayerInfo::GetBottomColor()
 	return iBottomColor;
 }
 
-uint64 CPlayerInfo::GetValidSteamID64()
-{
-	return CSteamID(m_szSteamID,k_EUniversePublic).ConvertToUint64();
-}
-
-uint64 CPlayerInfo::GetStatusSteamID64()
+uint64 CPlayerInfo::GetSteamID64()
 {
 	Assert(m_bIsConnected);
-	return ParseSteamID(m_szSteamID);
+	return m_pSteamId.ConvertToUint64();
+}
+
+CSteamID CPlayerInfo::GetSteamID() {
+	return m_pSteamId;
 }
 
 int CPlayerInfo::GetFrags()
@@ -330,7 +155,7 @@ const char *CPlayerInfo::GetDisplayName()
 
 const char* CPlayerInfo::GetSteamIDString()
 {
-	return m_szSteamID;
+	return m_pSteamId.Render();
 }
 CPlayerInfo *CPlayerInfo::Update()
 {
@@ -342,26 +167,19 @@ CPlayerInfo *CPlayerInfo::Update()
 
 	if (bIsConnected != bWasConnected)
 	{
-		m_szSteamID[0] = '\0';
+		m_pSteamId.Clear();
 		m_szRealName[0] = '\0';
 		m_bRealNameChecked = false;
 		m_iStatusPenalty = 0;
-		m_flLastStatusRequest = 0;
 		g_pViewPort->GetScoreBoard()->UpdateOnPlayerInfo(GetIndex());
 	}
 
 	if (bIsConnected)
 	{
-		if (!m_szSteamID[0])
+		if (!m_pSteamId.IsValid())
 		{
-			// Player has no SteamID, update it
-			float period = (m_iStatusPenalty < STATUS_PENALTY_THRESHOLD) ? STATUS_PERIOD : STATUS_BUGGED_PERIOD;
-			if (!g_bInPing && m_flLastStatusRequest + period < gEngfuncs.GetAbsoluteTime())
-			{
-				g_bInPing = true;
-				ServerCmd("status");
-				m_flLastStatusRequest = gEngfuncs.GetAbsoluteTime();
-			}
+			if (m_iIndex == 1)
+				m_pSteamId = SteamUser()->GetSteamID();	
 		}
 
 		hud_playerinfo_t* extraInfo = gCustomHud.GetPlayerHUDInfo(m_iIndex);
@@ -382,21 +200,9 @@ CPlayerInfo *CPlayerInfo::Update()
 		Q_strcpy(m_ExtraInfo.teamname, GetTeamInfo(0)->GetNameByIndex(extraInfo->team));
 		
 		//RealNameGet
-		if (!m_bRealNameChecked && m_szSteamID[0] != '\0')
+		if (!m_bRealNameChecked && m_pSteamId.IsValid())
 		{
-			m_bRealNameChecked = true;
-
-			if (!s_RealNames.empty())
-			{
-				// Find real name
-				uint64_t steamid64 = GetStatusSteamID64();
-				auto it = s_RealNames.find(steamid64);
-
-				if (it != s_RealNames.end())
-				{
-					Q_strncpy(m_szRealName, it->second.c_str(), sizeof(m_szRealName));
-				}
-			}
+			
 		}
 
 		if (IsThisPlayer())
@@ -436,7 +242,7 @@ void CPlayerInfo::Reset()
 	m_ExtraInfo = extra_player_info_t();
 	m_bIsConnected = false;
 	m_bIsSpectator = false;
-	memset(m_szSteamID, 0, sizeof(m_szSteamID));
+	m_pSteamId.Clear();
 }
 void CPlayerInfo::ResetAll() {
 	for (int i = 1; i < SC_MAX_PLAYERS; i++)

@@ -54,8 +54,7 @@ public:
 	const char *GetModel();
 	int GetTopColor();
 	int GetBottomColor();
-	uint64 GetValidSteamID64(); //!< Returns a valid SteamID that most likely points to a real profile.
-	uint64 GetStatusSteamID64(); //!< Returns the SteamID from `status`.
+	uint64 GetSteamID64();
 
 	// Extra info (from HUD messages)
 	int GetFrags();
@@ -77,7 +76,7 @@ public:
 	/**
 	 * Returns SteamID string. Requires SVC hook.
 	 */
-	const char* GetSteamID();
+	CSteamID GetSteamID();
 	const char* GetSteamIDString();
 	// Should be called before reading engine info.
 	// Returns this
@@ -96,7 +95,7 @@ public:
 	void ClearRealName();
 	void ResetAll();
 
-	char m_szSteamID[SC_MAX_STEAMID];
+	CSteamID m_pSteamId;
 	int m_iStatusPenalty; //!< This var is incremented every time player is not found in status output
 
 private:
@@ -121,7 +120,6 @@ private:
 	bool m_bIsSpectator;
 	char m_szRealName[SC_MAX_PLAYER_NAME + 1];
 	bool m_bRealNameChecked = false;
-	float m_flLastStatusRequest = 0;
 
 	player_info_t *GetEnginePlayerInfo();
 	void Reset();

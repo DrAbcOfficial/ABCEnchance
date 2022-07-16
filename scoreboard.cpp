@@ -666,20 +666,19 @@ void CScorePanel::UpdateClientIcon(CPlayerInfo* pi)
 	//pImg->SetMuted(GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()));
 
 	// Update avatar
-	uint64 steamID64 = pi->GetValidSteamID64();
-	if (hud_scoreboard_showavatars->value > 0 && steamID64 != 0)
+	CSteamID steamID = pi->GetSteamID();
+	if (hud_scoreboard_showavatars->value > 0 && steamID.IsValid())
 	{
-		CSteamID steamIDForPlayer(steamID64);
-		auto it = m_PlayerAvatars.find(steamIDForPlayer);
+		auto it = m_PlayerAvatars.find(steamID);
 
 		if (it == m_PlayerAvatars.end())
 		{
 			CAvatarImage* pAvatar = new CAvatarImage();
 			pAvatar->SetDrawFriend(false);
-			pAvatar->SetAvatarSteamID(steamIDForPlayer);
+			pAvatar->SetAvatarSteamID(steamID);
 
 			pImg->SetAvatar(pAvatar);
-			m_PlayerAvatars.insert({ steamIDForPlayer, pAvatar });
+			m_PlayerAvatars.insert({ steamID, pAvatar });
 		}
 		else
 		{
@@ -846,7 +845,7 @@ void CScorePanel::OpenPlayerMenu(int itemID)
 		return;
 
 	// SteamID64
-	m_MenuData.nSteamID64 = GetPlayerInfo(m_MenuData.nClient)->GetValidSteamID64();
+	m_MenuData.nSteamID64 = GetPlayerInfo(m_MenuData.nClient)->GetSteamID64();
 	if (m_MenuData.nSteamID64 != 0)
 	{
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nProfilePageItemID, true);
@@ -927,11 +926,11 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	}
 	case MenuAction::SteamProfile:
 	{
-		if (ClientSteamContext().SteamFriends())
+		if (SteamFriends())
 		{
 			// Open in overlay
 			CSteamID steamId = CSteamID((uint64)m_MenuData.nSteamID64);
-			ClientSteamContext().SteamFriends()->ActivateGameOverlayToUser("steamid", steamId);
+			SteamFriends()->ActivateGameOverlayToUser("steamid", steamId);
 		}
 		else
 		{

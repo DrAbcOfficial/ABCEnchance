@@ -13,6 +13,7 @@
 #include <IClientVGUI.h>
 #include "plugins.h"
 #include "vguilocal.h"
+#include "steam_api.h"
 #include "player_info.h"
 #include "scoreboard.h"
 #include "Viewport.h"
