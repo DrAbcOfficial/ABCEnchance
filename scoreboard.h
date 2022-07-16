@@ -62,10 +62,7 @@ public:
 	cvar_t* hud_scoreboard_mousebtn;
 	cvar_t* hud_scoreboard_showavatars;
 	cvar_t* hud_scoreboard_showloss;
-	cvar_t* hud_scoreboard_efftype;
-	cvar_t* hud_scoreboard_effpercent;
 	cvar_t* hud_scoreboard_showsteamid;
-	cvar_t* hud_scoreboard_showeff;
 	cvar_t* hud_scoreboard_size;
 	cvar_t* hud_scoreboard_spacing_normal;
 	cvar_t* hud_scoreboard_spacing_compact;
@@ -142,15 +139,16 @@ private:
 	Color m_ThisPlayerBgColor = Color(0, 0, 0, 0);
 	Color m_KillerBgColor = Color(0, 0, 0, 0);
 
-	char m_szSpectatorTag[32] = "(spectator)";
+	char m_szSpectatorTag[128] = "(spectator)";
 
 	// Column widths
 	CPanelAnimationVarAliasType(int, m_iColumnWidthAvatar, "column_avatar", "26", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthName, "column_name", "170", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthSteamID, "column_steamid", "88", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthEff, "column_eff", "60", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthFrags, "column_frags", "60", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthDeaths, "column_deaths", "60", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthName, "column_name", "160", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthSteamID, "column_steamid", "80", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthHealth, "column_health", "45", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthArmor, "column_armor", "45", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthFrags, "column_frags", "45", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthDeaths, "column_deaths", "45", "proportional_int");
 	CPanelAnimationVarAliasType(int, m_iColumnWidthPing, "column_ping", "80", "proportional_int");
 
 	CPanelAnimationVarAliasType(int, m_iMutedIconTexture, "muted_icon", "ui/gfx/muted_icon32", "textureid");
@@ -215,11 +213,6 @@ private:
 	 * Returns bright color if this is this player, fading red if it's the last killer or (0,0,0,0).
 	 */
 	Color GetPlayerBgColor(CPlayerInfo* pi);
-
-	/**
-	 * Calculates efficiency based on hud_scoreboard_efftype.
-	 */
-	float CalculateEfficiency(int kills, int deaths);
 
 	/**
 	 * Returns client icon size.

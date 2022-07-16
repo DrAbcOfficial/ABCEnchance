@@ -1,6 +1,7 @@
 #include <metahook.h>
 #include "exportfuncs.h"
 #include <vgui_controls/Controls.h>
+#include <svc_hook.h>
 
 cl_enginefunc_t gEnginefuncs;
 mh_interface_t *g_pInterface;
@@ -52,6 +53,7 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 
 	CheckOtherPlugin();
 	FillEngineAddress();
+	//SVC_FillAddress();
 	InstallEngineHook();
 	BaseUI_InstallHook();
 	

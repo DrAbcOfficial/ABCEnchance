@@ -11,6 +11,7 @@
 #include "mymathlib.h"
 #include "local.h"
 #include "vguilocal.h"
+#include <string>
 #include "player_info.h"
 #include "scoreboard.h"
 #include "Viewport.h"
@@ -71,9 +72,14 @@ void CViewport::Think(void)
 
 void CViewport::VidInit(void)
 {
+	Reset();
+}
+
+void CViewport::Reset() {
 	m_szLevelName[0] = 0;
 	for (IViewportPanel* pPanel : m_Panels)
 		pPanel->Reset();
+	GetThisPlayerInfo()->ResetAll();
 }
 
 void CViewport::Init(void)
@@ -131,5 +137,5 @@ Color CViewport::GetPlayerColor(int index)
 {
 	vec3_t color;
 	mathlib::VectorCopy(gHookFuncs.GetClientColor(index), color);
-	return Color(color[0], color[1], color[2]);
+	return Color(color[0] * 255, color[1] * 255, color[2] * 255, 255);
 }

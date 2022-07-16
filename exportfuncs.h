@@ -19,6 +19,10 @@ extern baseweapon_t* (*g_rgBaseSlots)[10][26];
 extern refdef_t* g_refdef;
 extern metaplugins_t g_metaplugins;
 
+//Hook
+void AddHook(hook_t* h);
+void AddEngineHook(hook_t* h);
+
 //VGUI2
 extern HWND g_MainWnd;
 extern WNDPROC g_MainWndProc;
@@ -86,7 +90,7 @@ void KeyValuesSystem_InstallHook(void);
 #define Fill_Func(dest, src) gHookFuncs.dest = *src
 #define Fill_EfxFunc(fn) gHookFuncs.fn = *gEngfuncs.pEfxAPI->fn
 #define Fill_EngFunc(fn) gHookFuncs.fn = *gEngfuncs.fn
-#define Install_InlineHook(fn) aryClientHook.push_back(g_pMetaHookAPI->InlineHook((void *)gHookFuncs.fn, fn, (void **)&gHookFuncs.fn))
-#define Install_InlineEngHook(fn) aryEngineHook.push_back(g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn))
+#define Install_InlineHook(fn) AddHook(g_pMetaHookAPI->InlineHook((void *)gHookFuncs.fn, fn, (void **)&gHookFuncs.fn))
+#define Install_InlineEngHook(fn) AddEngineHook(g_pMetaHookAPI->InlineHook((void *)*gHookFuncs.fn, fn, (void **)&gHookFuncs.fn))
 #define Fill_InlineEfxHook(fn) Fill_EfxFunc(fn);Install_InlineEngHook(fn)
 #define Uninstall_Hook(fn) if(##fn){g_pMetaHookAPI->UnHook(##fn);##fn = NULL;}

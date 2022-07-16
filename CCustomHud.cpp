@@ -19,6 +19,7 @@
 #include "local.h"
 #include "gl_draw.h"
 #include "player_info.h"
+#include "svc_hook.h"
 
 #include "CCustomHud.h"
 
@@ -54,6 +55,7 @@ cl_hookedHud gHookHud;
 pfnUserMsgHook m_pfnScoreInfo;
 pfnUserMsgHook m_pfnSpectator;
 pfnUserMsgHook m_pfnServerName;
+pfnSVC_Parse m_pfnSVCPrint;
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
@@ -69,6 +71,7 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 		info->donors = READ_CHAR();
 		info->admin = READ_CHAR();
 	}
+	GetThisPlayerInfo()->UpdateAll();
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
 }
 int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {
@@ -184,6 +187,14 @@ void __UserCmd_CloseScoreboard(void) {
 	g_pViewPort->HideScoreBoard();
 }
 
+bool g_bInRecevingAnser =false;
+bool g_bInProccessingAnser = false;
+void __SVCHook_Print(void) {
+	BEGIN_READ(SVC_GetBuffer(), SVC_GetBufferSize());
+	char* str = READ_STRING();
+	m_pfnSVCPrint();
+}
+
 void CCustomHud::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
@@ -194,6 +205,10 @@ void CCustomHud::GL_Init(void){
 #endif
 }
 void CCustomHud::HUD_Init(void){
+	GetThisPlayerInfo()->InitPlayerInfos();
+	GetTeamInfo(0)->InitTeamInfos();
+
+	m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 	m_pfnSpectator = HOOK_MESSAGE(Spectator);
 	m_pfnServerName = HOOK_MESSAGE(ServerName);

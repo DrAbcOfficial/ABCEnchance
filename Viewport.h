@@ -30,6 +30,7 @@ public:
 	void Start(void);
 	void Init(void);
 	void VidInit(void);
+	void Reset();
 	void Think(void);
 	void Paint(void);
 	void SetParent(vgui::VPANEL vPanel);

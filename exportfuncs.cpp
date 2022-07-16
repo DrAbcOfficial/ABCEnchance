@@ -9,6 +9,7 @@
 #include "triangleapi.h"
 #include "pm_movevars.h"
 #include "cvar_hook.h"
+#include <capstone.h>
 //Def
 #include "hud.h"
 #include "vguilocal.h"
@@ -27,13 +28,16 @@
 //Base HUD
 #include "CCustomHud.h"
 #include "local.h"
+#include <string>
+#include "player_info.h"
 //HUD
 #include "ammo.h"
 #include "healthhud.h"
+#include "scoreboard.h"
+#include "Viewport.h"
 //efx
 #include "efxenchance.h"
 #include "viewmodellag.h"
-#include <capstone.h>
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -188,6 +192,7 @@ void R_NewMap(void){
 	ClearExtraPrecache();
 
 	gCustomHud.HUD_Reset();
+	g_pViewPort->Reset();
 	EfxReset();
 	gHookFuncs.R_NewMap();
 }
@@ -472,11 +477,19 @@ void FillAddress(){
 }
 std::vector<hook_t*> aryEngineHook = {};
 std::vector<hook_t*> aryClientHook = {};
+
+void AddHook(hook_t* h) {
+	aryClientHook.push_back(h);
+}
+void AddEngineHook(hook_t* h) {
+	aryEngineHook.push_back(h);
+}
 void InstallEngineHook() {
 	Fill_InlineEfxHook(R_BloodSprite);
-	Fill_EngFunc(pfnPlaybackEvent);
 
+	Fill_EngFunc(pfnPlaybackEvent);
 	Install_InlineEngHook(pfnPlaybackEvent);
+
 	Install_InlineEngHook(R_NewMap);
 	Install_InlineEngHook(R_ForceCVars);
 	Install_InlineEngHook(CL_IsDevOverview);
@@ -707,6 +720,8 @@ void IN_Accumulate(void){
 		gExportfuncs.IN_Accumulate();
 }
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
+	if (ent->player)
+		GetPlayerInfo(ent->index);
 	if (!gCustomHud.HUD_AddEntity(type, ent, modelname))
 		return 0;
 	return gExportfuncs.HUD_AddEntity(type, ent, modelname);

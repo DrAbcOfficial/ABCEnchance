@@ -224,6 +224,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
     <ClCompile Include="steamid.cpp" />
+    <ClCompile Include="svc_hook.cpp" />
     <ClCompile Include="VGUI2\avatar_image.cpp" />
     <ClCompile Include="VGUI2\BaseUI.cpp" />
     <ClCompile Include="VGUI2\Bitmap.cpp" />
@@ -441,6 +442,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
     <ClInclude Include="CVector.h" />
+    <ClInclude Include="svc_hook.h" />
     <ClInclude Include="VGUI2\avatar_image.h" />
     <ClInclude Include="VGUI2\BaseUI.h" />
     <ClInclude Include="VGUI2\Bitmap.h" />
