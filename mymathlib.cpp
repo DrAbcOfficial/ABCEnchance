@@ -11,10 +11,10 @@ float mathlib::Q_DEG2RAD(float a) {
 float mathlib::Q_RAD2DEG(float r) {
 	return (r * 180.0F) / Q_PI;
 }
-float mathlib::Q_clamp(float num, float minn, float maxn) {
+float mathlib::clamp(float num, float minn, float maxn) {
 	return max(min(num, maxn), minn);
 }
-int mathlib::Q_clamp(int num, int minn, int maxn) {
+int mathlib::clamp(int num, int minn, int maxn) {
 	return max(min(num, maxn), minn);
 }
 float mathlib::METER2INCH(float x) {
@@ -76,7 +76,7 @@ void mathlib::CenterPos2OpenGLPos(vec2_t pos, int w, int h){
 	pos[1] = h / 2 - pos[1];
 }
 size_t mathlib::GetScreenPixel(int length, double percent) {
-	return (size_t)((float)length * Q_clamp(percent, 0.0f, 1.0f));
+	return (size_t)((float)length * clamp(percent, 0.0f, 1.0f));
 }
 void mathlib::Vector2Rotate(vec2_t out, float x, float y, float rotate) {
 	out[0] = x * cos(rotate) - y * sin(rotate); out[1] = x * sin(rotate) + y * cos(rotate);
@@ -856,8 +856,8 @@ void mathlib::HSVToRGB(float h, float s, float v, int& r, int& g, int& b) {
 	//0<=s<=1
 	//0<=v<=1
 	h = fmod(h, 360);
-	s = Q_clamp(s, 0.0, 1.0);
-	v = Q_clamp(v, 0.0, 1.0);
+	s = clamp(s, 0.0, 1.0);
+	v = clamp(v, 0.0, 1.0);
 	float section = h / 60;
 	float c = v * s;
 	float x = c * (1 - abs(fmod(section, 2) - 1));

@@ -347,6 +347,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="numdisplay.h" />
     <ClInclude Include="playertitle.h" />
     <ClInclude Include="player_info.h" />
+    <ClInclude Include="player_infosc.h" />
     <ClInclude Include="radar.h" />
     <ClInclude Include="deathmsg.h" />
     <ClInclude Include="efxenchance.h" />

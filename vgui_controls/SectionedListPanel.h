@@ -87,6 +87,7 @@ namespace vgui
 
 		// set the text color of an item
 		virtual void SetItemFgColor(int itemID, Color color);
+		void SetItemColorData(int itemID, KeyValues* color);
 		//=============================================================================
 		// HPE_BEGIN:
 		// [menglish] Getters and setters for several item and section objects
@@ -147,6 +148,10 @@ namespace vgui
 
 		// returns the item ID from the row, again ignoring section dividers - valid from [0, GetItemCount )
 		virtual int GetItemIDFromRow(int row);
+
+		void ItemOnMousePressed(int index, MouseCode code);
+
+		void ItemOnMouseDoublePressed(int index, MouseCode code);
 
 		// returns the row that this itemID occupies. -1 if the itemID is invalid
 		virtual int GetRowFromItemID(int itemID);

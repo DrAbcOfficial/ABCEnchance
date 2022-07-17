@@ -234,7 +234,7 @@ int CHudArmorHealth::Draw(float flTime) {
 			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
 				BarLength, BarWidth, r / 2, g / 2, b / 2, a);
 			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-				BarLength * mathlib::Q_clamp((float)iHealth / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
+				BarLength * mathlib::clamp((float)iHealth / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
 			iStartX += BarLength + 2 * ElementGap;
 		}
 		iStartX += 2 * ElementGap;
@@ -271,7 +271,7 @@ int CHudArmorHealth::Draw(float flTime) {
 			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
 				BarLength, BarWidth, r / 2, g / 2, b / 2, a);
 			gEngfuncs.pfnFillRGBABlend(iStartX, flCenterY - BarWidth / 2,
-				BarLength * mathlib::Q_clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
+				BarLength * mathlib::clamp((float)iBattery / 100, 0.0f, 1.0f), BarWidth, r, g, b, a);
 			iStartX += BarLength + ElementGap * 2;
 		}
 	}

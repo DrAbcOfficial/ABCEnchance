@@ -16,6 +16,7 @@
 #include "exportfuncs.h"
 #include "Color.h"
 #include "weapon.h"
+#include "usercmd.h"
 #include "extraprecache.h"
 #include "regquery.h"
 #include "vgui_controls/Controls.h"
@@ -51,7 +52,6 @@ float m_hfov;
 
 overviewInfo_t* gDevOverview;
 baseweapon_t* (*g_rgBaseSlots)[10][26] = nullptr;
-int* g_iVisibleMouse = nullptr;
 refdef_t* g_refdef = nullptr;
 netadr_s* g_pConnectingServer = nullptr;
 
@@ -456,12 +456,6 @@ void FillAddress(){
 			Sig_AddrNotFound(SetPunchAngle);
 			gHookFuncs.SetPunchAngle = (decltype(gHookFuncs.SetPunchAngle))GetCallAddress(addr + 8);
 		}
-#define SC_UPDATECURSORSTATE_SIG "\x8B\x40\x28\xFF\xD0\x84\xC0\x2A\x2A\xC7\x05\x2A\x2A\x2A\x2A\x01\x00\x00\x00"
-		{
-			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_UPDATECURSORSTATE_SIG, Sig_Length(SC_UPDATECURSORSTATE_SIG));
-			Sig_AddrNotFound(g_iVisibleMouse);
-			g_iVisibleMouse = *(decltype(g_iVisibleMouse)*)(addr + 11);
-		}
 #define SC_HUDAMMO_RESET_SIG "\x83\x49\x10\x01\x68\x78\x05\x00\x00\xC7\x41\x14\x00\x00\x00\x00\xC7\x41\x2C\x00\x00\x00\x00\xC7\x41\x18\x00\x00\x00\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xE8\x2A\x2A\x2A\x2A\x68\xC0\x00\x00\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x83\xC4\x18\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xC3"
 		{
 			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_HUDAMMO_RESET_SIG, Sig_Length(SC_HUDAMMO_RESET_SIG));
@@ -689,33 +683,27 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 	}
 }
 
-void HUD_DrawTransparentTriangles(void)
-{
+void HUD_DrawTransparentTriangles(void){
 	gExportfuncs.HUD_DrawTransparentTriangles();
 }
-
 void IN_MouseEvent(int mstate){
 	gCustomHud.IN_MouseEvent(mstate);
 	gExportfuncs.IN_MouseEvent(mstate);
 }
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
-	if (g_iVisibleMouse && gCustomHud.m_iVisibleMouse) {
-		int iVisibleMouse = *g_iVisibleMouse;
-		*g_iVisibleMouse = 1;
+	if (gCustomHud.IsMouseVisible()) {
 		gExportfuncs.CL_CreateMove(frametime, cmd, active);
 		gCustomHud.CL_CreateMove(frametime, cmd, active);
-		*g_iVisibleMouse = iVisibleMouse;
 	}
 	else
 		gExportfuncs.CL_CreateMove(frametime, cmd, active);
+	if (gCustomHud.IsInScore())
+		cmd->buttons |= IN_SCORE;
 }
 void IN_Accumulate(void){
-	if (g_iVisibleMouse && gCustomHud.m_iVisibleMouse){
-		int iVisibleMouse = *g_iVisibleMouse;
-		*g_iVisibleMouse = 1;
+	if (gCustomHud.IsMouseVisible()){
 		gExportfuncs.IN_Accumulate();
 		gCustomHud.IN_Accumulate();
-		*g_iVisibleMouse = iVisibleMouse;
 	}
 	else
 		gExportfuncs.IN_Accumulate();

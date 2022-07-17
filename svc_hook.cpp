@@ -9,7 +9,7 @@ typedef struct svc_func_s
 {
 	unsigned char opcode;
 	char* pszname;
-	pfnSVC_Parse pfnParse;
+	pfnSVCMsgHook pfnParse;
 }
 svc_func_t;
 
@@ -60,9 +60,9 @@ void SVC_FillAddress(void)
 	}
 }
 
-pfnSVC_Parse SVC_HookFunc(int opcode, pfnSVC_Parse pfnParse)
+pfnSVCMsgHook SVC_HookFunc(int opcode, pfnSVCMsgHook pfnParse)
 {
-	pfnSVC_Parse pfnResult = cl_parsefuncs[opcode].pfnParse;
+	pfnSVCMsgHook pfnResult = cl_parsefuncs[opcode].pfnParse;
 
 	cl_parsefuncs[opcode].pfnParse = pfnParse;
 	return pfnResult;

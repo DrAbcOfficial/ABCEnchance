@@ -56,7 +56,7 @@ cl_hookedHud gHookHud;
 pfnUserMsgHook m_pfnScoreInfo;
 pfnUserMsgHook m_pfnSpectator;
 pfnUserMsgHook m_pfnServerName;
-pfnSVC_Parse m_pfnSVCPrint;
+pfnSVCMsgHook m_pfnSVC_PING;
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
@@ -171,20 +171,12 @@ void __UserCmd_PrevWeapon(void) {
 	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1);
 	return UserCmd_PrevWeapon();
 }
-void __UserCmd_Attack1(void) {
-	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu) {
-		m_HudWMenuAnnular.Select();
-		return;
-	}
-	m_HudCustomAmmo.m_pNowSelectMenu->Select();
-	if (m_HudEccoBuyMenu.SelectMenu())
-		return;
-	return UserCmd_Attack1();
-}
 void __UserCmd_OpenScoreboard(void) {
+	gCustomHud.m_bInScore = true;
 	g_pViewPort->ShowScoreBoard();
 }
 void __UserCmd_CloseScoreboard(void) {
+	gCustomHud.m_bInScore = false;
 	g_pViewPort->HideScoreBoard();
 }
 void CCustomHud::GL_Init(void){
@@ -218,7 +210,6 @@ void CCustomHud::HUD_Init(void){
 	UserCmd_SlotClose = HOOK_COMMAND("cancelselect", Close);
 	UserCmd_NextWeapon = HOOK_COMMAND("invnext", NextWeapon);
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
-	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 	UserCmd_ShowScores = HOOK_COMMAND("+showscores", OpenScoreboard);
 	UserCmd_HideScores = HOOK_COMMAND("-showscores", CloseScoreboard);
 
@@ -351,6 +342,41 @@ void CCustomHud::HUD_BlitRadarFramebuffer()
 void CCustomHud::IN_MouseEvent(int mstate){
 	if (!IsHudEnable())
 		return;
+	auto MouseTest = [&](int mstate, int testBit, vgui::MouseCode enumMouse) {
+		//现在有
+		if ((mstate & testBit) != 0) {
+			//之前没有
+			if ((m_iMouseState & testBit) == 0) {
+				//Press
+				this->OnMousePressed(enumMouse);
+				g_pViewPort->OnMousePressed(enumMouse);
+				//加上Bit
+				m_iMouseState += testBit;
+				if (m_iLastClick == enumMouse) {
+					g_pViewPort->OnMouseDoublePressed(enumMouse);
+					m_iLastClick = vgui::MouseCode::MOUSE_LAST;
+				}
+				else
+					m_iLastClick = enumMouse;
+			}
+		}
+		//现在没有之前有
+		else if ((m_iMouseState & testBit) != 0) {
+			//触发Release
+			m_iMouseState -= testBit;
+			g_pViewPort->OnMouseReleased(enumMouse);
+		}
+	};
+	//左键检测
+	MouseTest(mstate, 1 << 0, vgui::MouseCode::MOUSE_LEFT);
+	//右键检测
+	MouseTest(mstate, 1 << 1, vgui::MouseCode::MOUSE_RIGHT);
+	//中键检测
+	MouseTest(mstate, 1 << 2, vgui::MouseCode::MOUSE_MIDDLE);
+	//4键检测
+	MouseTest(mstate, 1 << 3, vgui::MouseCode::MOUSE_4);
+	//5键检测
+	MouseTest(mstate, 1 << 4, vgui::MouseCode::MOUSE_5);
 }
 int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	if (!IsHudEnable())
@@ -393,6 +419,22 @@ bool CCustomHud::IsSpectator(int client){
 void CCustomHud::SetSpectator(int client, bool value){
 	m_SpectatePlayer[client] = value;
 }
+bool CCustomHud::IsMouseVisible(){
+	return g_pViewPort->IsMouseInputEnabled();
+}
+void CCustomHud::SetMouseVisible(bool state) {
+	g_pViewPort->SetMouseInputEnabled(state);
+}
+void CCustomHud::OnMousePressed(int code) {
+	switch (code) {
+	case vgui::MouseCode::MOUSE_LEFT: {
+		if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)
+			m_HudWMenuAnnular.Select();
+		m_HudCustomAmmo.m_pNowSelectMenu->Select();
+		m_HudEccoBuyMenu.SelectMenu();
+	}
+	}
+}
 void CCustomHud::SetBaseHudActivity() {
 	if (IsHudEnable()) {
 		if (gHookHud.m_Ammo)
@@ -411,7 +453,6 @@ void CCustomHud::SetBaseHudActivity() {
 			gHookHud.m_Health->m_iFlags |= HUD_ACTIVE;
 	}
 }
-
 HSPRITE CCustomHud::GetSprite(size_t index) {
 	return (index < 0) ? 0 : m_arySprites[index]->spr;
 }
@@ -431,6 +472,12 @@ hud_playerinfo_t* CCustomHud::GetPlayerHUDInfo(int index){
 	if (index > 0 && index <= 33)
 		return &m_Playerinfo[index];
 	return nullptr;
+}
+bool CCustomHud::IsInScore() {
+	return m_bInScore;
+}
+player_infosc_t* CCustomHud::GetPlayerInfoEx(int index) {
+	return (player_infosc_t*)gEngineStudio.PlayerInfo(index - 1);
 }
 CCustomHud :: ~CCustomHud(){
 	m_arySprites.clear();

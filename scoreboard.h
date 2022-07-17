@@ -50,6 +50,8 @@ public:
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void OnThink() override;
 	virtual void OnCommand(const char* command) override;
+	virtual void OnMousePressed(vgui::MouseCode code) override;
+	virtual void OnMouseDoublePressed(vgui::MouseCode code) override;
 
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
@@ -63,6 +65,7 @@ public:
 	cvar_t* hud_scoreboard_showavatars;
 	cvar_t* hud_scoreboard_showloss;
 	cvar_t* hud_scoreboard_showsteamid;
+	cvar_t* hud_scoreboard_showrealname;
 	cvar_t* hud_scoreboard_size;
 	cvar_t* hud_scoreboard_spacing_normal;
 	cvar_t* hud_scoreboard_spacing_compact;

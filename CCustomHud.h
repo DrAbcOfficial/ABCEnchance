@@ -4,6 +4,7 @@
 #include "baseammo.h"
 #include "basemenu.h"
 #include "basehealth.h"
+#include "player_infosc.h"
 
 typedef struct hud_playerinfo_s {
 	int index;
@@ -62,6 +63,10 @@ public:
 	bool IsHudEnable();
 	bool IsSpectator(int client);
 	void SetSpectator(int client, bool value);
+	bool IsMouseVisible();
+	void SetMouseVisible(bool state);
+
+	void OnMousePressed(int code);
 
 	HSPRITE GetSprite(size_t index);
 	wrect_t* GetSpriteRect(size_t index);
@@ -69,11 +74,14 @@ public:
 
 	hud_playerinfo_t* GetPlayerHUDInfo(int index);
 
+	bool IsInScore();
+
+	player_infosc_t* GetPlayerInfoEx(int index);
+
 	~CCustomHud();			// destructor, frees allocated memory
 
 	int m_iPlayerHealth = 0;
 	bool m_bPlayerLongjump = false;
-	int m_iVisibleMouse = 0;
 	int m_iIsOverView = 0;
 	int m_iHideHUDDisplay = 0;
 	int m_iWeaponBits = 0;
@@ -95,8 +103,13 @@ public:
 	GLint m_iCursorTga = 0;
 
 	bool m_bRenderRadarView = false;
+	bool m_bInScore = false;
 private:
 	void SetBaseHudActivity();
+
+	int m_iMouseState = 0;
+	int m_iLastClick = 5;
+
 	bool m_SpectatePlayer[33] = { 0 };
 	hud_playerinfo_t m_Playerinfo[33] = { 0 };
 	int m_iSpriteCountAllRes;

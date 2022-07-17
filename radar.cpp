@@ -173,8 +173,8 @@ void CHudRadar::Draw(float flTime){
 	//»æÖÆÖ¸±±Õë
 	float rotate = mathlib::Q_DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[Q_YAW]);
 	h = gCVars.pRadar->value > 1 ? size / 2 : mathlib::fsqrt(2 * pow(size, 2)) / 2;
-	stx = mathlib::Q_clamp(((iStartX + size / 2) + h * cos(rotate)), (float)iStartX, (float)iStartX + size);
-	sty = mathlib::Q_clamp(((iStartY + size / 2) + h * sin(rotate)), (float)iStartY, (float)iStartY + size);
+	stx = mathlib::clamp(((iStartX + size / 2) + h * cos(rotate)), (float)iStartX, (float)iStartX + size);
+	sty = mathlib::clamp(((iStartY + size / 2) + h * sin(rotate)), (float)iStartY, (float)iStartY + size);
 	vgui::surface()->DrawSetColor(255, 255, 255, OutLineAlpha);
 	vgui::surface()->DrawSetTexture(NorthImg);
 	w = NorthPointerSize / 2;

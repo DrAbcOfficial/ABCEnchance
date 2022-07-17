@@ -103,6 +103,16 @@ void CViewport::HideClientUI(void)
 	}
 }
 
+void CViewport::OnMousePressed(vgui::MouseCode code){
+	BaseClass::OnMousePressed(code);
+	m_pScorePanel->OnMousePressed(code);
+}
+
+void CViewport::OnMouseDoublePressed(vgui::MouseCode code) {
+	BaseClass::OnMouseDoublePressed(code);
+	m_pScorePanel->OnMouseDoublePressed(code);
+}
+
 bool CViewport::IsScoreBoardVisible()
 {
 	return m_pScorePanel->IsVisible();
@@ -123,19 +133,15 @@ char* CViewport::GetServerName()
 	return m_szServerName;
 }
 
-void CViewport::Paint(void)
-{
+void CViewport::Paint(void){
 	BaseClass::Paint();
-
-	//m_HudMessage.Draw();
 }
 
 CScorePanel* CViewport::GetScoreBoard() {
 	return m_pScorePanel;
 }
 
-Color CViewport::GetPlayerColor(int index)
-{
+Color CViewport::GetPlayerColor(int index){
 	vec3_t color;
 	mathlib::VectorCopy(gHookFuncs.GetClientColor(index), color);
 	return Color(color[0] * 255, color[1] * 255, color[2] * 255, 255);

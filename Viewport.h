@@ -37,6 +37,9 @@ public:
 	void AddNewPanel(IViewportPanel* panel);
 	void ActivateClientUI(void);
 	void HideClientUI(void);
+	virtual void OnMousePressed(vgui::MouseCode code) override;
+	virtual void OnMouseDoublePressed(vgui::MouseCode code) override;
+
 	bool IsScoreBoardVisible();
 	void ShowScoreBoard();
 	void HideScoreBoard();
@@ -45,7 +48,6 @@ public:
 	Color GetPlayerColor(int index);
 private:
 	std::vector<IViewportPanel*> m_Panels;
-
 	char m_szLevelName[256];
 	CScorePanel* m_pScorePanel = nullptr;
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";

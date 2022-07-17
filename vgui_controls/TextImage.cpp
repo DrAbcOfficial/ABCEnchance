@@ -100,76 +100,13 @@ TextImage::~TextImage()
 void TextImage::SetText(const char* text)
 {
 	if (!text)
-	{
 		text = "";
-	}
-
-	// check for localization
-	if (*text == '#')
-	{
-		// try lookup in localization tables
-		_unlocalizedTextSymbol = g_pVGuiLocalize->FindIndex(text + 1);
-
-		if (_unlocalizedTextSymbol != INVALID_LOCALIZE_STRING_INDEX)
-		{
-			wchar_t* unicode = g_pVGuiLocalize->GetValueByIndex(_unlocalizedTextSymbol);
-			SetText(unicode);
-			return;
-		}
-		else
-		{
-			// could not find string
-			// debug code for logging unlocalized strings
-#if defined(LOG_UNLOCALIZED_STRINGS)
-			if (*text)
-			{
-				// write out error to unfound.txt log file
-				static bool first = true;
-				FILE* f;
-				if (first)
-				{
-					first = false;
-					f = fopen("unfound.txt", "wt");
-				}
-				else
-				{
-					f = fopen("unfound.txt", "at");
-				}
-
-				if (f)
-				{
-					fprintf(f, "\"%s\"\n", text);
-					fclose(f);
-				}
-			}
-#endif // LOG_UNLOCALIZED_STRINGS
-		}
-	}
-	else
-	{
-		// debug code for logging unlocalized strings
-#if defined(LOG_UNLOCALIZED_STRINGS)
-		if (text[0])
-		{
-			// setting a label to be ANSI text, write out error to unlocalized.txt log file
-			static bool first = true;
-			FILE* f;
-			if (first)
-			{
-				first = false;
-				f = fopen("unlocalized.txt", "wt");
-			}
-			else
-			{
-				f = fopen("unlocalized.txt", "at");
-			}
-			if (f)
-			{
-				fprintf(f, "\"%s\"\n", text);
-				fclose(f);
-			}
-		}
-#endif // LOG_UNLOCALIZED_STRINGS
+	// try lookup in localization tables
+	_unlocalizedTextSymbol = localize()->FindIndex(text);
+	if (_unlocalizedTextSymbol != INVALID_LOCALIZE_STRING_INDEX){
+		wchar_t* unicode = localize()->GetValueByIndex(_unlocalizedTextSymbol);
+		SetText(unicode);
+		return;
 	}
 
 	// convert the ansi string to unicode and use that

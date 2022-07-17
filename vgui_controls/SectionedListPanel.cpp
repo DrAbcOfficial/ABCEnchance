@@ -26,9 +26,9 @@
 #include <vgui_controls/ImageList.h>
 
 #include "utlvector.h"
-
-// memdbgon must be the last include file in a .cpp file!!!
-//#include <tier0/memdbgon.h>
+#include <vguilocal.h>
+#include <mymathlib.h>
+#include <sstream>
 
 using namespace vgui;
 
@@ -44,7 +44,6 @@ enum
 
 namespace vgui
 {
-
 	//-----------------------------------------------------------------------------
 	// Purpose: header label that separates and names each section
 	//-----------------------------------------------------------------------------
@@ -141,7 +140,6 @@ namespace vgui
 					textImage->SetColor(GetFgColor());
 					image = textImage;
 				}
-
 				SetImageAtIndex(i, image, 0);
 			}
 		}
@@ -196,13 +194,9 @@ namespace vgui
 					SetImageBounds(i, xpos + wide - contentWide, wide - COLUMN_DATA_GAP);
 				}
 				else
-				{
 					SetImageBounds(i, xpos, wide - COLUMN_DATA_GAP);
-				}
 				xpos += columnWidth;
-
-				if (!(columnFlags & SectionedListPanel::HEADER_IMAGE))
-				{
+				if (!(columnFlags & SectionedListPanel::HEADER_IMAGE)){
 					Assert(dynamic_cast<TextImage*>(image) != NULL);
 					TextImage* textImage = (TextImage*)image;
 					textImage->SetFont(GetFont());
@@ -282,6 +276,15 @@ namespace vgui
 				InvalidateLayout();
 			}
 			m_iSectionID = sectionID;
+		}
+
+		void SetColorData(const KeyValues* data) {
+			if (m_pColorData)
+			{
+				m_pColorData->deleteThis();
+			}
+
+			m_pColorData = data->MakeCopy();
 		}
 
 		void SetData(const KeyValues* data)
@@ -413,7 +416,7 @@ namespace vgui
 								}
 								else
 								{
-									textImage->SetColor(GetFgColor());
+									textImage->SetColor(GetFgColorEx(keyname));
 								}
 							}
 						}
@@ -462,6 +465,66 @@ namespace vgui
 			}
 
 			BaseClass::PerformLayout();
+		}
+
+		Color GetFgColorEx(const char* keyname) {
+			KeyValues* kv = m_pColorData->FindKey(keyname);
+			if (kv) {
+				switch (m_pColorData->GetDataType(keyname)) {
+				case kv->TYPE_COLOR: {
+					return m_pColorData->GetColor();
+				}
+				case kv->TYPE_INT: {
+					int iColorCode = m_pColorData->GetInt(keyname);
+					if (iColorCode == COLOR_PERCENT || iColorCode == COLOR_PING) {
+						float flTemp = 0;
+						int dataType = m_pData->GetDataType(keyname);
+						if (dataType == kv->TYPE_INT)
+							flTemp = m_pData->GetInt(keyname);
+						else if (dataType == kv->TYPE_FLOAT)
+							flTemp = m_pData->GetFloat(keyname);
+						else if (dataType == kv->TYPE_STRING) {
+							char* str = (char*)m_pData->GetString(keyname);
+							auto isnum = [&](std::string str) {
+								std::stringstream sin(str);
+								double d;
+								char c;
+								if (!(sin >> d))
+									return false;
+								if (sin >> c)
+									return false;
+								return true;
+							};
+							if (iColorCode == COLOR_PING) {
+								char* buf = nullptr;
+								auto p = strtok_s(str, "/", &buf);
+								flTemp += V_atof(p);
+								while (p) {
+									p = strtok_s(nullptr, "/", &buf);
+									if(p)
+										flTemp += V_atof(p);
+								}
+							}
+							else if(isnum(str))
+								flTemp = V_atof(str);
+							else
+								return GetFgColor();
+						}
+						else
+							return GetFgColor();
+						flTemp = mathlib::clamp(fabs(flTemp / (iColorCode == COLOR_PING ? 255.0f : 100.0f) * 90.0f), 0.0f, 90.0f);
+						if (iColorCode == COLOR_PING)
+							flTemp = 90 - flTemp;
+						int r, g, b;
+						mathlib::HSVToRGB(flTemp, 1, 1, r, g, b);
+						return Color(r, g, b, 255);
+					}
+					else
+						return g_aryVGUIColorCode[iColorCode];
+				}
+				}
+			}
+			return GetFgColor();
 		}
 
 		virtual void ApplySchemeSettings(IScheme* pScheme)
@@ -744,7 +807,8 @@ namespace vgui
 		SectionedListPanel* m_pListPanel;
 		int m_iID;
 		int m_iSectionID;
-		KeyValues* m_pData;
+		KeyValues* m_pData = nullptr;
+		KeyValues* m_pColorData = nullptr;
 		Color m_FgColor2;
 		Color m_BgColor;
 		Color m_ArmedFgColor1;
@@ -1327,6 +1391,15 @@ void SectionedListPanel::SetItemFgColor(int itemID, Color color)
 	m_Items[itemID]->InvalidateLayout();
 }
 
+
+void SectionedListPanel::SetItemColorData(int itemID, KeyValues* data)
+{
+	Assert(m_Items.IsValidIndex(itemID));
+	if (!m_Items.IsValidIndex(itemID))
+		return;
+
+	m_Items[itemID]->SetColorData(data);
+}
 //=============================================================================
 // HPE_BEGIN:
 // [menglish] Setter for the background color similar to the foreground color
@@ -1930,7 +2003,16 @@ int SectionedListPanel::GetItemIDFromRow(int row)
 
 	return m_SortedItems[row]->GetID();
 }
-
+void SectionedListPanel::ItemOnMousePressed(int index, MouseCode code) {
+	if (index < 0 || index >= m_Items.Count())
+		return;
+	m_Items[index]->OnMousePressed(code);
+}
+void SectionedListPanel::ItemOnMouseDoublePressed(int index, MouseCode code) {
+	if (index < 0 || index >= m_Items.Count())
+		return;
+	m_Items[index]->OnMouseDoublePressed(code);
+}
 //-----------------------------------------------------------------------------
 // Purpose: returns the row that this itemID occupies. -1 if the itemID is invalid
 //-----------------------------------------------------------------------------

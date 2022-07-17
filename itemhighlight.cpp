@@ -24,7 +24,7 @@ std::vector<cl_hightlight_s*> aryHighLightList;
 CHudItemHighLight m_HudItemHighLight;
 char szItemPraseBuf[256];
 void RangeSizeCallBack(cvar_t* cvar) {
-	cvar->value = mathlib::Q_clamp(cvar->value, 0.0, 344.0);
+	cvar->value = mathlib::clamp(cvar->value, 0.0, 344.0);
 }
 int CHudItemHighLight::Init(){
 	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "1", FCVAR_VALUE, NULL);
@@ -146,7 +146,7 @@ void CHudItemHighLight::LoadItemList() {
 			aryHighLightList.push_back(item);
 		}
 		else {
-			aryHighLightList[index]->Type = mathlib::Q_clamp(mathlib::fatoi(szItemPraseBuf), 0, 2);
+			aryHighLightList[index]->Type = mathlib::clamp(mathlib::fatoi(szItemPraseBuf), 0, 2);
 			index++;
 		}
 		i++;

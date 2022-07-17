@@ -46,8 +46,8 @@ namespace mathlib {
 	bool Q_IS_NAN(float x);
 	float Q_DEG2RAD(float a);
 	float Q_RAD2DEG(float r);
-	float Q_clamp(float num, float minn, float maxn);
-	int Q_clamp(int num, int minn, int maxn);
+	float clamp(float num, float minn, float maxn);
+	int clamp(int num, int minn, int maxn);
 	float METER2INCH(float x);
 	float INCH2METER(float x);
 	void VectorSubtract(vec3_t a, vec3_t b, vec3_t c);

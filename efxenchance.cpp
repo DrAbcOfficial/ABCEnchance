@@ -48,7 +48,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 			vec3_t	offset, dir;
 			vec3_t	forward, right, up;
 			int nColor = colorindex;
-			nColor = mathlib::Q_clamp(nColor, 0, 255);
+			nColor = mathlib::clamp(nColor, 0, 255);
 			pTemp->entity.curstate.scale = RANDOM_FLOAT((size / 25.0f), (size / 35.0f));
 			pTemp->flags = FTENT_SPRANIMATE;
 			pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r();
