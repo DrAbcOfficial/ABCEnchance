@@ -1,4 +1,4 @@
-//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -6,18 +6,17 @@
 //=============================================================================//
 
 #include <vgui/IScheme.h>
-#include <vgui/IVGUI.h>
-#include <vgui/ISurface.h>
+#include <vgui/IVGui.h>
+#include "vgui/ISurface.h"
+#include <KeyValues.h>
 
-#include <tier1/KeyValues.h>
-
-#include "Controls.h"
-#include "Menu.h"
-#include "MenuItem.h"
-#include "TextImage.h"
+#include <vgui_controls/Controls.h>
+#include <vgui_controls/Menu.h>
+#include <vgui_controls/MenuItem.h>
+#include <vgui_controls/TextImage.h>
 
 // memdbgon must be the last include file in a .cpp file!!!
-//#include <tier0/memdbgon.h>
+#include <tier0/memdbgon.h>
 
 using namespace vgui;
 
@@ -27,7 +26,7 @@ using namespace vgui;
 class MenuItemCheckImage : public TextImage
 {
 public:
-	MenuItemCheckImage(MenuItem *item) : TextImage( "g" )
+	MenuItemCheckImage(MenuItem* item) : TextImage("g")
 	{
 		_menuItem = item;
 
@@ -37,7 +36,7 @@ public:
 	virtual void Paint()
 	{
 		DrawSetTextFont(GetFont());
-		
+
 		// draw background
 		DrawSetTextColor(_menuItem->GetBgColor());
 		DrawPrintChar(0, 0, 'g');
@@ -56,7 +55,7 @@ public:
 				// offset image
 				DrawSetTextColor(_menuItem->GetDisabledFgColor1());
 				DrawPrintChar(1, 3, 'a');
-				
+
 				// overlayed image
 				DrawSetTextColor(_menuItem->GetDisabledFgColor2());
 				DrawPrintChar(0, 2, 'a');
@@ -65,10 +64,10 @@ public:
 	}
 
 private:
-	MenuItem *_menuItem;
+	MenuItem* _menuItem;
 };
 
-DECLARE_BUILD_FACTORY_DEFAULT_TEXT( MenuItem, MenuItem );
+DECLARE_BUILD_FACTORY_DEFAULT_TEXT(MenuItem, MenuItem);
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
@@ -78,7 +77,7 @@ DECLARE_BUILD_FACTORY_DEFAULT_TEXT( MenuItem, MenuItem );
 //			provide a pointer to it.
 //			MenuItems cannot be both checkable and trigger a cascade menu.
 //-----------------------------------------------------------------------------
-MenuItem::MenuItem(Menu *parent, const char *panelName, const char *text, Menu *cascadeMenu, bool checkable) : Button(parent, panelName, text)
+MenuItem::MenuItem(Menu* parent, const char* panelName, const char* text, Menu* cascadeMenu, bool checkable) : Button(parent, panelName, text)
 {
 	m_pCascadeMenu = cascadeMenu;
 	m_bCheckable = checkable;
@@ -87,8 +86,8 @@ MenuItem::MenuItem(Menu *parent, const char *panelName, const char *text, Menu *
 	m_pCurrentKeyBinding = NULL;
 
 	// only one arg should be passed in.
-	Assert (!(cascadeMenu && checkable));
-	
+	Assert(!(cascadeMenu && checkable));
+
 	Init();
 }
 
@@ -100,7 +99,7 @@ MenuItem::MenuItem(Menu *parent, const char *panelName, const char *text, Menu *
 //			provide a pointer to it.
 //			MenuItems cannot be both checkable and trigger a cascade menu.
 //-----------------------------------------------------------------------------
-MenuItem::MenuItem(Menu *parent, const char *panelName, const wchar_t *wszText, Menu *cascadeMenu, bool checkable) : Button(parent, panelName, wszText)
+MenuItem::MenuItem(Menu* parent, const char* panelName, const wchar_t* wszText, Menu* cascadeMenu, bool checkable) : Button(parent, panelName, wszText)
 {
 	m_pCascadeMenu = cascadeMenu;
 	m_bCheckable = checkable;
@@ -109,8 +108,8 @@ MenuItem::MenuItem(Menu *parent, const char *panelName, const wchar_t *wszText, 
 	m_pCurrentKeyBinding = NULL;
 
 	// only one arg should be passed in.
-	Assert (!(cascadeMenu && checkable));
-	
+	Assert(!(cascadeMenu && checkable));
+
 	Init();
 }
 
@@ -120,7 +119,7 @@ MenuItem::MenuItem(Menu *parent, const char *panelName, const wchar_t *wszText, 
 MenuItem::~MenuItem()
 {
 	delete m_pCascadeMenu;
-	delete m_pCascadeArrow;	
+	delete m_pCascadeArrow;
 	delete m_pCheck;
 	if (m_pUserData)
 	{
@@ -132,15 +131,15 @@ MenuItem::~MenuItem()
 //-----------------------------------------------------------------------------
 // Purpose: Basic initializer
 //-----------------------------------------------------------------------------
-void MenuItem::Init( void )
+void MenuItem::Init(void)
 {
-	m_pCascadeArrow	= NULL;
+	m_pCascadeArrow = NULL;
 	m_pCheck = NULL;
 
 	if (m_pCascadeMenu)
 	{
 		m_pCascadeMenu->SetParent(this);
-		m_pCascadeArrow = new TextImage (" 4");	// this makes a right pointing arrow.
+		m_pCascadeArrow = new TextImage("4");	// this makes a right pointing arrow.
 
 		m_pCascadeMenu->AddActionSignalTarget(this);
 	}
@@ -153,9 +152,9 @@ void MenuItem::Init( void )
 		SetChecked(false);
 	}
 
-	SetButtonBorderEnabled( false );
-	SetUseCaptureMouse( false );
-	SetContentAlignment( Label::a_west );
+	SetButtonBorderEnabled(false);
+	SetUseCaptureMouse(false);
+	SetContentAlignment(Label::a_west);
 
 	// note menus handle all the sizing of menuItem panels
 }
@@ -163,9 +162,9 @@ void MenuItem::Init( void )
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-Menu *MenuItem::GetParentMenu()
+Menu* MenuItem::GetParentMenu()
 {
-	return (Menu *)GetParent();
+	return (Menu*)GetParent();
 }
 
 //-----------------------------------------------------------------------------
@@ -194,7 +193,7 @@ void MenuItem::CloseCascadeMenu()
 			m_pCascadeMenu->SetVisible(false);
 		}
 		// disarm even if menu wasn't visible!
-		SetArmed(false);  
+		SetArmed(false);
 	}
 }
 
@@ -221,7 +220,7 @@ void MenuItem::OnCursorEntered()
 {
 	// post a message to the parent menu.
 	// forward the message on to the parent of this menu.
-	KeyValues *msg = new KeyValues ("CursorEnteredMenuItem");
+	KeyValues* msg = new KeyValues("CursorEnteredMenuItem");
 	// tell the parent this menuitem is the one that was entered so it can highlight it
 	msg->SetInt("VPanel", GetVPanel());
 
@@ -235,7 +234,7 @@ void MenuItem::OnCursorExited()
 {
 	// post a message to the parent menu.
 	// forward the message on to the parent of this menu.
-	KeyValues *msg = new KeyValues ("CursorExitedMenuItem");
+	KeyValues* msg = new KeyValues("CursorExitedMenuItem");
 	// tell the parent this menuitem is the one that was entered so it can unhighlight it
 	msg->SetInt("VPanel", GetVPanel());
 
@@ -264,12 +263,12 @@ void MenuItem::ArmItem()
 	// close all other menus 
 	GetParentMenu()->CloseOtherMenus(this);
 	// arm the menuItem.
-	Button::SetArmed(true);	
+	Button::SetArmed(true);
 
 	// When you have a submenu with no scroll bar the menu
 	// border will not be drawn correctly. This fixes it.
-	Menu *parent = GetParentMenu();
-	if ( parent )
+	Menu* parent = GetParentMenu();
+	if (parent)
 	{
 		parent->ForceCalculateWidth();
 	}
@@ -293,8 +292,8 @@ void MenuItem::DisarmItem()
 
 	// When you have a submenu with no scroll bar the menu
 	// border will not be drawn correctly. This fixes it.
-	Menu *parent = GetParentMenu();
-	if ( parent )
+	Menu* parent = GetParentMenu();
+	if (parent)
 	{
 		parent->ForceCalculateWidth();
 	}
@@ -324,18 +323,18 @@ void MenuItem::FireActionSignal()
 {
 	// cascading menus items don't trigger the parent menu to disappear
 	// (they trigger the cascading menu to open/close when cursor is moved over/off them)
-	if (!m_pCascadeMenu) 
-	{	
-		KeyValues *kv = new KeyValues("MenuItemSelected");
+	if (!m_pCascadeMenu)
+	{
+		KeyValues* kv = new KeyValues("MenuItemSelected");
 		kv->SetPtr("panel", this);
 		ivgui()->PostMessage(GetVParent(), kv, GetVPanel());
 
-	//	ivgui()->PostMessage(GetVParent(), new KeyValues("MenuItemSelected"), GetVPanel());		
+		//	ivgui()->PostMessage(GetVParent(), new KeyValues("MenuItemSelected"), GetVPanel());		
 		Button::FireActionSignal();
 		// toggle the check next to the item if it is checkable
 		if (m_bCheckable)
 		{
-			SetChecked( !m_bChecked );
+			SetChecked(!m_bChecked);
 		}
 	}
 	else
@@ -343,7 +342,7 @@ void MenuItem::FireActionSignal()
 		// if we are in keyboard mode, open the child menu.
 		if (GetParentMenu()->GetMenuMode() == Menu::KEYBOARD)
 		{
-			OpenCascadeMenu();			
+			OpenCascadeMenu();
 		}
 	}
 }
@@ -352,7 +351,7 @@ void MenuItem::FireActionSignal()
 // Purpose: Opens the cascading menu.
 //-----------------------------------------------------------------------------
 void MenuItem::OpenCascadeMenu()
-{		
+{
 	if (m_pCascadeMenu)
 	{
 		// perform layout on menu, this way it will open in the right spot 
@@ -374,42 +373,42 @@ bool MenuItem::HasMenu()
 //-----------------------------------------------------------------------------
 // Purpose: Apply the resource scheme to the menu.
 //-----------------------------------------------------------------------------
-void MenuItem::ApplySchemeSettings(IScheme *pScheme)
+void MenuItem::ApplySchemeSettings(IScheme* pScheme)
 {
 	// chain back first
 	Button::ApplySchemeSettings(pScheme);
 
 	// get color settings
-	SetDefaultColor(GetSchemeColor("Menu/FgColor", GetFgColor(), pScheme), GetSchemeColor("Menu/BgColor", GetBgColor(), pScheme));
-	SetArmedColor(GetSchemeColor("Menu/ArmedFgColor", GetFgColor(), pScheme), GetSchemeColor("Menu/ArmedBgColor", GetBgColor(), pScheme));
-	SetDepressedColor(GetSchemeColor("Menu/ArmedFgColor", GetFgColor(), pScheme), GetSchemeColor("Menu/ArmedBgColor", GetBgColor(), pScheme));
+	SetDefaultColor(GetSchemeColor("Menu.TextColor", GetFgColor(), pScheme), GetSchemeColor("Menu.BgColor", GetBgColor(), pScheme));
+	SetArmedColor(GetSchemeColor("Menu.ArmedTextColor", GetFgColor(), pScheme), GetSchemeColor("Menu.ArmedBgColor", GetBgColor(), pScheme));
+	SetDepressedColor(GetSchemeColor("Menu.ArmedTextColor", GetFgColor(), pScheme), GetSchemeColor("Menu.ArmedBgColor", GetBgColor(), pScheme));
 
-	SetTextInset(atoi(pScheme->GetResourceString("Menu/TextInset")), 0);
-	
+	SetTextInset(atoi(pScheme->GetResourceString("Menu.TextInset")), 0);
+
 	// reload images since applyschemesettings in label wipes them out.
-	if ( m_pCascadeArrow )
+	if (m_pCascadeArrow)
 	{
-		m_pCascadeArrow->SetFont(pScheme->GetFont("Marlett", IsProportional() ));
+		m_pCascadeArrow->SetFont(pScheme->GetFont("Marlett", IsProportional()));
 		m_pCascadeArrow->ResizeImageToContent();
 		AddImage(m_pCascadeArrow, 0);
-	}	
+	}
 	else if (m_bCheckable)
 	{
-		( static_cast<MenuItemCheckImage *>(m_pCheck) )->SetFont( pScheme->GetFont("Marlett", IsProportional()));
+		(static_cast<MenuItemCheckImage*>(m_pCheck))->SetFont(pScheme->GetFont("Marlett", IsProportional()));
 		SetImageAtIndex(0, m_pCheck, CHECK_INSET);
-		( static_cast<MenuItemCheckImage *>(m_pCheck) )->ResizeImageToContent();
+		(static_cast<MenuItemCheckImage*>(m_pCheck))->ResizeImageToContent();
 	}
 
-	if ( m_pCurrentKeyBinding )
+	if (m_pCurrentKeyBinding)
 	{
-		m_pCurrentKeyBinding->SetFont(pScheme->GetFont("Default", IsProportional() ));
+		m_pCurrentKeyBinding->SetFont(pScheme->GetFont("Default", IsProportional()));
 		m_pCurrentKeyBinding->ResizeImageToContent();
 	}
 
 	// Have the menu redo the layout
 	// Get the parent to resize
-	Menu * parent = GetParentMenu();
-	if ( parent )
+	Menu* parent = GetParentMenu();
+	if (parent)
 	{
 		parent->ForceCalculateWidth();
 	}
@@ -422,9 +421,9 @@ void MenuItem::ApplySchemeSettings(IScheme *pScheme)
 //			cascading menus it gives you the size of the text portion only, without
 //			the arrow.
 //-----------------------------------------------------------------------------
-void MenuItem::GetTextImageSize(int &wide, int &tall)
+void MenuItem::GetTextImageSize(int& wide, int& tall)
 {
-   GetTextImage()->GetSize(wide, tall);
+	GetTextImage()->GetSize(wide, tall);
 }
 
 //-----------------------------------------------------------------------------
@@ -435,39 +434,39 @@ void MenuItem::GetTextImageSize(int &wide, int &tall)
 //-----------------------------------------------------------------------------
 void MenuItem::SetTextImageSize(int wide, int tall)
 {
-   GetTextImage()->SetSize(wide, tall);
+	GetTextImage()->SetSize(wide, tall);
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Return the size of the arrow portion of the label.
 //			If the menuItem is not a cascading menu, 0 is returned.
 //-----------------------------------------------------------------------------
-void MenuItem::GetArrowImageSize(int &wide, int &tall)
+void MenuItem::GetArrowImageSize(int& wide, int& tall)
 {
 	wide = 0, tall = 0;
 	if (m_pCascadeArrow)
 	{
 		m_pCascadeArrow->GetSize(wide, tall);
 		return;
-	}	
+	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Return the size of the check portion of the label.
 //-----------------------------------------------------------------------------
-void MenuItem::GetCheckImageSize(int &wide, int &tall)
+void MenuItem::GetCheckImageSize(int& wide, int& tall)
 {
 	wide = 0, tall = 0;
 	if (m_pCheck)
 	{
 		// resize the image to the contents size
-		( static_cast<MenuItemCheckImage *>(m_pCheck) )->ResizeImageToContent();
-	    m_pCheck->GetSize(wide, tall);
+		(static_cast<MenuItemCheckImage*>(m_pCheck))->ResizeImageToContent();
+		m_pCheck->GetSize(wide, tall);
 
 		// include the inset for the check, since nobody but us know about the inset
 		wide += CHECK_INSET;
 		return;
-	}	
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -475,16 +474,16 @@ void MenuItem::GetCheckImageSize(int &wide, int &tall)
 //          This is useful when the parent menu's commands must be
 //          sent through all menus that are open as well (like hotkeys)
 //-----------------------------------------------------------------------------
-Menu *MenuItem::GetMenu()
+Menu* MenuItem::GetMenu()
 {
-	return m_pCascadeMenu;	
+	return m_pCascadeMenu;
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Get the border style for the button. Menu items have no border so
 //			return null.
 //-----------------------------------------------------------------------------
-IBorder *MenuItem::GetBorder(bool depressed, bool armed, bool selected, bool keyfocus)
+IBorder* MenuItem::GetBorder(bool depressed, bool armed, bool selected, bool keyfocus)
 {
 	return NULL;
 }
@@ -505,7 +504,7 @@ void MenuItem::OnKeyModeSet()
 //-----------------------------------------------------------------------------
 bool MenuItem::IsCheckable()
 {
-	return m_bCheckable;	
+	return m_bCheckable;
 }
 
 //-----------------------------------------------------------------------------
@@ -513,7 +512,7 @@ bool MenuItem::IsCheckable()
 //-----------------------------------------------------------------------------
 bool MenuItem::IsChecked()
 {
-	return m_bChecked;	
+	return m_bChecked;
 }
 
 //-----------------------------------------------------------------------------
@@ -533,17 +532,17 @@ void MenuItem::SetChecked(bool state)
 //-----------------------------------------------------------------------------
 bool MenuItem::CanBeDefaultButton(void)
 {
-    return false;
+	return false;
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-KeyValues *MenuItem::GetUserData()
+KeyValues* MenuItem::GetUserData()
 {
-	if ( HasMenu() )
+	if (HasMenu())
 	{
-		return m_pCascadeMenu->GetItemUserData( m_pCascadeMenu->GetActiveItem() );
+		return m_pCascadeMenu->GetItemUserData(m_pCascadeMenu->GetActiveItem());
 	}
 	else
 	{
@@ -554,15 +553,15 @@ KeyValues *MenuItem::GetUserData()
 //-----------------------------------------------------------------------------
 // Purpose: sets the user data
 //-----------------------------------------------------------------------------
-void MenuItem::SetUserData(const KeyValues *kv)
+void MenuItem::SetUserData(const KeyValues* kv)
 {
 	if (m_pUserData)
 	{
 		m_pUserData->deleteThis();
 		m_pUserData = NULL;
 	}
-	
-	if ( kv )
+
+	if (kv)
 	{
 		m_pUserData = kv->MakeCopy();
 	}
@@ -572,30 +571,30 @@ void MenuItem::SetUserData(const KeyValues *kv)
 // Purpose: Passing in NULL removes this object
 // Input  : *keyName - 
 //-----------------------------------------------------------------------------
-void MenuItem::SetCurrentKeyBinding( char const *keyName )
+void MenuItem::SetCurrentKeyBinding(char const* keyName)
 {
-	if ( !keyName )
+	if (!keyName)
 	{
 		delete m_pCurrentKeyBinding;
 		m_pCurrentKeyBinding = NULL;
 		return;
 	}
 
-	if ( !m_pCurrentKeyBinding )
+	if (!m_pCurrentKeyBinding)
 	{
-		m_pCurrentKeyBinding = new TextImage( keyName );
+		m_pCurrentKeyBinding = new TextImage(keyName);
 	}
 	else
 	{
-		char curtext[ 256 ];
-		m_pCurrentKeyBinding->GetText( curtext, sizeof( curtext ) );
-		if ( !Q_strcmp( curtext, keyName ) )
+		char curtext[256];
+		m_pCurrentKeyBinding->GetText(curtext, sizeof(curtext));
+		if (!Q_strcmp(curtext, keyName))
 			return;
 
-		m_pCurrentKeyBinding->SetText( keyName );
+		m_pCurrentKeyBinding->SetText(keyName);
 	}
 
-	InvalidateLayout( false, true );
+	InvalidateLayout(false, true);
 }
 
 #define KEYBINDING_INSET 5
@@ -603,46 +602,46 @@ void MenuItem::SetCurrentKeyBinding( char const *keyName )
 void MenuItem::Paint()
 {
 	BaseClass::Paint();
-	if ( !m_pCurrentKeyBinding )
+	if (!m_pCurrentKeyBinding)
 		return;
 
 	int w, h;
-	GetSize( w,  h );
+	GetSize(w, h);
 	int iw, ih;
-	m_pCurrentKeyBinding->GetSize( iw, ih );
+	m_pCurrentKeyBinding->GetSize(iw, ih);
 
 	int x = w - iw - KEYBINDING_INSET;
-	int y = ( h - ih ) / 2;
+	int y = (h - ih) / 2;
 
-	if ( IsEnabled() )
+	if (IsEnabled())
 	{
-		m_pCurrentKeyBinding->SetPos( x, y );
-		m_pCurrentKeyBinding->SetColor( GetButtonFgColor() );
+		m_pCurrentKeyBinding->SetPos(x, y);
+		m_pCurrentKeyBinding->SetColor(GetButtonFgColor());
 		m_pCurrentKeyBinding->Paint();
 	}
 	else
 	{
-		m_pCurrentKeyBinding->SetPos( x + 1 , y + 1 );
-		m_pCurrentKeyBinding->SetColor( GetDisabledFgColor1() );
+		m_pCurrentKeyBinding->SetPos(x + 1, y + 1);
+		m_pCurrentKeyBinding->SetColor(GetDisabledFgColor1());
 		m_pCurrentKeyBinding->Paint();
 
 		surface()->DrawFlushText();
 
-		m_pCurrentKeyBinding->SetPos( x, y );
-		m_pCurrentKeyBinding->SetColor( GetDisabledFgColor2() );
+		m_pCurrentKeyBinding->SetPos(x, y);
+		m_pCurrentKeyBinding->SetColor(GetDisabledFgColor2());
 		m_pCurrentKeyBinding->Paint();
 	}
 }
 
-void MenuItem::GetContentSize( int& cw, int &ch )
+void MenuItem::GetContentSize(int& cw, int& ch)
 {
-	BaseClass::GetContentSize( cw, ch );
-	if ( !m_pCurrentKeyBinding )
+	BaseClass::GetContentSize(cw, ch);
+	if (!m_pCurrentKeyBinding)
 		return;
 
 	int iw, ih;
-	m_pCurrentKeyBinding->GetSize( iw, ih );
+	m_pCurrentKeyBinding->GetSize(iw, ih);
 
 	cw += iw + KEYBINDING_INSET;
-	ch = max( ch, ih );
+	ch = max(ch, ih);
 }

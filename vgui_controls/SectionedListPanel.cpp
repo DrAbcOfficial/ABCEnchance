@@ -484,7 +484,8 @@ namespace vgui
 						else if (dataType == kv->TYPE_FLOAT)
 							flTemp = m_pData->GetFloat(keyname);
 						else if (dataType == kv->TYPE_STRING) {
-							char* str = (char*)m_pData->GetString(keyname);
+							char str[512];
+							strcpy_s(str, m_pData->GetString(keyname));
 							auto isnum = [&](std::string str) {
 								std::stringstream sin(str);
 								double d;
