@@ -48,8 +48,8 @@ int CHudGrenadeIndicator::Draw(float flTime){
 			//Draw icon
 			CVector vecHUD;
 			VEC_WorldToScreen(ent->curstate.origin, vecHUD);
-			vecHUD.x = mathlib::Q_clamp((int)vecHUD.x, IconHalfSize, ScreenWidth - IconHalfSize);
-			vecHUD.y = mathlib::Q_clamp((int)vecHUD.y, IconHalfSize, ScreenHeight - IconHalfSize);
+			vecHUD.x = mathlib::clamp((int)vecHUD.x, IconHalfSize, ScreenWidth - IconHalfSize);
+			vecHUD.y = mathlib::clamp((int)vecHUD.y, IconHalfSize, ScreenHeight - IconHalfSize);
 			vgui::surface()->DrawSetTexture(-1);
 			vgui::surface()->DrawSetColor(255, 255, 255, 255);
 			vgui::surface()->DrawSetTexture(GrenadeIconTga);

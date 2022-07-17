@@ -22,12 +22,12 @@ struct extra_player_info_t
 {
 	short frags;
 	short deaths;
-	short playerclass;
 	short armor;
 	short health;
 	bool dead;
 	short teamnumber;
 	char teamname[SC_MAX_TEAM_NAME];
+	short doner;
 };
 
 //-----------------------------------------------------
@@ -61,7 +61,6 @@ public:
 	int GetDeaths();
 	int GetHealth();
 	int GetArmor();
-	int GetPlayerClass();
 	int GetTeamNumber();
 	const char *GetTeamName();
 	bool IsSpectator();
@@ -71,13 +70,15 @@ public:
 	 * @param	bNoColorCodes	If true and ColorCodeAction != Ignore, color codes will be removed.
 	 * @return	Display name stored in internal buffer. It can handle up to 8 calls before overwriting.
 	 */
-	const char *GetDisplayName();
+	const char *GetRealName();
 
 	/**
 	 * Returns SteamID string. Requires SVC hook.
 	 */
 	CSteamID GetSteamID();
 	const char* GetSteamIDString();
+
+	void UpdatePing();
 	// Should be called before reading engine info.
 	// Returns this
 	CPlayerInfo *Update();
@@ -96,7 +97,6 @@ public:
 	void ResetAll();
 
 	CSteamID m_pSteamId;
-	int m_iStatusPenalty; //!< This var is incremented every time player is not found in status output
 
 private:
 	/**
@@ -117,11 +117,8 @@ private:
 	int iBottomColor;
 	extra_player_info_t m_ExtraInfo;
 	bool m_bIsConnected;
-	bool m_bIsSpectator;
 	char m_szRealName[SC_MAX_PLAYER_NAME + 1];
-	bool m_bRealNameChecked = false;
 
-	player_info_t *GetEnginePlayerInfo();
 	void Reset();
 
 	static CPlayerInfo m_sPlayerInfo[SC_MAX_PLAYERS + 1];

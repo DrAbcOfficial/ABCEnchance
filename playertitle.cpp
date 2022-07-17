@@ -90,8 +90,8 @@ int CHudPlayerTitle::Draw(float flTime){
 					nowY = vecHUD.y - flTitleHeight / 2;
 					if (gCVars.pPlayerTitle->value < 2){
 						hud_playerinfo_t* info = gCustomHud.GetPlayerHUDInfo(i);
-						flHealthRatio = mathlib::Q_clamp((info->health / 100.0f), 0.0f, 1.0f);
-						flArmorRatio = mathlib::Q_clamp((info->armor / 100.0f), 0.0f, 1.0f);
+						flHealthRatio = mathlib::clamp((info->health / 100.0f), 0.0f, 1.0f);
+						flArmorRatio = mathlib::clamp((info->armor / 100.0f), 0.0f, 1.0f);
 
 						flHealthLength = nowX + (flTitleLength * flHealthRatio);
 						flArmorLength = nowX + (flTitleLength * flArmorRatio);

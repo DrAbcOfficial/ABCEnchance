@@ -73,7 +73,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_GetStudioModelInterface = HUD_GetStudioModelInterface;
 	pExportFunc->HUD_VidInit = HUD_VidInit;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
-	//pExportFunc->IN_MouseEvent = IN_MouseEvent;
+	pExportFunc->IN_MouseEvent = IN_MouseEvent;
 	pExportFunc->HUD_Key_Event = HUD_KeyEvent;
 	pExportFunc->IN_Accumulate = IN_Accumulate;
 	pExportFunc->CL_CreateMove = CL_CreateMove;

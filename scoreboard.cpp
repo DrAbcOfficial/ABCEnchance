@@ -33,6 +33,7 @@
 #define NAME_LOCALIZE_TOKEN  "Scores_PlayerName"
 #define STEAMID_LOCALIZE_TOKEN "Scores_SteamID"
 #define HEALTH_LOCALIZE_TOKEN "Scores_PlayerHealth"
+#define HEALTHDEAD_LOCALIZE_TOKEN "Scores_PlayerHealthDead"
 #define ARMOR_LOCALIZE_TOKEN "Scores_PlayerArmor"
 #define SCORE_LOCALIZE_TOKEN "Scores_PlayerScore"
 #define DEATH_LOCALIZE_TOKEN "Scores_PlayerDeath"
@@ -41,13 +42,18 @@
 #define SPECTATOR_LOCALIZE_TOKEN "Scores_PlayerSpec"
 #define NA_LOCALIZE_TOKEN "Scores_NA"
 
-#define NAME_TITLE_TOKEN
+#define FRAG_KEY "score_frags"
+#define DEATH_KEY "score_dead"
+#define HEALTH_KEY "score_health"
+#define ARMOR_KEY "score_armor"
+#define NAME_KEY "score_name"
+#define STEAMID_KEY "score_steamid"
+#define PING_KEY "score_ping"
+#define AVATAR_KEY "score_avatar"
 
 namespace
 {
-
 	int s_iMutedIconTexture = -1;
-
 	class CPlayerImage : public vgui::IImage
 	{
 	public:
@@ -154,10 +160,12 @@ CScorePanel::CScorePanel()
 	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "ScoreBoardScheme.res", "ScoreBoardScheme");
 	SetScheme("ScoreBoardScheme");
 
-	hud_scoreboard_mousebtn = CREATE_CVAR("hud_scoreboard_mousebtn", "1", FCVAR_ARCHIVE, nullptr);
+	hud_scoreboard_mousebtn = CREATE_CVAR("hud_scoreboard_mousebtn", "1", FCVAR_VALUE, nullptr);
 	hud_scoreboard_showavatars = CREATE_CVAR("hud_scoreboard_showavatars", "1", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_showloss = CREATE_CVAR("hud_scoreboard_showloss", "1", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_showsteamid = CREATE_CVAR("hud_scoreboard_showsteamid", "1", FCVAR_ARCHIVE, nullptr);
+	hud_scoreboard_showrealname = CREATE_CVAR("hud_scoreboard_showrealname", "1", FCVAR_ARCHIVE, nullptr);
+
 	hud_scoreboard_size = CREATE_CVAR("hud_scoreboard_size", "0", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_spacing_normal = CREATE_CVAR("hud_scoreboard_spacing_normal", "0", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_spacing_compact = CREATE_CVAR("hud_scoreboard_spacing_compact", "0", FCVAR_ARCHIVE, nullptr);
@@ -201,8 +209,7 @@ void CScorePanel::UpdateServerName()
 	m_pServerNameLabel->SetText(wbuf);
 }
 
-void CScorePanel::EnableMousePointer(bool bEnable)
-{
+void CScorePanel::EnableMousePointer(bool bEnable){
 	if (bEnable && !IsVisible())
 		return;
 
@@ -250,18 +257,11 @@ void CScorePanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 	s_iMutedIconTexture = m_iMutedIconTexture;
 }
 
-void CScorePanel::OnThink()
-{
+void CScorePanel::OnThink(){
 	if (m_iKillerIndex != 0 && m_PlayerData[m_iKillerIndex].nItemID != -1)
-	{
-		// Update bg color
 		UpdateClientInfo(m_iKillerIndex);
-	}
-
 	if (m_flLastUpdateTime + UPDATE_PERIOD <= gEngfuncs.GetAbsoluteTime())
-	{
 		UpdateAllClients();
-	}
 }
 
 void CScorePanel::OnCommand(const char* command)
@@ -381,6 +381,8 @@ void CScorePanel::RefreshItems()
 	for (int i = 1; i <= SC_MAX_PLAYERS; i++)
 	{
 		CPlayerInfo* pi = GetPlayerInfo(i)->Update();
+		if (!pi)
+			continue;
 		PlayerData& pd = m_PlayerData[i];
 		pd.bIsConnected = pi->IsConnected();
 
@@ -473,7 +475,7 @@ void CScorePanel::CreateSection(int nTeamID)
 	}
 
 	// Avatar
-	m_pPlayerList->AddColumnToSection(nTeamID, "avatar", "",
+	m_pPlayerList->AddColumnToSection(nTeamID, AVATAR_KEY, "",
 		vgui::SectionedListPanel::COLUMN_IMAGE | vgui::SectionedListPanel::COLUMN_CENTER,
 		m_iColumnWidthAvatar);
 
@@ -485,35 +487,35 @@ void CScorePanel::CreateSection(int nTeamID)
 	else
 		nameCol = NA_LOCALIZE_TOKEN;
 
-	m_pPlayerList->AddColumnToSection(nTeamID, "name", nameCol,
+	m_pPlayerList->AddColumnToSection(nTeamID, NAME_KEY, nameCol,
 		vgui::SectionedListPanel::COLUMN_BRIGHT | vgui::SectionedListPanel::COLUMN_COLORED,
 		GetNameColumnWidth());
 
 	// SteamID
 	if (hud_scoreboard_showsteamid->value > 0)
 	{
-		m_pPlayerList->AddColumnToSection(nTeamID, "steamid", nTeamID == HEADER_SECTION_ID ? STEAMID_LOCALIZE_TOKEN : "",
+		m_pPlayerList->AddColumnToSection(nTeamID, STEAMID_KEY, nTeamID == HEADER_SECTION_ID ? STEAMID_LOCALIZE_TOKEN : "",
 			vgui::SectionedListPanel::COLUMN_BRIGHT,
 			m_iColumnWidthSteamID);
 	}
 
 	// Frags
-	m_pPlayerList->AddColumnToSection(nTeamID, "health", nTeamID == HEADER_SECTION_ID ? HEALTH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
+	m_pPlayerList->AddColumnToSection(nTeamID, HEALTH_KEY, nTeamID == HEADER_SECTION_ID ? HEALTH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
 		vgui::SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthHealth);
 
 	// Frags
-	m_pPlayerList->AddColumnToSection(nTeamID, "armor", nTeamID == HEADER_SECTION_ID ? ARMOR_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
+	m_pPlayerList->AddColumnToSection(nTeamID, ARMOR_KEY, nTeamID == HEADER_SECTION_ID ? ARMOR_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
 		vgui::SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthArmor);
 
 	// Frags
-	m_pPlayerList->AddColumnToSection(nTeamID, "frags", nTeamID == HEADER_SECTION_ID ? SCORE_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
+	m_pPlayerList->AddColumnToSection(nTeamID, FRAG_KEY, nTeamID == HEADER_SECTION_ID ? SCORE_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
 		vgui::SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthFrags);
 
 	// Deaths
-	m_pPlayerList->AddColumnToSection(nTeamID, "deaths", nTeamID == HEADER_SECTION_ID ? DEATH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
+	m_pPlayerList->AddColumnToSection(nTeamID, DEATH_KEY, nTeamID == HEADER_SECTION_ID ? DEATH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
 		vgui::SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthDeaths);
 
@@ -525,7 +527,7 @@ void CScorePanel::CreateSection(int nTeamID)
 	else
 		pingLabel = "";
 
-	m_pPlayerList->AddColumnToSection(nTeamID, "ping", pingLabel,
+	m_pPlayerList->AddColumnToSection(nTeamID, PING_KEY, pingLabel,
 		vgui::SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthPing);
 }
@@ -547,9 +549,7 @@ void CScorePanel::UpdateClientInfo(int client)
 {
 	CPlayerInfo* pi = GetPlayerInfo(client);
 	PlayerData& pd = m_PlayerData[client];
-
-	if (pi->IsConnected() && !pd.bIsConnected)
-	{
+	if (pi->IsConnected() && !pd.bIsConnected){
 		// Player just connected
 		pd.bIsConnected = true;
 
@@ -559,8 +559,7 @@ void CScorePanel::UpdateClientInfo(int client)
 		pd.nItemID = -1;
 		pd.nTeamID = pi->GetTeamNumber();
 	}
-	else if (!pi->IsConnected() && pd.bIsConnected)
-	{
+	else if (!pi->IsConnected() && pd.bIsConnected){
 		// Player disconnected
 		pd.bIsConnected = false;
 
@@ -568,83 +567,84 @@ void CScorePanel::UpdateClientInfo(int client)
 		pd.nItemID = -1;
 		pd.nTeamID = 0;
 	}
-
 	Assert(pd.bIsConnected == pi->IsConnected());
-
 	// Skip unconnected players
 	if (!pi->IsConnected())
 		return;
-
-	if (GetPlayerTeam(pi) != pd.nTeamID)
-	{
+	if (GetPlayerTeam(pi) != pd.nTeamID){
 		// Player changed team
 		m_pPlayerList->RemoveItem(pd.nItemID);
 		pd.nItemID = -1;
 		pd.nTeamID = pi->GetTeamNumber();
 	}
-
 	// Create section for player's team if need to
 	CreateSection(pd.nTeamID);
-
 	KeyValues* playerKv = new KeyValues("data");
-
+	KeyValues* colorKv = new KeyValues("colorData");
 	{
 		char buf[128];
 		playerKv->SetInt("client", client);
-
 		if (pi->IsThisPlayer())
 			playerKv->SetBool("thisplayer", true);
-
 		// Avatar
 		UpdateClientIcon(pi);
-		playerKv->SetInt("avatar", client); // Client index == index into m_pImageList
-
+		playerKv->SetInt(AVATAR_KEY, client);
 		// Name
-		if (pi->IsSpectator())
-		{
-			snprintf(buf, sizeof(buf), "%s %s", pi->GetDisplayName(), m_szSpectatorTag);
-		}
+		if(hud_scoreboard_showrealname->value > 0)
+			snprintf(buf, sizeof(buf), "%s (%s)", pi->GetName(), pi->GetRealName());
 		else
-		{
-			snprintf(buf, sizeof(buf), "%s", pi->GetDisplayName());
-		}
-		playerKv->SetString("name", buf);
-
+			snprintf(buf, sizeof(buf), "%s", pi->GetName());
+		playerKv->SetString(NAME_KEY, buf);
 		// SteamID
-		playerKv->SetString("steamid", pi->GetSteamIDString());
+		playerKv->SetString(STEAMID_KEY, pi->GetSteamIDString());
 
+		if (pi->IsSpectator()) {
+			colorKv->SetInt(HEALTH_KEY,COLOR_GREY);
+			playerKv->SetString(HEALTH_KEY, m_szSpectatorTag);
+			colorKv->SetInt(ARMOR_KEY, COLOR_GREY);
+			playerKv->SetString(ARMOR_KEY, NA_LOCALIZE_TOKEN);
+		}
+		else {
+			int iHealth = pi->GetHealth();
+			if(iHealth < 0)
+				playerKv->SetString(HEALTH_KEY, HEALTHDEAD_LOCALIZE_TOKEN);
+			else
+				playerKv->SetInt(HEALTH_KEY, iHealth);
+			colorKv->SetInt(HEALTH_KEY, COLOR_PERCENT);
 
-		playerKv->SetInt("armor", pi->GetArmor());
-		playerKv->SetInt("health", pi->GetHealth());
-
-
+			int iArmor = pi->GetArmor();
+			if (iArmor < 0)
+				playerKv->SetString(ARMOR_KEY, NA_LOCALIZE_TOKEN);
+			else
+				playerKv->SetInt(ARMOR_KEY, iArmor);
+			colorKv->SetInt(ARMOR_KEY, COLOR_PERCENT);
+		}
+		
 		// Frags & deaths
-		playerKv->SetInt("frags", pi->GetFrags());
-		playerKv->SetInt("deaths", pi->GetDeaths());
+		playerKv->SetInt(FRAG_KEY, pi->GetFrags());
+		playerKv->SetInt(DEATH_KEY, pi->GetDeaths());
 
 		// Ping
-		if (hud_scoreboard_showloss->value > 0)
-		{
+		// ForceUpdatePing
+		pi->UpdatePing();
+		if (hud_scoreboard_showloss->value > 0){
 			snprintf(buf, sizeof(buf), "%d/%d", pi->GetPing(), pi->GetPacketLoss());
-			playerKv->SetString("ping", buf);
+			playerKv->SetString(PING_KEY, buf);
 		}
 		else
-		{
-			playerKv->SetInt("ping", pi->GetPing());
-		}
+			playerKv->SetInt(PING_KEY, pi->GetPing());
+		colorKv->SetInt(PING_KEY, COLOR_PING);
 	}
 
 	Color SectionColor = g_pViewPort->GetPlayerColor(client);
-
-	if (pd.nItemID == -1)
-	{
+	if (pd.nItemID == -1){
 		// Create player's row
 		pd.nItemID = m_pPlayerList->AddItem(pd.nTeamID, playerKv);
 		m_pPlayerList->SetItemFgColor(pd.nItemID, SectionColor);
+		m_pPlayerList->SetItemColorData(pd.nItemID, colorKv);
 		m_pPlayerList->InvalidateLayout();
 	}
-	else
-	{
+	else{
 		// Update player's row
 		m_pPlayerList->ModifyItem(pd.nItemID, pd.nTeamID, playerKv);
 	}
@@ -741,20 +741,20 @@ void CScorePanel::UpdateScoresAndCounts()
 		}
 
 		swprintf_s(wbuf, 128, L"%s (%d/%d)", localizedName, td.iPlayerCount, iPlayerCount);
-		m_pPlayerList->ModifyColumn(nTeamID, "name", wbuf);
+		m_pPlayerList->ModifyColumn(nTeamID, NAME_KEY, wbuf);
 
-		m_pPlayerList->ModifyColumn(nTeamID, "health", L"");
-		m_pPlayerList->ModifyColumn(nTeamID, "armor", L"");
+		m_pPlayerList->ModifyColumn(nTeamID, HEALTH_KEY, L"");
+		m_pPlayerList->ModifyColumn(nTeamID, ARMOR_KEY, L"");
 
 		// Team frags
 		snprintf(buf, sizeof(buf), "%d", td.iFrags);
 		vgui::localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
-		m_pPlayerList->ModifyColumn(nTeamID, "frags", wbuf);
+		m_pPlayerList->ModifyColumn(nTeamID, FRAG_KEY, wbuf);
 
 		// Team deaths
 		snprintf(buf, sizeof(buf), "%d", td.iDeaths);
 		vgui::localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
-		m_pPlayerList->ModifyColumn(nTeamID, "deaths", wbuf);
+		m_pPlayerList->ModifyColumn(nTeamID, DEATH_KEY, wbuf);
 	};
 
 	// Update team score and player count
@@ -808,9 +808,10 @@ Color CScorePanel::GetPlayerBgColor(CPlayerInfo* pi)
 
 	return Color(0, 0, 0, 0);
 }
+
 int CScorePanel::GetClientIconSize()
 {
-	return mathlib::Q_clamp(m_pPlayerList->GetLineSpacing() - 2, 0, 32);
+	return mathlib::clamp(m_pPlayerList->GetLineSpacing() - 2, 0, 32);
 }
 
 void CScorePanel::CreatePlayerMenu()
@@ -927,11 +928,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	case MenuAction::SteamProfile:
 	{
 		if (SteamFriends())
-		{
-			// Open in overlay
-			CSteamID steamId = CSteamID((uint64)m_MenuData.nSteamID64);
-			SteamFriends()->ActivateGameOverlayToUser("steamid", steamId);
-		}
+			SteamFriends()->ActivateGameOverlayToUser(STEAMID_KEY, pi->GetSteamID());
 		else
 		{
 			// Open in browser
@@ -950,7 +947,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	case MenuAction::CopyName:
 	{
 		wchar_t name[SC_MAX_PLAYER_NAME + 1];
-		vgui::localize()->ConvertANSIToUnicode(pi->GetDisplayName(), name, sizeof(name));
+		vgui::localize()->ConvertANSIToUnicode(pi->GetRealName(), name, sizeof(name));
 		vgui::system()->SetClipboardText(name, wcslen(name));
 		break;
 	}
@@ -978,7 +975,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 
 CScorePanel::SizeMode CScorePanel::GetSizeMode()
 {
-	return (SizeMode)mathlib::Q_clamp((int)hud_scoreboard_size->value, 0, 2);
+	return (SizeMode)mathlib::clamp((int)hud_scoreboard_size->value, 0, 2);
 }
 
 int CScorePanel::GetLineSpacingForHeight(int h)
@@ -1087,23 +1084,46 @@ bool CScorePanel::StaticPlayerSortFuncByFrags(vgui::SectionedListPanel* list, in
 	KeyValues* it1 = list->GetItemData(itemID1);
 	KeyValues* it2 = list->GetItemData(itemID2);
 	Assert(it1 && it2);
-
+	int frags1 = it1->GetInt(FRAG_KEY);
+	int frags2 = it2->GetInt(FRAG_KEY);
+	int death1 = it1->GetInt(DEATH_KEY);
+	int death2 = it2->GetInt(DEATH_KEY);
+	int ping1 = it1->GetInt(PING_KEY);
+	int ping2 = it2->GetInt(PING_KEY);
+	//Ping Zero??
+	if (frags1 + death1 + ping1 == 0)
+		return false;
+	else if (frags2 + death2 + ping2 == 0)
+		return true;
 	// first compare frags
-	int v1 = it1->GetInt("frags");
-	int v2 = it2->GetInt("frags");
-	if (v1 > v2)
+	if (frags1 > frags2)
 		return true;
-	else if (v1 < v2)
+	else if (frags1 < frags2)
 		return false;
-
 	// next compare deaths
-	v1 = it1->GetInt("deaths");
-	v2 = it2->GetInt("deaths");
-	if (v1 > v2)
+	if (death1 > death2)
 		return false;
-	else if (v1 < v2)
+	else if (death1 < death2)
 		return true;
-
 	// the same, so compare itemID's (as a sentinel value to get deterministic sorts)
 	return itemID1 < itemID2;
+}
+
+void CScorePanel::OnMousePressed(vgui::MouseCode code) {
+	BaseClass::OnMousePressed(code);
+	if (code == vgui::MOUSE_RIGHT && !IsMouseInputEnabled())
+		EnableMousePointer(true);
+	if (IsMouseInputEnabled()) {
+		m_pPlayerMenu->OnMousePressed(code);
+		m_pPlayerList->ItemOnMousePressed(m_pPlayerList->GetSelectedItem(), code);
+	}
+}
+
+void CScorePanel::OnMouseDoublePressed(vgui::MouseCode code) {
+	BaseClass::OnMouseDoublePressed(code);
+	if (IsMouseInputEnabled()) {
+		m_pPlayerMenu->OnMouseDoublePressed(code);
+		m_pPlayerMenu->OnInternalMousePressed(this, code);
+		m_pPlayerList->ItemOnMouseDoublePressed(m_pPlayerList->GetSelectedItem(), code);
+	}
 }

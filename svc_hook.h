@@ -58,9 +58,9 @@
 #define svc_sendcvarvalue 57
 #define svc_sendcvarvalue2 58
 
-typedef void (*pfnSVC_Parse)(void);
+typedef void (*pfnSVCMsgHook)(void);
 
 void SVC_FillAddress(void);
-pfnSVC_Parse SVC_HookFunc(int opcode, pfnSVC_Parse pfnParse);
+pfnSVCMsgHook SVC_HookFunc(int opcode, pfnSVCMsgHook pfnParse);
 void* SVC_GetBuffer(void);
 int SVC_GetBufferSize(void);

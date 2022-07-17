@@ -352,7 +352,7 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 		gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
 
 	WEAPON* wp = nullptr;
-	iSlot = mathlib::Q_clamp(iSlot, 0, MAX_WEAPON_SLOT_INDEX);
+	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT_INDEX);
 	//如果是当前slot
 	if (iSlot == iNowSlot) {
 		//避免死循环

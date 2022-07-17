@@ -45,7 +45,7 @@ int CHudEfx::Draw(float flTime){
 			flDyingFlincAdvanceTime = flTime;
 		}
 		vgui::surface()->DrawSetColor(255, 25, 25,
-			mathlib::Q_clamp((int)(255 * (gCVars.pDangerHealth->value - m_HudArmorHealth.m_iHealth) / gCVars.pDangerHealth->value + iDyingFlinc - 30), 0, 255));
+			mathlib::clamp((int)(255 * (gCVars.pDangerHealth->value - m_HudArmorHealth.m_iHealth) / gCVars.pDangerHealth->value + iDyingFlinc - 30), 0, 255));
 		vgui::surface()->DrawSetTexture(DarkconerImg);
 		vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 	}

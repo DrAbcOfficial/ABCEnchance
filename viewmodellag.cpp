@@ -76,7 +76,7 @@ void V_CalcModelSlide(ref_params_t* pparams) {
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEnd, PM_STUDIO_IGNORE, local->index, &tr);
 	if (tr.fraction >= 1)
 		return;
-	float flViewHeight = mathlib::Q_clamp(pparams->viewheight[2], 12.0f, 28.0f);
+	float flViewHeight = mathlib::clamp(pparams->viewheight[2], 12.0f, 28.0f);
 	//12 Duck
 	//28 Stand
 	float flSlideRatio = 1 - ((flViewHeight - 12) / 16);

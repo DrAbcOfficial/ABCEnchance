@@ -350,7 +350,7 @@ void CHudEccoBuyMenu::OpenMenu(){
 		CreateLight();
 	}
 	bOpenningMenu = true;
-	gCustomHud.m_iVisibleMouse = true;
+	gCustomHud.SetMouseVisible(true);
 }
 void CHudEccoBuyMenu::CloseMenu() {
 	if (!bOpenningMenu)
@@ -365,7 +365,7 @@ void CHudEccoBuyMenu::CloseMenu() {
 		EngineClientCmd("firstperson");
 	iNextPageBase = 0;
 	bOpenningMenu = false;
-	gCustomHud.m_iVisibleMouse = false;
+	gCustomHud.SetMouseVisible(false);
 }
 bool CHudEccoBuyMenu::SelectMenu() {
 	if (!bOpenningMenu || iNowChosenSlot < 0 || iNowChosenSlot > 10)

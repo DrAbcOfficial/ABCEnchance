@@ -1264,5 +1264,8 @@
     <ClInclude Include="svc_hook.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="player_infosc.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

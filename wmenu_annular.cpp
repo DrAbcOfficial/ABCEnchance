@@ -27,16 +27,16 @@ void __UserCmd_OpenAnnularMenu(void) {
 		if (m_HudWMenuAnnular.m_fFade <= gEngfuncs.GetClientTime())
 			PlaySoundByName("common/wpn_hudon.wav", 1);
 		m_HudWMenuAnnular.m_bOpeningMenu = true;
-		gCustomHud.m_iVisibleMouse = true;
+		gCustomHud.SetMouseVisible(true);
 	}
 }
 void __UserCmd_CloseAnnularMenu(void) {
 	if (m_HudWMenuAnnular.m_bOpeningMenu && m_HudWMenuAnnular.m_bSelectMenuDisplay) {
 		m_HudWMenuAnnular.m_bOpeningMenu = false;
 		m_HudWMenuAnnular.m_fFade = 0;
-		gCustomHud.m_iVisibleMouse = false;
 		m_HudWMenuAnnular.m_bSetedCursor = false;
 		m_HudWMenuAnnular.m_bSelectMenuDisplay = false;
+		gCustomHud.SetMouseVisible(false);
 	}
 }
 void CWeaponMenuAnnular::Select() {
