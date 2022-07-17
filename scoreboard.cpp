@@ -895,30 +895,12 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	{
 		if (pi->IsThisPlayer())
 			return;
-
-		/*
 		if (GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()))
-		{
 			// Unmute
 			GetClientVoiceMgr()->SetPlayerBlockedState(pi->GetIndex(), false);
-
-			char string1[1024];
-			snprintf(string1, sizeof(string1), CHudTextMessage::BufferedLocaliseTextString("#Unmuted"), pi->GetDisplayName());
-			(0, "** %s", string1);
-		}
 		else
-		{
 			// Mute
 			GetClientVoiceMgr()->SetPlayerBlockedState(pi->GetIndex(), true);
-
-			char string1[1024];
-			char string2[1024];
-			snprintf(string1, sizeof(string1), CHudTextMessage::BufferedLocaliseTextString("#Muted"), pi->GetDisplayName());
-			snprintf(string2, sizeof(string2), "%s", CHudTextMessage::BufferedLocaliseTextString("#No_longer_hear_that_player"));
-			CHudChat::Get()->ChatPrintf(0, "** %s", string1);
-			CHudChat::Get()->ChatPrintf(0, "** %s", string2);
-		}
-		*/
 
 		// Muting one player may mute others (if they have identical Unique IDs)
 		UpdateAllClients();
@@ -928,7 +910,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	case MenuAction::SteamProfile:
 	{
 		if (SteamFriends())
-			SteamFriends()->ActivateGameOverlayToUser(STEAMID_KEY, pi->GetSteamID());
+			SteamFriends()->ActivateGameOverlayToUser("steamid", pi->GetSteamID());
 		else
 		{
 			// Open in browser
@@ -1111,11 +1093,23 @@ bool CScorePanel::StaticPlayerSortFuncByFrags(vgui::SectionedListPanel* list, in
 
 void CScorePanel::OnMousePressed(vgui::MouseCode code) {
 	BaseClass::OnMousePressed(code);
+	m_pPlayerList->ItemOnMousePressed(m_MenuData.nItemID, code);
 	if (code == vgui::MOUSE_RIGHT && !IsMouseInputEnabled())
 		EnableMousePointer(true);
-	if (IsMouseInputEnabled()) {
-		m_pPlayerMenu->OnMousePressed(code);
-		m_pPlayerList->ItemOnMousePressed(m_pPlayerList->GetSelectedItem(), code);
+	else if (IsMouseInputEnabled()) {
+		int itemIndex = m_pPlayerList->GetSelectedItem();
+		if (itemIndex >= 0) {
+			if (!m_pPlayerMenu->IsVisible()) {
+				int x, y;
+				gEngfuncs.GetMousePosition(&x, &y);
+				m_pPlayerMenu->SetPos(x, y);
+				m_pPlayerMenu->SetVisible(true);
+				m_pPlayerMenu->MakePopup();
+				OpenPlayerMenu(itemIndex);
+			}
+			else
+				m_pPlayerMenu->OnMousePressed(code);
+		}
 	}
 }
 
@@ -1123,7 +1117,6 @@ void CScorePanel::OnMouseDoublePressed(vgui::MouseCode code) {
 	BaseClass::OnMouseDoublePressed(code);
 	if (IsMouseInputEnabled()) {
 		m_pPlayerMenu->OnMouseDoublePressed(code);
-		m_pPlayerMenu->OnInternalMousePressed(this, code);
 		m_pPlayerList->ItemOnMouseDoublePressed(m_pPlayerList->GetSelectedItem(), code);
 	}
 }
