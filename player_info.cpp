@@ -157,6 +157,7 @@ const char* CPlayerInfo::GetSteamIDString()
 {
 	return m_pSteamId.Render();
 }
+
 CPlayerInfo *CPlayerInfo::Update()
 {
 	hud_player_info_t hInfo;
@@ -176,23 +177,17 @@ CPlayerInfo *CPlayerInfo::Update()
 
 	if (bIsConnected)
 	{
+		player_info_t* info = gEngineStudio.PlayerInfo(m_iIndex - 1);
 		if (!m_pSteamId.IsValid())
 		{
 			if (m_iIndex == gEngfuncs.GetLocalPlayer()->index)
 				m_pSteamId = SteamUser()->GetSteamID();
-			else {
-				int iIp = g_pConnectingServer->ip[0] + 
-					g_pConnectingServer->ip[1] << 8 + 
-					g_pConnectingServer->ip[2] << 16 + 
-					g_pConnectingServer->ip[3] << 24;
-				ISteamMatchmakingPlayersResponse* pRespons;
-				auto query = SteamMatchmakingServers()->PlayerDetails(iIp, g_pConnectingServer->port, pRespons);			
-			}
+			else 
+				m_pSteamId = CSteamID(info->m_nSteamID);
 		}
 
 		hud_playerinfo_t* extraInfo = gCustomHud.GetPlayerHUDInfo(m_iIndex);
 		//Ping loss
-		player_info_t* info = gEngineStudio.PlayerInfo(m_iIndex);
 		iPing = info->ping;
 		iLoss = info->packet_loss;
 		iTopColor = info->topcolor;
