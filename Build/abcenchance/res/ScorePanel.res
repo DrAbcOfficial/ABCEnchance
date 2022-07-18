@@ -30,6 +30,7 @@
 		
 		// Icon of muted players (without .tga)
 		"muted_icon"		"abcenchance/tga/muted_icon32"
+		"avatar_icon"		"abcenchance/tga/default_avatar"
 		"donor1_icon"		"abcenchance/tga/donor_1"
 		"donor2_icon"		"abcenchance/tga/donor_2"
 		"donor3_icon"		"abcenchance/tga/donor_3"
