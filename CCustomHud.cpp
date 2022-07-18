@@ -109,7 +109,7 @@ void(*UserCmd_PrevWeapon)(void);
 void(*UserCmd_Attack1)(void);
 void(*UserCmd_ShowScores)(void);
 void(*UserCmd_HideScores)(void);
-void(*UserCmd_Attack1)(void);
+
 void __UserCmd_Slot1(void) {
 	m_HudCustomAmmo.SlotInput(0, 1);
 	m_HudEccoBuyMenu.SlotCallBack(0);
