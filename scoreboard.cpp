@@ -765,19 +765,19 @@ void CScorePanel::UpdateClientIcon(CPlayerInfo* pi){
 	pImg->SetMuted(GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()));
 
 	// Update avatar
-	CSteamID steamID = pi->GetSteamID();
-	if (hud_scoreboard_showavatars->value > 0 && steamID.IsValid())
+	CSteamID* steamID = pi->GetSteamID();
+	if (hud_scoreboard_showavatars->value > 0 && steamID->IsValid())
 	{
-		auto it = m_PlayerAvatars.find(steamID);
+		auto it = m_PlayerAvatars.find(*steamID);
 
 		if (it == m_PlayerAvatars.end())
 		{
 			CAvatarImage* pAvatar = new CAvatarImage();
 			pAvatar->SetDrawFriend(false);
-			pAvatar->SetAvatarSteamID(steamID);
+			pAvatar->SetAvatarSteamID(*steamID);
 
 			pImg->SetAvatar(pAvatar);
-			m_PlayerAvatars.insert({ steamID, pAvatar });
+			m_PlayerAvatars.insert({ *steamID, pAvatar });
 		}
 		else
 		{
@@ -988,7 +988,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	case MenuAction::SteamProfile:
 	{
 		if (SteamFriends())
-			SteamFriends()->ActivateGameOverlayToUser("steamid", pi->GetSteamID());
+			SteamFriends()->ActivateGameOverlayToUser("steamid", *pi->GetSteamID());
 		else
 		{
 			// Open in browser
