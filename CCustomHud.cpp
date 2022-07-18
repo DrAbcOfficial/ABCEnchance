@@ -109,6 +109,7 @@ void(*UserCmd_PrevWeapon)(void);
 void(*UserCmd_Attack1)(void);
 void(*UserCmd_ShowScores)(void);
 void(*UserCmd_HideScores)(void);
+void(*UserCmd_Attack1)(void);
 void __UserCmd_Slot1(void) {
 	m_HudCustomAmmo.SlotInput(0, 1);
 	m_HudEccoBuyMenu.SlotCallBack(0);
@@ -171,6 +172,10 @@ void __UserCmd_PrevWeapon(void) {
 	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1);
 	return UserCmd_PrevWeapon();
 }
+void __UserCmd_Attack1(void) {
+	m_HudCustomAmmo.m_pNowSelectMenu->Select();
+	return UserCmd_Attack1();
+}
 void __UserCmd_OpenScoreboard(void) {
 	gCustomHud.m_bInScore = true;
 	g_pViewPort->ShowScoreBoard();
@@ -179,6 +184,7 @@ void __UserCmd_CloseScoreboard(void) {
 	gCustomHud.m_bInScore = false;
 	g_pViewPort->HideScoreBoard();
 }
+
 void CCustomHud::GL_Init(void){
 	m_HudRadar.GLInit();
 	m_HudCustomAmmo.GLInit();
@@ -210,6 +216,7 @@ void CCustomHud::HUD_Init(void){
 	UserCmd_SlotClose = HOOK_COMMAND("cancelselect", Close);
 	UserCmd_NextWeapon = HOOK_COMMAND("invnext", NextWeapon);
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
+	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 	UserCmd_ShowScores = HOOK_COMMAND("+showscores", OpenScoreboard);
 	UserCmd_HideScores = HOOK_COMMAND("-showscores", CloseScoreboard);
 
