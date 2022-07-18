@@ -61,6 +61,7 @@
 namespace
 {
 	int s_iMutedIconTexture = -1;
+	int s_iDefaultAvatarTexture = -1;
 	class CPlayerImage : public vgui::IImage
 	{
 	public:
@@ -91,8 +92,14 @@ namespace
 		{
 			if (m_pAvatar)
 				m_pAvatar->Paint();
+			else if(s_iDefaultAvatarTexture >= 0) {
+				vgui::surface()->DrawSetTexture(s_iDefaultAvatarTexture);
+				vgui::surface()->DrawSetColor(m_DrawColor);
+				vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
+					m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
+			}
 
-			if (m_bIsMuted && s_iMutedIconTexture != -1){
+			if (m_bIsMuted && s_iMutedIconTexture >= 0){
 				vgui::surface()->DrawSetTexture(s_iMutedIconTexture);
 				vgui::surface()->DrawSetColor(m_DrawColor);
 				vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
@@ -321,6 +328,7 @@ void CScorePanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 	SetBgColor(GetSchemeColor("ScorePanel.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 
 	s_iMutedIconTexture = m_iMutedIconTexture;
+	s_iDefaultAvatarTexture = m_iDefaultAvatarTexture;
 }
 
 void CScorePanel::OnThink(){
@@ -766,8 +774,7 @@ void CScorePanel::UpdateClientIcon(CPlayerInfo* pi){
 
 	// Update avatar
 	CSteamID* steamID = pi->GetSteamID();
-	if (hud_scoreboard_showavatars->value > 0 && steamID->IsValid())
-	{
+	if (hud_scoreboard_showavatars->value > 0 && steamID->IsValid()){
 		auto it = m_PlayerAvatars.find(*steamID);
 
 		if (it == m_PlayerAvatars.end())

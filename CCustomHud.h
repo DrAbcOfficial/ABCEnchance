@@ -12,9 +12,9 @@ typedef struct hud_playerinfo_s {
 	long death;
 	float health;
 	float armor;
-	byte team;
-	char donors;
-	char admin;
+	int team;
+	int donors;
+	int admin;
 }hud_playerinfo_t;
 typedef struct {
 	CHudBattery* m_Battery;

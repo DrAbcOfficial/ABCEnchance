@@ -154,6 +154,7 @@ private:
 	CPanelAnimationVarAliasType(int, m_iColumnWidthPing, "column_ping", "80", "proportional_int");
 
 	CPanelAnimationVarAliasType(int, m_iMutedIconTexture, "muted_icon", "abcenchance/tga/muted_icon32", "textureid");
+	CPanelAnimationVarAliasType(int, m_iDefaultAvatarTexture, "avatar_icon", "abcenchance/tga/default_avatar", "textureid");
 
 	CPanelAnimationVarAliasType(int, m_iDonor1IconTexture, "donor1_icon", "abcenchance/tga/donor_1", "textureid");
 	CPanelAnimationVarAliasType(int, m_iDonor2IconTexture, "donor2_icon", "abcenchance/tga/donor_2", "textureid");
