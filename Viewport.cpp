@@ -17,6 +17,7 @@
 #include "scoreboard.h"
 #include "Viewport.h"
 #include "exportfuncs.h"
+#include "keydefs.h"
 
 using namespace vgui;
 
@@ -103,14 +104,18 @@ void CViewport::HideClientUI(void)
 	}
 }
 
-void CViewport::OnMousePressed(vgui::MouseCode code){
-	BaseClass::OnMousePressed(code);
-	m_pScorePanel->OnMousePressed(code);
-}
-
-void CViewport::OnMouseDoublePressed(vgui::MouseCode code) {
-	BaseClass::OnMouseDoublePressed(code);
-	m_pScorePanel->OnMouseDoublePressed(code);
+bool CViewport::KeyInput(int down, int keynum, const char* pszCurrentBinding){
+	if (down){
+		if (IsScoreBoardVisible()){
+			if (!m_pScorePanel->IsMouseInputEnabled()){
+				if (keynum == K_MOUSE2){
+					m_pScorePanel->EnableMousePointer(true);
+					return false;
+				}
+			}
+		}
+	}
+	return true;
 }
 
 bool CViewport::IsScoreBoardVisible()

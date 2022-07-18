@@ -37,8 +37,7 @@ public:
 	void AddNewPanel(IViewportPanel* panel);
 	void ActivateClientUI(void);
 	void HideClientUI(void);
-	virtual void OnMousePressed(vgui::MouseCode code) override;
-	virtual void OnMouseDoublePressed(vgui::MouseCode code) override;
+	bool KeyInput(int down, int keynum, const char* pszCurrentBinding);
 
 	bool IsScoreBoardVisible();
 	void ShowScoreBoard();

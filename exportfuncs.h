@@ -59,6 +59,8 @@ void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding);
 void IN_Accumulate(void);
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
+void HUD_VoiceStatus(int entindex, qboolean talking);
+void HUD_Frame(double frametime);
 
 void R_NewMap(void);
 

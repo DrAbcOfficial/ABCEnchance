@@ -342,6 +342,7 @@ void CCustomHud::HUD_BlitRadarFramebuffer()
 void CCustomHud::IN_MouseEvent(int mstate){
 	if (!IsHudEnable())
 		return;
+	/*
 	auto MouseTest = [&](int mstate, int testBit, vgui::MouseCode enumMouse) {
 		//ÏÖÔÚÓĞ
 		if ((mstate & testBit) != 0) {
@@ -377,8 +378,10 @@ void CCustomHud::IN_MouseEvent(int mstate){
 	MouseTest(mstate, 1 << 3, vgui::MouseCode::MOUSE_4);
 	//5¼ü¼ì²â
 	MouseTest(mstate, 1 << 4, vgui::MouseCode::MOUSE_5);
+	*/
 }
 int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
+	g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding);
 	if (!IsHudEnable())
 		return 1;
 	int result = 1;

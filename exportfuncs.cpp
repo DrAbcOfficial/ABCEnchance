@@ -40,6 +40,7 @@
 //efx
 #include "efxenchance.h"
 #include "viewmodellag.h"
+#include <voice_status.h>
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -456,6 +457,12 @@ void FillAddress(){
 			Sig_AddrNotFound(SetPunchAngle);
 			gHookFuncs.SetPunchAngle = (decltype(gHookFuncs.SetPunchAngle))GetCallAddress(addr + 8);
 		}
+#define VOICE_GETVOICEMGR_SIG "\x83\x7C\x24\x08\x00\x0F\x95\xC0\x0F\xB6\xC0\x50\xFF\x74\x24\x08\xE8\xDB\x53\xFD\xFF"
+		{
+			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, VOICE_GETVOICEMGR_SIG, sizeof(VOICE_GETVOICEMGR_SIG) - 1);
+			Sig_AddrNotFound(GetClientVoiceMgr);
+			gHookFuncs.GetClientVoiceMgr = (decltype(gHookFuncs.GetClientVoiceMgr))GetCallAddress(addr + 16);
+		}
 #define SC_HUDAMMO_RESET_SIG "\x83\x49\x10\x01\x68\x78\x05\x00\x00\xC7\x41\x14\x00\x00\x00\x00\xC7\x41\x2C\x00\x00\x00\x00\xC7\x41\x18\x00\x00\x00\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xE8\x2A\x2A\x2A\x2A\x68\xC0\x00\x00\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x83\xC4\x18\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xC3"
 		{
 			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_HUDAMMO_RESET_SIG, Sig_Length(SC_HUDAMMO_RESET_SIG));
@@ -546,6 +553,7 @@ void HUD_Init(void){
 
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
+	GetClientVoiceMgr()->Init();
 }
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
 	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
@@ -573,6 +581,14 @@ int HUD_VidInit(void){
 	int result = gExportfuncs.HUD_VidInit();
 	gCustomHud.HUD_VidInit();
 	return result;
+}
+void HUD_VoiceStatus(int entindex, qboolean talking) {
+	GetClientVoiceMgr()->UpdateSpeakerStatus(entindex, talking);
+	gExportfuncs.HUD_VoiceStatus(entindex, talking);
+}
+void HUD_Frame(double frametime) {
+	GetClientVoiceMgr()->Frame(frametime);
+	gExportfuncs.HUD_Frame(frametime);
 }
 int HUD_Redraw(float time, int intermission){
 	gCustomHud.HUD_Draw(time);

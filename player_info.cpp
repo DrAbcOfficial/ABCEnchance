@@ -19,15 +19,14 @@ typedef int GLint;
 #include <CCustomHud.h>
 
 CPlayerInfo CPlayerInfo::m_sPlayerInfo[SC_MAX_PLAYERS + 1];
-static CPlayerInfo *s_ThisPlayerInfo = nullptr;
 
 #define UNDEFINEDTEAM_LOCALIZE_TOKEN "Scores_UndifinedTeam"
-
 CPlayerInfo *GetThisPlayerInfo(){
-	return s_ThisPlayerInfo;
+	cl_entity_t* ent = gEngfuncs.GetLocalPlayer();
+	if(ent)
+		return GetPlayerInfo(ent->index);
+	return GetPlayerInfo(0);
 }
-
-
 void CPlayerInfo::InitPlayerInfos() {
 	// Set player info IDs
 	for (int i = 1; i < SC_MAX_PLAYERS; i++)
@@ -38,6 +37,9 @@ int CPlayerInfo::GetIndex(){
 }
 bool CPlayerInfo::IsConnected(){
 	return m_bIsConnected;
+}
+bool CPlayerInfo::IsValid() {
+	return m_bIsConnected && szName[0] != '\0';
 }
 const char *CPlayerInfo::GetName(){
 	Assert(m_bIsConnected);
@@ -56,7 +58,7 @@ int CPlayerInfo::GetPacketLoss(){
 }
 bool CPlayerInfo::IsThisPlayer(){
 	Assert(m_bIsConnected);
-	return m_iIndex == 1;
+	return m_iIndex == gEngfuncs.GetLocalPlayer()->index;
 }
 const char *CPlayerInfo::GetModel(){
 	Assert(m_bIsConnected);
@@ -74,8 +76,8 @@ uint64 CPlayerInfo::GetSteamID64(){
 	Assert(m_bIsConnected);
 	return m_pSteamId.ConvertToUint64();
 }
-CSteamID CPlayerInfo::GetSteamID() {
-	return m_pSteamId;
+CSteamID* CPlayerInfo::GetSteamID() {
+	return &m_pSteamId;
 }
 const char* CPlayerInfo::GetSteamIDString() {
 	return m_pSteamId.Render();
@@ -83,6 +85,14 @@ const char* CPlayerInfo::GetSteamIDString() {
 int CPlayerInfo::GetFrags(){
 	Assert(m_bIsConnected);
 	return m_ExtraInfo.frags;
+}
+int CPlayerInfo::GetDonor() {
+	Assert(m_bIsConnected);
+	return m_ExtraInfo.donor;
+}
+int CPlayerInfo::GetAdmin() {
+	Assert(m_bIsConnected);
+	return m_ExtraInfo.admin;
 }
 int CPlayerInfo::GetDeaths(){
 	Assert(m_bIsConnected);
@@ -136,9 +146,8 @@ CPlayerInfo *CPlayerInfo::Update(){
 	}
 	if (bIsConnected){
 		//Wtf, quit?
-		if (!m_pSteamId.IsValid() || szName[0] == '\0')
+		if (szName[0] == '\0')
 			Reset();
-
 		iTopColor = info->topcolor;
 		iBottomColor = info->bottomcolor;
 		iPing = info->ping;
@@ -149,11 +158,10 @@ CPlayerInfo *CPlayerInfo::Update(){
 		m_ExtraInfo.frags = extraInfo->frags;
 		m_ExtraInfo.deaths = extraInfo->death;
 		m_ExtraInfo.health = extraInfo->health;
-		m_ExtraInfo.doner = extraInfo->donors;
+		m_ExtraInfo.donor = extraInfo->donors;
 		m_ExtraInfo.teamnumber = extraInfo->team;
+		m_ExtraInfo.admin = extraInfo->admin;
 		Q_strcpy(m_ExtraInfo.teamname, GetTeamInfo(0)->GetNameByIndex(extraInfo->team));
-		if (IsThisPlayer())
-			s_ThisPlayerInfo = this;
 	}
 	return this;
 }

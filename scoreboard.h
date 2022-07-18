@@ -50,8 +50,6 @@ public:
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void OnThink() override;
 	virtual void OnCommand(const char* command) override;
-	virtual void OnMousePressed(vgui::MouseCode code) override;
-	virtual void OnMouseDoublePressed(vgui::MouseCode code) override;
 
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
@@ -146,15 +144,28 @@ private:
 
 	// Column widths
 	CPanelAnimationVarAliasType(int, m_iColumnWidthAvatar, "column_avatar", "26", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthName, "column_name", "160", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthDonor, "column_donor", "15", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthName, "column_name", "100", "proportional_int");
 	CPanelAnimationVarAliasType(int, m_iColumnWidthSteamID, "column_steamid", "80", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthHealth, "column_health", "45", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthArmor, "column_armor", "45", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthFrags, "column_frags", "45", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthDeaths, "column_deaths", "45", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthPing, "column_ping", "80", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthHealth, "column_health", "40", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthArmor, "column_armor", "40", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthFrags, "column_frags", "40", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthDeaths, "column_deaths", "40", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthPing, "column_ping", "40", "proportional_int");
 
-	CPanelAnimationVarAliasType(int, m_iMutedIconTexture, "muted_icon", "ui/gfx/muted_icon32", "textureid");
+	CPanelAnimationVarAliasType(int, m_iMutedIconTexture, "muted_icon", "abcenchance/tga/muted_icon32", "textureid");
+
+	CPanelAnimationVarAliasType(int, m_iDonor1IconTexture, "donor1_icon", "abcenchance/tga/donor_1", "textureid");
+	CPanelAnimationVarAliasType(int, m_iDonor2IconTexture, "donor2_icon", "abcenchance/tga/donor_2", "textureid");
+	CPanelAnimationVarAliasType(int, m_iDonor3IconTexture, "donor3_icon", "abcenchance/tga/donor_3", "textureid");
+	CPanelAnimationVarAliasType(int, m_iDonor4IconTexture, "donor4_icon", "abcenchance/tga/donor_4", "textureid");
+	CPanelAnimationVarAliasType(int, m_iDonor5IconTexture, "donor5_icon", "abcenchance/tga/donor_5", "textureid");
+	CPanelAnimationVarAliasType(int, m_iDonor6IconTexture, "donor6_icon", "abcenchance/tga/donor_6", "textureid");
+
+	CPanelAnimationVarAliasType(int, m_iAdminIconTexture, "admin_icon", "abcenchance/tga/admin_icon32", "textureid");
+	CPanelAnimationVarAliasType(int, m_iServerIconTexture, "server_icon", "abcenchance/tga/serverowner_icon32", "textureid");
+
+
 	CPanelAnimationVarAliasType(int, m_iMinHeight, "min_height", "200", "proportional_int");
 	CPanelAnimationVarAliasType(int, m_iVerticalMargin, "vertical_margin", "30", "proportional_int");
 	CPanelAnimationVarAliasType(int, m_iBottomPadding, "bottom_padding", "4", "proportional_int");
@@ -186,7 +197,8 @@ private:
 	 * Resizes the panel.
 	 */
 	void UpdateAllClients();
-
+	void UpdatePlayerAdmin(CPlayerInfo* pi);
+	void UpdatePlayerDonor(CPlayerInfo* pi);
 	/**
 	 * Updates client's row in the scoreboard.
 	 */
@@ -231,6 +243,8 @@ private:
 	 * Opens context menu for specified item.
 	 */
 	void OpenPlayerMenu(int itemID);
+
+	MESSAGE_FUNC_INT(OnItemContextMenu, "ItemContextMenu", itemID);
 
 	/**
 	 * Handles player menu action.
