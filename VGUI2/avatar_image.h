@@ -134,6 +134,8 @@ public:
 	// [tj] simple setter for drawing friend icon
 	void SetDrawFriend(bool drawFriend) { m_bDrawFriend = drawFriend; }
 
+	bool GetDrawFriend() { return m_bDrawFriend; }
+
 	// [pmf] specify the default (fallback) image
 	void SetDefaultImage(vgui::IImage *pImage) { m_pDefaultImage = pImage; }
 
@@ -157,13 +159,13 @@ private:
 
 	Color m_Color;
 	int m_iTextureID;
-	int m_nX, m_nY;
 	int m_wide, m_tall;
 	int m_avatarWide, m_avatarTall;
 	bool m_bValid;
 	bool m_bFriend;
 	bool m_bLoadPending;
 	float m_fNextLoadTime; // used to throttle load attempts
+	int m_nX, m_nY;
 	int m_offX = 0, m_offY = 0;
 
 	EAvatarSize m_AvatarSize;

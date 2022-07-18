@@ -59,9 +59,9 @@ typedef struct{
 	void		(*Cvar_DirectSet)			(cvar_t* var, char* value);
 	void		(*SetPunchAngle)			(int y, float value);
 	bool		(*NET_StringToAdr)			(char* param_1, netadr_s* param_2);
+	void*		(*GetClientVoiceMgr)();
 
 	void		(*pfnPlaybackEvent)			(int flags, const struct edict_s* pInvoker, unsigned short eventindex, float delay, float* origin, float* angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2);
-
 	//VGUI2
 	char* (*V_strncpy)(char* a1, const char* a2, size_t a3);
 	PVOID(*VGUIClient001_CreateInterface)(HINTERFACEMODULE hModule);

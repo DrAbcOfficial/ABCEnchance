@@ -20,14 +20,15 @@ typedef struct player_info_s player_info_t;
 
 struct extra_player_info_t
 {
-	short frags;
-	short deaths;
-	short armor;
-	short health;
+	int frags;
+	int deaths;
+	int armor;
+	int health;
 	bool dead;
 	short teamnumber;
 	char teamname[SC_MAX_TEAM_NAME];
-	short doner;
+	short donor;
+	short admin;
 };
 
 //-----------------------------------------------------
@@ -45,6 +46,7 @@ public:
 	void InitPlayerInfos();
 	int GetIndex();
 	bool IsConnected();
+	bool IsValid();
 
 	// Engine info
 	const char *GetName();
@@ -58,6 +60,8 @@ public:
 
 	// Extra info (from HUD messages)
 	int GetFrags();
+	int GetDonor();
+	int GetAdmin();
 	int GetDeaths();
 	int GetHealth();
 	int GetArmor();
@@ -75,7 +79,7 @@ public:
 	/**
 	 * Returns SteamID string. Requires SVC hook.
 	 */
-	CSteamID GetSteamID();
+	CSteamID* GetSteamID();
 	const char* GetSteamIDString();
 
 	void UpdatePing();

@@ -539,6 +539,12 @@
     <ClCompile Include="svc_hook.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="voice_banmgr.cpp">
+      <Filter>Public\Source\Var</Filter>
+    </ClCompile>
+    <ClCompile Include="voice_status.cpp">
+      <Filter>Public\Source\Var</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -1265,6 +1271,18 @@
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="player_infosc.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="voice_status.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="voice_banmgr.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="voice_common.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="bitvec.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
   </ItemGroup>

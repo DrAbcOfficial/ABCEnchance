@@ -315,6 +315,8 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\WizardSubPanel.cpp" />
     <ClCompile Include="viewmodellag.cpp" />
     <ClCompile Include="Viewport.cpp" />
+    <ClCompile Include="voice_banmgr.cpp" />
+    <ClCompile Include="voice_status.cpp" />
     <ClCompile Include="vote.cpp" />
     <ClCompile Include="weaponbank.cpp" />
     <ClCompile Include="wmenu_annular.cpp" />
@@ -327,6 +329,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="baseammo.h" />
     <ClInclude Include="basehealth.h" />
     <ClInclude Include="basemenu.h" />
+    <ClInclude Include="bitvec.h" />
     <ClInclude Include="cctv.h" />
     <ClInclude Include="CCustomHud.h" />
     <ClInclude Include="client_steam_context.h" />
@@ -558,6 +561,9 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_internal.h" />
     <ClInclude Include="viewmodellag.h" />
     <ClInclude Include="Viewport.h" />
+    <ClInclude Include="voice_banmgr.h" />
+    <ClInclude Include="voice_common.h" />
+    <ClInclude Include="voice_status.h" />
     <ClInclude Include="vote.h" />
     <ClInclude Include="weapon.h" />
     <ClInclude Include="weaponbank.h" />

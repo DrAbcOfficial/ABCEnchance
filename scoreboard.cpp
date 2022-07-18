@@ -23,6 +23,10 @@
 #include "scoreboard.h"
 #include "avatar_image.h"
 
+//VoiceShit
+#include "hud.h"
+#include "voice_status.h"
+
 #include "Viewport.h"
 
 #include "plugins.h"
@@ -30,17 +34,17 @@
 
 #define STEAM_PROFILE_URL "http://steamcommunity.com/profiles/"
 
-#define NAME_LOCALIZE_TOKEN  "Scores_PlayerName"
-#define STEAMID_LOCALIZE_TOKEN "Scores_SteamID"
-#define HEALTH_LOCALIZE_TOKEN "Scores_PlayerHealth"
-#define HEALTHDEAD_LOCALIZE_TOKEN "Scores_PlayerHealthDead"
-#define ARMOR_LOCALIZE_TOKEN "Scores_PlayerArmor"
-#define SCORE_LOCALIZE_TOKEN "Scores_PlayerScore"
-#define DEATH_LOCALIZE_TOKEN "Scores_PlayerDeath"
-#define PING_LOCALIZE_TOKEN "Scores_Ping"
-#define PINGLOSS_LOCALIZE_TOKEN "Scores_lPingLoss"
-#define SPECTATOR_LOCALIZE_TOKEN "Scores_PlayerSpec"
-#define NA_LOCALIZE_TOKEN "Scores_NA"
+#define NAME_LOCALIZE_TOKEN  "#Scores_PlayerName"
+#define STEAMID_LOCALIZE_TOKEN "#Scores_SteamID"
+#define HEALTH_LOCALIZE_TOKEN "#Scores_PlayerHealth"
+#define HEALTHDEAD_LOCALIZE_TOKEN "#Scores_PlayerHealthDead"
+#define ARMOR_LOCALIZE_TOKEN "#Scores_PlayerArmor"
+#define SCORE_LOCALIZE_TOKEN "#Scores_PlayerScore"
+#define DEATH_LOCALIZE_TOKEN "#Scores_PlayerDeath"
+#define PING_LOCALIZE_TOKEN "#Scores_Ping"
+#define PINGLOSS_LOCALIZE_TOKEN "#Scores_lPingLoss"
+#define SPECTATOR_LOCALIZE_TOKEN "#Scores_PlayerSpec"
+#define NA_LOCALIZE_TOKEN "#Scores_NA"
 
 #define FRAG_KEY "score_frags"
 #define DEATH_KEY "score_dead"
@@ -50,6 +54,9 @@
 #define STEAMID_KEY "score_steamid"
 #define PING_KEY "score_ping"
 #define AVATAR_KEY "score_avatar"
+#define DONOR_KEY "score_donor"
+
+#define DONOR_IMAGELIST_BASE 40
 
 namespace
 {
@@ -57,6 +64,9 @@ namespace
 	class CPlayerImage : public vgui::IImage
 	{
 	public:
+		void SetAdminTexture(int tex) {
+			iAdminTexture = tex;
+		}
 		void SetAvatar(CAvatarImage* pAvatar)
 		{
 			m_pAvatar = pAvatar;
@@ -82,9 +92,14 @@ namespace
 			if (m_pAvatar)
 				m_pAvatar->Paint();
 
-			if (m_bIsMuted && s_iMutedIconTexture != -1)
-			{
+			if (m_bIsMuted && s_iMutedIconTexture != -1){
 				vgui::surface()->DrawSetTexture(s_iMutedIconTexture);
+				vgui::surface()->DrawSetColor(m_DrawColor);
+				vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
+					m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
+			}
+			if (iAdminTexture >= 0) {
+				vgui::surface()->DrawSetTexture(iAdminTexture);
 				vgui::surface()->DrawSetColor(m_DrawColor);
 				vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
 					m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
@@ -141,8 +156,56 @@ namespace
 		Color m_DrawColor = Color(255, 255, 255, 255);
 		CAvatarImage* m_pAvatar = nullptr;
 		bool m_bIsMuted = false;
+		int iAdminTexture;
 	};
+	class CDonorImage : public vgui::IImage {
+	public:
+		void SetTexture(int level) {
+			m_iLevelTexture = level;
+		}
+		virtual void Paint() override{
+			if (m_iLevelTexture < 0)
+				return;
+			vgui::surface()->DrawSetTexture(m_iLevelTexture);
+			vgui::surface()->DrawSetColor(m_DrawColor);
+			vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
+					m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
+		}
+		// Get the size the image will actually draw in (usually defaults to the content size)
+		virtual void GetSize(int& wide, int& tall) override{
+			GetContentSize(wide, tall);
+		}
 
+		// Sets the size of the image
+		virtual void SetSize(int wide, int tall) override{
+			m_iWide = wide;
+			m_iTall = tall;
+		}
+		// Set the position of the image
+		virtual void SetPos(int x, int y) override{
+			m_iX = x;
+			m_iY = y;
+		}
+		virtual void SetOffset(int x, int y){
+			m_iOffX = x;
+			m_iOffY = y;
+		}
+		// Gets the size of the content
+		virtual void GetContentSize(int& wide, int& tall) override{
+			wide = m_iWide;
+			tall = m_iTall;
+		}
+		// Set the draw color
+		virtual void SetColor(Color col) override{
+			m_DrawColor = col;
+		}
+	private:
+		int m_iLevelTexture = 0;
+		int m_iX = 0, m_iY = 0;
+		int m_iOffX = 0, m_iOffY = 0;
+		int m_iWide = 0, m_iTall = 0;
+		Color m_DrawColor = Color(255, 255, 255, 255);
+	};
 }
 
 #define VIEWPORT_SCOREPANEL_NAME "ScorePanel"
@@ -192,6 +255,10 @@ CScorePanel::CScorePanel()
 		CPlayerImage* pImg = new CPlayerImage();
 		pImg->SetSize(32, 32);
 		m_pImageList->SetImageAtIndex(i, pImg);
+		CDonorImage* pDonorImg = new CDonorImage();
+		pDonorImg->SetSize(24, 24);
+		m_pImageList->SetImageAtIndex(i + DONOR_IMAGELIST_BASE, pDonorImg);
+
 	}
 
 	m_iMutedIconTexture = -1;
@@ -212,7 +279,6 @@ void CScorePanel::UpdateServerName()
 void CScorePanel::EnableMousePointer(bool bEnable){
 	if (bEnable && !IsVisible())
 		return;
-
 	SetMouseInputEnabled(bEnable);
 	SetKeyBoardInputEnabled(false);
 
@@ -479,6 +545,11 @@ void CScorePanel::CreateSection(int nTeamID)
 		vgui::SectionedListPanel::COLUMN_IMAGE | vgui::SectionedListPanel::COLUMN_CENTER,
 		m_iColumnWidthAvatar);
 
+	//Donor
+	m_pPlayerList->AddColumnToSection(nTeamID, DONOR_KEY, "",
+		vgui::SectionedListPanel::COLUMN_IMAGE | vgui::SectionedListPanel::COLUMN_CENTER,
+		m_iColumnWidthDonor);
+	
 	// Name
 	const char* nameCol;
 
@@ -588,10 +659,14 @@ void CScorePanel::UpdateClientInfo(int client)
 			playerKv->SetBool("thisplayer", true);
 		// Avatar
 		UpdateClientIcon(pi);
+		UpdatePlayerAdmin(pi);
 		playerKv->SetInt(AVATAR_KEY, client);
+		//Donor
+		UpdatePlayerDonor(pi);
+		playerKv->SetInt(DONOR_KEY, client + DONOR_IMAGELIST_BASE);
 		// Name
-		if(hud_scoreboard_showrealname->value > 0)
-			snprintf(buf, sizeof(buf), "%s (%s)", pi->GetName(), pi->GetRealName());
+		if (hud_scoreboard_showrealname->value > 0 && pi->GetRealName()[0] != '\0')
+				snprintf(buf, sizeof(buf), "%s (%s)", pi->GetName(), pi->GetRealName());
 		else
 			snprintf(buf, sizeof(buf), "%s", pi->GetName());
 		playerKv->SetString(NAME_KEY, buf);
@@ -654,8 +729,32 @@ void CScorePanel::UpdateClientInfo(int client)
 	playerKv->deleteThis();
 }
 
-void CScorePanel::UpdateClientIcon(CPlayerInfo* pi)
-{
+void CScorePanel::UpdatePlayerDonor(CPlayerInfo* pi) {
+	CDonorImage* pImg = static_cast<CDonorImage*>(m_pImageList->GetImage(pi->GetIndex() + DONOR_IMAGELIST_BASE));
+	int iTex = -1;
+	switch (pi->GetDonor()) {
+	case 1:iTex = m_iDonor1IconTexture; break;
+	case 2:iTex = m_iDonor2IconTexture; break;
+	case 3:iTex = m_iDonor3IconTexture; break;
+	case 4:iTex = m_iDonor4IconTexture; break;
+	case 5:iTex = m_iDonor5IconTexture; break;
+	case 6:iTex = m_iDonor6IconTexture; break;
+	}
+	pImg->SetTexture(iTex);
+}
+
+void CScorePanel::UpdatePlayerAdmin(CPlayerInfo* pi) {
+	CPlayerImage* pImg = static_cast<CPlayerImage*>(m_pImageList->GetImage(pi->GetIndex()));
+	int tex = -1;
+	switch (pi->GetAdmin()) {
+	case 1:tex = m_iAdminIconTexture; break;
+	case 2:tex = m_iServerIconTexture; break;
+	}
+	//Update admin 
+	pImg->SetAdminTexture(tex);
+}
+
+void CScorePanel::UpdateClientIcon(CPlayerInfo* pi){
 	CPlayerImage* pImg = static_cast<CPlayerImage*>(m_pImageList->GetImage(pi->GetIndex()));
 
 	// Update size
@@ -663,7 +762,7 @@ void CScorePanel::UpdateClientIcon(CPlayerInfo* pi)
 	pImg->SetSize(size, size);
 
 	// Update muted state
-	//pImg->SetMuted(GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()));
+	pImg->SetMuted(GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()));
 
 	// Update avatar
 	CSteamID steamID = pi->GetSteamID();
@@ -686,16 +785,12 @@ void CScorePanel::UpdateClientIcon(CPlayerInfo* pi)
 		}
 	}
 	else
-	{
 		pImg->SetAvatar(nullptr);
-	}
 }
 
-void CScorePanel::UpdateScoresAndCounts()
-{
+void CScorePanel::UpdateScoresAndCounts(){
 	// Reset team data
-	for (int i = 1; i <= SC_MAX_TEAMS; i++)
-	{
+	for (int i = 1; i <= SC_MAX_TEAMS; i++){
 		TeamData& td = m_TeamData[i];
 		td.iPlayerCount = 0;
 		td.iFrags = 0;
@@ -705,11 +800,10 @@ void CScorePanel::UpdateScoresAndCounts()
 	// Refresh scores
 	int iPlayerCount = 0;
 
-	for (int i = 1; i <= SC_MAX_PLAYERS; i++)
-	{
+	for (int i = 1; i <= SC_MAX_PLAYERS; i++){
 		CPlayerInfo* pi = GetPlayerInfo(i);
 
-		if (!pi->IsConnected())
+		if (!pi->IsValid())
 			continue;
 
 		TeamData& td = m_TeamData[pi->GetTeamNumber()];
@@ -729,12 +823,7 @@ void CScorePanel::UpdateScoresAndCounts()
 		// Team name and player count
 		wchar_t wbuf2[128];
 		wchar_t* localizedName = nullptr;
-		if (localizedName = vgui::localize()->Find(pszTeamName))
-		{
-			// localizedName set to localized name
-		}
-		else
-		{
+		if (!(localizedName = vgui::localize()->Find(pszTeamName))){
 			// set localizedName to pszTeamName converted to WString
 			vgui::localize()->ConvertANSIToUnicode(pszTeamName, wbuf2, sizeof(wbuf2));
 			localizedName = wbuf2;
@@ -758,8 +847,7 @@ void CScorePanel::UpdateScoresAndCounts()
 	};
 
 	// Update team score and player count
-	for (int i = 1; i <= SC_MAX_TEAMS; i++)
-	{
+	for (int i = 1; i <= SC_MAX_TEAMS; i++){
 		TeamData& td = m_TeamData[i];
 
 		if (td.iPlayerCount == 0)
@@ -767,8 +855,7 @@ void CScorePanel::UpdateScoresAndCounts()
 
 		CTeamInfo* ti = GetTeamInfo(i);
 
-		if (ti->IsScoreOverriden())
-		{
+		if (ti->IsScoreOverriden()){
 			td.iFrags = ti->GetFrags();
 			td.iDeaths = ti->GetDeaths();
 		}
@@ -833,8 +920,7 @@ void CScorePanel::CreatePlayerMenu()
 	m_pPlayerMenu->AddMenuItem("CopySteamID64", "#Scores_MenuCopySteamID64", "MenuCopySteamID64", this);
 }
 
-void CScorePanel::OpenPlayerMenu(int itemID)
-{
+void CScorePanel::OpenPlayerMenu(int itemID){
 	// Set menu info
 	m_MenuData.nItemID = itemID;
 	m_MenuData.nClient = 0;
@@ -847,39 +933,34 @@ void CScorePanel::OpenPlayerMenu(int itemID)
 
 	// SteamID64
 	m_MenuData.nSteamID64 = GetPlayerInfo(m_MenuData.nClient)->GetSteamID64();
-	if (m_MenuData.nSteamID64 != 0)
-	{
+	if (m_MenuData.nSteamID64 != 0){
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nProfilePageItemID, true);
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nProfileUrlItemID, true);
 	}
-	else
-	{
+	else{
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nProfilePageItemID, false);
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nProfileUrlItemID, false);
 	}
 
 	// Player muting
 	bool thisPlayer = kv->GetBool("thisplayer", 0);
-	if (thisPlayer)
-	{
+	if (thisPlayer){
 		// Can't mute yourself
 		m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuMute", new KeyValues("Command", "command", "MenuMute"));
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nMuteItemID, false);
 	}
-	else
-	{
+	else{
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nMuteItemID, true);
-		//if (GetClientVoiceMgr()->IsPlayerBlocked(m_MenuData.nClient))
-		//{
-		//	m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuUnmute", new KeyValues("Command", "command", "MenuMute"));
-		//}
-		//else
-		//{
-		//	m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuMute", new KeyValues("Command", "command", "MenuMute"));
-		//}
+		if (GetClientVoiceMgr()->IsPlayerBlocked(m_MenuData.nClient))
+			m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuUnmute", new KeyValues("Command", "command", "MenuMute"));
+		else
+			m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuMute", new KeyValues("Command", "command", "MenuMute"));
 	}
-
 	m_pPlayerMenu->PositionRelativeToPanel(this, vgui::Menu::CURSOR, 0, true);
+}
+
+void CScorePanel::OnItemContextMenu(int itemID) {
+	OpenPlayerMenu(itemID);
 }
 
 void CScorePanel::OnPlayerMenuCommand(MenuAction command)
@@ -895,13 +976,10 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	{
 		if (pi->IsThisPlayer())
 			return;
-		if (GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()))
-			// Unmute
+		if(GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()))
 			GetClientVoiceMgr()->SetPlayerBlockedState(pi->GetIndex(), false);
 		else
-			// Mute
 			GetClientVoiceMgr()->SetPlayerBlockedState(pi->GetIndex(), true);
-
 		// Muting one player may mute others (if they have identical Unique IDs)
 		UpdateAllClients();
 
@@ -1089,34 +1167,4 @@ bool CScorePanel::StaticPlayerSortFuncByFrags(vgui::SectionedListPanel* list, in
 		return true;
 	// the same, so compare itemID's (as a sentinel value to get deterministic sorts)
 	return itemID1 < itemID2;
-}
-
-void CScorePanel::OnMousePressed(vgui::MouseCode code) {
-	BaseClass::OnMousePressed(code);
-	m_pPlayerList->ItemOnMousePressed(m_MenuData.nItemID, code);
-	if (code == vgui::MOUSE_RIGHT && !IsMouseInputEnabled())
-		EnableMousePointer(true);
-	else if (IsMouseInputEnabled()) {
-		int itemIndex = m_pPlayerList->GetSelectedItem();
-		if (itemIndex >= 0) {
-			if (!m_pPlayerMenu->IsVisible()) {
-				int x, y;
-				gEngfuncs.GetMousePosition(&x, &y);
-				m_pPlayerMenu->SetPos(x, y);
-				m_pPlayerMenu->SetVisible(true);
-				m_pPlayerMenu->MakePopup();
-				OpenPlayerMenu(itemIndex);
-			}
-			else
-				m_pPlayerMenu->OnMousePressed(code);
-		}
-	}
-}
-
-void CScorePanel::OnMouseDoublePressed(vgui::MouseCode code) {
-	BaseClass::OnMouseDoublePressed(code);
-	if (IsMouseInputEnabled()) {
-		m_pPlayerMenu->OnMouseDoublePressed(code);
-		m_pPlayerList->ItemOnMouseDoublePressed(m_pPlayerList->GetSelectedItem(), code);
-	}
 }
