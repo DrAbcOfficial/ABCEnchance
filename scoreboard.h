@@ -145,13 +145,13 @@ private:
 	// Column widths
 	CPanelAnimationVarAliasType(int, m_iColumnWidthAvatar, "column_avatar", "32", "proportional_int");
 	CPanelAnimationVarAliasType(int, m_iColumnWidthDonor, "column_donor", "24", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthName, "column_name", "160", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthSteamID, "column_steamid", "120", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthHealth, "column_health", "40", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthArmor, "column_armor", "40", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthFrags, "column_frags", "40", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthDeaths, "column_deaths", "40", "proportional_int");
-	CPanelAnimationVarAliasType(int, m_iColumnWidthPing, "column_ping", "40", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthName, "column_name", "170", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthSteamID, "column_steamid", "88", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthHealth, "column_health", "50", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthArmor, "column_armor", "50", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthFrags, "column_frags", "50", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthDeaths, "column_deaths", "50", "proportional_int");
+	CPanelAnimationVarAliasType(int, m_iColumnWidthPing, "column_ping", "80", "proportional_int");
 
 	CPanelAnimationVarAliasType(int, m_iMutedIconTexture, "muted_icon", "abcenchance/tga/muted_icon32", "textureid");
 

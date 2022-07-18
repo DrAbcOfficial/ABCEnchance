@@ -18,17 +18,27 @@
 		
 		// Column widths
 		// Sum of these must equal width of PlayerList
-		"column_avatar"		"26"
-		"column_name"		"170"
-		"column_steamid"	"88"
-		"column_eff"		"60"
-		"column_frags"		"60"
-		"column_deaths"		"60"
+		"column_avatar"		"24"
+		"column_donor"		"18"
+		"column_name"		"164"
+		"column_steamid"	"92"
+		"column_health"		"47"
+		"column_armor"		"47"
+		"column_frags"		"47"
+		"column_deaths"		"47"
 		"column_ping"		"80"
 		
 		// Icon of muted players (without .tga)
 		"muted_icon"		"abcenchance/tga/muted_icon32"
-		
+		"donor1_icon"		"abcenchance/tga/donor_1"
+		"donor2_icon"		"abcenchance/tga/donor_2"
+		"donor3_icon"		"abcenchance/tga/donor_3"
+		"donor4_icon"		"abcenchance/tga/donor_4"
+		"donor5_icon"		"abcenchance/tga/donor_5"
+		"donor6_icon"		"abcenchance/tga/donor_6"
+		"admin_icon"		"abcenchance/tga/admin_icon32"
+		"server_icon"		"abcenchance/tga/serverowner_icon32"
+
 		// Minimum height of the score panel
 		"min_height"		"300"
 		
