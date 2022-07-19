@@ -32,6 +32,7 @@ public:
 	void VidInit(void);
 	void Reset();
 	void Think(void);
+	char* GetNextMap();
 	void Paint(void);
 	void SetParent(vgui::VPANEL vPanel);
 	void AddNewPanel(IViewportPanel* panel);
@@ -42,14 +43,18 @@ public:
 	bool IsScoreBoardVisible();
 	void ShowScoreBoard();
 	void HideScoreBoard();
+	long GetTimeEnd();
 	char* GetServerName();
 	CScorePanel* GetScoreBoard();
 	Color GetPlayerColor(int index);
+
+	long m_iTimeEnd = 0;
 private:
 	std::vector<IViewportPanel*> m_Panels;
 	char m_szLevelName[256];
 	CScorePanel* m_pScorePanel = nullptr;
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
+	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 };
 
 extern CViewport *g_pViewPort;

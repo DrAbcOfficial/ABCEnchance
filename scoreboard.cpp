@@ -45,6 +45,7 @@
 #define PINGLOSS_LOCALIZE_TOKEN "#Scores_lPingLoss"
 #define SPECTATOR_LOCALIZE_TOKEN "#Scores_PlayerSpec"
 #define NA_LOCALIZE_TOKEN "#Scores_NA"
+#define NEXTMAP_LOCALIZE_TOKEN "#Scores_NextMap"
 
 #define FRAG_KEY "score_frags"
 #define DEATH_KEY "score_dead"
@@ -230,7 +231,6 @@ CScorePanel::CScorePanel()
 	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "ScoreBoardScheme.res", "ScoreBoardScheme");
 	SetScheme("ScoreBoardScheme");
 
-	hud_scoreboard_mousebtn = CREATE_CVAR("hud_scoreboard_mousebtn", "1", FCVAR_VALUE, nullptr);
 	hud_scoreboard_showavatars = CREATE_CVAR("hud_scoreboard_showavatars", "1", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_showloss = CREATE_CVAR("hud_scoreboard_showloss", "1", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_showsteamid = CREATE_CVAR("hud_scoreboard_showsteamid", "1", FCVAR_ARCHIVE, nullptr);
@@ -244,6 +244,8 @@ CScorePanel::CScorePanel()
 	m_pServerNameLabel = new vgui::Label(this, "ServerName", "Sven Co-op Server");
 	m_pMapNameLabel = new vgui::Label(this, "MapName", "");
 	m_pPlayerCountLabel = new vgui::Label(this, "PlayerCount", "");
+	m_pNextMapLable = new vgui::Label(this, "NextMap", "");
+	m_pTimeEndLable = new vgui::Label(this, "TimeEnd", "");
 
 	// Player list
 	m_pPlayerList = new vgui::SectionedListPanel(this, "PlayerList");
@@ -276,11 +278,38 @@ CScorePanel::CScorePanel()
 	SetVisible(false);
 }
 
-void CScorePanel::UpdateServerName()
-{
+void CScorePanel::UpdateTimeEndInternal() {
+	if (m_iTimeEndCount <= 0)
+		return;
+	float flTime = gEngfuncs.GetClientTime();
+	if (flTime >= m_flLastUpdateTimeEndTime) {
+		long iMin = m_iTimeEndCount / 60;
+		long iSec = m_iTimeEndCount % 60;
+		char buf[64];
+		snprintf(buf, sizeof(buf), "%.1d:%.2d", iMin, iSec);
+		wchar_t wbuf[64];
+		vgui::localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
+		m_pTimeEndLable->SetText(wbuf);
+		m_iTimeEndCount--;
+		m_flLastUpdateTimeEndTime = flTime + 1.0f;
+	}
+}
+
+void CScorePanel::UpdateTimeEnd() {
+	m_iTimeEndCount = g_pViewPort->GetTimeEnd();
+	m_flLastUpdateTimeEndTime = gEngfuncs.GetClientTime();
+}
+void CScorePanel::UpdateServerName(){
 	wchar_t wbuf[MAX_SERVERNAME_LENGTH];
 	vgui::localize()->ConvertANSIToUnicode(g_pViewPort->GetServerName(), wbuf, sizeof(wbuf));
 	m_pServerNameLabel->SetText(wbuf);
+}
+void CScorePanel::UpdateNextMap() {
+	std::wstring buf = vgui::localize()->Find(NEXTMAP_LOCALIZE_TOKEN);;
+	wchar_t wbuf[MAX_SERVERNAME_LENGTH];
+	vgui::localize()->ConvertANSIToUnicode(g_pViewPort->GetNextMap(), wbuf, sizeof(wbuf));
+	buf += wbuf;
+	m_pNextMapLable->SetText(buf.c_str());
 }
 
 void CScorePanel::EnableMousePointer(bool bEnable){
@@ -336,6 +365,7 @@ void CScorePanel::OnThink(){
 		UpdateClientInfo(m_iKillerIndex);
 	if (m_flLastUpdateTime + UPDATE_PERIOD <= gEngfuncs.GetAbsoluteTime())
 		UpdateAllClients();
+	UpdateTimeEndInternal();
 }
 
 void CScorePanel::OnCommand(const char* command)
@@ -425,10 +455,10 @@ void CScorePanel::SetParent(vgui::VPANEL parent)
 	BaseClass::SetParent(parent);
 }
 
-void CScorePanel::FullUpdate()
-{
+void CScorePanel::FullUpdate(){
 	UpdateServerName();
 	UpdateMapName();
+	UpdateNextMap();
 	RefreshItems();
 }
 
@@ -529,8 +559,7 @@ void CScorePanel::RefreshItems()
 	UpdateAllClients();
 }
 
-void CScorePanel::CreateSection(int nTeamID)
-{
+void CScorePanel::CreateSection(int nTeamID){
 	if (m_IsTeamSectionCreated[nTeamID])
 		return;
 
@@ -540,10 +569,8 @@ void CScorePanel::CreateSection(int nTeamID)
 	TeamData& td = m_TeamData[nTeamID];
 
 	m_pPlayerList->AddSection(nTeamID, "", StaticPlayerSortFuncByFrags);
-	//m_pPlayerList->SetSectionFgColor(nTeamID, g_pViewPort->GetTeamColor(nTeamID));
 
-	if (nTeamID == HEADER_SECTION_ID)
-	{
+	if (nTeamID == HEADER_SECTION_ID){
 		m_pPlayerList->SetSectionAlwaysVisible(nTeamID);
 		m_pPlayerList->SetSectionDividerColor(nTeamID, Color(0, 0, 0, 0));
 	}
@@ -908,8 +935,7 @@ int CScorePanel::GetClientIconSize()
 	return mathlib::clamp(m_pPlayerList->GetLineSpacing() - 2, 0, 32);
 }
 
-void CScorePanel::CreatePlayerMenu()
-{
+void CScorePanel::CreatePlayerMenu(){
 	m_pPlayerMenu = new vgui::Menu(this, "PlayerMenu");
 	m_pPlayerMenu->SetVisible(false);
 	m_pPlayerMenu->AddActionSignalTarget(this);

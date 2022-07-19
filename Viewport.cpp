@@ -117,27 +117,27 @@ bool CViewport::KeyInput(int down, int keynum, const char* pszCurrentBinding){
 	}
 	return true;
 }
-
 bool CViewport::IsScoreBoardVisible()
 {
 	return m_pScorePanel->IsVisible();
 }
-
 void CViewport::ShowScoreBoard()
 {
 	m_pScorePanel->ShowPanel(true);
 }
-
 void CViewport::HideScoreBoard()
 {
 	m_pScorePanel->ShowPanel(false);
 }
-
-char* CViewport::GetServerName()
-{
+long CViewport::GetTimeEnd() {
+	return m_iTimeEnd;
+}
+char* CViewport::GetServerName(){
 	return m_szServerName;
 }
-
+char* CViewport::GetNextMap() {
+	return m_szNextMapName;
+}
 void CViewport::Paint(void){
 	BaseClass::Paint();
 }

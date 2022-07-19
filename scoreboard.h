@@ -29,7 +29,9 @@ public:
 	/**
 	 * Updates server name label. Called on ServerName message.
 	 */
+	void UpdateTimeEnd();
 	void UpdateServerName();
+	void UpdateNextMap();
 
 	/**
 	 * Shows or hides mouse pointer.
@@ -59,7 +61,6 @@ public:
 	virtual bool IsVisible() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
-	cvar_t* hud_scoreboard_mousebtn;
 	cvar_t* hud_scoreboard_showavatars;
 	cvar_t* hud_scoreboard_showloss;
 	cvar_t* hud_scoreboard_showsteamid;
@@ -120,6 +121,8 @@ private:
 	};
 
 	vgui::SectionedListPanel* m_pPlayerList = nullptr;
+	vgui::Label* m_pNextMapLable = nullptr;
+	vgui::Label* m_pTimeEndLable = nullptr;
 	vgui::Label* m_pServerNameLabel = nullptr;
 	vgui::Label* m_pMapNameLabel = nullptr;
 	vgui::Label* m_pPlayerCountLabel = nullptr;
@@ -136,6 +139,8 @@ private:
 	int m_iKillerIndex = 0;
 	float m_flKillerHighlightStart = 0;
 	float m_flLastUpdateTime = 0;
+	float m_flLastUpdateTimeEndTime = 0;
+	long m_iTimeEndCount = 0;
 
 	Color m_ThisPlayerBgColor = Color(0, 0, 0, 0);
 	Color m_KillerBgColor = Color(0, 0, 0, 0);
@@ -171,6 +176,7 @@ private:
 	CPanelAnimationVarAliasType(int, m_iVerticalMargin, "vertical_margin", "30", "proportional_int");
 	CPanelAnimationVarAliasType(int, m_iBottomPadding, "bottom_padding", "4", "proportional_int");
 
+	void UpdateTimeEndInternal();
 	/**
 	 * Updates all labels, recreates all sections, recalculates all data.
 	 * Called when panel becomes visible.

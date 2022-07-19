@@ -56,6 +56,8 @@ cl_hookedHud gHookHud;
 pfnUserMsgHook m_pfnScoreInfo;
 pfnUserMsgHook m_pfnSpectator;
 pfnUserMsgHook m_pfnServerName;
+pfnUserMsgHook m_pfnNextMap;
+pfnUserMsgHook m_pfnTimeEnd;
 pfnSVCMsgHook m_pfnSVC_PING;
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
@@ -69,8 +71,8 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 		info->health = READ_FLOAT();
 		info->armor = READ_FLOAT();
 		info->team = READ_BYTE();
-		info->donors = READ_CHAR();
-		info->admin = READ_CHAR();
+		info->donors = READ_SHORT();
+		info->admin = READ_SHORT();
 	}
 	GetPlayerInfo(clientIndex)->Update();
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
@@ -88,9 +90,23 @@ int __MsgFunc_ServerName(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	char buf[MAX_SERVERNAME_LENGTH];
 	strncpy_s(buf, READ_STRING(), MAX_SERVERNAME_LENGTH);
-	buf[MAX_SERVERNAME_LENGTH - 1] = 0;
 	snprintf(g_pViewPort->GetServerName(), MAX_SERVERNAME_LENGTH, "%s", buf);
 	g_pViewPort->GetScoreBoard()->UpdateServerName();
+	return m_pfnServerName(pszName, iSize, pbuf);
+}
+int __MsgFunc_NextMap(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	char buf[MAX_SERVERNAME_LENGTH];
+	strncpy_s(buf, READ_STRING(), MAX_SERVERNAME_LENGTH);
+	snprintf(g_pViewPort->GetNextMap(), MAX_SERVERNAME_LENGTH, "%s", buf);
+	g_pViewPort->GetScoreBoard()->UpdateNextMap();
+	return m_pfnNextMap(pszName, iSize, pbuf);
+}
+int __MsgFunc_TimeEnd(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	g_pViewPort->m_iTimeEnd = READ_LONG();
+	g_pViewPort->GetScoreBoard()->UpdateTimeEnd();
+	return m_pfnTimeEnd(pszName, iSize, pbuf);
 }
 
 void(*UserCmd_Slot1)(void);
@@ -202,6 +218,8 @@ void CCustomHud::HUD_Init(void){
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 	m_pfnSpectator = HOOK_MESSAGE(Spectator);
 	m_pfnServerName = HOOK_MESSAGE(ServerName);
+	m_pfnNextMap = HOOK_MESSAGE(NextMap);
+	m_pfnTimeEnd = HOOK_MESSAGE(TimeEnd);
 
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
 	UserCmd_Slot2 = HOOK_COMMAND("slot2", Slot2);
