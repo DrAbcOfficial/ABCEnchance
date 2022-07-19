@@ -260,7 +260,6 @@ bool NET_StringToAdr(char* param_1, netadr_s* param_2) {
 	g_pConnectingServer = param_2;
 	return result;
 }
-
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
@@ -456,12 +455,6 @@ void FillAddress(){
 			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_SETPUNCHANGLE_SIG, sizeof(R_SETPUNCHANGLE_SIG) - 1);
 			Sig_AddrNotFound(SetPunchAngle);
 			gHookFuncs.SetPunchAngle = (decltype(gHookFuncs.SetPunchAngle))GetCallAddress(addr + 8);
-		}
-#define VOICE_GETVOICEMGR_SIG "\x83\x7C\x24\x08\x00\x0F\x95\xC0\x0F\xB6\xC0\x50\xFF\x74\x24\x08\xE8\xDB\x53\xFD\xFF"
-		{
-			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, VOICE_GETVOICEMGR_SIG, sizeof(VOICE_GETVOICEMGR_SIG) - 1);
-			Sig_AddrNotFound(GetClientVoiceMgr);
-			gHookFuncs.GetClientVoiceMgr = (decltype(gHookFuncs.GetClientVoiceMgr))GetCallAddress(addr + 16);
 		}
 #define SC_HUDAMMO_RESET_SIG "\x83\x49\x10\x01\x68\x78\x05\x00\x00\xC7\x41\x14\x00\x00\x00\x00\xC7\x41\x2C\x00\x00\x00\x00\xC7\x41\x18\x00\x00\x00\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xE8\x2A\x2A\x2A\x2A\x68\xC0\x00\x00\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x83\xC4\x18\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xC3"
 		{
