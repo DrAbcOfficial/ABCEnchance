@@ -545,6 +545,9 @@
     <ClCompile Include="voice_status.cpp">
       <Filter>Public\Source\Var</Filter>
     </ClCompile>
+    <ClCompile Include="flashwater.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -1284,6 +1287,9 @@
     </ClInclude>
     <ClInclude Include="bitvec.h">
       <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="flashwater.h">
+      <Filter>Public\Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

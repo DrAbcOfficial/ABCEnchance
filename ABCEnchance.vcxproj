@@ -173,6 +173,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="efxhud.cpp" />
     <ClCompile Include="encode.cpp" />
     <ClCompile Include="extraprecache.cpp" />
+    <ClCompile Include="flashwater.cpp" />
     <ClCompile Include="gl_def.cpp" />
     <ClCompile Include="gl_utility.cpp" />
     <ClCompile Include="gl_draw.cpp" />
@@ -338,6 +339,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="efxhud.h" />
     <ClInclude Include="encode.h" />
     <ClInclude Include="extraprecache.h" />
+    <ClInclude Include="flashwater.h" />
     <ClInclude Include="gl_draw.h" />
     <ClInclude Include="grenadeindicator.h" />
     <ClInclude Include="IEngineSurface.h" />
