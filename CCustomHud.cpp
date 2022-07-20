@@ -15,6 +15,7 @@
 #include "parsemsg.h"
 #include "mymathlib.h"
 #include "exportfuncs.h"
+#include "keydefs.h"
 
 #include "local.h"
 #include "gl_draw.h"
@@ -122,7 +123,6 @@ void(*UserCmd_Slot10)(void);
 void(*UserCmd_SlotClose)(void);
 void(*UserCmd_NextWeapon)(void);
 void(*UserCmd_PrevWeapon)(void);
-void(*UserCmd_Attack1)(void);
 void(*UserCmd_ShowScores)(void);
 void(*UserCmd_HideScores)(void);
 
@@ -188,16 +188,6 @@ void __UserCmd_PrevWeapon(void) {
 	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1);
 	return UserCmd_PrevWeapon();
 }
-void __UserCmd_Attack1(void) {
-	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu) {
-		m_HudWMenuAnnular.Select();
-		return;
-	}
-	m_HudCustomAmmo.m_pNowSelectMenu->Select();
-	if (m_HudEccoBuyMenu.SelectMenu())
-		return;
-	return UserCmd_Attack1();
-}
 void __UserCmd_OpenScoreboard(void) {
 	gCustomHud.m_bInScore = true;
 	g_pViewPort->ShowScoreBoard();
@@ -240,7 +230,6 @@ void CCustomHud::HUD_Init(void){
 	UserCmd_SlotClose = HOOK_COMMAND("cancelselect", Close);
 	UserCmd_NextWeapon = HOOK_COMMAND("invnext", NextWeapon);
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
-	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 	UserCmd_ShowScores = HOOK_COMMAND("+showscores", OpenScoreboard);
 	UserCmd_HideScores = HOOK_COMMAND("-showscores", CloseScoreboard);
 
@@ -373,7 +362,6 @@ void CCustomHud::HUD_BlitRadarFramebuffer()
 void CCustomHud::IN_MouseEvent(int mstate){
 	if (!IsHudEnable())
 		return;
-	/*
 	auto MouseTest = [&](int mstate, int testBit, vgui::MouseCode enumMouse) {
 		//现在有
 		if ((mstate & testBit) != 0) {
@@ -381,11 +369,11 @@ void CCustomHud::IN_MouseEvent(int mstate){
 			if ((m_iMouseState & testBit) == 0) {
 				//Press
 				this->OnMousePressed(enumMouse);
-				g_pViewPort->OnMousePressed(enumMouse);
+				//g_pViewPort->OnMousePressed(enumMouse);
 				//加上Bit
 				m_iMouseState += testBit;
 				if (m_iLastClick == enumMouse) {
-					g_pViewPort->OnMouseDoublePressed(enumMouse);
+					//g_pViewPort->OnMouseDoublePressed(enumMouse);
 					m_iLastClick = vgui::MouseCode::MOUSE_LAST;
 				}
 				else
@@ -396,7 +384,7 @@ void CCustomHud::IN_MouseEvent(int mstate){
 		else if ((m_iMouseState & testBit) != 0) {
 			//触发Release
 			m_iMouseState -= testBit;
-			g_pViewPort->OnMouseReleased(enumMouse);
+			//g_pViewPort->OnMouseReleased(enumMouse);
 		}
 	};
 	//左键检测
@@ -409,14 +397,13 @@ void CCustomHud::IN_MouseEvent(int mstate){
 	MouseTest(mstate, 1 << 3, vgui::MouseCode::MOUSE_4);
 	//5键检测
 	MouseTest(mstate, 1 << 4, vgui::MouseCode::MOUSE_5);
-	*/
 }
 int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
+	int result = 1;
+	result &= m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
 	g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding);
 	if (!IsHudEnable())
 		return 1;
-	int result = 1;
-	result &= m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
 	return result;
 }
 void CCustomHud::IN_Accumulate(void){
