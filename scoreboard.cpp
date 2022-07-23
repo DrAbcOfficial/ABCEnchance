@@ -69,17 +69,14 @@ namespace
 		void SetAdminTexture(int tex) {
 			iAdminTexture = tex;
 		}
-		void SetAvatar(CAvatarImage* pAvatar)
+		void SetAvatar(CSteamID* pSteamID)
 		{
-			m_pAvatar = pAvatar;
-
-			if (m_pAvatar)
-			{
-				m_pAvatar->SetPos(m_iX, m_iY);
-				m_pAvatar->SetOffset(m_iOffX, m_iOffY);
-				m_pAvatar->SetSize(m_iWide, m_iTall);
-				m_pAvatar->SetColor(m_DrawColor);
-			}
+			m_pAvatar->SetAvatarSteamID(*pSteamID);
+			m_pAvatar->SetDrawFriend(false);
+			m_pAvatar->SetPos(m_iX, m_iY);
+			m_pAvatar->SetOffset(m_iOffX, m_iOffY);
+			m_pAvatar->SetSize(m_iWide, m_iTall);
+			m_pAvatar->SetColor(m_DrawColor);
 		}
 
 		void SetMuted(bool state)
@@ -119,14 +116,12 @@ namespace
 		{
 			m_iX = x;
 			m_iY = y;
-			SetAvatar(m_pAvatar);
 		}
 
 		virtual void SetOffset(int x, int y)
 		{
 			m_iOffX = x;
 			m_iOffY = y;
-			SetAvatar(m_pAvatar);
 		}
 
 		// Gets the size of the content
@@ -147,14 +142,12 @@ namespace
 		{
 			m_iWide = wide;
 			m_iTall = tall;
-			SetAvatar(m_pAvatar);
 		}
 
 		// Set the draw color
 		virtual void SetColor(Color col) override
 		{
 			m_DrawColor = col;
-			SetAvatar(m_pAvatar);
 		}
 
 	private:
@@ -162,7 +155,7 @@ namespace
 		int m_iOffX = 0, m_iOffY = 0;
 		int m_iWide = 0, m_iTall = 0;
 		Color m_DrawColor = Color(255, 255, 255, 255);
-		CAvatarImage* m_pAvatar = nullptr;
+		CAvatarImage* m_pAvatar = new CAvatarImage();
 		bool m_bIsMuted = false;
 		int iAdminTexture;
 	};
@@ -791,33 +784,15 @@ void CScorePanel::UpdatePlayerAdmin(CPlayerInfo* pi) {
 
 void CScorePanel::UpdateClientIcon(CPlayerInfo* pi){
 	CPlayerImage* pImg = static_cast<CPlayerImage*>(m_pImageList->GetImage(pi->GetIndex()));
-
 	// Update size
 	int size = GetClientIconSize();
 	pImg->SetSize(size, size);
-
 	// Update muted state
 	pImg->SetMuted(GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()));
-
 	// Update avatar
 	CSteamID* steamID = pi->GetSteamID();
-	if (hud_scoreboard_showavatars->value > 0 && steamID->IsValid()){
-		auto it = m_PlayerAvatars.find(*steamID);
-
-		if (it == m_PlayerAvatars.end())
-		{
-			CAvatarImage* pAvatar = new CAvatarImage();
-			pAvatar->SetDrawFriend(false);
-			pAvatar->SetAvatarSteamID(*steamID);
-
-			pImg->SetAvatar(pAvatar);
-			m_PlayerAvatars.insert({ *steamID, pAvatar });
-		}
-		else
-		{
-			pImg->SetAvatar(it->second);
-		}
-	}
+	if (hud_scoreboard_showavatars->value > 0 && steamID->IsValid())
+		pImg->SetAvatar(steamID);
 	else
 		pImg->SetAvatar(nullptr);
 }

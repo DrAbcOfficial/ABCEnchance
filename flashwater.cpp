@@ -22,3 +22,4 @@ CFlashPanel::CFlashPanel()
 	LoadControlSettings(VGUI2_ROOT_DIR "ScorePanel.res");
 	SetVisible(true);
 }
+

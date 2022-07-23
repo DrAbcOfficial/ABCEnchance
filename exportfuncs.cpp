@@ -194,7 +194,6 @@ void R_NewMap(void){
 	ClearExtraPrecache();
 
 	gCustomHud.HUD_Reset();
-	g_pViewPort->Reset();
 	EfxReset();
 	gHookFuncs.R_NewMap();
 }
@@ -523,6 +522,7 @@ void GL_Init(void){
 		return;
 	}
 	GL_ShaderInit();
+	g_pViewPort->Init();
 	gCustomHud.GL_Init();
 }
 void HUD_Init(void){
@@ -568,6 +568,8 @@ int HUD_VidInit(void){
 			pHudList = pHudList->pNext;
 		}
 	}
+	if (g_pViewPort)
+		g_pViewPort->VidInit();
 	//Fillup Default CVars
 	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
 

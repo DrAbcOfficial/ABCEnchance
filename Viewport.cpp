@@ -66,9 +66,6 @@ void CViewport::AddNewPanel(IViewportPanel* panel)
 
 void CViewport::Think(void)
 {
-	auto levelname = gEngfuncs.pfnGetLevelName();
-	if (!levelname || !levelname[0])
-		return;
 
 }
 
@@ -86,7 +83,8 @@ void CViewport::Reset() {
 
 void CViewport::Init(void)
 {
-
+	GetThisPlayerInfo()->InitPlayerInfos();
+	GetTeamInfo(0)->InitTeamInfos();
 }
 
 void CViewport::ActivateClientUI(void)

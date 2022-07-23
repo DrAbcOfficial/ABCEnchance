@@ -207,9 +207,6 @@ void CCustomHud::GL_Init(void){
 #endif
 }
 void CCustomHud::HUD_Init(void){
-	GetThisPlayerInfo()->InitPlayerInfos();
-	GetTeamInfo(0)->InitTeamInfos();
-
 	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 	m_pfnSpectator = HOOK_MESSAGE(Spectator);
