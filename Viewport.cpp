@@ -37,7 +37,6 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport")
 	SetMouseInputEnabled(false);
 	SetKeyBoardInputEnabled(false);
 	SetProportional(true);
-	m_szLevelName[0] = 0;
 }
 
 CViewport::~CViewport(void)
@@ -75,7 +74,6 @@ void CViewport::VidInit(void)
 }
 
 void CViewport::Reset() {
-	m_szLevelName[0] = 0;
 	for (IViewportPanel* pPanel : m_Panels)
 		pPanel->Reset();
 	GetThisPlayerInfo()->ResetAll();
