@@ -558,7 +558,6 @@ void CScorePanel::CreateSection(int nTeamID){
 
 	m_IsTeamSectionCreated[nTeamID] = true;
 
-	char buf[128];
 	TeamData& td = m_TeamData[nTeamID];
 
 	m_pPlayerList->AddSection(nTeamID, "", StaticPlayerSortFuncByFrags);

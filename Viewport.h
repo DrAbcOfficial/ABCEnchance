@@ -51,7 +51,6 @@ public:
 	long m_iTimeEnd = 0;
 private:
 	std::vector<IViewportPanel*> m_Panels;
-	char m_szLevelName[256];
 	CScorePanel* m_pScorePanel = nullptr;
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
