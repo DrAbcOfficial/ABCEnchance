@@ -71,6 +71,8 @@ namespace
 		}
 		void SetAvatar(CSteamID* pSteamID)
 		{
+			if (!pSteamID)
+				return;
 			m_pAvatar->SetAvatarSteamID(*pSteamID);
 			m_pAvatar->SetDrawFriend(false);
 			m_pAvatar->SetPos(m_iX, m_iY);
@@ -88,7 +90,7 @@ namespace
 		// Image will draw within the current panel context at the specified position
 		virtual void Paint() override
 		{
-			if (m_pAvatar)
+			if (m_pAvatar->IsValid())
 				m_pAvatar->Paint();
 			else if(s_iDefaultAvatarTexture >= 0) {
 				vgui::surface()->DrawSetTexture(s_iDefaultAvatarTexture);
