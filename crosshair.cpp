@@ -88,7 +88,10 @@ int CHudCustomCrosshair::Draw(float flTime){
 		if (iDrift <= 0)
 			iDrift = fabs(gClientData->punchangle[0]) + fabs(gClientData->punchangle[1]);
 		iDrift = iDrift * 5 * gCVars.pDynamicCrossHairM->value;
-		int r = gCVars.pDynamicCrossHairCR->value, g = gCVars.pDynamicCrossHairCG->value, b = gCVars.pDynamicCrossHairCB->value, a = gCVars.pDynamicCrossHairA->value;
+		int r = gCVars.pDynamicCrossHairCR->value, 
+			g = gCVars.pDynamicCrossHairCG->value, 
+			b = gCVars.pDynamicCrossHairCB->value, 
+			a = gCVars.pDynamicCrossHairA->value;
 		int iWidth = gCVars.pDynamicCrossHairW->value;
 		int iLength = gCVars.pDynamicCrossHairL->value;
 		int iWidthOffset = iWidth / 2;
