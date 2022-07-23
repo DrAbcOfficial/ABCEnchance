@@ -133,7 +133,6 @@ private:
 	std::array<bool, SC_MAX_TEAMS + 2> m_IsTeamSectionCreated;
 	std::array<PlayerData, SC_MAX_PLAYERS + 1> m_PlayerData;
 	std::array<int, SC_MAX_TEAMS + 1> m_SortedTeamIDs;
-	std::map<CSteamID, CAvatarImage*> m_PlayerAvatars;
 	MenuData m_MenuData;
 
 	int m_iKillerIndex = 0;
