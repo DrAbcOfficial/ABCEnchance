@@ -19,8 +19,7 @@ function WritePluginLine($path, $avx){
         }
         $newLines += @($l)
     }
-    Clear-Content $path
-    $newLines >> $path
+    Set-Content $path -Value $newLines
 }
 $svenLocation = (Get-ItemPropertyValue -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 225840" -Name "InstallLocation" -ErrorAction SilentlyContinue)
 if([String]::IsNullOrEmpty($svenLocation)){
