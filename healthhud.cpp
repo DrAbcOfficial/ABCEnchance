@@ -182,7 +182,7 @@ int CHudArmorHealth::Draw(float flTime) {
 	float flBackGroundHeight = ScreenHeight - flBackGroundY;
 	float flCenterY = ScreenHeight - flBackGroundHeight / 2;
 	int iStartX = StartX;
-	wchar_t wideName[8];
+	wchar_t wideName[16] = {};
 	int iTextWidth, iTextHeight;
 
 	float flBackGroundLength = 0; 
@@ -205,13 +205,16 @@ int CHudArmorHealth::Draw(float flTime) {
 	vgui::surface()->DrawTexturedRect(0, flBackGroundY, flBackGroundLength, ScreenHeight);
 	//HP
 	if (!gCustomHud.IsHudHide(HUD_HIDEHEALTH)) {
-		int iHealth = mathlib::clamp(m_iHealth, -9999999, 99999999);
+		int iHealth = mathlib::clamp(m_iHealth, 0, 9999);
 		if (iHealth <= gCVars.pDangerHealth->value)
 			HealthDangerColor.GetColor(r, g, b, a);
 		else
 			HealthIconColor.GetColor(r, g, b, a);
 		DrawSPRIcon(iHealthIcon, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
-		wsprintfW(wideName, L"%d", iHealth);
+		if (m_iHealth > iHealth)
+			wcscpy_s(wideName, L"9999+");
+		else
+			wprintf_s(wideName, L"%d\0", iHealth);
 		GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
 		iStartX += IconSize + ElementGap;
 		if (iHealth <= gCVars.pDangerHealth->value)
@@ -241,14 +244,16 @@ int CHudArmorHealth::Draw(float flTime) {
 	}
 	//AP
 	if(!gCustomHud.IsHudHide(HUD_HIDEBATTERY)) {
-		int iBattery = mathlib::clamp(m_iBattery, -9999999, 99999999);
+		int iBattery = mathlib::clamp(m_iBattery, 0, 9999);
 		if (iBattery <= gCVars.pDangerArmor->value)
 			ArmorDangerColor.GetColor(r, g, b, a);
 		else
 			ArmorIconColor.GetColor(r, g, b, a);
 		DrawSPRIcon(iBattery > 0 ? iArmorIconFull : iArmorIconNull, kRenderTransAdd, iStartX, flCenterY - IconSize / 2, IconSize, IconSize, r, g, b, a);
-
-		wsprintfW(wideName, L"%d", iBattery);
+		if (m_iBattery > iBattery)
+			wcscpy_s(wideName, L"9999+");
+		else
+			wprintf_s(wideName, L"%d\0", iBattery);
 		GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
 		iStartX += IconSize + ElementGap;
 		if (iBattery <= gCVars.pDangerArmor->value)
