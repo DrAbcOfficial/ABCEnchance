@@ -205,7 +205,7 @@ int CHudArmorHealth::Draw(float flTime) {
 	vgui::surface()->DrawTexturedRect(0, flBackGroundY, flBackGroundLength, ScreenHeight);
 	//HP
 	if (!gCustomHud.IsHudHide(HUD_HIDEHEALTH)) {
-		int iHealth = m_iHealth;
+		int iHealth = mathlib::clamp(m_iHealth, -9999999, 99999999);
 		if (iHealth <= gCVars.pDangerHealth->value)
 			HealthDangerColor.GetColor(r, g, b, a);
 		else
@@ -241,7 +241,7 @@ int CHudArmorHealth::Draw(float flTime) {
 	}
 	//AP
 	if(!gCustomHud.IsHudHide(HUD_HIDEBATTERY)) {
-		int iBattery = m_iBattery;
+		int iBattery = mathlib::clamp(m_iBattery, -9999999, 99999999);
 		if (iBattery <= gCVars.pDangerArmor->value)
 			ArmorDangerColor.GetColor(r, g, b, a);
 		else
