@@ -214,7 +214,7 @@ int CHudArmorHealth::Draw(float flTime) {
 		if (m_iHealth > iHealth)
 			wcscpy_s(wideName, L"9999+");
 		else
-			wprintf_s(wideName, L"%d\0", iHealth);
+			wsprintfW(wideName, L"%d", iHealth);
 		GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
 		iStartX += IconSize + ElementGap;
 		if (iHealth <= gCVars.pDangerHealth->value)
@@ -253,7 +253,7 @@ int CHudArmorHealth::Draw(float flTime) {
 		if (m_iBattery > iBattery)
 			wcscpy_s(wideName, L"9999+");
 		else
-			wprintf_s(wideName, L"%d\0", iBattery);
+			wsprintfW(wideName, L"%d", iBattery);
 		GetStringSize(wideName, &iTextWidth, &iTextHeight, HUDFont);
 		iStartX += IconSize + ElementGap;
 		if (iBattery <= gCVars.pDangerArmor->value)
