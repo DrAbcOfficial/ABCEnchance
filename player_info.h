@@ -25,7 +25,7 @@ struct extra_player_info_t
 	int armor;
 	int health;
 	bool dead;
-	short teamnumber;
+	short teamnumber = -1;
 	char teamname[SC_MAX_TEAM_NAME];
 	short donor;
 	short admin;
