@@ -159,7 +159,7 @@ namespace
 		Color m_DrawColor = Color(255, 255, 255, 255);
 		CAvatarImage* m_pAvatar = new CAvatarImage();
 		bool m_bIsMuted = false;
-		int iAdminTexture;
+		int iAdminTexture = 0;
 	};
 	class CDonorImage : public vgui::IImage {
 	public:
@@ -668,6 +668,8 @@ void CScorePanel::UpdateClientInfo(int client)
 		m_pPlayerList->RemoveItem(pd.nItemID);
 		pd.nItemID = -1;
 		pd.nTeamID = 0;
+
+		pi->Reset();
 	}
 	Assert(pd.bIsConnected == pi->IsConnected());
 	// Skip unconnected players
