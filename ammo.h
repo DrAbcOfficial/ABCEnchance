@@ -6,6 +6,7 @@ public:
 	int Init(void);
 	int VidInit(void);
 	int Draw(float flTime);
+	bool ShouldDraw();
 	void Reset(void);
 	void SlotInput(int iSlot, int fAdvance);
 	void ChosePlayerWeapon(void);

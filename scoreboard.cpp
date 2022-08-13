@@ -555,6 +555,8 @@ void CScorePanel::RefreshItems()
 }
 
 void CScorePanel::CreateSection(int nTeamID){
+	if (nTeamID < 0)
+		return;
 	if (m_IsTeamSectionCreated[nTeamID])
 		return;
 

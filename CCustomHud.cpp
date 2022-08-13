@@ -125,6 +125,7 @@ void(*UserCmd_NextWeapon)(void);
 void(*UserCmd_PrevWeapon)(void);
 void(*UserCmd_ShowScores)(void);
 void(*UserCmd_HideScores)(void);
+void(*UserCmd_Attack1)(void);
 
 void __UserCmd_Slot1(void) {
 	m_HudCustomAmmo.SlotInput(0, 1);
@@ -196,6 +197,11 @@ void __UserCmd_CloseScoreboard(void) {
 	gCustomHud.m_bInScore = false;
 	g_pViewPort->HideScoreBoard();
 }
+void __UserCmd_Attack1(void) {
+	if (!m_HudCustomAmmo.ShouldDraw())
+		return;
+	return UserCmd_Attack1();
+}
 
 void CCustomHud::GL_Init(void){
 	m_HudRadar.GLInit();
@@ -214,6 +220,7 @@ void CCustomHud::HUD_Init(void){
 	m_pfnNextMap = HOOK_MESSAGE(NextMap);
 	m_pfnTimeEnd = HOOK_MESSAGE(TimeEnd);
 
+	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
 	UserCmd_Slot2 = HOOK_COMMAND("slot2", Slot2);
 	UserCmd_Slot3 = HOOK_COMMAND("slot3", Slot3);
