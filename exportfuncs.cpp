@@ -53,6 +53,7 @@ float m_hfov;
 
 overviewInfo_t* gDevOverview;
 baseweapon_t* (*g_rgBaseSlots)[10][26] = nullptr;
+uint* g_arySlotPuVar = nullptr;
 refdef_t* g_refdef = nullptr;
 netadr_s* g_pConnectingServer = nullptr;
 
@@ -461,6 +462,12 @@ void FillAddress(){
 			Sig_AddrNotFound(g_rgBaseSlots);
 			g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 33);
 		}
+#define SC_SLOTPOS_PUVAR_SIG "\x53\x8B\x5C\x24\x08\x55\x56\x57\x8B\xE9\x33\xFF\xBE"
+		{
+			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_SLOTPOS_PUVAR_SIG, Sig_Length(SC_SLOTPOS_PUVAR_SIG));
+			Sig_AddrNotFound(g_arySlotPuVar);
+			g_arySlotPuVar = *(decltype(g_arySlotPuVar)*)(addr + 13);
+		}
 		if (1)
 		{
 			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
@@ -604,6 +611,9 @@ int HUD_UpdateClientData (struct client_data_s* c, float f){
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	gCustomHud.HUD_ClientMove(ppmove, server);
 	return gExportfuncs.HUD_PlayerMove(ppmove, server);
+}
+void HUD_TxferPredictionData (struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
+	return gExportfuncs.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 }
 void V_CalcRefdef(struct ref_params_s* pparams){
 	

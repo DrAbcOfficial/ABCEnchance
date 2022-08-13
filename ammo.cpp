@@ -294,14 +294,19 @@ void CHudCustomAmmo::SyncWeapon(){
 		}
 	}
 }
-int CHudCustomAmmo::Draw(float flTime){
+bool CHudCustomAmmo::ShouldDraw() {
 	if (gCustomHud.IsInSpectate())
-		return 1;
+		return false;
 	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
-		return 1;
+		return false;
 	if (!gCustomHud.HasSuit())
-		return 1;
+		return false;
 	if (gClientData->health <= 0)
+		return false;
+	return true;
+}
+int CHudCustomAmmo::Draw(float flTime){
+	if (!ShouldDraw())
 		return 1;
 	//0.3s 进行一次武器同步
 	if (flTime > m_fNextSyncTime) {
