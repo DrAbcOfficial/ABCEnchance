@@ -98,6 +98,7 @@ public:
 	 * Clears saved realname. Should be called when realnames are unloaded.
 	 */
 	void ClearRealName();
+	void Reset();
 	void ResetAll();
 
 	CSteamID m_pSteamId;
@@ -122,8 +123,6 @@ private:
 	extra_player_info_t m_ExtraInfo;
 	bool m_bIsConnected;
 	char m_szRealName[SC_MAX_PLAYER_NAME + 1];
-
-	void Reset();
 
 	static CPlayerInfo m_sPlayerInfo[SC_MAX_PLAYERS + 1];
 	friend CPlayerInfo *GetPlayerInfo(int idx);
