@@ -2,7 +2,6 @@
 #define MAX_SPRITE_NAME_LENGTH	24
 #include <vector>
 #include "baseammo.h"
-#include "basemenu.h"
 #include "basehealth.h"
 #include "player_infosc.h"
 
@@ -19,7 +18,6 @@ typedef struct hud_playerinfo_s {
 typedef struct {
 	CHudBattery* m_Battery;
 	CHudHealth* m_Health;
-	CHudMenu* m_Menu;
 	CHudAmmo* m_Ammo;
 } cl_hookedHud;
 typedef struct cl_spritem_s {
@@ -64,6 +62,7 @@ public:
 	bool IsSpectator(int client);
 	void SetSpectator(int client, bool value);
 	bool IsMouseVisible();
+	bool IsTextMenuOpening();
 	void SetMouseVisible(bool state);
 
 	void OnMousePressed(int code);
@@ -104,9 +103,11 @@ public:
 
 	bool m_bRenderRadarView = false;
 	bool m_bInScore = false;
+	bool m_bTextMenuOpening = false;
+	float m_flTextMenuDisplayTime = 0;
 private:
 	void SetBaseHudActivity();
-
+	
 	int m_iMouseState = 0;
 	int m_iLastClick = 5;
 

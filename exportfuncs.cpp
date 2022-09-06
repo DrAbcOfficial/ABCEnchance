@@ -570,8 +570,6 @@ int HUD_VidInit(void){
 				gHookHud.m_Health = (dynamic_cast<CHudHealth*>(pHudList->p));
 			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != nullptr)
 				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
-			else if (dynamic_cast<CHudMenu*>(pHudList->p) != nullptr)
-				gHookHud.m_Menu = (dynamic_cast<CHudMenu*>(pHudList->p));
 			pHudList = pHudList->pNext;
 		}
 	}

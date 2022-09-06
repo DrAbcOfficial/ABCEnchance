@@ -62,6 +62,7 @@
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
@@ -329,7 +330,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="ammo.h" />
     <ClInclude Include="baseammo.h" />
     <ClInclude Include="basehealth.h" />
-    <ClInclude Include="basemenu.h" />
     <ClInclude Include="bitvec.h" />
     <ClInclude Include="cctv.h" />
     <ClInclude Include="CCustomHud.h" />

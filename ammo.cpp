@@ -424,7 +424,7 @@ void CHudCustomAmmo::ChosePlayerWeapon(){
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
 	if (!gCustomHud.IsHudEnable())
 		return;
-	if (gHookHud.m_Menu->m_fMenuDisplayed)
+	if (gCustomHud.IsTextMenuOpening())
 		return;
 	if (!gCustomHud.HasSuit())
 		return;
