@@ -15,7 +15,6 @@
 #include "weapon.h"
 #include "cvardef.h"
 #include "dlight.h"
-#include "basemenu.h"
 
 #include "vgui_controls/Controls.h"
 
@@ -116,8 +115,6 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		return 1;
 	if (!bOpenningMenu)
 		return 1;
-	if (gHookHud.m_Menu)
-		gHookHud.m_Menu->m_iFlags &= ~HUD_ACTIVE;
 	float flAnimationRatio = min(1.0f, 1.0f - ((m_fAnimateTime - flTime) / BuyMenuAnimateTime));
 	//Ä£ºý
 	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);

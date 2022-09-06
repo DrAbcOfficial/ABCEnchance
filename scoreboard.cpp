@@ -681,6 +681,7 @@ void CScorePanel::UpdateClientInfo(int client)
 		pd.nItemID = -1;
 		pd.nTeamID = pi->GetTeamNumber();
 	}
+
 	// Create section for player's team if need to
 	CreateSection(pd.nTeamID);
 	KeyValues* playerKv = new KeyValues("data");

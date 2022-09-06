@@ -631,9 +631,6 @@
     <ClInclude Include="basehealth.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="basemenu.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="CCustomHud.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>

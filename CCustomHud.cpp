@@ -59,7 +59,8 @@ pfnUserMsgHook m_pfnSpectator;
 pfnUserMsgHook m_pfnServerName;
 pfnUserMsgHook m_pfnNextMap;
 pfnUserMsgHook m_pfnTimeEnd;
-pfnSVCMsgHook m_pfnSVC_PING;
+pfnUserMsgHook m_pfnShowMenu;
+
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
@@ -108,6 +109,14 @@ int __MsgFunc_TimeEnd(const char* pszName, int iSize, void* pbuf) {
 	g_pViewPort->m_iTimeEnd = READ_LONG();
 	g_pViewPort->GetScoreBoard()->UpdateTimeEnd();
 	return m_pfnTimeEnd(pszName, iSize, pbuf);
+}
+int __MsgFunc_ShowMenu(const char* pszName, int iSize, void* pbuf){
+	BEGIN_READ(pbuf, iSize);
+	READ_SHORT();
+	gCustomHud.m_flTextMenuDisplayTime = gEngfuncs.GetClientTime() + READ_CHAR();
+	gCustomHud.m_bTextMenuOpening = true;
+	//Other thing? i dont care
+	return m_pfnShowMenu(pszName, iSize, pbuf);
 }
 
 void(*UserCmd_Slot1)(void);
@@ -173,6 +182,11 @@ void __UserCmd_Slot9(void) {
 	return UserCmd_Slot9();
 }
 void __UserCmd_Slot10(void) {
+	if (gCustomHud.IsTextMenuOpening()) {
+		gCustomHud.m_flTextMenuDisplayTime = 0;
+		gCustomHud.m_bTextMenuOpening = false;
+		return UserCmd_Slot10();
+	}
 	m_HudCustomAmmo.SlotInput(9, 1);
 	m_HudEccoBuyMenu.SlotCallBack(9);
 	m_HudEccoBuyMenu.CloseMenu();
@@ -219,6 +233,7 @@ void CCustomHud::HUD_Init(void){
 	m_pfnServerName = HOOK_MESSAGE(ServerName);
 	m_pfnNextMap = HOOK_MESSAGE(NextMap);
 	m_pfnTimeEnd = HOOK_MESSAGE(TimeEnd);
+	m_pfnShowMenu = HOOK_MESSAGE(ShowMenu);
 
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
@@ -337,6 +352,13 @@ void CCustomHud::HUD_Reset(void){
 #ifdef _DEBUG
 	m_HudCCTV.Reset();
 #endif
+
+	m_bInScore = false;
+	m_bTextMenuOpening = false;
+	m_bRenderRadarView = false;
+	m_iMouseState = 0;
+	m_iLastClick = 5;
+	m_flTextMenuDisplayTime = 0;
 	memset(m_SpectatePlayer, 0, sizeof(m_SpectatePlayer));
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
@@ -446,6 +468,11 @@ void CCustomHud::SetSpectator(int client, bool value){
 }
 bool CCustomHud::IsMouseVisible(){
 	return g_pViewPort->IsMouseInputEnabled();
+}
+bool CCustomHud::IsTextMenuOpening() {
+	if (gEngfuncs.GetClientTime() <= m_flTextMenuDisplayTime || m_bTextMenuOpening)
+		return true;
+	return false;
 }
 void CCustomHud::SetMouseVisible(bool state) {
 	g_pViewPort->SetMouseInputEnabled(state);
