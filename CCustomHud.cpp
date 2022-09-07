@@ -182,11 +182,6 @@ void __UserCmd_Slot9(void) {
 	return UserCmd_Slot9();
 }
 void __UserCmd_Slot10(void) {
-	if (gCustomHud.IsTextMenuOpening()) {
-		gCustomHud.m_flTextMenuDisplayTime = 0;
-		gCustomHud.m_bTextMenuOpening = false;
-		return UserCmd_Slot10();
-	}
 	m_HudCustomAmmo.SlotInput(9, 1);
 	m_HudEccoBuyMenu.SlotCallBack(9);
 	m_HudEccoBuyMenu.CloseMenu();
