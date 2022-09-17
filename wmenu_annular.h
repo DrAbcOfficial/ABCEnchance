@@ -3,6 +3,7 @@ class CWeaponMenuAnnular : public IWeaponSelect {
 public:
 	void Init();
 	void VidInit();
+	bool IsVisible();
 	int DrawWList(float flTime);
 	void Reset();
 	void GLInit();

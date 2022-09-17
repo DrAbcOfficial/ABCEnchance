@@ -40,13 +40,7 @@ void __UserCmd_CloseAnnularMenu(void) {
 	}
 }
 void CWeaponMenuAnnular::Select() {
-	if (m_fFade > gEngfuncs.GetClientTime()) {
-		if (m_HudCustomAmmo.m_bAcceptDeadMessage)
-			return;
-		m_HudCustomAmmo.ChosePlayerWeapon();
-	}
 	if (!m_bOpeningMenu) {
-		gWR.iNowSlot = 0;
 		m_fFade = 0;
 		m_bSelectMenuDisplay = false;
 	}
@@ -127,6 +121,9 @@ void CWeaponMenuAnnular::DrawSelectIcon(WEAPON* wp, int a, int xpos, int ypos, i
 		wsprintfW(buf, L"");
 	GetStringSize(buf, &iTextWidth, nullptr, HUDFont);
 	DrawVGUI2String(buf, xpos - iTextWidth / 2, ypos + iHeight, r, g, b, HUDFont, true);
+}
+bool CWeaponMenuAnnular::IsVisible() {
+	return m_bSelectMenuDisplay;
 }
 int CWeaponMenuAnnular::DrawWList(float flTime) {
 	if (m_fFade <= flTime) {

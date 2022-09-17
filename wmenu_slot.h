@@ -4,8 +4,9 @@ public:
 	void Init();
 	void VidInit();
 	int DrawWList(float flTime);
-	void Reset();
+	bool IsVisible();
 	void Select();
+	void Reset();
 private:
 	int DrawBar(int x, int y, int width, int height, float f);
 	void DrawAmmoBar(WEAPON* p, int x, int y, int width, int height);

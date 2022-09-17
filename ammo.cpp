@@ -235,6 +235,7 @@ int CHudCustomAmmo::Init(void){
 };
 void CHudCustomAmmo::Reset(void){
 	m_fNextSyncTime = 0;
+	m_bSelectBlock = false;
 	m_pWeapon = nullptr;
 	m_bIsOnTarget = false;
 	VGUI_CREATE_NEWTGA_TEXTURE(iBackGroundTga, "abcenchance/tga/ammobar_background");
@@ -294,6 +295,11 @@ void CHudCustomAmmo::SyncWeapon(){
 		}
 	}
 }
+bool CHudCustomAmmo::IsVisible() {
+	if (m_pNowSelectMenu != nullptr)
+		return m_pNowSelectMenu->IsVisible();
+	return false;
+}
 bool CHudCustomAmmo::ShouldDraw() {
 	if (gCustomHud.IsInSpectate())
 		return false;
@@ -304,6 +310,25 @@ bool CHudCustomAmmo::ShouldDraw() {
 	if (gClientData->health <= 0)
 		return false;
 	return true;
+}
+bool CHudCustomAmmo::BlockAttackOnce() {
+	if (m_bSelectBlock) {
+		m_bSelectBlock = false;
+		return true;
+	}
+	return false;
+}
+void CHudCustomAmmo::Select() {
+	if (!IsVisible())
+		return;
+	if (m_pNowSelectMenu->m_fFade > gEngfuncs.GetClientTime()) {
+		if (m_HudCustomAmmo.m_bAcceptDeadMessage)
+			return;
+		m_HudCustomAmmo.ChosePlayerWeapon();
+	}
+	m_pNowSelectMenu->Select();
+	gWR.iNowSlot = -1;
+	m_bSelectBlock = true;
 }
 int CHudCustomAmmo::Draw(float flTime){
 	if (!ShouldDraw())
@@ -418,7 +443,6 @@ void CHudCustomAmmo::ChosePlayerWeapon(){
 			return;
 		ServerCmd(wp->szName);
 		PlaySoundByName("common/wpn_select.wav", 1);
-		gWR.iNowSlot = -1;
 	}
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
@@ -434,8 +458,6 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
 	gWR.SelectSlot(iSlot, fAdvance);
 }
 int CHudCustomAmmo::DrawWList(float flTime){
-	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDESELECTION))
-		return 1;
 	m_pNowSelectMenu->DrawWList(flTime);
 	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)
 		m_HudWMenuAnnular.DrawWList(flTime);
