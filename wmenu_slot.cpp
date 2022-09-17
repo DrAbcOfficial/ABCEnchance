@@ -218,19 +218,16 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 	m_bSelectMenuDisplay = true;
 	return 1;
 }
+bool CWeaponMenuSlot::IsVisible() {
+	return m_bSelectMenuDisplay;
+}
 void CWeaponMenuSlot::Reset(){
 	m_fFade = 0;
 	m_fAnimateTime = 0;
 	m_bSelectMenuDisplay = false;
 	m_bSetedCursor = false;
 }
-void CWeaponMenuSlot::Select(){
-	if (m_fFade > gEngfuncs.GetClientTime()) {
-		if (m_HudCustomAmmo.m_bAcceptDeadMessage)
-			return;
-		m_HudCustomAmmo.ChosePlayerWeapon();
-	}
-	gWR.iNowSlot = -1;
+void CWeaponMenuSlot::Select() {
 	m_fFade = 0;
 	m_bSelectMenuDisplay = false;
 }

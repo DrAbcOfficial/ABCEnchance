@@ -3,8 +3,9 @@ class IWeaponSelect {
 public:
 	virtual void Init() = 0;
 	virtual int DrawWList(float flTime) = 0;
+	virtual bool IsVisible() = 0;
+	virtual void Select(); = 0;
 	virtual void Reset() = 0;
-	virtual void Select() = 0;
 
 	float m_fFade = 0;
 	bool m_bSelectMenuDisplay = false;

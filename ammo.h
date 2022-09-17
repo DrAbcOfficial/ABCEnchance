@@ -6,7 +6,12 @@ public:
 	int Init(void);
 	int VidInit(void);
 	int Draw(float flTime);
+	//是否正在绘制ammo
+	bool IsVisible();
 	bool ShouldDraw();
+	//阻挡一次+attack
+	bool BlockAttackOnce();
+	void Select();
 	void Reset(void);
 	void SlotInput(int iSlot, int fAdvance);
 	void ChosePlayerWeapon(void);
@@ -15,6 +20,8 @@ public:
 	void Clear();
 
 	bool m_bIsOnTarget = false;
+	bool m_bSelectBlock = false;
+
 	WEAPON* m_pWeapon = nullptr;
 	IWeaponSelect* m_pNowSelectMenu = nullptr;
 

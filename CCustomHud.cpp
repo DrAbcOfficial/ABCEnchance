@@ -207,7 +207,7 @@ void __UserCmd_CloseScoreboard(void) {
 	g_pViewPort->HideScoreBoard();
 }
 void __UserCmd_Attack1(void) {
-	if (!m_HudCustomAmmo.ShouldDraw())
+	if (m_HudCustomAmmo.BlockAttackOnce())
 		return;
 	return UserCmd_Attack1();
 }
@@ -475,10 +475,18 @@ void CCustomHud::SetMouseVisible(bool state) {
 void CCustomHud::OnMousePressed(int code) {
 	switch (code) {
 	case vgui::MouseCode::MOUSE_LEFT: {
-		if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)
+		if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu) {
+			if (m_HudWMenuAnnular.m_fFade > gEngfuncs.GetClientTime()) {
+				if (m_HudCustomAmmo.m_bAcceptDeadMessage)
+					return;
+				m_HudCustomAmmo.ChosePlayerWeapon();
+			}
 			m_HudWMenuAnnular.Select();
-		m_HudCustomAmmo.m_pNowSelectMenu->Select();
-		m_HudEccoBuyMenu.SelectMenu();
+		}
+		else {
+			m_HudCustomAmmo.Select();
+			m_HudEccoBuyMenu.SelectMenu();
+		}
 	}
 	}
 }
