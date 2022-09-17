@@ -333,7 +333,7 @@ buymenuitem_t* CHudEccoBuyMenu::GetInfo(int index) {
 	return nullptr;
 }
 void CHudEccoBuyMenu::OpenMenu(){
-	if (gCVars.pEccoBuyMenu->value <= 0)
+	if (gCVars.pEccoBuyMenu->value <= 0 || buymenuinfo.size() <= 0)
 		return;
 	m_fAnimateTime = gEngfuncs.GetClientTime() + BuyMenuAnimateTime;
 	iNextPageBase = 0;
