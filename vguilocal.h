@@ -1,3 +1,4 @@
+#pragma once
 #include "Color.h" 
 #include <vgui/IScheme.h>
 #define VGUI_CREATE_NEWTGA_TEXTURE(tex, path) tex=vgui::surface()->CreateNewTextureID();vgui::surface()->DrawSetTextureFile(tex, path, true, false)

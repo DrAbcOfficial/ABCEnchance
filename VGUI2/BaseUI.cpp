@@ -78,7 +78,8 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 
 	KeyValuesSystem_InstallHook();
 	Surface_InstallHooks();
-	Scheme_InstallHook();
+	if(!g_metaplugins.captionmod)
+		Scheme_InstallHook();
 }
 
 void CBaseUI::Start(struct cl_enginefuncs_s *engineFuncs, int interfaceVersion)
@@ -145,7 +146,6 @@ void BaseUI_InstallHook(void)
 	CreateInterfaceFn fnCreateInterface = g_pMetaHookAPI->GetEngineFactory();
 	baseuifuncs = (IBaseUI *)fnCreateInterface(BASEUI_INTERFACE_VERSION, NULL);
 	gameuifuncs = (IGameUIFuncs *)fnCreateInterface(VENGINE_GAMEUIFUNCS_VERSION, NULL);
-#define CLIENTFACTORY_SIG_SVENGINE "\x83\xC4\x0C\x83\x3D"
 	DWORD *pVFTable = *(DWORD **)&s_BaseUI;
 	g_pMetaHookAPI->VFTHook(baseuifuncs, 0, 1, (void *)pVFTable[1], (void **)&m_pfnCBaseUI_Initialize);
 	g_pMetaHookAPI->VFTHook(baseuifuncs, 0, 3, (void *)pVFTable[3], (void **)&m_pfnCBaseUI_Shutdown);
