@@ -54,7 +54,7 @@ public:
 	void LoadWeaponSprites(WEAPON* wp);
 	void LoadScriptWeaponSprites(int iId, char* cust);
 	void LoadAllWeaponSprites(void);
-	void SelectSlot(int iSlot, int fAdvance);
+	void SelectSlot(int iSlot, int fAdvance, bool bWheel);
 	void SetUserSlot(int iSlot, int iId);
 	WEAPON* GetFirstPos(int iSlot);
 	WEAPON* GetLastPos(int iSlot);
@@ -68,6 +68,6 @@ public:
 	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect);
 private:
 	//选择选定的武器或菜单
-	void SetSelectWeapon(int iId, int iPos);
+	void SetSelectWeapon(int iId, int iPos, bool bWheel);
 };
 extern WeaponsResource gWR;

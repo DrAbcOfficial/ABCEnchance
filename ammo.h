@@ -13,7 +13,7 @@ public:
 	bool BlockAttackOnce();
 	void Select();
 	void Reset(void);
-	void SlotInput(int iSlot, int fAdvance);
+	void SlotInput(int iSlot, int fAdvance, bool bWheel = false);
 	void ChosePlayerWeapon(void);
 	void ClientMove(struct playermove_s* ppmove, qboolean server);
 	void IN_Accumulate();

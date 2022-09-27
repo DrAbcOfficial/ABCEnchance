@@ -346,19 +346,19 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
 
 	return nullptr;
 }
-void WeaponsResource::SetSelectWeapon(int iId, int iPos) {
-	if (pFastSwich->value > 0)
+void WeaponsResource::SetSelectWeapon(int iId, int iPos, bool bWheel) {
+	if (pFastSwich->value > 0 && bWheel)
 		ServerCmd(GetWeapon(iId)->szName);
 	else {
 		gridDrawMenu[iNowSlot].iId = iId;
 		gridDrawMenu[iNowSlot].iPos = iPos;
 	}
 }
-void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
+void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bWheel){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
 
-	if (pFastSwich->value <= 0)
+	if ((pFastSwich->value > 0 && !bWheel) || (pFastSwich->value <= 0))
 		m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
 			gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
 
@@ -404,7 +404,7 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 		}
 		iNowSlot = iTempSlot;
 		if (wp && wp->iId > 0)
-			SetSelectWeapon(wp->iId, wp->iSlotPos);
+			SetSelectWeapon(wp->iId, wp->iSlotPos, bWheel);
 		else if (gCVars.pAmmoMenuStyle->value <= 0) {
 			gridDrawMenu[iNowSlot].iId = gridDrawMenu[iNowSlot].iPos = -1;
 			return;
@@ -417,7 +417,7 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 		if (gCVars.pAmmoMenuStyle->value <= 0) {
 			wp = gWR.GetFirstPos(iNowSlot);
 			if (wp && wp->iId > 0)
-				SetSelectWeapon(wp->iId, wp->iSlotPos);
+				SetSelectWeapon(wp->iId, wp->iSlotPos, bWheel);
 			else{
 				gridDrawMenu[iNowSlot].iId = gridDrawMenu[iNowSlot].iPos = -1;
 				return;
