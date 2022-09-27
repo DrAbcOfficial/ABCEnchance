@@ -263,6 +263,8 @@ bool NET_StringToAdr(char* param_1, netadr_s* param_2) {
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
+	if(!g_metaplugins.renderer)
+		g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer_AVX2.dll", &info);
 	g_metaplugins.captionmod = g_pMetaHookAPI->GetPluginInfo("CaptionMod.dll", &info);
 }
 void FillEfxAddress(){
