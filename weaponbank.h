@@ -27,6 +27,8 @@ private:
 	int gridSlotPosDataMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
 	//玩家持有的所有子弹数据
 	int	riAmmo[MAX_AMMO];
+	//hud_fastswitch
+	cvar_t* pFastSwich = nullptr;
 
 public:
 	//等待绘制的图标
@@ -64,5 +66,8 @@ public:
 	int CountAmmo(int iId);
 	int HasAmmo(WEAPON* p);
 	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect);
+private:
+	//选择选定的武器或菜单
+	void SetSelectWeapon(int iId, int iPos);
 };
 extern WeaponsResource gWR;

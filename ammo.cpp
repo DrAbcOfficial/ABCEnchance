@@ -219,7 +219,7 @@ int CHudCustomAmmo::Init(void){
 	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuStyle = CREATE_CVAR("cl_wmenustyle", "0", FCVAR_VALUE, ChangeWMenuStyleCallBack);
-	
+
 	//所有选择菜单都要加载
 	m_HudWMenuAnnular.Init();
 	m_HudWMenuSlot.Init();
