@@ -445,7 +445,7 @@ void CHudCustomAmmo::ChosePlayerWeapon(){
 		PlaySoundByName("common/wpn_select.wav", 1);
 	}
 }
-void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
+void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bWheel){
 	if (!gCustomHud.IsHudEnable())
 		return;
 	if (gCustomHud.IsTextMenuOpening()) {
@@ -455,7 +455,7 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance){
 	}
 	if (!gCustomHud.HasSuit())
 		return;
-	gWR.SelectSlot(iSlot, fAdvance);
+	gWR.SelectSlot(iSlot, fAdvance, bWheel);
 }
 int CHudCustomAmmo::DrawWList(float flTime){
 	m_pNowSelectMenu->DrawWList(flTime);

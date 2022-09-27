@@ -191,11 +191,11 @@ void __UserCmd_Close(void) {
 	return UserCmd_SlotClose();
 }
 void __UserCmd_NextWeapon(void) {
-	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, 1);
+	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, 1, true);
 	return UserCmd_NextWeapon();
 }
 void __UserCmd_PrevWeapon(void) {
-	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1);
+	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1, true);
 	return UserCmd_PrevWeapon();
 }
 void __UserCmd_OpenScoreboard(void) {
