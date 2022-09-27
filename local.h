@@ -68,93 +68,93 @@ typedef struct{
 
 //CVars
 typedef struct{
-	cvar_t* pBloodEfx;
-	cvar_t* pBloodSpriteSpeed;
-	cvar_t* pBloodSpriteNumber;
-	cvar_t* pGaussEfx;
+	cvar_t* pBloodEfx = nullptr;
+	cvar_t* pBloodSpriteSpeed = nullptr;
+	cvar_t* pBloodSpriteNumber = nullptr;
+	cvar_t* pGaussEfx = nullptr;
 
-	cvar_t* pPlayerTitle;
-	cvar_t* pPlayerTitleLength;
-	cvar_t* pPlayerTitleHeight;
-	cvar_t* pPlayerTitleDangerHealth;
+	cvar_t* pPlayerTitle = nullptr;
+	cvar_t* pPlayerTitleLength = nullptr;
+	cvar_t* pPlayerTitleHeight = nullptr;
+	cvar_t* pPlayerTitleDangerHealth = nullptr;
 
-	cvar_t* pHealthArmorStyle;
-	cvar_t* pDangerHealth;
-	cvar_t* pDangerArmor;
-	cvar_t* pDamageScreenFilter;
-	cvar_t* pDamageScreenFactor;
-	cvar_t* pDamageScreenBase;
+	cvar_t* pHealthArmorStyle = nullptr;
+	cvar_t* pDangerHealth = nullptr;
+	cvar_t* pDangerArmor = nullptr;
+	cvar_t* pDamageScreenFilter = nullptr;
+	cvar_t* pDamageScreenFactor = nullptr;
+	cvar_t* pDamageScreenBase = nullptr;
 
-	cvar_t* pDynamicCrossHair;
-	cvar_t* pDynamicCrossHairAH;
-	cvar_t* pDynamicCrossHairL;
-	cvar_t* pDynamicCrossHairW;
-	cvar_t* pDynamicCrossHairO;
-	cvar_t* pDynamicCrossHairM;
-	cvar_t* pDynamicCrossHairA;
-	cvar_t* pDynamicCrossHairCR;
-	cvar_t* pDynamicCrossHairCG;
-	cvar_t* pDynamicCrossHairCB;
-	cvar_t* pDynamicCrossHairOTD;
-	cvar_t* pDynamicCrossHairOTDW;
-	cvar_t* pDynamicCrossHairT;
-	cvar_t* pDynamicCrossHairD;
+	cvar_t* pDynamicCrossHair = nullptr;
+	cvar_t* pDynamicCrossHairAH = nullptr;
+	cvar_t* pDynamicCrossHairL = nullptr;
+	cvar_t* pDynamicCrossHairW = nullptr;
+	cvar_t* pDynamicCrossHairO = nullptr;
+	cvar_t* pDynamicCrossHairM = nullptr;
+	cvar_t* pDynamicCrossHairA = nullptr;
+	cvar_t* pDynamicCrossHairCR = nullptr;
+	cvar_t* pDynamicCrossHairCG = nullptr;
+	cvar_t* pDynamicCrossHairCB = nullptr;
+	cvar_t* pDynamicCrossHairOTD = nullptr;
+	cvar_t* pDynamicCrossHairOTDW = nullptr;
+	cvar_t* pDynamicCrossHairT = nullptr;
+	cvar_t* pDynamicCrossHairD = nullptr;
 
-	cvar_t* pDynamicHUD;
+	cvar_t* pDynamicHUD = nullptr;
 
-	cvar_t* pAmmoCSlot[10];
-	cvar_t* pAmmoMenuDrawPos;
-	cvar_t* pAmmoMenuDrawRainbow;
-	cvar_t* pAmmoMenuStyle;
+	cvar_t* pAmmoCSlot[10] = {};
+	cvar_t* pAmmoMenuDrawPos = nullptr;
+	cvar_t* pAmmoMenuDrawRainbow = nullptr;
+	cvar_t* pAmmoMenuStyle = nullptr;
 
-	cvar_t* pModelLag;
-	cvar_t* pModelLagAutoStop;
-	cvar_t* pModelLagValue;
-	cvar_t* pModelSlide;
-	cvar_t* pModelSlideAngle;
-	cvar_t* pModelSlideLength;
-	cvar_t* pModelSlideHeight;
+	cvar_t* pModelLag = nullptr;
+	cvar_t* pModelLagAutoStop = nullptr;
+	cvar_t* pModelLagValue = nullptr;
+	cvar_t* pModelSlide = nullptr;
+	cvar_t* pModelSlideAngle = nullptr;
+	cvar_t* pModelSlideLength = nullptr;
+	cvar_t* pModelSlideHeight = nullptr;
 
-	cvar_t* pCamIdealHeight;
-	cvar_t* pCamIdealRight;
+	cvar_t* pCamIdealHeight = nullptr;
+	cvar_t* pCamIdealRight = nullptr;
 
-	cvar_t* pRadar;
-	cvar_t* pRadarZoom;
-	cvar_t* pRadarSize;
-	cvar_t* pRadarSizeTime;
-	cvar_t* pRadarGap;
-	cvar_t* pRadarUpdateInterval;
-	cvar_t* pRadarRoundRadius;
+	cvar_t* pRadar = nullptr;
+	cvar_t* pRadarZoom = nullptr;
+	cvar_t* pRadarSize = nullptr;
+	cvar_t* pRadarSizeTime = nullptr;
+	cvar_t* pRadarGap = nullptr;
+	cvar_t* pRadarUpdateInterval = nullptr;
+	cvar_t* pRadarRoundRadius = nullptr;
 
-	cvar_t* pDeathNoticeTime;
+	cvar_t* pDeathNoticeTime = nullptr;
 
-	cvar_t* pHudEfx;
+	cvar_t* pHudEfx = nullptr;
 
-	cvar_t* pEccoCheckInfo;
-	cvar_t* pEccoEnable;
+	cvar_t* pEccoCheckInfo = nullptr;
+	cvar_t* pEccoEnable = nullptr;
 
-	cvar_t* pItemHighLight;
-	cvar_t* pItemHighLightRange;
+	cvar_t* pItemHighLight = nullptr;
+	cvar_t* pItemHighLightRange = nullptr;
 
-	cvar_t* pEccoBuyMenu;
+	cvar_t* pEccoBuyMenu = nullptr;
 
-	cvar_t* pGrenadeIndicator;
-	cvar_t* pGrenadeIndicatorRange;
-	cvar_t* pGrenadeInicatorTime;
+	cvar_t* pGrenadeIndicator = nullptr;
+	cvar_t* pGrenadeIndicatorRange = nullptr;
+	cvar_t* pGrenadeInicatorTime = nullptr;
 
-	cvar_t* pCVarDevOverview;
-	cvar_t* pCVarDrawEntities;
-	cvar_t* pCVarDrawViewModel;
-	cvar_t* pCVarDrawDynamic;
-	cvar_t* pCVarFXAA;
-	cvar_t* pCVarWater;
-	cvar_t* pCVarShadow;
+	cvar_t* pCVarDevOverview = nullptr;
+	cvar_t* pCVarDrawEntities = nullptr;
+	cvar_t* pCVarDrawViewModel = nullptr;
+	cvar_t* pCVarDrawDynamic = nullptr;
+	cvar_t* pCVarFXAA = nullptr;
+	cvar_t* pCVarWater = nullptr;
+	cvar_t* pCVarShadow = nullptr;
 
 #ifdef _DEBUG
-	cvar_t* pCCTV;
+	cvar_t* pCCTV = nullptr;
 #endif
 	//Defualt CVars
-	cvar_t* pCvarDefaultFOV;
+	cvar_t* pCvarDefaultFOV = nullptr;
 }cl_cvars_t;
 
 extern cl_refHookfunc_t gHookFuncs;

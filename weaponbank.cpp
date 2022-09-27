@@ -31,6 +31,7 @@ client_sprite_t* GetSpriteList(client_sprite_t* pList, const char* psz, int iRes
 }
 
 void WeaponsResource::Init(void){
+	pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
 	Reset();
 }
 void WeaponsResource::Reset(void){
@@ -345,11 +346,21 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
 
 	return nullptr;
 }
+void WeaponsResource::SetSelectWeapon(int iId, int iPos) {
+	if (pFastSwich->value > 0)
+		ServerCmd(GetWeapon(iId)->szName);
+	else {
+		gridDrawMenu[iNowSlot].iId = iId;
+		gridDrawMenu[iNowSlot].iPos = iPos;
+	}
+}
 void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
-	m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
-		gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
+
+	if (pFastSwich->value <= 0)
+		m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
+			gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
 
 	WEAPON* wp = nullptr;
 	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT_INDEX);
@@ -392,10 +403,8 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 			}
 		}
 		iNowSlot = iTempSlot;
-		if (wp && wp->iId > 0) {
-			gridDrawMenu[iNowSlot].iId = wp->iId;
-			gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
-		}
+		if (wp && wp->iId > 0)
+			SetSelectWeapon(wp->iId, wp->iSlotPos);
 		else if (gCVars.pAmmoMenuStyle->value <= 0) {
 			gridDrawMenu[iNowSlot].iId = gridDrawMenu[iNowSlot].iPos = -1;
 			return;
@@ -407,10 +416,8 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance){
 		//¾­µäÑùÊ½
 		if (gCVars.pAmmoMenuStyle->value <= 0) {
 			wp = gWR.GetFirstPos(iNowSlot);
-			if (wp && wp->iId > 0) {
-				gridDrawMenu[iNowSlot].iId = wp->iId;
-				gridDrawMenu[iNowSlot].iPos = wp->iSlotPos;
-			}
+			if (wp && wp->iId > 0)
+				SetSelectWeapon(wp->iId, wp->iSlotPos);
 			else{
 				gridDrawMenu[iNowSlot].iId = gridDrawMenu[iNowSlot].iPos = -1;
 				return;
