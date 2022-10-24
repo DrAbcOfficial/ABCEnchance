@@ -1,3 +1,5 @@
+#version 430 compatibility
+
 uniform sampler2D tex;
 uniform float rad;
 uniform vec3 xys;
