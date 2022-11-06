@@ -70,14 +70,14 @@ size_t WeaponsResource::CountMenuWeapons() {
 	}
 	return c;
 }
-void WeaponsResource::SyncWeapon(struct weapon_data_s* wd) {
+void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
 	if (m_iMaxId <= 0)
 		return;
 	for (size_t i = 0; i <= m_iMaxId; i++) {
 		WEAPON* weapon = GetWeapon(i);
 		if (weapon->iId <= 0)
 			continue;
-		weapon_data_s* wp = wd + i;
+		const weapon_data_t* wp = wd + i;
 		if (wp->m_iId <= 0) {
 			if (HasWeapon(weapon->iSlot, weapon->iSlotPos))
 				DropWeapon(weapon->iSlot, weapon->iSlotPos);

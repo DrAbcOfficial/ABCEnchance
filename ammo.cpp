@@ -59,7 +59,6 @@ int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_SHORT();
 	gHR.AddToHistory(HistoryResource::HISTSLOT_WEAP, iIndex);
-	gWR.PickupWeapon(iIndex);
 	return m_pfnWeapPickup(pszName, iSize, pbuf);
 }
 int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf){
