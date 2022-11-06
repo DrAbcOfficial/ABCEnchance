@@ -62,7 +62,7 @@ public:
 	WEAPON* GetLastPos(int iSlot);
 	gridmenuitem_t* GetDrawMenuItem(size_t iSlot);
 	void FillDrawMenuGrid();
-	void SyncWeapon(struct weapon_data_s* wd);
+	void SyncWeapon(const weapon_data_t* wd);
 
 	AMMO GetAmmo(int iId);
 	void SetAmmo(int iId, int iCount);

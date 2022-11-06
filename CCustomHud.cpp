@@ -442,7 +442,7 @@ int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 	return result;
 }
 void CCustomHud::HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
-	gWR.SyncWeapon(wd);
+	gWR.SyncWeapon(pwd);
 }
 void CCustomHud::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {
 }
