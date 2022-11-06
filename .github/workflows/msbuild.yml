@@ -33,11 +33,11 @@ jobs:
 
     - name: Setup build env
       working-directory: MetaHookSv
-      run: &"MetaHookSv/build-initdeps.bat"
+      run: ./MetaHookSv/build-initdeps.bat
     
     - name: Setup glew
       working-directory: MetaHookSv
-      run: &"MetaHookSv/build-glew.bat"
+      run: ./MetaHookSv/build-glew.bat
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
