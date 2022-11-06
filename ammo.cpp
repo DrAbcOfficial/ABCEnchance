@@ -39,6 +39,7 @@ pfnUserMsgHook m_pfnItemPickup;
 pfnUserMsgHook m_pfnAmmoX;
 pfnUserMsgHook m_pfnHideWeapon;
 pfnUserMsgHook m_pfnHideHUD;
+pfnUserMsgHook m_pfnWeaponSpr;
 
 int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
@@ -177,6 +178,11 @@ int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf)
 	gCustomHud.m_iHideHUDDisplay = READ_BYTE();
 	return m_pfnHideHUD(pszName, iSize, pbuf);
 }
+int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf){
+	BEGIN_READ(pbuf, iSize);
+	gWR.LoadScriptWeaponSprites(READ_SHORT(), READ_STRING());
+	return m_pfnWeaponSpr(pszName, iSize, pbuf);
+}
 void CustomSlotSetCallBack(cvar_t* vars){
 	if (!vars->string || vars->string[0] == 0)
 		return;
@@ -205,6 +211,7 @@ int CHudCustomAmmo::Init(void){
 	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
 	m_pfnHideWeapon = HOOK_MESSAGE(HideWeapon);
 	m_pfnHideHUD = HOOK_MESSAGE(HideHUD);
+	m_pfnWeaponSpr = HOOK_MESSAGE(WeaponSpr);
 
 	gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_VALUE, CustomSlotSetCallBack);
