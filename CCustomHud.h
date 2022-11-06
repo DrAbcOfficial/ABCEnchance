@@ -55,6 +55,7 @@ public:
 	void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 	void IN_Accumulate(void);
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
+	void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
 	bool IsInSpectate();
 	bool HasSuit();
 	bool IsHudHide(int HideToken);

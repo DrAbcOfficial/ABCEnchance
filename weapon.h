@@ -16,6 +16,7 @@
 
 struct WEAPON{
 	char	szName[MAX_WEAPON_NAME];
+	char	szSprName[MAX_WEAPON_NAME];
 	int		iAmmoType;
 	int		iAmmo2Type;
 	int		iMax1;

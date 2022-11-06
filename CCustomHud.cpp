@@ -191,11 +191,11 @@ void __UserCmd_Close(void) {
 	return UserCmd_SlotClose();
 }
 void __UserCmd_NextWeapon(void) {
-	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, 1, true);
+	m_HudCustomAmmo.SlotInput(gWR.m_iNowSlot, 1, true);
 	return UserCmd_NextWeapon();
 }
 void __UserCmd_PrevWeapon(void) {
-	m_HudCustomAmmo.SlotInput(gWR.iNowSlot, -1, true);
+	m_HudCustomAmmo.SlotInput(gWR.m_iNowSlot, -1, true);
 	return UserCmd_PrevWeapon();
 }
 void __UserCmd_OpenScoreboard(void) {
@@ -440,6 +440,9 @@ int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 	m_HudItemHighLight.AddEntity(type, ent, modelname);
 	m_HudGrenadeIndicator.HUD_AddEntity(type, ent, modelname);
 	return result;
+}
+void CCustomHud::HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
+	gWR.SyncWeapon(wd);
 }
 void CCustomHud::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {
 }
