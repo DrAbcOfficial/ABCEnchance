@@ -50,23 +50,23 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION_AVX}} ${{env.SOLUTION_FILE_PATH}}
     
-    - name: Copy install bat to Output
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: |
+    - name: Copy to build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
           copy "MetaHookSv/Plugins/ABCEnchance/Release/ABCEnchance.dll" "MetaHookSv/Plugins/ABCEnchance/build/ABCEnchance.dll" /y
           copy "MetaHookSv/Plugins/ABCEnchance/Release_AVX2/ABCEnchance.dll" "MetaHookSv/Plugins/ABCEnchance/build/ABCEnchance_AVX2.dll" "Output" /y
-        shell: cmd
+      shell: cmd
 
     - name: Zipping All
-        uses: vimtor/action-zip@v1
-        with:
+      uses: vimtor/action-zip@v1
+      with:
           files: MetaHookSv/Plugins/ABCEnchance/build/
           dest: ABCEnchance-windows-x86.zip
 
     - name: Create Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
           name: ABCEnchance-${{ github.ref }}
           files: |
             ABCEnchance-windows-x86.zip
