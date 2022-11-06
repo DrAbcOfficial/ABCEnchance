@@ -19,7 +19,7 @@ jobs:
     runs-on: windows-latest
 
     steps:    
-    - name: Git Clone Metamod
+    - name: Git Clone Metahook
       uses: sudosubin/git-clone-action@v1.0.1
       with:
         repository: hzqst/MetaHookSv
@@ -30,6 +30,14 @@ jobs:
       with:
         repository: DrAbcOfficial/ABCEnchance
         path: MetaHookSv/Plugins/ABCEnchance
+
+    - name: Setup build env
+      working-directory: MetaHookSv
+      run: MetaHookSv/build-initdeps.bat
+    
+    - name: Setup glew
+      working-directory: MetaHookSv
+      run: MetaHookSv/build-glew.bat
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
