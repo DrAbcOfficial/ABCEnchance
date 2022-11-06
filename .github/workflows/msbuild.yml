@@ -1,0 +1,54 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance
+  BUILD_CONFIGURATION: Release
+  BUILD_CONFIGURATION_AVX: Release_AVX2
+
+permissions:
+  contents: write
+
+jobs:
+  build-win32:
+    runs-on: windows-latest
+
+    steps:    
+    - name: Git Clone Metamod
+      uses: sudosubin/git-clone-action@v1.0.1
+      with:
+        repository: hzqst/MetaHookSv
+        path: MetaHookSv
+    
+    - name: Git Clone This
+      uses: sudosubin/git-clone-action@v1.0.1
+      with:
+        repository: DrAbcOfficial/ABCEnchance
+        path: MetaHookSv/Plugins/ABCEnchance
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      
+    - name: Build AVX
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION_AVX}} ${{env.SOLUTION_FILE_PATH}}
+      
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        name: ABCEnchance.dll
+        path: MetaHookSv/Plugins/ABCEnchance/Release/ABCEnchance.dll
+    - name: Upload a AVX Build Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        name: ABCEnchance_AVX2.dll
+        path: MetaHookSv/Plugins/ABCEnchance/Release_AVX2/ABCEnchance.dll
