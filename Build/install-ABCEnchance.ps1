@@ -38,9 +38,9 @@ if([String]::IsNullOrEmpty($svenLocation)){
 $metaLocation = "$($svenLocation)/svencoop/metahook/"
 if(Test-Path("$($svenLocation)/svencoop")){
     Write-Output "Copying dlls"
-    Copy-Item -Force -Path "./Build/abcenchance" -Destination "$($svenLocation)/svencoop"
-    Copy-Item -Force -Path "./Build/ABCEnchance.dll" -Destination "$($metaLocation)/plugins"
-    Copy-Item -Force -Path "./Build/ABCEnchance_AVX2.dll" -Destination "$($metaLocation)/plugins"
+    Copy-Item -Force -Path "./abcenchance" -Destination "$($svenLocation)/svencoop"
+    Copy-Item -Force -Path "./ABCEnchance.dll" -Destination "$($metaLocation)/plugins"
+    Copy-Item -Force -Path "./ABCEnchance_AVX2.dll" -Destination "$($metaLocation)/plugins"
     Write-Output "Done"
     Write-Output "Writing plugin load list"
     if(Test-Path("$($metaLocation)/configs/plugins.lst")){
@@ -57,7 +57,7 @@ if(Test-Path("$($svenLocation)/svencoop")){
 else{
     Write-Error "`n`
         --------------------------------------------------------`n`
-        (¨s¨F¡õ¡ä)¨s¦à©ß©¥©ß Can not find Sven-Coop game dir`n`
+        (ï¿½sï¿½Fï¿½ï¿½ï¿½ï¿½)ï¿½sï¿½ï¿½ß©ï¿½ï¿½ï¿½ Can not find Sven-Coop game dir`n`
         Is the key value of Sven coop in the registry corrupted?`n`
         --------------------------------------------------------`n"
 }

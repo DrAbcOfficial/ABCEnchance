@@ -53,8 +53,8 @@ jobs:
     - name: Copy to build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-          copy "MetaHookSv/Plugins/ABCEnchance/Release/ABCEnchance.dll" "MetaHookSv/Plugins/ABCEnchance/build/ABCEnchance.dll" /y
-          copy "MetaHookSv/Plugins/ABCEnchance/Release_AVX2/ABCEnchance.dll" "MetaHookSv/Plugins/ABCEnchance/build/ABCEnchance_AVX2.dll" "Output" /y
+          copy "MetaHookSv/Plugins/ABCEnchance/Release/ABCEnchance.dll" "MetaHookSv/Plugins/ABCEnchance/Bbuild/ABCEnchance.dll" /y
+          copy "MetaHookSv/Plugins/ABCEnchance/Release_AVX2/ABCEnchance.dll" "MetaHookSv/Plugins/ABCEnchance/Build/ABCEnchance_AVX2.dll" "Output" /y
       shell: cmd
 
     - name: Zipping All
