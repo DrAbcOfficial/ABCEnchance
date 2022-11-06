@@ -121,8 +121,7 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf){
 	char name[128];
 	strcpy_s(name, READ_STRING());
 	if (name[0] != 0)
-		gWR.LoadScriptWeaponSprites(id, name);
-	gWR.PickupWeapon(id);
+		gWR.LoadScriptWeaponSprites(id, name);;
 	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
 }
@@ -180,7 +179,11 @@ int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf)
 }
 int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
-	gWR.LoadScriptWeaponSprites(READ_SHORT(), READ_STRING());
+	int id = READ_SHORT();
+	char name[128];
+	strcpy_s(name, READ_STRING());
+	if (name[0] != 0)
+		gWR.LoadScriptWeaponSprites(id, name);;
 	return m_pfnWeaponSpr(pszName, iSize, pbuf);
 }
 void CustomSlotSetCallBack(cvar_t* vars){
