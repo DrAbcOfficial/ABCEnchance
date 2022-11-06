@@ -28,8 +28,6 @@ public:
 	bool m_bAcceptDeadMessage = false;
 private:
 	int DrawWList(float flTime);
-	void SyncWeapon();
-	float m_fNextSyncTime = 0;
 
 	size_t ElementGap = 0;
 	size_t BackGroundY = 0;

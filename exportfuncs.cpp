@@ -52,7 +52,6 @@ const clientdata_t* gClientData;
 float m_hfov;
 
 overviewInfo_t* gDevOverview;
-baseweapon_t* (*g_rgBaseSlots)[10][26] = nullptr;
 uint* g_arySlotPuVar = nullptr;
 refdef_t* g_refdef = nullptr;
 netadr_s* g_pConnectingServer = nullptr;
@@ -458,12 +457,6 @@ void FillAddress(){
 			Sig_AddrNotFound(SetPunchAngle);
 			gHookFuncs.SetPunchAngle = (decltype(gHookFuncs.SetPunchAngle))GetCallAddress(addr + 8);
 		}
-#define SC_HUDAMMO_RESET_SIG "\x83\x49\x10\x01\x68\x78\x05\x00\x00\xC7\x41\x14\x00\x00\x00\x00\xC7\x41\x2C\x00\x00\x00\x00\xC7\x41\x18\x00\x00\x00\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xE8\x2A\x2A\x2A\x2A\x68\xC0\x00\x00\x00\x6A\x00\x68\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x83\xC4\x18\xC7\x05\x2A\x2A\x2A\x2A\x00\x00\x00\x00\xC3"
-		{
-			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_HUDAMMO_RESET_SIG, Sig_Length(SC_HUDAMMO_RESET_SIG));
-			Sig_AddrNotFound(g_rgBaseSlots);
-			g_rgBaseSlots = *(decltype(g_rgBaseSlots)*)(addr + 33);
-		}
 #define SC_SLOTPOS_PUVAR_SIG "\x53\x8B\x5C\x24\x08\x55\x56\x57\x8B\xE9\x33\xFF\xBE"
 		{
 			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_SLOTPOS_PUVAR_SIG, Sig_Length(SC_SLOTPOS_PUVAR_SIG));
@@ -613,7 +606,8 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	return gExportfuncs.HUD_PlayerMove(ppmove, server);
 }
 void HUD_TxferPredictionData (struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
-	return gExportfuncs.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
+	gCustomHud.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
+	gExportfuncs.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 }
 void V_CalcRefdef(struct ref_params_s* pparams){
 	

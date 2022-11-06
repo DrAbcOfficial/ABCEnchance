@@ -34,7 +34,9 @@ public:
 	//等待绘制的图标
 	gridmenuitem_t gridDrawMenu[MAX_WEAPON_SLOTS];
 	//目前选择的Slot
-	int iNowSlot;
+	int m_iNowSlot;
+	//为了更快的同步
+	int m_iMaxId = 0;
 
 	void Init();
 	void Reset();
@@ -60,6 +62,7 @@ public:
 	WEAPON* GetLastPos(int iSlot);
 	gridmenuitem_t* GetDrawMenuItem(size_t iSlot);
 	void FillDrawMenuGrid();
+	void SyncWeapon(struct weapon_data_s* wd);
 
 	AMMO GetAmmo(int iId);
 	void SetAmmo(int iId, int iCount);

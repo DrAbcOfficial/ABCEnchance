@@ -116,16 +116,16 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 	//ªÊ÷∆∂•∂À1~10
 	for (int i = 0; i < MAX_WEAPON_SLOTS; i++){
 		int iWidth;
-		if (gWR.iNowSlot == i)
+		if (gWR.m_iNowSlot == i)
 			a = 255 * flAlphaRatio;
 		else
 			a = 192 * flAlphaRatio;
 		SelectColor.GetColor(r, g, b, dummy);
 		SPR_Set(gCustomHud.GetSprite(iBucket0Spr + i), r, g, b);
 		// make active slot wide enough to accomodate gun pictures
-		if (i == gWR.iNowSlot)
+		if (i == gWR.m_iNowSlot)
 		{
-			WEAPON* p = gWR.GetFirstPos(gWR.iNowSlot);
+			WEAPON* p = gWR.GetFirstPos(gWR.m_iNowSlot);
 			if (p && p->iId > 0)
 				iWidth = p->rcActive.right - p->rcActive.left;
 			else
@@ -142,7 +142,7 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 		y = SelectBucketHeight + (iYGap * 2 * flAnimationRatio);
 		// If this is the active slot, draw the bigger pictures,
 		// otherwise just draw boxes
-		if (i == gWR.iNowSlot){
+		if (i == gWR.m_iNowSlot){
 			WEAPON* p = gWR.GetFirstPos(i);
 			int iWidth = SelectBucketWidth;
 			if (p && p->iId > 0)

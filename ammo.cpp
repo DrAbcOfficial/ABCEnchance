@@ -59,6 +59,7 @@ int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_SHORT();
 	gHR.AddToHistory(HistoryResource::HISTSLOT_WEAP, iIndex);
+	gWR.PickupWeapon(iIndex);
 	return m_pfnWeapPickup(pszName, iSize, pbuf);
 }
 int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf){
@@ -72,6 +73,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
 
 	WEAPON Weapon;
 	strcpy_s(Weapon.szName, READ_STRING());
+	strcpy_s(Weapon.szSprName, Weapon.szName);
 	Weapon.iAmmoType = READ_CHAR();
 	Weapon.iMax1 = READ_LONG();
 	if (Weapon.iMax1 == 255)
@@ -87,6 +89,9 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
 	Weapon.iId = READ_SHORT();
 	Weapon.iFlags = READ_BYTE();
 	Weapon.iClip = 0;
+
+	if (Weapon.iId > gWR.m_iMaxId)
+		gWR.m_iMaxId = Weapon.iId;
 	
 	for (size_t i = 0; i < MAX_WEAPON_SLOTS; i++) {
 		if (!gCVars.pAmmoCSlot[i]->string || gCVars.pAmmoCSlot[i]->string[0] == 0)
@@ -96,8 +101,6 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
 			break;
 		}
 	}
-	/*
-	* * 在找到解决方案前暂时停止修复选枪冲突
 	int posFlag = Weapon.iSlotPos;
 	int tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, posFlag);
 	while (tw > 0){
@@ -111,7 +114,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
 	}
 	if(posFlag != Weapon.iSlotPos)
 		Weapon.iSlotPos = posFlag;
-		*/
+
 	gWR.AddWeapon(&Weapon);
 	return m_pfnWeaponList(pszName, iSize, pbuf);
 }
@@ -177,13 +180,20 @@ int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf)
 	gCustomHud.m_iHideHUDDisplay = READ_BYTE();
 	return m_pfnHideHUD(pszName, iSize, pbuf);
 }
+//uzi akimbo
+//shit uzi
 int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int id = READ_SHORT();
 	char name[128];
 	strcpy_s(name, READ_STRING());
-	if (name[0] != 0)
-		gWR.LoadScriptWeaponSprites(id, name);;
+	if (name[0] != 0) {
+		WEAPON* wp = gWR.GetWeapon(id);
+		if (wp && wp->iId > 0) {
+			strcpy_s(wp->szSprName, name);
+			gWR.LoadWeaponSprites(wp);
+		}
+	}
 	return m_pfnWeaponSpr(pszName, iSize, pbuf);
 }
 void CustomSlotSetCallBack(cvar_t* vars){
@@ -244,7 +254,6 @@ int CHudCustomAmmo::Init(void){
 	return 1;
 };
 void CHudCustomAmmo::Reset(void){
-	m_fNextSyncTime = 0;
 	m_bSelectBlock = false;
 	m_pWeapon = nullptr;
 	m_bIsOnTarget = false;
@@ -278,33 +287,6 @@ int CHudCustomAmmo::VidInit(void){
 	m_HudWMenuSlot.VidInit();
 	return 1;
 }
-void CHudCustomAmmo::SyncWeapon(){
-	for (size_t i = 0; i < MAX_WEAPON_OLDSLOTS; i++){
-		for (size_t j = 0; j < MAX_WEAPON_OLDPOSITIONS; j++){
-			//没有WeaponList信息，丢弃
-			if (gWR.GetWeaponIdBySlot(i, j) <= 0)
-				continue;
-			//获得原位武器信息
-			baseweapon_t* bwp = (*g_rgBaseSlots)[i][j];
-			//若原位已没有
-			if (!bwp) {
-				//现位还有，丢弃武器
-				if (gWR.HasWeapon(i, j))
-					gWR.DropWeapon(i, j);
-			}
-			//若原位已有
-			else {
-				//现位没有，捡起武器
-				if (!gWR.HasWeapon(i, j))
-					gWR.PickupWeapon(bwp->iId);
-				//同步弹匣数据
-				WEAPON* wp = gWR.GetWeapon(bwp->iId);
-				wp->iClip = bwp->iClip;
-				wp->iClip2 = bwp->iClip2;
-			}
-		}
-	}
-}
 bool CHudCustomAmmo::IsVisible() {
 	if (m_pNowSelectMenu != nullptr)
 		return m_pNowSelectMenu->IsVisible();
@@ -337,17 +319,12 @@ void CHudCustomAmmo::Select() {
 		m_HudCustomAmmo.ChosePlayerWeapon();
 	}
 	m_pNowSelectMenu->Select();
-	gWR.iNowSlot = -1;
+	gWR.m_iNowSlot = -1;
 	m_bSelectBlock = true;
 }
 int CHudCustomAmmo::Draw(float flTime){
 	if (!ShouldDraw())
 		return 1;
-	//0.3s 进行一次武器同步
-	if (flTime > m_fNextSyncTime) {
-		SyncWeapon();
-		m_fNextSyncTime = flTime + 0.3f;
-	}
 	// Draw Weapon Menu
 	DrawWList(flTime);
 	gHR.DrawAmmoHistory(flTime);
@@ -447,8 +424,8 @@ int CHudCustomAmmo::Draw(float flTime){
 	return 1;
 }
 void CHudCustomAmmo::ChosePlayerWeapon(){
-	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1) {
-		WEAPON* wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
+	if (gWR.gridDrawMenu[gWR.m_iNowSlot].iId > -1) {
+		WEAPON* wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.m_iNowSlot].iId);
 		if (!(wp->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(wp))
 			return;
 		ServerCmd(wp->szName);
@@ -492,7 +469,7 @@ void CHudCustomAmmo::IN_Accumulate(){
 		int s = m_HudWMenuAnnular.m_fCursorAngle / (0.2 * mathlib::Q_PI);
 		s = m_HudWMenuAnnular.m_fCursorAngle >= 0 ? s : 9 + s;
 		if (gWR.gridDrawMenu[s].iId > -1)
-			gWR.iNowSlot = s;
+			gWR.m_iNowSlot = s;
 	}
 }
 void CHudCustomAmmo::Clear(){

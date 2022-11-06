@@ -15,7 +15,6 @@ extern float m_hfov;
 extern netadr_s* g_pConnectingServer;
 
 extern overviewInfo_t* gDevOverview;
-extern baseweapon_t* (*g_rgBaseSlots)[10][26];
 extern refdef_t* g_refdef;
 extern metaplugins_t g_metaplugins;
 

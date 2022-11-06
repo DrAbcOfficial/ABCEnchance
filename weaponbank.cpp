@@ -35,7 +35,8 @@ void WeaponsResource::Init(void){
 	Reset();
 }
 void WeaponsResource::Reset(void){
-	iNowSlot = -1;
+	m_iNowSlot = -1;
+	m_iMaxId = -1;
 	memset(rgWeapons, 0, sizeof rgWeapons);
 	memset(riAmmo, 0, sizeof riAmmo);
 	memset(gridSlotPosDataMap, -1, sizeof gridSlotPosDataMap);
@@ -68,6 +69,28 @@ size_t WeaponsResource::CountMenuWeapons() {
 			c++;
 	}
 	return c;
+}
+void WeaponsResource::SyncWeapon(struct weapon_data_s* wd) {
+	if (m_iMaxId <= 0)
+		return;
+	for (size_t i = 0; i <= m_iMaxId; i++) {
+		WEAPON* weapon = GetWeapon(i);
+		if (weapon->iId <= 0)
+			continue;
+		weapon_data_s* wp = wd + i;
+		if (wp->m_iId <= 0) {
+			if (HasWeapon(weapon->iSlot, weapon->iSlotPos))
+				DropWeapon(weapon->iSlot, weapon->iSlotPos);
+		}
+		else {
+			if (!HasWeapon(weapon->iSlot, weapon->iSlotPos))
+				PickupWeapon(wp->m_iId);
+			//同步弹匣数据
+			WEAPON* pwd = gWR.GetWeapon(wp->m_iId);
+			pwd->iClip = pwd->iClip;
+			pwd->iClip2 = pwd->iClip2;
+		}
+	}
 }
 int WeaponsResource::GetWeaponId(char* szName){
 	for (const WEAPON& var : rgWeapons) {
@@ -144,7 +167,7 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon){
 	pWeapon->hAmmo = 0;
 	pWeapon->hAmmo2 = 0;
 
-	sprintf_s(sz, "sprites/%s.txt", pWeapon->szName);
+	sprintf_s(sz, "sprites/%s.txt", pWeapon->szSprName);
 	client_sprite_t* pList = SPR_GetList(sz, &i);
 
 	if (!pList)
@@ -247,7 +270,7 @@ void WeaponsResource::LoadScriptWeaponSprites(int iId, char* cust){
 	pWeapon->hActive = 0;
 	pWeapon->hAmmo = 0;
 	pWeapon->hAmmo2 = 0;
-	sprintf_s(sz, "sprites/%s/%s.txt", cust, pWeapon->szName);
+	sprintf_s(sz, "sprites/%s/%s.txt", cust, pWeapon->szSprName);
 	client_sprite_t* pList = SPR_GetList(sz, &i);
 
 	if (!pList)
@@ -350,8 +373,8 @@ void WeaponsResource::SetSelectWeapon(int iId, int iPos, bool bWheel) {
 	if (pFastSwich->value > 0 && bWheel)
 		ServerCmd(GetWeapon(iId)->szName);
 	else {
-		gridDrawMenu[iNowSlot].iId = iId;
-		gridDrawMenu[iNowSlot].iPos = iPos;
+		gridDrawMenu[m_iNowSlot].iId = iId;
+		gridDrawMenu[m_iNowSlot].iPos = iPos;
 	}
 }
 void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bWheel){
@@ -365,12 +388,12 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bWheel){
 	WEAPON* wp = nullptr;
 	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT_INDEX);
 	//如果是当前slot
-	if (iSlot == iNowSlot) {
+	if (iSlot == m_iNowSlot) {
 		//避免死循环
-		if (gridDrawMenu[iNowSlot].iPos < 0 && gridDrawMenu[iNowSlot].iId < 0)
+		if (gridDrawMenu[m_iNowSlot].iPos < 0 && gridDrawMenu[m_iNowSlot].iId <= 0)
 			return;
-		int menuPos = gridDrawMenu[iNowSlot].iPos + fAdvance;
-		int iTempSlot = iNowSlot;
+		int menuPos = gridDrawMenu[m_iNowSlot].iPos + fAdvance;
+		int iTempSlot = m_iNowSlot;
 		while (wp == nullptr) {
 			wp = GetWeaponSlot(iTempSlot, menuPos);
 
@@ -402,24 +425,35 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bWheel){
 					iTempSlot = MAX_WEAPON_SLOT_INDEX;
 			}
 		}
-		iNowSlot = iTempSlot;
+		m_iNowSlot = iTempSlot;
 		if (wp && wp->iId > 0)
 			SetSelectWeapon(wp->iId, wp->iSlotPos, bWheel);
 		else if (gCVars.pAmmoMenuStyle->value <= 0) {
-			gridDrawMenu[iNowSlot].iId = gridDrawMenu[iNowSlot].iPos = -1;
+			gridDrawMenu[m_iNowSlot].iId = gridDrawMenu[m_iNowSlot].iPos = -1;
 			return;
 		}
 	}
 	//如果不是
 	else {
-		iNowSlot = iSlot;
+		m_iNowSlot = iSlot;
 		//经典样式
 		if (gCVars.pAmmoMenuStyle->value <= 0) {
-			wp = gWR.GetFirstPos(iNowSlot);
+			wp = gWR.GetFirstPos(m_iNowSlot);
+			if (!wp) {
+				int iCounter = m_iNowSlot + 1;
+				while (wp == nullptr && iCounter != m_iNowSlot) {
+					if (iCounter >= MAX_WEAPON_SLOTS)
+						iCounter = 0;
+					wp = gWR.GetFirstPos(iCounter);
+					if (iCounter == m_iNowSlot || wp != nullptr)
+						break;
+					iCounter++;
+				}
+			}
 			if (wp && wp->iId > 0)
 				SetSelectWeapon(wp->iId, wp->iSlotPos, bWheel);
 			else{
-				gridDrawMenu[iNowSlot].iId = gridDrawMenu[iNowSlot].iPos = -1;
+				gridDrawMenu[m_iNowSlot].iId = gridDrawMenu[m_iNowSlot].iPos = -1;
 				return;
 			}
 		}

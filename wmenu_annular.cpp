@@ -227,7 +227,7 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 			mathlib::HSVToRGB(h, s, v, r, g, b);
 		}
 		DrawSPRIconPos(iSelectCyclerSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, a * 0.5);
-		if (gWR.gridDrawMenu[i].iId <= 0 || i == gWR.iNowSlot)
+		if (gWR.gridDrawMenu[i].iId <= 0 || i == gWR.m_iNowSlot)
 			continue;
 		wp = gWR.GetWeapon(gWR.gridDrawMenu[i].iId);
 		if (!wp)
@@ -237,19 +237,19 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		DrawSelectIcon(wp, a, xpos, ypos, i);
 	}
 	//»æÖÆÒÑÑ¡
-	if (gWR.gridDrawMenu[gWR.iNowSlot].iId > -1 && gWR.iNowSlot >= 0) {
-		wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.iNowSlot].iId);
-		mathlib::Q_Vector2Copy(aryIn[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecA);
-		mathlib::Q_Vector2Copy(aryIn[gWR.iNowSlot], vecB);
-		mathlib::Q_Vector2Copy(aryOut[gWR.iNowSlot == 9 ? 0 : gWR.iNowSlot + 1], vecC);
-		mathlib::Q_Vector2Copy(aryOut[gWR.iNowSlot], vecD);
+	if (gWR.gridDrawMenu[gWR.m_iNowSlot].iId > -1 && gWR.m_iNowSlot >= 0) {
+		wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.m_iNowSlot].iId);
+		mathlib::Q_Vector2Copy(aryIn[gWR.m_iNowSlot == 9 ? 0 : gWR.m_iNowSlot + 1], vecA);
+		mathlib::Q_Vector2Copy(aryIn[gWR.m_iNowSlot], vecB);
+		mathlib::Q_Vector2Copy(aryOut[gWR.m_iNowSlot == 9 ? 0 : gWR.m_iNowSlot + 1], vecC);
+		mathlib::Q_Vector2Copy(aryOut[gWR.m_iNowSlot], vecD);
 		mathlib::CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
 		mathlib::CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
 		mathlib::CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
 		mathlib::CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4;
 		ypos = (vecA[1] + vecB[1] + vecC[1] + vecD[1]) / 4;
-		DrawSelectIcon(wp, a, xpos, ypos, gWR.iNowSlot);
+		DrawSelectIcon(wp, a, xpos, ypos, gWR.m_iNowSlot);
 		SelectRinColor.GetColor(r, g, b, dummy);
 		DrawSPRIconPos(iSelectCyclerRinSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, a);
 	}
