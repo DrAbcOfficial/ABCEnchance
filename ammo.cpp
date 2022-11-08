@@ -3,6 +3,9 @@
 #include "pm_shared.h"
 
 #include <cmath>
+#include <string>
+#include <map>
+#include <vector>
 #include <mymathlib.h>
 #include <mathlib/Vector.h>
 
@@ -70,51 +73,25 @@ int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf){
 int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 
-	WEAPON Weapon;
-	strcpy_s(Weapon.szName, READ_STRING());
-	strcpy_s(Weapon.szSprName, Weapon.szName);
-	Weapon.iAmmoType = READ_CHAR();
-	Weapon.iMax1 = READ_LONG();
-	if (Weapon.iMax1 == 255)
-		Weapon.iMax1 = -1;
+	WEAPON* Weapon = new WEAPON();
+	strcpy_s(Weapon->szName, READ_STRING());
+	strcpy_s(Weapon->szSprName, Weapon->szName);
+	Weapon->iAmmoType = READ_CHAR();
+	Weapon->iMax1 = READ_LONG();
+	if (Weapon->iMax1 == 255)
+		Weapon->iMax1 = -1;
 
-	Weapon.iAmmo2Type = READ_CHAR();
-	Weapon.iMax2 = READ_LONG();
-	if (Weapon.iMax2 == 255)
-		Weapon.iMax2 = -1;
+	Weapon->iAmmo2Type = READ_CHAR();
+	Weapon->iMax2 = READ_LONG();
+	if (Weapon->iMax2 == 255)
+		Weapon->iMax2 = -1;
 
-	Weapon.iSlot = READ_CHAR();
-	Weapon.iSlotPos = READ_CHAR();
-	Weapon.iId = READ_SHORT();
-	Weapon.iFlags = READ_BYTE();
-	Weapon.iClip = 0;
-
-	if (Weapon.iId > gWR.m_iMaxId)
-		gWR.m_iMaxId = Weapon.iId;
-	
-	for (size_t i = 0; i < MAX_WEAPON_SLOTS; i++) {
-		if (!gCVars.pAmmoCSlot[i]->string || gCVars.pAmmoCSlot[i]->string[0] == 0)
-			continue;
-		if (strcmp(Weapon.szName, gCVars.pAmmoCSlot[i]->string) == 0) {
-			gWR.SetUserSlot(i, Weapon.iId);
-			break;
-		}
-	}
-	int posFlag = Weapon.iSlotPos;
-	int tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, posFlag);
-	while (tw > 0){
-		posFlag++;
-		//草你真的应该去找服主排查下冲突
-		if (Weapon.iSlotPos >= MAX_WEAPON_POS_INDEX) {
-			posFlag = Weapon.iSlotPos;
-			break;
-		}
-		tw = gWR.GetWeaponIdBySlot(Weapon.iSlot, posFlag);
-	}
-	if(posFlag != Weapon.iSlotPos)
-		Weapon.iSlotPos = posFlag;
-
-	gWR.AddWeapon(&Weapon);
+	Weapon->iSlot = READ_CHAR();
+	Weapon->iSlotPos = READ_CHAR();
+	Weapon->iId = READ_SHORT();
+	Weapon->iFlags = READ_BYTE();
+	Weapon->iClip = 0;
+	gWR.AddWeapon(Weapon);
 	return m_pfnWeaponList(pszName, iSize, pbuf);
 }
 int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf){
@@ -123,7 +100,7 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf){
 	char name[128];
 	strcpy_s(name, READ_STRING());
 	if (name[0] != 0)
-		gWR.LoadScriptWeaponSprites(id, name);;
+		gWR.LoadWeaponSprites(id, name);;
 	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
 }
@@ -201,7 +178,6 @@ void CustomSlotSetCallBack(cvar_t* vars){
 	int slot;
 	sscanf_s(vars->name, "cl_customslot%d", &slot);
 	slot--;
-	gWR.SetUserSlot(slot, gWR.GetWeaponId(vars->string));
 }
 void ChangeWMenuStyleCallBack(cvar_t* vars) {
 	if (vars->value > 0)
@@ -225,16 +201,16 @@ int CHudCustomAmmo::Init(void){
 	m_pfnHideHUD = HOOK_MESSAGE(HideHUD);
 	m_pfnWeaponSpr = HOOK_MESSAGE(WeaponSpr);
 
-	gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[2] = CREATE_CVAR("cl_customslot3", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[3] = CREATE_CVAR("cl_customslot4", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[4] = CREATE_CVAR("cl_customslot5", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[5] = CREATE_CVAR("cl_customslot6", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[6] = CREATE_CVAR("cl_customslot7", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[7] = CREATE_CVAR("cl_customslot8", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[8] = CREATE_CVAR("cl_customslot9", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[2] = CREATE_CVAR("cl_customslot3", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[3] = CREATE_CVAR("cl_customslot4", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[4] = CREATE_CVAR("cl_customslot5", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[5] = CREATE_CVAR("cl_customslot6", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[6] = CREATE_CVAR("cl_customslot7", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[7] = CREATE_CVAR("cl_customslot8", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[8] = CREATE_CVAR("cl_customslot9", "", FCVAR_VALUE, CustomSlotSetCallBack);
+	//gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuStyle = CREATE_CVAR("cl_wmenustyle", "0", FCVAR_VALUE, ChangeWMenuStyleCallBack);
@@ -423,8 +399,8 @@ int CHudCustomAmmo::Draw(float flTime){
 	return 1;
 }
 void CHudCustomAmmo::ChosePlayerWeapon(){
-	if (gWR.gridDrawMenu[gWR.m_iNowSlot].iId > -1) {
-		WEAPON* wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.m_iNowSlot].iId);
+	WEAPON* wp = gWR.GetWeapon(gWR.m_iNowSlot, gWR.m_aryDrawMenu[gWR.m_iNowSlot]);
+	if (wp != nullptr) {
 		if (!(wp->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(wp))
 			return;
 		ServerCmd(wp->szName);
@@ -467,7 +443,7 @@ void CHudCustomAmmo::IN_Accumulate(){
 		m_HudWMenuAnnular.m_fCursorAngle = atan2(y, x);
 		int s = m_HudWMenuAnnular.m_fCursorAngle / (0.2 * mathlib::Q_PI);
 		s = m_HudWMenuAnnular.m_fCursorAngle >= 0 ? s : 9 + s;
-		if (gWR.gridDrawMenu[s].iId > -1)
+		if (gWR.m_aryDrawMenu[s] != INVALID_WEAPON_POS)
 			gWR.m_iNowSlot = s;
 	}
 }

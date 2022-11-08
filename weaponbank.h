@@ -1,76 +1,86 @@
 #pragma once
-constexpr size_t MAX_WEAPON_OLDPOSITIONS = 26;
-constexpr size_t MAX_WEAPON_OLDSLOTS = 10;
-constexpr size_t MAX_WEAPON_POSITIONS = 30;
-constexpr size_t MAX_WEAPON_POSITIONS_USER = MAX_WEAPON_POSITIONS + 1;
+#define MAX_WEAPON_SLOT 10
+#define INVALID_WEAPON_SLOT MAX_WEAPON_SLOT + 1
+#define INVALID_WEAPON_POS -1
 
-constexpr size_t MAX_WEAPON_POS_INDEX = MAX_WEAPON_POSITIONS - 1;
-constexpr size_t MAX_WEAPON_POSUSER_INDEX = MAX_WEAPON_POSITIONS_USER - 1;
+class CWeaponData {
+public:
+	WEAPON* operator [](size_t iId);
+	WEAPON* operator [](std::pair<size_t, size_t>);
+	WEAPON* operator [](std::string szName);
+	void Add(WEAPON* wp);
+	void Remove(WEAPON* wp);
+	void RemoveAll();
+	void Clear();
+	bool Has(size_t iSlot, size_t iPos);
+	std::map<size_t, WEAPON*>::iterator Begin();
+	std::map<size_t, WEAPON*>::iterator End();
+	std::map<size_t, WEAPON*>::iterator PosBegin(size_t iSlot);
+	std::map<size_t, WEAPON*>::iterator PosEnd(size_t iSlot);
+	size_t GetMaxPos(size_t iSlot);
+	size_t GetMinPos(size_t iSlot);
+	size_t Size();
+	size_t Size(size_t iSlot);
+	CWeaponData();
+private:
+	//依照Id索引的
+	std::map<size_t, WEAPON*> m_dicWeaponIds;
+	//依照Slot Pos索引的
+	std::map<size_t, std::map<size_t, WEAPON*>> m_dicWeaponSlots;
+	//依照名称索引的
+	std::map<std::string, WEAPON*> m_dicWeaponNames;
+};
 
-constexpr size_t MAX_WEAPON_SLOTS = 10;
-constexpr size_t MAX_WEAPON_SLOT_INDEX = MAX_WEAPON_SLOTS - 1;
-constexpr size_t MAX_WEAPONS = MAX_WEAPON_POSITIONS * MAX_WEAPON_SLOTS;
-constexpr size_t MAX_AMMO = 999;
-
-typedef struct gridmenuitem_s{
-	int iId = -1;
-	int iPos = -1;
-}gridmenuitem_t;
 
 class WeaponsResource{
 private:
-	//同步到的所有武器数据
-	WEAPON rgWeapons[MAX_WEAPONS];
-	//所有武器依照Slot Pos填充的ID列表
-	int gridSlotMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS_USER];
-	//玩家持有的武器Slot Pos填充的ID列表
-	int gridSlotPosDataMap[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];
+	//玩家可以获取的所有武器数据
+	CWeaponData m_pWeaponData;
+	//玩家持有的武器
+	CWeaponData m_pOwnedWeaponData;
 	//玩家持有的所有子弹数据
-	int	riAmmo[MAX_AMMO];
+	std::map<size_t, int> m_dicAmmos;
 	//hud_fastswitch
 	cvar_t* pFastSwich = nullptr;
 
 public:
-	//等待绘制的图标
-	gridmenuitem_t gridDrawMenu[MAX_WEAPON_SLOTS];
+	//1~0十个菜单选中的Pos
+	int m_aryDrawMenu[MAX_WEAPON_SLOT];
 	//目前选择的Slot
-	int m_iNowSlot;
-	//为了更快的同步
-	int m_iMaxId = 0;
+	size_t m_iNowSlot;
 
 	void Init();
 	void Reset();
-	size_t CountGridWeapons();
-	size_t CountWeapons();
-	size_t CountMenuWeapons();
-	int GetWeaponId(char* szName);
-	WEAPON* GetWeapon(int iId);
+
+	CWeaponData* GetOwnedData();
+
+	WEAPON* GetWeapon(char* szName);
+	WEAPON* GetWeapon(size_t iId);
+	WEAPON* GetWeapon(size_t slot, size_t pos);
+
 	void AddWeapon(WEAPON* wp);
-	void PickupWeapon(int id);
-	void DropWeapon(int s, int p);
-	void DropAllWeapons(void);
-	WEAPON* GetWeaponSlot(int slot, int pos);
-	int GetWeaponIdBySlot(int slot, int pos);
-	int HasWeapon(int s, int p);
-	int HasWeapon(WEAPON* wp);
-	void LoadWeaponSprites(WEAPON* wp);
-	void LoadScriptWeaponSprites(int iId, char* cust);
-	void LoadAllWeaponSprites(void);
-	void SelectSlot(int iSlot, int fAdvance, bool bWheel);
-	void SetUserSlot(int iSlot, int iId);
-	WEAPON* GetFirstPos(int iSlot);
-	WEAPON* GetLastPos(int iSlot);
-	gridmenuitem_t* GetDrawMenuItem(size_t iSlot);
-	void FillDrawMenuGrid();
+	void PickupWeapon(size_t id);
+	void DropWeapon(size_t s, size_t p);
+	void DropAllWeapons();
+	
+	bool HasWeapon(size_t s, size_t p);
+	bool HasWeapon(WEAPON* wp);
+	void LoadWeaponSprites(WEAPON* wp, char* cust = nullptr);
+	void LoadWeaponSprites(size_t iId, char* cust);
+	void LoadAllWeaponSprites();
+	void SelectSlot(size_t iSlot, int fAdvance, bool bWheel);
+	WEAPON* GetFirstPos(size_t iSlot);
+	WEAPON* GetLastPos(size_t iSlot);
+	size_t GetDrawMenuPos(size_t iSlot);
 	void SyncWeapon(const weapon_data_t* wd);
 
-	AMMO GetAmmo(int iId);
-	void SetAmmo(int iId, int iCount);
-	int CountAmmo(int iId);
-	int HasAmmo(WEAPON* p);
+	void SetAmmo(size_t iId, int iCount);
+	int CountAmmo(size_t iId);
+	bool HasAmmo(WEAPON* p);
 	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect);
 private:
 	//选择选定的武器或菜单
 	void SetSelectWeapon(int iId, int iPos, bool bWheel);
+	client_sprite_t* WeaponsResource::GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount);
 };
 extern WeaponsResource gWR;

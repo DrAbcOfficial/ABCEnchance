@@ -1,4 +1,7 @@
 #include <metahook.h>
+#include <map>
+#include <string>
+#include <vector>
 
 #include "mymathlib.h"
 #include "glew.h"
@@ -101,7 +104,6 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 		flAnimationRatio = 1 - ((m_fAnimateTime - flTime) / SelectAnimateTime);
 	int r, g, b, a, dummy;
 	int x, y;
-	int id;
 	int iXStart = SelectXOffset;
 	int iYStart = SelectYOffset;
 	int iXGap = SelectXGap;
@@ -114,7 +116,7 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 	x = iXStart;
 	y = iYStart;
 	//ªÊ÷∆∂•∂À1~10
-	for (int i = 0; i < MAX_WEAPON_SLOTS; i++){
+	for (size_t i = 0; i < MAX_WEAPON_SLOT; i++){
 		int iWidth;
 		if (gWR.m_iNowSlot == i)
 			a = 255 * flAlphaRatio;
@@ -123,8 +125,7 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 		SelectColor.GetColor(r, g, b, dummy);
 		SPR_Set(gCustomHud.GetSprite(iBucket0Spr + i), r, g, b);
 		// make active slot wide enough to accomodate gun pictures
-		if (i == gWR.m_iNowSlot)
-		{
+		if (i == gWR.m_iNowSlot){
 			WEAPON* p = gWR.GetFirstPos(gWR.m_iNowSlot);
 			if (p && p->iId > 0)
 				iWidth = p->rcActive.right - p->rcActive.left;
@@ -138,7 +139,7 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 	}
 	x = iXStart;
 	// Draw all of the buckets
-	for (int i = 0; i < MAX_WEAPON_SLOTS; i++){
+	for (int i = 0; i < MAX_WEAPON_SLOT; i++){
 		y = SelectBucketHeight + (iYGap * 2 * flAnimationRatio);
 		// If this is the active slot, draw the bigger pictures,
 		// otherwise just draw boxes
@@ -147,21 +148,14 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 			int iWidth = SelectBucketWidth;
 			if (p && p->iId > 0)
 				iWidth = p->rcActive.right - p->rcActive.left;
-			for (int iPos = 0; iPos < MAX_WEAPON_POSITIONS_USER; iPos++){
-				if (!gWR.HasWeapon(i, iPos))
-					continue;
-				id = gWR.GetWeaponIdBySlot(i, iPos);
-				if (id <= 0)
-					continue;
-				p = gWR.GetWeapon(id);
-				if (!p)
-					continue;
+			for(auto iter = gWR.GetOwnedData()->PosBegin(i); iter != gWR.GetOwnedData()->PosEnd(i);iter++){
+				p = iter->second;
 				if (gWR.HasAmmo(p))
 					SelectColor.GetColor(r, g, b, a);
 				else
 					SelectEmptyColor.GetColor(r, g, b, a);
 				// if active, then we must have ammo.
-				if (gWR.gridDrawMenu[i].iPos == iPos){
+				if (gWR.m_aryDrawMenu[i] == p->iSlotPos){
 					a = 255 * flAlphaRatio;
 					ScaleColors(r, g, b, a);
 					SPR_Set(p->hActive, r, g, b);
@@ -191,15 +185,8 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 		}
 		else{
 			// Draw Row of weapons.
-			for (int iPos = 0; iPos < MAX_WEAPON_POSITIONS_USER; iPos++){
-				if (!gWR.HasWeapon(i, iPos))
-					continue;
-				id = gWR.GetWeaponIdBySlot(i, iPos);
-				if (id <= 0)
-					continue;
-				WEAPON* p = gWR.GetWeapon(id);
-				if (!p)
-					continue;
+			for (auto iter = gWR.GetOwnedData()->PosBegin(i); iter != gWR.GetOwnedData()->PosEnd(i); iter++) {
+				WEAPON* p = iter->second;
 				if (gWR.HasAmmo(p)){
 					SelectColor.GetColor(r, g, b, dummy);
 					a = 128 * flAlphaRatio;

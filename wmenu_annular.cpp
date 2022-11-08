@@ -1,4 +1,7 @@
 #include <metahook.h>
+#include <map>
+#include <vector>
+#include <string>
 
 #include "mymathlib.h"
 
@@ -133,7 +136,6 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		}
 		return 1;
 	}
-	gWR.FillDrawMenuGrid();
 	float flTimeDiffer = m_fFade - flTime;
 	float flStartRot = (float)SelectRotate;
 	int iBackGroundHeight = SelectSize;
@@ -227,9 +229,9 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 			mathlib::HSVToRGB(h, s, v, r, g, b);
 		}
 		DrawSPRIconPos(iSelectCyclerSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, a * 0.5);
-		if (gWR.gridDrawMenu[i].iId <= 0 || i == gWR.m_iNowSlot)
+		if (gWR.m_aryDrawMenu[i] == INVALID_WEAPON_POS || i == gWR.m_iNowSlot)
 			continue;
-		wp = gWR.GetWeapon(gWR.gridDrawMenu[i].iId);
+		wp = gWR.GetWeapon(i, gWR.m_aryDrawMenu[i]);
 		if (!wp)
 			continue;
 		xpos = (vecA[0] + vecB[0] + vecC[0] + vecD[0]) / 4.0f;
@@ -237,8 +239,10 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		DrawSelectIcon(wp, a, xpos, ypos, i);
 	}
 	//»æÖÆÒÑÑ¡
-	if (gWR.gridDrawMenu[gWR.m_iNowSlot].iId > -1 && gWR.m_iNowSlot >= 0) {
-		wp = gWR.GetWeapon(gWR.gridDrawMenu[gWR.m_iNowSlot].iId);
+	if (gWR.m_aryDrawMenu[i] != INVALID_WEAPON_POS && gWR.m_iNowSlot >= 0) {
+		wp = gWR.GetWeapon(gWR.m_iNowSlot, gWR.m_aryDrawMenu[gWR.m_iNowSlot]);
+		if (!wp)
+			return 1;
 		mathlib::Q_Vector2Copy(aryIn[gWR.m_iNowSlot == 9 ? 0 : gWR.m_iNowSlot + 1], vecA);
 		mathlib::Q_Vector2Copy(aryIn[gWR.m_iNowSlot], vecB);
 		mathlib::Q_Vector2Copy(aryOut[gWR.m_iNowSlot == 9 ? 0 : gWR.m_iNowSlot + 1], vecC);
