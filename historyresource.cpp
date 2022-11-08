@@ -1,4 +1,7 @@
 #include <metahook.h>
+#include <map>
+#include <vector>
+#include <string>
 #include "glew.h"
 
 #include "Color.h"

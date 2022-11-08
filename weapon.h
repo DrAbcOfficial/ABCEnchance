@@ -21,10 +21,10 @@ struct WEAPON{
 	int		iAmmo2Type;
 	int		iMax1;
 	int		iMax2;
-	int		iSlot;
-	int		iSlotPos;
+	size_t	iSlot;
+	size_t	iSlotPos;
 	int		iFlags;
-	int		iId = -1;
+	size_t	iId = 0;
 	int		iClip;
 	int		iClip2;
 

@@ -1,5 +1,9 @@
 #include <metahook.h>
 #include <cmath>
+#include <string>
+#include <map>
+#include <vector>
+
 #include "mymathlib.h"
 #include "cvardef.h"
 #include "vguilocal.h"
@@ -14,68 +18,126 @@
 #include "historyresource.h"
 #include "weaponbank.h"
 
-client_sprite_t* GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount){
-	if (!pList)
-		return nullptr;
-
-	int i = iCount;
-	client_sprite_t* p = pList;
-
-	while (i--){
-		if ((!strcmp(psz, p->szName)) && (p->iRes == iRes))
-			return p;
-		p++;
+WEAPON* CWeaponData::operator [](size_t iId) {
+	return this->m_dicWeaponIds[iId];
+}
+WEAPON* CWeaponData::operator [](std::pair<size_t, size_t> pair) {
+	return this->m_dicWeaponSlots[pair.first][pair.second];
+}
+WEAPON* CWeaponData::operator [](std::string szName) {
+	return this->m_dicWeaponNames[szName];
+}
+//删除所有链接，并且清理指向的对象内存
+void CWeaponData::Clear() {
+	//所有map指向同一个对象，所以只需要第一张map释放WEAPON内存即可
+	for (auto iter = this->m_dicWeaponIds.begin(); iter != this->m_dicWeaponIds.end(); iter++) {
+		delete iter->second;
+		iter->second = nullptr;
 	}
-
-	return nullptr;
+	//但是这个表包含十个std::map栈对象，所以需要手动清理每张表
+	for (auto iter = this->m_dicWeaponSlots.begin(); iter != this->m_dicWeaponSlots.end(); iter++) {
+		iter->second.clear();
+	}
+	this->m_dicWeaponSlots.clear();
+	this->m_dicWeaponNames.clear();
+}
+bool CWeaponData::Has(size_t iSlot, size_t iPos){
+	if (!this->m_dicWeaponSlots[iSlot].count(iPos))
+		return false;
+	auto mapPos = this->m_dicWeaponSlots.find(iSlot)->second;
+	return mapPos.find(iPos) != mapPos.end();
+}
+size_t CWeaponData::Size(){
+	return m_dicWeaponIds.size();
+}
+size_t CWeaponData::Size(size_t iSlot){
+	return this->m_dicWeaponSlots[iSlot].size();
+}
+void CWeaponData::Add(WEAPON* wp) {
+	this->m_dicWeaponIds.insert(std::make_pair(wp->iId, wp));
+	this->m_dicWeaponNames.insert(std::make_pair(wp->szName, wp));
+	this->m_dicWeaponSlots[wp->iSlot].insert(std::make_pair(wp->iSlotPos, wp));
+}
+void CWeaponData::Remove(WEAPON* wp){
+	this->m_dicWeaponIds.erase(wp->iId);
+	this->m_dicWeaponNames.erase(wp->szName);
+	this->m_dicWeaponSlots[wp->iSlot].erase(wp->iSlotPos);
+}
+std::map<size_t, WEAPON*>::iterator CWeaponData::Begin() {
+	return this->m_dicWeaponIds.begin();
+}
+std::map<size_t, WEAPON*>::iterator CWeaponData::End() {
+	return this->m_dicWeaponIds.end();
+}
+std::map<size_t, WEAPON*>::iterator CWeaponData::PosBegin(size_t iSlot) {
+	return this->m_dicWeaponSlots[iSlot].begin();
+}
+std::map<size_t, WEAPON*>::iterator CWeaponData::PosEnd(size_t iSlot) {
+	return this->m_dicWeaponSlots[iSlot].end();
+}
+size_t CWeaponData::GetMaxPos(size_t iSlot){
+	if (this->m_dicWeaponSlots[iSlot].size() <= 0)
+		return 0;
+	size_t maxPos = 0;
+	for (auto iter = this->m_dicWeaponSlots[iSlot].begin(); iter != this->m_dicWeaponSlots[iSlot].end(); iter++) {
+		if (maxPos < iter->second->iSlotPos)
+			maxPos = iter->second->iSlotPos;
+	}
+	return maxPos;
+}
+size_t CWeaponData::GetMinPos(size_t iSlot) {
+	if (this->m_dicWeaponSlots[iSlot].size() <= 0)
+		return 0;
+	size_t minPos = this->m_dicWeaponSlots[iSlot].begin()->second->iSlotPos;
+	for (auto iter = this->m_dicWeaponSlots[iSlot].begin(); iter != this->m_dicWeaponSlots[iSlot].end(); iter++) {
+		if (minPos > iter->second->iSlotPos)
+			minPos = iter->second->iSlotPos;
+	}
+	return minPos;
+}
+//删除所有链接，但是不清理内存
+void CWeaponData::RemoveAll() {
+	this->m_dicWeaponIds.clear();
+	this->m_dicWeaponNames.clear();
+	this->m_dicWeaponSlots.clear();
+}
+CWeaponData::CWeaponData() {
+	for (size_t i = 0; i < MAX_WEAPON_SLOT; i++) {
+		m_dicWeaponSlots.insert(std::make_pair(i, std::map<size_t, WEAPON*>()));
+	}
 }
 
+//初始化武器仓库
 void WeaponsResource::Init(void){
-	pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
+	this->pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
 	Reset();
 }
+//重置武器仓库
 void WeaponsResource::Reset(void){
-	m_iNowSlot = -1;
-	m_iMaxId = -1;
-	memset(rgWeapons, 0, sizeof rgWeapons);
-	memset(riAmmo, 0, sizeof riAmmo);
-	memset(gridSlotPosDataMap, -1, sizeof gridSlotPosDataMap);
-	memset(gridSlotMap, -1, sizeof gridSlotMap);
-	memset(gridDrawMenu, -1, sizeof gridDrawMenu);
+	this->m_iNowSlot = INVALID_WEAPON_SLOT;
+	this->m_pWeaponData.Clear();
+	this->m_pOwnedWeaponData.Clear();
+	this->m_dicAmmos.clear();
+	memset(this->m_aryDrawMenu, -1, sizeof(this->m_aryDrawMenu));
 }
-size_t WeaponsResource::CountGridWeapons() {
-	size_t i, j;
-	size_t c = 0;
-	for (i = 0; i < MAX_WEAPON_SLOTS; i++){
-		for (j = 0; j < MAX_WEAPON_POSITIONS; j++){
-			if (gridSlotMap[i][j] >= 0)
-				c++;
-		}
-	}
-	return c;
+CWeaponData* WeaponsResource::GetOwnedData(){
+	return &this->m_pOwnedWeaponData;
 }
-size_t WeaponsResource::CountWeapons() {
-	size_t i, c = 0;
-	for (i = 0; i < MAX_WEAPONS; i++){
-		if (GetWeapon(i)->iId > 0)
-			c++;
-	}
-	return c;
+//由武器ID获取武器数据
+WEAPON* WeaponsResource::GetWeapon(size_t iId) {
+	return this->m_pWeaponData[iId];
 }
-size_t WeaponsResource::CountMenuWeapons() {
-	size_t i, c = 0;
-	for (i = 0; i < MAX_WEAPON_SLOTS; i++){
-		if (gridDrawMenu[i].iId > 0)
-			c++;
-	}
-	return c;
+WEAPON* WeaponsResource::GetWeapon(char* szName) {
+	return this->m_pWeaponData[szName];
 }
+WEAPON* WeaponsResource::GetWeapon(size_t slot, size_t pos) {
+	return this->m_pWeaponData[std::make_pair(slot, pos)];
+}
+//从本地武器预测数组同步武器到菜单缓存
 void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
-	if (m_iMaxId <= 0)
-		return;
-	for (size_t i = 0; i <= m_iMaxId; i++) {
+	for (size_t i = 0; i < this->m_pWeaponData.Size(); i++) {
 		WEAPON* weapon = GetWeapon(i);
-		if (weapon->iId <= 0)
+		if (!weapon)
 			continue;
 		const weapon_data_t* wp = wd + i;
 		if (wp->m_iId <= 0) {
@@ -92,292 +154,130 @@ void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
 		}
 	}
 }
-int WeaponsResource::GetWeaponId(char* szName){
-	for (const WEAPON& var : rgWeapons) {
-		if (!var.iId)
-			continue;
-		if (strcmp(var.szName, szName) == 0) {
-			return var.iId;
-		}
-	}
-	return -1;
-}
-WEAPON* WeaponsResource::GetWeapon(int iId){
-	return &rgWeapons[iId];
-}
+//添加新的武器数据到武器仓库
 void WeaponsResource::AddWeapon(WEAPON* wp){
-	rgWeapons[wp->iId] = *wp;
-	gridSlotPosDataMap[wp->iSlot][wp->iSlotPos] = wp->iId;
-	LoadWeaponSprites(&rgWeapons[wp->iId]);
+	//防冲突
+	while (this->m_pWeaponData.Has(wp->iSlot, wp->iSlotPos)) {
+		wp->iSlotPos++;
+	}
+	this->m_pWeaponData.Add(wp);
+	this->LoadWeaponSprites(wp);
 }
-void WeaponsResource::PickupWeapon(int id){
-	WEAPON* wp = &rgWeapons[id];
-	gridSlotMap[wp->iSlot][wp->iSlotPos] = id;
+
+//添加武器到菜单缓存
+void WeaponsResource::PickupWeapon(size_t id){
+	this->m_pOwnedWeaponData.Add(this->GetWeapon(id));
 }
-void WeaponsResource::DropWeapon(int s,int p){
-	gridSlotMap[s][p] = -1;
+//从武器菜单删除缓存
+void WeaponsResource::DropWeapon(size_t s,size_t p){
+	this->m_pOwnedWeaponData.Remove(this->GetWeapon(s, p));
 }
+//删除所有缓存
 void WeaponsResource::DropAllWeapons(void){
-	memset(gridSlotMap, -1, sizeof gridSlotMap);
+	this->m_pOwnedWeaponData.RemoveAll();
 }
-WEAPON* WeaponsResource::GetWeaponSlot(int slot, int pos){
-	if (slot < 0 || slot > MAX_WEAPON_SLOT_INDEX)
-		return nullptr;
-	if (pos < 0 || pos > MAX_WEAPON_POSUSER_INDEX)
-		return nullptr;
-	int id = gridSlotMap[slot][pos];
-	if (id <= 0)
-		return nullptr;
-	return &rgWeapons[id];
-}
-int WeaponsResource::GetWeaponIdBySlot(int slot, int pos){
-	return gridSlotPosDataMap[slot][pos];
-}
-void WeaponsResource::LoadAllWeaponSprites(void){
-	for (size_t i = 0; i < MAX_WEAPONS; i++){
-		if (rgWeapons[i].iId)
-			LoadWeaponSprites(&rgWeapons[i]);
+//载入所有武器图标
+void WeaponsResource::LoadAllWeaponSprites(){
+	for (auto iter = this->m_pWeaponData.Begin(); iter != this->m_pWeaponData.End(); iter++) {
+		LoadWeaponSprites(iter->second);
 	}
 }
-int WeaponsResource::HasWeapon(int s, int p) {
-	return gridSlotMap[s][p] > 0;
+//菜单缓存是否有这把武器(玩家是否拥有这把武器)
+bool WeaponsResource::HasWeapon(size_t s, size_t p) {
+	return this->m_pOwnedWeaponData.Has(s, p);
 }
-int WeaponsResource::HasWeapon(WEAPON* wp){
-	return gridSlotMap[wp->iSlot][wp->iSlotPos] > 0;
+bool WeaponsResource::HasWeapon(WEAPON* wp){
+	return this->m_pOwnedWeaponData.Has(wp->iSlot, wp->iSlotPos);
 }
-void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon){
-	int i, iRes;
-
-	if (ScreenWidth < 640)
-		iRes = 320;
-	else
-		iRes = 640;
-
-	char sz[128];
-
-	if (!pWeapon)
-		return;
-
-	memset(&pWeapon->rcActive, 0, sizeof(wrect_t));
-	memset(&pWeapon->rcInactive, 0, sizeof(wrect_t));
-	memset(&pWeapon->rcAmmo, 0, sizeof(wrect_t));
-	memset(&pWeapon->rcAmmo2, 0, sizeof(wrect_t));
-	pWeapon->hInactive = 0;
-	pWeapon->hActive = 0;
-	pWeapon->hAmmo = 0;
-	pWeapon->hAmmo2 = 0;
-
-	sprintf_s(sz, "sprites/%s.txt", pWeapon->szSprName);
-	client_sprite_t* pList = SPR_GetList(sz, &i);
-
-	if (!pList)
-		return;
-
-	client_sprite_t* p;
-
-	p = GetSpriteList(pList, "crosshair", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hCrosshair = SPR_Load(sz);
-		pWeapon->rcCrosshair = p->rc;
-	}
-	else
-		pWeapon->hCrosshair = NULL;
-
-	p = GetSpriteList(pList, "autoaim", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hAutoaim = SPR_Load(sz);
-		pWeapon->rcAutoaim = p->rc;
-	}
-	else
-		pWeapon->hAutoaim = 0;
-
-	p = GetSpriteList(pList, "zoom", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hZoomedCrosshair = SPR_Load(sz);
-		pWeapon->rcZoomedCrosshair = p->rc;
-	}
-	else{
-		pWeapon->hZoomedCrosshair = pWeapon->hCrosshair; //default to non-zoomed crosshair
-		pWeapon->rcZoomedCrosshair = pWeapon->rcCrosshair;
-	}
-
-	p = GetSpriteList(pList, "zoom_autoaim", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hZoomedAutoaim = SPR_Load(sz);
-		pWeapon->rcZoomedAutoaim = p->rc;
-	}
-	else{
-		pWeapon->hZoomedAutoaim = pWeapon->hZoomedCrosshair;  //default to zoomed crosshair
-		pWeapon->rcZoomedAutoaim = pWeapon->rcZoomedCrosshair;
-	}
-
-	p = GetSpriteList(pList, "weapon", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hInactive = SPR_Load(sz);
-		pWeapon->rcInactive = p->rc;
-	}
-	else
-		pWeapon->hInactive = 0;
-
-	p = GetSpriteList(pList, "weapon_s", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hActive = SPR_Load(sz);
-		pWeapon->rcActive = p->rc;
-	}
-	else
-		pWeapon->hActive = 0;
-
-	p = GetSpriteList(pList, "ammo", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hAmmo = SPR_Load(sz);
-		pWeapon->rcAmmo = p->rc;
-	}
-	else
-		pWeapon->hAmmo = 0;
-
-	p = GetSpriteList(pList, "ammo2", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hAmmo2 = SPR_Load(sz);
-		pWeapon->rcAmmo2 = p->rc;
-	}
-	else
-		pWeapon->hAmmo2 = 0;
-
-}
-void WeaponsResource::LoadScriptWeaponSprites(int iId, char* cust){
-	int i, iRes;
-	if (ScreenWidth < 640)
-		iRes = 320;
-	else
-		iRes = 640;
-	char sz[128];
-	WEAPON* pWeapon = GetWeapon(iId);
-	if (!pWeapon)
-		return;
-	memset(&pWeapon->rcActive, 0, sizeof(wrect_t));
-	memset(&pWeapon->rcInactive, 0, sizeof(wrect_t));
-	memset(&pWeapon->rcAmmo, 0, sizeof(wrect_t));
-	memset(&pWeapon->rcAmmo2, 0, sizeof(wrect_t));
-	pWeapon->hInactive = 0;
-	pWeapon->hActive = 0;
-	pWeapon->hAmmo = 0;
-	pWeapon->hAmmo2 = 0;
-	sprintf_s(sz, "sprites/%s/%s.txt", cust, pWeapon->szSprName);
-	client_sprite_t* pList = SPR_GetList(sz, &i);
-
-	if (!pList)
-		return;
-
-	client_sprite_t* p;
-
-	p = GetSpriteList(pList, "crosshair", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hCrosshair = SPR_Load(sz);
-		pWeapon->rcCrosshair = p->rc;
-	}
-	else
-		pWeapon->hCrosshair = NULL;
-
-	p = GetSpriteList(pList, "autoaim", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hAutoaim = SPR_Load(sz);
-		pWeapon->rcAutoaim = p->rc;
-	}
-	else
-		pWeapon->hAutoaim = 0;
-
-	p = GetSpriteList(pList, "zoom", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hZoomedCrosshair = SPR_Load(sz);
-		pWeapon->rcZoomedCrosshair = p->rc;
-	}
-	else{
-		pWeapon->hZoomedCrosshair = pWeapon->hCrosshair; //default to non-zoomed crosshair
-		pWeapon->rcZoomedCrosshair = pWeapon->rcCrosshair;
-	}
-
-	p = GetSpriteList(pList, "zoom_autoaim", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hZoomedAutoaim = SPR_Load(sz);
-		pWeapon->rcZoomedAutoaim = p->rc;
-	}
-	else{
-		pWeapon->hZoomedAutoaim = pWeapon->hZoomedCrosshair;  //default to zoomed crosshair
-		pWeapon->rcZoomedAutoaim = pWeapon->rcZoomedCrosshair;
-	}
-
-	p = GetSpriteList(pList, "weapon", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hInactive = SPR_Load(sz);
-		pWeapon->rcInactive = p->rc;
-	}
-	else
-		pWeapon->hInactive = 0;
-
-	p = GetSpriteList(pList, "weapon_s", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hActive = SPR_Load(sz);
-		pWeapon->rcActive = p->rc;
-	}
-	else
-		pWeapon->hActive = 0;
-
-	p = GetSpriteList(pList, "ammo", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hAmmo = SPR_Load(sz);
-		pWeapon->rcAmmo = p->rc;
-	}
-	else
-		pWeapon->hAmmo = 0;
-
-	p = GetSpriteList(pList, "ammo2", iRes, i);
-	if (p){
-		sprintf_s(sz, "sprites/%s.spr", p->szSprite);
-		pWeapon->hAmmo2 = SPR_Load(sz);
-		pWeapon->rcAmmo2 = p->rc;
-	}
-	else
-		pWeapon->hAmmo2 = 0;
-
-}
-HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
-	for (size_t i = 0; i < MAX_WEAPONS; i++){
-		if (rgWeapons[i].iAmmoType == iAmmoId){
-			rect = rgWeapons[i].rcAmmo;
-			return &rgWeapons[i].hAmmo;
-		}
-		else if (rgWeapons[i].iAmmo2Type == iAmmoId){
-			rect = rgWeapons[i].rcAmmo2;
-			return &rgWeapons[i].hAmmo2;
-		}
-	}
-
-	return nullptr;
-}
+//玩家选择武器
 void WeaponsResource::SetSelectWeapon(int iId, int iPos, bool bWheel) {
 	if (pFastSwich->value > 0 && bWheel)
 		ServerCmd(GetWeapon(iId)->szName);
-	else {
-		gridDrawMenu[m_iNowSlot].iId = iId;
-		gridDrawMenu[m_iNowSlot].iPos = iPos;
-	}
+	else
+		m_aryDrawMenu[m_iNowSlot] = iPos;
 }
-void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bWheel){
+
+//由txt获取图标信息
+client_sprite_t* WeaponsResource::GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount) {
+	if (!pList)
+		return nullptr;
+	int i = iCount;
+	client_sprite_t* p = pList;
+	while (i--) {
+		if ((!strcmp(psz, p->szName)) && (p->iRes == iRes))
+			return p;
+		p++;
+	}
+	return nullptr;
+}
+//载入武器图标
+void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust){
+	if (!pWeapon)
+		return;
+	memset(&pWeapon->rcActive, 0, sizeof(wrect_t));
+	memset(&pWeapon->rcInactive, 0, sizeof(wrect_t));
+	memset(&pWeapon->rcAmmo, 0, sizeof(wrect_t));
+	memset(&pWeapon->rcAmmo2, 0, sizeof(wrect_t));
+	pWeapon->hInactive = 0;
+	pWeapon->hActive = 0;
+	pWeapon->hAmmo = 0;
+	pWeapon->hAmmo2 = 0;
+
+	char sz[128];
+	int i;
+	if(cust == nullptr)
+		sprintf_s(sz, "sprites/%s.txt", pWeapon->szSprName);
+	else
+		sprintf_s(sz, "sprites/%s/%s.txt", cust, pWeapon->szSprName);
+	client_sprite_t* pList = SPR_GetList(sz, &i);
+	if (!pList)
+		return;
+	auto fSetupSprInfo = [&](const char* szType, HSPRITE* spr, wrect_t* rc, HSPRITE* dspr = nullptr, wrect_t* drc = nullptr) {
+		int iRes = ScreenWidth < 640 ? 320 : 640;
+		client_sprite_t* p = this->GetSpriteList(pList, szType, iRes, i);
+		if (p != nullptr) {
+			sprintf_s(sz, "sprites/%s.spr", p->szSprite);
+			*spr = SPR_Load(sz);
+			*rc = p->rc;
+		}
+		else if(dspr != nullptr && drc != nullptr) {
+			*spr = *dspr;
+			*rc = *drc;
+		}
+		else
+			*spr = 0;
+	};
+	fSetupSprInfo("crosshair", &pWeapon->hCrosshair, &pWeapon->rcCrosshair);
+	fSetupSprInfo("autoaim", &pWeapon->hAutoaim, &pWeapon->rcAutoaim);
+	fSetupSprInfo("zoom", &pWeapon->hZoomedCrosshair, &pWeapon->rcZoomedCrosshair, &pWeapon->hCrosshair, &pWeapon->rcCrosshair);
+	fSetupSprInfo("zoom_autoaim", &pWeapon->hZoomedAutoaim, &pWeapon->rcZoomedAutoaim, &pWeapon->hZoomedCrosshair, &pWeapon->rcZoomedCrosshair);
+	fSetupSprInfo("weapon", &pWeapon->hInactive, &pWeapon->rcInactive);
+	fSetupSprInfo("weapon_s", &pWeapon->hActive, &pWeapon->rcActive);
+	fSetupSprInfo("ammo", &pWeapon->hAmmo, &pWeapon->rcAmmo);
+	fSetupSprInfo("ammo2", &pWeapon->hAmmo2, &pWeapon->rcAmmo2);
+}
+void WeaponsResource::LoadWeaponSprites(size_t iId, char* cust){
+	this->LoadWeaponSprites(this->GetWeapon(iId), cust);
+}
+//从武器载入子弹Spr
+HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
+	for (auto iter = this->m_pWeaponData.Begin(); iter != this->m_pWeaponData.End(); iter++) {
+		if (!iter->second)
+			continue;
+		if (iter->second->iAmmoType == iAmmoId) {
+			rect = iter->second->rcAmmo;
+			return &iter->second->hAmmo;
+		}
+		else if (iter->second->iAmmo2Type == iAmmoId) {
+			rect = iter->second->rcAmmo2;
+			return &iter->second->hAmmo2;
+		}
+	}
+	return nullptr;
+}
+
+//slot 1234567890切换武器回调
+void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
 
@@ -385,116 +285,94 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance, bool bWheel){
 		m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
 			gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
 
-	WEAPON* wp = nullptr;
-	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT_INDEX);
-	//如果是当前slot
-	if (iSlot == m_iNowSlot) {
-		//避免死循环
-		if (gridDrawMenu[m_iNowSlot].iPos < 0 && gridDrawMenu[m_iNowSlot].iId <= 0)
-			return;
-		int menuPos = gridDrawMenu[m_iNowSlot].iPos + fAdvance;
-		int iTempSlot = m_iNowSlot;
+	auto changeSlot = [&] {
+		if (iAdvance >= 0) {
+			if (this->m_iNowSlot + 1 >= INVALID_WEAPON_SLOT)
+				this->m_iNowSlot = 0;
+			else
+				this->m_iNowSlot += 1;
+			return this->GetFirstPos(this->m_iNowSlot);
+		}
+		else {
+			if ((int)this->m_iNowSlot - 1 < 0)
+				this->m_iNowSlot = MAX_WEAPON_SLOT;
+			else
+				this->m_iNowSlot -= 1;
+			return this->GetLastPos(this->m_iNowSlot);
+		}
+	};
+	auto getValidWeapon = [&](WEAPON* firstValue) {
+		WEAPON* wp = firstValue;
+		//获取当前的Pos
+		int iNowPos = this->m_aryDrawMenu[this->m_iNowSlot];
+		//获取应当选择的Pos
+		int iNextPos = iNowPos + iAdvance;
 		while (wp == nullptr) {
-			wp = GetWeaponSlot(iTempSlot, menuPos);
-
-			if (wp) {
-				if (gCVars.pAmmoMenuStyle->value <= 0 && !HasAmmo(wp))
-					wp = nullptr;
-				else if (gCVars.pAmmoMenuStyle->value > 0)
-					break;
-			}
-
-			menuPos += fAdvance;
-			if (wp && menuPos < 0)
+			wp = this->GetWeapon(this->m_iNowSlot, iNextPos);
+			if (wp != nullptr || iNextPos == iNowPos || this->m_pOwnedWeaponData.Size(this->m_iNowSlot) <= 0)
 				break;
-			if (menuPos > (int)MAX_WEAPON_POSUSER_INDEX) {
-				if (gCVars.pAmmoMenuStyle->value <= 0)
-					iTempSlot++;
-				menuPos = 0;
+			else 
+				iNextPos += iAdvance >= 0 ? 1 : -1;
+
+			if (iAdvance >= 0) {
+				if (iNextPos >= this->m_pOwnedWeaponData.GetMaxPos(this->m_iNowSlot)) {
+					iNextPos = this->m_pOwnedWeaponData.GetMinPos(this->m_iNowSlot);
+					if (bWheel)
+						wp = changeSlot();
+				}
 			}
-			else if (menuPos < 0) {
-				if (gCVars.pAmmoMenuStyle->value <= 0)
-					iTempSlot--;
-				menuPos = MAX_WEAPON_POSUSER_INDEX;
-			}
-			
-			if (gCVars.pAmmoMenuStyle->value <= 0){
-				if (iTempSlot > (int)MAX_WEAPON_SLOT_INDEX)
-					iTempSlot = 0;
-				else if (iTempSlot < 0)
-					iTempSlot = MAX_WEAPON_SLOT_INDEX;
+			else if (iNextPos <= (int)this->m_pOwnedWeaponData.GetMinPos(this->m_iNowSlot)) {
+				iNextPos = this->m_pOwnedWeaponData.GetMaxPos(this->m_iNowSlot);
+				if (bWheel)
+					wp = changeSlot();
 			}
 		}
-		m_iNowSlot = iTempSlot;
-		if (wp && wp->iId > 0)
-			SetSelectWeapon(wp->iId, wp->iSlotPos, bWheel);
+		return wp;
+	};
+	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT-1);
+	//如果是当前slot
+	if (iSlot == this->m_iNowSlot) {
+		WEAPON* chose = getValidWeapon(nullptr);
+		if (chose)
+			SetSelectWeapon(chose->iId, chose->iSlotPos, bWheel);
 		else if (gCVars.pAmmoMenuStyle->value <= 0) {
-			gridDrawMenu[m_iNowSlot].iId = gridDrawMenu[m_iNowSlot].iPos = -1;
+			this->m_aryDrawMenu[this->m_iNowSlot] = INVALID_WEAPON_POS;
 			return;
 		}
 	}
 	//如果不是
 	else {
-		m_iNowSlot = iSlot;
+		this->m_iNowSlot = iSlot;
 		//经典样式
 		if (gCVars.pAmmoMenuStyle->value <= 0) {
-			wp = gWR.GetFirstPos(m_iNowSlot);
-			if (!wp) {
-				int iCounter = m_iNowSlot + 1;
-				while (wp == nullptr && iCounter != m_iNowSlot) {
-					if (iCounter >= MAX_WEAPON_SLOTS)
-						iCounter = 0;
-					wp = gWR.GetFirstPos(iCounter);
-					if (iCounter == m_iNowSlot || wp != nullptr)
-						break;
-					iCounter++;
-				}
-			}
-			if (wp && wp->iId > 0)
-				SetSelectWeapon(wp->iId, wp->iSlotPos, bWheel);
+			WEAPON* chose = getValidWeapon(gWR.GetFirstPos(this->m_iNowSlot));
+			if (chose)
+				SetSelectWeapon(chose->iId, chose->iSlotPos, bWheel);
 			else{
-				gridDrawMenu[m_iNowSlot].iId = gridDrawMenu[m_iNowSlot].iPos = -1;
+				this->m_aryDrawMenu[this->m_iNowSlot] = INVALID_WEAPON_POS;
 				return;
 			}
 		}
 	}
 }
-WEAPON* WeaponsResource::GetFirstPos(int iSlot){
-	if (iSlot >= MAX_WEAPON_SLOTS)
-		return nullptr;
-	WEAPON* now = nullptr;
-	for (size_t i = 0; i < MAX_WEAPON_POSITIONS_USER; i++){
-		now = GetWeaponSlot(iSlot, i);
-		if (HasWeapon(iSlot,i) && HasAmmo(now))
-			return now;
-	}
+WEAPON* WeaponsResource::GetFirstPos(size_t iSlot){
+	WEAPON* wp = this->GetWeapon(iSlot, this->m_pOwnedWeaponData.GetMinPos(iSlot));
+	if (HasAmmo(wp))
+		return wp;
 	return nullptr;
 }
-WEAPON* WeaponsResource::GetLastPos(int iSlot) {
-	if (iSlot >= MAX_WEAPON_SLOTS)
-		return nullptr;
-	WEAPON* now = nullptr;
-	for (size_t i = MAX_WEAPON_POSUSER_INDEX; i > 0; i--) {
-		now = GetWeaponSlot(iSlot, i);
-		if (HasWeapon(iSlot, i) && HasAmmo(now))
-			return now;
-	}
+WEAPON* WeaponsResource::GetLastPos(size_t iSlot) {
+	WEAPON* wp = this->GetWeapon(iSlot, this->m_pOwnedWeaponData.GetMaxPos(iSlot));
+	if (HasAmmo(wp))
+		return wp;
 	return nullptr;
 }
-int WeaponsResource::CountAmmo(int iId){
-	if (iId < 0)
-		return 0;
-	return  riAmmo[iId];
-}
-void WeaponsResource::SetUserSlot(int iSlot, int iId){
-	gridSlotMap[iSlot][MAX_WEAPON_POSUSER_INDEX] = iId;
-}
-int WeaponsResource::HasAmmo(WEAPON* p){
+bool WeaponsResource::HasAmmo(WEAPON* p) {
 	if (!p)
 		return false;
 	if (p->iMax1 == -1 && p->iMax2 == -1)
 		return true;
-	if (p->iAmmoType > -1){
+	if (p->iAmmoType > -1) {
 		bool bFlag = (p->iClip > 0) || CountAmmo(p->iAmmoType);
 		if (p->iAmmo2Type > -1 && !bFlag)
 			return CountAmmo(p->iAmmo2Type) > 0 || (p->iClip2 > 0);
@@ -503,34 +381,16 @@ int WeaponsResource::HasAmmo(WEAPON* p){
 	}
 	return true;
 }
-AMMO WeaponsResource::GetAmmo(int iId){
-	return iId;
+size_t WeaponsResource::GetDrawMenuPos(size_t iSlot) {
+	return this->m_aryDrawMenu[iSlot];
 }
-void WeaponsResource::SetAmmo(int iId, int iCount){
-	riAmmo[iId] = iCount;
+int WeaponsResource::CountAmmo(size_t iId){
+	if (iId < 0)
+		return 0;
+	return this->m_dicAmmos[iId];
 }
-gridmenuitem_t* WeaponsResource::GetDrawMenuItem(size_t iSlot) {
-	return &gridDrawMenu[iSlot];
+void WeaponsResource::SetAmmo(size_t iId, int iCount){
+	this->m_dicAmmos[iId] = iCount;
 }
-void WeaponsResource::FillDrawMenuGrid() {
-	gridmenuitem_t* pItem = nullptr;
-	for (size_t i = 0; i < MAX_WEAPON_SLOTS; i++) {
-		pItem = GetDrawMenuItem(i);
-		if (pItem->iId > 0 && HasWeapon(i, pItem->iPos))
-			continue;
-		else {
-			for (size_t j = 0; j < MAX_WEAPON_POSITIONS_USER; j++) {
-				if (HasWeapon(i, j)) {
-					gridDrawMenu[i].iId = gridSlotMap[i][j];
-					gridDrawMenu[i].iPos = (int)j;
-					break;
-				}
-				else {
-					gridDrawMenu[i].iId = -1;
-					gridDrawMenu[i].iPos = -1;
-				}
-			}
-		}
-	}
-}
+
 WeaponsResource gWR;
