@@ -1,0 +1,7 @@
+6
+weapon	640		 ../abcenchance/spr/weapon_error		0	0	170	45
+weapon_s	640		../abcenchance/spr/weapon_error		0	46	170	45
+ammo	640		../abcenchance/spr/weapon_error		16	106	32	32
+ammo2	640		../abcenchance/spr/weapon_error		16	106	32	32
+crosshair	640		crosshairs						0	48	24	24
+autoaim	640		crosshairs						72	72	24	24

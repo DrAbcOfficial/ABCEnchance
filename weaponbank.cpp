@@ -223,15 +223,19 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust){
 	pWeapon->hAmmo = 0;
 	pWeapon->hAmmo2 = 0;
 
-	char sz[128];
+	char sz[256];
 	int i;
 	if(cust == nullptr)
 		sprintf_s(sz, "sprites/%s.txt", pWeapon->szSprName);
 	else
 		sprintf_s(sz, "sprites/%s/%s.txt", cust, pWeapon->szSprName);
 	client_sprite_t* pList = SPR_GetList(sz, &i);
-	if (!pList)
-		return;
+	if (!pList) {
+		//载入默认Error
+		pList = SPR_GetList("abcenchance/spr/weapon_error.txt", &i);
+		if (!pList)
+			return;
+	}
 	auto fSetupSprInfo = [&](const char* szType, HSPRITE* spr, wrect_t* rc, HSPRITE* dspr = nullptr, wrect_t* drc = nullptr) {
 		int iRes = ScreenWidth < 640 ? 320 : 640;
 		client_sprite_t* p = this->GetSpriteList(pList, szType, iRes, i);
@@ -308,8 +312,10 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
 		//获取应当选择的Pos
 		int iNextPos = iNowPos + iAdvance;
 		while (wp == nullptr) {
-			wp = this->GetWeapon(this->m_iNowSlot, iNextPos);
-			if (wp != nullptr || iNextPos == iNowPos || this->m_pOwnedWeaponData.Size(this->m_iNowSlot) <= 0)
+			//玩家有这把武器才尝试获取数据
+			if(this->HasWeapon(this->m_iNowSlot, iNextPos))
+				wp = this->GetWeapon(this->m_iNowSlot, iNextPos);
+			if (wp != nullptr || iNextPos == iNowPos || this->m_pOwnedWeaponData.Size(this->m_iNowSlot) == 0)
 				break;
 			else 
 				iNextPos += iAdvance >= 0 ? 1 : -1;
