@@ -239,7 +239,7 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 		DrawSelectIcon(wp, a, xpos, ypos, i);
 	}
 	//»æÖÆÒÑÑ¡
-	if (gWR.m_aryDrawMenu[i] != INVALID_WEAPON_POS && gWR.m_iNowSlot >= 0) {
+	if (gWR.m_aryDrawMenu[gWR.m_iNowSlot] != INVALID_WEAPON_POS) {
 		wp = gWR.GetWeapon(gWR.m_iNowSlot, gWR.m_aryDrawMenu[gWR.m_iNowSlot]);
 		if (!wp)
 			return 1;
