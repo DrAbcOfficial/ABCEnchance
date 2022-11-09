@@ -2,10 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+    tags:
+    - 'v*'
+    
 env:
   SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance
   BUILD_CONFIGURATION: Release
