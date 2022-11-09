@@ -23,7 +23,7 @@
 # 🤫 已知问题
 
  - [ ] 双持UZI不能正确显示第二把枪的子弹数
- - [ ] 武器Position冲突修复不能正常工作
+ - [x] ~~武器Position冲突修复不能正常工作~~
  - [x] ~~当`+annularmenu`命令绑定到`mouse4`，`mouse5`（鼠标侧键）时，不会自动触发 `-annularmenu`命令~~
 
 # 🖥️ 安装
@@ -187,7 +187,7 @@
 
 ## 🏐 环形选枪菜单
 
-### ~~并且修复了SC的Position冲突导致无法患处武器问题~~
+### 并且修复了SC的Position冲突导致无法患处武器问题
 
 <div>
 <img src="img/Annular4.png" width="50%"><img src="img/Annular1.jpg" width="50%">
