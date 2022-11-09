@@ -32,7 +32,7 @@
  - [x] ~~Sometimes will empty the weapon menu incorrectly after player death~~
  - [x] ~~Dynamic indicator will point to wrong direction~~
  - [ ] The number of bullets in the second weapon will not be displayed correctly in Akimbo uzi. it is seem not regular `iAmmoType2`?
- - [ ] Weapon postion conflict fix will not work
+ - [x] ~~Weapon postion conflict fix will not work~~
  - [x] ~~when bind `+annularmenu` command to `mouse4` or `mouse5`, `-annularmenu` command will not execute automatically.~~
 
 # 🖥️ Install
@@ -199,7 +199,7 @@
 
 ## 🏐 Annular selection menu
 
-### ~~And fixed the problem that the svencoop selection menu could not switch Postion conflict weapons~~
+### And fixed the problem that the svencoop selection menu could not switch Postion conflict weapons
 
 <div>
 <img src="img/Annular4.png" width="50%"><img src="img/Annular1.jpg" width="50%">
