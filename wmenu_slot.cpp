@@ -19,6 +19,7 @@
 
 #include "ammo.h"
 #include "CCustomHud.h"
+#include "wmenu_annular.h"
 #include "wmenu_slot.h"
 
 CWeaponMenuSlot m_HudWMenuSlot;
@@ -90,6 +91,8 @@ void CWeaponMenuSlot::DrawAmmoBar(WEAPON* p, int x, int y, int width, int height
 	}
 }
 int CWeaponMenuSlot::DrawWList(float flTime){
+	if (m_HudWMenuAnnular.m_bOpeningMenu)
+		return 1;
 	if (m_fFade <= flTime) {
 		if (m_bSelectMenuDisplay) {
 			m_bSelectMenuDisplay = false;

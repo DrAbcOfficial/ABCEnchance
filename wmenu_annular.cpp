@@ -44,15 +44,15 @@ void __UserCmd_CloseAnnularMenu(void) {
 }
 void CWeaponMenuAnnular::Select() {
 	if (!m_bOpeningMenu) {
-		m_fFade = 0;
-		m_bSelectMenuDisplay = false;
+m_fFade = 0;
+m_bSelectMenuDisplay = false;
 	}
 }
 void CWeaponMenuAnnular::GLInit() {
 	glGenFramebuffersEXT(1, &m_hGaussianBufferFBO);
 	m_hGaussianBufferTex = GL_GenTextureRGB8(ScreenWidth, ScreenHeight);
 }
-void CWeaponMenuAnnular::Clear(){
+void CWeaponMenuAnnular::Clear() {
 	if (m_hGaussianBufferTex)
 		glDeleteTextures(1, &m_hGaussianBufferTex);
 }
@@ -63,7 +63,7 @@ void CWeaponMenuAnnular::Init() {
 	if (SelectHoldTime <= 0)
 		SelectHoldTime = 5;
 }
-void CWeaponMenuAnnular::VidInit(){
+void CWeaponMenuAnnular::VidInit() {
 	SelectColor = pSchemeData->GetColor("WMenuAnnular.SelectColor", gDefaultColor);
 	SelectRinColor = pSchemeData->GetColor("WMenuAnnular.SelectRinColor", gDefaultColor);
 	SelectIconColor = pSchemeData->GetColor("WMenuAnnular.SelectIconColor", gDefaultColor);
@@ -141,8 +141,17 @@ int CWeaponMenuAnnular::DrawWList(float flTime) {
 	int iBackGroundHeight = SelectSize;
 	int iOffset = SelectOffset;
 	float flAnimationRatio = 1.0f;
-	if (!m_bSelectMenuDisplay)
+	if (!m_bSelectMenuDisplay) {
 		m_fAnimateTime = flTime + SelectAnimateTime;
+		//第一次开启时填充一次
+		for (size_t i = 0; i < MAX_WEAPON_SLOT; i++){
+			if (gWR.m_aryDrawMenu[i] <= 0) {
+				WEAPON* t = gWR.GetFirstPos(i);
+				if(t)
+					gWR.m_aryDrawMenu[i] = t->iSlotPos;
+			}
+		}
+	}
 	if (m_fAnimateTime > flTime && SelectHoldTime > SelectAnimateTime) {
 		flAnimationRatio = 1 - ((m_fAnimateTime - flTime) / SelectAnimateTime);
 		iOffset *= flAnimationRatio;
