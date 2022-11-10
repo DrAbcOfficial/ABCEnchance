@@ -14,7 +14,8 @@
 
 #define WEAPON_IS_ONTARGET 0x40
 
-struct WEAPON{
+class WEAPON{
+public:
 	char	szName[MAX_WEAPON_NAME];
 	char	szSprName[MAX_WEAPON_NAME];
 	int		iAmmoType;
