@@ -29,17 +29,18 @@ WEAPON* CWeaponData::operator [](std::string szName) {
 }
 //删除所有链接，并且清理指向的对象内存
 void CWeaponData::Clear() {
-	//所有map指向同一个对象，所以只需要第一张map释放WEAPON内存即可
-	for (auto iter = this->m_dicWeaponIds.begin(); iter != this->m_dicWeaponIds.end(); iter++) {
-		delete iter->second;
-		iter->second = nullptr;
-	}
-	//但是这个表包含十个std::map栈对象，所以需要手动清理每张表
+	//这个表包含十个std::map栈对象，所以需要手动清理每张表
 	for (auto iter = this->m_dicWeaponSlots.begin(); iter != this->m_dicWeaponSlots.end(); iter++) {
 		iter->second.clear();
 	}
 	this->m_dicWeaponSlots.clear();
 	this->m_dicWeaponNames.clear();
+	//所有map指向同一个对象，所以只需要第一张map释放WEAPON内存即可
+	for (auto iter = this->m_dicWeaponIds.begin(); iter != this->m_dicWeaponIds.end(); iter++) {
+		delete iter->second;
+		iter->second = nullptr;
+	}
+	this->m_dicWeaponIds.clear();
 }
 bool CWeaponData::Has(size_t iSlot, size_t iPos){
 	if (!this->m_dicWeaponSlots[iSlot].count(iPos))
@@ -54,9 +55,9 @@ size_t CWeaponData::Size(size_t iSlot){
 	return this->m_dicWeaponSlots[iSlot].size();
 }
 void CWeaponData::Add(WEAPON* wp) {
-	this->m_dicWeaponIds.insert(std::make_pair(wp->iId, wp));
-	this->m_dicWeaponNames.insert(std::make_pair(wp->szName, wp));
-	this->m_dicWeaponSlots[wp->iSlot].insert(std::make_pair(wp->iSlotPos, wp));
+	this->m_dicWeaponIds[wp->iId] = wp;
+	this->m_dicWeaponNames[wp->szName] = wp;
+	this->m_dicWeaponSlots[wp->iSlot][wp->iSlotPos] = wp;
 }
 void CWeaponData::Remove(WEAPON* wp){
 	this->m_dicWeaponIds.erase(wp->iId);
@@ -115,8 +116,10 @@ void WeaponsResource::Init(void){
 //重置武器仓库
 void WeaponsResource::Reset(void){
 	this->m_iNowSlot = INVALID_WEAPON_SLOT;
+	//下面那个兄弟已经完全清理了，所以只需要解除链接即可
+	this->m_pOwnedWeaponData.RemoveAll();
 	this->m_pWeaponData.Clear();
-	this->m_pOwnedWeaponData.Clear();
+
 	this->m_dicAmmos.clear();
 	memset(this->m_aryDrawMenu, -1, sizeof(this->m_aryDrawMenu));
 }
