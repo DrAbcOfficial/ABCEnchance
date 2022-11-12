@@ -129,9 +129,11 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 		SPR_Set(gCustomHud.GetSprite(iBucket0Spr + i), r, g, b);
 		// make active slot wide enough to accomodate gun pictures
 		if (i == gWR.m_iNowSlot){
-			WEAPON* p = gWR.GetFirstPos(gWR.m_iNowSlot);
-			if (p && p->iId > 0)
+			size_t iPos = gWR.GetFirstPosNumber(gWR.m_iNowSlot);
+			if (gWR.HasWeapon(gWR.m_iNowSlot, iPos)) {
+				WEAPON* p = gWR.GetWeapon(gWR.m_iNowSlot, iPos);
 				iWidth = p->rcActive.right - p->rcActive.left;
+			}
 			else
 				iWidth = SelectBucketWidth;
 		}
@@ -149,7 +151,7 @@ int CWeaponMenuSlot::DrawWList(float flTime){
 		if (i == gWR.m_iNowSlot){
 			WEAPON* p = gWR.GetFirstPos(i);
 			int iWidth = SelectBucketWidth;
-			if (p && p->iId > 0)
+			if (p && gWR.HasWeapon(gWR.m_iNowSlot, gWR.GetFirstPosNumber(gWR.m_iNowSlot)))
 				iWidth = p->rcActive.right - p->rcActive.left;
 			for(auto iter = gWR.GetOwnedData()->PosBegin(i); iter != gWR.GetOwnedData()->PosEnd(i);iter++){
 				p = iter->second;

@@ -71,12 +71,15 @@ public:
 	void SelectSlot(size_t iSlot, int fAdvance, bool bWheel);
 	WEAPON* GetFirstPos(size_t iSlot);
 	WEAPON* GetLastPos(size_t iSlot);
+	size_t GetFirstPosNumber(size_t iSlot);
+	size_t GetLastPosNumber(size_t iSlot);
 	size_t GetDrawMenuPos(size_t iSlot);
 	void SyncWeapon(const weapon_data_t* wd);
 
 	void SetAmmo(size_t iId, int iCount);
 	int CountAmmo(size_t iId);
 	bool HasAmmo(WEAPON* p);
+	bool IsSelectable(WEAPON* p);
 	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect);
 private:
 	//选择选定的武器或菜单
