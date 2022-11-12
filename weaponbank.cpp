@@ -261,7 +261,7 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust){
 	fSetupSprInfo("weapon", &pWeapon->hInactive, &pWeapon->rcInactive);
 	fSetupSprInfo("weapon_s", &pWeapon->hActive, &pWeapon->rcActive);
 	fSetupSprInfo("ammo", &pWeapon->hAmmo, &pWeapon->rcAmmo);
-	fSetupSprInfo("ammo2", &pWeapon->hAmmo2, &pWeapon->rcAmmo2);
+	fSetupSprInfo("ammo2", &pWeapon->hAmmo2, &pWeapon->rcAmmo2, &pWeapon->hAmmo, &pWeapon->rcAmmo);
 }
 void WeaponsResource::LoadWeaponSprites(size_t iId, char* cust){
 	this->LoadWeaponSprites(this->GetWeapon(iId), cust);
@@ -316,21 +316,25 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
 		int iNextPos = iNowPos + iAdvance;
 		while (wp == nullptr) {
 			//玩家有这把武器才尝试获取数据
-			if(this->HasWeapon(this->m_iNowSlot, iNextPos))
+			if (this->HasWeapon(this->m_iNowSlot, iNextPos)) {
 				wp = this->GetWeapon(this->m_iNowSlot, iNextPos);
+				//不可被选择的直接跳过
+				if (!IsSelectable(wp))
+					wp = nullptr;
+			}
 			if (wp != nullptr || iNextPos == iNowPos || this->m_pOwnedWeaponData.Size(this->m_iNowSlot) == 0)
 				break;
 			else 
 				iNextPos += iAdvance >= 0 ? 1 : -1;
 
 			if (iAdvance >= 0) {
-				if (iNextPos >= this->m_pOwnedWeaponData.GetMaxPos(this->m_iNowSlot)) {
+				if (iNextPos > this->m_pOwnedWeaponData.GetMaxPos(this->m_iNowSlot)) {
 					iNextPos = this->m_pOwnedWeaponData.GetMinPos(this->m_iNowSlot);
 					if (bWheel)
 						wp = changeSlot();
 				}
 			}
-			else if (iNextPos <= (int)this->m_pOwnedWeaponData.GetMinPos(this->m_iNowSlot)) {
+			else if (iNextPos < (int)this->m_pOwnedWeaponData.GetMinPos(this->m_iNowSlot)) {
 				iNextPos = this->m_pOwnedWeaponData.GetMaxPos(this->m_iNowSlot);
 				if (bWheel)
 					wp = changeSlot();
@@ -365,16 +369,28 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
 	}
 }
 WEAPON* WeaponsResource::GetFirstPos(size_t iSlot){
-	WEAPON* wp = this->GetWeapon(iSlot, this->m_pOwnedWeaponData.GetMinPos(iSlot));
+	size_t iMinPos = this->m_pOwnedWeaponData.GetMinPos(iSlot);
+	if (!HasWeapon(iSlot, iMinPos))
+		return nullptr;
+	WEAPON* wp = this->GetWeapon(iSlot, iMinPos);
 	if (HasAmmo(wp))
 		return wp;
 	return nullptr;
 }
 WEAPON* WeaponsResource::GetLastPos(size_t iSlot) {
-	WEAPON* wp = this->GetWeapon(iSlot, this->m_pOwnedWeaponData.GetMaxPos(iSlot));
+	size_t iMaxPos = this->m_pOwnedWeaponData.GetMaxPos(iSlot);
+	if (!HasWeapon(iSlot, iMaxPos))
+		return nullptr;
+	WEAPON* wp = this->GetWeapon(iSlot, iMaxPos);
 	if (HasAmmo(wp))
 		return wp;
 	return nullptr;
+}
+size_t WeaponsResource::GetFirstPosNumber(size_t iSlot) {
+	return this->m_pOwnedWeaponData.GetMinPos(iSlot);
+}
+size_t WeaponsResource::GetLastPosNumber(size_t iSlot) {
+	return this->m_pOwnedWeaponData.GetMaxPos(iSlot);
 }
 bool WeaponsResource::HasAmmo(WEAPON* p) {
 	if (!p)
@@ -400,6 +416,12 @@ int WeaponsResource::CountAmmo(size_t iId){
 }
 void WeaponsResource::SetAmmo(size_t iId, int iCount){
 	this->m_dicAmmos[iId] = iCount;
+}
+//是否可被选择？
+bool WeaponsResource::IsSelectable(WEAPON* p) {
+	if (HasAmmo(p))
+		return true;
+	return (p->iFlags & ITEM_FLAG_SELECTONEMPTY) != 0;
 }
 
 WeaponsResource gWR;
