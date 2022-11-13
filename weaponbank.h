@@ -21,8 +21,11 @@ public:
 	size_t GetMinPos(size_t iSlot);
 	size_t Size();
 	size_t Size(size_t iSlot);
+	size_t MaxID();
 	CWeaponData();
 private:
+	//当前最大ID
+	size_t m_iMaxID;
 	//依照Id索引的
 	std::map<size_t, WEAPON*> m_dicWeaponIds;
 	//依照Slot Pos索引的
