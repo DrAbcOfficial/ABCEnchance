@@ -19,13 +19,21 @@
 #include "weaponbank.h"
 
 WEAPON* CWeaponData::operator [](size_t iId) {
-	return this->m_dicWeaponIds[iId];
+	if(this->m_dicWeaponIds.count(iId))
+		return this->m_dicWeaponIds[iId];
+	return nullptr;
 }
 WEAPON* CWeaponData::operator [](std::pair<size_t, size_t> pair) {
-	return this->m_dicWeaponSlots[pair.first][pair.second];
+	if (pair.first > 9)
+		return nullptr;
+	if(this->m_dicWeaponSlots[pair.first].count(pair.second))
+		return this->m_dicWeaponSlots[pair.first][pair.second];
+	return nullptr;
 }
 WEAPON* CWeaponData::operator [](std::string szName) {
-	return this->m_dicWeaponNames[szName];
+	if (this->m_dicWeaponNames.count(szName))
+		return this->m_dicWeaponNames[szName];
+	return nullptr;
 }
 //删除所有链接，并且清理指向的对象内存
 void CWeaponData::Clear() {
@@ -54,10 +62,15 @@ size_t CWeaponData::Size(){
 size_t CWeaponData::Size(size_t iSlot){
 	return this->m_dicWeaponSlots[iSlot].size();
 }
+size_t CWeaponData::MaxID(){
+	return this->m_iMaxID;
+}
 void CWeaponData::Add(WEAPON* wp) {
 	this->m_dicWeaponIds[wp->iId] = wp;
 	this->m_dicWeaponNames[wp->szName] = wp;
 	this->m_dicWeaponSlots[wp->iSlot][wp->iSlotPos] = wp;
+	if (wp->iId > m_iMaxID)
+		m_iMaxID = wp->iId;
 }
 void CWeaponData::Remove(WEAPON* wp){
 	this->m_dicWeaponIds.erase(wp->iId);
@@ -138,7 +151,7 @@ WEAPON* WeaponsResource::GetWeapon(size_t slot, size_t pos) {
 }
 //从本地武器预测数组同步武器到菜单缓存
 void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
-	for (size_t i = 0; i < this->m_pWeaponData.Size(); i++) {
+	for (size_t i = 0; i <= this->m_pWeaponData.MaxID(); i++) {
 		WEAPON* weapon = GetWeapon(i);
 		if (!weapon)
 			continue;
