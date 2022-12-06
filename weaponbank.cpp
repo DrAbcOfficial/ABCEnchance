@@ -335,10 +335,10 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
 				if (!IsSelectable(wp))
 					wp = nullptr;
 			}
-			if (wp != nullptr || iNextPos == iNowPos || this->m_pOwnedWeaponData.Size(this->m_iNowSlot) == 0)
+			if ((wp != nullptr) || (iNextPos == iNowPos) || (this->m_pOwnedWeaponData.Size(this->m_iNowSlot) == 0))
 				break;
 			else 
-				iNextPos += iAdvance >= 0 ? 1 : -1;
+				iNextPos += (iAdvance >= 0 ? 1 : -1);
 
 			if (iAdvance >= 0) {
 				if (iNextPos > this->m_pOwnedWeaponData.GetMaxPos(this->m_iNowSlot)) {
