@@ -305,6 +305,9 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
 		m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
 			gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
 
+	if (iAdvance == 0)
+		iAdvance = 1;
+
 	auto changeSlot = [&] {
 		if (iAdvance >= 0) {
 			if (this->m_iNowSlot + 1 >= INVALID_WEAPON_SLOT)
