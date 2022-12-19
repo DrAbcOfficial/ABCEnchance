@@ -308,22 +308,6 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
 	if (iAdvance == 0)
 		iAdvance = 1;
 
-	auto changeSlot = [&] {
-		if (iAdvance >= 0) {
-			if (this->m_iNowSlot + 1 >= INVALID_WEAPON_SLOT)
-				this->m_iNowSlot = 0;
-			else
-				this->m_iNowSlot += 1;
-			return this->GetFirstPos(this->m_iNowSlot);
-		}
-		else {
-			if ((int)this->m_iNowSlot - 1 < 0)
-				this->m_iNowSlot = MAX_WEAPON_SLOT;
-			else
-				this->m_iNowSlot -= 1;
-			return this->GetLastPos(this->m_iNowSlot);
-		}
-	};
 	auto getValidWeapon = [&](WEAPON* firstValue) {
 		WEAPON* wp = firstValue;
 		//获取当前的Pos
@@ -340,20 +324,30 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
 			}
 			if ((wp != nullptr) || (iNextPos == iNowPos) || (this->m_pOwnedWeaponData.Size(this->m_iNowSlot) == 0))
 				break;
-			else 
-				iNextPos += (iAdvance >= 0 ? 1 : -1);
-
+			iNextPos += (iAdvance >= 0 ? 1 : -1);
 			if (iAdvance >= 0) {
 				if (iNextPos > this->m_pOwnedWeaponData.GetMaxPos(this->m_iNowSlot)) {
 					iNextPos = this->m_pOwnedWeaponData.GetMinPos(this->m_iNowSlot);
-					if (bWheel)
-						wp = changeSlot();
+					if (bWheel) {
+						if (this->m_iNowSlot + 1 >= INVALID_WEAPON_SLOT)
+							this->m_iNowSlot = 0;
+						else
+							this->m_iNowSlot += 1;
+					}
+					wp = this->GetFirstPos(this->m_iNowSlot);
+					break;
 				}
 			}
 			else if (iNextPos < (int)this->m_pOwnedWeaponData.GetMinPos(this->m_iNowSlot)) {
 				iNextPos = this->m_pOwnedWeaponData.GetMaxPos(this->m_iNowSlot);
-				if (bWheel)
-					wp = changeSlot();
+				if (bWheel) {
+					if ((int)this->m_iNowSlot - 1 < 0)
+						this->m_iNowSlot = MAX_WEAPON_SLOT;
+					else
+						this->m_iNowSlot -= 1;
+				}
+				wp = this->GetLastPos(this->m_iNowSlot);
+				break;
 			}
 		}
 		return wp;
