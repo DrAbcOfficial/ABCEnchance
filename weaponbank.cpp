@@ -9,6 +9,7 @@
 #include "vguilocal.h"
 #include "local.h"
 #include "hud.h"
+#include "weaponinfo_sven.h"
 #include "weapon.h"
 #include "glew.h"
 #include "gl_def.h"
@@ -150,12 +151,13 @@ WEAPON* WeaponsResource::GetWeapon(size_t slot, size_t pos) {
 	return this->m_pWeaponData[std::make_pair(slot, pos)];
 }
 //从本地武器预测数组同步武器到菜单缓存
-void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
+void WeaponsResource::SyncWeapon(const weapon_data_t* _wd) {
+	const weapon_sven_t* wd = (weapon_sven_t*)_wd;
 	for (size_t i = 0; i <= this->m_pWeaponData.MaxID(); i++) {
 		WEAPON* weapon = GetWeapon(i);
 		if (!weapon)
 			continue;
-		const weapon_data_t* wp = wd + i;
+		const weapon_sven_t* wp = wd + i;
 		if (wp->m_iId <= 0) {
 			if (HasWeapon(weapon->iSlot, weapon->iSlotPos))
 				DropWeapon(weapon->iSlot, weapon->iSlotPos);
@@ -165,8 +167,8 @@ void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
 				PickupWeapon(wp->m_iId);
 			//同步弹匣数据
 			WEAPON* pwd = gWR.GetWeapon(wp->m_iId);
-			pwd->iClip = pwd->iClip;
-			pwd->iClip2 = pwd->iClip2;
+			pwd->iClip = wp->m_iClip;
+			//pwd->iClip2 = wp->m_iClip2;
 		}
 	}
 }
