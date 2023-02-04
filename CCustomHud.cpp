@@ -89,25 +89,35 @@ int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {
 	return m_pfnSpectator(pszName, iSize, pbuf);
 }
 int __MsgFunc_ServerName(const char* pszName, int iSize, void* pbuf) {
-	BEGIN_READ(pbuf, iSize);
-	char buf[MAX_SERVERNAME_LENGTH];
-	strncpy_s(buf, READ_STRING(), MAX_SERVERNAME_LENGTH);
-	snprintf(g_pViewPort->GetServerName(), MAX_SERVERNAME_LENGTH, "%s", buf);
-	g_pViewPort->GetScoreBoard()->UpdateServerName();
+	if (g_pViewPort)
+	{
+		BEGIN_READ(pbuf, iSize);
+		char buf[MAX_SERVERNAME_LENGTH];
+		strncpy_s(buf, READ_STRING(), MAX_SERVERNAME_LENGTH);
+		snprintf(g_pViewPort->GetServerName(), MAX_SERVERNAME_LENGTH, "%s", buf);
+		g_pViewPort->GetScoreBoard()->UpdateServerName();
+	}
 	return m_pfnServerName(pszName, iSize, pbuf);
 }
 int __MsgFunc_NextMap(const char* pszName, int iSize, void* pbuf) {
-	BEGIN_READ(pbuf, iSize);
-	char buf[MAX_SERVERNAME_LENGTH];
-	strncpy_s(buf, READ_STRING(), MAX_SERVERNAME_LENGTH);
-	snprintf(g_pViewPort->GetNextMap(), MAX_SERVERNAME_LENGTH, "%s", buf);
-	g_pViewPort->GetScoreBoard()->UpdateNextMap();
+	if (g_pViewPort)
+	{
+		BEGIN_READ(pbuf, iSize);
+		char buf[MAX_SERVERNAME_LENGTH];
+		strncpy_s(buf, READ_STRING(), MAX_SERVERNAME_LENGTH);
+		snprintf(g_pViewPort->GetNextMap(), MAX_SERVERNAME_LENGTH, "%s", buf);
+		g_pViewPort->GetScoreBoard()->UpdateNextMap();
+	}
 	return m_pfnNextMap(pszName, iSize, pbuf);
 }
 int __MsgFunc_TimeEnd(const char* pszName, int iSize, void* pbuf) {
-	BEGIN_READ(pbuf, iSize);
-	g_pViewPort->m_iTimeEnd = READ_LONG();
-	g_pViewPort->GetScoreBoard()->UpdateTimeEnd();
+	
+	if (g_pViewPort)
+	{
+		BEGIN_READ(pbuf, iSize);
+		g_pViewPort->m_iTimeEnd = READ_LONG();
+		g_pViewPort->GetScoreBoard()->UpdateTimeEnd();
+	}
 	return m_pfnTimeEnd(pszName, iSize, pbuf);
 }
 int __MsgFunc_ShowMenu(const char* pszName, int iSize, void* pbuf){
@@ -200,11 +210,13 @@ void __UserCmd_PrevWeapon(void) {
 }
 void __UserCmd_OpenScoreboard(void) {
 	gCustomHud.m_bInScore = true;
-	g_pViewPort->ShowScoreBoard();
+	if(g_pViewPort)
+		g_pViewPort->ShowScoreBoard();
 }
 void __UserCmd_CloseScoreboard(void) {
 	gCustomHud.m_bInScore = false;
-	g_pViewPort->HideScoreBoard();
+	if(g_pViewPort)
+		g_pViewPort->HideScoreBoard();
 }
 void __UserCmd_Attack1(void) {
 	if (m_HudCustomAmmo.BlockAttackOnce())
@@ -422,7 +434,8 @@ void CCustomHud::IN_MouseEvent(int mstate){
 int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	int result = 1;
 	result &= m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
-	g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding);
+	if(g_pViewPort)
+		g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding);
 	if (!IsHudEnable())
 		return 1;
 	return result;
@@ -465,7 +478,10 @@ void CCustomHud::SetSpectator(int client, bool value){
 	m_SpectatePlayer[client] = value;
 }
 bool CCustomHud::IsMouseVisible(){
-	return g_pViewPort->IsMouseInputEnabled();
+	if(g_pViewPort)
+		return g_pViewPort->IsMouseInputEnabled();
+
+	return false;
 }
 bool CCustomHud::IsTextMenuOpening() {
 	if (gEngfuncs.GetClientTime() <= m_flTextMenuDisplayTime || m_bTextMenuOpening)
@@ -473,7 +489,8 @@ bool CCustomHud::IsTextMenuOpening() {
 	return false;
 }
 void CCustomHud::SetMouseVisible(bool state) {
-	g_pViewPort->SetMouseInputEnabled(state);
+	if(g_pViewPort)
+		g_pViewPort->SetMouseInputEnabled(state);
 }
 void CCustomHud::OnMousePressed(int code) {
 	switch (code) {
