@@ -25,7 +25,7 @@ public:
 	CWeaponData();
 private:
 	//当前最大ID
-	size_t m_iMaxID;
+	size_t m_iMaxID = 0;
 	//依照Id索引的
 	std::map<size_t, WEAPON*> m_dicWeaponIds;
 	//依照Slot Pos索引的

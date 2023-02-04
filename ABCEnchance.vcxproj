@@ -568,6 +568,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vote.h" />
     <ClInclude Include="weapon.h" />
     <ClInclude Include="weaponbank.h" />
+    <ClInclude Include="weaponinfo_sven.h" />
     <ClInclude Include="wmenu_annular.h" />
     <ClInclude Include="wmenu_slot.h" />
   </ItemGroup>
