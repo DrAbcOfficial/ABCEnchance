@@ -142,7 +142,8 @@ CPlayerInfo *CPlayerInfo::Update(){
 		//RealNameGet
 		if (m_pSteamId.IsValid())
 			Q_strcpy(m_szRealName, SteamFriends()->GetFriendPersonaName(m_pSteamId));
-		g_pViewPort->GetScoreBoard()->UpdateOnPlayerInfo(GetIndex());
+		if(g_pViewPort)
+			g_pViewPort->GetScoreBoard()->UpdateOnPlayerInfo(GetIndex());
 	}
 	if (bIsConnected){
 		//Wtf, quit?
