@@ -49,12 +49,20 @@ m_bSelectMenuDisplay = false;
 	}
 }
 void CWeaponMenuAnnular::GLInit() {
-	glGenFramebuffersEXT(1, &m_hGaussianBufferFBO);
+	glGenFramebuffers(1, &m_hGaussianBufferFBO);
 	m_hGaussianBufferTex = GL_GenTextureRGB8(ScreenWidth, ScreenHeight);
 }
 void CWeaponMenuAnnular::Clear() {
 	if (m_hGaussianBufferTex)
+	{
 		glDeleteTextures(1, &m_hGaussianBufferTex);
+		m_hGaussianBufferTex = 0;
+	}
+	if (m_hGaussianBufferFBO)
+	{
+		glDeleteBuffers(1, &m_hGaussianBufferFBO);
+		m_hGaussianBufferFBO = 0;
+	}
 }
 void CWeaponMenuAnnular::Init() {
 	ADD_COMMAND("+annularmenu", __UserCmd_OpenAnnularMenu);
