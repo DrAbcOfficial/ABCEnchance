@@ -5,42 +5,34 @@
 
 class CWeaponData {
 public:
-	WEAPON* operator [](size_t iId);
-	WEAPON* operator [](std::pair<size_t, size_t>);
-	WEAPON* operator [](std::string szName);
 	void Add(WEAPON* wp);
-	void Remove(WEAPON* wp);
-	void RemoveAll();
 	void Clear();
 	bool Has(size_t iSlot, size_t iPos);
-	std::map<size_t, WEAPON*>::iterator Begin();
-	std::map<size_t, WEAPON*>::iterator End();
-	std::map<size_t, WEAPON*>::iterator PosBegin(size_t iSlot);
-	std::map<size_t, WEAPON*>::iterator PosEnd(size_t iSlot);
-	size_t GetMaxPos(size_t iSlot);
-	size_t GetMinPos(size_t iSlot);
-	size_t Size();
-	size_t Size(size_t iSlot);
+	WEAPON* Get(size_t iId);
+	WEAPON* Get(size_t iSlot, size_t iPos);
+	WEAPON* Get(char* szName);
 	size_t MaxID();
-	CWeaponData();
-private:
+
+	std::vector<WEAPON*> m_aryWeapons;
+protected:
 	//当前最大ID
 	size_t m_iMaxID = 0;
-	//依照Id索引的
-	std::map<size_t, WEAPON*> m_dicWeaponIds;
-	//依照Slot Pos索引的
-	std::map<size_t, std::map<size_t, WEAPON*>> m_dicWeaponSlots;
-	//依照名称索引的
-	std::map<std::string, WEAPON*> m_dicWeaponNames;
+};
+
+class CPlayerWeaponData : public CWeaponData {
+public:
+	void Remove(size_t s, size_t p);
+	void Add(WEAPON* wp);
 };
 
 
 class WeaponsResource{
 private:
+	//玩家拥有的武器
+	CPlayerWeaponData m_pPlayerWeapon;
 	//玩家可以获取的所有武器数据
 	CWeaponData m_pWeaponData;
-	//玩家持有的武器
-	CWeaponData m_pOwnedWeaponData;
+
 	//玩家持有的所有子弹数据
 	std::map<size_t, int> m_dicAmmos;
 	//hud_fastswitch
@@ -50,12 +42,16 @@ public:
 	//1~0十个菜单选中的Pos
 	int m_aryDrawMenu[MAX_WEAPON_SLOT];
 	//目前选择的Slot
-	size_t m_iNowSlot;
+	int m_iNowSlot;
+	//目前选择的Id
+	size_t m_iNowChoseId;
+	//上次选择的武器ID
+	int m_iLastChoseId;
 
 	void Init();
 	void Reset();
 
-	CWeaponData* GetOwnedData();
+	CPlayerWeaponData* GetOwnedData();
 
 	WEAPON* GetWeapon(char* szName);
 	WEAPON* GetWeapon(size_t iId);
@@ -74,8 +70,6 @@ public:
 	void SelectSlot(size_t iSlot, int fAdvance, bool bWheel);
 	WEAPON* GetFirstPos(size_t iSlot);
 	WEAPON* GetLastPos(size_t iSlot);
-	size_t GetFirstPosNumber(size_t iSlot);
-	size_t GetLastPosNumber(size_t iSlot);
 	size_t GetDrawMenuPos(size_t iSlot);
 	void SyncWeapon(const weapon_data_t* wd);
 
