@@ -10,6 +10,7 @@ env:
   SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance
   BUILD_CONFIGURATION: Release
   BUILD_CONFIGURATION_AVX: Release_AVX2
+  GITHUB_DATE: ""
 
 permissions:
   contents: write
