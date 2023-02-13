@@ -65,5 +65,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.2
       with:
-        name: ABCEnchance-$NOW
+        name: ABCEnchance-${{NOW}}.zip
         path: ABCEnchance-windows-x86.zip
