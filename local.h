@@ -129,6 +129,8 @@ typedef struct{
 	cvar_t* pDeathNotice = nullptr;
 	cvar_t* pDeathNoticeTime = nullptr;
 
+	cvar_t* pHudVote = nullptr;
+
 	cvar_t* pHudEfx = nullptr;
 
 	cvar_t* pEccoCheckInfo = nullptr;

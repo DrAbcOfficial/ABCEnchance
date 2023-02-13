@@ -39,6 +39,8 @@ bool VotePatternCheck(std::string content, char* szpattern, char* localtoken) {
 	return false;
 }
 int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf){
+	if(gCVars.pHudVote->value <= 0)
+		return m_pfnVoteMenu(pszName, iSize, pbuf);
 	BEGIN_READ(pbuf, iSize);
 	m_HudVote.m_flKeepTime = gEngfuncs.GetClientTime() + READ_BYTE();
 
@@ -59,12 +61,16 @@ int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf){
 	return m_HudVote.StartVote() ? 1 : m_pfnVoteMenu(pszName, iSize, pbuf);
 }
 int __MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf){
+	if(gCVars.pHudVote->value <= 0)
+		return m_pfnVoteMenu(pszName, iSize, pbuf);
 	m_HudVote.m_bInVoting = false;
 	return m_pfnEndVote(pszName, iSize, pbuf);
 }
 int CHudVote::Init(){
 	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
 	m_pfnEndVote = HOOK_MESSAGE(EndVote);
+
+	gCVars.pHudVote = CREATE_CVAR("cl_hud_vote", "1", FCVAR_VALUE, nullptr);
 	
 	Reset();
 	return 0;
@@ -139,6 +145,8 @@ void CHudVote::DrawMultiLineStr(const wchar_t *str, int limite, int x, int y, in
 }
 int CHudVote::Draw(float flTime){
 	if (!m_bInVoting)
+		return 0;
+	if(gCVars.pHudVote->value <= 0)
 		return 0;
 	//if (m_flKeepTime <= flTime)
 	//	m_bInVoting = false;
