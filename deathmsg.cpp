@@ -28,12 +28,14 @@ wregex parttenKilled(MSG_KILLEDNOTIFY);
 wregex parttenPlayer(MSG_PLAYERKILLNOTIFY);
 
 int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf){
+	if(gCVars.pDeathNotice->value <= 0)
+		return m_pfnTextMsg(pszName, iSize, pbuf);
 	if(!m_HudDeathMsg.bIsDeathMsgOn){
 		BEGIN_READ(pbuf, iSize);
 		if (READ_BYTE() == HUD_PRINTNOTIFY){
 			char* msg_text = READ_STRING();
 			//Ê²Ã´¼¦°Í¶«Î÷
-			if (msg_text == (char*)0)
+			if (msg_text[0] == '\0')
 				return m_pfnTextMsg(pszName, iSize, pbuf);
 			wchar_t wideBuf[MSG_BUF_SIZE];
 			vgui::localize()->ConvertANSIToUnicode(msg_text, wideBuf, sizeof(wideBuf));
@@ -69,6 +71,8 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf){
 	return m_pfnTextMsg(pszName, iSize, pbuf);
 }
 int __MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf) {
+	if(gCVars.pDeathNotice->value <= 0)
+		return m_pfnTextMsg(pszName, iSize, pbuf);
 	BEGIN_READ(pbuf, iSize);
 	int iType = READ_BYTE();
 	if (iType == 0)
@@ -218,6 +222,7 @@ void CHudDeathMsg::InsertNewMsg(const wstring &v, wstring &e, wstring &k){
 int CHudDeathMsg::Init(void){
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
 	m_pfnDeathMsg = HOOK_MESSAGE(DeathMsg);
+	gCVars.pDeathNotice = CREATE_CVAR("hud_deathnotice", "1", FCVAR_VALUE, NULL);
 	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_VALUE, NULL);
 	return 1;
 }

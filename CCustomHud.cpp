@@ -324,23 +324,25 @@ void CCustomHud::HUD_VidInit(void){
 }
 void CCustomHud::HUD_Draw(float flTime){
 	SetBaseHudActivity();
-	if (!IsHudEnable())
-		return;
-	m_HudEfx.Draw(flTime);
-	m_HudPlayerTitle.Draw(flTime);
-	m_HudArmorHealth.Draw(flTime);
-	m_HudRadar.Draw(flTime);
-	m_HudCustomAmmo.Draw(flTime);
-	m_HudDeathMsg.Draw(flTime);
 	m_HudCrosshair.Draw(flTime);
+	m_HudDeathMsg.Draw(flTime);
+	m_HudPlayerTitle.Draw(flTime);
+	m_HudRadar.Draw(flTime);
 	m_HudVote.Draw(flTime);
-	m_HudEccoMoney.Draw(flTime);
 	m_HudItemHighLight.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
 	m_HudGrenadeIndicator.Draw(flTime);
+
 #ifdef _DEBUG
 	m_HudCCTV.Draw(flTime);
 #endif
+
+	if (!IsHudEnable())
+		return;
+	m_HudEfx.Draw(flTime);
+	m_HudArmorHealth.Draw(flTime);
+	m_HudCustomAmmo.Draw(flTime);
+	m_HudEccoMoney.Draw(flTime);
 }
 void CCustomHud::HUD_Reset(void){
 	m_iPlayerHealth = 100;
