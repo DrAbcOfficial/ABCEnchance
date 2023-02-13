@@ -10,7 +10,6 @@ env:
   SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance
   BUILD_CONFIGURATION: Release
   BUILD_CONFIGURATION_AVX: Release_AVX2
-  GITHUB_DATE: ""
 
 permissions:
   contents: write
@@ -66,5 +65,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.2
       with:
-        name: ABCEnchance-${{ GITHUB_DATE }}
+        name: ABCEnchance-$GITHUB_DATE
         path: ABCEnchance-windows-x86.zip
