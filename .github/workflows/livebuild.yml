@@ -61,6 +61,7 @@ jobs:
           files: MetaHookSv/Plugins/ABCEnchance/build/
           dest: ABCEnchance-windows-x86.zip
     - name: Current Time
+      uses: srfrnk/current-time@master
       id: current-time
       with:
         format: YYYY-MM-DD-HH-mm-ss
