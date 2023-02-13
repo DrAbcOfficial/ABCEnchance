@@ -61,10 +61,9 @@ jobs:
           files: MetaHookSv/Plugins/ABCEnchance/build/
           dest: ABCEnchance-windows-x86.zip
     - name: Get current date
-      id: date
-      run: echo "::set-output name=today::$(date +'%Y-%m-%d-%H-%m-%s')"
+      run: echo "$(date +'%Y-%m-%d-%H-%m-%s')" >> $GITHUB_DATE
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.2
       with:
-        name: ABCEnchance-${{ github.ref }}
+        name: ABCEnchance-${{ GITHUB_DATE }}
         path: ABCEnchance-windows-x86.zip
