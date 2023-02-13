@@ -60,12 +60,12 @@ jobs:
       with:
           files: MetaHookSv/Plugins/ABCEnchance/build/
           dest: ABCEnchance-windows-x86.zip
-    - name: "Set current date as env variable"
-      run: |
-        echo "builddate=$(date +'%Y-%m-%d-%H-%M-%S')" >> $GITHUB_OUTPUT
-      id: version
+    - name: Current Time
+      id: current-time
+      with:
+        format: YYYY-MM-DD-HH-mm-ss
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.2
       with:
-        name: ABCEnchance-${{ steps.version.outputs.builddate }}.zip
+        name: ABCEnchance-${{steps.current-time.outputs.formattedTime}}.zip
         path: ABCEnchance-windows-x86.zip
