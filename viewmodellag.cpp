@@ -16,7 +16,7 @@ void V_CalcViewModelLag(ref_params_t* pparams){
 	if (gCVars.pModelLag->value <= 0)
 		return;
 	//¼¦ÃçÎäÆ÷
-	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != gCVars.pCvarDefaultFOV->value)
+	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != mathlib::clamp(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
 		return;
 	static vec3_t m_vecLastFacing;
 	cl_entity_t* view = gEngfuncs.GetViewModel();
