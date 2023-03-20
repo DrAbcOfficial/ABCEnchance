@@ -103,8 +103,9 @@
 # 📊 CVars
 |CVar|uses|default|range|
 |---|---|---|---|
-|cl_hud_csgo|Use now hud or not|1|0/1|
+|cl_hud_csgo|enable hud or not|1|0/1|
 |---|---|---|---|
+|hud_deathnotice|use new death message|1|0~1|
 |hud_deathnotice_time|the death message keep time|6|0~9999|
 |---|---|---|---|
 |cl_customslot1|Set customslot 1| |weapon_xxxxx|
@@ -165,7 +166,7 @@
 |---|---|---|---|
 |cl_eccoenable|Enable Ecco show|1|0(off)/1(always show)/2(only detected Ecco plugin)|
 |cl_eccocheck|Enable Ecco plugin check|0|0/1|
-|cl_eccobuymenu|Enable Ecco buymenu enhance|1|0/1|
+|cl_eccomenu|Enable Ecco buymenu enhance|1|0/1|
 |---|---|---|---|
 |cl_modellag|View model lag|1|0/1|
 |cl_modellag_value|View model lag value|1.0|0-9999|

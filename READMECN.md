@@ -117,6 +117,7 @@
 |cl_damageshock_factor|受伤色差强度|0.015|0~99999|
 |cl_damageshock_base|出现色差应受伤害|30|0~99999|
 |---|---|---|---|
+|hud_deathnotice|用新的死亡提示|1|0~1|
 |hud_deathnotice_time|死亡提示保持时间|6|0~9999|
 |---|---|---|---|
 |cl_radar|启用雷达|2|0/1/2|
@@ -153,7 +154,7 @@
 |---|---|---|---|
 |cl_eccoenable|启用Ecco显示|1|0(关闭)/1(总是开启)/2(检测到Ecoo时开启)|
 |cl_eccocheck|启用Ecco插件检查|0|0/1|
-|cl_eccobuymenu|启用增强Ecco菜单|1|0/1|
+|cl_eccomenu|启用增强Ecco菜单|1|0/1|
 |---|---|---|---|
 |cl_modellag|启用V模型延迟|1|0/1|
 |cl_modellag_value|V模型延迟数值|1.0|0-9999|
