@@ -126,7 +126,10 @@ typedef struct{
 	cvar_t* pRadarUpdateInterval = nullptr;
 	cvar_t* pRadarRoundRadius = nullptr;
 
+	cvar_t* pDeathNotice = nullptr;
 	cvar_t* pDeathNoticeTime = nullptr;
+
+	cvar_t* pHudVote = nullptr;
 
 	cvar_t* pHudEfx = nullptr;
 
