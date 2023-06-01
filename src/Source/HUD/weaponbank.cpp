@@ -229,15 +229,19 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust) {
 	pWeapon->hAmmo = 0;
 	pWeapon->hAmmo2 = 0;
 
-	char sz[128];
+	char sz[256];
 	int i;
 	if (cust == nullptr)
 		sprintf_s(sz, "sprites/%s.txt", pWeapon->szSprName);
 	else
 		sprintf_s(sz, "sprites/%s/%s.txt", cust, pWeapon->szSprName);
 	client_sprite_t* pList = SPR_GetList(sz, &i);
-	if (!pList)
-		return;
+	if (!pList) {
+		//载入默认Error
+		pList = SPR_GetList("abcenchance/spr/weapon_error.txt", &i);
+		if (!pList)
+			return;
+	}
 	auto fSetupSprInfo = [&](const char* szType, HSPRITE* spr, wrect_t* rc, HSPRITE* dspr = nullptr, wrect_t* drc = nullptr) {
 		int iRes = ScreenWidth < 640 ? 320 : 640;
 		client_sprite_t* p = this->GetSpriteList(pList, szType, iRes, i);
@@ -260,7 +264,7 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust) {
 	fSetupSprInfo("weapon", &pWeapon->hInactive, &pWeapon->rcInactive);
 	fSetupSprInfo("weapon_s", &pWeapon->hActive, &pWeapon->rcActive);
 	fSetupSprInfo("ammo", &pWeapon->hAmmo, &pWeapon->rcAmmo);
-	fSetupSprInfo("ammo2", &pWeapon->hAmmo2, &pWeapon->rcAmmo2);
+	fSetupSprInfo("ammo2", &pWeapon->hAmmo2, &pWeapon->rcAmmo2, &pWeapon->hAmmo, &pWeapon->rcAmmo);
 }
 void WeaponsResource::LoadWeaponSprites(size_t iId, char* cust) {
 	this->LoadWeaponSprites(this->GetWeapon(iId), cust);
