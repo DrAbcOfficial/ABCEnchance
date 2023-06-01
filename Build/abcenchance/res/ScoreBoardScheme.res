@@ -1,4 +1,4 @@
-#base "ScoreBoardSchemeBase.res"
+#base "SchemeBase.res"
 
 Scheme
 {
