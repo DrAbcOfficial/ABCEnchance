@@ -57,19 +57,6 @@ Scheme
 		//拾取物品图标颜色
 		"AmmoHUD.ItemPickUpColor"		"0 255 0 255"
 
-        //环状菜单背景颜色
-		"WMenuAnnular.SelectColor"			"106 102 96 255"
-		//环状菜单选中框颜色
-		"WMenuAnnular.SelectRinColor"		"0 255 0 255"
-		//环状菜单图标颜色
-		"WMenuAnnular.SelectIconColor"		"128 255 0 255"
-		//环状菜单空武器图标颜色
-		"WMenuAnnular.SelectEmptyColor"		"255 0 0 255"
-		//环状菜单文字颜色
-		"WMenuAnnular.SelectTextColor"		"128 255 0 255"
-		//环状菜单指针颜色
-		"WMenuAnnular.SelectPointerColor"		"255 128 0 255"
-
         //经典菜单颜色
 		"WMenuBucket.SelectColor"			"0 255 0 255"
 		//经典菜单图标颜色
@@ -160,21 +147,6 @@ Scheme
 		"AmmoHUD.ItemPickUpX"	"0.55"
 		//拾取物品起始高
 		"AmmoHUD.ItemPickUpY"	"0.55"
-
-        //环状菜单空心长度
-		"WMenuAnnular.SelectOffset"	"0.25"
-		//环状菜单按钮长度
-		"WMenuAnnular.SelectSize"	"0.1"
-		//环状菜单指针尺寸
-		"WMenuAnnular.SelectPointerSize"	"0.03"
-		//环状菜单起始选址度数（角度）
-		"WMenuAnnular.SelectRotate"	"0"
-		//环状菜单开启动画时间
-		"WMenuAnnular.SelectAnimateTime"	"0.12"
-		//环状菜单消失动画时间
-		"WMenuAnnular.SelectFadeTime"	"0.2"
-		//环状菜单保持时间
-		"WMenuAnnular.SelectHoldTime"	"5"
 
         //经典菜单起始宽
 		"WMenuBucket.SelectXOffset"	"0.005"
