@@ -102,10 +102,8 @@ typedef struct{
 
 	cvar_t* pDynamicHUD = nullptr;
 
-	cvar_t* pAmmoCSlot[10] = {};
 	cvar_t* pAmmoMenuDrawPos = nullptr;
 	cvar_t* pAmmoMenuDrawRainbow = nullptr;
-	cvar_t* pAmmoMenuStyle = nullptr;
 
 	cvar_t* pModelLag = nullptr;
 	cvar_t* pModelLagAutoStop = nullptr;
