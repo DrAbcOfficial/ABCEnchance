@@ -15,6 +15,7 @@
 #ifndef PLAYER_INFO_H
 #define PLAYER_INFO_H
 #include <tier0/dbg.h>
+#include <string>
 
 typedef struct player_info_s player_info_t;
 

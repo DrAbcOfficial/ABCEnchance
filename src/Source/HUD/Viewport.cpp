@@ -14,6 +14,8 @@
 #include <string>
 #include "steam_api.h"
 #include "player_info.h"
+
+#include "playerboard.h"
 #include "scoreboard.h"
 #include "Viewport.h"
 #include "exportfuncs.h"
@@ -47,6 +49,10 @@ CViewport::~CViewport(void)
 void CViewport::Start(void)
 {
 	AddNewPanel(m_pScorePanel = new CScorePanel());
+	for (size_t i = 0; i < 32; i++) {
+		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
+		m_pPlayerInfoPanels[i]->SetId(i);
+	}
 	SetVisible(false);
 }
 
@@ -54,6 +60,9 @@ void CViewport::SetParent(VPANEL vPanel)
 {
 	BaseClass::SetParent(vPanel);
 	m_pScorePanel->SetParent(GetVPanel());
+	for (size_t i = 0; i < 32; i++) {
+		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
+	}
 }
 
 void CViewport::AddNewPanel(IViewportPanel* panel)
@@ -65,7 +74,9 @@ void CViewport::AddNewPanel(IViewportPanel* panel)
 
 void CViewport::Think(void)
 {
-
+	for (size_t i = 0; i < 32; i++) {
+		m_pPlayerInfoPanels[i]->Think();
+	}
 }
 
 void CViewport::VidInit(void)
