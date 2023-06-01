@@ -10,6 +10,7 @@
 #include "pm_movevars.h"
 #include "cvar_hook.h"
 #include <capstone.h>
+#include "CVector.h"
 //Def
 #include "hud.h"
 #include "vguilocal.h"
@@ -703,7 +704,11 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 			{
 				view->origin[2] += 0.5;
 			}
-			V_CalcViewModelLag(pparams, view->origin, view->angles, pparams->cl_viewangles);
+			CVector viewOrigin = view->origin;
+			CVector viewAngles = view->angles;
+			V_CalcViewModelLag(pparams, viewOrigin, viewAngles, pparams->cl_viewangles);
+			mathlib::VectorCopy(viewOrigin, view->origin);
+			mathlib::VectorCopy(viewAngles, view->angles);
 			V_CalcModelSlide(pparams);
 		}
 		else

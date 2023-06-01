@@ -14,11 +14,11 @@
 #include "weapon.h"
 #include "glew.h"
 #include "gl_def.h"
-#include "IWeaponSelect.h"
 #include "ammo.h"
 #include "CCustomHud.h"
 #include "historyresource.h"
 #include "weaponbank.h"
+#include <weaponselect.h>
 
 void CPlayerWeaponData::Remove(size_t s, size_t p){
 	for (size_t i = 0; i < m_aryWeapons.size(); i++) {
@@ -266,8 +266,8 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
 	//if ((pFastSwich->value > 0 && !bWheel) || (pFastSwich->value <= 0))
-		m_HudCustomAmmo.m_pNowSelectMenu->m_fFade =
-			gEngfuncs.GetClientTime() + m_HudCustomAmmo.m_pNowSelectMenu->SelectHoldTime;
+	m_HudWMenuSlot.m_fFade =
+			gEngfuncs.GetClientTime() + m_HudWMenuSlot.SelectHoldTime;
 	if (m_pPlayerWeapon.m_aryWeapons.size() == 0)
 		return;
 	if (iAdvance == 0)

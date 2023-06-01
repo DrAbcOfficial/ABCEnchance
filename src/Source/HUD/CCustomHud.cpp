@@ -49,7 +49,6 @@
 #endif
 
 #include "weaponbank.h"
-#include "wmenu_annular.h"
 
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
@@ -381,7 +380,6 @@ void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 void CCustomHud::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	if (!IsHudEnable())
 		return;
-	m_HudCustomAmmo.ClientMove(ppmove, server);
 }
 void CCustomHud::HUD_Clear(void){
 	m_HudRadar.Clear();
@@ -445,7 +443,6 @@ int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBi
 void CCustomHud::IN_Accumulate(void){
 	if (!IsHudEnable())
 		return;
-	m_HudCustomAmmo.IN_Accumulate();
 }
 int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	if (!IsHudEnable())
@@ -496,20 +493,11 @@ void CCustomHud::SetMouseVisible(bool state) {
 }
 void CCustomHud::OnMousePressed(int code) {
 	switch (code) {
-	case vgui::MouseCode::MOUSE_LEFT: {
-		if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu) {
-			if (m_HudWMenuAnnular.m_fFade > gEngfuncs.GetClientTime()) {
-				if (m_HudCustomAmmo.m_bAcceptDeadMessage)
-					return;
-				m_HudCustomAmmo.ChosePlayerWeapon();
-			}
-			m_HudWMenuAnnular.Select();
-		}
-		else {
+		case vgui::MouseCode::MOUSE_LEFT: {
 			m_HudCustomAmmo.Select();
 			m_HudEccoBuyMenu.SelectMenu();
+			break;
 		}
-	}
 	}
 }
 void CCustomHud::SetBaseHudActivity() {

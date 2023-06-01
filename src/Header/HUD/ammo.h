@@ -1,5 +1,4 @@
 #pragma once
-#include "IWeaponSelect.h"
 class CHudCustomAmmo{
 public:
 	void GLInit();
@@ -15,15 +14,12 @@ public:
 	void Reset(void);
 	void SlotInput(int iSlot, int fAdvance, bool bWheel = false);
 	void ChosePlayerWeapon(void);
-	void ClientMove(struct playermove_s* ppmove, qboolean server);
-	void IN_Accumulate();
 	void Clear();
 
 	bool m_bIsOnTarget = false;
 	bool m_bSelectBlock = false;
 
 	WEAPON* m_pWeapon = nullptr;
-	IWeaponSelect* m_pNowSelectMenu = nullptr;
 
 	bool m_bAcceptDeadMessage = false;
 private:

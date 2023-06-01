@@ -554,6 +554,9 @@
     <ClCompile Include="src\Source\plugins.cpp">
       <Filter>Public\Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\HUD\weaponselect.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1287,6 +1290,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\viewmodellag.h">
       <Filter>Public\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\weaponselect.h">
+      <Filter>Public\Header\HUD</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -23,9 +23,7 @@
 #include "enginedef.h"
 #include "exportfuncs.h"
 
-#include "IWeaponSelect.h"
-#include "wmenu_annular.h"
-#include "wmenu_slot.h"
+#include "weaponselect.h"
 
 #include "weaponbank.h"
 #include "historyresource.h"
@@ -179,15 +177,9 @@ void CustomSlotSetCallBack(cvar_t* vars){
 	sscanf_s(vars->name, "cl_customslot%d", &slot);
 	slot--;
 }
-void ChangeWMenuStyleCallBack(cvar_t* vars) {
-	if (vars->value > 0)
-		m_HudCustomAmmo.m_pNowSelectMenu = &m_HudWMenuAnnular;
-	else
-		m_HudCustomAmmo.m_pNowSelectMenu = &m_HudWMenuSlot;
-}
+
 void CHudCustomAmmo::GLInit(){
-	//所有选择菜单都要加载
-	m_HudWMenuAnnular.GLInit();
+
 }
 int CHudCustomAmmo::Init(void){
 	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
@@ -201,29 +193,10 @@ int CHudCustomAmmo::Init(void){
 	m_pfnHideHUD = HOOK_MESSAGE(HideHUD);
 	m_pfnWeaponSpr = HOOK_MESSAGE(WeaponSpr);
 
-	//gCVars.pAmmoCSlot[0] = CREATE_CVAR("cl_customslot1", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	//gCVars.pAmmoCSlot[1] = CREATE_CVAR("cl_customslot2", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	//gCVars.pAmmoCSlot[2] = CREATE_CVAR("cl_customslot3", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	//gCVars.pAmmoCSlot[3] = CREATE_CVAR("cl_customslot4", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	//gCVars.pAmmoCSlot[4] = CREATE_CVAR("cl_customslot5", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	//gCVars.pAmmoCSlot[5] = CREATE_CVAR("cl_customslot6", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	//gCVars.pAmmoCSlot[6] = CREATE_CVAR("cl_customslot7", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	//gCVars.pAmmoCSlot[7] = CREATE_CVAR("cl_customslot8", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	//gCVars.pAmmoCSlot[8] = CREATE_CVAR("cl_customslot9", "", FCVAR_VALUE, CustomSlotSetCallBack);
-	//gCVars.pAmmoCSlot[9] = CREATE_CVAR("cl_customslot10", "", FCVAR_VALUE, CustomSlotSetCallBack);
 	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_VALUE, NULL);
 	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
-	gCVars.pAmmoMenuStyle = CREATE_CVAR("cl_wmenustyle", "0", FCVAR_VALUE, ChangeWMenuStyleCallBack);
 
-	//所有选择菜单都要加载
-	m_HudWMenuAnnular.Init();
-	m_HudWMenuSlot.Init();
 	Reset();
-	//设置所选菜单
-	if(gCVars.pAmmoMenuStyle->value > 0)
-		m_pNowSelectMenu = &m_HudWMenuAnnular;
-	else
-		m_pNowSelectMenu = &m_HudWMenuSlot;
 	gWR.Init();
 	gHR.Init();
 	return 1;
@@ -235,7 +208,6 @@ void CHudCustomAmmo::Reset(void){
 	VGUI_CREATE_NEWTGA_TEXTURE(iBackGroundTga, "abcenchance/tga/ammobar_background");
 
 	//所有选择菜单都要加载
-	m_HudWMenuAnnular.Reset();
 	m_HudWMenuSlot.Reset();
 
 	gWR.Reset();
@@ -258,14 +230,11 @@ int CHudCustomAmmo::VidInit(void){
 
 	gHR.VidInit();
 	gWR.LoadAllWeaponSprites();
-	m_HudWMenuAnnular.VidInit();
 	m_HudWMenuSlot.VidInit();
 	return 1;
 }
 bool CHudCustomAmmo::IsVisible() {
-	if (m_pNowSelectMenu != nullptr)
-		return m_pNowSelectMenu->IsVisible();
-	return false;
+	return m_HudWMenuSlot.IsVisible();
 }
 bool CHudCustomAmmo::ShouldDraw() {
 	if (gCustomHud.IsInSpectate())
@@ -288,12 +257,12 @@ bool CHudCustomAmmo::BlockAttackOnce() {
 void CHudCustomAmmo::Select() {
 	if (!IsVisible())
 		return;
-	if (m_pNowSelectMenu->m_fFade > gEngfuncs.GetClientTime()) {
+	if (m_HudWMenuSlot.m_fFade > gEngfuncs.GetClientTime()) {
 		if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 			return;
 		m_HudCustomAmmo.ChosePlayerWeapon();
 	}
-	m_pNowSelectMenu->Select();
+	m_HudWMenuSlot.Select();
 	gWR.m_iNowSlot = -1;
 	m_bSelectBlock = true;
 }
@@ -420,34 +389,7 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bWheel){
 	gWR.SelectSlot(iSlot, fAdvance, bWheel);
 }
 int CHudCustomAmmo::DrawWList(float flTime){
-	m_pNowSelectMenu->DrawWList(flTime);
-	if (gCVars.pAmmoMenuStyle->value <= 0 && m_HudWMenuAnnular.m_bOpeningMenu)
-		m_HudWMenuAnnular.DrawWList(flTime);
-	return 1;
-}
-void CHudCustomAmmo::ClientMove(struct playermove_s* ppmove, qboolean server){
-	if (m_HudWMenuAnnular.m_bOpeningMenu)
-		m_HudWMenuAnnular.m_fFade = gEngfuncs.GetClientTime() + m_HudWMenuAnnular.SelectHoldTime;
-}
-void CHudCustomAmmo::IN_Accumulate(){
-	if (m_HudWMenuAnnular.m_bOpeningMenu) {
-		int x, y;
-		gEngfuncs.GetMousePosition(&x, &y);
-		if (!m_HudWMenuAnnular.m_bSetedCursor) {
-			gEngfuncs.pfnSetMousePos(gScreenInfo.iWidth / 2, gScreenInfo.iHeight / 2);
-			m_HudWMenuAnnular.m_bSetedCursor = true;
-		}
-		x -= gScreenInfo.iWidth / 2;
-		y -= gScreenInfo.iHeight / 2;
-		y = -y;
-		m_HudWMenuAnnular.m_fCursorAngle = atan2(y, x);
-		int s = m_HudWMenuAnnular.m_fCursorAngle / (0.2 * mathlib::Q_PI);
-		s = m_HudWMenuAnnular.m_fCursorAngle >= 0 ? s : 9 + s;
-		if (gWR.m_aryDrawMenu[s] != INVALID_WEAPON_POS)
-			gWR.m_iNowSlot = s;
-	}
+	return m_HudWMenuSlot.DrawWList(flTime);
 }
 void CHudCustomAmmo::Clear(){
-	//所有选择列表都需要清理
-	m_HudWMenuAnnular.Clear();
 }
