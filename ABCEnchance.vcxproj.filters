@@ -63,6 +63,12 @@
     <Filter Include="VGUI2">
       <UniqueIdentifier>{4482ca35-4aaa-4534-9fc7-8485e221c687}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Source\HUD\vgui">
+      <UniqueIdentifier>{3e33e7f1-0416-451d-9d2b-dfc1263ecde5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Header\HUD\vgui">
+      <UniqueIdentifier>{52162b84-c88b-46d0-a67b-051b77482b11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="exportfuncs.cpp">
@@ -152,9 +158,6 @@
     <ClCompile Include="wmenu_annular.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="wmenu_slot.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="regquery.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
@@ -168,9 +171,6 @@
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
     <ClCompile Include="grenadeindicator.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="scoreboard.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
     <ClCompile Include="steamid.cpp">
@@ -548,6 +548,12 @@
     <ClCompile Include="flashwater.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
+    <ClCompile Include="scoreboard.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="wmenu_slot.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exportfuncs.h">
@@ -721,9 +727,6 @@
     <ClInclude Include="wmenu_annular.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="wmenu_slot.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="regquery.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
@@ -740,9 +743,6 @@
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="grenadeindicator.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="scoreboard.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="vgui_controls\AnalogBar.h">
@@ -1287,6 +1287,15 @@
     </ClInclude>
     <ClInclude Include="flashwater.h">
       <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="weaponinfo_sven.h">
+      <Filter>Public\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="wmenu_slot.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="scoreboard.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

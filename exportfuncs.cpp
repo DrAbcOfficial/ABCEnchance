@@ -41,6 +41,7 @@
 #include "efxenchance.h"
 #include "viewmodellag.h"
 #include <voice_status.h>
+#include <CVector.h>
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -683,7 +684,26 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 	{
 		if (!gExportfuncs.CL_IsThirdPerson())
 		{
-			V_CalcViewModelLag(pparams);
+			// fudge position around to keep amount of weapon visible
+			// roughly equal with different FOV
+			cl_entity_t* view = gEngfuncs.GetViewModel();
+			if (pparams->viewsize == 110)
+			{
+				view->origin[2] += 1;
+			}
+			else if (pparams->viewsize == 100)
+			{
+				view->origin[2] += 2;
+			}
+			else if (pparams->viewsize == 90)
+			{
+				view->origin[2] += 1;
+			}
+			else if (pparams->viewsize == 80)
+			{
+				view->origin[2] += 0.5;
+			}
+			V_CalcViewModelLag(pparams, view->origin, view->angles, pparams->cl_viewangles);
 			V_CalcModelSlide(pparams);
 		}
 		else
