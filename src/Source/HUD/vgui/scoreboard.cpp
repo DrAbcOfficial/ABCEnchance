@@ -66,6 +66,12 @@ namespace
 	class CPlayerImage : public vgui::IImage
 	{
 	public:
+		void ResetAvatarInfo() {
+			m_pAvatar->SetPos(m_iX, m_iY);
+			m_pAvatar->SetOffset(m_iOffX, m_iOffY);
+			m_pAvatar->SetSize(m_iWide, m_iTall);
+			m_pAvatar->SetColor(m_DrawColor);
+		}
 		void SetAdminTexture(int tex) {
 			iAdminTexture = tex;
 		}
@@ -75,10 +81,7 @@ namespace
 				return;
 			m_pAvatar->SetAvatarSteamID(*pSteamID);
 			m_pAvatar->SetDrawFriend(false);
-			m_pAvatar->SetPos(m_iX, m_iY);
-			m_pAvatar->SetOffset(m_iOffX, m_iOffY);
-			m_pAvatar->SetSize(m_iWide, m_iTall);
-			m_pAvatar->SetColor(m_DrawColor);
+			ResetAvatarInfo();
 		}
 
 		void SetMuted(bool state)
@@ -118,12 +121,14 @@ namespace
 		{
 			m_iX = x;
 			m_iY = y;
+			ResetAvatarInfo();
 		}
 
 		virtual void SetOffset(int x, int y)
 		{
 			m_iOffX = x;
 			m_iOffY = y;
+			ResetAvatarInfo();
 		}
 
 		// Gets the size of the content
@@ -144,12 +149,14 @@ namespace
 		{
 			m_iWide = wide;
 			m_iTall = tall;
+			ResetAvatarInfo();
 		}
 
 		// Set the draw color
 		virtual void SetColor(Color col) override
 		{
 			m_DrawColor = col;
+			ResetAvatarInfo();
 		}
 
 	private:
