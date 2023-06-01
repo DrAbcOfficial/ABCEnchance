@@ -1,0 +1,98 @@
+"abcenchance/res/PlayerBoardPanel.res"
+{
+	"PlayerBoardPanel"
+	{
+		"ControlName"		"CPlayerInfoPanel"
+		"fieldName"		"PlayerBoardPanel"
+		"wide"		"56"
+		"tall"		"14"
+		"visible"		"1"
+		"enabled"		"1"
+		"danger_health"	"200"
+	}
+	"PlayerName"
+	{
+		"ControlName"		"Label"
+		"fieldName"		"PlayerName"
+		"xpos"		"12"
+		"ypos"		"4"
+		"wide"		"38"
+		"tall"		"10"
+		"auto_wide_tocontents" 	"1"
+		"visible"		"1"
+		"enabled"		"1"
+		"labelText"		"(Anon)"
+		"textAlignment"		"west"
+		"font"		"PlayerInfoSmall"
+	}
+	"BackGroundImage"
+	{
+		"ControlName"		"ImagePanel"
+		"fieldName"		"BackGroundImage"
+		"wide"		"56"
+		"tall"		"14"
+		"visible"		"1"
+		"tabPosition"		"0"
+		"scaleImage"		"1"
+		"image"			"abcenchance/tga/playertitle_background"
+		"drawColor"		"255 255 255 255"
+	}
+	"HealthImage"
+	{
+		"ControlName"		"ImagePanel"
+		"fieldName"		"HealthImage"
+		"xpos"		"12"
+		"wide"		"38"
+		"tall"		"2"
+		"visible"		"1"
+		"scaleImage"		"1"
+		"image"			"abcenchance/tga/playertitle_healthbar"
+		"drawColor"		"255 255 255 255"
+	}
+	"ArmorImage"
+	{
+		"ControlName"		"ImagePanel"
+		"fieldName"		"ArmorImage"
+		"xpos"		"12"
+		"ypos"		"2"
+		"wide"		"38"
+		"tall"		"2"
+		"visible"		"1"
+		"scaleImage"		"1"
+		"image"			"abcenchance/tga/playertitle_armorbar"
+		"drawColor"		"255 255 255 255"
+	}
+	"CourchIconImage"
+	{
+		"ControlName"		"ImagePanel"
+		"fieldName"		"CourchIconImage"
+		"wide"		"12"
+		"tall"		"12"
+		"visible"		"0"
+		"scaleImage"		"1"
+		"image"			"abcenchance/tga/playertitle_crouchicon"
+		"drawColor"		"255 255 255 255"
+	}
+	"MedikIconImage"
+	{
+		"ControlName"		"ImagePanel"
+		"fieldName"		"MedikIconImage"
+		"wide"		"12"
+		"tall"		"12"
+		"visible"		"0"
+		"scaleImage"		"1"
+		"image"			"abcenchance/tga/playertitle_medkiticon"
+		"drawColor"		"255 255 255 255"
+	}
+	"DeadIconImage"
+	{
+		"ControlName"		"ImagePanel"
+		"fieldName"		"DeadIconImage"
+		"wide"		"12"
+		"tall"		"12"
+		"visible"		"0"
+		"scaleImage"		"1"
+		"image"			"abcenchance/tga/playertitle_deadicon"
+		"drawColor"		"255 255 255 255"
+	}
+}
