@@ -294,13 +294,8 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 	if ((pFastSwich->value > 0 && !bWheel) || (pFastSwich->value <= 0))
 		m_HudWMenuSlot.m_fFade =
 		gEngfuncs.GetClientTime() + m_HudWMenuSlot.SelectHoldTime;
-	
-	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT - 1);
-	if (!m_iNowSelected) {
-		m_iNowSelected = GetFirstPos(iSlot);
-		SetSelectWeapon(m_iNowSelected, bWheel);
+	if (m_pOwnedWeaponData.Size() == 0)
 		return;
-	}
 	auto getMinSlot = [&] {
 		size_t slot = (*m_pOwnedWeaponData.Begin()).second->iSlot;
 		for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
@@ -319,6 +314,12 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		}
 		return slot;
 	};
+	if (!m_iNowSelected) {
+		m_iNowSelected = GetFirstPos(getMinSlot());
+		SetSelectWeapon(m_iNowSelected, bWheel);
+		return;
+	}
+	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT - 1);
 	auto getNext = [&](WEAPON* wp) {
 		size_t pos = wp->iSlotPos;
 		for (auto iter = m_pOwnedWeaponData.PosBegin(wp->iSlot); iter != m_pOwnedWeaponData.PosEnd(wp->iSlot); iter++) {
@@ -346,24 +347,26 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		return pos;
 	};
 	if (m_pOwnedWeaponData.Size(iSlot) <= 0)
-		return;
-	//如果是当前slot
-	if (iAdvance > 0) {
-		if (m_pOwnedWeaponData.GetMaxPos(iSlot) == m_iNowSelected->iSlotPos) {
+		iSlot = iAdvance > 0 ? getMinSlot() : getMaxSlot();
+	if (bWheel) {
+		//如果是当前slot
+		if (iAdvance > 0) {
+			if (m_pOwnedWeaponData.GetMaxPos(iSlot) == m_iNowSelected->iSlotPos) {
+				do {
+					iSlot++;
+					if (iSlot > getMaxSlot())
+						iSlot = getMinSlot();
+				} while (m_pOwnedWeaponData.Size(iSlot) == 0);
+			}
+		}
+		else if (m_pOwnedWeaponData.GetMinPos(iSlot) == m_iNowSelected->iSlotPos) {
 			do {
-				iSlot++;
-				if (iSlot > getMaxSlot())
-					iSlot = getMinSlot();
+				if (((int)iSlot) - 1 < (int)getMinSlot())
+					iSlot = getMaxSlot();
+				else
+					iSlot--;
 			} while (m_pOwnedWeaponData.Size(iSlot) == 0);
 		}
-	}
-	else if (m_pOwnedWeaponData.GetMinPos(iSlot) == m_iNowSelected->iSlotPos) {
-		do {
-			if (((int)iSlot) - 1 < (int)getMinSlot())
-				iSlot = getMaxSlot();
-			else
-				iSlot--;
-		} while (m_pOwnedWeaponData.Size(iSlot) == 0);
 	}
 
 	if (iSlot == m_iNowSlot) {
