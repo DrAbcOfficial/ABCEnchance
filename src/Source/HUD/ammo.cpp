@@ -368,11 +368,10 @@ int CHudCustomAmmo::Draw(float flTime){
 	return 1;
 }
 void CHudCustomAmmo::ChosePlayerWeapon(){
-	WEAPON* wp = gWR.GetWeapon(gWR.m_iNowSlot, gWR.m_aryDrawMenu[gWR.m_iNowSlot]);
-	if (wp != nullptr) {
-		if (!(wp->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(wp))
+	if (gWR.m_iNowSelected != nullptr) {
+		if (!(gWR.m_iNowSelected->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(gWR.m_iNowSelected))
 			return;
-		ServerCmd(wp->szName);
+		ServerCmd(gWR.m_iNowSelected->szName);
 		PlaySoundByName("common/wpn_select.wav", 1);
 	}
 }
