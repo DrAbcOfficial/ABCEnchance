@@ -476,9 +476,6 @@
     <ClCompile Include="src\Source\HUD\weaponbank.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\playertitle.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\radar.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
@@ -556,6 +553,9 @@
     </ClCompile>
     <ClCompile Include="src\Source\HUD\weaponselect.cpp">
       <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\playerboard.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1180,9 +1180,6 @@
     <ClInclude Include="src\Header\HUD\numdisplay.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\playertitle.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\radar.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
@@ -1293,6 +1290,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\weaponselect.h">
       <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\playerboard.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

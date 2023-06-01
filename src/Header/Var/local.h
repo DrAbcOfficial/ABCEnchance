@@ -73,11 +73,6 @@ typedef struct{
 	cvar_t* pBloodSpriteNumber = nullptr;
 	cvar_t* pGaussEfx = nullptr;
 
-	cvar_t* pPlayerTitle = nullptr;
-	cvar_t* pPlayerTitleLength = nullptr;
-	cvar_t* pPlayerTitleHeight = nullptr;
-	cvar_t* pPlayerTitleDangerHealth = nullptr;
-
 	cvar_t* pHealthArmorStyle = nullptr;
 	cvar_t* pDangerHealth = nullptr;
 	cvar_t* pDangerArmor = nullptr;

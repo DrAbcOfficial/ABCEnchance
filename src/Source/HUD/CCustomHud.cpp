@@ -31,7 +31,6 @@
 #include "radar.h"
 #include "deathmsg.h"
 #include "crosshair.h"
-#include "playertitle.h"
 #include "vote.h"
 #include "eccomoney.h"
 #include "efxhud.h"
@@ -265,7 +264,6 @@ void CCustomHud::HUD_Init(void){
 	m_HudRadar.Init();
 	m_HudDeathMsg.Init();
 	m_HudCrosshair.Init();
-	m_HudPlayerTitle.Init();
 	m_HudVote.Init();
 	m_HudEccoMoney.Init();
 	m_HudEfx.Init();
@@ -325,7 +323,6 @@ void CCustomHud::HUD_Draw(float flTime){
 	SetBaseHudActivity();
 	m_HudCrosshair.Draw(flTime);
 	m_HudDeathMsg.Draw(flTime);
-	m_HudPlayerTitle.Draw(flTime);
 	m_HudRadar.Draw(flTime);
 	m_HudVote.Draw(flTime);
 	m_HudItemHighLight.Draw(flTime);
@@ -350,7 +347,6 @@ void CCustomHud::HUD_Reset(void){
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
 	m_HudDeathMsg.Reset();
-	m_HudPlayerTitle.Reset();
 	m_HudVote.Reset();
 	m_HudEccoMoney.Reset();
 	m_HudEfx.Reset();

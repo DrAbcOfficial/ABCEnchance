@@ -15,6 +15,8 @@
 #include <VGUI_controls/Panel.h>
 #include <VGUI_controls/Frame.h>
 
+class CPlayerInfoPanel;
+class CScorePanel;
 class ISchemel;
 
 class CViewport : public vgui::Panel
@@ -52,6 +54,7 @@ public:
 private:
 	std::vector<IViewportPanel*> m_Panels;
 	CScorePanel* m_pScorePanel = nullptr;
+	CPlayerInfoPanel* m_pPlayerInfoPanels[32];
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 };
