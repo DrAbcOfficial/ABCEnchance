@@ -1,4 +1,4 @@
-#include <metahook.h>
+ï»¿#include <metahook.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -17,7 +17,6 @@
 #include "cvardef.h"
 #include "weaponbank.h"
 
-#include "wrect.h"
 #include "ammo.h"
 #include "CCustomHud.h"
 #include "weaponselect.h"
@@ -100,7 +99,7 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 		m_fAnimateTime = flTime + SelectAnimateTime;
 	if (m_fAnimateTime > flTime && SelectHoldTime > SelectAnimateTime)
 		flAnimationRatio = 1 - ((m_fAnimateTime - flTime) / SelectAnimateTime);
-	int r, g, b, a;
+	int r, g, b, a, dummy;
 	int x, y;
 	int iXStart = SelectXOffset;
 	int iYStart = SelectYOffset;
@@ -113,58 +112,93 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 
 	x = iXStart;
 	y = iYStart;
-	//»æÖÆ¶¥¶Ë1~10
-	wrect_t* wrect;
+	//ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½1~10
 	for (size_t i = 0; i < MAX_WEAPON_SLOT; i++) {
-		SelectColor.GetColor(r, g, b, a);
-		a *= flAlphaRatio;
+		int iWidth;
+		if (gWR.m_iNowSlot == i)
+			a = 255 * flAlphaRatio;
+		else
+			a = 192 * flAlphaRatio;
+		SelectColor.GetColor(r, g, b, dummy);
 		SPR_Set(gCustomHud.GetSprite(iBucket0Spr + i), r, g, b);
-		int iWidth = SelectBucketWidth;
 		// make active slot wide enough to accomodate gun pictures
-		wrect = gCustomHud.GetSpriteRect(iBucket0Spr + i);
-		SPR_DrawAdditive(0, x, y, wrect);
+		if (i == gWR.m_iNowSlot) {
+			WEAPON* p = gWR.GetFirstPos(gWR.m_iNowSlot);
+			if (p && p->iId > 0)
+				iWidth = p->rcActive.right - p->rcActive.left;
+			else
+				iWidth = SelectBucketWidth;
+		}
+		else
+			iWidth = SelectBucketWidth;
+		SPR_DrawAdditive(0, x, y, gCustomHud.GetSpriteRect(iBucket0Spr + i));
 		x += iWidth + (iXGap);
 	}
-	iYStart += wrect->bottom - wrect->top;
+	x = iXStart;
 	// Draw all of the buckets
-	int iYCounter = 0;
-	int iLastSlot = -1;
-	for (auto iter : gWR.GetOwnedData()->m_aryWeapons) {
-		if (iLastSlot != iter->iSlot) {
-			iLastSlot = iter->iSlot;
-			iYCounter = 0;
-		}
-		int iWidth = iter->rcActive.right - iter->rcActive.left;
-		x = iXStart + ((iWidth + iXGap) * iter->iSlot);
-		y = iYStart + (iYCounter * ((iter->rcActive.bottom - iter->rcActive.top + iYGap) * flAnimationRatio));
-
-		if (iter->iId == gWR.m_iNowChoseId) {
-			a = 255 * flAlphaRatio;
-			ScaleColors(r, g, b, a);
-			SPR_Set(iter->hActive, r, g, b);
-			SPR_DrawAdditive(0, x, y, &iter->rcActive);
-			SPR_Set(gCustomHud.GetSprite(iSelectionSpr), r, g, b);
-			SPR_DrawAdditive(0, x, y, gCustomHud.GetSpriteRect(iSelectionSpr));
+	for (int i = 0; i < MAX_WEAPON_SLOT; i++) {
+		y = SelectBucketHeight + (iYGap * 2 * flAnimationRatio);
+		// If this is the active slot, draw the bigger pictures,
+		// otherwise just draw boxes
+		if (i == gWR.m_iNowSlot) {
+			WEAPON* p = gWR.GetFirstPos(i);
+			int iWidth = SelectBucketWidth;
+			if (p && p->iId > 0)
+				iWidth = p->rcActive.right - p->rcActive.left;
+			for (auto iter = gWR.GetOwnedData()->PosBegin(i); iter != gWR.GetOwnedData()->PosEnd(i); iter++) {
+				p = iter->second;
+				if (gWR.HasAmmo(p))
+					SelectColor.GetColor(r, g, b, a);
+				else
+					SelectEmptyColor.GetColor(r, g, b, a);
+				// if active, then we must have ammo.
+				if (gWR.m_iNowSelected == p) {
+					a = 255 * flAlphaRatio;
+					ScaleColors(r, g, b, a);
+					SPR_Set(p->hActive, r, g, b);
+					SPR_DrawAdditive(0, x, y, &p->rcActive);
+					SPR_Set(gCustomHud.GetSprite(iSelectionSpr), r, g, b);
+					SPR_DrawAdditive(0, x, y, gCustomHud.GetSpriteRect(iSelectionSpr));
+				}
+				else {
+					// Draw Weapon if Red if no ammo
+					if (gWR.HasAmmo(p)) {
+						a = 192 * flAlphaRatio;
+						ScaleColors(r, g, b, a);
+					}
+					else {
+						SelectEmptyColor.GetColor(r, g, b, dummy);
+						a = 128 * flAlphaRatio;
+						ScaleColors(r, g, b, a);
+					}
+					SPR_Set(p->hInactive, r, g, b);
+					SPR_DrawAdditive(0, x, y, &p->rcInactive);
+				}
+				// Draw Ammo Bar
+				DrawAmmoBar(p, x + SelectABWidth / 2, y, SelectABWidth, SelectABHeight);
+				y += (p->rcActive.bottom - p->rcActive.top + iYGap) * flAnimationRatio;
+			}
+			x += iWidth + (iXGap);
 		}
 		else {
-			// Draw Weapon if Red if no ammo
-			if (gWR.HasAmmo(iter)) {
-				SelectColor.GetColor(r, g, b, a);
-				a = 192 * flAlphaRatio;
+			// Draw Row of weapons.
+			for (auto iter = gWR.GetOwnedData()->PosBegin(i); iter != gWR.GetOwnedData()->PosEnd(i); iter++) {
+				WEAPON* p = iter->second;
+				if (gWR.HasAmmo(p)) {
+					SelectColor.GetColor(r, g, b, dummy);
+					a = 128 * flAlphaRatio;
+				}
+				else {
+					SelectEmptyColor.GetColor(r, g, b, dummy);
+					a = 96 * flAlphaRatio;
+				}
+				FillRGBA(x, y, SelectBucketWidth, SelectBucketHeight, r, g, b, a);
+				y += (SelectBucketHeight + iYGap) * flAnimationRatio;
 			}
-			else {
-				SelectEmptyColor.GetColor(r, g, b, a);
-				a = 128 * flAlphaRatio;
-			}
-			ScaleColors(r, g, b, a);
-			SPR_Set(iter->hInactive, r, g, b);
-			SPR_DrawAdditive(0, x, y, &iter->rcInactive);
+			x += SelectBucketWidth + (iXGap);
 		}
-		// Draw Ammo Bar
-		DrawAmmoBar(iter, x + SelectABWidth / 2, y, SelectABWidth, SelectABHeight);
-		iYCounter++;
 	}
-	//»æÖÆÍê±Ï£¬ÐÞ¸ÄÕ¹Ê¾×´Ì¬
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½Þ¸ï¿½Õ¹Ê¾×´Ì¬
 	m_bSelectMenuDisplay = true;
 	return 1;
 }

@@ -1,125 +1,151 @@
-#include <metahook.h>
+Ôªø#include <metahook.h>
 #include <cmath>
 #include <string>
 #include <map>
 #include <vector>
-#include <algorithm>
 
 #include "mymathlib.h"
 #include "cvardef.h"
 #include "vguilocal.h"
 #include "local.h"
 #include "hud.h"
-#include "weaponinfo_sven.h"
 #include "weapon.h"
 #include "glew.h"
 #include "gl_def.h"
+#include "weaponselect.h"
 #include "ammo.h"
 #include "CCustomHud.h"
 #include "historyresource.h"
 #include "weaponbank.h"
-#include <weaponselect.h>
 
-void CPlayerWeaponData::Remove(size_t s, size_t p){
-	for (size_t i = 0; i < m_aryWeapons.size(); i++) {
-		auto iter = m_aryWeapons[i];
-		if (iter->iSlot == s && iter->iSlotPos == p) {
-			m_aryWeapons.erase(m_aryWeapons.begin() + i);
-			break;
-		}
-	}
+WEAPON* CWeaponData::operator [](size_t iId) {
+	return this->m_dicWeaponIds[iId];
 }
-
-void CPlayerWeaponData::Add(WEAPON* wp) {
-	m_aryWeapons.push_back(wp);
-	std::sort(m_aryWeapons.begin(), m_aryWeapons.end(),[&](WEAPON* a, WEAPON* b) {
-		return a->iSlot == b->iSlot ? a->iSlotPos < b->iSlotPos : a->iSlot < b->iSlot;
-	});
-	if (wp->iId > m_iMaxID)
-		m_iMaxID = wp->iId;
+WEAPON* CWeaponData::operator [](std::pair<size_t, size_t> pair) {
+	return this->m_dicWeaponSlots[pair.first][pair.second];
 }
-
-//…æ≥˝À˘”–¡¥Ω”£¨≤¢«“«Â¿Ì÷∏œÚµƒ∂‘œÛƒ⁄¥Ê
+WEAPON* CWeaponData::operator [](std::string szName) {
+	return this->m_dicWeaponNames[szName];
+}
+//Âà†Èô§ÊâÄÊúâÈìæÊé•ÔºåÂπ∂‰∏îÊ∏ÖÁêÜÊåáÂêëÁöÑÂØπË±°ÂÜÖÂ≠ò
 void CWeaponData::Clear() {
-	for (WEAPON* iter : m_aryWeapons) {
-		delete iter;
+	//ÊâÄÊúâmapÊåáÂêëÂêå‰∏Ä‰∏™ÂØπË±°ÔºåÊâÄ‰ª•Âè™ÈúÄË¶ÅÁ¨¨‰∏ÄÂº†mapÈáäÊîæWEAPONÂÜÖÂ≠òÂç≥ÂèØ
+	for (auto iter = this->m_dicWeaponIds.begin(); iter != this->m_dicWeaponIds.end(); iter++) {
+		delete iter->second;
+		iter->second = nullptr;
 	}
-	m_aryWeapons.clear();
-}
-bool CWeaponData::Has(size_t iSlot, size_t iPos){
-	for (WEAPON* iter : m_aryWeapons) {
-		if (iter->iSlot == iSlot && iter->iSlotPos == iPos)
-			return true;
+	//‰ΩÜÊòØËøô‰∏™Ë°®ÂåÖÂê´ÂçÅ‰∏™std::mapÊ†àÂØπË±°ÔºåÊâÄ‰ª•ÈúÄË¶ÅÊâãÂä®Ê∏ÖÁêÜÊØèÂº†Ë°®
+	for (auto iter = this->m_dicWeaponSlots.begin(); iter != this->m_dicWeaponSlots.end(); iter++) {
+		iter->second.clear();
 	}
-	return false;
+	this->m_dicWeaponSlots.clear();
+	this->m_dicWeaponNames.clear();
 }
-size_t CWeaponData::MaxID(){
-	return this->m_iMaxID;
+bool CWeaponData::Has(size_t iSlot, size_t iPos) {
+	if (!this->m_dicWeaponSlots[iSlot].count(iPos))
+		return false;
+	auto mapPos = this->m_dicWeaponSlots.find(iSlot)->second;
+	return mapPos.find(iPos) != mapPos.end();
+}
+size_t CWeaponData::Size() {
+	return m_dicWeaponIds.size();
+}
+size_t CWeaponData::Size(size_t iSlot) {
+	return this->m_dicWeaponSlots[iSlot].size();
 }
 void CWeaponData::Add(WEAPON* wp) {
-	m_aryWeapons.push_back(wp);
-	if (wp->iId > m_iMaxID)
-		m_iMaxID = wp->iId;
+	this->m_dicWeaponIds.insert(std::make_pair(wp->iId, wp));
+	this->m_dicWeaponNames.insert(std::make_pair(wp->szName, wp));
+	this->m_dicWeaponSlots[wp->iSlot].insert(std::make_pair(wp->iSlotPos, wp));
 }
-WEAPON* CWeaponData::Get(size_t iId) {
-	for (WEAPON* iter : m_aryWeapons) {
-		if (iter->iId == iId)
-			return iter;
-	}
-	return nullptr;
+void CWeaponData::Remove(WEAPON* wp) {
+	this->m_dicWeaponIds.erase(wp->iId);
+	this->m_dicWeaponNames.erase(wp->szName);
+	this->m_dicWeaponSlots[wp->iSlot].erase(wp->iSlotPos);
 }
-WEAPON* CWeaponData::Get(size_t iSlot, size_t iPos) {
-	for (WEAPON* iter : m_aryWeapons) {
-		if (iter->iSlot == iSlot && iter->iSlotPos == iPos)
-			return iter;
-	}
-	return nullptr;
+std::map<size_t, WEAPON*>::iterator CWeaponData::Begin() {
+	return this->m_dicWeaponIds.begin();
 }
-WEAPON* CWeaponData::Get(char* szName) {
-	for (WEAPON* iter : m_aryWeapons) {
-		if (!strcmp(szName, iter->szName))
-			return iter;
+std::map<size_t, WEAPON*>::iterator CWeaponData::End() {
+	return this->m_dicWeaponIds.end();
+}
+std::map<size_t, WEAPON*>::iterator CWeaponData::PosBegin(size_t iSlot) {
+	return this->m_dicWeaponSlots[iSlot].begin();
+}
+std::map<size_t, WEAPON*>::iterator CWeaponData::PosEnd(size_t iSlot) {
+	return this->m_dicWeaponSlots[iSlot].end();
+}
+std::map<size_t, WEAPON*>::reverse_iterator CWeaponData::RPosBegin(size_t iSlot) {
+	return this->m_dicWeaponSlots[iSlot].rbegin();
+}
+std::map<size_t, WEAPON*>::reverse_iterator CWeaponData::RPosEnd(size_t iSlot) {
+	return this->m_dicWeaponSlots[iSlot].rend();
+}
+size_t CWeaponData::GetMaxPos(size_t iSlot) {
+	if (this->m_dicWeaponSlots[iSlot].size() <= 0)
+		return 0;
+	size_t maxPos = 0;
+	for (auto iter = this->m_dicWeaponSlots[iSlot].begin(); iter != this->m_dicWeaponSlots[iSlot].end(); iter++) {
+		if (maxPos < iter->second->iSlotPos)
+			maxPos = iter->second->iSlotPos;
 	}
-	return nullptr;
+	return maxPos;
+}
+size_t CWeaponData::GetMinPos(size_t iSlot) {
+	if (this->m_dicWeaponSlots[iSlot].size() <= 0)
+		return 0;
+	size_t minPos = this->m_dicWeaponSlots[iSlot].begin()->second->iSlotPos;
+	for (auto iter = this->m_dicWeaponSlots[iSlot].begin(); iter != this->m_dicWeaponSlots[iSlot].end(); iter++) {
+		if (minPos > iter->second->iSlotPos)
+			minPos = iter->second->iSlotPos;
+	}
+	return minPos;
+}
+//Âà†Èô§ÊâÄÊúâÈìæÊé•Ôºå‰ΩÜÊòØ‰∏çÊ∏ÖÁêÜÂÜÖÂ≠ò
+void CWeaponData::RemoveAll() {
+	this->m_dicWeaponIds.clear();
+	this->m_dicWeaponNames.clear();
+	this->m_dicWeaponSlots.clear();
+}
+CWeaponData::CWeaponData() {
+	for (size_t i = 0; i < MAX_WEAPON_SLOT; i++) {
+		m_dicWeaponSlots.insert(std::make_pair(i, std::map<size_t, WEAPON*>()));
+	}
 }
 
-//≥ı ºªØŒ‰∆˜≤÷ø‚
-void WeaponsResource::Init(void){
-	//this->pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
+//ÂàùÂßãÂåñÊ≠¶Âô®‰ªìÂ∫ì
+void WeaponsResource::Init(void) {
+	this->pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
 	Reset();
 }
-//÷ÿ÷√Œ‰∆˜≤÷ø‚
-void WeaponsResource::Reset(void){
-	this->m_iLastChoseId = -1;
+//ÈáçÁΩÆÊ≠¶Âô®‰ªìÂ∫ì
+void WeaponsResource::Reset(void) {
 	this->m_iNowSlot = INVALID_WEAPON_SLOT;
 	this->m_pWeaponData.Clear();
-	this->m_pPlayerWeapon.Clear();
+	this->m_pOwnedWeaponData.Clear();
 	this->m_dicAmmos.clear();
-	memset(this->m_aryDrawMenu, -1, sizeof(this->m_aryDrawMenu));
+	this->m_iNowSelected = nullptr;
 }
-
-CPlayerWeaponData* WeaponsResource::GetOwnedData(){
-	return &m_pPlayerWeapon;
+CWeaponData* WeaponsResource::GetOwnedData() {
+	return &this->m_pOwnedWeaponData;
 }
-
-//”…Œ‰∆˜IDªÒ»°Œ‰∆˜ ˝æ›
+//Áî±Ê≠¶Âô®IDËé∑ÂèñÊ≠¶Âô®Êï∞ÊçÆ
 WEAPON* WeaponsResource::GetWeapon(size_t iId) {
-	return this->m_pWeaponData.Get(iId);
+	return this->m_pWeaponData[iId];
 }
 WEAPON* WeaponsResource::GetWeapon(char* szName) {
-	return this->m_pWeaponData.Get(szName);
+	return this->m_pWeaponData[szName];
 }
 WEAPON* WeaponsResource::GetWeapon(size_t slot, size_t pos) {
-	return this->m_pWeaponData.Get(slot, pos);
+	return this->m_pWeaponData[std::make_pair(slot, pos)];
 }
-//¥”±æµÿŒ‰∆˜‘§≤‚ ˝◊ÈÕ¨≤ΩŒ‰∆˜µΩ≤Àµ•ª∫¥Ê
-void WeaponsResource::SyncWeapon(const weapon_data_t* _wd) {
-	const weapon_sven_t* wd = (weapon_sven_t*)_wd;
-	for (size_t i = 0; i <= this->m_pWeaponData.MaxID(); i++) {
+//‰ªéÊú¨Âú∞Ê≠¶Âô®È¢ÑÊµãÊï∞ÁªÑÂêåÊ≠•Ê≠¶Âô®Âà∞ËèúÂçïÁºìÂ≠ò
+void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
+	for (size_t i = 0; i < this->m_pWeaponData.Size(); i++) {
 		WEAPON* weapon = GetWeapon(i);
 		if (!weapon)
 			continue;
-		const weapon_sven_t* wp = wd + i;
+		const weapon_data_t* wp = wd + i;
 		if (wp->m_iId <= 0) {
 			if (HasWeapon(weapon->iSlot, weapon->iSlotPos))
 				DropWeapon(weapon->iSlot, weapon->iSlotPos);
@@ -127,16 +153,16 @@ void WeaponsResource::SyncWeapon(const weapon_data_t* _wd) {
 		else {
 			if (!HasWeapon(weapon->iSlot, weapon->iSlotPos))
 				PickupWeapon(wp->m_iId);
-			//Õ¨≤ΩµØœª ˝æ›
+			//ÂêåÊ≠•ÂºπÂå£Êï∞ÊçÆ
 			WEAPON* pwd = gWR.GetWeapon(wp->m_iId);
-			pwd->iClip = wp->m_iClip;
-			//pwd->iClip2 = wp->m_iClip2;
+			pwd->iClip = pwd->iClip;
+			pwd->iClip2 = pwd->iClip2;
 		}
 	}
 }
-//ÃÌº”–¬µƒŒ‰∆˜ ˝æ›µΩŒ‰∆˜≤÷ø‚
-void WeaponsResource::AddWeapon(WEAPON* wp){
-	//∑¿≥ÂÕª
+//Ê∑ªÂä†Êñ∞ÁöÑÊ≠¶Âô®Êï∞ÊçÆÂà∞Ê≠¶Âô®‰ªìÂ∫ì
+void WeaponsResource::AddWeapon(WEAPON* wp) {
+	//Èò≤ÂÜ≤Á™Å
 	while (this->m_pWeaponData.Has(wp->iSlot, wp->iSlotPos)) {
 		wp->iSlotPos++;
 	}
@@ -144,41 +170,40 @@ void WeaponsResource::AddWeapon(WEAPON* wp){
 	this->LoadWeaponSprites(wp);
 }
 
-//ÃÌº”Œ‰∆˜µΩ≤Àµ•ª∫¥Ê
-void WeaponsResource::PickupWeapon(size_t id){
-	this->m_pPlayerWeapon.Add(GetWeapon(id));
+//Ê∑ªÂä†Ê≠¶Âô®Âà∞ËèúÂçïÁºìÂ≠ò
+void WeaponsResource::PickupWeapon(size_t id) {
+	this->m_pOwnedWeaponData.Add(this->GetWeapon(id));
 }
-//¥”Œ‰∆˜≤Àµ•…æ≥˝ª∫¥Ê
-void WeaponsResource::DropWeapon(size_t s,size_t p){
-	this->m_pPlayerWeapon.Remove(s, p);
+//‰ªéÊ≠¶Âô®ËèúÂçïÂà†Èô§ÁºìÂ≠ò
+void WeaponsResource::DropWeapon(size_t s, size_t p) {
+	this->m_pOwnedWeaponData.Remove(this->GetWeapon(s, p));
 }
-//…æ≥˝À˘”–ª∫¥Ê
-void WeaponsResource::DropAllWeapons(void){
-	this->m_pPlayerWeapon.Clear();
+//Âà†Èô§ÊâÄÊúâÁºìÂ≠ò
+void WeaponsResource::DropAllWeapons(void) {
+	this->m_pOwnedWeaponData.RemoveAll();
 }
-//‘ÿ»ÎÀ˘”–Œ‰∆˜Õº±Í
-void WeaponsResource::LoadAllWeaponSprites(){
-	for(auto iter: m_pWeaponData.m_aryWeapons){
-		LoadWeaponSprites(iter);
+//ËΩΩÂÖ•ÊâÄÊúâÊ≠¶Âô®ÂõæÊ†á
+void WeaponsResource::LoadAllWeaponSprites() {
+	for (auto iter = this->m_pWeaponData.Begin(); iter != this->m_pWeaponData.End(); iter++) {
+		LoadWeaponSprites(iter->second);
 	}
 }
-//≤Àµ•ª∫¥Ê «∑Ò”–’‚∞—Œ‰∆˜(ÕÊº“ «∑Ò”µ”–’‚∞—Œ‰∆˜)
+//ËèúÂçïÁºìÂ≠òÊòØÂê¶ÊúâËøôÊääÊ≠¶Âô®(Áé©ÂÆ∂ÊòØÂê¶Êã•ÊúâËøôÊääÊ≠¶Âô®)
 bool WeaponsResource::HasWeapon(size_t s, size_t p) {
-	return this->m_pPlayerWeapon.Has(s, p);
+	return this->m_pOwnedWeaponData.Has(s, p);
 }
-bool WeaponsResource::HasWeapon(WEAPON* wp){
-	return this->HasWeapon(wp->iSlot, wp->iSlotPos);
+bool WeaponsResource::HasWeapon(WEAPON* wp) {
+	return this->m_pOwnedWeaponData.Has(wp->iSlot, wp->iSlotPos);
 }
-//ÕÊº“—°‘ÒŒ‰∆˜
-void WeaponsResource::SetSelectWeapon(int iId, int iPos, bool bWheel) {
-	//if (pFastSwich->value > 0 && bWheel)
-	//	ServerCmd(GetWeapon(iId)->szName);
-	//else
-		m_aryDrawMenu[m_iNowSlot] = iPos;
-	m_iNowChoseId = iId;
+//Áé©ÂÆ∂ÈÄâÊã©Ê≠¶Âô®
+void WeaponsResource::SetSelectWeapon(WEAPON* wp, bool bWheel) {
+	if (pFastSwich->value > 0 && bWheel)
+		ServerCmd(wp->szName);
+	else
+		m_iNowSelected = wp;
 }
 
-//”…txtªÒ»°Õº±Í–≈œ¢
+//Áî±txtËé∑ÂèñÂõæÊ†á‰ø°ÊÅØ
 client_sprite_t* WeaponsResource::GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount) {
 	if (!pList)
 		return nullptr;
@@ -191,8 +216,8 @@ client_sprite_t* WeaponsResource::GetSpriteList(client_sprite_t* pList, const ch
 	}
 	return nullptr;
 }
-//‘ÿ»ÎŒ‰∆˜Õº±Í
-void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust){
+//ËΩΩÂÖ•Ê≠¶Âô®ÂõæÊ†á
+void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust) {
 	if (!pWeapon)
 		return;
 	memset(&pWeapon->rcActive, 0, sizeof(wrect_t));
@@ -204,19 +229,15 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust){
 	pWeapon->hAmmo = 0;
 	pWeapon->hAmmo2 = 0;
 
-	char sz[256];
+	char sz[128];
 	int i;
-	if(cust == nullptr)
+	if (cust == nullptr)
 		sprintf_s(sz, "sprites/%s.txt", pWeapon->szSprName);
 	else
 		sprintf_s(sz, "sprites/%s/%s.txt", cust, pWeapon->szSprName);
 	client_sprite_t* pList = SPR_GetList(sz, &i);
-	if (!pList) {
-		//‘ÿ»Îƒ¨»œError
-		pList = SPR_GetList("abcenchance/spr/weapon_error.txt", &i);
-		if (!pList)
-			return;
-	}
+	if (!pList)
+		return;
 	auto fSetupSprInfo = [&](const char* szType, HSPRITE* spr, wrect_t* rc, HSPRITE* dspr = nullptr, wrect_t* drc = nullptr) {
 		int iRes = ScreenWidth < 640 ? 320 : 640;
 		client_sprite_t* p = this->GetSpriteList(pList, szType, iRes, i);
@@ -225,7 +246,7 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust){
 			*spr = SPR_Load(sz);
 			*rc = p->rc;
 		}
-		else if(dspr != nullptr && drc != nullptr) {
+		else if (dspr != nullptr && drc != nullptr) {
 			*spr = *dspr;
 			*rc = *drc;
 		}
@@ -239,73 +260,130 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust){
 	fSetupSprInfo("weapon", &pWeapon->hInactive, &pWeapon->rcInactive);
 	fSetupSprInfo("weapon_s", &pWeapon->hActive, &pWeapon->rcActive);
 	fSetupSprInfo("ammo", &pWeapon->hAmmo, &pWeapon->rcAmmo);
-	fSetupSprInfo("ammo2", &pWeapon->hAmmo2, &pWeapon->rcAmmo2, &pWeapon->hAmmo, &pWeapon->rcAmmo);
+	fSetupSprInfo("ammo2", &pWeapon->hAmmo2, &pWeapon->rcAmmo2);
 }
-void WeaponsResource::LoadWeaponSprites(size_t iId, char* cust){
+void WeaponsResource::LoadWeaponSprites(size_t iId, char* cust) {
 	this->LoadWeaponSprites(this->GetWeapon(iId), cust);
 }
-//¥”Œ‰∆˜‘ÿ»Î◊”µØSpr
-HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect){
-	for (auto iter : m_pWeaponData.m_aryWeapons) {
-		if (!iter)
+//‰ªéÊ≠¶Âô®ËΩΩÂÖ•Â≠êÂºπSpr
+HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect) {
+	for (auto iter = this->m_pWeaponData.Begin(); iter != this->m_pWeaponData.End(); iter++) {
+		if (!iter->second)
 			continue;
-		if (iter->iAmmoType == iAmmoId) {
-			rect = iter->rcAmmo;
-			return &iter->hAmmo;
+		if (iter->second->iAmmoType == iAmmoId) {
+			rect = iter->second->rcAmmo;
+			return &iter->second->hAmmo;
 		}
-		else if (iter->iAmmo2Type == iAmmoId) {
-			rect = iter->rcAmmo2;
-			return &iter->hAmmo2;
+		else if (iter->second->iAmmo2Type == iAmmoId) {
+			rect = iter->second->rcAmmo2;
+			return &iter->second->hAmmo2;
 		}
 	}
 	return nullptr;
 }
 
-//slot 1234567890«–ªªŒ‰∆˜ªÿµ˜
-void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel){
+//slot 1234567890ÂàáÊç¢Ê≠¶Âô®ÂõûË∞É
+void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
-	//if ((pFastSwich->value > 0 && !bWheel) || (pFastSwich->value <= 0))
-	m_HudWMenuSlot.m_fFade =
-			gEngfuncs.GetClientTime() + m_HudWMenuSlot.SelectHoldTime;
-	if (m_pPlayerWeapon.m_aryWeapons.size() == 0)
+
+	if ((pFastSwich->value > 0 && !bWheel) || (pFastSwich->value <= 0))
+		m_HudWMenuSlot.m_fFade =
+		gEngfuncs.GetClientTime() + m_HudWMenuSlot.SelectHoldTime;
+	
+	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT - 1);
+	if (!m_iNowSelected) {
+		m_iNowSelected = GetFirstPos(iSlot);
+		SetSelectWeapon(m_iNowSelected, bWheel);
 		return;
-	if (iAdvance == 0)
-		iAdvance = 1;
-	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT-1);
-	size_t index = 0;
-	if (m_iLastChoseId >= 0) {
-		for (index = 0; m_pPlayerWeapon.m_aryWeapons.size(); index++) {
-			if (m_iLastChoseId == m_pPlayerWeapon.m_aryWeapons[index]->iId)
+	}
+	auto getMinSlot = [&] {
+		size_t slot = (*m_pOwnedWeaponData.Begin()).second->iSlot;
+		for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
+			WEAPON* compare = (*iter).second;
+			if (HasAmmo(compare) && compare->iSlot < slot)
+				slot = compare->iSlot;
+		}
+		return slot;
+	};
+	auto getMaxSlot = [&] {
+		size_t slot = (*m_pOwnedWeaponData.Begin()).second->iSlot;
+		for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
+			WEAPON* compare = (*iter).second;
+			if (HasAmmo(compare) && compare->iSlot > slot)
+				slot = compare->iSlot;
+		}
+		return slot;
+	};
+	auto getNext = [&](WEAPON* wp) {
+		size_t pos = wp->iSlotPos;
+		for (auto iter = m_pOwnedWeaponData.PosBegin(wp->iSlot); iter != m_pOwnedWeaponData.PosEnd(wp->iSlot); iter++) {
+			WEAPON* compare = (*iter).second;
+			if (HasAmmo(compare) && compare->iSlotPos > pos) {
+				pos = compare->iSlotPos;
 				break;
+			}	
+		}
+		if (pos == wp->iSlotPos) 
+			return m_pOwnedWeaponData.GetMinPos(wp->iSlot);
+		return pos;
+	};
+	auto getLast = [&](WEAPON* wp) {
+		size_t pos = wp->iSlotPos;
+		for (auto iter = m_pOwnedWeaponData.RPosBegin(wp->iSlot); iter != m_pOwnedWeaponData.RPosEnd(wp->iSlot); iter++) {
+			WEAPON* compare = (*iter).second;
+			if (HasAmmo(compare) && compare->iSlotPos < pos) {
+				pos = compare->iSlotPos;
+				break;
+			}
+		}
+		if (pos == wp->iSlotPos)
+			return m_pOwnedWeaponData.GetMaxPos(wp->iSlot);
+		return pos;
+	};
+	if (m_pOwnedWeaponData.Size(iSlot) <= 0)
+		return;
+	//Â¶ÇÊûúÊòØÂΩìÂâçslot
+	if (iAdvance > 0) {
+		if (m_pOwnedWeaponData.GetMaxPos(iSlot) == m_iNowSelected->iSlotPos) {
+			do {
+				iSlot++;
+				if (iSlot > getMaxSlot())
+					iSlot = getMinSlot();
+			} while (m_pOwnedWeaponData.Size(iSlot) == 0);
 		}
 	}
-	int step = iAdvance > 0 ? 1 : -1;
-	for (int i = index + step; i != index; i += step) {
-		if (i >= m_pPlayerWeapon.m_aryWeapons.size())
-			i = 0;
-		else if (i <= 0)
-			i = m_pPlayerWeapon.m_aryWeapons.size() - 1;
-		WEAPON* wp = m_pPlayerWeapon.m_aryWeapons[i];
-		if (HasAmmo(wp)) {
-			SetSelectWeapon(wp->iId, wp->iSlotPos, bWheel);
-			break;
-		}
+	else if (m_pOwnedWeaponData.GetMinPos(iSlot) == m_iNowSelected->iSlotPos) {
+		do {
+			if (((int)iSlot) - 1 < (int)getMinSlot())
+				iSlot = getMaxSlot();
+			else
+				iSlot--;
+		} while (m_pOwnedWeaponData.Size(iSlot) == 0);
+	}
+
+	if (iSlot == m_iNowSlot) {
+		WEAPON* chose = GetWeapon(iSlot, iAdvance > 0 ? getNext(m_iNowSelected) : getLast(m_iNowSelected));
+		if (chose)
+			SetSelectWeapon(chose, bWheel);
+	}
+	//Â¶ÇÊûú‰∏çÊòØ
+	else {
+		m_iNowSlot = iSlot;
+		m_iNowSelected = iAdvance > 0 ? GetFirstPos(iSlot) : GetLastPos(iSlot);
+		SetSelectWeapon(m_iNowSelected, bWheel);
 	}
 }
-WEAPON* WeaponsResource::GetFirstPos(size_t iSlot){
-	for (auto iter : this->m_pPlayerWeapon.m_aryWeapons) {
-		if (iter->iSlot == iSlot && HasAmmo(iter))
-			return iter;
-	}
+WEAPON* WeaponsResource::GetFirstPos(size_t iSlot) {
+	WEAPON* wp = GetWeapon(iSlot, m_pOwnedWeaponData.GetMinPos(iSlot));
+	if (HasAmmo(wp))
+		return wp;
 	return nullptr;
 }
 WEAPON* WeaponsResource::GetLastPos(size_t iSlot) {
-	for (size_t i = this->m_pPlayerWeapon.m_aryWeapons.size() - 1; i > 0; i--) {
-		auto iter = this->m_pPlayerWeapon.m_aryWeapons[i];
-		if (iter->iSlot == iSlot && HasAmmo(iter))
-			return iter;
-	}
+	WEAPON* wp = this->GetWeapon(iSlot, this->m_pOwnedWeaponData.GetMaxPos(iSlot));
+	if (HasAmmo(wp))
+		return wp;
 	return nullptr;
 }
 bool WeaponsResource::HasAmmo(WEAPON* p) {
@@ -322,22 +400,13 @@ bool WeaponsResource::HasAmmo(WEAPON* p) {
 	}
 	return true;
 }
-size_t WeaponsResource::GetDrawMenuPos(size_t iSlot) {
-	return this->m_aryDrawMenu[iSlot];
-}
-int WeaponsResource::CountAmmo(size_t iId){
+int WeaponsResource::CountAmmo(size_t iId) {
 	if (iId < 0)
 		return 0;
 	return this->m_dicAmmos[iId];
 }
-void WeaponsResource::SetAmmo(size_t iId, int iCount){
+void WeaponsResource::SetAmmo(size_t iId, int iCount) {
 	this->m_dicAmmos[iId] = iCount;
-}
-// «∑Òø…±ª—°‘Ò£ø
-bool WeaponsResource::IsSelectable(WEAPON* p) {
-	if (HasAmmo(p))
-		return true;
-	return (p->iFlags & ITEM_FLAG_SELECTONEMPTY) != 0;
 }
 
 WeaponsResource gWR;

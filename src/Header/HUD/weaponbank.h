@@ -1,57 +1,59 @@
-#pragma once
+ï»¿#pragma once
 #define MAX_WEAPON_SLOT 10
 #define INVALID_WEAPON_SLOT MAX_WEAPON_SLOT + 1
 #define INVALID_WEAPON_POS -1
 
 class CWeaponData {
 public:
+	WEAPON* operator [](size_t iId);
+	WEAPON* operator [](std::pair<size_t, size_t>);
+	WEAPON* operator [](std::string szName);
 	void Add(WEAPON* wp);
+	void Remove(WEAPON* wp);
+	void RemoveAll();
 	void Clear();
 	bool Has(size_t iSlot, size_t iPos);
-	WEAPON* Get(size_t iId);
-	WEAPON* Get(size_t iSlot, size_t iPos);
-	WEAPON* Get(char* szName);
-	size_t MaxID();
-
-	std::vector<WEAPON*> m_aryWeapons;
-protected:
-	//µ±Ç°×î´óID
-	size_t m_iMaxID = 0;
-};
-
-class CPlayerWeaponData : public CWeaponData {
-public:
-	void Remove(size_t s, size_t p);
-	void Add(WEAPON* wp);
-};
-
-
-class WeaponsResource{
+	std::map<size_t, WEAPON*>::iterator Begin();
+	std::map<size_t, WEAPON*>::iterator End();
+	std::map<size_t, WEAPON*>::iterator PosBegin(size_t iSlot);
+	std::map<size_t, WEAPON*>::iterator PosEnd(size_t iSlot);
+	std::map<size_t, WEAPON*>::reverse_iterator RPosBegin(size_t iSlot);
+	std::map<size_t, WEAPON*>::reverse_iterator RPosEnd(size_t iSlot);
+	size_t GetMaxPos(size_t iSlot);
+	size_t GetMinPos(size_t iSlot);
+	size_t Size();
+	size_t Size(size_t iSlot);
+	CWeaponData();
 private:
-	//Íæ¼ÒÓµÓĞµÄÎäÆ÷
-	CPlayerWeaponData m_pPlayerWeapon;
-	//Íæ¼Ò¿ÉÒÔ»ñÈ¡µÄËùÓĞÎäÆ÷Êı¾İ
-	CWeaponData m_pWeaponData;
+	//ä¾ç…§Idç´¢å¼•çš„
+	std::map<size_t, WEAPON*> m_dicWeaponIds;
+	//ä¾ç…§Slot Posç´¢å¼•çš„
+	std::map<size_t, std::map<size_t, WEAPON*>> m_dicWeaponSlots;
+	//ä¾ç…§åç§°ç´¢å¼•çš„
+	std::map<std::string, WEAPON*> m_dicWeaponNames;
+};
 
-	//Íæ¼Ò³ÖÓĞµÄËùÓĞ×Óµ¯Êı¾İ
+
+class WeaponsResource {
+private:
+	//ç©å®¶å¯ä»¥è·å–çš„æ‰€æœ‰æ­¦å™¨æ•°æ®
+	CWeaponData m_pWeaponData;
+	//ç©å®¶æŒæœ‰çš„æ­¦å™¨
+	CWeaponData m_pOwnedWeaponData;
+	//ç©å®¶æŒæœ‰çš„æ‰€æœ‰å­å¼¹æ•°æ®
 	std::map<size_t, int> m_dicAmmos;
 	//hud_fastswitch
 	cvar_t* pFastSwich = nullptr;
 
 public:
-	//1~0Ê®¸ö²Ëµ¥Ñ¡ÖĞµÄPos
-	int m_aryDrawMenu[MAX_WEAPON_SLOT];
-	//Ä¿Ç°Ñ¡ÔñµÄSlot
-	int m_iNowSlot;
-	//Ä¿Ç°Ñ¡ÔñµÄId
-	size_t m_iNowChoseId;
-	//ÉÏ´ÎÑ¡ÔñµÄÎäÆ÷ID
-	int m_iLastChoseId;
+	WEAPON* m_iNowSelected;
+	//ç›®å‰é€‰æ‹©çš„Slot
+	size_t m_iNowSlot;
 
 	void Init();
 	void Reset();
 
-	CPlayerWeaponData* GetOwnedData();
+	CWeaponData* GetOwnedData();
 
 	WEAPON* GetWeapon(char* szName);
 	WEAPON* GetWeapon(size_t iId);
@@ -61,7 +63,7 @@ public:
 	void PickupWeapon(size_t id);
 	void DropWeapon(size_t s, size_t p);
 	void DropAllWeapons();
-	
+
 	bool HasWeapon(size_t s, size_t p);
 	bool HasWeapon(WEAPON* wp);
 	void LoadWeaponSprites(WEAPON* wp, char* cust = nullptr);
@@ -70,17 +72,15 @@ public:
 	void SelectSlot(size_t iSlot, int fAdvance, bool bWheel);
 	WEAPON* GetFirstPos(size_t iSlot);
 	WEAPON* GetLastPos(size_t iSlot);
-	size_t GetDrawMenuPos(size_t iSlot);
 	void SyncWeapon(const weapon_data_t* wd);
 
 	void SetAmmo(size_t iId, int iCount);
 	int CountAmmo(size_t iId);
 	bool HasAmmo(WEAPON* p);
-	bool IsSelectable(WEAPON* p);
 	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect);
 private:
-	//Ñ¡ÔñÑ¡¶¨µÄÎäÆ÷»ò²Ëµ¥
-	void SetSelectWeapon(int iId, int iPos, bool bWheel);
+	//é€‰æ‹©é€‰å®šçš„æ­¦å™¨æˆ–èœå•
+	void SetSelectWeapon(WEAPON* wp, bool bWheel);
 	client_sprite_t* WeaponsResource::GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount);
 };
 extern WeaponsResource gWR;
