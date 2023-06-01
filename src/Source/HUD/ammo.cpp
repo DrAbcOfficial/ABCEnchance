@@ -102,10 +102,16 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf){
 	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
 }
+enum WEAPONSTATE {
+	NOTVALID = 0,
+	VALID = 1 << 0,
+	ONTARGET = 1 << 1,
+	UZI = 1 << 2
+};
 int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iState = READ_BYTE();
-	if (iState > 0){
+	if (iState & VALID){
 		int iId = READ_SHORT();
 		//sc反编汇后如此
 		if (iId == -1){
@@ -123,7 +129,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 		pWeapon->iClip = iClip;
 		pWeapon->iClip2 = iClip2;
 		m_HudCustomAmmo.m_pWeapon = pWeapon;
-		m_HudCustomAmmo.m_bIsOnTarget = iState > 1;
+		m_HudCustomAmmo.m_bIsOnTarget = iState & ONTARGET;
 	}
 	else{
 		int iFlag1 = READ_BYTE();
@@ -344,7 +350,11 @@ int CHudCustomAmmo::Draw(float flTime){
 			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
 
 			Ammo1BigTextColor.GetColor(r, g, b, a);
-			wsprintfW(buf, L"%d/", pw->iClip);
+			//ITEM_FLAG_DUALWIELD
+			if(pw->iFlags & 32)
+				wsprintfW(buf, L"%dx%d/", pw->iClip, pw->iClip2);
+			else
+				wsprintfW(buf, L"%d/", pw->iClip);
 			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
 			nowX -= iTextWidth;
 			nowY = HalfY - iTextHeight / 2;
