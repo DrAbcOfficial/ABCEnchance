@@ -38,7 +38,7 @@ void CWeaponData::Clear() {
 	for (auto iter = this->m_dicWeaponSlots.begin(); iter != this->m_dicWeaponSlots.end(); iter++) {
 		iter->second.clear();
 	}
-	this->m_dicWeaponSlots.clear();
+	this->m_dicWeaponIds.clear();
 	this->m_dicWeaponNames.clear();
 }
 bool CWeaponData::Has(size_t iSlot, size_t iPos) {
@@ -115,7 +115,7 @@ CWeaponData::CWeaponData() {
 
 //初始化武器仓库
 void WeaponsResource::Init(void) {
-	this->pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
+	//this->pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
 	Reset();
 }
 //重置武器仓库
@@ -197,9 +197,9 @@ bool WeaponsResource::HasWeapon(WEAPON* wp) {
 }
 //玩家选择武器
 void WeaponsResource::SetSelectWeapon(WEAPON* wp, bool bWheel) {
-	if (pFastSwich->value > 0 && bWheel)
-		ServerCmd(wp->szName);
-	else
+	//if (pFastSwich->value > 0 && bWheel)
+	//	ServerCmd(wp->szName);
+	//else
 		m_iNowSelected = wp;
 }
 
@@ -291,7 +291,7 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
 
-	if ((pFastSwich->value > 0 && !bWheel) || (pFastSwich->value <= 0))
+	//if ((pFastSwich->value > 0 && !bWheel) || (pFastSwich->value <= 0))
 		m_HudWMenuSlot.m_fFade =
 		gEngfuncs.GetClientTime() + m_HudWMenuSlot.SelectHoldTime;
 	if (m_pOwnedWeaponData.Size() == 0)

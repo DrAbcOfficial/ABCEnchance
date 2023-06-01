@@ -115,6 +115,10 @@ void CPlayerInfoPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 }
 
 void CPlayerInfoPanel::Think(){
+	if (pPlayerTitle->value <= 0) {
+		SetVisible(false);
+		return;
+	}
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	if(!local)
 		return;
@@ -178,11 +182,6 @@ void CPlayerInfoPanel::ShowPanel(bool state)
 	if (state)
 	{
 		Activate();
-	}
-	else
-	{
-		SetMouseInputEnabled(false);
-		SetKeyBoardInputEnabled(false);
 	}
 	SetVisible(state);
 }
