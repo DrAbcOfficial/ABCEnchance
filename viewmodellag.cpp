@@ -10,59 +10,71 @@
 #include "local.h"
 #include "exportfuncs.h"
 #include "viewmodellag.h"
-//copied and edited from here: https://github.com/SNMetamorph/PrimeXT/blob/master/client/r_view.cpp#L266
 
-void V_CalcViewModelLag(ref_params_t* pparams){
-	if (gCVars.pModelLag->value <= 0)
-		return;
+//copied and edited from here: https://github.com/SNMetamorph/PrimeXT/blob/master/client/r_view.cpp#L266
+void V_CalcViewModelLag(ref_params_t* pparams, CVector& origin, CVector& angles, const CVector& original_angles)
+{
 	//¼¦ÃçÎäÆ÷
 	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != mathlib::clamp(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
 		return;
-	static vec3_t m_vecLastFacing;
-	cl_entity_t* view = gEngfuncs.GetViewModel();
-	vec3_t vOriginalOrigin;
-	vec3_t vOriginalAngles;
-	mathlib::VectorCopy(view->origin, vOriginalOrigin);
-	mathlib::VectorCopy(view->angles, vOriginalAngles);
+	static CVector m_vecLastFacing;
+	CVector vOriginalOrigin = origin;
+	CVector vOriginalAngles = angles;
+
 	// Calculate our drift
-	vec3_t forward, right, up;
-	mathlib::AngleVectors(view->angles, forward, right, up);
-	// not in paused
-	if (pparams->frametime != 0.0f){
-		vec3_t vDifference;
-		vDifference[0] = forward[0] - m_vecLastFacing[0];
-		vDifference[1] = forward[1] - m_vecLastFacing[1];
-		vDifference[2] = forward[2] - m_vecLastFacing[2];
+	CVector forward, right, up;
+
+	mathlib::AngleVectors(angles, forward, right, up);
+
+	if (pparams->frametime != 0.0f)	// not in paused
+	{
+		CVector vDifference;
+
+		vDifference = forward - m_vecLastFacing;
 
 		float flSpeed = 5.0f;
+
 		// If we start to lag too far behind, we'll increase the "catch up" speed.
 		// Solves the problem with fast cl_yawspeed, m_yaw or joysticks rotating quickly.
 		// The old code would slam lastfacing with origin causing the viewmodel to pop to a new position
-		float flDiff = mathlib::FVectorLength(vDifference);
+		float flDiff = vDifference.Length();
 		if ((flDiff > gCVars.pModelLagValue->value) && (gCVars.pModelLagValue->value > 0.0f))
-			flSpeed *= (flDiff / gCVars.pModelLagValue->value);
-		m_vecLastFacing[0] = m_vecLastFacing[0] + vDifference[0] * (flSpeed * pparams->frametime);
-		m_vecLastFacing[1] = m_vecLastFacing[1] + vDifference[1] * (flSpeed * pparams->frametime);
-		m_vecLastFacing[2] = m_vecLastFacing[2] + vDifference[2] * (flSpeed * pparams->frametime);
-		// Make sure it doesn't grow out of control!!!
-		mathlib::VectorNormalize(m_vecLastFacing);
-		view->origin[0] += (vDifference[0] * -1.0f) * flSpeed;
-		view->origin[1] += (vDifference[1] * -1.0f) * flSpeed;
-		view->origin[2] += (vDifference[2] * -1.0f) * flSpeed;
-	}
-	mathlib::AngleVectors(pparams->cl_viewangles, forward, right, up);
-	float pitch = pparams->cl_viewangles[Q_PITCH];
-	pitch += pitch > 180.0f ? -360.0f : pitch < -180.0f ? 360.0f : 0;
-	if (gCVars.pModelLagValue->value <= 0.0f){
-		mathlib::VectorCopy(vOriginalOrigin, view->origin);
-		mathlib::VectorCopy(vOriginalAngles, view->angles);
-	}
-	else{
-		for (int i = 0; i < 3; i++) {
-			view->origin[i] += (forward[i] * (-pitch * 0.035f));
-			view->origin[i] += (right[i] * (-pitch * 0.03f));
-			view->origin[i] += (up[i] * (-pitch * 0.02f));
+		{
+			float flScale = flDiff / gCVars.pModelLagValue->value;
+			flSpeed *= flScale;
 		}
+
+		// FIXME:  Needs to be predictable?
+		m_vecLastFacing = m_vecLastFacing + vDifference * (flSpeed * pparams->frametime);
+		// Make sure it doesn't grow out of control!!!
+		m_vecLastFacing = m_vecLastFacing.Normalize();
+		origin = origin + (vDifference * -1.0f) * flSpeed;
+	}
+
+	mathlib::AngleVectors(original_angles, forward, right, up);
+
+	float pitch = original_angles[Q_PITCH];
+
+	if (pitch > 180.0f)
+	{
+		pitch -= 360.0f;
+	}
+	else if (pitch < -180.0f)
+	{
+		pitch += 360.0f;
+	}
+
+	if (gCVars.pModelLagValue->value <= 0.0f)
+	{
+		origin = vOriginalOrigin;
+		angles = vOriginalAngles;
+	}
+	else
+	{
+		// FIXME: These are the old settings that caused too many exposed polys on some models
+		origin = origin + forward * (-pitch * 0.035f);
+		origin = origin + right * (-pitch * 0.03f);
+		origin = origin + up * (-pitch * 0.02f);
 	}
 }
 void V_CalcModelSlide(ref_params_t* pparams) {
