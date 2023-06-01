@@ -69,112 +69,16 @@
     <Filter Include="Public\Header\HUD\vgui">
       <UniqueIdentifier>{52162b84-c88b-46d0-a67b-051b77482b11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Header\Utility\opengl">
+      <UniqueIdentifier>{1fe854bc-38cf-404f-ab0b-c8eda68d0197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Source\Utility\opengl">
+      <UniqueIdentifier>{04cb55bb-c613-4621-97c5-5f4b5c35c237}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="exportfuncs.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp">
       <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="plugins.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="efxenchance.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="ammo.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="CCustomHud.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="healthhud.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="historyresource.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="mymathlib.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="parsemsg.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="weaponbank.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="vguilocal.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
-    <ClCompile Include="local.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
-    <ClCompile Include="viewmodellag.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="deathmsg.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="radar.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="gl_utility.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="gl_shader.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="crosshair.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="playertitle.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="vote.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="cvar_hook.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
-    <ClCompile Include="eccomoney.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="efxhud.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="itemhighlight.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="extraprecache.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
-    <ClCompile Include="encode.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="gl_draw.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="wmenu_annular.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="regquery.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="eccobuymenu.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="gl_def.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="cctv.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="grenadeindicator.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="steamid.cpp">
-      <Filter>Public\Source\Utility</Filter>
     </ClCompile>
     <ClCompile Include="vgui_controls\AnalogBar.cpp">
       <Filter>VGUI\control</Filter>
@@ -527,45 +431,135 @@
     <ClCompile Include="VGUI2\tga_image.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
-    <ClCompile Include="player_info.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="client_steam_context.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Viewport.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="svc_hook.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="voice_banmgr.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
-    <ClCompile Include="voice_status.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
-    <ClCompile Include="flashwater.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="scoreboard.cpp">
+    <ClCompile Include="src\Source\HUD\vgui\scoreboard.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
-    <ClCompile Include="wmenu_slot.cpp">
-      <Filter>Public\Source\HUD\vgui</Filter>
+    <ClCompile Include="src\Source\HUD\ammo.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\cctv.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\CCustomHud.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\crosshair.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\deathmsg.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\eccobuymenu.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\eccomoney.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\efxhud.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\flashwater.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\grenadeindicator.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\healthhud.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\historyresource.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\itemhighlight.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\weaponbank.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\playertitle.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\radar.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\Viewport.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vote.cpp">
+      <Filter>Public\Source\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp">
+      <Filter>Public\Source\Utility\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp">
+      <Filter>Public\Source\Utility\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\opengl\gl_shader.cpp">
+      <Filter>Public\Source\Utility\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\opengl\gl_utility.cpp">
+      <Filter>Public\Source\Utility\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\client_steam_context.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\encode.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\mymathlib.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\parsemsg.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\player_info.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\regquery.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\steamid.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\svc_hook.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Var\cvar_hook.cpp">
+      <Filter>Public\Source\Var</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Var\extraprecache.cpp">
+      <Filter>Public\Source\Var</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Var\local.cpp">
+      <Filter>Public\Source\Var</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Var\vguilocal.cpp">
+      <Filter>Public\Source\Var</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Var\voice_banmgr.cpp">
+      <Filter>Public\Source\Var</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Var\voice_status.cpp">
+      <Filter>Public\Source\Var</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\exportfuncs.cpp">
+      <Filter>Public\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\efxenchance.cpp">
+      <Filter>Public\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\viewmodellag.cpp">
+      <Filter>Public\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\plugins.cpp">
+      <Filter>Public\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="exportfuncs.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
       <Filter>Public\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\metahook.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="plugins.h">
       <Filter>Public\Header</Filter>
     </ClInclude>
     <ClInclude Include="VGUI\VGUI.h">
@@ -627,123 +621,6 @@
     </ClInclude>
     <ClInclude Include="VGUI\Cursor.h">
       <Filter>VGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="efxenchance.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="baseammo.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="basehealth.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="CCustomHud.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="healthhud.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="historyresource.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="weaponbank.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="weapon.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="ammo.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="mymathlib.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="parsemsg.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="local.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="vguilocal.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="viewmodellag.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="deathmsg.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="radar.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="gl_utility.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="palette.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="gl_shader.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="crosshair.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="playertitle.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="vote.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="cvar_hook.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="eccomoney.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="numdisplay.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="efxhud.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="itemhighlight.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="extraprecache.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="enginedef.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="encode.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="gl_draw.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="IWeaponSelect.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="wmenu_annular.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="regquery.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="eccobuymenu.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="gl_def.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="hud.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="cctv.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="grenadeindicator.h">
-      <Filter>Public\Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="vgui_controls\AnalogBar.h">
       <Filter>VGUI\control</Filter>
@@ -1189,17 +1066,8 @@
     <ClInclude Include="SourceSDK\tier0\xbox_codeline_defines.h">
       <Filter>SourceSDK\tier0</Filter>
     </ClInclude>
-    <ClInclude Include="vgui_internal.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="IEngineSurface.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
     <ClInclude Include="SourceSDK\mathlib\mathlib.h">
       <Filter>SourceSDK\mathlib</Filter>
-    </ClInclude>
-    <ClInclude Include="CVector.h">
-      <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\IClientVGUI.h">
       <Filter>VGUI2</Filter>
@@ -1249,9 +1117,6 @@
     <ClInclude Include="VGUI2\viewport_panel_names.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
-    <ClInclude Include="player_info.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="SourceSDK\tier1\utldelegate.h">
       <Filter>SourceSDK\tier1</Filter>
     </ClInclude>
@@ -1261,41 +1126,167 @@
     <ClInclude Include="SourceSDK\tier1\UtlSortVector.h">
       <Filter>SourceSDK\tier1</Filter>
     </ClInclude>
-    <ClInclude Include="client_steam_context.h">
-      <Filter>Public\Header\Utility</Filter>
+    <ClInclude Include="src\Header\HUD\vgui\scoreboard.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
-    <ClInclude Include="Viewport.h">
+    <ClInclude Include="src\Header\HUD\ammo.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="svc_hook.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="player_infosc.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="voice_status.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="voice_banmgr.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="voice_common.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="bitvec.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="flashwater.h">
+    <ClInclude Include="src\Header\HUD\baseammo.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="weaponinfo_sven.h">
+    <ClInclude Include="src\Header\HUD\basehealth.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\cctv.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\CCustomHud.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\crosshair.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\deathmsg.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\eccobuymenu.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\eccomoney.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\efxhud.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\flashwater.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\grenadeindicator.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\healthhud.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\historyresource.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\itemhighlight.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\numdisplay.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\playertitle.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\radar.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\Viewport.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vote.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\weaponbank.h">
+      <Filter>Public\Header\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\client_steam_context.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\CVector.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\encode.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\mymathlib.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\parsemsg.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\player_info.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\regquery.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\svc_hook.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\opengl\gl_def.h">
+      <Filter>Public\Header\Utility\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\opengl\gl_draw.h">
+      <Filter>Public\Header\Utility\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\opengl\gl_shader.h">
+      <Filter>Public\Header\Utility\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\opengl\gl_utility.h">
+      <Filter>Public\Header\Utility\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\bitvec.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\weapon.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\cvar_hook.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\enginedef.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\extraprecache.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\hud.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\local.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\palette.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\player_infosc.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\vguilocal.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\voice_status.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\voice_banmgr.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\voice_common.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\weaponinfo_sven.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\efxenchance.h">
       <Filter>Public\Header</Filter>
     </ClInclude>
-    <ClInclude Include="wmenu_slot.h">
-      <Filter>Public\Header\HUD\vgui</Filter>
+    <ClInclude Include="src\Header\exportfuncs.h">
+      <Filter>Public\Header</Filter>
     </ClInclude>
-    <ClInclude Include="scoreboard.h">
-      <Filter>Public\Header\HUD\vgui</Filter>
+    <ClInclude Include="src\Header\IEngineSurface.h">
+      <Filter>Public\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\plugins.h">
+      <Filter>Public\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\vgui_internal.h">
+      <Filter>Public\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\viewmodellag.h">
+      <Filter>Public\Header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

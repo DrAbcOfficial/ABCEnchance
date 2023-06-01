@@ -77,7 +77,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -114,7 +114,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,7 +145,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,38 +162,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp" />
-    <ClCompile Include="ammo.cpp" />
-    <ClCompile Include="cctv.cpp" />
-    <ClCompile Include="CCustomHud.cpp" />
-    <ClCompile Include="client_steam_context.cpp" />
-    <ClCompile Include="crosshair.cpp" />
-    <ClCompile Include="cvar_hook.cpp" />
-    <ClCompile Include="eccobuymenu.cpp" />
-    <ClCompile Include="eccomoney.cpp" />
-    <ClCompile Include="efxhud.cpp" />
-    <ClCompile Include="encode.cpp" />
-    <ClCompile Include="extraprecache.cpp" />
-    <ClCompile Include="flashwater.cpp" />
-    <ClCompile Include="gl_def.cpp" />
-    <ClCompile Include="gl_utility.cpp" />
-    <ClCompile Include="gl_draw.cpp" />
-    <ClCompile Include="gl_shader.cpp" />
-    <ClCompile Include="grenadeindicator.cpp" />
-    <ClCompile Include="itemhighlight.cpp" />
-    <ClCompile Include="playertitle.cpp" />
-    <ClCompile Include="player_info.cpp" />
-    <ClCompile Include="radar.cpp" />
-    <ClCompile Include="deathmsg.cpp" />
-    <ClCompile Include="efxenchance.cpp" />
-    <ClCompile Include="exportfuncs.cpp" />
-    <ClCompile Include="healthhud.cpp" />
-    <ClCompile Include="historyresource.cpp" />
-    <ClCompile Include="local.cpp" />
-    <ClCompile Include="mymathlib.cpp" />
-    <ClCompile Include="parsemsg.cpp" />
-    <ClCompile Include="plugins.cpp" />
-    <ClCompile Include="regquery.cpp" />
-    <ClCompile Include="scoreboard.cpp" />
     <ClCompile Include="SourceSDK\filesystem.cpp" />
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp" />
     <ClCompile Include="SourceSDK\InputWin32.cpp" />
@@ -224,8 +192,47 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="SourceSDK\tier1\utlsymbol.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
-    <ClCompile Include="steamid.cpp" />
-    <ClCompile Include="svc_hook.cpp" />
+    <ClCompile Include="src\Source\efxenchance.cpp" />
+    <ClCompile Include="src\Source\exportfuncs.cpp" />
+    <ClCompile Include="src\Source\HUD\ammo.cpp" />
+    <ClCompile Include="src\Source\HUD\cctv.cpp" />
+    <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
+    <ClCompile Include="src\Source\HUD\crosshair.cpp" />
+    <ClCompile Include="src\Source\HUD\deathmsg.cpp" />
+    <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
+    <ClCompile Include="src\Source\HUD\eccomoney.cpp" />
+    <ClCompile Include="src\Source\HUD\efxhud.cpp" />
+    <ClCompile Include="src\Source\HUD\flashwater.cpp" />
+    <ClCompile Include="src\Source\HUD\grenadeindicator.cpp" />
+    <ClCompile Include="src\Source\HUD\healthhud.cpp" />
+    <ClCompile Include="src\Source\HUD\historyresource.cpp" />
+    <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
+    <ClCompile Include="src\Source\HUD\playertitle.cpp" />
+    <ClCompile Include="src\Source\HUD\radar.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\scoreboard.cpp" />
+    <ClCompile Include="src\Source\HUD\Viewport.cpp" />
+    <ClCompile Include="src\Source\HUD\vote.cpp" />
+    <ClCompile Include="src\Source\HUD\weaponbank.cpp" />
+    <ClCompile Include="src\Source\plugins.cpp" />
+    <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
+    <ClCompile Include="src\Source\Utility\encode.cpp" />
+    <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
+    <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
+    <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp" />
+    <ClCompile Include="src\Source\Utility\opengl\gl_shader.cpp" />
+    <ClCompile Include="src\Source\Utility\opengl\gl_utility.cpp" />
+    <ClCompile Include="src\Source\Utility\parsemsg.cpp" />
+    <ClCompile Include="src\Source\Utility\player_info.cpp" />
+    <ClCompile Include="src\Source\Utility\regquery.cpp" />
+    <ClCompile Include="src\Source\Utility\steamid.cpp" />
+    <ClCompile Include="src\Source\Utility\svc_hook.cpp" />
+    <ClCompile Include="src\Source\Var\cvar_hook.cpp" />
+    <ClCompile Include="src\Source\Var\extraprecache.cpp" />
+    <ClCompile Include="src\Source\Var\local.cpp" />
+    <ClCompile Include="src\Source\Var\vguilocal.cpp" />
+    <ClCompile Include="src\Source\Var\voice_banmgr.cpp" />
+    <ClCompile Include="src\Source\Var\voice_status.cpp" />
+    <ClCompile Include="src\Source\viewmodellag.cpp" />
     <ClCompile Include="VGUI2\avatar_image.cpp" />
     <ClCompile Include="VGUI2\BaseUI.cpp" />
     <ClCompile Include="VGUI2\Bitmap.cpp" />
@@ -243,7 +250,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="VGUI2\VPanel.cpp" />
     <ClCompile Include="VGUI2\VPanelWrapper.cpp" />
     <ClCompile Include="VGUI2\Win32Font.cpp" />
-    <ClCompile Include="vguilocal.cpp" />
     <ClCompile Include="vgui_controls\AnalogBar.cpp" />
     <ClCompile Include="vgui_controls\AnimatingImagePanel.cpp" />
     <ClCompile Include="vgui_controls\AnimationController.cpp" />
@@ -314,60 +320,10 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\vgui_controls.cpp" />
     <ClCompile Include="vgui_controls\WizardPanel.cpp" />
     <ClCompile Include="vgui_controls\WizardSubPanel.cpp" />
-    <ClCompile Include="viewmodellag.cpp" />
-    <ClCompile Include="Viewport.cpp" />
-    <ClCompile Include="voice_banmgr.cpp" />
-    <ClCompile Include="voice_status.cpp" />
-    <ClCompile Include="vote.cpp" />
-    <ClCompile Include="weaponbank.cpp" />
-    <ClCompile Include="wmenu_annular.cpp" />
-    <ClCompile Include="wmenu_slot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h" />
     <ClInclude Include="..\..\metahook.h" />
-    <ClInclude Include="ammo.h" />
-    <ClInclude Include="baseammo.h" />
-    <ClInclude Include="basehealth.h" />
-    <ClInclude Include="bitvec.h" />
-    <ClInclude Include="cctv.h" />
-    <ClInclude Include="CCustomHud.h" />
-    <ClInclude Include="client_steam_context.h" />
-    <ClInclude Include="eccobuymenu.h" />
-    <ClInclude Include="eccomoney.h" />
-    <ClInclude Include="efxhud.h" />
-    <ClInclude Include="encode.h" />
-    <ClInclude Include="extraprecache.h" />
-    <ClInclude Include="flashwater.h" />
-    <ClInclude Include="gl_draw.h" />
-    <ClInclude Include="grenadeindicator.h" />
-    <ClInclude Include="IEngineSurface.h" />
-    <ClInclude Include="itemhighlight.h" />
-    <ClInclude Include="IWeaponSelect.h" />
-    <ClInclude Include="crosshair.h" />
-    <ClInclude Include="cvar_hook.h" />
-    <ClInclude Include="gl_utility.h" />
-    <ClInclude Include="gl_shader.h" />
-    <ClInclude Include="numdisplay.h" />
-    <ClInclude Include="playertitle.h" />
-    <ClInclude Include="player_info.h" />
-    <ClInclude Include="player_infosc.h" />
-    <ClInclude Include="radar.h" />
-    <ClInclude Include="deathmsg.h" />
-    <ClInclude Include="efxenchance.h" />
-    <ClInclude Include="enginedef.h" />
-    <ClInclude Include="exportfuncs.h" />
-    <ClInclude Include="gl_def.h" />
-    <ClInclude Include="healthhud.h" />
-    <ClInclude Include="historyresource.h" />
-    <ClInclude Include="hud.h" />
-    <ClInclude Include="local.h" />
-    <ClInclude Include="mymathlib.h" />
-    <ClInclude Include="palette.h" />
-    <ClInclude Include="parsemsg.h" />
-    <ClInclude Include="plugins.h" />
-    <ClInclude Include="regquery.h" />
-    <ClInclude Include="scoreboard.h" />
     <ClInclude Include="SourceSDK\appframework\IAppSystem.h" />
     <ClInclude Include="SourceSDK\Color.h" />
     <ClInclude Include="SourceSDK\common\xbox\xbox_console.h" />
@@ -446,8 +402,60 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="SourceSDK\vstdlib\random.h" />
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
-    <ClInclude Include="CVector.h" />
-    <ClInclude Include="svc_hook.h" />
+    <ClInclude Include="src\Header\efxenchance.h" />
+    <ClInclude Include="src\Header\exportfuncs.h" />
+    <ClInclude Include="src\Header\HUD\ammo.h" />
+    <ClInclude Include="src\Header\HUD\baseammo.h" />
+    <ClInclude Include="src\Header\HUD\basehealth.h" />
+    <ClInclude Include="src\Header\HUD\cctv.h" />
+    <ClInclude Include="src\Header\HUD\CCustomHud.h" />
+    <ClInclude Include="src\Header\HUD\crosshair.h" />
+    <ClInclude Include="src\Header\HUD\deathmsg.h" />
+    <ClInclude Include="src\Header\HUD\eccobuymenu.h" />
+    <ClInclude Include="src\Header\HUD\eccomoney.h" />
+    <ClInclude Include="src\Header\HUD\efxhud.h" />
+    <ClInclude Include="src\Header\HUD\flashwater.h" />
+    <ClInclude Include="src\Header\HUD\grenadeindicator.h" />
+    <ClInclude Include="src\Header\HUD\healthhud.h" />
+    <ClInclude Include="src\Header\HUD\historyresource.h" />
+    <ClInclude Include="src\Header\HUD\itemhighlight.h" />
+    <ClInclude Include="src\Header\HUD\numdisplay.h" />
+    <ClInclude Include="src\Header\HUD\playertitle.h" />
+    <ClInclude Include="src\Header\HUD\radar.h" />
+    <ClInclude Include="src\Header\HUD\vgui\scoreboard.h" />
+    <ClInclude Include="src\Header\HUD\Viewport.h" />
+    <ClInclude Include="src\Header\HUD\vote.h" />
+    <ClInclude Include="src\Header\HUD\weaponbank.h" />
+    <ClInclude Include="src\Header\IEngineSurface.h" />
+    <ClInclude Include="src\Header\plugins.h" />
+    <ClInclude Include="src\Header\Utility\client_steam_context.h" />
+    <ClInclude Include="src\Header\Utility\CVector.h" />
+    <ClInclude Include="src\Header\Utility\encode.h" />
+    <ClInclude Include="src\Header\Utility\mymathlib.h" />
+    <ClInclude Include="src\Header\Utility\opengl\gl_def.h" />
+    <ClInclude Include="src\Header\Utility\opengl\gl_draw.h" />
+    <ClInclude Include="src\Header\Utility\opengl\gl_shader.h" />
+    <ClInclude Include="src\Header\Utility\opengl\gl_utility.h" />
+    <ClInclude Include="src\Header\Utility\parsemsg.h" />
+    <ClInclude Include="src\Header\Utility\player_info.h" />
+    <ClInclude Include="src\Header\Utility\regquery.h" />
+    <ClInclude Include="src\Header\Utility\svc_hook.h" />
+    <ClInclude Include="src\Header\Var\bitvec.h" />
+    <ClInclude Include="src\Header\Var\cvar_hook.h" />
+    <ClInclude Include="src\Header\Var\enginedef.h" />
+    <ClInclude Include="src\Header\Var\extraprecache.h" />
+    <ClInclude Include="src\Header\Var\hud.h" />
+    <ClInclude Include="src\Header\Var\local.h" />
+    <ClInclude Include="src\Header\Var\palette.h" />
+    <ClInclude Include="src\Header\Var\player_infosc.h" />
+    <ClInclude Include="src\Header\Var\vguilocal.h" />
+    <ClInclude Include="src\Header\Var\voice_banmgr.h" />
+    <ClInclude Include="src\Header\Var\voice_common.h" />
+    <ClInclude Include="src\Header\Var\voice_status.h" />
+    <ClInclude Include="src\Header\Var\weapon.h" />
+    <ClInclude Include="src\Header\Var\weaponinfo_sven.h" />
+    <ClInclude Include="src\Header\vgui_internal.h" />
+    <ClInclude Include="src\Header\viewmodellag.h" />
     <ClInclude Include="VGUI2\avatar_image.h" />
     <ClInclude Include="VGUI2\BaseUI.h" />
     <ClInclude Include="VGUI2\Bitmap.h" />
@@ -464,7 +472,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\viewport_panel_names.h" />
     <ClInclude Include="VGUI2\VPanel.h" />
     <ClInclude Include="VGUI2\Win32Font.h" />
-    <ClInclude Include="vguilocal.h" />
     <ClInclude Include="VGUI\Cursor.h" />
     <ClInclude Include="VGUI\Dar.h" />
     <ClInclude Include="VGUI\IBorder.h" />
@@ -559,18 +566,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\URLLabel.h" />
     <ClInclude Include="vgui_controls\WizardPanel.h" />
     <ClInclude Include="vgui_controls\WizardSubPanel.h" />
-    <ClInclude Include="vgui_internal.h" />
-    <ClInclude Include="viewmodellag.h" />
-    <ClInclude Include="Viewport.h" />
-    <ClInclude Include="voice_banmgr.h" />
-    <ClInclude Include="voice_common.h" />
-    <ClInclude Include="voice_status.h" />
-    <ClInclude Include="vote.h" />
-    <ClInclude Include="weapon.h" />
-    <ClInclude Include="weaponbank.h" />
-    <ClInclude Include="weaponinfo_sven.h" />
-    <ClInclude Include="wmenu_annular.h" />
-    <ClInclude Include="wmenu_slot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
