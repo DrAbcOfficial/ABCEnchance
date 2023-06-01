@@ -96,8 +96,6 @@
 # 📤 Command
 |Command|usage|
 |----|----|
-|+annularmenu|Open cycler weapon menu(Mouse selection)|
-|-annularmenu|Close cycler weapon menu(Mouse selection)|
 |+scaleradar|Start scale radar size|
 |-scaleradar|Stop scale radar size|
 # 📊 CVars
@@ -108,19 +106,8 @@
 |hud_deathnotice|use new death message|1|0~1|
 |hud_deathnotice_time|the death message keep time|6|0~9999|
 |---|---|---|---|
-|cl_customslot1|Set customslot 1| |weapon_xxxxx|
-|cl_customslot2|Set customslot 2| |weapon_xxxxx|
-|cl_customslot3|Set customslot 3| |weapon_xxxxx|
-|cl_customslot4|Set customslot 4| |weapon_xxxxx|
-|cl_customslot5|Set customslot 5| |weapon_xxxxx|
-|cl_customslot6|Set customslot 6| |weapon_xxxxx|
-|cl_customslot7|Set customslot 7| |weapon_xxxxx|
-|cl_customslot8|Set customslot 8| |weapon_xxxxx|
-|cl_customslot9|Set customslot 9| |weapon_xxxxx|
-|cl_customslot10|Set customslot 10| |weapon_xxxxx|
 |cl_menudrawpos|Draw weapon Pos|0|0/1|
 |cl_rainbowmenu|Draw weapon menu in rainbow|1|0/1/2|
-|cl_wmenustyle|1:Annular weapon menu 0:Classic weapon menu|1|0/1|
 |---|---|---|---|
 |cl_itemhighlight|Draw item high light|1|0/1|
 |cl_itemhighlightrange|Item high light range|344|0~500|
@@ -140,9 +127,6 @@
 |cl_radarupdateint|Radar image update interval|1|0-9999|
 |---|---|---|---|
 |cl_playertitle|Show Player name|1|0/1/2|
-|cl_playertitleheight|Player name bar height|48|0~9999|
-|cl_playertitlelength|Player name bar length|196|0~9999|
-|cl_playertitledanger|player danger health|30|0~9999|
 |---|---|---|---|
 |cl_crosshair|Show dynamic crosshair|1|0/1|
 |cl_crosshairautohide|Auto hide crosshair when zoomed|1|0/1|

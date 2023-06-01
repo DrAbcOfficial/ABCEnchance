@@ -93,19 +93,8 @@
 |---|---|---|---|
 |cl_hud_csgo|启用HUD|1|0/1|
 |---|---|---|---|
-|cl_customslot1|设置自定义轮盘 1| |weapon_xxxxx|
-|cl_customslot1|设置自定义轮盘 1| |weapon_xxxxx|
-|cl_customslot2|设置自定义轮盘 2| |weapon_xxxxx|
-|cl_customslot3|设置自定义轮盘 3| |weapon_xxxxx|
-|cl_customslot4|设置自定义轮盘 4| |weapon_xxxxx|
-|cl_customslot5|设置自定义轮盘 5| |weapon_xxxxx|
-|cl_customslot6|设置自定义轮盘 6| |weapon_xxxxx|
-|cl_customslot7|设置自定义轮盘 7| |weapon_xxxxx|
-|cl_customslot8|设置自定义轮盘 8| |weapon_xxxxx|
-|cl_customslot9|设置自定义轮盘 9| |weapon_xxxxx|
 |cl_menudrawpos|是否绘制武器Pos|0|0/1|
 |cl_rainbowmenu|绘制武器菜单彩虹圈|1|0/1/2|
-|cl_wmenustyle|1:使用选枪轮盘菜单 0:使用选枪经典菜单|1|0/1|
 |---|---|---|---|
 |cl_itemhighlight|是否显示物品高亮|1|0/1|
 |cl_itemhighlightrange|物品高亮范围|344|0~500|
@@ -128,9 +117,6 @@
 |cl_radarupdateint|雷达更新频率（秒）|1|0-9999|
 |---|---|---|---|
 |cl_playertitle|展示玩家状态栏|1|0/1/2|
-|cl_playertitleheight|玩家状态栏高度|48|0~9999|
-|cl_playertitlelength|玩家状态栏长度|196|0~9999|
-|cl_playertitledanger|玩家状态栏危险血量|30|0~9999|
 |---|---|---|---|
 |cl_crosshair|绘制动态准心|1|0/1|
 |cl_crosshairautohide|开镜自动隐藏动态准心|1|0/1|
@@ -185,15 +171,6 @@
 
 ## 🛒 增强Ecco购买菜单
 <img src="img/buymenu.png" width="100%">
-
-## 🏐 环形选枪菜单
-
-### 并且修复了SC的Position冲突导致无法患处武器问题
-
-<div>
-<img src="img/Annular4.png" width="50%"><img src="img/Annular1.jpg" width="50%">
-<img src="img/Annular3.jpg" width="50%"><img src="img/Annular2.jpg" width="50%">
-</div>
 
 ## 🔺 动态伤害指示器与动态准心
 
