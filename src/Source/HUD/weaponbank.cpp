@@ -29,17 +29,18 @@ WEAPON* CWeaponData::operator [](std::string szName) {
 }
 //删除所有链接，并且清理指向的对象内存
 void CWeaponData::Clear() {
+	//这个表包含十个std::map栈对象，所以需要手动清理每张表
+	for (auto iter = this->m_dicWeaponSlots.begin(); iter != this->m_dicWeaponSlots.end(); iter++) {
+		iter->second.clear();
+	}
+	this->m_dicWeaponSlots.clear();
+	this->m_dicWeaponNames.clear();
 	//所有map指向同一个对象，所以只需要第一张map释放WEAPON内存即可
 	for (auto iter = this->m_dicWeaponIds.begin(); iter != this->m_dicWeaponIds.end(); iter++) {
 		delete iter->second;
 		iter->second = nullptr;
 	}
-	//但是这个表包含十个std::map栈对象，所以需要手动清理每张表
-	for (auto iter = this->m_dicWeaponSlots.begin(); iter != this->m_dicWeaponSlots.end(); iter++) {
-		iter->second.clear();
-	}
 	this->m_dicWeaponIds.clear();
-	this->m_dicWeaponNames.clear();
 }
 bool CWeaponData::Has(size_t iSlot, size_t iPos) {
 	if (!this->m_dicWeaponSlots[iSlot].count(iPos))
@@ -116,13 +117,13 @@ CWeaponData::CWeaponData() {
 //初始化武器仓库
 void WeaponsResource::Init(void) {
 	//this->pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
-	Reset();
 }
 //重置武器仓库
 void WeaponsResource::Reset(void) {
 	this->m_iNowSlot = INVALID_WEAPON_SLOT;
-	this->m_pWeaponData.Clear();
-	this->m_pOwnedWeaponData.Clear();
+	//下面那个兄弟已经完全清理了，所以只需要解除链接即可
+	this->m_pOwnedWeaponData.RemoveAll();
+	this->m_pWeaponData.Clear();	
 	this->m_dicAmmos.clear();
 	this->m_iNowSelected = nullptr;
 }
