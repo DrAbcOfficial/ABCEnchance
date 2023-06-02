@@ -46,7 +46,7 @@
 		"ControlName"		"Label"
 		"fieldName"		"VoteContent"
 		"xpos"		"4"
-		"ypos"		"12"
+		"ypos"		"14"
 		"wide"		"114"
 		"tall"		"144"
 		"visible"		"1"

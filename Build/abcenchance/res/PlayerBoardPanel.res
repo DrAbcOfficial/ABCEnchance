@@ -8,7 +8,7 @@
 		"tall"		"14"
 		"visible"		"1"
 		"enabled"		"1"
-		"danger_health"	"200"
+		"danger_health"	"30"
 	}
 	"PlayerName"
 	{
