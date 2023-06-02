@@ -75,11 +75,6 @@ Scheme
 		//死亡消息攻击武器颜色
 		"DeathMsg.InflictorColor"		"178 178 178 255"
 
-        //投票菜单外框颜色
-		"Vote.OutlineColor"		"255 255 255 180"
-		//投票菜单背景颜色
-		"Vote.BackGoundColor"		"139 137 137 180"
-
         //分数，金钱增加颜色
 		"Ecco.MoneyIncreseColor"		"0 255 0 255"
 		//分数，金钱减少颜色
@@ -186,15 +181,6 @@ Scheme
 		"DeathMsg.GapOffset"	"0.012"
 		//死亡消息背景高度
 		"DeathMsg.BackGoundWidth"	"0.0070"
-
-        //投票菜单起始宽
-		"Vote.XOffset"		"0.9"
-		//投票菜单起始高
-		"Vote.YOffset"		"0.233"
-		//投票菜单高
-		"Vote.Height"		"0.33"
-		//投票菜单宽
-		"Vote.Width"		"0.2"
 
         //分数金钱起始高
 		"Ecco.YOffset"		"0.4"
