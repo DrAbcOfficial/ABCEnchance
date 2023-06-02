@@ -351,7 +351,7 @@ int CHudCustomAmmo::Draw(float flTime){
 
 			Ammo1BigTextColor.GetColor(r, g, b, a);
 			//ITEM_FLAG_DUALWIELD
-			if(pw->iFlags & 32)
+			if(pw->iFlags & 32 && pw->iClip2 >= 0)
 				wsprintfW(buf, L"%dx%d/", pw->iClip, pw->iClip2);
 			else
 				wsprintfW(buf, L"%d/", pw->iClip);
