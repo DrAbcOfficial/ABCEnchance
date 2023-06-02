@@ -15,6 +15,7 @@
 #include "steam_api.h"
 #include "player_info.h"
 
+#include "popnum.h"
 #include "playerboard.h"
 #include "scoreboard.h"
 #include "vote.h"
@@ -174,6 +175,12 @@ void CViewport::StartVote(char* szContent, char* szYes, char* szNo, int iVoteTyp
 }
 void CViewport::EndVote(){
 	m_pVotePanel->EndVote();
+}
+void CViewport::AddPopNumber(int x, int y, Color& pColor, int value){
+	CPopNumberPanel* p = new CPopNumberPanel(x, y, pColor, value);
+	p->SetParent(GetVPanel());
+	dynamic_cast<vgui::Panel*>(p)->MakeReadyForUse();
+	p->ShowPanel(true);
 }
 void CViewport::Paint(void){
 	BaseClass::Paint();

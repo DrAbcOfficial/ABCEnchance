@@ -106,6 +106,17 @@ public:
 	bool m_bInScore = false;
 	bool m_bTextMenuOpening = false;
 	float m_flTextMenuDisplayTime = 0;
+
+	enum MetaHookMsgType {
+		MHSV_CMD_QUERY_PLUGIN = 1,
+		MHSV_CMD_QUERY_CVAR,
+		MHSV_CMD_ECCO_INFO = 7,
+		MHSV_CMD_ECCO_MENU = 8,
+		MHSV_CMD_ABC_CUSTOM = 77
+	};
+	enum class ABCCustomMsg {
+		POPNUMBER = 0
+	};
 private:
 	void SetBaseHudActivity();
 	
