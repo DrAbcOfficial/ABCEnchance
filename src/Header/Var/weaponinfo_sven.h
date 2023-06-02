@@ -22,7 +22,7 @@ typedef struct weapon_sven_s
 	int			m_iAmmoType;
 	int			m_iAmmoLeft;
 	int			m_iAmmoLeft2;
-	int			iuser4;
+	int			m_iClip2;
 	float		fuser1;
 	float		fuser2;
 	float		fuser3;

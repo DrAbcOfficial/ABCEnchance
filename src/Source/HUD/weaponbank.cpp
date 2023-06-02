@@ -17,6 +17,7 @@
 #include "CCustomHud.h"
 #include "historyresource.h"
 #include "weaponbank.h"
+#include <weaponinfo_sven.h>
 
 WEAPON* CWeaponData::operator [](size_t iId) {
 	return this->m_dicWeaponIds.find(iId) != this->m_dicWeaponIds.end() ? this->m_dicWeaponIds[iId] : nullptr;
@@ -145,11 +146,11 @@ WEAPON* WeaponsResource::GetWeapon(size_t slot, size_t pos) {
 }
 //从本地武器预测数组同步武器到菜单缓存
 void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
-	for (size_t i = 0; i < this->m_pWeaponData.Size(); i++) {
-		WEAPON* weapon = GetWeapon(i);
+	for (auto iter = this->m_pWeaponData.Begin(); iter != this->m_pWeaponData.End(); iter++) {
+		WEAPON* weapon = iter->second;
 		if (!weapon)
 			continue;
-		const weapon_data_t* wp = wd + i;
+		const weapon_sven_t* wp = (const weapon_sven_t*)wd + weapon->iId;
 		if (wp->m_iId <= 0) {
 			if (HasWeapon(weapon->iSlot, weapon->iSlotPos))
 				DropWeapon(weapon->iSlot, weapon->iSlotPos);
@@ -158,9 +159,8 @@ void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
 			if (!HasWeapon(weapon->iSlot, weapon->iSlotPos))
 				PickupWeapon(wp->m_iId);
 			//同步弹匣数据
-			WEAPON* pwd = gWR.GetWeapon(wp->m_iId);
-			pwd->iClip = pwd->iClip;
-			pwd->iClip2 = pwd->iClip2;
+			weapon->iClip = wp->m_iClip;
+			weapon->iClip2 = wp->m_iClip2;
 		}
 	}
 }
