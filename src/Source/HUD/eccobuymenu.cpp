@@ -27,35 +27,7 @@
 #include "eccobuymenu.h"
 
 CHudEccoBuyMenu m_HudEccoBuyMenu;
-pfnUserMsgHook m_pfnMetaHookMsg;
-int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
-	BEGIN_READ(pbuf, iSize);
-	int type = READ_BYTE();
-	switch (type) {
-	case CHudEccoBuyMenu::MetaHookMsgType::MHSV_CMD_ECCO_INFO: {
-		buymenuitem_t item;
-		item.id = READ_LONG();
-		item.price = READ_LONG();
-		item.modelindex = READ_LONG();
-		item.sequence = READ_LONG();
-		strcpy_s(item.name, READ_STRING());
-		m_HudEccoBuyMenu.AddInfo(item);
-		break;
-	}
-	case CHudEccoBuyMenu::MetaHookMsgType::MHSV_CMD_ECCO_MENU: {
-		m_HudEccoBuyMenu.MenuList.clear();
-		size_t pageLen = (size_t)READ_BYTE();
-		m_HudEccoBuyMenu.MenuList.resize(pageLen);
-		for (size_t i = 0; i < pageLen; i++) {
-			m_HudEccoBuyMenu.MenuList[i] = READ_LONG();
-		}
-		m_HudEccoBuyMenu.OpenMenu();
-		break;
-	}
-	default:break;
-	}
-	return 0;
-}
+
 void EccoBuymenuSetCallBack(cvar_t* vars) {
 	if (vars->value <= 0 && m_HudEccoBuyMenu.IsOpen())
 		m_HudEccoBuyMenu.CloseMenu();
@@ -65,8 +37,6 @@ void CHudEccoBuyMenu::GLInit(){
 	m_hGaussianBufferTex = GL_GenTextureRGBA8(ScreenWidth / 2, ScreenHeight);
 }
 int CHudEccoBuyMenu::Init(){
-	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
-
 	pCVarIdealYaw = CVAR_GET_POINTER("cam_idealyaw");
 	pCVarIdealDist = CVAR_GET_POINTER("cam_idealdist");
 	pCVarFollowAim = CVAR_GET_POINTER("cam_followaim");

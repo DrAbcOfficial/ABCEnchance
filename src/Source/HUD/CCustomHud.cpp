@@ -47,6 +47,8 @@
 #endif
 
 #include "weaponbank.h"
+#include <CVector.h>
+#include "triangleapi.h"
 
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
@@ -60,6 +62,64 @@ pfnUserMsgHook m_pfnShowMenu;
 pfnUserMsgHook m_pfnVoteMenu;
 pfnUserMsgHook m_pfnEndVote;
 
+int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int type = READ_BYTE();
+	switch (type) {
+	case CCustomHud::MetaHookMsgType::MHSV_CMD_ECCO_INFO: {
+		buymenuitem_t item;
+		item.id = READ_LONG();
+		item.price = READ_LONG();
+		item.modelindex = READ_LONG();
+		item.sequence = READ_LONG();
+		strcpy_s(item.name, READ_STRING());
+		m_HudEccoBuyMenu.AddInfo(item);
+		break;
+	}
+	case CCustomHud::MetaHookMsgType::MHSV_CMD_ECCO_MENU: {
+		m_HudEccoBuyMenu.MenuList.clear();
+		size_t pageLen = (size_t)READ_BYTE();
+		m_HudEccoBuyMenu.MenuList.resize(pageLen);
+		for (size_t i = 0; i < pageLen; i++) {
+			m_HudEccoBuyMenu.MenuList[i] = READ_LONG();
+		}
+		m_HudEccoBuyMenu.OpenMenu();
+		break;
+	}
+	case CCustomHud::MetaHookMsgType::MHSV_CMD_ABC_CUSTOM: {
+		CCustomHud::ABCCustomMsg type = static_cast<CCustomHud::ABCCustomMsg>(READ_BYTE());
+		switch(type) {
+			case CCustomHud::ABCCustomMsg::POPNUMBER:{
+				CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
+				int iValue = READ_LONG();
+				Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
+				cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+				if (!local)
+					return 0;
+				//视角角度
+				CVector vecView;
+				gEngfuncs.GetViewAngles(vecView);
+				mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
+				//计算我和目标的相对偏移
+				CVector vecLength;
+				mathlib::VectorSubtract(vecOrigin, local->curstate.origin, vecLength);
+				vecLength = vecLength.Normalize();
+				float angledotResult = mathlib::DotProduct(vecLength, vecView);
+				//cos 60
+				if (angledotResult > 0.5) {
+					CVector vecHUD;
+					VEC_WorldToScreen(vecOrigin, vecHUD);
+					g_pViewPort->AddPopNumber(vecHUD.x, vecHUD.y, pColor, iValue);
+				}
+				return 0;
+			}
+		}
+		break;
+	}
+	default:break;
+	}
+	return 0;
+}
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
@@ -261,6 +321,7 @@ void CCustomHud::HUD_Init(void){
 	m_pfnShowMenu = HOOK_MESSAGE(ShowMenu);
 	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
 	m_pfnEndVote = HOOK_MESSAGE(EndVote);
+	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);

@@ -23,12 +23,6 @@ public:
 	void SlotCallBack(int slot);
 	bool IsOpen();
 
-	enum MetaHookMsgType {
-		MHSV_CMD_QUERY_PLUGIN = 1,
-		MHSV_CMD_QUERY_CVAR,
-		MHSV_CMD_ECCO_INFO = 7,
-		MHSV_CMD_ECCO_MENU = 8
-	};
 	enum EccoRenderMode {
 		INVALID = -4,
 		NONE = -3,

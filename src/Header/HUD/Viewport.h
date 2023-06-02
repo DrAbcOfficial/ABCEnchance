@@ -60,6 +60,7 @@ public:
 	void StartVote(char* szContent, char* szYes, char* szNo, int iVoteType);
 	void EndVote();
 
+	void AddPopNumber(int x, int y, Color& pColor, int value);
 	long m_iTimeEnd = 0;
 private:
 	std::vector<IViewportPanel*> m_Panels;
