@@ -128,7 +128,7 @@ bool CViewport::KeyInput(int down, int keynum, const char* pszCurrentBinding){
 				}
 			}
 		}
-		m_pVotePanel->KeyCodeTyped(keynum);
+		return m_pVotePanel->KeyCodeTyped(keynum);
 	}
 	return true;
 }

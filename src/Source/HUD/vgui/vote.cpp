@@ -84,22 +84,23 @@ vgui::VPANEL CVotePanel::GetVPanel(){
 void CVotePanel::SetParent(vgui::VPANEL parent){
 	BaseClass::SetParent(parent);
 }
-void CVotePanel::KeyCodeTyped(int code){
+bool CVotePanel::KeyCodeTyped(int code){
 	if (IsVisible()) {
 		switch (code){
 			case K_F1: {
 				ServerCmd("voteyes");
 				ShowPanel(false);
-				break;
+				return false;
 			}
 			case K_F2: {
 				ServerCmd("voteno");
 				ShowPanel(false);
-				break;
+				return false;
 			}
 			default:break;
 		}
 	}
+	return true;
 }
 void CVotePanel::StartVote(char* szContent, char* szYes, char* szNo, int iVoteType){
 	auto VotePattern = [&](std::string & content, std::string & szpattern, std::string & localtoken) {
