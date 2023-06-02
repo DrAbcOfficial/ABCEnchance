@@ -228,12 +228,12 @@ void __UserCmd_PrevWeapon(void) {
 }
 void __UserCmd_OpenScoreboard(void) {
 	gCustomHud.m_bInScore = true;
-	if(g_pViewPort)
+	if (g_pViewPort && !g_pViewPort->GetInterMission())
 		g_pViewPort->ShowScoreBoard();
 }
 void __UserCmd_CloseScoreboard(void) {
 	gCustomHud.m_bInScore = false;
-	if(g_pViewPort)
+	if(g_pViewPort && !g_pViewPort->GetInterMission())
 		g_pViewPort->HideScoreBoard();
 }
 void __UserCmd_Attack1(void) {

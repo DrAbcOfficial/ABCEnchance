@@ -94,6 +94,7 @@ void CViewport::Reset() {
 	for (IViewportPanel* pPanel : m_Panels)
 		pPanel->Reset();
 	GetThisPlayerInfo()->ResetAll();
+	m_iInterMission = 0;
 }
 
 void CViewport::Init(void)
@@ -131,6 +132,16 @@ bool CViewport::KeyInput(int down, int keynum, const char* pszCurrentBinding){
 	}
 	return true;
 }
+
+void CViewport::SetInterMission(int intermission) {
+	if(intermission != m_iInterMission)
+		m_pScorePanel->ShowPanel(intermission > 0);
+	m_iInterMission = intermission;
+}
+int CViewport::GetInterMission() {
+	return m_iInterMission;
+}
+
 bool CViewport::IsScoreBoardVisible()
 {
 	return m_pScorePanel->IsVisible();

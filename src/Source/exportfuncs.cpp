@@ -204,6 +204,11 @@ int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1){
 		return 0;
 	return gHookFuncs.R_CrossHair_ReDraw(pthis, dummy, param_1);
 }
+void __fastcall TFV_ShowScoreBoard(void* pthis) {
+	if (gCVars.pDynamicHUD->value > 0)
+		return;
+	gHookFuncs.TFV_ShowScoreBoard(pthis);
+}
 void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
 	mathlib::VectorCopy(punchangle1, gCustomHud.m_vecClientEVPunch);
@@ -452,6 +457,8 @@ void FillAddress(){
 		Fill_Sig(R_EVVECTORSCALE_SIG, g_dwClientBase, g_dwClientSize, EVVectorScale);
 #define R_CROSSHAIR_REDRAW_SIG "\x8B\x51\x14\x85\xD2\x0F\x84\x8B\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\xF3\x0F\x2C\x40\x0C\x85\xC0\x7E\x2A\x83\x3D\x2A\x2A\x2A\x2A\x00\x53\x56\x57\x74\x2A\x80\x3D\x2A\x2A\x2A\x2A\x00\x75\x2A\xF3\x0F\x2C\x79\x34\xF3\x0F\x2C\x59\x38\xEB\x2A"
 		Fill_Sig(R_CROSSHAIR_REDRAW_SIG, g_dwClientBase, g_dwClientSize, R_CrossHair_ReDraw);
+#define TFV_SHOWSCOREBOARD_SIG "\x56\x8B\xF1\x8B\x8E\x2C\x10\x00\x00\x85\xC9\x74\x0D\xE8\xDE\xC3\xFF\xFF\x8B\xCE\x5E\xE9\x06\xF9\xFF\xFF\x5E\xC3\xCC\xCC\xCC\xCC"
+		Fill_Sig(TFV_SHOWSCOREBOARD_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowScoreBoard);
 		DWORD addr;
 #define R_SETPUNCHANGLE_SIG "\x83\xC4\x04\xD9\x1C\x24\x6A\x00\xE8\x93\x56\x05\x00\x83\xC4\x08\xF3\x0F\x10\x74\x24\x34\xF3\x0F\x10\xAC\x24\x98\x00\x00\x00\xF3\x0F\x10\x25\x2A\x2A\x2A\x2A\xF3\x0F\x58\xEE\xF3\x0F\x10\x44\x24\x74"
 		{
@@ -498,6 +505,7 @@ void InstallEngineHook() {
 void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);
 	Install_InlineHook(R_CrossHair_ReDraw);
+	Install_InlineHook(TFV_ShowScoreBoard);
 }
 void UninstallEngineHook() {
 	for (hook_t* h : aryEngineHook) {
@@ -589,6 +597,7 @@ void HUD_Frame(double frametime) {
 }
 int HUD_Redraw(float time, int intermission){
 	gCustomHud.HUD_Draw(time);
+	g_pViewPort->SetInterMission(intermission);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
 void HUD_Reset(void){
