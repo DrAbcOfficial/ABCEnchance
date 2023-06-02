@@ -51,6 +51,11 @@ public:
 	CScorePanel* GetScoreBoard();
 	CVotePanel* GetVotePanel();
 	Color GetPlayerColor(int index);
+	bool IsPlayerTileEnable();
+
+	bool IsVoteEnable();
+	void StartVote(char* szContent, char* szYes, char* szNo, int iVoteType);
+	void EndVote();
 
 	long m_iTimeEnd = 0;
 private:
@@ -58,6 +63,9 @@ private:
 	CScorePanel* m_pScorePanel = nullptr;
 	CVotePanel* m_pVotePanel = nullptr;
 	CPlayerInfoPanel* m_pPlayerInfoPanels[32];
+
+	cvar_t* m_pPlayerTitle = nullptr;
+
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 };

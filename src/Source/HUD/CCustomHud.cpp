@@ -12,7 +12,7 @@
 #include "hud.h"
 #include "weapon.h"
 #include "pm_defs.h"
-#include "parsemsg.h"
+#include "Utility/parsemsg.h"
 #include "mymathlib.h"
 #include "exportfuncs.h"
 #include "keydefs.h"
@@ -31,7 +31,6 @@
 #include "radar.h"
 #include "deathmsg.h"
 #include "crosshair.h"
-#include "vote.h"
 #include "eccomoney.h"
 #include "efxhud.h"
 #include "itemhighlight.h"
@@ -58,6 +57,8 @@ pfnUserMsgHook m_pfnServerName;
 pfnUserMsgHook m_pfnNextMap;
 pfnUserMsgHook m_pfnTimeEnd;
 pfnUserMsgHook m_pfnShowMenu;
+pfnUserMsgHook m_pfnVoteMenu;
+pfnUserMsgHook m_pfnEndVote;
 
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
@@ -125,6 +126,25 @@ int __MsgFunc_ShowMenu(const char* pszName, int iSize, void* pbuf){
 	gCustomHud.m_bTextMenuOpening = true;
 	//Other thing? i dont care
 	return m_pfnShowMenu(pszName, iSize, pbuf);
+}
+int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf) {
+	if (!g_pViewPort->IsVoteEnable())
+		return m_pfnVoteMenu(pszName, iSize, pbuf);
+
+	BEGIN_READ(pbuf, iSize);
+	int iVoteType = READ_BYTE();
+	char szContent[2048];
+	char szYes[2048];
+	char szNo[2048];
+	Q_strcpy(szContent, READ_STRING());
+	Q_strcpy(szYes, READ_STRING());
+	Q_strcpy(szNo, READ_STRING());
+	g_pViewPort->StartVote(szContent, szYes, szNo, iVoteType);
+	return 1;
+}
+int __MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf) {
+	g_pViewPort->EndVote();
+	return m_pfnEndVote(pszName, iSize, pbuf);
 }
 
 void(*UserCmd_Slot1)(void);
@@ -239,6 +259,8 @@ void CCustomHud::HUD_Init(void){
 	m_pfnNextMap = HOOK_MESSAGE(NextMap);
 	m_pfnTimeEnd = HOOK_MESSAGE(TimeEnd);
 	m_pfnShowMenu = HOOK_MESSAGE(ShowMenu);
+	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
+	m_pfnEndVote = HOOK_MESSAGE(EndVote);
 
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
@@ -264,7 +286,6 @@ void CCustomHud::HUD_Init(void){
 	m_HudRadar.Init();
 	m_HudDeathMsg.Init();
 	m_HudCrosshair.Init();
-	m_HudVote.Init();
 	m_HudEccoMoney.Init();
 	m_HudEfx.Init();
 	m_HudItemHighLight.Init();
@@ -314,7 +335,6 @@ void CCustomHud::HUD_VidInit(void){
 	m_HudArmorHealth.VidInit();
 	m_HudCustomAmmo.VidInit();
 	m_HudRadar.VidInit();
-	m_HudVote.VidInit();
 	m_HudEccoBuyMenu.VidInit();
 
 	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
@@ -324,7 +344,6 @@ void CCustomHud::HUD_Draw(float flTime){
 	m_HudCrosshair.Draw(flTime);
 	m_HudDeathMsg.Draw(flTime);
 	m_HudRadar.Draw(flTime);
-	m_HudVote.Draw(flTime);
 	m_HudItemHighLight.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
 	m_HudGrenadeIndicator.Draw(flTime);
@@ -347,7 +366,6 @@ void CCustomHud::HUD_Reset(void){
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
 	m_HudDeathMsg.Reset();
-	m_HudVote.Reset();
 	m_HudEccoMoney.Reset();
 	m_HudEfx.Reset();
 	m_HudItemHighLight.Reset();
@@ -429,7 +447,6 @@ void CCustomHud::IN_MouseEvent(int mstate){
 }
 int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	int result = 1;
-	result &= m_HudVote.HUD_KeyEvent(eventcode, keynum, pszCurrentBinding);
 	if(g_pViewPort)
 		g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding);
 	if (!IsHudEnable())

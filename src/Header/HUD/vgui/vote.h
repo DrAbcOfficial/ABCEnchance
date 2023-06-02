@@ -1,5 +1,5 @@
-#ifndef CPLAYERINFOPANEL_H
-#define CPLAYERINFOPANEL_H
+#ifndef CVOTEPANEL_H
+#define CVOTEPANEL_H
 #include <string>
 
 #include <vgui_controls/Frame.h>
@@ -8,39 +8,47 @@
 namespace vgui {
 	class Label;
 	class ImagePanel;
-	enum KeyCode;
 }
 
-class CVotePanel : public vgui::Frame, public IViewportPanel
+class CVotePanel : public vgui::EditablePanel, public IViewportPanel
 {
 public:
-	DECLARE_CLASS_SIMPLE(CVotePanel, vgui::Frame);
+	DECLARE_CLASS_SIMPLE(CVotePanel, vgui::EditablePanel);
 
 	CVotePanel();
+	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	virtual void Reset() override;
 	virtual void ShowPanel(bool state) override;
 	virtual bool IsVisible() override;
-	virtual void OnKeyCodeTyped(vgui::KeyCode code) override;
+	virtual vgui::VPANEL GetVPanel() override;
+	virtual void SetParent(vgui::VPANEL parent) override;
 
-	static int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf);
-	static int __MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf);
-	void StartVote(char* szContent, char* szYes, char* szNo, float flKeepTime);
+	void StartVote(char* szContent, char* szYes, char* szNo, int iVoteType);
 	void EndVote();
-
-	void Think();
 	bool IsVoteEnable();
+	void KeyCodeTyped(int code);
 private:
+	vgui::Label* m_pTitleLable = nullptr;
+	vgui::Panel* m_pContentPanel = nullptr;
 	vgui::Label* m_pContentLable = nullptr;
 	vgui::Label* m_pYesLable = nullptr;
 	vgui::Label* m_pNoLable = nullptr;
 	vgui::ImagePanel* m_pYesIconImagePanel = nullptr;
 	vgui::ImagePanel* m_pNoImagePanel = nullptr;
 
+	enum VoteType {
+		NONE = 0,
+		KILL = 1,
+		KICK = 2,
+		BAN = 3,
+		MAP = 4,
+		SURVIVAL = 5,
+		DONKNOW = 6,
+		CUSTOM = 7
+	};
+
 	cvar_t* m_pHudVote = nullptr;
-
-	float m_flKeepTime;
 };
-
 #endif

@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <metahook.h>
 
 #include <vgui/IImage.h>
@@ -10,14 +11,14 @@
 #include "local.h"
 #include "vguilocal.h"
 
-#include "KeyCode.h"
+#include <keydefs.h>
 #include "vgui_controls/ImagePanel.h"
 #include "vote.h"
 #include "Viewport.h"
 
 #include "plugins.h"
-#include <parsemsg.h>
 #include <regex>
+
 
 #define VIEWPORT_VOTE_NAME "VotePanel"
 #define VOTE_TITLE_LOCALIZE_TOKEN "#Vote_DefaultMessage"
@@ -28,29 +29,8 @@
 #define VOTE_BAN_LOCALIZE_TOKEN "Vote_VoteBan"
 #define VOTE_MAP_LOCALIZE_TOKEN "Vote_VoteMap"
 
-pfnUserMsgHook m_pfnVoteMenu;
-pfnUserMsgHook m_pfnEndVote;
-
-int CVotePanel::__MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf) {
-	if(!g_pViewPort->GetVotePanel()->IsVoteEnable())
-		return m_pfnVoteMenu(pszName, iSize, pbuf);
-
-	BEGIN_READ(pbuf, iSize);
-	float flKeepTime = static_cast<float>(READ_BYTE());
-	g_pViewPort->GetVotePanel()->StartVote(READ_STRING(), READ_STRING(), READ_STRING(), flKeepTime);
-	return 1;
-}
-int CVotePanel::__MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf){
-	g_pViewPort->GetVotePanel()->EndVote();
-	return m_pfnEndVote(pszName, iSize, pbuf);
-}
-
 CVotePanel::CVotePanel()
 	: BaseClass(nullptr, VIEWPORT_VOTE_NAME){
-	SetTitle(VOTE_TITLE_LOCALIZE_TOKEN, true);
-	SetCloseButtonVisible(false);
-	SetMoveable(false);
-	SetSizeable(false);
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
@@ -58,6 +38,8 @@ CVotePanel::CVotePanel()
 	SetScheme("VoteScheme");
 
 	// Header labels
+	m_pContentPanel = new vgui::Panel(this, "VoteContentPanel");
+	m_pTitleLable = new vgui::Label(this, "VoteTitle", VOTE_TITLE_LOCALIZE_TOKEN);
 	m_pContentLable = new vgui::Label(this, "VoteContent", "(None)");
 	m_pYesLable = new vgui::Label(this, "VoteYesText", VOTE_YES_LOCALIZE_TOKEN);
 	m_pNoLable = new vgui::Label(this, "VoteNoText", VOTE_NO_LOCALIZE_TOKEN);
@@ -69,9 +51,6 @@ CVotePanel::CVotePanel()
 	SetVisible(false);
 
 	m_pHudVote = CREATE_CVAR("cl_hud_vote", "1", FCVAR_VALUE, nullptr);
-
-	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
-	m_pfnEndVote = HOOK_MESSAGE(EndVote);
 }
 const char* CVotePanel::GetName(){
 	return VIEWPORT_VOTE_NAME;
@@ -79,87 +58,110 @@ const char* CVotePanel::GetName(){
 void CVotePanel::Reset(){
 	if (IsVisible())
 		ShowPanel(false);
-	m_flKeepTime = 0;
+}
+void CVotePanel::ApplySchemeSettings(vgui::IScheme* pScheme){
+	BaseClass::ApplySchemeSettings(pScheme);
+	SetBgColor(GetSchemeColor("Vote.BackGoundColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pContentPanel->SetBgColor(GetSchemeColor("Vote.ContentBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pTitleLable->SetBgColor(GetSchemeColor("Vote.TitleBgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme));
+	m_pTitleLable->SetFgColor(GetSchemeColor("Vote.TitleFgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
+	m_pContentLable->SetFgColor(GetSchemeColor("Vote.ContentFgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
+	m_pYesLable->SetFgColor(GetSchemeColor("Vote.YesFgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
+	m_pNoLable->SetFgColor(GetSchemeColor("Vote.NoFgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
 }
 void CVotePanel::ShowPanel(bool state){
 	if (state == IsVisible())
 		return;
-
-	if (state)
-		Activate();
-	else
-		m_flKeepTime = 0;
+	SetKeyBoardInputEnabled(state);
 	SetVisible(state);
 }
 bool CVotePanel::IsVisible(){
 	return BaseClass::IsVisible();
 }
-void CVotePanel::OnKeyCodeTyped(vgui::KeyCode code){
+vgui::VPANEL CVotePanel::GetVPanel(){
+	return BaseClass::GetVPanel();
+}
+void CVotePanel::SetParent(vgui::VPANEL parent){
+	BaseClass::SetParent(parent);
+}
+void CVotePanel::KeyCodeTyped(int code){
 	if (IsVisible()) {
 		switch (code){
-			case vgui::KEY_F1: {
+			case K_F1: {
 				ServerCmd("voteyes");
+				ShowPanel(false);
 				break;
 			}
-			case vgui::KEY_F2: {
+			case K_F2: {
 				ServerCmd("voteno");
+				ShowPanel(false);
 				break;
 			}
 			default:break;
 		}
 	}
 }
-void CVotePanel::StartVote(char* szContent, char* szYes, char* szNo, float flKeepTime){
-	auto VotePatternCheck = [&](std::string& content, const char* szpattern, const char* localtoken) {
+void CVotePanel::StartVote(char* szContent, char* szYes, char* szNo, int iVoteType){
+	auto VotePattern = [&](std::string & content, std::string & szpattern, std::string & localtoken) {
 		std::regex pattern(szpattern);
 		std::smatch result;
 		if (std::regex_match(content, result, pattern) && result.size() >= 2) {
 			std::string playername = result[1];
 			wchar_t wPlayerName[32] = { 0 };
-			wchar_t szContent[256] = { 0 };
+			wchar_t wszContent[1024] = { 0 };
 			vgui::localize()->ConvertANSIToUnicode(playername.c_str(), wPlayerName, sizeof(wPlayerName));
-			vgui::localize()->ConstructString(szContent, sizeof(szContent), vgui::localize()->Find(localtoken), 1, wPlayerName);
+			vgui::localize()->ConstructString(wszContent, sizeof(wszContent), vgui::localize()->Find(localtoken.c_str()), 1, wPlayerName);
+			m_pContentLable->SetText(wszContent);
+		}
+	};
+	std::string strContent = szContent;
+	std::string szPatten;
+	std::string szToken;
+	switch (iVoteType){
+		case KILL: {
+			szPatten = "Would you like to kill \"(.*)\"\\?";
+			szToken = VOTE_KILL_LOCALIZE_TOKEN;
+			break;
+		}
+		case KICK: {
+			szPatten = "Would you like to kick \"(.*)\" from the server\\?";
+			szToken = VOTE_KICK_LOCALIZE_TOKEN;
+			break;
+		}
+		case BAN: {
+			szPatten = "Do you wish to ban \"(.*)\" from the server\\?";
+			szToken = VOTE_BAN_LOCALIZE_TOKEN;
+			break;
+		}
+		case MAP: {
+			szPatten = "Would you like to change the map to \"(.*)\"\\?";
+			szToken = VOTE_MAP_LOCALIZE_TOKEN;
+			break;
+		}
+		case SURVIVAL:
+		case DONKNOW:{
 			m_pContentLable->SetText(szContent);
 			m_pYesLable->SetText(VOTE_YES_LOCALIZE_TOKEN);
 			m_pNoLable->SetText(VOTE_NO_LOCALIZE_TOKEN);
-			return true;
+			break;
 		}
-		return false;
-	};
-	const char* patterns[] = {
-		"Would you like to kill \"(.*)\"\\?",
-		"Would you like to kick \"(.*)\" from the server\\?",
-		"Do you wish to ban \"(.*)\" from the server\\?",
-		"Would you like to change the map to \"(.*)\"\\?"
-	};
-	const char* tokens[] = {
-		VOTE_KILL_LOCALIZE_TOKEN,
-		VOTE_KICK_LOCALIZE_TOKEN,
-		VOTE_BAN_LOCALIZE_TOKEN,
-		VOTE_MAP_LOCALIZE_TOKEN
-	};
-	m_flKeepTime = gEngfuncs.GetClientTime() + flKeepTime;
-	std::string stdContent = szContent;
-	for (size_t i = 0; i < 4; i++) {
-		if (VotePatternCheck(stdContent, patterns[i], tokens[i])) {
-			SetKeyBoardInputEnabled(true);
-			ShowPanel(true);
-			return;
+		case CUSTOM:
+		default: {
+			m_pContentLable->SetText(szContent);
+			m_pYesLable->SetText(szYes);
+			m_pNoLable->SetText(szNo);
+			break;
 		}
 	}
-	m_pContentLable->SetText(szContent);
-	m_pYesLable->SetText(szYes);
-	m_pNoLable->SetText(szNo);
-	SetKeyBoardInputEnabled(true);
+	if (iVoteType >= KILL && iVoteType <= MAP) {
+		VotePattern(strContent, szPatten, szToken);
+		m_pYesLable->SetText(VOTE_YES_LOCALIZE_TOKEN);
+		m_pNoLable->SetText(VOTE_NO_LOCALIZE_TOKEN);
+	}
 	ShowPanel(true);
 }
 void CVotePanel::EndVote(){
-	SetKeyBoardInputEnabled(false);
 	ShowPanel(false);
-}
-void CVotePanel::Think(){
-	if (IsVisible() && gEngfuncs.GetClientTime() >= m_flKeepTime)
-		EndVote();
 }
 bool CVotePanel::IsVoteEnable(){
 	return m_pHudVote->value > 0;

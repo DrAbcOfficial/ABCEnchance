@@ -41,6 +41,8 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport")
 	SetMouseInputEnabled(false);
 	SetKeyBoardInputEnabled(false);
 	SetProportional(true);
+
+	m_pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, nullptr);
 }
 
 CViewport::~CViewport(void)
@@ -51,6 +53,7 @@ CViewport::~CViewport(void)
 void CViewport::Start(void)
 {
 	AddNewPanel(m_pScorePanel = new CScorePanel());
+	AddNewPanel(m_pVotePanel = new CVotePanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -62,6 +65,7 @@ void CViewport::SetParent(VPANEL vPanel)
 {
 	BaseClass::SetParent(vPanel);
 	m_pScorePanel->SetParent(GetVPanel());
+	m_pVotePanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -123,6 +127,7 @@ bool CViewport::KeyInput(int down, int keynum, const char* pszCurrentBinding){
 				}
 			}
 		}
+		m_pVotePanel->KeyCodeTyped(keynum);
 	}
 	return true;
 }
@@ -146,6 +151,18 @@ char* CViewport::GetServerName(){
 }
 char* CViewport::GetNextMap() {
 	return m_szNextMapName;
+}
+bool CViewport::IsPlayerTileEnable() {
+	return m_pPlayerTitle->value > 0;
+}
+bool CViewport::IsVoteEnable(){
+	return m_pVotePanel->IsVoteEnable();
+}
+void CViewport::StartVote(char* szContent, char* szYes, char* szNo, int iVoteType){
+	m_pVotePanel->StartVote(szContent, szYes, szNo, iVoteType);
+}
+void CViewport::EndVote(){
+	m_pVotePanel->EndVote();
 }
 void CViewport::Paint(void){
 	BaseClass::Paint();

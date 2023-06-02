@@ -40,7 +40,6 @@ private:
 	vgui::ImagePanel* m_pMedikIconImagePanel = nullptr;
 	vgui::ImagePanel* m_pDeadIconImagePanel = nullptr;
 
-	cvar_t* pPlayerTitle;
 	size_t m_iPlayerIndex;
 
 	CPanelAnimationVarAliasType(int, m_iDangerHealth, "danger_health", "30", "proportional_int");
