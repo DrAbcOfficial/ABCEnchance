@@ -24,58 +24,6 @@
 
 #define VIEWPORT_PLAYERBOARD_NAME "PlayerBoardPanel"
 
-namespace {
-	class CBarImage : public vgui::IImage {
-	public:
-		CBarImage(int tex) {
-			m_iTexture = tex;
-		}
-		void SetTexture(int level) {
-			m_iTexture = level;
-		}
-		virtual void Paint() override {
-			if (m_iTexture < 0)
-				return;
-			vgui::surface()->DrawSetTexture(m_iTexture);
-			vgui::surface()->DrawSetColor(m_DrawColor);
-			vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
-				m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
-		}
-		// Get the size the image will actually draw in (usually defaults to the content size)
-		virtual void GetSize(int& wide, int& tall) override {
-			GetContentSize(wide, tall);
-		}
-		// Sets the size of the image
-		virtual void SetSize(int wide, int tall) override {
-			m_iWide = wide;
-			m_iTall = tall;
-		}
-		// Set the position of the image
-		virtual void SetPos(int x, int y) override {
-			m_iX = x;
-			m_iY = y;
-		}
-		virtual void SetOffset(int x, int y) {
-			m_iOffX = x;
-			m_iOffY = y;
-		}
-		// Gets the size of the content
-		virtual void GetContentSize(int& wide, int& tall) override {
-			wide = m_iWide;
-			tall = m_iTall;
-		}
-		// Set the draw color
-		virtual void SetColor(Color col) override {
-			m_DrawColor = col;
-		}
-	private:
-		int m_iTexture = 0;
-		int m_iX = 0, m_iY = 0;
-		int m_iOffX = 0, m_iOffY = 0;
-		int m_iWide = 0, m_iTall = 0;
-		Color m_DrawColor = Color(255, 255, 255, 255);
-	};
-}
 CPlayerInfoPanel::CPlayerInfoPanel()
 	: BaseClass(nullptr, VIEWPORT_PLAYERBOARD_NAME)
 {

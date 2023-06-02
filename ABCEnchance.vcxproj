@@ -210,8 +210,8 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\radar.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\playerboard.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\scoreboard.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\vote.cpp" />
     <ClCompile Include="src\Source\HUD\Viewport.cpp" />
-    <ClCompile Include="src\Source\HUD\vote.cpp" />
     <ClCompile Include="src\Source\HUD\weaponbank.cpp" />
     <ClCompile Include="src\Source\HUD\weaponselect.cpp" />
     <ClCompile Include="src\Source\plugins.cpp" />
@@ -424,8 +424,8 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\radar.h" />
     <ClInclude Include="src\Header\HUD\vgui\playerboard.h" />
     <ClInclude Include="src\Header\HUD\vgui\scoreboard.h" />
+    <ClInclude Include="src\Header\HUD\vgui\vote.h" />
     <ClInclude Include="src\Header\HUD\Viewport.h" />
-    <ClInclude Include="src\Header\HUD\vote.h" />
     <ClInclude Include="src\Header\HUD\weaponbank.h" />
     <ClInclude Include="src\Header\HUD\weaponselect.h" />
     <ClInclude Include="src\Header\IEngineSurface.h" />

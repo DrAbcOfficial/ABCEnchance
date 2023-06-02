@@ -17,6 +17,7 @@
 
 class CPlayerInfoPanel;
 class CScorePanel;
+class CVotePanel;
 class ISchemel;
 
 class CViewport : public vgui::Panel
@@ -48,12 +49,14 @@ public:
 	long GetTimeEnd();
 	char* GetServerName();
 	CScorePanel* GetScoreBoard();
+	CVotePanel* GetVotePanel();
 	Color GetPlayerColor(int index);
 
 	long m_iTimeEnd = 0;
 private:
 	std::vector<IViewportPanel*> m_Panels;
 	CScorePanel* m_pScorePanel = nullptr;
+	CVotePanel* m_pVotePanel = nullptr;
 	CPlayerInfoPanel* m_pPlayerInfoPanels[32];
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
