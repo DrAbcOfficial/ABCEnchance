@@ -434,16 +434,16 @@ void CCustomHud::IN_MouseEvent(int mstate){
 			//g_pViewPort->OnMouseReleased(enumMouse);
 		}
 	};
-	//×ó¼ü¼ì²â
-	MouseTest(mstate, 1 << 0, vgui::MouseCode::MOUSE_LEFT);
-	//ÓÒ¼ü¼ì²â
-	MouseTest(mstate, 1 << 1, vgui::MouseCode::MOUSE_RIGHT);
-	//ÖÐ¼ü¼ì²â
-	MouseTest(mstate, 1 << 2, vgui::MouseCode::MOUSE_MIDDLE);
-	//4¼ü¼ì²â
-	MouseTest(mstate, 1 << 3, vgui::MouseCode::MOUSE_4);
-	//5¼ü¼ì²â
-	MouseTest(mstate, 1 << 4, vgui::MouseCode::MOUSE_5);
+	/**	
+	* ×ó¼ü¼ì²â 0
+	* ÓÒ¼ü¼ì²â 1
+	* ÖÐ¼ü¼ì²â 2
+	* 4¼ü¼ì²â  3
+	* 5¼ü¼ì²â  4 
+	**/
+	for (size_t i = 0; i < 5; i++) {
+		MouseTest(mstate, 1 << i, static_cast<vgui::MouseCode>(i));
+	}
 }
 int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	int result = 1;
