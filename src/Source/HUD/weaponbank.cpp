@@ -19,13 +19,16 @@
 #include "weaponbank.h"
 
 WEAPON* CWeaponData::operator [](size_t iId) {
-	return this->m_dicWeaponIds[iId];
+	return this->m_dicWeaponIds.find(iId) != this->m_dicWeaponIds.end() ? this->m_dicWeaponIds[iId] : nullptr;
 }
 WEAPON* CWeaponData::operator [](std::pair<size_t, size_t> pair) {
-	return this->m_dicWeaponSlots[pair.first][pair.second];
+	auto iter = this->m_dicWeaponSlots.find(pair.first);
+	if (iter != this->m_dicWeaponSlots.end() && iter->second.find(pair.second) != iter->second.end())
+		return iter->second[pair.second];
+	return nullptr;
 }
 WEAPON* CWeaponData::operator [](std::string szName) {
-	return this->m_dicWeaponNames[szName];
+	return this->m_dicWeaponNames.find(szName) != this->m_dicWeaponNames.end() ? this->m_dicWeaponNames[szName] : nullptr;
 }
 //删除所有链接，并且清理指向的对象内存
 void CWeaponData::Clear() {
@@ -121,9 +124,9 @@ void WeaponsResource::Init(void) {
 //重置武器仓库
 void WeaponsResource::Reset(void) {
 	this->m_iNowSlot = INVALID_WEAPON_SLOT;
-	//下面那个兄弟已经完全清理了，所以只需要解除链接即可
+	this->m_pWeaponData.Clear();
+	//上面那个兄弟已经完全清理了，所以只需要解除链接即可
 	this->m_pOwnedWeaponData.RemoveAll();
-	this->m_pWeaponData.Clear();	
 	this->m_dicAmmos.clear();
 	this->m_iNowSelected = nullptr;
 }
