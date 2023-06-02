@@ -47,6 +47,7 @@ typedef struct{
 
 	float*		(*GetClientColor)			(int clientIndex);
 	int(__fastcall* R_CrossHair_ReDraw)	(void* pthis, int dummy, int param_1);
+	void(__fastcall* TFV_ShowScoreBoard)	(void* pthis);
 	void		(*EVVectorScale)			(float* pucnangle1, float scale, float* pucnangle2);
 	void		(*R_NewMap)					(void);
 	int			(*CL_IsDevOverview)			(void);

@@ -43,6 +43,9 @@ public:
 	void HideClientUI(void);
 	bool KeyInput(int down, int keynum, const char* pszCurrentBinding);
 
+	void SetInterMission(int intermission);
+	int GetInterMission();
+
 	bool IsScoreBoardVisible();
 	void ShowScoreBoard();
 	void HideScoreBoard();
@@ -65,6 +68,8 @@ private:
 	CPlayerInfoPanel* m_pPlayerInfoPanels[32];
 
 	cvar_t* m_pPlayerTitle = nullptr;
+
+	int m_iInterMission;
 
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
