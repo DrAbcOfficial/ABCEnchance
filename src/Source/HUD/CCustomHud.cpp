@@ -448,7 +448,7 @@ void CCustomHud::IN_MouseEvent(int mstate){
 int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	int result = 1;
 	if(g_pViewPort)
-		g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding);
+		result = g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding);
 	if (!IsHudEnable())
 		return 1;
 	return result;

@@ -28,7 +28,7 @@ public:
 	void StartVote(char* szContent, char* szYes, char* szNo, int iVoteType);
 	void EndVote();
 	bool IsVoteEnable();
-	void KeyCodeTyped(int code);
+	bool KeyCodeTyped(int code);
 private:
 	vgui::Label* m_pTitleLable = nullptr;
 	vgui::Panel* m_pContentPanel = nullptr;
