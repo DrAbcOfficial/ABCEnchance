@@ -45,8 +45,6 @@ CPlayerInfoPanel::CPlayerInfoPanel()
 	m_pMedikIconImagePanel = new vgui::ImagePanel(this, "MedikIconImage");
 	m_pDeadIconImagePanel = new vgui::ImagePanel(this, "DeadIconImage");
 
-	pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, nullptr);
-
 	LoadControlSettings(VGUI2_ROOT_DIR "PlayerBoardPanel.res");
 	SetVisible(false);
 }
@@ -63,7 +61,7 @@ void CPlayerInfoPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 }
 
 void CPlayerInfoPanel::Think(){
-	if (pPlayerTitle->value <= 0) {
+	if (!g_pViewPort->IsPlayerTileEnable()) {
 		SetVisible(false);
 		return;
 	}
