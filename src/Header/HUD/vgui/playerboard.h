@@ -32,21 +32,6 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 
 private:
-
-	enum class SizeMode
-	{
-		Auto = 0,
-		Normal = 1,
-		Compact = 2,
-	};
-
-	struct PlayerData
-	{
-		std::string szName = false;
-		int nHealth = 0;
-		int nArmor = 0;
-	};
-
 	vgui::Label* m_pNameLable = nullptr;
 	vgui::ImagePanel* m_pBackgroundImagePanel = nullptr;
 	vgui::ImagePanel* m_pHealthImagePanel = nullptr;
@@ -55,13 +40,11 @@ private:
 	vgui::ImagePanel* m_pMedikIconImagePanel = nullptr;
 	vgui::ImagePanel* m_pDeadIconImagePanel = nullptr;
 
-	Color m_NameFgColor = Color(0, 0, 0, 0);
-
 	cvar_t* pPlayerTitle;
+	size_t m_iPlayerIndex;
+
 	CPanelAnimationVarAliasType(int, m_iDangerHealth, "danger_health", "30", "proportional_int");
 
-	size_t m_iPlayerIndex;
-	
 	/**
 	 * Updates client's row in the scoreboard.
 	 */

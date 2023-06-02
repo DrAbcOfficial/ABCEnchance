@@ -17,6 +17,8 @@
 
 #include "playerboard.h"
 #include "scoreboard.h"
+#include "vote.h"
+
 #include "Viewport.h"
 #include "exportfuncs.h"
 #include "keydefs.h"
@@ -151,6 +153,10 @@ void CViewport::Paint(void){
 
 CScorePanel* CViewport::GetScoreBoard() {
 	return m_pScorePanel;
+}
+
+CVotePanel* CViewport::GetVotePanel(){
+	return m_pVotePanel;
 }
 
 Color CViewport::GetPlayerColor(int index){
