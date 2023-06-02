@@ -31,7 +31,7 @@
  - [x] ~~After `CBasePlayer::RemovePlayerItem`, the menu will display the removed items incorrectly because there is no corresponding networkmessage to synchronize the message~~
  - [x] ~~Sometimes will empty the weapon menu incorrectly after player death~~
  - [x] ~~Dynamic indicator will point to wrong direction~~
- - [ ] The number of bullets in the second weapon will not be displayed correctly in Akimbo uzi. it is seem not regular `iAmmoType2`?
+ - [x] ~~The number of bullets in the second weapon will not be displayed correctly in Akimbo uzi. it is seem not regular `iAmmoType2`?~~
  - [x] ~~Weapon postion conflict fix will not work~~
  - [x] ~~when bind `+annularmenu` command to `mouse4` or `mouse5`, `-annularmenu` command will not execute automatically.~~
 
