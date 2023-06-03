@@ -74,6 +74,8 @@ public:
 	WEAPON* GetLastPos(size_t iSlot);
 	void SyncWeapon(const weapon_data_t* wd);
 
+	bool HasUsableWeaponSize();
+
 	void SetAmmo(size_t iId, int iCount);
 	int CountAmmo(size_t iId);
 	bool HasAmmo(WEAPON* p);

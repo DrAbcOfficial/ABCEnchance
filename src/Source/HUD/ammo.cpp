@@ -280,6 +280,10 @@ int CHudCustomAmmo::Draw(float flTime){
 	gHR.DrawAmmoHistory(flTime);
 	if (!m_pWeapon)
 		return 0;
+	if (!gWR.HasUsableWeaponSize()) {
+		m_pWeapon = nullptr;
+		return 0;
+	}
 	WEAPON* pw = m_pWeapon;
 	if (pw->iId <= 0)
 		return 0;
@@ -351,7 +355,7 @@ int CHudCustomAmmo::Draw(float flTime){
 
 			Ammo1BigTextColor.GetColor(r, g, b, a);
 			//ITEM_FLAG_DUALWIELD
-			if(pw->iFlags & 32 && pw->iClip2 >= 0)
+			if(pw->iFlags & 32 && pw->iClip2 >= 0 && pw->iClip2 != 255)
 				wsprintfW(buf, L"%dx%d/", pw->iClip, pw->iClip2);
 			else
 				wsprintfW(buf, L"%d/", pw->iClip);
