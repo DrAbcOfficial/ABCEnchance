@@ -796,17 +796,9 @@ void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
 	//Auto jump from openag
 	static bool s_jump_was_down_last_frame = false;
 	if (gCVars.pCVarAutoBunnyJump->value != 0.0f) {
-		cl_entity_t* player = gEngfuncs.GetLocalPlayer();
 		bool should_release_jump = (!g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking);
-		/*
-		 * Spam pressing and releasing jump if we're stuck in a spot where jumping still results in
-		 * being onground in the end of the frame. Without this check, +jump would remain held and
-		 * when the player exits this spot they would have to release and press the jump button to
-		 * start jumping again. This also helps with exiting water or ladder right onto the ground.
-		 */
 		if (s_jump_was_down_last_frame && g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking)
 			should_release_jump = true;
-
 		if (should_release_jump)
 			cmd->buttons &= ~IN_JUMP;
 	}
