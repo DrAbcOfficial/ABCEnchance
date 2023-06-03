@@ -5,7 +5,7 @@
 		"ControlName"		"CPopNumberPanel"
 		"fieldName"		"PopNumberPanel"
 		"wide"		"64"
-		"tall"		"12"
+		"tall"		"16"
 		"visible"		"1"
 		"enabled"		"1"
 	}
@@ -14,11 +14,11 @@
 		"ControlName"		"Label"
 		"fieldName"		"PopNumber"
 		"wide"		"64"
-		"tall"		"12"
+		"tall"		"16"
 		"visible"		"1"
 		"enabled"		"1"
 		"textAlignment"		"center"
-		"brighttext"		"0"
-		"font"		"DefaultVerySmall"
+		"brighttext"		"1"
+		"font"		"CompactaBold"
 	}
 }
