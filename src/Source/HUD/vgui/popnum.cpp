@@ -10,6 +10,9 @@
 
 #include "local.h"
 #include "vguilocal.h"
+#include <mymathlib.h>
+#include <CVector.h>
+#include "triangleapi.h"
 
 #include "popnum.h"
 #include "Viewport.h"
@@ -26,7 +29,7 @@
 #define POPNUMBER_B_TOKEN "PopNumber_B"
 #define POPNUMBER_B 100000000
 
-CPopNumberPanel::CPopNumberPanel(int x, int y, Color& pColor, int value)
+CPopNumberPanel::CPopNumberPanel(vec3_t vecOrigin, Color& pColor, int value)
 	: BaseClass(nullptr, VIEWPORT_POPNUMBER_NAME){
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
@@ -55,14 +58,15 @@ CPopNumberPanel::CPopNumberPanel(int x, int y, Color& pColor, int value)
 	wchar_t wszContent[32] = { 0 };
 	vgui::localize()->ConstructString(wszContent, sizeof(wszContent), vgui::localize()->Find(token.c_str()), 1, std::to_wstring(m_iValue).c_str());
 	m_pNumberLable->SetText(wszContent);
+	m_vecOrigin = new CVector(vecOrigin);
+	m_flCreateTime = gEngfuncs.GetClientTime();
 
 	LoadControlSettings(VGUI2_ROOT_DIR "PopNumber.res");
-
-	m_iOriginalY = y;
-	m_iOriginalTall = GetTall() / 2;
-	SetPos(x - GetWide() / 2, y - m_iOriginalTall);
 	SetVisible(false);
-	m_flCreateTime = gEngfuncs.GetClientTime();
+}
+CPopNumberPanel::~CPopNumberPanel(){
+	delete m_vecOrigin;
+	m_pNumberLable->DeletePanel();
 }
 const char* CPopNumberPanel::GetName(){
 	return VIEWPORT_POPNUMBER_NAME;
@@ -94,10 +98,25 @@ void CPopNumberPanel::SetParent(vgui::VPANEL parent){
 }
 
 void CPopNumberPanel::OnThink(){
-	float ratio = 1 + sin(gEngfuncs.GetClientTime() - m_flCreateTime);
-	int x, y;
-	GetPos(x, y);
-	SetPos(x, m_iOriginalY + m_iOriginalTall * ratio);
+	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+	if (!local)
+		return;
+	//视角角度
+	CVector vecView;
+	gEngfuncs.GetViewAngles(vecView);
+	mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
+	//计算我和目标的相对偏移
+	CVector vecLength;
+	mathlib::VectorSubtract(*m_vecOrigin, local->curstate.origin, vecLength);
+	vecLength = vecLength.Normalize();
+	float angledotResult = mathlib::DotProduct(vecLength, vecView);
+	//cos 60
+	if (angledotResult > 0.5) {
+		float ratio = sin(gEngfuncs.GetClientTime() - m_flCreateTime);
+		CVector vecHUD;
+		VEC_WorldToScreen(*m_vecOrigin, vecHUD);
+		SetPos(vecHUD.x - GetWide() / 2, vecHUD.y - (GetTall() / 2 * ratio));
+	}
 	int a = m_pNumberLable->GetAlpha();
 	a-=2;
 	if (a <= 0)
@@ -107,6 +126,5 @@ void CPopNumberPanel::OnThink(){
 }
 
 void CPopNumberPanel::Destory(){
-	m_pNumberLable->DeletePanel();
 	DeletePanel();
 }

@@ -23,7 +23,6 @@
 #include <CVector.h>
 
 #define VIEWPORT_PLAYERBOARD_NAME "PlayerBoardPanel"
-
 CPlayerInfoPanel::CPlayerInfoPanel()
 	: BaseClass(nullptr, VIEWPORT_PLAYERBOARD_NAME)
 {

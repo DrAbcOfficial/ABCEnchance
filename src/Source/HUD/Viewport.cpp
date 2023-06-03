@@ -177,8 +177,8 @@ void CViewport::StartVote(char* szContent, char* szYes, char* szNo, int iVoteTyp
 void CViewport::EndVote(){
 	m_pVotePanel->EndVote();
 }
-void CViewport::AddPopNumber(int x, int y, Color& pColor, int value){
-	CPopNumberPanel* p = new CPopNumberPanel(x, y, pColor, value);
+void CViewport::AddPopNumber(vec3_t vecOrigin, Color& pColor, int value){
+	CPopNumberPanel* p = new CPopNumberPanel(vecOrigin, pColor, value);
 	p->SetParent(GetVPanel());
 	dynamic_cast<vgui::Panel*>(p)->MakeReadyForUse();
 	p->ShowPanel(true);
