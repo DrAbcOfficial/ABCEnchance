@@ -266,8 +266,7 @@ void DoGaussFire(float fparam1, int bparam1) {
 		}
 	}
 }
-void EV_StopPreviousGauss()
-{
+void EV_StopPreviousGauss(){
 	int idx = gEngfuncs.GetLocalPlayer()->index;
 	// Make sure we don't have a gauss spin event in the queue for this guy
 	gEngfuncs.pEventAPI->EV_KillEvents(idx, "events/gaussspin.sc");
