@@ -109,7 +109,12 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 	float flTimeDiffer = m_fFade - flTime;
 	if (flTimeDiffer < SelectFadeTime)
 		flAlphaRatio = flTimeDiffer / SelectFadeTime;
-
+	auto RainbowColor = [&](WEAPON* wp, int& r, int& g, int& b) {
+		float h, s, v;
+		mathlib::RGBToHSV(r, g, b, h, s, v);
+		h += wp->iId * 15;
+		mathlib::HSVToRGB(h, s, v, r, g, b);
+	};
 	x = iXStart;
 	y = iYStart;
 	//���ƶ���1~10
@@ -151,6 +156,8 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 					SelectColor.GetColor(r, g, b, a);
 				else
 					SelectEmptyColor.GetColor(r, g, b, a);
+				if (gCVars.pAmmoMenuDrawRainbow->value > 0)
+					RainbowColor(p, r, g, b);
 				// if active, then we must have ammo.
 				if (gWR.m_iNowSelected == p) {
 					a = 255 * flAlphaRatio;
@@ -168,6 +175,8 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 					}
 					else {
 						SelectEmptyColor.GetColor(r, g, b, dummy);
+						if (gCVars.pAmmoMenuDrawRainbow->value > 0)
+							RainbowColor(p, r, g, b);
 						a = 128 * flAlphaRatio;
 						ScaleColors(r, g, b, a);
 					}
@@ -192,6 +201,8 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 					SelectEmptyColor.GetColor(r, g, b, dummy);
 					a = 96 * flAlphaRatio;
 				}
+				if (gCVars.pAmmoMenuDrawRainbow->value > 0)
+					RainbowColor(p, r, g, b);
 				FillRGBA(x, y, SelectBucketWidth, SelectBucketHeight, r, g, b, a);
 				y += (SelectBucketHeight + iYGap) * flAnimationRatio;
 			}

@@ -317,7 +317,6 @@ void __UserCmd_Attack1(void) {
 
 void CCustomHud::GL_Init(void){
 	m_HudRadar.GLInit();
-	m_HudCustomAmmo.GLInit();
 	m_HudArmorHealth.GLInit();
 	m_HudEccoBuyMenu.GLInit();
 #ifdef _DEBUG
