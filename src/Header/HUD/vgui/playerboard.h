@@ -42,8 +42,6 @@ private:
 
 	size_t m_iPlayerIndex;
 
-	CPanelAnimationVarAliasType(int, m_iDangerHealth, "danger_health", "30", "proportional_int");
-
 	/**
 	 * Updates client's row in the scoreboard.
 	 */
