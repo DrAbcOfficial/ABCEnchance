@@ -48,7 +48,6 @@
 
 #include "weaponbank.h"
 #include <CVector.h>
-#include "triangleapi.h"
 
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
@@ -106,11 +105,8 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 				vecLength = vecLength.Normalize();
 				float angledotResult = mathlib::DotProduct(vecLength, vecView);
 				//cos 60
-				if (angledotResult > 0.5) {
-					CVector vecHUD;
-					VEC_WorldToScreen(vecOrigin, vecHUD);
-					g_pViewPort->AddPopNumber(vecHUD.x, vecHUD.y, pColor, iValue);
-				}
+				if (angledotResult > 0.5)
+					g_pViewPort->AddPopNumber(vecOrigin, pColor, iValue);
 				return 0;
 			}
 		}

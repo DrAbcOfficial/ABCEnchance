@@ -60,7 +60,7 @@ public:
 	void StartVote(char* szContent, char* szYes, char* szNo, int iVoteType);
 	void EndVote();
 
-	void AddPopNumber(int x, int y, Color& pColor, int value);
+	void AddPopNumber(vec3_t vecOrigin, Color& pColor, int value);
 	long m_iTimeEnd = 0;
 
 	cvar_t* m_pPlayerTitle = nullptr;

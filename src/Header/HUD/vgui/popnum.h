@@ -8,13 +8,15 @@
 namespace vgui {
 	class Label;
 }
+class CVector;
 
 class CPopNumberPanel : public vgui::EditablePanel, public IViewportPanel
 {
 public:
 	DECLARE_CLASS_SIMPLE(CPopNumberPanel, vgui::EditablePanel);
 
-	CPopNumberPanel(int x, int y, Color& pColor, int value);
+	CPopNumberPanel(vec3_t vecOrigin, Color& pColor, int value);
+	~CPopNumberPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
@@ -28,9 +30,8 @@ public:
 private:
 	void Destory();
 	float m_flCreateTime = 0;
-	int m_iOriginalY = 0;
-	int m_iOriginalTall = 0;
 	int m_iValue = 0;
 	vgui::Label* m_pNumberLable = nullptr;
+	CVector* m_vecOrigin;
 };
 #endif
