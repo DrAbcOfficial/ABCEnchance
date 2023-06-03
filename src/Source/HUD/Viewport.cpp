@@ -44,6 +44,7 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport")
 	SetProportional(true);
 
 	m_pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, nullptr);
+	m_pPlayerTitleDanger = CREATE_CVAR("cl_playertitle_danger", "30", FCVAR_VALUE, nullptr);
 }
 
 CViewport::~CViewport(void)

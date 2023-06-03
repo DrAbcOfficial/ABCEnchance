@@ -162,7 +162,7 @@ void CPlayerInfoPanel::UpdateClientInfo(){
 		m_pArmorImagePanel->SetWide(m_pBackgroundImagePanel->GetWide() * flArmorRatio);
 		m_pHealthImagePanel->SetWide(m_pBackgroundImagePanel->GetWide() * flHealthRatio);
 		cl_entity_t* ent = gEngfuncs.GetEntityByIndex(m_iPlayerIndex);
-		if (iHealth < m_iDangerHealth) {
+		if (iHealth < g_pViewPort->m_pPlayerTitleDanger->value) {
 			if (iHealth <= 0){
 				m_pCourchIconImagePanel->SetVisible(false);
 				m_pMedikIconImagePanel->SetVisible(false);

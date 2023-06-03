@@ -62,13 +62,14 @@ public:
 
 	void AddPopNumber(int x, int y, Color& pColor, int value);
 	long m_iTimeEnd = 0;
+
+	cvar_t* m_pPlayerTitle = nullptr;
+	cvar_t* m_pPlayerTitleDanger = nullptr;
 private:
 	std::vector<IViewportPanel*> m_Panels;
 	CScorePanel* m_pScorePanel = nullptr;
 	CVotePanel* m_pVotePanel = nullptr;
 	CPlayerInfoPanel* m_pPlayerInfoPanels[32];
-
-	cvar_t* m_pPlayerTitle = nullptr;
 
 	int m_iInterMission;
 
