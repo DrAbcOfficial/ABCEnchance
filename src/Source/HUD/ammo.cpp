@@ -176,17 +176,6 @@ int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf){
 	}
 	return m_pfnWeaponSpr(pszName, iSize, pbuf);
 }
-void CustomSlotSetCallBack(cvar_t* vars){
-	if (!vars->string || vars->string[0] == 0)
-		return;
-	int slot;
-	sscanf_s(vars->name, "cl_customslot%d", &slot);
-	slot--;
-}
-
-void CHudCustomAmmo::GLInit(){
-
-}
 int CHudCustomAmmo::Init(void){
 	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
 	m_pfnWeaponList = HOOK_MESSAGE(WeaponList);
@@ -199,8 +188,7 @@ int CHudCustomAmmo::Init(void){
 	m_pfnHideHUD = HOOK_MESSAGE(HideHUD);
 	m_pfnWeaponSpr = HOOK_MESSAGE(WeaponSpr);
 
-	gCVars.pAmmoMenuDrawPos = CREATE_CVAR("cl_menudrawpos", "0", FCVAR_VALUE, NULL);
-	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "1", FCVAR_VALUE, NULL);
+	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "0", FCVAR_VALUE, NULL);
 
 	Reset();
 	gWR.Init();

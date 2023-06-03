@@ -1,7 +1,6 @@
 #pragma once
 class CHudCustomAmmo{
 public:
-	void GLInit();
 	int Init(void);
 	int VidInit(void);
 	int Draw(float flTime);
