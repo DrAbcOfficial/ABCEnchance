@@ -96,7 +96,7 @@ void CMotdPanel::BuildPageInternal() {
 	int w, h;
 	m_pMessage->GetSize(w, h);
 	int fh = vgui::surface()->GetFontTall(m_pMessage->GetFont());
-	int iMaxClipSize = (w / (fh / 1.5)) * (h / fh);
+	int iMaxClipSize = (w / (fh / 1.66f)) * (h / fh);
 	if (m_szBuffer.size() > iMaxClipSize) {
 		for (size_t i = 0; i < m_szBuffer.size(); i += iMaxClipSize) {
 			m_aryClipedPage.push_back(m_szBuffer.substr(i, iMaxClipSize));
@@ -109,6 +109,7 @@ void CMotdPanel::BuildPage() {
 	if (m_bBuiledPages)
 		return;
 	BuildPageInternal();
+	m_szBuffer.clear();
 	m_bBuiledPages = true;
 }
 #undef CLIP_MAX_SIZE
