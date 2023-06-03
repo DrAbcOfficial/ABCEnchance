@@ -160,7 +160,8 @@ void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
 				PickupWeapon(wp->m_iId);
 			//同步弹匣数据
 			weapon->iClip = wp->m_iClip;
-			weapon->iClip2 = wp->m_iClip2;
+			if(wp->m_iClip2 > 0)
+				weapon->iClip2 = wp->m_iClip2;
 		}
 	}
 }
@@ -396,6 +397,13 @@ WEAPON* WeaponsResource::GetLastPos(size_t iSlot) {
 	if (HasAmmo(wp))
 		return wp;
 	return nullptr;
+}
+bool WeaponsResource::HasUsableWeaponSize(){
+	for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
+		if (HasAmmo(iter->second))
+			return true;
+	}
+	return false;
 }
 bool WeaponsResource::HasAmmo(WEAPON* p) {
 	if (!p)
