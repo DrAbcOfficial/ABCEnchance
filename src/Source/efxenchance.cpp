@@ -266,6 +266,13 @@ void DoGaussFire(float fparam1, int bparam1) {
 		}
 	}
 }
+void EV_StopPreviousGauss()
+{
+	int idx = gEngfuncs.GetLocalPlayer()->index;
+	// Make sure we don't have a gauss spin event in the queue for this guy
+	gEngfuncs.pEventAPI->EV_KillEvents(idx, "events/gaussspin.sc");
+	gEngfuncs.pEventAPI->EV_StopSound(idx, CHAN_WEAPON, "ambience/pulsemachine.wav");
+}
 void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short eventindex, 
 	float delay, float* origin, float* angles, 
 	float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2) {
@@ -274,6 +281,7 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 	switch (eventindex) {
 		case 12: {
 			if (gCVars.pGaussEfx->value > 0) {
+				EV_StopPreviousGauss();
 				gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
 				gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
 				gHookFuncs.SetPunchAngle(0, -1.5f);
