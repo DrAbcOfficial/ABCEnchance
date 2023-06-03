@@ -15,6 +15,7 @@
 #include "steam_api.h"
 #include "player_info.h"
 
+#include "motd.h"
 #include "popnum.h"
 #include "playerboard.h"
 #include "scoreboard.h"
@@ -56,6 +57,7 @@ void CViewport::Start(void)
 {
 	AddNewPanel(m_pScorePanel = new CScorePanel());
 	AddNewPanel(m_pVotePanel = new CVotePanel());
+	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -68,6 +70,7 @@ void CViewport::SetParent(VPANEL vPanel)
 	BaseClass::SetParent(vPanel);
 	m_pScorePanel->SetParent(GetVPanel());
 	m_pVotePanel->SetParent(GetVPanel());
+	m_pMOTDPanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -183,6 +186,18 @@ void CViewport::AddPopNumber(vec3_t vecOrigin, Color& pColor, int value){
 	dynamic_cast<vgui::Panel*>(p)->MakeReadyForUse();
 	p->ShowPanel(true);
 }
+void CViewport::AppendMOTD(char* szMessage) {
+	m_pMOTDPanel->AppendMotd(szMessage);
+}
+void CViewport::ShowMOTD(){
+	m_pMOTDPanel->ShowMotd();
+}
+void CViewport::CloseMOTD(){
+	m_pMOTDPanel->ShowPanel(false);
+}
+void CViewport::ForeceBuildPage() {
+	m_pMOTDPanel->ForceAddPage();
+}
 void CViewport::Paint(void){
 	BaseClass::Paint();
 }
@@ -193,6 +208,10 @@ CScorePanel* CViewport::GetScoreBoard() {
 
 CVotePanel* CViewport::GetVotePanel(){
 	return m_pVotePanel;
+}
+
+CMotdPanel* CViewport::GetMotdPanel(){
+	return this->m_pMOTDPanel;
 }
 
 Color CViewport::GetPlayerColor(int index){
