@@ -20,6 +20,8 @@
 #include "usercmd.h"
 #include "extraprecache.h"
 #include "regquery.h"
+#include "pm_defs.h"
+#include "usercmd.h"
 #include "vgui_controls/Controls.h"
 //GL
 #include "glew.h"
@@ -57,6 +59,12 @@ overviewInfo_t* gDevOverview;
 uint* g_arySlotPuVar = nullptr;
 refdef_t* g_refdef = nullptr;
 netadr_s* g_pConnectingServer = nullptr;
+
+struct playerppmoveinfo {
+	bool onground;
+	bool inwater;
+	bool walking;
+} g_playerppmove;
 
 //VGUI2
 HWND g_MainWnd = nullptr;
@@ -588,6 +596,8 @@ void HUD_Init(void){
 	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, nullptr);
 	gCVars.pCamIdealRight = CREATE_CVAR("cam_idealright", "0", FCVAR_VALUE, nullptr);
 
+	gCVars.pCVarAutoBunnyJump = CREATE_CVAR("cl_autojump", "0", FCVAR_VALUE, nullptr);
+
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
 	GetClientVoiceMgr()->Init();
@@ -645,6 +655,9 @@ int HUD_UpdateClientData (struct client_data_s* c, float f){
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
+	g_playerppmove.inwater = ppmove->waterlevel > 1;
+	g_playerppmove.onground = ppmove->onground != -1;
+	g_playerppmove.walking = ppmove->movetype = MOVETYPE_WALK;
 	gCustomHud.HUD_ClientMove(ppmove, server);
 	return gExportfuncs.HUD_PlayerMove(ppmove, server);
 }
@@ -780,6 +793,24 @@ void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
 		gExportfuncs.CL_CreateMove(frametime, cmd, active);
 	if (gCustomHud.IsInScore())
 		cmd->buttons |= IN_SCORE;
+	//Auto jump from openag
+	static bool s_jump_was_down_last_frame = false;
+	if (gCVars.pCVarAutoBunnyJump->value != 0.0f) {
+		cl_entity_t* player = gEngfuncs.GetLocalPlayer();
+		bool should_release_jump = (!g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking);
+		/*
+		 * Spam pressing and releasing jump if we're stuck in a spot where jumping still results in
+		 * being onground in the end of the frame. Without this check, +jump would remain held and
+		 * when the player exits this spot they would have to release and press the jump button to
+		 * start jumping again. This also helps with exiting water or ladder right onto the ground.
+		 */
+		if (s_jump_was_down_last_frame && g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking)
+			should_release_jump = true;
+
+		if (should_release_jump)
+			cmd->buttons &= ~IN_JUMP;
+	}
+	s_jump_was_down_last_frame = ((cmd->buttons & IN_JUMP) != 0);
 }
 void IN_Accumulate(void){
 	if (gCustomHud.IsMouseVisible()){
