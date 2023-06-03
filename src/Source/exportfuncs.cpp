@@ -209,6 +209,34 @@ void __fastcall TFV_ShowScoreBoard(void* pthis) {
 		return;
 	gHookFuncs.TFV_ShowScoreBoard(pthis);
 }
+void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
+	switch (iVguiMenu){
+		//MissionBrief
+		case 4: return;
+		//MOTD
+		case 5: {
+			g_pViewPort->ShowMOTD();
+			return;
+		}
+		//TeamMenu
+		case 2:
+		//Vote
+		case 0x16:
+		//MapVote
+		case 0x17:
+		//VotePopUp
+		case 0x18:
+		//CameraMenu
+		case 0x19:
+		//InventroyMenu
+		case 0x1A:
+		//MediaMenu
+		case 0x1E:
+		default: break;
+	}
+	//mission brief shit2 is 4, but fku all vgui shit
+	gHookFuncs.TFV_ShowVGUIMenu(pthis, dummy, iVguiMenu);
+}
 void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
 	mathlib::VectorCopy(punchangle1, gCustomHud.m_vecClientEVPunch);
@@ -459,6 +487,9 @@ void FillAddress(){
 		Fill_Sig(R_CROSSHAIR_REDRAW_SIG, g_dwClientBase, g_dwClientSize, R_CrossHair_ReDraw);
 #define TFV_SHOWSCOREBOARD_SIG "\x56\x8B\xF1\x8B\x8E\x2C\x10\x00\x00\x85\xC9\x74\x0D\xE8\xDE\xC3\xFF\xFF\x8B\xCE\x5E\xE9\x06\xF9\xFF\xFF\x5E\xC3\xCC\xCC\xCC\xCC"
 		Fill_Sig(TFV_SHOWSCOREBOARD_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowScoreBoard);
+#define TFV_SHOWVGUIMENU_SHIT_SIG "\xA1\x2A\x2A\x2A\x2A\x57\x8B\xF9\x8B\x40\x04\xFF\xD0\x85\xC0\x0F\x85\x2A\x2A\x2A\x2A\x55\x8B\x6C\x24\x0C\x39\x05"
+		Fill_Sig(TFV_SHOWVGUIMENU_SHIT_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowVGUIMenu);
+
 		DWORD addr;
 #define R_SETPUNCHANGLE_SIG "\x83\xC4\x04\xD9\x1C\x24\x6A\x00\xE8\x93\x56\x05\x00\x83\xC4\x08\xF3\x0F\x10\x74\x24\x34\xF3\x0F\x10\xAC\x24\x98\x00\x00\x00\xF3\x0F\x10\x25\x2A\x2A\x2A\x2A\xF3\x0F\x58\xEE\xF3\x0F\x10\x44\x24\x74"
 		{
@@ -506,6 +537,7 @@ void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);
 	Install_InlineHook(R_CrossHair_ReDraw);
 	Install_InlineHook(TFV_ShowScoreBoard);
+	Install_InlineHook(TFV_ShowVGUIMenu);
 }
 void UninstallEngineHook() {
 	for (hook_t* h : aryEngineHook) {

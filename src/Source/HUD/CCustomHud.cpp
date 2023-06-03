@@ -60,6 +60,7 @@ pfnUserMsgHook m_pfnTimeEnd;
 pfnUserMsgHook m_pfnShowMenu;
 pfnUserMsgHook m_pfnVoteMenu;
 pfnUserMsgHook m_pfnEndVote;
+pfnUserMsgHook m_pfnMOTD;
 
 int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
@@ -202,6 +203,18 @@ int __MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf) {
 	g_pViewPort->EndVote();
 	return m_pfnEndVote(pszName, iSize, pbuf);
 }
+int __MsgFunc_MOTD(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int code = READ_BYTE();
+	char* msg = READ_STRING();
+	if(msg[0] != '\0')
+		g_pViewPort->AppendMOTD(msg);
+	else
+		g_pViewPort->CloseMOTD();
+	if (code > 0)
+		g_pViewPort->ForeceBuildPage();
+	return m_pfnMOTD(pszName, iSize, pbuf);
+}
 
 void(*UserCmd_Slot1)(void);
 void(*UserCmd_Slot2)(void);
@@ -219,6 +232,7 @@ void(*UserCmd_PrevWeapon)(void);
 void(*UserCmd_ShowScores)(void);
 void(*UserCmd_HideScores)(void);
 void(*UserCmd_Attack1)(void);
+void(*UserCmd_MissionBrief)(void);
 
 void __UserCmd_Slot1(void) {
 	m_HudCustomAmmo.SlotInput(0, 1);
@@ -271,6 +285,9 @@ void __UserCmd_Slot10(void) {
 	m_HudEccoBuyMenu.CloseMenu();
 	return UserCmd_Slot10();
 }
+void __UserCmd_MissionBrief(void) {
+	g_pViewPort->ShowMOTD();
+}
 void __UserCmd_Close(void) {
 	return UserCmd_SlotClose();
 }
@@ -317,6 +334,7 @@ void CCustomHud::HUD_Init(void){
 	m_pfnShowMenu = HOOK_MESSAGE(ShowMenu);
 	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
 	m_pfnEndVote = HOOK_MESSAGE(EndVote);
+	m_pfnMOTD = HOOK_MESSAGE(MOTD);
 	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
@@ -330,6 +348,8 @@ void CCustomHud::HUD_Init(void){
 	UserCmd_Slot8 = HOOK_COMMAND("slot8", Slot8);
 	UserCmd_Slot9 = HOOK_COMMAND("slot9", Slot9);
 	UserCmd_Slot10 = HOOK_COMMAND("slot10", Slot10);
+
+	UserCmd_MissionBrief = HOOK_COMMAND("missionbriefing", MissionBrief);
 	UserCmd_SlotClose = HOOK_COMMAND("cancelselect", Close);
 	UserCmd_NextWeapon = HOOK_COMMAND("invnext", NextWeapon);
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);

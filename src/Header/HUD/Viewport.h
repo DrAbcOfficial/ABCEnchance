@@ -18,6 +18,7 @@
 class CPlayerInfoPanel;
 class CScorePanel;
 class CVotePanel;
+class CMotdPanel;
 class ISchemel;
 
 class CViewport : public vgui::Panel
@@ -53,6 +54,7 @@ public:
 	char* GetServerName();
 	CScorePanel* GetScoreBoard();
 	CVotePanel* GetVotePanel();
+	CMotdPanel* GetMotdPanel();
 	Color GetPlayerColor(int index);
 	bool IsPlayerTileEnable();
 
@@ -61,6 +63,12 @@ public:
 	void EndVote();
 
 	void AddPopNumber(vec3_t vecOrigin, Color& pColor, int value);
+
+	void AppendMOTD(char* szMessage);
+	void ShowMOTD();
+	void CloseMOTD();
+	void ForeceBuildPage();
+
 	long m_iTimeEnd = 0;
 
 	cvar_t* m_pPlayerTitle = nullptr;
@@ -70,6 +78,7 @@ private:
 	CScorePanel* m_pScorePanel = nullptr;
 	CVotePanel* m_pVotePanel = nullptr;
 	CPlayerInfoPanel* m_pPlayerInfoPanels[32];
+	CMotdPanel* m_pMOTDPanel = nullptr;
 
 	int m_iInterMission;
 

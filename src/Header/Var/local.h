@@ -46,8 +46,9 @@ typedef struct{
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
 
 	float*		(*GetClientColor)			(int clientIndex);
-	int(__fastcall* R_CrossHair_ReDraw)	(void* pthis, int dummy, int param_1);
+	int(__fastcall* R_CrossHair_ReDraw)		(void* pthis, int dummy, int param_1);
 	void(__fastcall* TFV_ShowScoreBoard)	(void* pthis);
+	void(__fastcall* TFV_ShowVGUIMenu)		(void* pthis, int dummy, int iVguiMenu);
 	void		(*EVVectorScale)			(float* pucnangle1, float scale, float* pucnangle2);
 	void		(*R_NewMap)					(void);
 	int			(*CL_IsDevOverview)			(void);
