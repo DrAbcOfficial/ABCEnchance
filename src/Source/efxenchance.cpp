@@ -27,7 +27,7 @@ struct EfxVarible{
 	int iGaussChargeSprite;
 	float flGaussStartChargeTime;
 	model_t* iGaussLoophole;
-	mstudioevent_t pGaussFireSoundEvent = { 0,5004,0,GAUSS_FIRE_SOUND };
+	mstudioevent_t pGaussFireSoundEvent = { 0,5004,0, };
 	TEMPENTITY* pChargeGlow = nullptr;
 };
 EfxVarible gEfxVarible;
@@ -270,7 +270,7 @@ void EV_StopPreviousGauss(){
 	int idx = gEngfuncs.GetLocalPlayer()->index;
 	// Make sure we don't have a gauss spin event in the queue for this guy
 	gEngfuncs.pEventAPI->EV_KillEvents(idx, "events/gaussspin.sc");
-	gEngfuncs.pEventAPI->EV_StopSound(idx, CHAN_WEAPON, "ambience/pulsemachine.wav");
+	gEngfuncs.pEventAPI->EV_StopSound(idx + 4096, CHAN_WEAPON, "ambience/pulsemachine.wav");
 }
 void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short eventindex, 
 	float delay, float* origin, float* angles, 
