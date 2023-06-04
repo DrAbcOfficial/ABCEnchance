@@ -4,6 +4,7 @@
 <!-- badges: start -->
 
 ![Codacy Badge](https://img.shields.io/codacy/grade/d58f0a4ca9e649ffa5d1b97bb668598c?style=for-the-badge)
+![Downloads](https://img.shields.io/github/downloads/DrAbcrealone/ABCEnchance/total?style=for-the-badge)
 ![Repo Size](https://img.shields.io/github/repo-size/DrAbcrealone/ABCEnchance?style=for-the-badge)
 ![Last Commit](https://img.shields.io/github/last-commit/DrAbcrealone/ABCEnchance?style=for-the-badge)
 
@@ -27,14 +28,7 @@
 > ## &emsp;👉  <u>[点我](READMECN.md)</u>
 
 # 🤫 Known issue
-
- - [x] ~~After `CBasePlayer::RemovePlayerItem`, the menu will display the removed items incorrectly because there is no corresponding networkmessage to synchronize the message~~
- - [x] ~~Sometimes will empty the weapon menu incorrectly after player death~~
- - [x] ~~Dynamic indicator will point to wrong direction~~
  - [x] ~~The number of bullets in the second weapon will not be displayed correctly in Akimbo uzi. it is seem not regular `iAmmoType2`?~~
- - [x] ~~Weapon postion conflict fix will not work~~
- - [x] ~~when bind `+annularmenu` command to `mouse4` or `mouse5`, `-annularmenu` command will not execute automatically.~~
-
 # 🖥️ Install
  1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
  2. Install
@@ -107,7 +101,7 @@
 |hud_deathnotice_time|the death message keep time|6|0~9999|
 |---|---|---|---|
 |cl_menudrawpos|Draw weapon Pos|0|0/1|
-|cl_rainbowmenu|Draw weapon menu in rainbow|1|0/1/2|
+|cl_rainbowmenu|Draw weapon menu in rainbow|0|0/1/2|
 |---|---|---|---|
 |cl_itemhighlight|Draw item high light|1|0/1|
 |cl_itemhighlightrange|Item high light range|344|0~500|
@@ -127,6 +121,7 @@
 |cl_radarupdateint|Radar image update interval|1|0-9999|
 |---|---|---|---|
 |cl_playertitle|Show Player name|1|0/1/2|
+|cl_playertitle_danger|Set danger health|30|any shit|
 |---|---|---|---|
 |cl_crosshair|Show dynamic crosshair|1|0/1|
 |cl_crosshairautohide|Auto hide crosshair when zoomed|1|0/1|
