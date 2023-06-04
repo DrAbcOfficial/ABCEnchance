@@ -81,4 +81,4 @@ public:
 };
 
 
-#endif //PARTICLEMAN_H
+#endif //PARTICLEMAN_Hq
