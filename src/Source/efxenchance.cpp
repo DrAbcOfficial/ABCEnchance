@@ -27,7 +27,7 @@ struct EfxVarible{
 	int iGaussChargeSprite;
 	float flGaussStartChargeTime;
 	model_t* iGaussLoophole;
-	mstudioevent_t pGaussFireSoundEvent = { 0,5004,0, };
+	mstudioevent_t pGaussFireSoundEvent = { 0, 5004, 0, GAUSS_FIRE_SOUND };
 	TEMPENTITY* pChargeGlow = nullptr;
 };
 EfxVarible gEfxVarible;
@@ -151,11 +151,11 @@ void DoGaussFire(float fparam1, int bparam1) {
 			local->curstate.effects |= EF_MUZZLEFLASH;
 			fFirstBeam = false;
 			gEngfuncs.pEfxAPI->R_BeamEntPoint(local->index + (gExportfuncs.CL_IsThirdPerson() ? 0 : 4096), tr.endpos, gEfxVarible.iGaussBeam, 0.2,
-				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, 0.8, 0);
+				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8 : 1, bparam1 ? 0 : 1);
 		}
 		else
 			gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, tr.endpos, gEfxVarible.iGaussBeam, 0.2,
-				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, 0.8, 0);
+				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8 : 1, bparam1 ? 0 : 1);
 		cl_entity_t* hit = gEngfuncs.GetEntityByIndex(tr.ent);
 		//可反射高斯
 		if (hit && hit->model && hit->model->type == mod_brush) {
@@ -267,10 +267,10 @@ void DoGaussFire(float fparam1, int bparam1) {
 	}
 }
 void EV_StopPreviousGauss(){
-	int idx = gEngfuncs.GetLocalPlayer()->index;
+	int idx = gEngfuncs.GetViewModel()->index;
 	// Make sure we don't have a gauss spin event in the queue for this guy
 	gEngfuncs.pEventAPI->EV_KillEvents(idx, "events/gaussspin.sc");
-	gEngfuncs.pEventAPI->EV_StopSound(idx + 4096, CHAN_WEAPON, "ambience/pulsemachine.wav");
+	gEngfuncs.pEventAPI->EV_StopSound(idx, CHAN_WEAPON, "ambience/pulsemachine.wav");
 }
 void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short eventindex, 
 	float delay, float* origin, float* angles, 
