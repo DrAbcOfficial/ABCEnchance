@@ -324,7 +324,7 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		SetSelectWeapon(m_iNowSelected, bWheel);
 		return;
 	}
-	iSlot = mathlib::clamp(iSlot, 0, MAX_WEAPON_SLOT - 1);
+	iSlot = mathlib::clamp<size_t>(iSlot, 0, MAX_WEAPON_SLOT - 1);
 	auto getNext = [&](WEAPON* wp) {
 		size_t pos = wp->iSlotPos;
 		for (auto iter = m_pOwnedWeaponData.PosBegin(wp->iSlot); iter != m_pOwnedWeaponData.PosEnd(wp->iSlot); iter++) {
