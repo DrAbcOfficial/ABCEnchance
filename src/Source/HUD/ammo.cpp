@@ -268,10 +268,11 @@ int CHudCustomAmmo::Draw(float flTime){
 	gHR.DrawAmmoHistory(flTime);
 	if (!m_pWeapon)
 		return 0;
-	if (!gWR.HasUsableWeaponSize()) {
-		m_pWeapon = nullptr;
-		return 0;
-	}
+	//Yeah thats stupid
+	//if (!gWR.HasUsableWeaponSize()) {
+	//	m_pWeapon = nullptr;
+	//	return 0;
+	//}
 	WEAPON* pw = m_pWeapon;
 	if (pw->iId <= 0)
 		return 0;
