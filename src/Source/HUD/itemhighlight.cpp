@@ -20,9 +20,8 @@
 #define ITEM_LIST_PATH "abcenchance/ItemHighLightList.txt"
 
 std::vector<cl_hightlight_s*> aryHighLightList;
+CHudItemHighLight g_HudItemHighLight;
 
-CHudItemHighLight m_HudItemHighLight;
-char szItemPraseBuf[256];
 void RangeSizeCallBack(cvar_t* cvar) {
 	cvar->value = mathlib::clamp<float>(cvar->value, 0.0f, 344.0f);
 }
@@ -34,7 +33,6 @@ int CHudItemHighLight::Init(){
 }
 void CHudItemHighLight::Reset(){
 	m_mapHighLightTable.clear();
-	m_mapToBeDraw.clear();
 	m_mapRestoredTent.clear();
 	for (size_t i = 0; i < (int)aryHighLightList.size(); i++) {
 		aryHighLightList[i]->Index = gEngfuncs.pEventAPI->EV_FindModelIndex(aryHighLightList[i]->Name);
@@ -45,8 +43,16 @@ void CHudItemHighLight::Reset(){
 }
 void HighLightTentCallBack(TEMPENTITY* ent, float frametime, float currenttime) {
 	cl_entity_t* var = gEngfuncs.GetEntityByIndex(ent->clientIndex);
-	if (!var) {
+	auto erase = [&]() {
+		g_HudItemHighLight.EraseHighLight(var);
 		ent->die = 0;
+	};
+	if (!var) {
+		erase();
+		return;
+	}
+	else if (var->curstate.messagenum != gEngfuncs.GetLocalPlayer()->curstate.messagenum) {
+		erase();
 		return;
 	}
 	mathlib::VectorCopy(var->curstate.origin, ent->entity.origin);
@@ -55,7 +61,7 @@ void HighLightTentCallBack(TEMPENTITY* ent, float frametime, float currenttime) 
 	ent->entity.angles[2] = var->curstate.angles[2];
 }
 void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
-	if (m_mapRestoredTent.count(var))
+	if (m_mapRestoredTent.find(var->index) != m_mapRestoredTent.end())
 		return;
 	model_t* mdl = gEngfuncs.hudGetModelByIndex(m_iHighLightMdl);
 	if (!mdl)
@@ -64,9 +70,10 @@ void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	TEMPENTITY* ent2 = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(var->curstate.origin, mdl);
 	if ((!ent1) || (!ent2))
 		return;
-	ent1->flags = ent2->flags = FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
+	ent1->flags = ent2->flags = FTENT_PERSIST | FTENT_CLIENTCUSTOM;
 	ent1->clientIndex = ent2->clientIndex = var->index;
 	ent1->die = ent2->die = gEngfuncs.GetClientTime() + 999.0f;
+
 	CVector vecTemp;
 	if (mathlib::FVectorLength(var->curstate.mins) <= 3.2) {
 		vecTemp.x = vecTemp.y = -16;
@@ -81,55 +88,31 @@ void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	else
 		mathlib::VectorCopy(var->curstate.maxs, vecTemp);
 	mathlib::VectorCopy(vecTemp, ent2->tentOffset);
+
 	ent2->entity.angles[1] = 180;
 	ent1->entity.curstate.skin = ent2->entity.curstate.skin = m_mapHighLightTable[var->curstate.modelindex]->Type;
+
 	ent1->callback = ent2->callback = HighLightTentCallBack;
-	m_mapRestoredTent[var].first = ent1;
-	m_mapRestoredTent[var].second = ent2;
+	m_mapRestoredTent[var->index] = std::make_pair(ent1, ent2);
 }
 void CHudItemHighLight::EraseHighLight(cl_entity_t* var) {
-	if (!m_mapRestoredTent.count(var))
+	if (m_mapRestoredTent.find(var->index) == m_mapRestoredTent.end())
 		return;
-	m_mapRestoredTent[var].first->die = m_mapRestoredTent[var].second->die = 0;
-	m_mapRestoredTent.erase(var);
+	m_mapRestoredTent[var->index].first->die = m_mapRestoredTent[var->index].second->die = 0;
+	m_mapRestoredTent.erase(var->index);
 }
-void CHudItemHighLight::Draw(float flTime){
-	if (gCVars.pItemHighLight->value <= 0)
-		return;
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	for (auto it = m_mapToBeDraw.begin(); it != m_mapToBeDraw.end(); ){
-		cl_entity_t* var = (*it).second;
-		if (!var) {
-			EraseHighLight(var);
-			it = m_mapToBeDraw.erase(it);
-			continue;
-		}
-		CVector len;
-		mathlib::VectorSubtract(var->curstate.origin, local->curstate.origin, len);
-		if (var->curstate.messagenum != local->curstate.messagenum || 
-			len.Length() > gCVars.pItemHighLightRange->value) {
-			EraseHighLight(var);
-			it = m_mapToBeDraw.erase(it);
-		}
-		else {
-			CreateHighLight(var);
-			it++;
-		}
-	}
 
-}
 void CHudItemHighLight::AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	if (gCVars.pItemHighLight->value <= 0)
 		return;
 	//mdlÄ£ÐÍ
-	if ((ent) && (ent->model) && (ent->curstate.movetype == MOVETYPE_TOSS) &&
-		(ent->curstate.solid == SOLID_TRIGGER) && (ent->model->type == mod_studio) &&
-		m_mapHighLightTable.count(ent->curstate.modelindex) && 
-		!m_mapToBeDraw.count(ent->index)) {
-		m_mapToBeDraw[ent->index] = ent;
+	if ((ent) && (ent->model) && (ent->model->type == mod_studio) &&
+		m_mapHighLightTable.find(ent->curstate.modelindex) != m_mapHighLightTable.end()) {
+		CreateHighLight(ent);
 	}
 }
 void CHudItemHighLight::LoadItemList() {
+	char szItemPraseBuf[256];
 	char* pfile = (char*)gEngfuncs.COM_LoadFile((char*)ITEM_LIST_PATH, 5, NULL);
 	int i = 0, index = 0;
 	if (!pfile){

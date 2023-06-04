@@ -92,11 +92,6 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 void GaussLoopholeCallback(TEMPENTITY* ent, float frametime, float currenttime) {
 	ent->entity.curstate.scale = ent->die - currenttime;
 }
-void GaussChargeCallback(TEMPENTITY* ent, float frametime, float currenttime) {
-	cl_entity_t* view = gEngfuncs.GetViewModel();
-	mathlib::VectorCopy(view->attachment[0], ent->entity.origin);
-	ent->entity.curstate.scale = min(0.5, (currenttime - gEfxVarible.flGaussStartChargeTime) / 2);
-}
 void CreateGaussLoophole(pmtrace_t* tr) {
 	TEMPENTITY* pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(tr->endpos, gEfxVarible.iGaussLoophole);
 	if (!pTemp)
