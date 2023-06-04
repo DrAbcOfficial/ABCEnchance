@@ -3,6 +3,7 @@
 
 <!-- badges: start -->
 ![Codacy Badge](https://img.shields.io/codacy/grade/d58f0a4ca9e649ffa5d1b97bb668598c?style=for-the-badge)
+![Downloads](https://img.shields.io/github/downloads/DrAbcrealone/ABCEnchance/total?style=for-the-badge)
 ![Repo Size](https://img.shields.io/github/repo-size/DrAbcrealone/ABCEnchance?style=for-the-badge)
 ![Last Commit](https://img.shields.io/github/last-commit/DrAbcrealone/ABCEnchance?style=for-the-badge)
 <!-- badges: end -->
@@ -94,7 +95,7 @@
 |cl_hud_csgo|启用HUD|1|0/1|
 |---|---|---|---|
 |cl_menudrawpos|是否绘制武器Pos|0|0/1|
-|cl_rainbowmenu|绘制武器菜单彩虹圈|1|0/1/2|
+|cl_rainbowmenu|绘制武器菜单彩虹圈|0|0/1/2|
 |---|---|---|---|
 |cl_itemhighlight|是否显示物品高亮|1|0/1|
 |cl_itemhighlightrange|物品高亮范围|344|0~500|
@@ -117,6 +118,7 @@
 |cl_radarupdateint|雷达更新频率（秒）|1|0-9999|
 |---|---|---|---|
 |cl_playertitle|展示玩家状态栏|1|0/1/2|
+|cl_playertitle_danger|危险血量|30|啥都行|
 |---|---|---|---|
 |cl_crosshair|绘制动态准心|1|0/1|
 |cl_crosshairautohide|开镜自动隐藏动态准心|1|0/1|
