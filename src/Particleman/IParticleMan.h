@@ -4,7 +4,7 @@
 #include "pman_triangleffect.h"
 
 #define PARTICLEMAN_INTERFACE "create_particleman"
-#define PARTICLEMAN_DLLNAME "svencoop/cl_dlls/particleman.dll"
+#define PARTICLEMAN_DLLNAME "cl_dlls/particleman.dll"
 
 class CBaseParticle;
 

@@ -364,7 +364,7 @@ void CCustomHud::HUD_Init(void){
 	m_HudCrosshair.Init();
 	m_HudEccoMoney.Init();
 	m_HudEfx.Init();
-	m_HudItemHighLight.Init();
+	g_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
 	m_HudGrenadeIndicator.Init();
 #ifdef _DEBUG
@@ -420,7 +420,6 @@ void CCustomHud::HUD_Draw(float flTime){
 	m_HudCrosshair.Draw(flTime);
 	m_HudDeathMsg.Draw(flTime);
 	m_HudRadar.Draw(flTime);
-	m_HudItemHighLight.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
 	m_HudGrenadeIndicator.Draw(flTime);
 
@@ -444,7 +443,7 @@ void CCustomHud::HUD_Reset(void){
 	m_HudDeathMsg.Reset();
 	m_HudEccoMoney.Reset();
 	m_HudEfx.Reset();
-	m_HudItemHighLight.Reset();
+	g_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
 	m_HudGrenadeIndicator.Reset();
 #ifdef _DEBUG
@@ -538,7 +537,7 @@ int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 		return true;
 	bool result = true;
 	result = result && m_HudEccoBuyMenu.AddEntity(type, ent, modelname);
-	m_HudItemHighLight.AddEntity(type, ent, modelname);
+	g_HudItemHighLight.AddEntity(type, ent, modelname);
 	m_HudGrenadeIndicator.HUD_AddEntity(type, ent, modelname);
 	return result;
 }

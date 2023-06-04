@@ -45,6 +45,7 @@
 #include "viewmodellag.h"
 #include <voice_status.h>
 #include <CVector.h>
+#include <ClientParticleMan.h>
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -601,6 +602,8 @@ void HUD_Init(void){
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
 	GetClientVoiceMgr()->Init();
+	if (g_pParticleMan)
+		g_pParticleMan->ResetParticles();
 }
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
 	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
