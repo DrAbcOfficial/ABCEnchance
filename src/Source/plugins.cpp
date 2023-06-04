@@ -1,5 +1,6 @@
 #include <metahook.h>
 #include "exportfuncs.h"
+#include "ClientParticleMan.h"
 #include <vgui_controls/Controls.h>
 #include <svc_hook.h>
 
@@ -93,6 +94,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	FillAddress();
 	InstallClientHook();
 	ClientVGUI_InstallHook();
+	InitCreateParticleMan();
 
 	EnumWindows([](HWND hwnd, LPARAM lParam
 		)
