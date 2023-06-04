@@ -11,12 +11,13 @@ float mathlib::Q_DEG2RAD(float a) {
 float mathlib::Q_RAD2DEG(float r) {
 	return (r * 180.0F) / Q_PI;
 }
-float mathlib::clamp(float num, float minn, float maxn) {
+template<typename T>
+T mathlib::clamp(T num, T minn, T maxn) {
 	return max(min(num, maxn), minn);
 }
-int mathlib::clamp(int num, int minn, int maxn) {
-	return max(min(num, maxn), minn);
-}
+template int mathlib::clamp(int, int, int);
+template float mathlib::clamp(float, float, float);
+template size_t mathlib::clamp(size_t, size_t, size_t);
 float mathlib::METER2INCH(float x) {
 	return (float)(x * (1.0f / mathlib::METERS_PER_INCH));
 }
@@ -59,16 +60,12 @@ void  mathlib::ColorCalcuAlpha(int& r, int& g, int& b, int a) {
 void mathlib::Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa) {
 	out[0] = x * ca - y * sa; out[1] = x * sa + y * ca;
 }
-float mathlib::max3(float a, float b, float c) {
+template<typename T>
+T mathlib::max3(T a, T b, T c) {
 	return max(a, max(b, c));
 }
-int mathlib::max3(int a, int b, int c) {
-	return max(a, max(b, c));
-}
-float mathlib::min3(float a, float b, float c) {
-	return min(a, min(b, c));
-}
-int mathlib::min3(int a, int b, int c) {
+template<typename T>
+T mathlib::min3(T a, T b, T c) {
 	return min(a, min(b, c));
 }
 void mathlib::CenterPos2OpenGLPos(vec2_t pos, int w, int h){
@@ -76,7 +73,7 @@ void mathlib::CenterPos2OpenGLPos(vec2_t pos, int w, int h){
 	pos[1] = h / 2 - pos[1];
 }
 size_t mathlib::GetScreenPixel(int length, double percent) {
-	return (size_t)((float)length * clamp(percent, 0.0f, 1.0f));
+	return (size_t)((float)length * clamp<float>(percent, 0.0f, 1.0f));
 }
 void mathlib::Vector2Rotate(vec2_t out, float x, float y, float rotate) {
 	out[0] = x * cos(rotate) - y * sin(rotate); out[1] = x * sin(rotate) + y * cos(rotate);
@@ -856,8 +853,8 @@ void mathlib::HSVToRGB(float h, float s, float v, int& r, int& g, int& b) {
 	//0<=s<=1
 	//0<=v<=1
 	h = fmod(h, 360);
-	s = clamp(s, 0.0, 1.0);
-	v = clamp(v, 0.0, 1.0);
+	s = clamp<float>(s, 0.0, 1.0);
+	v = clamp<float>(v, 0.0, 1.0);
 	float section = h / 60;
 	float c = v * s;
 	float x = c * (1 - abs(fmod(section, 2) - 1));

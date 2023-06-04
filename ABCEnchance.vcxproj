@@ -305,6 +305,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\RichText.cpp" />
     <ClCompile Include="vgui_controls\RotatingProgressBar.cpp" />
     <ClCompile Include="vgui_controls\savedocumentquery.cpp" />
+    <ClCompile Include="vgui_controls\ScalableImagePanel.cpp" />
     <ClCompile Include="vgui_controls\ScrollableEditablePanel.cpp" />
     <ClCompile Include="vgui_controls\ScrollBar.cpp" />
     <ClCompile Include="vgui_controls\ScrollBarSlider.cpp" />
@@ -555,6 +556,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\RichText.h" />
     <ClInclude Include="vgui_controls\RotatingProgressBar.h" />
     <ClInclude Include="vgui_controls\savedocumentquery.h" />
+    <ClInclude Include="vgui_controls\ScalableImagePanel.h" />
     <ClInclude Include="vgui_controls\ScrollableEditablePanel.h" />
     <ClInclude Include="vgui_controls\ScrollBar.h" />
     <ClInclude Include="vgui_controls\ScrollBarSlider.h" />

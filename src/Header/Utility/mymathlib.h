@@ -46,8 +46,8 @@ namespace mathlib {
 	bool Q_IS_NAN(float x);
 	float Q_DEG2RAD(float a);
 	float Q_RAD2DEG(float r);
-	float clamp(float num, float minn, float maxn);
-	int clamp(int num, int minn, int maxn);
+	template<typename T>
+	T clamp(T num, T minn, T maxn);
 	float METER2INCH(float x);
 	float INCH2METER(float x);
 	void VectorSubtract(vec3_t a, vec3_t b, vec3_t c);
@@ -62,10 +62,10 @@ namespace mathlib {
 	float DotProduct(const vec3_t x, const vec3_t y);
 	void ColorCalcuAlpha(int& r, int& g, int& b, int a);
 	void Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa);
-	float max3(float a, float b, float c);
-	int max3(int a, int b, int c);
-	float min3(float a, float b, float c);
-	int min3(int a, int b, int c);
+	template<typename T>
+	T max3(T a, T b, T c);
+	template<typename T>
+	T min3(T a, T b, T c);
 
 	void CenterPos2OpenGLPos(vec2_t pos, int w, int h);
 	size_t GetScreenPixel(int length, double percent);
