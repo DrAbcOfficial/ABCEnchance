@@ -28,7 +28,6 @@ struct EfxVarible{
 	float flGaussStartChargeTime;
 	model_t* iGaussLoophole;
 	mstudioevent_t pGaussFireSoundEvent = { 0, 5004, 0, GAUSS_FIRE_SOUND };
-	TEMPENTITY* pChargeGlow = nullptr;
 };
 EfxVarible gEfxVarible;
 void EfxReset() {
