@@ -359,8 +359,6 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 			return m_pOwnedWeaponData.GetMaxPos(wp->iSlot);
 		return pos;
 	};
-	if (m_pAviliableWeaponData.Size(iSlot) <= 0)
-		iSlot = iAdvance > 0 ? getMinSlot() : getMaxSlot();
 	if (bWheel) {
 		//如果是当前slot
 		if (iAdvance > 0) {
