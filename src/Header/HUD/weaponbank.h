@@ -40,6 +40,9 @@ private:
 	CWeaponData m_pWeaponData;
 	//玩家持有的武器
 	CWeaponData m_pOwnedWeaponData;
+	//玩家可切换出的武器
+	CWeaponData m_pAviliableWeaponData;
+
 	//玩家持有的所有子弹数据
 	std::map<size_t, int> m_dicAmmos;
 	//hud_fastswitch
@@ -81,6 +84,8 @@ public:
 	bool HasAmmo(WEAPON* p);
 	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect);
 private:
+	//构建AviliableWeapon
+	void BuildAviliableWeapons();
 	//选择选定的武器或菜单
 	void SetSelectWeapon(WEAPON* wp, bool bWheel);
 	client_sprite_t* WeaponsResource::GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount);

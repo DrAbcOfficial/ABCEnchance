@@ -128,6 +128,7 @@ void WeaponsResource::Reset(void) {
 	this->m_pWeaponData.Clear();
 	//上面那个兄弟已经完全清理了，所以只需要解除链接即可
 	this->m_pOwnedWeaponData.RemoveAll();
+	this->m_pAviliableWeaponData.RemoveAll();
 	this->m_dicAmmos.clear();
 	this->m_iNowSelected = nullptr;
 }
@@ -221,6 +222,13 @@ client_sprite_t* WeaponsResource::GetSpriteList(client_sprite_t* pList, const ch
 	}
 	return nullptr;
 }
+void WeaponsResource::BuildAviliableWeapons(){
+	m_pAviliableWeaponData.RemoveAll();
+	for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
+		if (HasAmmo(iter->second) || iter->second->iFlags & ITEM_FLAG_SELECTONEMPTY)
+			m_pAviliableWeaponData.Add(iter->second);
+	}
+}
 //载入武器图标
 void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust) {
 	if (!pWeapon)
@@ -295,17 +303,17 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect) {
 void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
+	m_HudWMenuSlot.m_fFade = gEngfuncs.GetClientTime() + m_HudWMenuSlot.SelectHoldTime;
 
-	//if ((pFastSwich->value > 0 && !bWheel) || (pFastSwich->value <= 0))
-		m_HudWMenuSlot.m_fFade =
-		gEngfuncs.GetClientTime() + m_HudWMenuSlot.SelectHoldTime;
-	if (m_pOwnedWeaponData.Size() == 0)
+	BuildAviliableWeapons();
+
+	if (m_pAviliableWeaponData.Size() == 0)
 		return;
 	auto getMinSlot = [&] {
 		size_t slot = (*m_pOwnedWeaponData.Begin()).second->iSlot;
 		for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
 			WEAPON* compare = (*iter).second;
-			if (HasAmmo(compare) && compare->iSlot < slot)
+			if ((HasAmmo(compare) || compare->iFlags & ITEM_FLAG_SELECTONEMPTY) && compare->iSlot < slot)
 				slot = compare->iSlot;
 		}
 		return slot;
@@ -351,26 +359,26 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 			return m_pOwnedWeaponData.GetMaxPos(wp->iSlot);
 		return pos;
 	};
-	if (m_pOwnedWeaponData.Size(iSlot) <= 0)
+	if (m_pAviliableWeaponData.Size(iSlot) <= 0)
 		iSlot = iAdvance > 0 ? getMinSlot() : getMaxSlot();
 	if (bWheel) {
 		//如果是当前slot
 		if (iAdvance > 0) {
-			if (m_pOwnedWeaponData.GetMaxPos(iSlot) == m_iNowSelected->iSlotPos) {
+			if (m_pAviliableWeaponData.GetMaxPos(iSlot) == m_iNowSelected->iSlotPos) {
 				do {
 					iSlot++;
 					if (iSlot > getMaxSlot())
 						iSlot = getMinSlot();
-				} while (m_pOwnedWeaponData.Size(iSlot) == 0);
+				} while (m_pAviliableWeaponData.Size(iSlot) == 0);
 			}
 		}
-		else if (m_pOwnedWeaponData.GetMinPos(iSlot) == m_iNowSelected->iSlotPos) {
+		else if (m_pAviliableWeaponData.GetMinPos(iSlot) == m_iNowSelected->iSlotPos) {
 			do {
 				if (((int)iSlot) - 1 < (int)getMinSlot())
 					iSlot = getMaxSlot();
 				else
 					iSlot--;
-			} while (m_pOwnedWeaponData.Size(iSlot) == 0);
+			} while (m_pAviliableWeaponData.Size(iSlot) == 0);
 		}
 	}
 
@@ -400,7 +408,7 @@ WEAPON* WeaponsResource::GetLastPos(size_t iSlot) {
 }
 bool WeaponsResource::HasUsableWeaponSize(){
 	for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
-		if (HasAmmo(iter->second))
+		if (HasAmmo(iter->second) || iter->second->iFlags & ITEM_FLAG_SELECTONEMPTY)
 			return true;
 	}
 	return false;
