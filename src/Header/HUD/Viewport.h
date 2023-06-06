@@ -73,6 +73,7 @@ public:
 
 	cvar_t* m_pPlayerTitle = nullptr;
 	cvar_t* m_pPlayerTitleDanger = nullptr;
+	cvar_t* m_pPopNumber = nullptr;
 private:
 	std::vector<IViewportPanel*> m_Panels;
 	CScorePanel* m_pScorePanel = nullptr;
