@@ -12,7 +12,7 @@
 #include "hud.h"
 #include "weapon.h"
 #include "pm_defs.h"
-#include "Utility/parsemsg.h"
+#include "parsemsg.h"
 #include "mymathlib.h"
 #include "exportfuncs.h"
 #include "keydefs.h"
@@ -90,6 +90,8 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 		CCustomHud::ABCCustomMsg type = static_cast<CCustomHud::ABCCustomMsg>(READ_BYTE());
 		switch(type) {
 			case CCustomHud::ABCCustomMsg::POPNUMBER:{
+				if (g_pViewPort->m_pPopNumber->value <= 0)
+					return 0;
 				CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
 				int iValue = READ_LONG();
 				Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
