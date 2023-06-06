@@ -92,7 +92,7 @@ LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	case WM_CHAR:
 	{
 		if (g_bIMEComposing)
-			return 1;
+			return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 
 		break;
 	}
@@ -102,7 +102,7 @@ LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		if (wParam == VK_BACK)
 		{
 			if (g_bIMEComposing)
-				return 1;
+				return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 		}
 
 		break;
@@ -111,7 +111,7 @@ LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	{
 		vgui::input()->OnInputLanguageChanged();
 		//break;
-		return 1;
+		return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 	}
 
 	case WM_IME_STARTCOMPOSITION:
@@ -119,14 +119,14 @@ LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		g_bIMEComposing = true;
 		g_flImeComposingTime = GetAbsoluteTime();
 		vgui::input()->OnIMEStartComposition();
-		return 1;
+		return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 	}
 
 	case WM_IME_COMPOSITION:
 	{
 		int flags = (int)lParam;
 		vgui::input()->OnIMEComposition(flags);
-		return 1;
+		return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 	}
 
 	case WM_IME_ENDCOMPOSITION:
@@ -134,7 +134,7 @@ LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		g_bIMEComposing = false;
 		g_flImeComposingTime = GetAbsoluteTime();
 		vgui::input()->OnIMEEndComposition();
-		return 1;
+		return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 	}
 
 	case WM_IME_NOTIFY:
@@ -144,20 +144,20 @@ LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		case IMN_OPENCANDIDATE:
 		{
 			vgui::input()->OnIMEShowCandidates();
-			return 1;
+			return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 		}
 
 		case IMN_CHANGECANDIDATE:
 		{
 			vgui::input()->OnIMEChangeCandidates();
-			return 1;
+			return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 		}
 
 		case IMN_CLOSECANDIDATE:
 		{
 			vgui::input()->OnIMECloseCandidates();
 			//break;
-			return 1;
+			return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 		}
 
 		case IMN_SETCONVERSIONMODE:
@@ -189,11 +189,6 @@ LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		lParam &= ~ISC_SHOWUIGUIDELINE;
 		lParam &= ~ISC_SHOWUIALLCANDIDATEWINDOW;
 		break;
-	}
-
-	case WM_IME_CHAR:
-	{
-		return 0;
 	}
 	}
 
