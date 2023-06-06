@@ -79,6 +79,7 @@ double GetAbsoluteTime(){
 	return gEngfuncs.GetAbsoluteTime();
 }
 LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
+	/*
 	static HWND s_hLastHWnd;
 	if (hWnd != s_hLastHWnd)
 	{
@@ -191,7 +192,7 @@ LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		break;
 	}
 	}
-
+	*/
 	return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
 }
 
