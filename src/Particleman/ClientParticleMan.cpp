@@ -4,6 +4,7 @@
 #include "IParticleMan.h"
 
 IParticleMan* g_pParticleMan;
+HINTERFACEMODULE g_hParticleman;
 void InitCreateParticleMan() {
 	char szPDir[512];
 	CreateInterfaceFn ParticleManCreateInterface = nullptr;
@@ -11,7 +12,7 @@ void InitCreateParticleMan() {
 		g_pMetaHookAPI->SysError("[ABCEnchance] Failed find particleman.dll!");
 		return;
 	}
-	HINTERFACEMODULE particleman = (HINTERFACEMODULE)Sys_LoadModule(szPDir);
+	g_hParticleman = (HINTERFACEMODULE)Sys_LoadModule(szPDir);
 	ParticleManCreateInterface = (CreateInterfaceFn)Sys_GetFactory(particleman);
 	if (!ParticleManCreateInterface)
 		g_pMetaHookAPI->SysError("[ABCEnchance] Can not create ParticleMan Interface!");
@@ -25,4 +26,7 @@ void InitCreateParticleMan() {
 		else
 			g_pMetaHookAPI->SysError("[ABCEnchance] Can not setup ParticleMan!");
 	}
+}
+void FreeParticleMan() {
+	Sys_FreeModule(g_hParticleman);
 }

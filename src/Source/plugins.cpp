@@ -122,6 +122,7 @@ void IPluginsV4::Shutdown(void){
 void IPluginsV4::ExitGame(int iResult){
 	UninstallClientHook();
 	UninstallEngineHook();
+	FreeParticleMan();
 }
 
 #define STR1(R) #R
