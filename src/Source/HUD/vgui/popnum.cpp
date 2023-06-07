@@ -34,11 +34,10 @@ CPopNumberPanel::CPopNumberPanel(vec3_t vecOrigin, Color& pColor, int value)
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "PopNumerScheme.res", "PopNumerScheme");
 	SetScheme("PopNumerScheme");
 	// Header labels
 	m_pNumberLable = new vgui::Label(this, "PopNumber", "");
-	m_pNumberLable->SetFgColor(pColor);
+	m_hColor = pColor;
 	m_iValue = value;
 	std::string token;
 	if (m_iValue > POPNUMBER_B) {
@@ -81,6 +80,7 @@ void CPopNumberPanel::Reset(){
 void CPopNumberPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("PopNumber.BackGoundColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pNumberLable->SetFgColor(m_hColor);
 }
 void CPopNumberPanel::ShowPanel(bool state){
 	if (state == IsVisible())
