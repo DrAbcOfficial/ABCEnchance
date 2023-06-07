@@ -13,7 +13,7 @@ void InitCreateParticleMan() {
 		return;
 	}
 	g_hParticleman = (HINTERFACEMODULE)Sys_LoadModule(szPDir);
-	ParticleManCreateInterface = (CreateInterfaceFn)Sys_GetFactory(particleman);
+	ParticleManCreateInterface = (CreateInterfaceFn)Sys_GetFactory(g_hParticleman);
 	if (!ParticleManCreateInterface)
 		g_pMetaHookAPI->SysError("[ABCEnchance] Can not create ParticleMan Interface!");
 	else {
