@@ -75,6 +75,9 @@
     <Filter Include="Public\Source\Utility\opengl">
       <UniqueIdentifier>{04cb55bb-c613-4621-97c5-5f4b5c35c237}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Particleman">
+      <UniqueIdentifier>{022c55ca-987d-47f3-bc42-d90dcab1b592}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp">
@@ -562,6 +565,12 @@
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_controls\ScalableImagePanel.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Particleman\ClientParticleMan.cpp">
+      <Filter>Public\Particleman</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1305,6 +1314,21 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\motd.h">
       <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\ScalableImagePanel.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Particleman\pman_triangleffect.h">
+      <Filter>Public\Particleman</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Particleman\pman_particlemem.h">
+      <Filter>Public\Particleman</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Particleman\ClientParticleMan.h">
+      <Filter>Public\Particleman</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Particleman\IParticleMan.h">
+      <Filter>Public\Particleman</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
