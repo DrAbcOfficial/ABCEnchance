@@ -92,6 +92,7 @@
 |----|----|
 |+scaleradar|Start scale radar size|
 |-scaleradar|Stop scale radar size|
+|models|search player models|
 # 📊 CVars
 |CVar|uses|default|range|
 |---|---|---|---|
