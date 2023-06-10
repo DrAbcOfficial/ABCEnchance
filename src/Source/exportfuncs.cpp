@@ -1,5 +1,6 @@
 #include "plugins.h"
 #include <vector>
+#include <filesystem>
 //Lib
 #include "cmath"
 #include "malloc.h"
@@ -594,6 +595,36 @@ void HUD_Init(void){
 	gCVars.pCamIdealRight = CREATE_CVAR("cam_idealright", "0", FCVAR_VALUE, nullptr);
 
 	gCVars.pCVarAutoBunnyJump = CREATE_CVAR("cl_autojump", "0", FCVAR_VALUE, nullptr);
+
+	CREATE_CVAR("models", "", 0, [](cvar_t* cvar) {
+		std::string szCvar = cvar->string;
+		std::transform(szCvar.begin(), szCvar.end(), szCvar.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+		auto searchAndprint = [&](const char* subpath) {
+			std::string szPath = gEngfuncs.pfnGetGameDirectory();
+			szPath += subpath;
+			if (std::filesystem::exists(szPath)) {
+				std::filesystem::directory_iterator iter(szPath);
+				for (const auto& entry : iter) {
+					if (std::filesystem::is_directory(entry)) {
+						std::string szName = entry.path().filename().string();
+						std::transform(szName.begin(), szName.end(), szName.begin(),
+							[](unsigned char c) { return std::tolower(c); });
+						if (szName.find(szCvar) != std::string::npos)
+							gEngfuncs.Con_Printf(const_cast<char*>((szName + "\n").c_str()));
+					}
+				}
+			}
+		};
+		gEngfuncs.Con_Printf(const_cast<char*>("Models\n==============\n"));
+		searchAndprint("/models/player");
+		searchAndprint("_addon/models/player");
+		searchAndprint("_downloads/models/player");
+		searchAndprint("_hd/models/player");
+		gEngfuncs.Con_Printf(const_cast<char*>("==============\n"));
+		cvar->string[0] = '\0';
+		cvar->value = 0;
+	});
 
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
