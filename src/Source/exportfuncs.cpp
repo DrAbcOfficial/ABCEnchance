@@ -273,9 +273,8 @@ model_t* CL_GetModelByIndex (int index){
 }
 void Cvar_DirectSet(cvar_t* var, char* value) {
 	gHookFuncs.Cvar_DirectSet(var, value);
-	if (gCVarsHookMap.count(var) && gCVarsHookMap[var]) {
+	if (gCVarsHookMap.find(var) != gCVarsHookMap.end())
 		gCVarsHookMap[var](var);
-	}
 }
 void* NewClientFactory(void){
 	return Sys_GetFactoryThis();
