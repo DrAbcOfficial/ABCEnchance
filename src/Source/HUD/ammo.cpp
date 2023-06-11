@@ -89,7 +89,22 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
 	Weapon->iId = READ_SHORT();
 	Weapon->iFlags = READ_BYTE();
 	Weapon->iClip = 0;
-	gWR.AddWeapon(Weapon);
+
+	WEAPON* wp = gWR.GetWeapon(Weapon->iId);
+	if(!wp)
+		gWR.AddWeapon(Weapon);
+	else {
+		strcpy_s(wp->szName, Weapon->szName);
+		strcpy_s(wp->szSprName, Weapon->szName);
+		wp->iAmmoType = Weapon->iAmmoType;
+		wp->iMax1 = Weapon->iMax1;
+		wp->iAmmo2Type = Weapon->iAmmo2Type;
+		wp->iMax2 = Weapon->iMax2;
+		wp->iSlot = Weapon->iSlot;
+		wp->iSlotPos = Weapon->iSlotPos;
+		wp->iFlags = Weapon->iFlags;
+		delete Weapon;
+	}
 	return m_pfnWeaponList(pszName, iSize, pbuf);
 }
 int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf){
