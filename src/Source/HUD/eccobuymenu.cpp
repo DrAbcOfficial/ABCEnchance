@@ -28,10 +28,6 @@
 
 CHudEccoBuyMenu m_HudEccoBuyMenu;
 
-void EccoBuymenuSetCallBack(cvar_t* vars) {
-	if (vars->value <= 0 && m_HudEccoBuyMenu.IsOpen())
-		m_HudEccoBuyMenu.CloseMenu();
-}
 void CHudEccoBuyMenu::GLInit(){
 	glGenFramebuffersEXT(1, &m_hGaussianBufferFBO);
 	m_hGaussianBufferTex = GL_GenTextureRGBA8(ScreenWidth / 2, ScreenHeight);
@@ -41,7 +37,10 @@ int CHudEccoBuyMenu::Init(){
 	pCVarIdealDist = CVAR_GET_POINTER("cam_idealdist");
 	pCVarFollowAim = CVAR_GET_POINTER("cam_followaim");
 
-	gCVars.pEccoBuyMenu = CREATE_CVAR("cl_eccocmenu", "1", FCVAR_VALUE, EccoBuymenuSetCallBack);
+	gCVars.pEccoBuyMenu = CREATE_CVAR("cl_eccocmenu", "1", FCVAR_VALUE, [](cvar_t* vars) {
+		if (vars->value <= 0 && m_HudEccoBuyMenu.IsOpen())
+			m_HudEccoBuyMenu.CloseMenu();
+	});
 	return 0;
 }
 void CHudEccoBuyMenu::VidInit() {
