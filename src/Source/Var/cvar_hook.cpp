@@ -4,6 +4,7 @@
 std::map<cvar_t*, void(*)(cvar_t* cvars)> gCVarsHookMap;
 cvar_t* RegisterHookedVariable(char* szName, char* szValue, int flags, void(*pCallBack)(cvar_t* cvars)) {
 	cvar_t* temp = gEngfuncs.pfnRegisterVariable(szName, szValue, flags);
-	gCVarsHookMap[temp] = pCallBack;
+	if(pCallBack != nullptr)
+		gCVarsHookMap[temp] = pCallBack;
 	return temp;
 }
