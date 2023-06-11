@@ -59,9 +59,9 @@ size_t CWeaponData::Size(size_t iSlot) {
 	return this->m_dicWeaponSlots[iSlot].size();
 }
 void CWeaponData::Add(WEAPON* wp) {
-	this->m_dicWeaponIds.insert(std::make_pair(wp->iId, wp));
-	this->m_dicWeaponNames.insert(std::make_pair(wp->szName, wp));
-	this->m_dicWeaponSlots[wp->iSlot].insert(std::make_pair(wp->iSlotPos, wp));
+	this->m_dicWeaponIds.emplace(std::make_pair(wp->iId, wp));
+	this->m_dicWeaponNames.emplace(std::make_pair(wp->szName, wp));
+	this->m_dicWeaponSlots[wp->iSlot].emplace(std::make_pair(wp->iSlotPos, wp));
 }
 void CWeaponData::Remove(WEAPON* wp) {
 	this->m_dicWeaponIds.erase(wp->iId);
@@ -114,7 +114,7 @@ void CWeaponData::RemoveAll() {
 }
 CWeaponData::CWeaponData() {
 	for (size_t i = 0; i < MAX_WEAPON_SLOT; i++) {
-		m_dicWeaponSlots.insert(std::make_pair(i, std::map<size_t, WEAPON*>()));
+		m_dicWeaponSlots.emplace(std::make_pair(i, std::map<size_t, WEAPON*>()));
 	}
 }
 
@@ -309,20 +309,20 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 
 	if (m_pAviliableWeaponData.Size() == 0)
 		return;
-	auto getMinSlot = [&] {
-		size_t slot = (*m_pOwnedWeaponData.Begin()).second->iSlot;
-		for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
+	static auto getMinSlot = [&] {
+		size_t slot = (*m_pAviliableWeaponData.Begin()).second->iSlot;
+		for (auto iter = m_pAviliableWeaponData.Begin(); iter != m_pAviliableWeaponData.End(); iter++) {
 			WEAPON* compare = (*iter).second;
-			if ((HasAmmo(compare) || compare->iFlags & ITEM_FLAG_SELECTONEMPTY) && compare->iSlot < slot)
+			if (compare->iSlot < slot)
 				slot = compare->iSlot;
 		}
 		return slot;
 	};
-	auto getMaxSlot = [&] {
-		size_t slot = (*m_pOwnedWeaponData.Begin()).second->iSlot;
-		for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
+	static auto getMaxSlot = [&] {
+		size_t slot = (*m_pAviliableWeaponData.Begin()).second->iSlot;
+		for (auto iter = m_pAviliableWeaponData.Begin(); iter != m_pAviliableWeaponData.End(); iter++) {
 			WEAPON* compare = (*iter).second;
-			if (HasAmmo(compare) && compare->iSlot > slot)
+			if (compare->iSlot > slot)
 				slot = compare->iSlot;
 		}
 		return slot;
@@ -333,30 +333,30 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		return;
 	}
 	iSlot = mathlib::clamp<size_t>(iSlot, 0, MAX_WEAPON_SLOT - 1);
-	auto getNext = [&](WEAPON* wp) {
+	static auto getNext = [&](WEAPON* wp) {
 		size_t pos = wp->iSlotPos;
-		for (auto iter = m_pOwnedWeaponData.PosBegin(wp->iSlot); iter != m_pOwnedWeaponData.PosEnd(wp->iSlot); iter++) {
+		for (auto iter = m_pAviliableWeaponData.PosBegin(wp->iSlot); iter != m_pAviliableWeaponData.PosEnd(wp->iSlot); iter++) {
 			WEAPON* compare = (*iter).second;
-			if (HasAmmo(compare) && compare->iSlotPos > pos) {
+			if (compare->iSlotPos > pos) {
 				pos = compare->iSlotPos;
 				break;
 			}	
 		}
 		if (pos == wp->iSlotPos) 
-			return m_pOwnedWeaponData.GetMinPos(wp->iSlot);
+			return m_pAviliableWeaponData.GetMinPos(wp->iSlot);
 		return pos;
 	};
-	auto getLast = [&](WEAPON* wp) {
+	static auto getLast = [&](WEAPON* wp) {
 		size_t pos = wp->iSlotPos;
-		for (auto iter = m_pOwnedWeaponData.RPosBegin(wp->iSlot); iter != m_pOwnedWeaponData.RPosEnd(wp->iSlot); iter++) {
+		for (auto iter = m_pAviliableWeaponData.RPosBegin(wp->iSlot); iter != m_pAviliableWeaponData.RPosEnd(wp->iSlot); iter++) {
 			WEAPON* compare = (*iter).second;
-			if (HasAmmo(compare) && compare->iSlotPos < pos) {
+			if (compare->iSlotPos < pos) {
 				pos = compare->iSlotPos;
 				break;
 			}
 		}
 		if (pos == wp->iSlotPos)
-			return m_pOwnedWeaponData.GetMaxPos(wp->iSlot);
+			return m_pAviliableWeaponData.GetMaxPos(wp->iSlot);
 		return pos;
 	};
 	if (bWheel) {
@@ -393,16 +393,10 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 	}
 }
 WEAPON* WeaponsResource::GetFirstPos(size_t iSlot) {
-	WEAPON* wp = GetWeapon(iSlot, m_pOwnedWeaponData.GetMinPos(iSlot));
-	if (HasAmmo(wp))
-		return wp;
-	return nullptr;
+	return GetWeapon(iSlot, m_pAviliableWeaponData.GetMinPos(iSlot));
 }
 WEAPON* WeaponsResource::GetLastPos(size_t iSlot) {
-	WEAPON* wp = this->GetWeapon(iSlot, this->m_pOwnedWeaponData.GetMaxPos(iSlot));
-	if (HasAmmo(wp))
-		return wp;
-	return nullptr;
+	return GetWeapon(iSlot, this->m_pAviliableWeaponData.GetMaxPos(iSlot));
 }
 bool WeaponsResource::HasUsableWeaponSize(){
 	for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
