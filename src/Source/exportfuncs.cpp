@@ -596,9 +596,12 @@ void HUD_Init(void){
 	gCVars.pCVarAutoBunnyJump = CREATE_CVAR("cl_autojump", "0", FCVAR_VALUE, nullptr);
 
 	CREATE_CVAR("models", "", 0, [](cvar_t* cvar) {
+		auto toLower = [](std::string& sz) {
+			std::transform(sz.begin(), sz.end(), sz.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+		};
 		std::string szCvar = cvar->string;
-		std::transform(szCvar.begin(), szCvar.end(), szCvar.begin(),
-			[](unsigned char c) { return std::tolower(c); });
+		toLower(szCvar);
 		auto searchAndprint = [&](const char* subpath) {
 			std::string szPath = gEngfuncs.pfnGetGameDirectory();
 			szPath += subpath;
@@ -607,8 +610,7 @@ void HUD_Init(void){
 				for (const auto& entry : iter) {
 					if (std::filesystem::is_directory(entry)) {
 						std::string szName = entry.path().filename().string();
-						std::transform(szName.begin(), szName.end(), szName.begin(),
-							[](unsigned char c) { return std::tolower(c); });
+						toLower(szName);
 						if (szName.find(szCvar) != std::string::npos)
 							gEngfuncs.Con_Printf(const_cast<char*>((szName + "\n").c_str()));
 					}
