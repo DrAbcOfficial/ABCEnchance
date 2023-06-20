@@ -112,7 +112,7 @@ void CPopNumberPanel::OnThink(){
 	float angledotResult = mathlib::DotProduct(vecLength, vecView);
 	//cos 60
 	if (angledotResult > 0.5) {
-		float ratio = sin(gEngfuncs.GetClientTime() - m_flCreateTime);
+		float ratio = -sin(gEngfuncs.GetClientTime() - m_flCreateTime) / 2;
 		CVector vecHUD;
 		VEC_WorldToScreen(*m_vecOrigin, vecHUD);
 		SetPos(vecHUD.x - GetWide() / 2, vecHUD.y - (GetTall() / 2 * ratio));
