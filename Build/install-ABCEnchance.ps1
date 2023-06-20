@@ -1,14 +1,9 @@
 $conflictPlugins = @("CommunicationDemo.dll")
 
-function WritePluginLine($path, $avx){
-    if($avx){
-        $new = "ABCEnchance_AVX2.dll"
-    }
-    else{
-        $new = "ABCEnchance.dll"
-    }
+function WritePluginLine($path){
     $lines = Get-Content($path)
-    $newLines = @($new)
+    $new = "ABCEnchance.dll"
+    $newLines = "@($new)`n"
     foreach($l in $lines){
         if(!(([string]$l).CompareTo($new))){
             continue
@@ -44,20 +39,14 @@ if(Test-Path("$($svenLocation)/svencoop")){
     Write-Output "Done"
     Write-Output "Writing plugin load list"
     if(Test-Path("$($metaLocation)/configs/plugins.lst")){
-        WritePluginLine "$($metaLocation)/configs/plugins.lst" $false
-    }
-    if(Test-Path("$($metaLocation)/configs/plugins_svencoop.lst")){
-        WritePluginLine "$($metaLocation)/configs/plugins_svencoop.lst" $false
-    }
-    if(Test-Path("$($metaLocation)/configs/plugins_svencoop_avx2.lst")){
-        WritePluginLine "$($metaLocation)/configs/plugins_svencoop_avx2.lst" $true
+        WritePluginLine "$($metaLocation)/configs/plugins.lst"
     }
     Write-Output "Done"
 }
 else{
     Write-Error "`n`
         --------------------------------------------------------`n`
-        (�s�F����)�s��ߩ��� Can not find Sven-Coop game dir`n`
+        (╯‵□′)╯︵┻━┻ Can not find Sven-Coop game dir`n`
         Is the key value of Sven coop in the registry corrupted?`n`
         --------------------------------------------------------`n"
 }
