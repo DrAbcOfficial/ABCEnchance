@@ -1,45 +1,41 @@
+# ABCEnchance<img src="img/icon.png" align="right" width="120"/>
 
-# ABCEnchance <img src="img/icon.png" align="right" width="120" />
+一个为Sven Co-op带来潜在的不稳定因素和可能的增强的MetaHookSV插件
+
+"Enchance" 是指 "Enchantment", 你看这个图标 👉
 
 <!-- badges: start -->
+
 ![Codacy Badge](https://img.shields.io/codacy/grade/d58f0a4ca9e649ffa5d1b97bb668598c?style=for-the-badge)
 ![Downloads](https://img.shields.io/github/downloads/DrAbcrealone/ABCEnchance/total?style=for-the-badge)
 ![Repo Size](https://img.shields.io/github/repo-size/DrAbcrealone/ABCEnchance?style=for-the-badge)
 ![Last Commit](https://img.shields.io/github/last-commit/DrAbcrealone/ABCEnchance?style=for-the-badge)
+
 <!-- badges: end -->
-
-`ABCEnchance` 是一个旨在提升Sven coop游玩体验并加入更多(花里胡哨)功能的metahook插件
-
-## 
 
 <img src="img/cover.png" width="200%">
 
 ----
 
-# ⚠️ **<span color="red">该插件正在开发，并不稳定，可能会有较大的修改</span>** ⚠️
-# 💥 **<span color="red">使用该插件风险自行承担</span>** 💥
+# ⚠️ **<span color="#dd0000">插件为游戏引入了潜在崩溃的风险，由于不断的开发可能与截图有异</span>** ⚠️
+# 💥 **<span color="#dd0000">风险自负</span>** 💥
 
 ----
 
-# 🤫 已知问题
-
- - [x] ~~双持UZI不能正确显示第二把枪的子弹数~~
- - [x] ~~武器Position冲突修复不能正常工作~~
- - [x] ~~当`+annularmenu`命令绑定到`mouse4`，`mouse5`（鼠标侧键）时，不会自动触发 `-annularmenu`命令~~
-
 # 🖥️ 安装
- 1. 下载并依照指示安装 [MetahookSV](https://github.com/hzqst/MetaHookSv)
-   
+ 1. 下载并按指示安装 [MetahookSV](https://github.com/hzqst/MetaHookSv)
+
  2. 安装
-   
-    自动安装:
+    
+    自动脚本:
 
-    1. 以Powersehll运行`install-ABCEnchance.ps1`
-    2. 用记事本或其他工具依照个人喜好编辑 `svencoop/abcenchance/ABCEnchance.res` 文件
+    1. 在 PowerShell中运行 `install-ABCEnchance.ps1`
    
-    手动安装
+    2. 按你的喜好随便编辑 `svencoop/abcenchance/` 里的res文件.
 
-    1. 下载`Build`文件夹, 并把 `abcenchance` 文件夹放入 `svencoop` 文件夹内, 把 `ABCEnchance.dll` 文件放入 `svencoop/metahook/plugins` 内, 放置完毕后的文件夹将如下所示
+    手动:
+
+    1. 从release或者action下载压缩包，解压到 `svencoop`文件夹里, 再把dll文件移动到`svencoop/metahook/plugins`，最终看起来像是这样👇
    
     ```
         Sven Coop
@@ -58,27 +54,26 @@
 
     ```
 
-    2. 用记事本或其他工具打开 `svencoop/metahook/configs/plugins.lst`文件，新建一行添加 `ABCEnchance.dll`
-    3. 用记事本或其他工具打开 `svencoop/metahook/configs/plugins_svencoop.lst`文件，新建一行添加 `ABCEnchance.dll`
-    4. 用记事本或其他工具打开 `svencoop/metahook/configs/plugins_svencoop_avx2.lst`文件，新建一行添加 `ABCEnchance_AVX2.dll`
-    5. 用记事本或其他工具依照个人喜好编辑 `svencoop/abcenchance/ABCEnchance.res` 文件
+    2. 打开 `svencoop/metahook/configs/plugins.lst`, 在CaptionMod前另起一行加上 `ABCEnchance.dll` .
+
+    3. 按你的喜好随便编辑 `svencoop/abcenchance/` 里的res文件.
 
 # 🏗️ 构建
- 1. 克隆或下载 [MetahookSV](https://github.com/hzqst/MetaHookSv)
+ 1. 克隆 [MetahookSV](https://github.com/hzqst/MetaHookSv)
    
- 2. 克隆或下载本储存库
+ 2. 克隆储存库到 `MetaHookSv-master/Plugins`
    
- 3. 复制 `ABCEnchance-master` 文件夹放入 `MetaHookSv-master/Plugins`
-   
-    自动构建：
+ 3. 构建
 
-    1. 以Powershell运行`build-ABCEnchance.ps1`
-   
-    手动构建：
+    自动构建:
 
-    1. 依照`MetahookSV`指示构建`glew`或`glew-debug`
+    1. 用powershell中运行 `build-ABCEnchance.ps1`
    
-    2. 构建本储存库
+    手动:
+
+    1. 按metahooksv里的指示构建 `glew` 或 `glew-debug`
+   
+    2. 打开sln按f5
  
  ----
 
@@ -157,50 +152,26 @@
 
 ----
 
-# 🖼️ 截图
+# 🖼️ 图像
 
-### 🛑 <u>这些截图来自插件的不同版本，可能与现行版本有较大差距</u> 🛑
+### 🛑 <u>有的图是老的，和现在的可能不一样</u> 🛑
 
-## 👮 CSGO式样HUD
+|👮 CSGO HUD|🗿 玩家浮动信息|
+|--|--|
+|<div><img src="img/csgo1.jpg" width="50%"><img src="img/csgo2.jpg" width="50%"></div>|<img src="img/Playertitle1.png" width="100%">|
 
-<div>
-<img src="img/csgo1.jpg" width="50%"><img src="img/csgo2.jpg" width="50%">
-</div>
+|🛒 增强购买菜单（需要服务器支持）|🔺 动态伤害指示器|
+|--|--|
+|<img src="img/buymenu.png" width="100%">|<div><img src="img/dynamic1.jpg" width="50%"><img src="img/dynamic2.jpg" width="50%"></div>|
 
-## 🗿 玩家名称和血条护甲浮动标签
-<img src="img/Playertitle1.png" width="100%">
+|🗺️ 雷达|🗳️ 不会恶心你的投票菜单|
+|--|--|
+|<div><img src="img/radar1.png" width="50%"><img src="img/radar2.png" width="50%"></div>|<img src="img/vote1.png" width="100%">|
 
-## 🛒 增强Ecco购买菜单
-<img src="img/buymenu.png" width="100%">
+|💀 死亡消息|☢️ 黑山起源样的高斯光线|
+|--|--|
+|<img src="img/deathmsg1.png" width="100%">|<img src="img/gauss.jpg" width="100%">|
 
-## 🔺 动态伤害指示器与动态准心
-
-<div>
-<img src="img/dynamic1.jpg" width="50%"><img src="img/dynamic2.jpg" width="50%">
-</div>
-
-## 🗺️ 雷达地图
-
-<div>
-<img src="img/radar1.png" width="50%"><img src="img/radar2.png" width="50%">
-</div>
-
-## 🗳️ 不会在你连跳时候蹦出来打断你的投票菜单
-
-<img src="img/vote1.png" width="100%">
-
-## 💀 玩家死亡消息
-
-<img src="img/deathmsg1.png" width="100%">
-
-## ☢️ BMS样式高斯光线
-
-<img src="img/gauss.jpg" width="100%">
-
-## 🪔 物品高亮
-
-<img src="img/highlight.jpg" width="100%">
-
-## 😗 与及一些没卵用的Efx特效
-
-<img src="img/efx.jpg" width="100%">
+|🪔 高光|😗 没用的efx特效|
+|--|--|
+|<img src="img/highlight.jpg" width="100%">|<img src="img/efx.jpg" width="100%">|
