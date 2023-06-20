@@ -92,13 +92,13 @@ int __MsgFunc_Geiger(const char* pszName, int iSize, void* pbuf) {
 		switch(type) {
 			case CCustomHud::ABCCustomMsg::POPNUMBER:{
 				if (g_pViewPort->m_pPopNumber->value <= 0)
-					return 0;
+					return m_pfnGeiger(pszName, iSize, pbuf);
 				CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
 				int iValue = READ_LONG();
 				Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
 				cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 				if (!local)
-					return 0;
+					return m_pfnGeiger(pszName, iSize, pbuf);
 				//йс╫г╫г╤х
 				CVector vecView;
 				gEngfuncs.GetViewAngles(vecView);
@@ -111,14 +111,14 @@ int __MsgFunc_Geiger(const char* pszName, int iSize, void* pbuf) {
 				//cos 60
 				if (angledotResult > 0.5)
 					g_pViewPort->AddPopNumber(vecOrigin, pColor, iValue);
-				return 0;
+				return m_pfnGeiger(pszName, iSize, pbuf);
 			}
 		}
 		break;
 	}
 	default:break;
 	}
-	return 0;
+	return m_pfnGeiger(pszName, iSize, pbuf);
 }
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
