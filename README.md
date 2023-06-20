@@ -1,5 +1,9 @@
 
-# ABCEnchance <img src="img/icon.png" align="right" width="120" />
+# ABCEnchance<img src="img/icon.png" align="right" width="120"/>
+
+A MetaHookSV plugin that introduces more instability and possible enhancements to the Sven Co-op.
+
+"Enchance" means "Enchantment", look the icon 👉
 
 <!-- badges: start -->
 
@@ -10,25 +14,17 @@
 
 <!-- badges: end -->
 
-`ABCEnchance` is a metahook plugin that provides experience improvement for Sven co-op
-
-##  
-
 <img src="img/cover.png" width="200%">
 
 ----
 
-# ⚠️ **<span color="#dd0000">This plugin is under development and unstable, and may have major modifications compared with the current one</span>** ⚠️
+# ⚠️ **<span color="#dd0000">This plugin introduces more potential risks of instability to the game. and, due to ongoing development, may have a large difference between the screenshots and real plugin</span>** ⚠️
 # 💥 **<span color="#dd0000">USE AT YOUR OWN RISK</span>** 💥
 
 ----
 
-# 🀄 中文README
+# 🀄 <u>[点我获得中文！](READMECN.md)</u>
 
-> ## &emsp;👉  <u>[点我](READMECN.md)</u>
-
-# 🤫 Known issue
- - [x] ~~The number of bullets in the second weapon will not be displayed correctly in Akimbo uzi. it is seem not regular `iAmmoType2`?~~
 # 🖥️ Install
  1. Download and install [MetahookSV](https://github.com/hzqst/MetaHookSv)
  2. Install
@@ -60,13 +56,9 @@
 
     ```
 
-    2. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line.
-    
-    3. Open `svencoop/metahook/configs/plugins_svencoop.lst`, add `ABCEnchance.dll` as a new line.
+    2. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line. Please load the plugin before CaptionMod.
 
-    4. Open `svencoop/metahook/configs/plugins_svencoop_avx2.lst`, add `ABCEnchance_AVX2.dll` as a new line.
-
-    5. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
+    3. Edit the res file in `svencoop/abcenchance/` to your liking.
 
 # 🏗️ Build
  1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
@@ -166,55 +158,22 @@
 
 ### 🛑 <u>These pictures contain old version images, which may be inconsistent with the actual version</u> 🛑
 
-## 👮 CSGO like Hud
+|👮 CSGO like Hud|🗿 Player name title and hp/ap bar|
+|--|--|
+|<div><img src="img/csgo1.jpg" width="50%"><img src="img/csgo2.jpg" width="50%"></div>|<img src="img/Playertitle1.png" width="100%">|
 
-<div>
-<img src="img/csgo1.jpg" width="50%"><img src="img/csgo2.jpg" width="50%">
-</div>
+|🛒 Enhanced Ecco buy menu|🔺 Dynamic indicator and dynamic crosshair|
+|--|--|
+|<img src="img/buymenu.png" width="100%">|<div><img src="img/dynamic1.jpg" width="50%"><img src="img/dynamic2.jpg" width="50%"></div>|
 
-## 🗿 Player name title and hp/ap bar
-<img src="img/Playertitle1.png" width="100%">
+|🗺️ Radar|🗳️ Voting menus that don't come out and gross you out when you're bunnyhopping|
+|--|--|
+|<div><img src="img/radar1.png" width="50%"><img src="img/radar2.png" width="50%"></div>|<img src="img/vote1.png" width="100%">|
 
-## 🛒 Enhanced Ecco buy menu
-<img src="img/buymenu.png" width="100%">
+|💀 Player death message|☢️ BMS style gauss laser|
+|--|--|
+|<img src="img/deathmsg1.png" width="100%">|<img src="img/gauss.jpg" width="100%">|
 
-## 🏐 Annular selection menu
-
-### And fixed the problem that the svencoop selection menu could not switch Postion conflict weapons
-
-<div>
-<img src="img/Annular4.png" width="50%"><img src="img/Annular1.jpg" width="50%">
-<img src="img/Annular3.jpg" width="50%"><img src="img/Annular2.jpg" width="50%">
-</div>
-
-## 🔺 Dynamic indicator and dynamic crosshair
-
-<div>
-<img src="img/dynamic1.jpg" width="50%"><img src="img/dynamic2.jpg" width="50%">
-</div>
-
-## 🗺️ Radar
-
-<div>
-<img src="img/radar1.png" width="50%"><img src="img/radar2.png" width="50%">
-</div>
-
-## 🗳️ The voting menu that won't block you when you bunnyhopping
-
-<img src="img/vote1.png" width="100%">
-
-## 💀 Player death message
-
-<img src="img/deathmsg1.png" width="100%">
-
-## ☢️ BMS style gauss laser
-
-<img src="img/gauss.jpg" width="100%">
-
-## 🪔 Item high light
-
-<img src="img/highlight.jpg" width="100%">
-
-## 😗 And some useless efx enchance
-
-<img src="img/efx.jpg" width="100%">
+|🪔 Item high light|😗 And some useless efx enchance|
+|--|--|
+|<img src="img/highlight.jpg" width="100%">|<img src="img/efx.jpg" width="100%">|
