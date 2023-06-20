@@ -61,8 +61,9 @@ pfnUserMsgHook m_pfnShowMenu;
 pfnUserMsgHook m_pfnVoteMenu;
 pfnUserMsgHook m_pfnEndVote;
 pfnUserMsgHook m_pfnMOTD;
+pfnUserMsgHook m_pfnGeiger;
 
-int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
+int __MsgFunc_Geiger(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int type = READ_BYTE();
 	switch (type) {
@@ -336,7 +337,7 @@ void CCustomHud::HUD_Init(void){
 	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
 	m_pfnEndVote = HOOK_MESSAGE(EndVote);
 	m_pfnMOTD = HOOK_MESSAGE(MOTD);
-	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
+	m_pfnGeiger = HOOK_MESSAGE(Geiger);
 
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
