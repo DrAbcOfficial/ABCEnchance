@@ -455,9 +455,6 @@
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\eccomoney.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\efxhud.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
@@ -571,6 +568,9 @@
     </ClCompile>
     <ClCompile Include="src\Particleman\ClientParticleMan.cpp">
       <Filter>Public\Particleman</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\sidetext.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1171,9 +1171,6 @@
     <ClInclude Include="src\Header\HUD\eccobuymenu.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\eccomoney.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\efxhud.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
@@ -1329,6 +1326,9 @@
     </ClInclude>
     <ClInclude Include="src\Particleman\IParticleMan.h">
       <Filter>Public\Particleman</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\sidetext.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
