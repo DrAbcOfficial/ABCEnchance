@@ -134,8 +134,7 @@
 |abc_bloodsprite_num|Efx新生成血迹数量|32|0-9999|
 |abc_gaussefx|启用bms高斯特效|1|0/1|
 |---|---|---|---|
-|cl_eccoenable|启用Ecco显示|1|0(关闭)/1(总是开启)/2(检测到Ecoo时开启)|
-|cl_eccocheck|启用Ecco插件检查|0|0/1|
+|cl_sideenable|开启侧边文字栏|1|0/1|
 |cl_eccomenu|启用增强Ecco菜单|1|0/1|
 |---|---|---|---|
 |cl_modellag|启用V模型延迟|1|0/1|
