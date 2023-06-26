@@ -79,7 +79,7 @@ void CSidePanel::OnThink() {
 	float flPlayerSpeed = vecSpeed.FLength();
 	if (m_flMaxSpeed < flPlayerSpeed)
 		m_flMaxSpeed = flPlayerSpeed;
-	auto ReplaceAll = [](std::string subject, const char* search,
+	const auto ReplaceAll = [](std::string subject, const char* search,
 		const std::string& replace) -> std::string {
 			size_t pos = 0;
 			while ((pos = subject.find(search, pos)) != std::string::npos) {
