@@ -4,8 +4,8 @@
 	{
 		"ControlName"		"CPopNumberPanel"
 		"fieldName"		"PopNumberPanel"
-		"wide"		"64"
-		"tall"		"16"
+		"wide"		"48"
+		"tall"		"64"
 		"visible"		"1"
 		"enabled"		"1"
 	}
@@ -13,8 +13,8 @@
 	{
 		"ControlName"		"Label"
 		"fieldName"		"PopNumber"
-		"wide"		"64"
-		"tall"		"16"
+		"wide"		"48"
+		"tall"		"64"
 		"visible"		"1"
 		"enabled"		"1"
 		"textAlignment"		"center"
