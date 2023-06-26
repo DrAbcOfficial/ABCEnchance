@@ -21,6 +21,7 @@
 #include "scoreboard.h"
 #include "vote.h"
 #include "sidetext.h"
+#include "textmenu.h"
 
 #include "Viewport.h"
 #include "exportfuncs.h"
@@ -64,6 +65,7 @@ void CViewport::Start(void)
 	AddNewPanel(m_pVotePanel = new CVotePanel());
 	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
 	AddNewPanel(m_pSidePanel = new CSidePanel());
+	AddNewPanel(m_pTextMenu = new CTextMenu());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -78,6 +80,7 @@ void CViewport::SetParent(VPANEL vPanel)
 	m_pVotePanel->SetParent(GetVPanel());
 	m_pMOTDPanel->SetParent(GetVPanel());
 	m_pSidePanel->SetParent(GetVPanel());
+	m_pTextMenu->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -207,6 +210,15 @@ void CViewport::ForeceBuildPage() {
 }
 void CViewport::ShowSideText(bool state){
 	m_pSidePanel->ShowPanel(state);
+}
+void CViewport::SetTextMenuTitle(char* szTitle){
+	m_pTextMenu->SetTitle(szTitle);
+}
+void CViewport::AddTextMenuItem(char* szMenu){
+	m_pTextMenu->AddMenu(szMenu);
+}
+void CViewport::ShowTextMenu(bool state){
+	m_pTextMenu->ShowPanel(state);
 }
 void CViewport::Paint(void){
 	BaseClass::Paint();
