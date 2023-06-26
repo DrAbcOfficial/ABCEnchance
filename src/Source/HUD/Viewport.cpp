@@ -20,6 +20,7 @@
 #include "playerboard.h"
 #include "scoreboard.h"
 #include "vote.h"
+#include "sidetext.h"
 
 #include "Viewport.h"
 #include "exportfuncs.h"
@@ -62,6 +63,7 @@ void CViewport::Start(void)
 	AddNewPanel(m_pScorePanel = new CScorePanel());
 	AddNewPanel(m_pVotePanel = new CVotePanel());
 	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
+	AddNewPanel(m_pSidePanel = new CSidePanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -75,6 +77,7 @@ void CViewport::SetParent(VPANEL vPanel)
 	m_pScorePanel->SetParent(GetVPanel());
 	m_pVotePanel->SetParent(GetVPanel());
 	m_pMOTDPanel->SetParent(GetVPanel());
+	m_pSidePanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -201,6 +204,9 @@ void CViewport::CloseMOTD(){
 }
 void CViewport::ForeceBuildPage() {
 	m_pMOTDPanel->ForceAddPage();
+}
+void CViewport::ShowSideText(bool state){
+	m_pSidePanel->ShowPanel(state);
 }
 void CViewport::Paint(void){
 	BaseClass::Paint();

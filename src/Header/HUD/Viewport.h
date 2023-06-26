@@ -4,6 +4,8 @@
 #undef GetCurrentTime
 #endif
 
+#include <vector>
+
 #include <vgui/VGUI.h>
 #include <vgui/ISurface.h>
 #include <vgui/ILocalize.h>
@@ -19,6 +21,7 @@ class CPlayerInfoPanel;
 class CScorePanel;
 class CVotePanel;
 class CMotdPanel;
+class CSidePanel;
 class ISchemel;
 
 class CViewport : public vgui::Panel
@@ -68,6 +71,8 @@ public:
 	void ShowMOTD();
 	void CloseMOTD();
 	void ForeceBuildPage();
+	
+	void ShowSideText(bool state);
 
 	long m_iTimeEnd = 0;
 
@@ -80,6 +85,7 @@ private:
 	CVotePanel* m_pVotePanel = nullptr;
 	CPlayerInfoPanel* m_pPlayerInfoPanels[32];
 	CMotdPanel* m_pMOTDPanel = nullptr;
+	CSidePanel* m_pSidePanel = nullptr;
 
 	int m_iInterMission;
 

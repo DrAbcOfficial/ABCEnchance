@@ -31,7 +31,6 @@
 #include "radar.h"
 #include "deathmsg.h"
 #include "crosshair.h"
-#include "eccomoney.h"
 #include "efxhud.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
@@ -364,7 +363,6 @@ void CCustomHud::HUD_Init(void){
 	m_HudRadar.Init();
 	m_HudDeathMsg.Init();
 	m_HudCrosshair.Init();
-	m_HudEccoMoney.Init();
 	m_HudEfx.Init();
 	g_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
@@ -408,7 +406,6 @@ void CCustomHud::HUD_VidInit(void){
 		}
 	}
 	m_HudGrenadeIndicator.VidInit();
-	m_HudEccoMoney.VidInit();
 	m_HudDeathMsg.VidInit();
 	m_HudArmorHealth.VidInit();
 	m_HudCustomAmmo.VidInit();
@@ -434,7 +431,6 @@ void CCustomHud::HUD_Draw(float flTime){
 	m_HudEfx.Draw(flTime);
 	m_HudArmorHealth.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
-	m_HudEccoMoney.Draw(flTime);
 }
 void CCustomHud::HUD_Reset(void){
 	m_iPlayerHealth = 100;
@@ -443,7 +439,6 @@ void CCustomHud::HUD_Reset(void){
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
 	m_HudDeathMsg.Reset();
-	m_HudEccoMoney.Reset();
 	m_HudEfx.Reset();
 	g_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
