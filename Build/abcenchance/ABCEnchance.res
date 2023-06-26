@@ -75,13 +75,6 @@ Scheme
 		//死亡消息攻击武器颜色
 		"DeathMsg.InflictorColor"		"178 178 178 255"
 
-        //分数，金钱增加颜色
-		"Ecco.MoneyIncreseColor"		"0 255 0 255"
-		//分数，金钱减少颜色
-		"Ecco.MoneyDecreseColor"		"255 0 0 255"
-		//分数，金钱颜色
-		"Ecco.MoneyColor"		"0 255 0 255"
-
         //购买菜单文字颜色
 		"BuyMenu.TextColor"		"255 255 255 255"
 		//购买菜单背景颜色
@@ -93,7 +86,7 @@ Scheme
     //时间单位为秒
 	BaseSettings
 	{
-		"Version"						"100016"
+		"Version"						"100017"
 		"Language"                      ""
 		//[尺寸]鼠标光标大小
 		"Common.CursorSize"             "0.03"
@@ -181,13 +174,6 @@ Scheme
 		"DeathMsg.GapOffset"	"0.012"
 		//死亡消息背景高度
 		"DeathMsg.BackGoundWidth"	"0.0070"
-
-        //分数金钱起始高
-		"Ecco.YOffset"		"0.4"
-		//分数金钱背景长度
-		"Ecco.BackgroundLength"		"0.11"
-		//分数金钱背景高度
-		"Ecco.BackgroundHeight"		"0.0325"
 
         //购买菜单进入动画时间
 		"EccoBuyMenu.BuyMenuAnimateTime"		"0.1"
