@@ -22,6 +22,7 @@ class CScorePanel;
 class CVotePanel;
 class CMotdPanel;
 class CSidePanel;
+class CTextMenu;
 class ISchemel;
 
 class CViewport : public vgui::Panel
@@ -74,6 +75,10 @@ public:
 	
 	void ShowSideText(bool state);
 
+	void SetTextMenuTitle(char* szTitle);
+	void AddTextMenuItem(char* szMenu);
+	void ShowTextMenu(bool state);
+
 	long m_iTimeEnd = 0;
 
 	cvar_t* m_pPlayerTitle = nullptr;
@@ -86,6 +91,7 @@ private:
 	CPlayerInfoPanel* m_pPlayerInfoPanels[32];
 	CMotdPanel* m_pMOTDPanel = nullptr;
 	CSidePanel* m_pSidePanel = nullptr;
+	CTextMenu* m_pTextMenu = nullptr;
 
 	int m_iInterMission;
 
