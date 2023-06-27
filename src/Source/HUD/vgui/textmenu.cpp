@@ -76,7 +76,7 @@ void CTextMenu::SelectMenuItem(int slot){
 	char szbuf[32];
 	if ((slot > 0) && (m_bitsValidSlots & (1 << (slot - 1)))){
 		sprintf(szbuf, m_bIsASMenu ? "as_menuselect %d\n" : "menuselect %d\n", slot);
-		gEngfuncs.pfnClientCmd(szbuf);
+		EngineClientCmd(szbuf);
 		ShowPanel(false);
 	}
 }
@@ -89,13 +89,8 @@ bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
 	int iDisplayTime = READ_CHAR();
 	int iNeedMoreBits = READ_BYTE();
 	int iNeedMore = iNeedMoreBits & 0x7F;
-	m_bIsASMenu = ((iNeedMoreBits >> 7) & 1) ? true : false;
-
-	if (iDisplayTime > 0)
-		m_flShutoffTime = gEngfuncs.GetClientTime() + iDisplayTime;
-	else
-		m_flShutoffTime = -1;
-
+	m_bIsASMenu = (iNeedMoreBits >> 7) & 1;
+	m_flShutoffTime = iDisplayTime > 0 ? gEngfuncs.GetClientTime() + iDisplayTime : -1;
 	if (m_bitsValidSlots){
 		m_szMenuString += READ_STRING();
 		if (!iNeedMore) {
