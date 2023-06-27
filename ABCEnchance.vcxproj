@@ -207,6 +207,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\historyresource.cpp" />
     <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
     <ClCompile Include="src\Source\HUD\radar.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\playerboard.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\popnum.cpp" />
@@ -279,6 +280,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\GraphPanel.cpp" />
     <ClCompile Include="vgui_controls\HTML.cpp" />
     <ClCompile Include="vgui_controls\Image.cpp" />
+    <ClCompile Include="vgui_controls\ImageClipPanel.cpp" />
     <ClCompile Include="vgui_controls\ImageList.cpp" />
     <ClCompile Include="vgui_controls\ImagePanel.cpp" />
     <ClCompile Include="vgui_controls\InputDialog.cpp" />
@@ -426,6 +428,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\itemhighlight.h" />
     <ClInclude Include="src\Header\HUD\numdisplay.h" />
     <ClInclude Include="src\Header\HUD\radar.h" />
+    <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
     <ClInclude Include="src\Header\HUD\vgui\playerboard.h" />
     <ClInclude Include="src\Header\HUD\vgui\popnum.h" />
@@ -531,6 +534,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\GraphPanel.h" />
     <ClInclude Include="vgui_controls\HTML.h" />
     <ClInclude Include="vgui_controls\Image.h" />
+    <ClInclude Include="vgui_controls\ImageClipPanel.h" />
     <ClInclude Include="vgui_controls\ImageList.h" />
     <ClInclude Include="vgui_controls\ImagePanel.h" />
     <ClInclude Include="vgui_controls\InputDialog.h" />

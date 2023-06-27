@@ -159,13 +159,14 @@ int __MsgFunc_MOTD(const char* pszName, int iSize, void* pbuf) {
 }
 int __MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
-	int battery = READ_BYTE();
+	g_pViewPort->SetFlashBattery(READ_BYTE());
 	return m_pfnFlashBat(pszName, iSize, pbuf);
 }
 int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
-	int id = READ_BYTE();
+	int on = READ_BYTE();
 	int battery = READ_BYTE();
+	g_pViewPort->SetFlashLight(on, battery);
 	return m_pfnFlashlight(pszName, iSize, pbuf);
 }
 
