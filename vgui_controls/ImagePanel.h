@@ -28,7 +28,7 @@ class ImagePanel : public Panel
 	DECLARE_CLASS_SIMPLE( ImagePanel, Panel );
 public:
 	ImagePanel(Panel *parent, const char *name);
-	~ImagePanel();
+	virtual ~ImagePanel();
 
 	virtual void SetImage(IImage *image);
 	virtual void SetImage(const char *imageName);
@@ -54,7 +54,6 @@ protected:
 	virtual void OnSizeChanged(int newWide, int newTall);
 	virtual void ApplySchemeSettings( IScheme *pScheme );
 
-private:
 	IImage *m_pImage;
 	char *m_pszImageName;
 	char *m_pszColorName;

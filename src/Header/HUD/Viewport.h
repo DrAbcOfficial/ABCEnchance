@@ -23,6 +23,8 @@ class CVotePanel;
 class CMotdPanel;
 class CSidePanel;
 class CTextMenu;
+class CFlashLightPanel;
+
 class ISchemel;
 
 class CViewport : public vgui::Panel
@@ -80,6 +82,9 @@ public:
 	void SelectMenuItem(int slot);
 	bool IsTextMenuOpen();
 
+	void SetFlashLight(bool on, int battery);
+	void SetFlashBattery(int battery);
+
 	long m_iTimeEnd = 0;
 
 	cvar_t* m_pPlayerTitle = nullptr;
@@ -93,6 +98,7 @@ private:
 	CMotdPanel* m_pMOTDPanel = nullptr;
 	CSidePanel* m_pSidePanel = nullptr;
 	CTextMenu* m_pTextMenu = nullptr;
+	CFlashLightPanel* m_pFlashLight = nullptr;
 
 	int m_iInterMission;
 

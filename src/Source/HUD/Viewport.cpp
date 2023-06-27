@@ -22,6 +22,7 @@
 #include "vote.h"
 #include "sidetext.h"
 #include "textmenu.h"
+#include "flashlight.h"
 
 #include "Viewport.h"
 #include "exportfuncs.h"
@@ -65,7 +66,8 @@ void CViewport::Start(void)
 	AddNewPanel(m_pVotePanel = new CVotePanel());
 	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
 	AddNewPanel(m_pSidePanel = new CSidePanel());
-	AddNewPanel(m_pTextMenu = new CTextMenu());
+	AddNewPanel(m_pTextMenu = new CTextMenu()); 
+	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -81,6 +83,7 @@ void CViewport::SetParent(VPANEL vPanel)
 	m_pMOTDPanel->SetParent(GetVPanel());
 	m_pSidePanel->SetParent(GetVPanel());
 	m_pTextMenu->SetParent(GetVPanel());
+	m_pFlashLight->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -224,6 +227,12 @@ void CViewport::SelectMenuItem(int slot){
 }
 bool CViewport::IsTextMenuOpen(){
 	return m_pTextMenu->IsVisible();
+}
+void CViewport::SetFlashLight(bool on, int battery){
+	m_pFlashLight->SetFlashLight(on, battery);
+}
+void CViewport::SetFlashBattery(int battery){
+	m_pFlashLight->SetFlashBattery(battery);
 }
 void CViewport::Paint(void){
 	BaseClass::Paint();
