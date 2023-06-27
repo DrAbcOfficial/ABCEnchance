@@ -366,8 +366,8 @@ void TextImageEx::RecalculateNewLinePositions()
 			case 'y':
 			case 'r':
 			case 'R': {
-				wsz+=2;
-				break; 
+				wsz++;
+				continue; 
 			}
 			default:break;
 			}
@@ -523,18 +523,16 @@ void TextImageEx::RecalculateEllipsesPosition()
 				}
 			}
 			else if (ch == '\\') {
-				if (wcslen(wsz) > 1) {
-					switch (wsz[1]) {
-					case 'w':
-					case 'd':
-					case 'y':
-					case 'r':
-					case 'R': {
-						wsz+=2;
-						break;
-					}
-					default:break;
-					}
+				switch (wsz[1]) {
+				case 'w':
+				case 'd':
+				case 'y':
+				case 'r':
+				case 'R': {
+					wsz++;
+					continue;
+				}
+				default:break;
 				}
 			}
 
@@ -661,8 +659,8 @@ void TextImageEx::RecalculateCenterWrapIndents()
 			case 'y':
 			case 'r':
 			case 'R': {
-				wsz+=2;
-				break;
+				wsz++;
+				continue;
 			}
 			default:break;
 			}
