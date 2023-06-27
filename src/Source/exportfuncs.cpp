@@ -646,6 +646,8 @@ int HUD_VidInit(void){
 				gHookHud.m_Health = (dynamic_cast<CHudHealth*>(pHudList->p));
 			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != nullptr)
 				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
+			else if (dynamic_cast<CHudFlashlight*>(pHudList->p) != nullptr)
+				gHookHud.m_Flash = (dynamic_cast<CHudFlashlight*>(pHudList->p));
 			pHudList = pHudList->pNext;
 		}
 	}
