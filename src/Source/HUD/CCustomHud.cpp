@@ -182,8 +182,8 @@ int __MsgFunc_ShowMenu(const char* pszName, int iSize, void* pbuf){
 	READ_SHORT();
 	gCustomHud.m_flTextMenuDisplayTime = gEngfuncs.GetClientTime() + READ_CHAR();
 	gCustomHud.m_bTextMenuOpening = true;
-	//Other thing? i dont care
-	return m_pfnShowMenu(pszName, iSize, pbuf);
+	//block hahahaha
+	return g_pViewPort->MsgShowMenu(pszName, iSize, pbuf);
 }
 int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf) {
 	if (!g_pViewPort->IsVoteEnable())

@@ -211,12 +211,11 @@ void CViewport::ForeceBuildPage() {
 void CViewport::ShowSideText(bool state){
 	m_pSidePanel->ShowPanel(state);
 }
-void CViewport::SetTextMenuTitle(char* szTitle){
-	m_pTextMenu->SetTitle(szTitle);
+
+bool CViewport::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
+	return m_pTextMenu->MsgShowMenu(pszName, iSize, pbuf);
 }
-void CViewport::AddTextMenuItem(char* szMenu){
-	m_pTextMenu->AddMenu(szMenu);
-}
+
 void CViewport::ShowTextMenu(bool state){
 	m_pTextMenu->ShowPanel(state);
 }

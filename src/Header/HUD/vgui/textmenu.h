@@ -6,8 +6,7 @@
 #include "IViewportPanel.h"
 
 namespace vgui {
-	class Label;
-	class ListViewPanel;
+	class LabelEx;
 }
 
 class CTextMenu : public vgui::EditablePanel, public IViewportPanel
@@ -26,12 +25,17 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
-	void AddMenu(char* szMenu);
-	void SetTitle(char* szTitle);
+	bool MsgShowMenu(const char* pszName, int iSize, void* pbuf);
 private:
-	vgui::Label* m_pTitle = nullptr;
-	vgui::ListViewPanel* m_pMenu = nullptr;
+	void SetContent(const char* szMenu);
 
-	float m_flDisplayTime = 0.0f;
+	vgui::LabelEx* m_pMenu = nullptr;
+
+	int m_bitsValidSlots;
+	bool m_bIsASMenu;
+
+	std::string m_szMenuString;
+
+	float m_flShutoffTime;
 };
 #endif
