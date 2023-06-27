@@ -178,10 +178,6 @@ int __MsgFunc_TimeEnd(const char* pszName, int iSize, void* pbuf) {
 	return m_pfnTimeEnd(pszName, iSize, pbuf);
 }
 int __MsgFunc_ShowMenu(const char* pszName, int iSize, void* pbuf){
-	BEGIN_READ(pbuf, iSize);
-	READ_SHORT();
-	gCustomHud.m_flTextMenuDisplayTime = gEngfuncs.GetClientTime() + READ_CHAR();
-	gCustomHud.m_bTextMenuOpening = true;
 	//block hahahaha
 	return g_pViewPort->MsgShowMenu(pszName, iSize, pbuf);
 }
@@ -448,11 +444,9 @@ void CCustomHud::HUD_Reset(void){
 #endif
 
 	m_bInScore = false;
-	m_bTextMenuOpening = false;
 	m_bRenderRadarView = false;
 	m_iMouseState = 0;
 	m_iLastClick = 5;
-	m_flTextMenuDisplayTime = 0;
 	memset(m_SpectatePlayer, 0, sizeof(m_SpectatePlayer));
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
@@ -568,8 +562,13 @@ bool CCustomHud::IsMouseVisible(){
 	return false;
 }
 bool CCustomHud::IsTextMenuOpening() {
-	if (gEngfuncs.GetClientTime() <= m_flTextMenuDisplayTime || m_bTextMenuOpening)
+	return g_pViewPort->IsTextMenuOpen();
+}
+bool CCustomHud::SelectTextMenuItem(int slot){
+	if (IsTextMenuOpening()) {
+		g_pViewPort->SelectMenuItem(slot);
 		return true;
+	}
 	return false;
 }
 void CCustomHud::SetMouseVisible(bool state) {

@@ -30,8 +30,8 @@ namespace vgui
 		virtual void Paint() override;
 		virtual void RecalculateNewLinePositions() override;
 		virtual void RecalculateCenterWrapIndents() override;
-	protected:
 		virtual void GetTextSize(int& wide, int& tall) override;
+	protected:
 		virtual void RecalculateEllipsesPosition() override;
 	private:
 		bool m_bRAlign;
