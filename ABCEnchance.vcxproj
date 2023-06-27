@@ -286,6 +286,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\KeyBoardEditorDialog.cpp" />
     <ClCompile Include="vgui_controls\KeyRepeat.cpp" />
     <ClCompile Include="vgui_controls\Label.cpp" />
+    <ClCompile Include="vgui_controls\LabelEx.cpp" />
     <ClCompile Include="vgui_controls\ListPanel.cpp" />
     <ClCompile Include="vgui_controls\ListViewPanel.cpp" />
     <ClCompile Include="vgui_controls\Menu.cpp" />
@@ -316,6 +317,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\subrectimage.cpp" />
     <ClCompile Include="vgui_controls\TextEntry.cpp" />
     <ClCompile Include="vgui_controls\TextImage.cpp" />
+    <ClCompile Include="vgui_controls\TextImageEx.cpp" />
     <ClCompile Include="vgui_controls\ToggleButton.cpp" />
     <ClCompile Include="vgui_controls\Tooltip.cpp" />
     <ClCompile Include="vgui_controls\ToolWindow.cpp" />
@@ -537,6 +539,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\KeyBoardEditorDialog.h" />
     <ClInclude Include="vgui_controls\KeyRepeat.h" />
     <ClInclude Include="vgui_controls\Label.h" />
+    <ClInclude Include="vgui_controls\LabelEx.h" />
     <ClInclude Include="vgui_controls\ListPanel.h" />
     <ClInclude Include="vgui_controls\ListViewPanel.h" />
     <ClInclude Include="vgui_controls\Menu.h" />
@@ -571,6 +574,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\subrectimage.h" />
     <ClInclude Include="vgui_controls\TextEntry.h" />
     <ClInclude Include="vgui_controls\TextImage.h" />
+    <ClInclude Include="vgui_controls\TextImageEx.h" />
     <ClInclude Include="vgui_controls\ToggleButton.h" />
     <ClInclude Include="vgui_controls\Tooltip.h" />
     <ClInclude Include="vgui_controls\ToolWindow.h" />

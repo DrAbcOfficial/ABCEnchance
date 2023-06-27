@@ -52,9 +52,9 @@ namespace vgui
 	class TextImage : public Image
 	{
 	public:
-		TextImage(const char* text);
-		TextImage(const wchar_t* wszText);
-		~TextImage();
+		explicit TextImage(const char* text);
+		explicit TextImage(const wchar_t* wszText);
+		virtual ~TextImage();
 
 	public:
 		// takes the string and looks it up in the localization file to convert it to unicode
@@ -96,14 +96,14 @@ namespace vgui
 		virtual void Paint();
 
 		void SetWrap(bool bWrap);
-		void RecalculateNewLinePositions();
+		virtual void RecalculateNewLinePositions();
 
 		void SetUseFallbackFont(bool bState, HFont hFallback);
 
 		void SetAllCaps(bool bAllCaps);
 
 		void SetCenterWrap(bool bWrap);
-		void RecalculateCenterWrapIndents();
+		virtual void RecalculateCenterWrapIndents();
 
 		const wchar_t* GetUText(void) { return _utext; }
 
@@ -120,9 +120,7 @@ namespace vgui
 		void SizeText(wchar_t* tempText, int stringLength);
 		// gets the size of a specified piece of text
 		virtual void GetTextSize(int& wide, int& tall);
-
-	private:
-		void RecalculateEllipsesPosition();
+		virtual void RecalculateEllipsesPosition();
 
 		wchar_t* _utext;	// unicode version of the text
 		short _textBufferLen;	// size of the text buffer
