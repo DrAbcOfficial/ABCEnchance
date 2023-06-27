@@ -60,6 +60,8 @@ pfnUserMsgHook m_pfnShowMenu;
 pfnUserMsgHook m_pfnVoteMenu;
 pfnUserMsgHook m_pfnEndVote;
 pfnUserMsgHook m_pfnMOTD;
+pfnUserMsgHook m_pfnFlashBat;
+pfnUserMsgHook m_pfnFlashlight;
 
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
@@ -155,17 +157,19 @@ int __MsgFunc_MOTD(const char* pszName, int iSize, void* pbuf) {
 		g_pViewPort->ForeceBuildPage();
 	return m_pfnMOTD(pszName, iSize, pbuf);
 }
+int __MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int battery = READ_BYTE();
+	return m_pfnFlashBat(pszName, iSize, pbuf);
+}
+int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int id = READ_BYTE();
+	int battery = READ_BYTE();
+	return m_pfnFlashlight(pszName, iSize, pbuf);
+}
 
-void(*UserCmd_Slot1)(void);
-void(*UserCmd_Slot2)(void);
-void(*UserCmd_Slot3)(void);
-void(*UserCmd_Slot4)(void);
-void(*UserCmd_Slot5)(void);
-void(*UserCmd_Slot6)(void);
-void(*UserCmd_Slot7)(void);
-void(*UserCmd_Slot8)(void);
-void(*UserCmd_Slot9)(void);
-void(*UserCmd_Slot10)(void);
+void(*UserCmd_Slots[10])(void);
 void(*UserCmd_SlotClose)(void);
 void(*UserCmd_NextWeapon)(void);
 void(*UserCmd_PrevWeapon)(void);
@@ -174,39 +178,39 @@ void(*UserCmd_HideScores)(void);
 void(*UserCmd_Attack1)(void);
 void(*UserCmd_MissionBrief)(void);
 
-void UserCmd_SlotInput(int i, void(*callback)()) {
+void UserCmd_SlotInput(int i) {
 	bool bVisible = gCustomHud.IsTextMenuOpening();
 	m_HudCustomAmmo.SlotInput(i, 1);
 	m_HudEccoBuyMenu.SlotCallBack(i);
 	if(!bVisible)
-		callback();
+		UserCmd_Slots[i]();
 }
 void __UserCmd_Slot1(void) {
-	UserCmd_SlotInput(0, UserCmd_Slot1);
+	UserCmd_SlotInput(0);
 }
 void __UserCmd_Slot2(void) {
-	UserCmd_SlotInput(1, UserCmd_Slot2);
+	UserCmd_SlotInput(1);
 }
 void __UserCmd_Slot3(void) {
-	UserCmd_SlotInput(2, UserCmd_Slot3);
+	UserCmd_SlotInput(2);
 }
 void __UserCmd_Slot4(void) {
-	UserCmd_SlotInput(3, UserCmd_Slot4);
+	UserCmd_SlotInput(3);
 }
 void __UserCmd_Slot5(void) {
-	UserCmd_SlotInput(4, UserCmd_Slot5);
+	UserCmd_SlotInput(4);
 }
 void __UserCmd_Slot6(void) {
-	UserCmd_SlotInput(5, UserCmd_Slot6);
+	UserCmd_SlotInput(5);
 }
 void __UserCmd_Slot7(void) {
-	UserCmd_SlotInput(6, UserCmd_Slot7);
+	UserCmd_SlotInput(6);
 }
 void __UserCmd_Slot8(void) {
-	UserCmd_SlotInput(7, UserCmd_Slot8);
+	UserCmd_SlotInput(7);
 }
 void __UserCmd_Slot9(void) {
-	UserCmd_SlotInput(8, UserCmd_Slot9);
+	UserCmd_SlotInput(8);
 }
 void __UserCmd_Slot10(void) {
 	bool bVisible = gCustomHud.IsTextMenuOpening();
@@ -214,7 +218,7 @@ void __UserCmd_Slot10(void) {
 	m_HudEccoBuyMenu.SlotCallBack(9);
 	m_HudEccoBuyMenu.CloseMenu();
 	if (!bVisible)
-		UserCmd_Slot10();
+		UserCmd_Slots[9]();
 }
 void __UserCmd_MissionBrief(void) {
 	g_pViewPort->ShowMOTD();
@@ -265,6 +269,8 @@ void CCustomHud::HUD_Init(void){
 	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
 	m_pfnEndVote = HOOK_MESSAGE(EndVote);
 	m_pfnMOTD = HOOK_MESSAGE(MOTD);
+	m_pfnFlashBat = HOOK_MESSAGE(FlashBat);
+	m_pfnFlashlight = HOOK_MESSAGE(Flashlight);
 	gEngfuncs.pfnHookUserMsg("MetaHook", [](const char* pszName, int iSize, void* pbuf) {
 		BEGIN_READ(pbuf, iSize);
 		int type = READ_BYTE();
@@ -324,16 +330,16 @@ void CCustomHud::HUD_Init(void){
 		});
 
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
-	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
-	UserCmd_Slot2 = HOOK_COMMAND("slot2", Slot2);
-	UserCmd_Slot3 = HOOK_COMMAND("slot3", Slot3);
-	UserCmd_Slot4 = HOOK_COMMAND("slot4", Slot4);
-	UserCmd_Slot5 = HOOK_COMMAND("slot5", Slot5);
-	UserCmd_Slot6 = HOOK_COMMAND("slot6", Slot6);
-	UserCmd_Slot7 = HOOK_COMMAND("slot7", Slot7);
-	UserCmd_Slot8 = HOOK_COMMAND("slot8", Slot8);
-	UserCmd_Slot9 = HOOK_COMMAND("slot9", Slot9);
-	UserCmd_Slot10 = HOOK_COMMAND("slot10", Slot10);
+	UserCmd_Slots[0] = HOOK_COMMAND("slot1", Slot1);
+	UserCmd_Slots[1] = HOOK_COMMAND("slot2", Slot2);
+	UserCmd_Slots[2] = HOOK_COMMAND("slot3", Slot3);
+	UserCmd_Slots[3] = HOOK_COMMAND("slot4", Slot4);
+	UserCmd_Slots[4] = HOOK_COMMAND("slot5", Slot5);
+	UserCmd_Slots[5] = HOOK_COMMAND("slot6", Slot6);
+	UserCmd_Slots[6] = HOOK_COMMAND("slot7", Slot7);
+	UserCmd_Slots[7] = HOOK_COMMAND("slot8", Slot8);
+	UserCmd_Slots[8] = HOOK_COMMAND("slot9", Slot9);
+	UserCmd_Slots[9] = HOOK_COMMAND("slot10", Slot10);
 
 	UserCmd_MissionBrief = HOOK_COMMAND("missionbriefing", MissionBrief);
 	UserCmd_SlotClose = HOOK_COMMAND("cancelselect", Close);
@@ -582,6 +588,8 @@ void CCustomHud::SetBaseHudActivity() {
 			gHookHud.m_Battery->m_iFlags &= ~HUD_ACTIVE;
 		if (gHookHud.m_Health)
 			gHookHud.m_Health->m_iFlags &= ~HUD_ACTIVE;
+		if(gHookHud.m_Flash)
+			gHookHud.m_Flash->m_iFlags &= ~HUD_ACTIVE;
 	}
 	else {
 		if (gHookHud.m_Ammo)
@@ -590,6 +598,8 @@ void CCustomHud::SetBaseHudActivity() {
 			gHookHud.m_Battery->m_iFlags |= HUD_ACTIVE;
 		if (gHookHud.m_Health)
 			gHookHud.m_Health->m_iFlags |= HUD_ACTIVE;
+		if (gHookHud.m_Flash)
+			gHookHud.m_Flash->m_iFlags |= HUD_ACTIVE;
 	}
 }
 HSPRITE CCustomHud::GetSprite(size_t index) {

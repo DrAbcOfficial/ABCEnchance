@@ -19,6 +19,7 @@ typedef struct {
 	CHudBattery* m_Battery;
 	CHudHealth* m_Health;
 	CHudAmmo* m_Ammo;
+	CHudFlashlight* m_Flash;
 } cl_hookedHud;
 typedef struct cl_spritem_s {
 	HSPRITE spr;

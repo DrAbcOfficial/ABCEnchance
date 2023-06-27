@@ -22,6 +22,30 @@ public:
 	int	  m_iHeight;		// width of the battery innards
 };
 
+class CHudFlashlight : public CHudBase
+{
+public:
+	int Init(void);
+	int VidInit(void);
+	int Draw(float flTime);
+	void Reset(void);
+	int MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf);
+	int MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf);
+
+private:
+	HSPRITE m_hSprite1;
+	HSPRITE m_hSprite2;
+	HSPRITE m_hBeam;
+	wrect_t* m_prc1;
+	wrect_t* m_prc2;
+	wrect_t* m_prcBeam;
+	float m_flBat;
+	int	  m_iBat;
+	int	  m_fOn;
+	float m_fFade;
+	int	  m_iWidth;		// width of the battery innards
+};
+
 #define FADE_TIME 100
 
 class CHudHealth : public CHudBase{
