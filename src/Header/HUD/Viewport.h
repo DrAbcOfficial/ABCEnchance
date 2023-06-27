@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef GetCurrentTime
 #undef GetCurrentTime
@@ -24,6 +24,7 @@ class CMotdPanel;
 class CSidePanel;
 class CTextMenu;
 class CFlashLightPanel;
+class CKillMarkPanel;
 
 class ISchemel;
 
@@ -85,11 +86,15 @@ public:
 	void SetFlashLight(bool on, int battery);
 	void SetFlashBattery(int battery);
 
+	void AddKillMark();
+
 	long m_iTimeEnd = 0;
 
 	cvar_t* m_pPlayerTitle = nullptr;
 	cvar_t* m_pPlayerTitleDanger = nullptr;
 	cvar_t* m_pPopNumber = nullptr;
+	cvar_t* m_pKillMarkEnable = nullptr;
+	cvar_t* m_pKillMarkMax = nullptr;
 private:
 	std::vector<IViewportPanel*> m_Panels;
 	CScorePanel* m_pScorePanel = nullptr;
@@ -99,6 +104,7 @@ private:
 	CSidePanel* m_pSidePanel = nullptr;
 	CTextMenu* m_pTextMenu = nullptr;
 	CFlashLightPanel* m_pFlashLight = nullptr;
+	CKillMarkPanel* m_pKillMark = nullptr;
 
 	int m_iInterMission;
 

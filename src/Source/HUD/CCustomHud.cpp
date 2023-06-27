@@ -1,4 +1,4 @@
-#include <metahook.h>
+ï»¿#include <metahook.h>
 #include <string>
 #include <map>
 #include <vector>
@@ -62,6 +62,8 @@ pfnUserMsgHook m_pfnEndVote;
 pfnUserMsgHook m_pfnMOTD;
 pfnUserMsgHook m_pfnFlashBat;
 pfnUserMsgHook m_pfnFlashlight;
+
+static int iDmg;
 
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
@@ -300,19 +302,29 @@ void CCustomHud::HUD_Init(void){
 			CCustomHud::ABCCustomMsg type = static_cast<CCustomHud::ABCCustomMsg>(READ_BYTE());
 			switch (type) {
 			case CCustomHud::ABCCustomMsg::POPNUMBER: {
+				int iValue = READ_LONG();
+				if (g_pViewPort->m_pKillMarkEnable > 0)
+				{
+					iDmg += iValue;
+					if (iDmg >= g_pViewPort->m_pKillMarkMax->value)
+					{
+						g_pViewPort->AddKillMark();
+						PlaySoundByName("misc/UI_SPECIALKILL2.wav", 1);
+						iDmg = 0;
+					}
+				}
 				if (g_pViewPort->m_pPopNumber->value <= 0)
 					return 0;
 				CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
-				int iValue = READ_LONG();
 				Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
 				cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 				if (!local)
 					return 0;
-				//ÊÓ½Ç½Ç¶È
+				//è§†è§’è§’åº¦
 				CVector vecView;
 				gEngfuncs.GetViewAngles(vecView);
 				mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
-				//¼ÆËãÎÒºÍÄ¿±êµÄÏà¶ÔÆ«ÒÆ
+				//è®¡ç®—æˆ‘å’Œç›®æ ‡çš„ç›¸å¯¹åç§»
 				CVector vecLength;
 				mathlib::VectorSubtract(vecOrigin, local->curstate.origin, vecLength);
 				vecLength = vecLength.Normalize();
@@ -473,14 +485,14 @@ void CCustomHud::IN_MouseEvent(int mstate){
 	if (!IsHudEnable())
 		return;
 	auto MouseTest = [&](int mstate, int testBit, vgui::MouseCode enumMouse) {
-		//ÏÖÔÚÓĞ
+		//ç°åœ¨æœ‰
 		if ((mstate & testBit) != 0) {
-			//Ö®Ç°Ã»ÓĞ
+			//ä¹‹å‰æ²¡æœ‰
 			if ((m_iMouseState & testBit) == 0) {
 				//Press
 				this->OnMousePressed(enumMouse);
 				//g_pViewPort->OnMousePressed(enumMouse);
-				//¼ÓÉÏBit
+				//åŠ ä¸ŠBit
 				m_iMouseState += testBit;
 				if (m_iLastClick == enumMouse) {
 					//g_pViewPort->OnMouseDoublePressed(enumMouse);
@@ -490,19 +502,19 @@ void CCustomHud::IN_MouseEvent(int mstate){
 					m_iLastClick = enumMouse;
 			}
 		}
-		//ÏÖÔÚÃ»ÓĞÖ®Ç°ÓĞ
+		//ç°åœ¨æ²¡æœ‰ä¹‹å‰æœ‰
 		else if ((m_iMouseState & testBit) != 0) {
-			//´¥·¢Release
+			//è§¦å‘Release
 			m_iMouseState -= testBit;
 			//g_pViewPort->OnMouseReleased(enumMouse);
 		}
 	};
 	/**	
-	* ×ó¼ü¼ì²â 0
-	* ÓÒ¼ü¼ì²â 1
-	* ÖĞ¼ü¼ì²â 2
-	* 4¼ü¼ì²â  3
-	* 5¼ü¼ì²â  4 
+	* å·¦é”®æ£€æµ‹ 0
+	* å³é”®æ£€æµ‹ 1
+	* ä¸­é”®æ£€æµ‹ 2
+	* 4é”®æ£€æµ‹  3
+	* 5é”®æ£€æµ‹  4 
 	**/
 	for (size_t i = 0; i < 5; i++) {
 		MouseTest(mstate, 1 << i, static_cast<vgui::MouseCode>(i));

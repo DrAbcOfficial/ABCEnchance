@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <metahook.h>
 #include <vector>
 #include <vgui/VGUI.h>
@@ -23,6 +23,7 @@
 #include "sidetext.h"
 #include "textmenu.h"
 #include "flashlight.h"
+#include "cfefx.h"
 
 #include "Viewport.h"
 #include "exportfuncs.h"
@@ -53,6 +54,9 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport")
 	m_pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, nullptr);
 	m_pPlayerTitleDanger = CREATE_CVAR("cl_playertitle_danger", "30", FCVAR_VALUE, nullptr);
 	m_pPopNumber = CREATE_CVAR("cl_popnumber", "1", FCVAR_VALUE, nullptr);
+
+	m_pKillMarkEnable = CREATE_CVAR("cl_cfefx", "1", FCVAR_VALUE, nullptr);
+	m_pKillMarkMax = CREATE_CVAR("cl_cfefx_max", "150", FCVAR_VALUE, nullptr);
 }
 
 CViewport::~CViewport(void)
@@ -68,6 +72,7 @@ void CViewport::Start(void)
 	AddNewPanel(m_pSidePanel = new CSidePanel());
 	AddNewPanel(m_pTextMenu = new CTextMenu()); 
 	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
+	AddNewPanel(m_pKillMark = new CKillMarkPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -84,6 +89,7 @@ void CViewport::SetParent(VPANEL vPanel)
 	m_pSidePanel->SetParent(GetVPanel());
 	m_pTextMenu->SetParent(GetVPanel());
 	m_pFlashLight->SetParent(GetVPanel());
+	m_pKillMark->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -233,6 +239,10 @@ void CViewport::SetFlashLight(bool on, int battery){
 }
 void CViewport::SetFlashBattery(int battery){
 	m_pFlashLight->SetFlashBattery(battery);
+}
+void CViewport::AddKillMark()
+{
+	m_pKillMark->ShowPanel(true);
 }
 void CViewport::Paint(void){
 	BaseClass::Paint();

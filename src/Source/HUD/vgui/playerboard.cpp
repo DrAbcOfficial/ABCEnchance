@@ -15,6 +15,7 @@
 #include "triangleapi.h"
 
 #include "vgui_controls/ImagePanel.h"
+#include "vgui_controls/ImageClipPanel.h"
 #include "playerboard.h"
 #include "Viewport.h"
 
@@ -38,8 +39,8 @@ CPlayerInfoPanel::CPlayerInfoPanel()
 	// Header labels
 	m_pNameLable = new vgui::Label(this, "PlayerName", "(Anon)");
 	m_pBackgroundImagePanel = new vgui::ImagePanel(this, "BackGroundImage");
-	m_pHealthImagePanel = new vgui::ImagePanel(this, "HealthImage");
-	m_pArmorImagePanel = new vgui::ImagePanel(this, "ArmorImage");
+	m_pHealthImagePanel = new vgui::ImageClipPanel(this, "HealthImage");
+	m_pArmorImagePanel = new vgui::ImageClipPanel(this, "ArmorImage");
 	m_pCourchIconImagePanel = new vgui::ImagePanel(this, "CourchIconImage");
 	m_pMedikIconImagePanel = new vgui::ImagePanel(this, "MedikIconImage");
 	m_pDeadIconImagePanel = new vgui::ImagePanel(this, "DeadIconImage");
