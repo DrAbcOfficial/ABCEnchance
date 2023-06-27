@@ -33,6 +33,8 @@ namespace vgui
 	protected:
 		virtual void GetTextSize(int& wide, int& tall) override;
 		virtual void RecalculateEllipsesPosition() override;
+	private:
+		bool m_bRAlign;
 	};
 
 } // namespace vgui2

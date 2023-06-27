@@ -71,11 +71,13 @@ void TextImageEx::Paint()
 
 	int currentLineBreak = 0;
 
-	if (m_bWrapCenter && m_LineXIndent.Count())
-	{
-		x = m_LineXIndent[0];
-	}
-
+	const auto SetXPosIndent = [&](int i) {
+		if (m_bWrapCenter && iIndent < m_LineXIndent.Count())
+			x = m_bRAlign ? wide - m_LineXIndent[iIndent] : m_LineXIndent[iIndent];
+		else
+			x = m_bRAlign ? wide : 0;
+	};
+	SetXPosIndent(0);
 	for (wchar_t* wsz = _utext; *wsz != 0; wsz++)
 	{
 		wchar_t ch = wsz[0];
@@ -105,16 +107,10 @@ void TextImageEx::Paint()
 		}
 		else if (ch == '\n')
 		{
+			m_bRAlign = false;
 			// newline
 			iIndent++;
-			if (m_bWrapCenter && iIndent < m_LineXIndent.Count())
-			{
-				x = m_LineXIndent[iIndent];
-			}
-			else
-			{
-				x = 0;
-			}
+			SetXPosIndent(iIndent);
 			y += lineHeight;
 			continue;
 		}
@@ -138,15 +134,15 @@ void TextImageEx::Paint()
 		}
 		else if (ch == '\\') {
 				switch (wsz[1]) {
-				case 'w': DrawSetTextColor(Color(255, 255, 255, 255)); wsz+=2; ch = *wsz; break;
-				case 'd': DrawSetTextColor(GetColor()); wsz += 2; ch = *wsz; break;
-				case 'y': DrawSetTextColor(Color(255, 210, 64, 255)); wsz += 2; ch = *wsz; break;
-				case 'r': DrawSetTextColor(Color(210, 64, 0, 255)); wsz += 2; ch = *wsz; break;
+				case 'w': DrawSetTextColor(Color(255, 255, 255, 255)); wsz++; continue;
+				case 'd': DrawSetTextColor(GetColor()); wsz++; continue;
+				case 'y': DrawSetTextColor(Color(255, 210, 64, 255)); wsz++; continue;
+				case 'r': DrawSetTextColor(Color(210, 64, 0, 255)); wsz++; continue;
 				case 'R': {
-					//没想好怎么做
-					wsz += 2;
-					ch = *wsz;
-					break;
+					m_bRAlign = true;
+					x = wide - x;
+					wsz++;
+					continue;
 				}
 				default:break;
 				}
@@ -160,7 +156,10 @@ void TextImageEx::Paint()
 			{
 				surface()->DrawSetTextPos(x + px, y + py);
 				surface()->DrawUnicodeChar('.');
-				x += surface()->GetCharacterWidth(font, '.');
+				if(m_bRAlign)
+					x -= surface()->GetCharacterWidth(font, '.');
+				else
+					x += surface()->GetCharacterWidth(font, '.');
 			}
 			break;
 		}
@@ -171,14 +170,7 @@ void TextImageEx::Paint()
 			{
 				// newline
 				iIndent++;
-				if (m_bWrapCenter && iIndent < m_LineXIndent.Count())
-				{
-					x = m_LineXIndent[iIndent];
-				}
-				else
-				{
-					x = 0;
-				}
+				SetXPosIndent(iIndent);
 
 				y += lineHeight;
 				currentLineBreak++;
@@ -203,7 +195,10 @@ void TextImageEx::Paint()
 #else
 		surface()->DrawSetTextPos(x + px, y + py);
 		surface()->DrawUnicodeChar(ch);
-		x += surface()->GetCharacterWidth(font, ch);
+		if(m_bRAlign)
+			x -= surface()->GetCharacterWidth(font, ch);
+		else
+			x += surface()->GetCharacterWidth(font, ch);
 #endif
 	}
 
