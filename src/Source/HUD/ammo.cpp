@@ -396,11 +396,8 @@ void CHudCustomAmmo::ChosePlayerWeapon(){
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bWheel){
 	if (!gCustomHud.IsHudEnable())
 		return;
-	if (gCustomHud.IsTextMenuOpening()) {
-		gCustomHud.m_flTextMenuDisplayTime = 0;
-		gCustomHud.m_bTextMenuOpening = false;
+	if (gCustomHud.SelectTextMenuItem(iSlot + 1))
 		return;
-	}
 	if (!gCustomHud.HasSuit())
 		return;
 	gWR.SelectSlot(iSlot, fAdvance, bWheel);

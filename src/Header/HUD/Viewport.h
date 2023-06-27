@@ -74,8 +74,11 @@ public:
 	void ForeceBuildPage();
 	
 	void ShowSideText(bool state);
+
 	bool MsgShowMenu(const char* pszName, int iSize, void* pbuf);
 	void ShowTextMenu(bool state);
+	void SelectMenuItem(int slot);
+	bool IsTextMenuOpen();
 
 	long m_iTimeEnd = 0;
 

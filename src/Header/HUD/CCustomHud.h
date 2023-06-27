@@ -64,6 +64,7 @@ public:
 	void SetSpectator(int client, bool value);
 	bool IsMouseVisible();
 	bool IsTextMenuOpening();
+	bool SelectTextMenuItem(int slot);
 	void SetMouseVisible(bool state);
 
 	void OnMousePressed(int code);
@@ -104,8 +105,6 @@ public:
 
 	bool m_bRenderRadarView = false;
 	bool m_bInScore = false;
-	bool m_bTextMenuOpening = false;
-	float m_flTextMenuDisplayTime = 0;
 
 	enum MetaHookMsgType {
 		MHSV_CMD_QUERY_PLUGIN = 1,

@@ -219,6 +219,12 @@ bool CViewport::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
 void CViewport::ShowTextMenu(bool state){
 	m_pTextMenu->ShowPanel(state);
 }
+void CViewport::SelectMenuItem(int slot){
+	m_pTextMenu->SelectMenuItem(slot);
+}
+bool CViewport::IsTextMenuOpen(){
+	return m_pTextMenu->IsVisible();
+}
 void CViewport::Paint(void){
 	BaseClass::Paint();
 }

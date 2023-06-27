@@ -62,9 +62,23 @@ void CTextMenu::SetParent(vgui::VPANEL parent) {
 void CTextMenu::SetContent(const char* szMenu){
 	m_pMenu->SetText(szMenu);
 	int w, h;
-	m_pMenu->GetTextImage()->GetSize(w, h);
+	m_pMenu->GetTextImage()->GetTextSize(w, h);
 	SetWide(w + 4);
 	SetTall(h + 4);
+}
+
+void CTextMenu::OnThink(){
+	if (m_flShutoffTime >= 0 && gEngfuncs.GetClientTime() <= m_flShutoffTime)
+		ShowPanel(false);
+}
+
+void CTextMenu::SelectMenuItem(int slot){
+	char szbuf[32];
+	if ((slot > 0) && (m_bitsValidSlots & (1 << (slot - 1)))){
+		sprintf(szbuf, m_bIsASMenu ? "as_menuselect %d\n" : "menuselect %d\n", slot);
+		gEngfuncs.pfnClientCmd(szbuf);
+		ShowPanel(false);
+	}
 }
 
 bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){

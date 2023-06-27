@@ -25,6 +25,8 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
+	virtual void OnThink() override;
+	void SelectMenuItem(int slot);
 	bool MsgShowMenu(const char* pszName, int iSize, void* pbuf);
 private:
 	void SetContent(const char* szMenu);

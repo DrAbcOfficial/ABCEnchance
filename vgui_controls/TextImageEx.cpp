@@ -108,6 +108,7 @@ void TextImageEx::Paint()
 		else if (ch == '\n')
 		{
 			m_bRAlign = false;
+			DrawSetTextColor(GetColor());
 			// newline
 			iIndent++;
 			SetXPosIndent(iIndent);
