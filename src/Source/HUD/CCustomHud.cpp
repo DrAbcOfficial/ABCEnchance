@@ -61,63 +61,6 @@ pfnUserMsgHook m_pfnVoteMenu;
 pfnUserMsgHook m_pfnEndVote;
 pfnUserMsgHook m_pfnMOTD;
 
-int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
-	BEGIN_READ(pbuf, iSize);
-	int type = READ_BYTE();
-	switch (type) {
-	case CCustomHud::MetaHookMsgType::MHSV_CMD_ECCO_INFO: {
-		buymenuitem_t item;
-		item.id = READ_LONG();
-		item.price = READ_LONG();
-		item.modelindex = READ_LONG();
-		item.sequence = READ_LONG();
-		strcpy_s(item.name, READ_STRING());
-		m_HudEccoBuyMenu.AddInfo(item);
-		break;
-	}
-	case CCustomHud::MetaHookMsgType::MHSV_CMD_ECCO_MENU: {
-		m_HudEccoBuyMenu.MenuList.clear();
-		size_t pageLen = (size_t)READ_BYTE();
-		m_HudEccoBuyMenu.MenuList.resize(pageLen);
-		for (size_t i = 0; i < pageLen; i++) {
-			m_HudEccoBuyMenu.MenuList[i] = READ_LONG();
-		}
-		m_HudEccoBuyMenu.OpenMenu();
-		break;
-	}
-	case CCustomHud::MetaHookMsgType::MHSV_CMD_ABC_CUSTOM: {
-		CCustomHud::ABCCustomMsg type = static_cast<CCustomHud::ABCCustomMsg>(READ_BYTE());
-		switch(type) {
-			case CCustomHud::ABCCustomMsg::POPNUMBER:{
-				if (g_pViewPort->m_pPopNumber->value <= 0)
-					return 0;
-				CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
-				int iValue = READ_LONG();
-				Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
-				cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-				if (!local)
-					return 0;
-				//视角角度
-				CVector vecView;
-				gEngfuncs.GetViewAngles(vecView);
-				mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
-				//计算我和目标的相对偏移
-				CVector vecLength;
-				mathlib::VectorSubtract(vecOrigin, local->curstate.origin, vecLength);
-				vecLength = vecLength.Normalize();
-				float angledotResult = mathlib::DotProduct(vecLength, vecView);
-				//cos 60
-				if (angledotResult > 0.5)
-					g_pViewPort->AddPopNumber(vecOrigin, pColor, iValue);
-				return 0;
-			}
-		}
-		break;
-	}
-	default:break;
-	}
-	return 0;
-}
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
@@ -231,56 +174,47 @@ void(*UserCmd_HideScores)(void);
 void(*UserCmd_Attack1)(void);
 void(*UserCmd_MissionBrief)(void);
 
+void UserCmd_SlotInput(int i, void(*callback)()) {
+	bool bVisible = gCustomHud.IsTextMenuOpening();
+	m_HudCustomAmmo.SlotInput(i, 1);
+	m_HudEccoBuyMenu.SlotCallBack(i);
+	if(!bVisible)
+		callback();
+}
 void __UserCmd_Slot1(void) {
-	m_HudCustomAmmo.SlotInput(0, 1);
-	m_HudEccoBuyMenu.SlotCallBack(0);
-	return UserCmd_Slot1();
+	UserCmd_SlotInput(0, UserCmd_Slot1);
 }
 void __UserCmd_Slot2(void) {
-	m_HudCustomAmmo.SlotInput(1, 1);
-	m_HudEccoBuyMenu.SlotCallBack(1);
-	return UserCmd_Slot2();
+	UserCmd_SlotInput(1, UserCmd_Slot2);
 }
 void __UserCmd_Slot3(void) {
-	m_HudCustomAmmo.SlotInput(2, 1);
-	m_HudEccoBuyMenu.SlotCallBack(2);
-	return UserCmd_Slot3();
+	UserCmd_SlotInput(2, UserCmd_Slot3);
 }
 void __UserCmd_Slot4(void) {
-	m_HudCustomAmmo.SlotInput(3, 1);
-	m_HudEccoBuyMenu.SlotCallBack(3);
-	return UserCmd_Slot4();
+	UserCmd_SlotInput(3, UserCmd_Slot4);
 }
 void __UserCmd_Slot5(void) {
-	m_HudCustomAmmo.SlotInput(4, 1);
-	m_HudEccoBuyMenu.SlotCallBack(4);
-	return UserCmd_Slot5();
+	UserCmd_SlotInput(4, UserCmd_Slot5);
 }
 void __UserCmd_Slot6(void) {
-	m_HudCustomAmmo.SlotInput(5, 1);
-	m_HudEccoBuyMenu.SlotCallBack(5);
-	return UserCmd_Slot6();
+	UserCmd_SlotInput(5, UserCmd_Slot6);
 }
 void __UserCmd_Slot7(void) {
-	m_HudCustomAmmo.SlotInput(6, 1);
-	m_HudEccoBuyMenu.SlotCallBack(6);
-	return UserCmd_Slot7();
+	UserCmd_SlotInput(6, UserCmd_Slot7);
 }
 void __UserCmd_Slot8(void) {
-	m_HudCustomAmmo.SlotInput(7, 1);
-	m_HudEccoBuyMenu.SlotCallBack(7);
-	return UserCmd_Slot8();
+	UserCmd_SlotInput(7, UserCmd_Slot8);
 }
 void __UserCmd_Slot9(void) {
-	m_HudCustomAmmo.SlotInput(8, 1);
-	m_HudEccoBuyMenu.SlotCallBack(8);
-	return UserCmd_Slot9();
+	UserCmd_SlotInput(8, UserCmd_Slot9);
 }
 void __UserCmd_Slot10(void) {
+	bool bVisible = gCustomHud.IsTextMenuOpening();
 	m_HudCustomAmmo.SlotInput(9, 1);
 	m_HudEccoBuyMenu.SlotCallBack(9);
 	m_HudEccoBuyMenu.CloseMenu();
-	return UserCmd_Slot10();
+	if (!bVisible)
+		UserCmd_Slot10();
 }
 void __UserCmd_MissionBrief(void) {
 	g_pViewPort->ShowMOTD();
@@ -331,7 +265,63 @@ void CCustomHud::HUD_Init(void){
 	m_pfnVoteMenu = HOOK_MESSAGE(VoteMenu);
 	m_pfnEndVote = HOOK_MESSAGE(EndVote);
 	m_pfnMOTD = HOOK_MESSAGE(MOTD);
-	gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
+	gEngfuncs.pfnHookUserMsg("MetaHook", [](const char* pszName, int iSize, void* pbuf) {
+		BEGIN_READ(pbuf, iSize);
+		int type = READ_BYTE();
+		switch (type) {
+		case CCustomHud::MetaHookMsgType::MHSV_CMD_ECCO_INFO: {
+			buymenuitem_t item;
+			item.id = READ_LONG();
+			item.price = READ_LONG();
+			item.modelindex = READ_LONG();
+			item.sequence = READ_LONG();
+			strcpy_s(item.name, READ_STRING());
+			m_HudEccoBuyMenu.AddInfo(item);
+			break;
+		}
+		case CCustomHud::MetaHookMsgType::MHSV_CMD_ECCO_MENU: {
+			m_HudEccoBuyMenu.MenuList.clear();
+			size_t pageLen = (size_t)READ_BYTE();
+			m_HudEccoBuyMenu.MenuList.resize(pageLen);
+			for (size_t i = 0; i < pageLen; i++) {
+				m_HudEccoBuyMenu.MenuList[i] = READ_LONG();
+			}
+			m_HudEccoBuyMenu.OpenMenu();
+			break;
+		}
+		case CCustomHud::MetaHookMsgType::MHSV_CMD_ABC_CUSTOM: {
+			CCustomHud::ABCCustomMsg type = static_cast<CCustomHud::ABCCustomMsg>(READ_BYTE());
+			switch (type) {
+			case CCustomHud::ABCCustomMsg::POPNUMBER: {
+				if (g_pViewPort->m_pPopNumber->value <= 0)
+					return 0;
+				CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
+				int iValue = READ_LONG();
+				Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
+				cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+				if (!local)
+					return 0;
+				//视角角度
+				CVector vecView;
+				gEngfuncs.GetViewAngles(vecView);
+				mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
+				//计算我和目标的相对偏移
+				CVector vecLength;
+				mathlib::VectorSubtract(vecOrigin, local->curstate.origin, vecLength);
+				vecLength = vecLength.Normalize();
+				float angledotResult = mathlib::DotProduct(vecLength, vecView);
+				//cos 60
+				if (angledotResult > 0.5)
+					g_pViewPort->AddPopNumber(vecOrigin, pColor, iValue);
+				return 0;
+			}
+			}
+			break;
+		}
+		default:break;
+		}
+		return 0;
+		});
 
 	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
 	UserCmd_Slot1 = HOOK_COMMAND("slot1", Slot1);
