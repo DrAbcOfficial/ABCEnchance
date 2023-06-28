@@ -8,7 +8,6 @@
 namespace vgui{
 	class Label;
 	class ImagePanel;
-	class ImageClipPanel;
 }
 
 class CPlayerInfoPanel : public vgui::Frame, public IViewportPanel
@@ -35,8 +34,8 @@ public:
 private:
 	vgui::Label* m_pNameLable = nullptr;
 	vgui::ImagePanel* m_pBackgroundImagePanel = nullptr;
-	vgui::ImageClipPanel* m_pHealthImagePanel = nullptr;
-	vgui::ImageClipPanel* m_pArmorImagePanel = nullptr;
+	vgui::ImagePanel* m_pHealthImagePanel = nullptr;
+	vgui::ImagePanel* m_pArmorImagePanel = nullptr;
 	vgui::ImagePanel* m_pCourchIconImagePanel = nullptr;
 	vgui::ImagePanel* m_pMedikIconImagePanel = nullptr;
 	vgui::ImagePanel* m_pDeadIconImagePanel = nullptr;
