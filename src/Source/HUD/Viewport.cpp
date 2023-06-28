@@ -72,7 +72,6 @@ void CViewport::Start(void)
 	AddNewPanel(m_pSidePanel = new CSidePanel());
 	AddNewPanel(m_pTextMenu = new CTextMenu()); 
 	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
-	AddNewPanel(m_pKillMark = new CKillMarkPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -89,7 +88,6 @@ void CViewport::SetParent(VPANEL vPanel)
 	m_pSidePanel->SetParent(GetVPanel());
 	m_pTextMenu->SetParent(GetVPanel());
 	m_pFlashLight->SetParent(GetVPanel());
-	m_pKillMark->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -242,6 +240,8 @@ void CViewport::SetFlashBattery(int battery){
 }
 void CViewport::AddKillMark()
 {
+	CKillMarkPanel* m_pKillMark = new CKillMarkPanel();
+	m_pKillMark->SetParent(GetVPanel());
 	m_pKillMark->ShowPanel(true);
 }
 void CViewport::Paint(void){

@@ -88,7 +88,7 @@ void CKillMarkPanel::OnThink()
 	float a = m_pKillMark->GetAlpha();
 	a -= 0.2;
 	if (a <= 0)
-		ShowPanel(false);
+		DeletePanel();
 	else
 		m_pKillMark->SetAlpha(a);
 }
