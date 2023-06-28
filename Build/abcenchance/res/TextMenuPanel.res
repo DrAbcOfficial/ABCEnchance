@@ -29,6 +29,6 @@
 		"enabled"		"1"
 		"autoResize"		"3"
 		"textAlignment" "north-west"
-		"font"			"DefaultSmall"
+		"font"			"UiBold"
 	}
 }
