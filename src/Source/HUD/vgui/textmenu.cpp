@@ -43,6 +43,7 @@ void CTextMenu::Reset() {
 void CTextMenu::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("TextMenu.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pMenu->SetFgColor(GetSchemeColor("TextMenu.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
 }
 void CTextMenu::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
@@ -79,10 +80,11 @@ void CTextMenu::StartFade(bool state){
 	ShowPanel(true);
 }
 
-
 void CTextMenu::OnThink(){
-	if (m_flShutoffTime >= 0 && gEngfuncs.GetClientTime() >= m_flShutoffTime)
+	if (m_flShutoffTime >= 0 && gEngfuncs.GetClientTime() >= m_flShutoffTime) {
 		StartFade(false);
+		m_flShutoffTime = -1;
+	}
 	if (m_iFadeFlag != FADE_FLAG::FNONE) {
 		if (gEngfuncs.GetClientTime() >= m_flFadeTime)
 			ShowPanel(m_iFadeFlag == FADE_FLAG::FIN);
