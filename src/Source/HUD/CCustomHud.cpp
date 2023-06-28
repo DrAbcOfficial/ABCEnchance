@@ -63,8 +63,6 @@ pfnUserMsgHook m_pfnMOTD;
 pfnUserMsgHook m_pfnFlashBat;
 pfnUserMsgHook m_pfnFlashlight;
 
-static int iDmg;
-
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
@@ -302,9 +300,11 @@ void CCustomHud::HUD_Init(void){
 			CCustomHud::ABCCustomMsg type = static_cast<CCustomHud::ABCCustomMsg>(READ_BYTE());
 			switch (type) {
 			case CCustomHud::ABCCustomMsg::POPNUMBER: {
+				CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
 				int iValue = READ_LONG();
 				if (g_pViewPort->m_pKillMarkEnable > 0)
 				{
+					static int iDmg;
 					iDmg += iValue;
 					if (iDmg >= g_pViewPort->m_pKillMarkMax->value)
 					{
@@ -315,7 +315,6 @@ void CCustomHud::HUD_Init(void){
 				}
 				if (g_pViewPort->m_pPopNumber->value <= 0)
 					return 0;
-				CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
 				Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
 				cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 				if (!local)
