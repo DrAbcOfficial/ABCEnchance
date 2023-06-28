@@ -52,6 +52,11 @@ typedef struct indicatorinfo_s {
 	float flKeepTime;
 	vec2_t vecHUDA, vecHUDB, vecHUDC, vecHUDD;
 }indicatorinfo_t;
+typedef struct {
+	float fExpire;
+	float fBaseline;
+	int	x, y;
+} DAMAGE_IMAGE;
 
 class CHudArmorHealth{
 public:
