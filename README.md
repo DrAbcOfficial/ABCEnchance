@@ -90,6 +90,8 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |---|---|---|---|
 |cl_hud_csgo|enable hud or not|1|0/1|
 |---|---|---|---|
+|cl_autojump|enable auto bhop|0|0/1|
+|---|---|---|---|
 |hud_deathnotice|use new death message|1|0~1|
 |hud_deathnotice_time|the death message keep time|6|0~9999|
 |---|---|---|---|
