@@ -299,6 +299,9 @@ bool NET_StringToAdr(char* param_1, netadr_s* param_2) {
 	g_pConnectingServer = param_2;
 	return result;
 }
+//void VGuiWrap2_HideGameUI() {
+//
+//}
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
@@ -342,6 +345,8 @@ void FillEngineAddress() {
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
 #define NET_STRINGTOADR_SIG "\x56\x57\x8B\x7C\x24\x0C\x68\x2A\x2A\x2A\x2A\x57\xE8\xDF\x5C\xFC\xFF\x83\xC4\x08\x85\xC0"
 		Fill_Sig(NET_STRINGTOADR_SIG, g_dwEngineBase, g_dwEngineSize, NET_StringToAdr);
+//#define VGuiWrap2_HideGameUI_SIG "\x8B\x0D\x2A\x2A\x2A\x2A\x85\xC9\x74\x05\x8B\x01\xFF\x60\x1C\xC3"
+		//Fill_Sig(VGuiWrap2_HideGameUI_SIG, g_dwEngineBase, g_dwEngineSize, VGuiWrap2_HideGameUI);
 
 		DWORD addr;
 #define R_VIEWREFDEF_SIG "\x68\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68"
@@ -537,6 +542,7 @@ void InstallEngineHook() {
 	Install_InlineEngHook(Cvar_DirectSet);
 	Install_InlineEngHook(CL_GetModelByIndex);
 	Install_InlineEngHook(NET_StringToAdr);
+	//Install_InlineEngHook(VGuiWrap2_HideGameUI);
 }
 void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);
