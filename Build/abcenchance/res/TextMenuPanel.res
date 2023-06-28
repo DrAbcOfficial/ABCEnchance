@@ -15,6 +15,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"		"0"
+		"fade_time"		"0.133"
 	}
 	"Menu"
 	{
