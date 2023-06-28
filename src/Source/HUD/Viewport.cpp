@@ -32,8 +32,7 @@ using namespace vgui;
 
 CViewport *g_pViewPort = nullptr;
 
-CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport")
-{
+CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	int swide, stall;
 	surface()->GetScreenSize(swide, stall);
 
@@ -55,13 +54,13 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport")
 	m_pPopNumber = CREATE_CVAR("cl_popnumber", "1", FCVAR_VALUE, nullptr);
 }
 
-CViewport::~CViewport(void)
-{
-	
+CViewport::~CViewport(void){
+	for (auto panel : m_Panels) {
+		panel->~IViewportPanel();
+	}
 }
 
-void CViewport::Start(void)
-{
+void CViewport::Start(void){
 	AddNewPanel(m_pScorePanel = new CScorePanel());
 	AddNewPanel(m_pVotePanel = new CVotePanel());
 	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
@@ -75,8 +74,7 @@ void CViewport::Start(void)
 	SetVisible(false);
 }
 
-void CViewport::SetParent(VPANEL vPanel)
-{
+void CViewport::SetParent(VPANEL vPanel){
 	BaseClass::SetParent(vPanel);
 	m_pScorePanel->SetParent(GetVPanel());
 	m_pVotePanel->SetParent(GetVPanel());
@@ -89,22 +87,19 @@ void CViewport::SetParent(VPANEL vPanel)
 	}
 }
 
-void CViewport::AddNewPanel(IViewportPanel* panel)
-{
+void CViewport::AddNewPanel(IViewportPanel* panel){
 	m_Panels.push_back(panel);
 	panel->SetParent(GetVPanel());
 	dynamic_cast<vgui::Panel*>(panel)->MakeReadyForUse();
 }
 
-void CViewport::Think(void)
-{
+void CViewport::Think(void){
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->Think();
 	}
 }
 
-void CViewport::VidInit(void)
-{
+void CViewport::VidInit(void){
 	Reset();
 }
 
@@ -115,25 +110,17 @@ void CViewport::Reset() {
 	m_iInterMission = 0;
 }
 
-void CViewport::Init(void)
-{
+void CViewport::Init(void){
 	GetThisPlayerInfo()->InitPlayerInfos();
 	GetTeamInfo(0)->InitTeamInfos();
 }
 
-void CViewport::ActivateClientUI(void)
-{
-	SetVisible(true);
+void CViewport::ActivateClientUI(void){
+	SetVisible(true);	
 }
 
-void CViewport::HideClientUI(void)
-{
+void CViewport::HideClientUI(void){
 	SetVisible(false);
-	for (IViewportPanel* pPanel : m_Panels)
-	{
-		if (pPanel->IsVisible())
-			pPanel->ShowPanel(false);
-	}
 }
 
 bool CViewport::KeyInput(int down, int keynum, const char* pszCurrentBinding){
@@ -160,16 +147,13 @@ int CViewport::GetInterMission() {
 	return m_iInterMission;
 }
 
-bool CViewport::IsScoreBoardVisible()
-{
+bool CViewport::IsScoreBoardVisible(){
 	return m_pScorePanel->IsVisible();
 }
-void CViewport::ShowScoreBoard()
-{
+void CViewport::ShowScoreBoard(){
 	m_pScorePanel->ShowPanel(true);
 }
-void CViewport::HideScoreBoard()
-{
+void CViewport::HideScoreBoard(){
 	m_pScorePanel->ShowPanel(false);
 }
 long CViewport::GetTimeEnd() {
@@ -247,7 +231,7 @@ CVotePanel* CViewport::GetVotePanel(){
 }
 
 CMotdPanel* CViewport::GetMotdPanel(){
-	return this->m_pMOTDPanel;
+	return m_pMOTDPanel;
 }
 
 Color CViewport::GetPlayerColor(int index){
