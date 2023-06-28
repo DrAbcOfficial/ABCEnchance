@@ -83,3 +83,11 @@ void vgui::ImageClipPanel::SetImageSize(int wide, int tall){
 	m_iOldWide = wide;
 	m_iOldTall = tall;
 }
+
+Color vgui::ImageClipPanel::GetDrawColor(void){
+	return m_DrawColor;
+}
+
+void vgui::ImageClipPanel::SetDrawColor(Color inColor){
+	m_DrawColor = inColor;
+}
