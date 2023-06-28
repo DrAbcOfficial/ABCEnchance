@@ -77,4 +77,5 @@ void CFlashLightPanel::SetFlashBattery(int battery){
 	char temp[32];
 	snprintf(temp, sizeof(temp), "%d%%", m_iBattery);
 	m_pMessage->SetText(temp);
+	ShowPanel(true);
 }
