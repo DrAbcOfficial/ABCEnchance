@@ -639,16 +639,23 @@ int HUD_VidInit(void){
 	//Search and destory vanillia HUDs
 	if (g_dwHUDListAddr && gCVars.pDynamicHUD->value > 0) {
 		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(g_dwHUDListAddr + 0x0));
+#if _DEBUG
+		size_t iter = 0;
+#endif // _DEBUG
 		while (pHudList) {
-			if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr)
-				gHookHud.m_Battery = (dynamic_cast<CHudBattery*>(pHudList->p));
-			else if (dynamic_cast<CHudHealth*>(pHudList->p) != nullptr)
-				gHookHud.m_Health = (dynamic_cast<CHudHealth*>(pHudList->p));
-			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != nullptr)
-				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
-			else if (dynamic_cast<CHudFlashlight*>(pHudList->p) != nullptr)
-				gHookHud.m_Flash = (dynamic_cast<CHudFlashlight*>(pHudList->p));
+			switch (iter) {
+			case 0: gHookHud.m_Health = (CHudHealth*)pHudList->p; break;
+			case 1: gHookHud.m_Battery = (CHudBattery*)pHudList->p; break;
+			case 2: gHookHud.m_Ammo = (CHudAmmo*)pHudList->p; break;
+			case 4: gHookHud.m_Flash = (CHudFlashlight*)pHudList->p; break;
+			}
 			pHudList = pHudList->pNext;
+#if _DEBUG
+			// Use RTTI to know which HUD
+			//if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr)
+			//	gHookHud.m_Battery = (dynamic_cast<CHudBattery*>(pHudList->p));
+			iter++;
+#endif // _DEBUG
 		}
 	}
 	if (g_pViewPort)

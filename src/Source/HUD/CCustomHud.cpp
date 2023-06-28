@@ -23,6 +23,8 @@
 #include "player_info.h"
 #include "svc_hook.h"
 
+#include "basehud.h"
+
 #include "CCustomHud.h"
 
 #include "ammo.h"
