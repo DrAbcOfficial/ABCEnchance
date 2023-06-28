@@ -62,13 +62,13 @@ void CTextMenu::SetParent(vgui::VPANEL parent) {
 void CTextMenu::SetContent(const char* szMenu){
 	m_pMenu->SetText(szMenu);
 	int w, h;
-	m_pMenu->GetTextImage()->GetTextSize(w, h);
+	m_pMenu->GetTextImage()->GetContentSize(w, h);
 	SetWide(w + 4);
 	SetTall(h + 4);
 }
 
 void CTextMenu::OnThink(){
-	if (m_flShutoffTime >= 0 && gEngfuncs.GetClientTime() <= m_flShutoffTime)
+	if (m_flShutoffTime >= 0 && gEngfuncs.GetClientTime() >= m_flShutoffTime)
 		ShowPanel(false);
 }
 
