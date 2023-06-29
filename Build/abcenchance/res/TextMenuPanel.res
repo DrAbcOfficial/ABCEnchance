@@ -15,6 +15,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"		"0"
+		"fade_time"		"0.133"
 	}
 	"Menu"
 	{
@@ -28,6 +29,6 @@
 		"enabled"		"1"
 		"autoResize"		"3"
 		"textAlignment" "north-west"
-		"font"			"DefaultSmall"
+		"font"			"UiBold"
 	}
 }

@@ -26,15 +26,18 @@ class ImageClipPanel : public ImagePanel
 	DECLARE_CLASS_SIMPLE(ImageClipPanel, ImagePanel);
 public:
 	ImageClipPanel(Panel *parent, const char *name);
+	virtual Color GetDrawColor(void) override;
+	void SetDrawColor(Color inColor);
+
 protected:
 	virtual void PaintBackground();
 	virtual void ApplySettings(KeyValues *inResourceData);
 
 	void SetImageSize(int wide, int tall);
-
 private:
 	int m_iOldWide;
 	int m_iOldTall;
+	Color m_DrawColor;
 };
 
 } // namespace vgui

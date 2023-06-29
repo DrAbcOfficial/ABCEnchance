@@ -33,9 +33,9 @@ public:
 private:
 	vgui::Label* m_pMessage = nullptr;
 	vgui::ImagePanel* m_pOffImage = nullptr;
-	vgui::ImageClipPanel* m_pOnImage = nullptr;
+	vgui::ImagePanel* m_pOnImage = nullptr;
+	vgui::ImageClipPanel* m_pPowerImage = nullptr;
 
 	int m_iBattery = 0;
-	bool m_bOn = false;
 };
 #endif

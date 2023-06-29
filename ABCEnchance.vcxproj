@@ -415,8 +415,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
     <ClInclude Include="src\Header\HUD\ammo.h" />
-    <ClInclude Include="src\Header\HUD\baseammo.h" />
-    <ClInclude Include="src\Header\HUD\basehealth.h" />
+    <ClInclude Include="src\Header\HUD\basehud.h" />
     <ClInclude Include="src\Header\HUD\cctv.h" />
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />
     <ClInclude Include="src\Header\HUD\crosshair.h" />
@@ -459,7 +458,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\Var\cvar_hook.h" />
     <ClInclude Include="src\Header\Var\enginedef.h" />
     <ClInclude Include="src\Header\Var\extraprecache.h" />
-    <ClInclude Include="src\Header\Var\hud.h" />
     <ClInclude Include="src\Header\Var\local.h" />
     <ClInclude Include="src\Header\Var\palette.h" />
     <ClInclude Include="src\Header\Var\player_infosc.h" />

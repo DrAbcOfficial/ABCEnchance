@@ -1165,10 +1165,7 @@
     <ClInclude Include="src\Header\HUD\ammo.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\baseammo.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\basehealth.h">
+    <ClInclude Include="src\Header\HUD\basehud.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\cctv.h">
@@ -1262,9 +1259,6 @@
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\extraprecache.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\hud.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\local.h">

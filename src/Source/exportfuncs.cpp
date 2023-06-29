@@ -221,6 +221,7 @@ void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 		case 4: return;
 		//MOTD
 		case 5: {
+			gCustomHud.m_bInScore = true;
 			g_pViewPort->ShowMOTD();
 			return;
 		}
@@ -299,6 +300,9 @@ bool NET_StringToAdr(char* param_1, netadr_s* param_2) {
 	g_pConnectingServer = param_2;
 	return result;
 }
+//void VGuiWrap2_HideGameUI() {
+//
+//}
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
@@ -342,6 +346,8 @@ void FillEngineAddress() {
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
 #define NET_STRINGTOADR_SIG "\x56\x57\x8B\x7C\x24\x0C\x68\x2A\x2A\x2A\x2A\x57\xE8\xDF\x5C\xFC\xFF\x83\xC4\x08\x85\xC0"
 		Fill_Sig(NET_STRINGTOADR_SIG, g_dwEngineBase, g_dwEngineSize, NET_StringToAdr);
+//#define VGuiWrap2_HideGameUI_SIG "\x8B\x0D\x2A\x2A\x2A\x2A\x85\xC9\x74\x05\x8B\x01\xFF\x60\x1C\xC3"
+		//Fill_Sig(VGuiWrap2_HideGameUI_SIG, g_dwEngineBase, g_dwEngineSize, VGuiWrap2_HideGameUI);
 
 		DWORD addr;
 #define R_VIEWREFDEF_SIG "\x68\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68"
@@ -537,6 +543,7 @@ void InstallEngineHook() {
 	Install_InlineEngHook(Cvar_DirectSet);
 	Install_InlineEngHook(CL_GetModelByIndex);
 	Install_InlineEngHook(NET_StringToAdr);
+	//Install_InlineEngHook(VGuiWrap2_HideGameUI);
 }
 void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);
@@ -639,16 +646,19 @@ int HUD_VidInit(void){
 	//Search and destory vanillia HUDs
 	if (g_dwHUDListAddr && gCVars.pDynamicHUD->value > 0) {
 		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(g_dwHUDListAddr + 0x0));
+		size_t iter = 0;
 		while (pHudList) {
-			if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr)
-				gHookHud.m_Battery = (dynamic_cast<CHudBattery*>(pHudList->p));
-			else if (dynamic_cast<CHudHealth*>(pHudList->p) != nullptr)
-				gHookHud.m_Health = (dynamic_cast<CHudHealth*>(pHudList->p));
-			else if (dynamic_cast<CHudAmmo*>(pHudList->p) != nullptr)
-				gHookHud.m_Ammo = (dynamic_cast<CHudAmmo*>(pHudList->p));
-			else if (dynamic_cast<CHudFlashlight*>(pHudList->p) != nullptr)
-				gHookHud.m_Flash = (dynamic_cast<CHudFlashlight*>(pHudList->p));
+			switch (iter) {
+			case 0: gHookHud.m_Health = (CHudHealth*)pHudList->p; break;
+			case 1: gHookHud.m_Battery = (CHudBattery*)pHudList->p; break;
+			case 2: gHookHud.m_Ammo = (CHudAmmo*)pHudList->p; break;
+			case 4: gHookHud.m_Flash = (CHudFlashlight*)pHudList->p; break;
+			}
 			pHudList = pHudList->pNext;
+			// Use RTTI to know which HUD
+			//if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr)
+			//	gHookHud.m_Battery = (dynamic_cast<CHudBattery*>(pHudList->p));
+			iter++;
 		}
 	}
 	if (g_pViewPort)

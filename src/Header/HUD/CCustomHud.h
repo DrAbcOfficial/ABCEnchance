@@ -1,8 +1,6 @@
 #pragma once
 #define MAX_SPRITE_NAME_LENGTH	24
 #include <vector>
-#include "baseammo.h"
-#include "basehealth.h"
 #include "player_infosc.h"
 
 typedef struct hud_playerinfo_s {
@@ -15,17 +13,25 @@ typedef struct hud_playerinfo_s {
 	int donors;
 	int admin;
 }hud_playerinfo_t;
+
+class CHudBattery;
+class CHudHealth;
+class CHudAmmo;
+class CHudFlashlight;
+
 typedef struct {
 	CHudBattery* m_Battery;
 	CHudHealth* m_Health;
 	CHudAmmo* m_Ammo;
 	CHudFlashlight* m_Flash;
 } cl_hookedHud;
+
 typedef struct cl_spritem_s {
 	HSPRITE spr;
 	wrect_t rect;
 	char name[MAX_SPRITE_NAME_LENGTH];
 }cl_spritem_t;
+
 enum SC_DONER_ICON {
 	DONER_NONE = 0,
 	DONER_ELECTRIC_CROWBAR,

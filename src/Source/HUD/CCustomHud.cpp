@@ -23,6 +23,8 @@
 #include "player_info.h"
 #include "svc_hook.h"
 
+#include "basehud.h"
+
 #include "CCustomHud.h"
 
 #include "ammo.h"
@@ -171,7 +173,6 @@ int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
 }
 
 void(*UserCmd_Slots[10])(void);
-void(*UserCmd_SlotClose)(void);
 void(*UserCmd_NextWeapon)(void);
 void(*UserCmd_PrevWeapon)(void);
 void(*UserCmd_ShowScores)(void);
@@ -223,9 +224,6 @@ void __UserCmd_Slot10(void) {
 }
 void __UserCmd_MissionBrief(void) {
 	g_pViewPort->ShowMOTD();
-}
-void __UserCmd_Close(void) {
-	return UserCmd_SlotClose();
 }
 void __UserCmd_NextWeapon(void) {
 	m_HudCustomAmmo.SlotInput(gWR.m_iNowSlot, 1, true);
@@ -354,7 +352,6 @@ void CCustomHud::HUD_Init(void){
 	UserCmd_Slots[9] = HOOK_COMMAND("slot10", Slot10);
 
 	UserCmd_MissionBrief = HOOK_COMMAND("missionbriefing", MissionBrief);
-	UserCmd_SlotClose = HOOK_COMMAND("cancelselect", Close);
 	UserCmd_NextWeapon = HOOK_COMMAND("invnext", NextWeapon);
 	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
 	UserCmd_ShowScores = HOOK_COMMAND("+showscores", OpenScoreboard);

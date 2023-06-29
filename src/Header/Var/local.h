@@ -50,10 +50,10 @@ typedef struct{
 	void(__fastcall* TFV_ShowScoreBoard)	(void* pthis);
 	void(__fastcall* TFV_ShowVGUIMenu)		(void* pthis, int dummy, int iVguiMenu);
 	void		(*EVVectorScale)			(float* pucnangle1, float scale, float* pucnangle2);
-	void		(*R_NewMap)					(void);
-	int			(*CL_IsDevOverview)			(void);
+	void		(*R_NewMap)					();
+	int			(*CL_IsDevOverview)			();
 	void		(*R_RenderView)				(int a1);
-	void		(*R_RenderScene)			(void);
+	void		(*R_RenderScene)			();
 	model_t*	(*CL_GetModelByIndex)		(int index);
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
@@ -61,6 +61,7 @@ typedef struct{
 	void		(*Cvar_DirectSet)			(cvar_t* var, char* value);
 	void		(*SetPunchAngle)			(int y, float value);
 	bool		(*NET_StringToAdr)			(char* param_1, netadr_s* param_2);
+	void		(*VGuiWrap2_HideGameUI)		();
 
 	void		(*pfnPlaybackEvent)			(int flags, const struct edict_s* pInvoker, unsigned short eventindex, float delay, float* origin, float* angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2);
 	//VGUI2
