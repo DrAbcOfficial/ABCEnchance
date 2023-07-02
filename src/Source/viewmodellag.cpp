@@ -14,6 +14,8 @@
 //copied and edited from here: https://github.com/SNMetamorph/PrimeXT/blob/master/client/r_view.cpp#L266
 void V_CalcViewModelLag(ref_params_t* pparams, CVector& origin, CVector& angles, const CVector& original_angles)
 {
+	if (gCVars.pModelLag->value <= 0)
+		return;
 	//¼¦ÃçÎäÆ÷
 	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != mathlib::clamp(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
 		return;

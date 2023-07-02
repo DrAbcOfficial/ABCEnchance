@@ -39,6 +39,7 @@ void CTextMenu::Reset() {
 	m_iFadeFlag = FADE_FLAG::FNONE;
 	m_flFadeTime = 0;
 	SetAlpha(255);
+	SetVisible(false);
 }
 void CTextMenu::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
