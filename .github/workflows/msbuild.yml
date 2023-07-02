@@ -6,7 +6,7 @@ on:
     - 'v*'
     
 env:
-  SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance
+  SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance_CFefx
   BUILD_CONFIGURATION: Release
   BUILD_CONFIGURATION_AVX: Release_AVX2
 
