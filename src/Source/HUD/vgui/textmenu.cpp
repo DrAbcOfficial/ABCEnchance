@@ -6,6 +6,7 @@
 #include <vgui/ILocalize.h>
 #include <vgui_controls/TextImageEx.h>
 #include <vgui_controls/LabelEx.h>
+#include <vgui_controls/AnimationController.h>
 
 #include "local.h"
 #include "vguilocal.h"
@@ -36,8 +37,6 @@ void CTextMenu::Reset() {
 	m_pMenu->SetText("");
 	m_szMenuString.clear();
 	m_flShutoffTime = -1;
-	m_iFadeFlag = FADE_FLAG::FNONE;
-	m_flFadeTime = 0;
 	SetAlpha(255);
 	SetVisible(false);
 }
@@ -75,26 +74,19 @@ void CTextMenu::SetContent(const char* szMenu){
 
 
 void CTextMenu::StartFade(bool state){
-	m_iFadeFlag = state ? FADE_FLAG::FIN : FADE_FLAG::FOUT;
-	m_flFadeTime = gEngfuncs.GetClientTime() + m_flFadeAnimateTime;
-	SetAlpha(state ? 0 : 255);
+	SetAlpha(state ? 1 : 255);
 	ShowPanel(true);
+	vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", state ? 255 : 0, 0.0f, m_flFadeAnimateTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
 
 void CTextMenu::OnThink(){
+	if (GetAlpha() <= 0) {
+		ShowPanel(false);
+		return;
+	}
 	if (m_flShutoffTime >= 0 && gEngfuncs.GetClientTime() >= m_flShutoffTime) {
 		StartFade(false);
 		m_flShutoffTime = -1;
-	}
-	if (m_iFadeFlag != FADE_FLAG::FNONE) {
-		if (gEngfuncs.GetClientTime() >= m_flFadeTime)
-			ShowPanel(m_iFadeFlag == FADE_FLAG::FIN);
-		else {
-			float flGap = m_flFadeTime - gEngfuncs.GetClientTime();
-			float flRatio = flGap / m_flFadeAnimateTime;
-			float flA = (m_iFadeFlag == FADE_FLAG::FIN ? 1 - flRatio : flRatio) * 255;
-			SetAlpha(flA);
-		}
 	}
 }
 
