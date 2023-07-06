@@ -1354,5 +1354,8 @@
     <ClInclude Include="src\Header\HUD\vgui\notice.h">
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
+    <ClInclude Include="SourceSDK\vstdlib\strtools.h">
+      <Filter>SourceSDK\vstdlib</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

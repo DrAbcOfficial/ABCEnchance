@@ -410,6 +410,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="SourceSDK\tier1\utlvector.h" />
     <ClInclude Include="SourceSDK\vstdlib\IKeyValuesSystem.h" />
     <ClInclude Include="SourceSDK\vstdlib\random.h" />
+    <ClInclude Include="SourceSDK\vstdlib\strtools.h" />
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
     <ClInclude Include="src\Header\efxenchance.h" />

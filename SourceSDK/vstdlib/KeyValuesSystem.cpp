@@ -284,3 +284,8 @@ IKeyValuesSystem *KeyValuesSystem(void)
 {
 	return g_pKeyValuesSystem;
 }
+
+IKeyValuesSystem* keyvalues()
+{
+	return g_pKeyValuesSystem;
+}

@@ -178,3 +178,14 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |🪔 Item high light|😗 And some useless efx enchance|
 |--|--|
 |<img src="img/highlight.jpg" width="100%">|<img src="img/efx.jpg" width="100%">|
+
+# Acknowledgements:
+
+This repository uses code from the following repositories:
+
+1. [PrimeXT](https://github.com/SNMetamorph/PrimeXT)
+2. [BugfixedHL-Rebased](https://github.com/tmp64/BugfixedHL-Rebased)
+3. [OpenAG](https://github.com/YaLTeR/OpenAG)
+4. [CaptionMod](https://github.com/hzqst/CaptionMod)
+5. [CKF3](https://github.com/CKFDevPowered/CKF3Alpha)
+6. [hl1_source_sdk](https://github.com/tmp64/hl1_source_sdk)
