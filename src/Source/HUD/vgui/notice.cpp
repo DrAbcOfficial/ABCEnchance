@@ -27,7 +27,7 @@ CNoticePanel::CNoticePanel(const char* szControlName)
 	sprintf(szControl, VGUI2_ROOT_DIR "%s.res", szControlName);
 	LoadControlSettings(szControl);
 }
-void CNoticePanel::ShowMessage(const wchar_t* message){
+void CNoticePanel::ShowMessage(const char* message){
 	m_pMessage->SetText(message);
 	if (m_bKeepCenter) {
 		int x, y;

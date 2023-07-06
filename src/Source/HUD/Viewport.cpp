@@ -223,7 +223,7 @@ void CViewport::SetFlashLight(bool on, int battery){
 void CViewport::SetFlashBattery(int battery){
 	m_pFlashLight->SetFlashBattery(battery);
 }
-void CViewport::ShowNotice(HUDNOTICE type, const wchar_t* message){
+void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	switch (type)
 	{
 	case CViewport::HUDNOTICE::PRINTNOTIFY:

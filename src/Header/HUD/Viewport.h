@@ -90,7 +90,7 @@ public:
 		PRINTNOTIFY = 1,
 		PRINTCENTER = 4
 	};
-	void ShowNotice(HUDNOTICE type, const wchar_t* message);
+	void ShowNotice(HUDNOTICE type, const char* message);
 
 	long m_iTimeEnd = 0;
 
