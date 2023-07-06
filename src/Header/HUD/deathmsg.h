@@ -23,8 +23,9 @@ public:
 	void VidInit();
 	int Draw(float flTime);
 	void Reset(void);
+	bool MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf);
+
 	void InsertNewDeathMsg(wchar_t* v, wchar_t* e, wchar_t* k, int kIndex, bool bIsYou, int iDamageType);
-	void InsertNewMsg(const std::wstring &v, std::wstring &e, std::wstring &k);
 
 	bool bIsDeathMsgOn;
 private:
@@ -41,6 +42,7 @@ private:
 	size_t GapOffset = 0;
 	size_t BackGoundWidth = 0;
 
+	void InsertNewMsg(const std::wstring& v, std::wstring& e, std::wstring& k);
 	void PushDeathNotice(wchar_t* v, wchar_t* e, wchar_t* k);
 };
 extern CHudDeathMsg m_HudDeathMsg;

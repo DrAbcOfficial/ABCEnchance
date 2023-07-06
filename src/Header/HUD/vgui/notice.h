@@ -1,5 +1,5 @@
-#ifndef CSIDEPANEL_H
-#define CSIDEPANEL_H
+#ifndef CNOTICEPANEL_H
+#define CNOTICEPANEL_H
 #include <string>
 
 #include <vgui_controls/EditablePanel.h>
@@ -7,15 +7,17 @@
 
 namespace vgui {
 	class Label;
-	class ImagePanel;
 }
 
-class CSidePanel : public vgui::EditablePanel, public IViewportPanel
+class CNoticePanel : public vgui::EditablePanel, public IViewportPanel
 {
 public:
-	DECLARE_CLASS_SIMPLE(CSidePanel, vgui::EditablePanel);
+	DECLARE_CLASS_SIMPLE(CNoticePanel, vgui::EditablePanel);
 
-	CSidePanel();
+	CNoticePanel(const char* szControlName);
+
+	void ShowMessage(const char* message);
+
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	// IViewportPanel overrides
@@ -28,9 +30,9 @@ public:
 	virtual void OnThink() override;
 private:
 	vgui::Label* m_pMessage = nullptr;
-	vgui::ImagePanel* m_pImage = nullptr;
-	std::string m_szTeplate;
-
-	float m_flMaxSpeed = 0;
+	
+	float m_flCloseTime = 0;
+	float m_flKeepTime = 0;
+	bool m_bKeepCenter = false;
 };
 #endif

@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <algorithm>
 
 #include "glew.h"
 #include "gl_shader.h"
@@ -50,6 +51,7 @@
 #include "weaponbank.h"
 #include <CVector.h>
 
+
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
@@ -64,6 +66,7 @@ pfnUserMsgHook m_pfnEndVote;
 pfnUserMsgHook m_pfnMOTD;
 pfnUserMsgHook m_pfnFlashBat;
 pfnUserMsgHook m_pfnFlashlight;
+pfnUserMsgHook m_pfnTextMsg;
 
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
@@ -171,6 +174,50 @@ int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
 	g_pViewPort->SetFlashLight(on, battery);
 	return m_pfnFlashlight(pszName, iSize, pbuf);
 }
+int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
+	if (!gCustomHud.TextDeathMsg(pszName, iSize, pbuf)) {
+		BEGIN_READ(pbuf, iSize);
+		std::string szBuf;
+		auto addBuffer = [&]() {
+			char szutf8[256];
+				char* temp = READ_STRING();
+				if (temp[0] == '#') {
+					Q_UnicodeToUTF8(g_pVGuiLocalize->Find(temp), szutf8, sizeof(szutf8));
+						szBuf += szutf8;
+				}
+				else
+					szBuf += temp;
+			if (szBuf.back() == '\n')
+				szBuf.pop_back();
+		};
+
+		CViewport::HUDNOTICE msg_dest = static_cast<CViewport::HUDNOTICE>(READ_BYTE());
+		//msg
+		addBuffer();
+		//sstr1
+		addBuffer();
+		//sstr2
+		addBuffer();
+		//sstr3
+		addBuffer();
+		//sstr4
+		addBuffer();
+
+		std::replace(szBuf.begin(), szBuf.end(), '\r', '\n');
+
+		switch (msg_dest)
+		{
+		case CViewport::HUDNOTICE::PRINTNOTIFY:
+		case CViewport::HUDNOTICE::PRINTCENTER:
+			if (g_pViewPort)
+				g_pViewPort->ShowNotice(msg_dest, szBuf.c_str());
+			break;
+		default:
+			return m_pfnTextMsg(pszName, iSize, pbuf);
+		}
+	}
+	return 1;
+}
 
 void(*UserCmd_Slots[10])(void);
 void(*UserCmd_NextWeapon)(void);
@@ -270,6 +317,7 @@ void CCustomHud::HUD_Init(void){
 	m_pfnMOTD = HOOK_MESSAGE(MOTD);
 	m_pfnFlashBat = HOOK_MESSAGE(FlashBat);
 	m_pfnFlashlight = HOOK_MESSAGE(Flashlight);
+	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
 	gEngfuncs.pfnHookUserMsg("MetaHook", [](const char* pszName, int iSize, void* pbuf) {
 		BEGIN_READ(pbuf, iSize);
 		int type = READ_BYTE();
@@ -568,6 +616,9 @@ bool CCustomHud::SelectTextMenuItem(int slot){
 void CCustomHud::SetMouseVisible(bool state) {
 	if(g_pViewPort)
 		g_pViewPort->SetMouseInputEnabled(state);
+}
+bool CCustomHud::TextDeathMsg(const char* pszName, int iSize, void* pbuf){
+	return m_HudDeathMsg.MsgFunc_TextMsg(pszName, iSize, pbuf);
 }
 void CCustomHud::OnMousePressed(int code) {
 	switch (code) {

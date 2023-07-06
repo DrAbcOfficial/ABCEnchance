@@ -23,6 +23,7 @@
 #include "sidetext.h"
 #include "textmenu.h"
 #include "flashlight.h"
+#include "notice.h"
 
 #include "Viewport.h"
 #include "exportfuncs.h"
@@ -67,6 +68,8 @@ void CViewport::Start(void){
 	AddNewPanel(m_pSidePanel = new CSidePanel());
 	AddNewPanel(m_pTextMenu = new CTextMenu()); 
 	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
+	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
+	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -82,6 +85,8 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pSidePanel->SetParent(GetVPanel());
 	m_pTextMenu->SetParent(GetVPanel());
 	m_pFlashLight->SetParent(GetVPanel());
+	m_pNotice->SetParent(GetVPanel());
+	m_pNoticeCenter->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -217,6 +222,17 @@ void CViewport::SetFlashLight(bool on, int battery){
 }
 void CViewport::SetFlashBattery(int battery){
 	m_pFlashLight->SetFlashBattery(battery);
+}
+void CViewport::ShowNotice(HUDNOTICE type, const char* message){
+	switch (type)
+	{
+	case CViewport::HUDNOTICE::PRINTNOTIFY:
+		m_pNotice->ShowMessage(message); break;
+	case CViewport::HUDNOTICE::PRINTCENTER:
+		m_pNoticeCenter->ShowMessage(message); break;
+	default:
+		break;
+	}
 }
 void CViewport::Paint(void){
 	BaseClass::Paint();
