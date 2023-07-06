@@ -8,6 +8,7 @@
 #include "filesystem_helpers.h"
 
 #include <tier1/characterset.h>
+#include <strtools.h>
 
 // memdbgon must be the last include file in a .cpp file!!!
 //#include <tier0/memdbgon.h>
@@ -135,4 +136,31 @@ char* ParseFile( char* pFileBytes, char* pToken, bool* pWasQuoted )
 }
 
 
+bool FS_GetFileTypeForFullPath(char const* pFullPath, wchar_t* buf, size_t bufSizeInBytes)
+{
+	if (!pFullPath)
+		return false;
 
+	if (!buf || bufSizeInBytes == 0)
+		return false;
+
+	char szExt[32];
+
+	Q_ExtractFileExtension(pFullPath, szExt, sizeof(szExt));
+	Q_UTF8ToUnicode(szExt, buf, bufSizeInBytes);
+
+	return true;
+}
+
+bool FS_IsFileWritable(IFileSystem* pFileSystem, char const* pFileName, const char* pPathID)
+{
+	//Work around the lack of IsFileWritable - Solokiller
+	FileHandle_t hFile = pFileSystem->Open(pFileName, "w", pPathID);
+
+	const bool bIsWritable = hFile != FILESYSTEM_INVALID_HANDLE;
+
+	if (hFile != FILESYSTEM_INVALID_HANDLE)
+		pFileSystem->Close(hFile);
+
+	return bIsWritable;
+}
