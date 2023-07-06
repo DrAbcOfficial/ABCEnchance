@@ -16,7 +16,7 @@ public:
 
 	CNoticePanel(const char* szControlName);
 
-	void ShowMessage(const wchar_t* message);
+	void ShowMessage(const char* message);
 
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;

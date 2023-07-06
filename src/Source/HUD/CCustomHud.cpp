@@ -50,7 +50,6 @@
 
 #include "weaponbank.h"
 #include <CVector.h>
-#include <encode.h>
 
 
 CCustomHud gCustomHud;
@@ -179,16 +178,16 @@ int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
 int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 	if (!gCustomHud.TextDeathMsg(pszName, iSize, pbuf)) {
 		BEGIN_READ(pbuf, iSize);
-		std::wstring szBuf;
+		std::string szBuf;
 		auto addBuffer = [&]() {
+			char szutf8[256];
 			char* temp = READ_STRING();
-			if (temp[0] == '#')
-				szBuf += g_pVGuiLocalize->Find(temp);
-			else {
-				std::wstring unibuf;
-				ANSIToUnicode(temp, unibuf);
-				szBuf += unibuf;
+			if (temp[0] == '#') {
+				Q_UnicodeToUTF8(g_pVGuiLocalize->Find(temp), szutf8, sizeof(szutf8));
+				szBuf += szutf8;
 			}
+			else
+				szBuf += temp;
 			if (szBuf.back() == '\n')
 				szBuf.pop_back();
 		};
