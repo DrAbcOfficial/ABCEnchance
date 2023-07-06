@@ -7,6 +7,7 @@
 #include <vgui/IEngineVGui.h>
 #include <vgui_controls/Controls.h>
 #include <vgui_controls/Label.h>
+#include <vgui_controls/AnimationController.h>
 #include "BaseUI.h"
 #include "mymathlib.h"
 #include "local.h"
@@ -99,6 +100,7 @@ void CViewport::AddNewPanel(IViewportPanel* panel){
 }
 
 void CViewport::Think(void){
+	vgui::GetAnimationController()->UpdateAnimations(gEngfuncs.GetClientTime());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->Think();
 	}

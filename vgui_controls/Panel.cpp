@@ -1172,11 +1172,7 @@ void Panel::PaintTraverse(bool repaint, bool allowForce)
 	// set global alpha
 	surface()->DrawSetAlphaMultiplier(newAlphaMultiplier);
 
-	// GoldSrc: border doesn't have that property
-#if 0
 	bool bBorderPaintFirst = _border ? _border->PaintFirst() : false;
-#endif
-	constexpr bool bBorderPaintFirst = false;
 
 	// draw the border first if requested to
 	if (bBorderPaintFirst && repaint && _flags.IsFlagSet(PAINT_BORDER_ENABLED) && (_border != nullptr))
@@ -2711,10 +2707,7 @@ void Panel::InternalKeyCodeTyped(int code)
 {
 	if (!ShouldHandleInputMessage())
 	{
-		// GoldSrc: Not supported
-#if 0
 		input()->OnKeyCodeUnhandled(code);
-#endif
 		return;
 	}
 
@@ -2758,12 +2751,7 @@ void Panel::InternalKeyCodeTyped(int code)
 	else
 	{
 		if (GetVPanel() == surface()->GetEmbeddedPanel())
-		{
-			// GoldSrc: Not supported
-#if 0
 			input()->OnKeyCodeUnhandled(code);
-#endif
-		}
 		CallParentFunction(new KeyValues("KeyCodeTyped", "code", code));
 	}
 }
@@ -3131,12 +3119,7 @@ void Panel::OnKeyCodeTyped(KeyCode code)
 	{
 		// forward up
 		if (GetVPanel() == surface()->GetEmbeddedPanel())
-		{
-			// GoldSrc: Not supported
-#if 0
 			input()->OnKeyCodeUnhandled(code);
-#endif
-		}
 		CallParentFunction(new KeyValues("KeyCodeTyped", "code", code));
 	}
 }
@@ -3593,12 +3576,7 @@ void Panel::SetBorder(IBorder* border)
 		border->GetInset(x, y, x2, y2);
 		ipanel()->SetInset(GetVPanel(), x, y, x2, y2);
 
-		// GoldSrc: Border doesn't support bg type
-		// GoldSrc: Emulate that for FrameBorder
-#if 0
-		// update our background type based on the bord
 		SetPaintBackgroundType(border->GetBackgroundType());
-#endif
 		if (!strcmp(border->GetName(), "FrameBorder"))
 			SetPaintBackgroundType(2);
 		else
@@ -4151,11 +4129,6 @@ void Panel::ApplyAutoResizeSettings(KeyValues* inResourceData)
 	SetAutoResize(pinCorner, autoResize, nPinnedCornerOffsetX, nPinnedCornerOffsetY, nUnpinnedCornerOffsetX, nUnpinnedCornerOffsetY);
 }
 
-// GoldSrc:
-#if 0
-ConVar panel_test_title_safe("panel_test_title_safe", "0", FCVAR_CHEAT, "Test vgui panel positioning with title safe indentation");
-#endif
-
 int Panel::ComputeWide(KeyValues* inResourceData, int nParentWide, int nParentTall, bool bComputingOther)
 {
 	int wide = GetWide();
@@ -4377,16 +4350,6 @@ int Panel::ComputePos(const char* pszInput, int& nPos, const int& nSize, const i
 			nPos = nPosDelta;
 		}
 	}
-
-	// GoldSrc: Not TF2
-#if 0
-	if (tf_debug_tabcontainer.GetBool() && !Q_stricmp("TabContainer", GetName()))
-	{
-		Msg("TabContainer nFlags:%x nPos:%d nParentSize:%d nPosDelta:%d nSize:%d GetParent:%p (%s) pszInput:'%s'\n",
-			nFlags, nPos, nParentSize, nPosDelta, nSize, GetParent(), GetParent() ? GetParent()->GetName() : "??",
-			pszInput ? pszInput : "??");
-	}
-#endif
 
 	return nFlags;
 }
