@@ -584,6 +584,9 @@
     <ClCompile Include="vgui_controls\ImageClipPanel.cpp">
       <Filter>VGUI\control</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\notice.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1347,6 +1350,9 @@
     </ClInclude>
     <ClInclude Include="vgui_controls\ImageClipPanel.h">
       <Filter>VGUI\control</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\notice.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
