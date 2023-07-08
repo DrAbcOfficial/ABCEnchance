@@ -181,11 +181,8 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 		CViewport::HUDNOTICE msg_dest = static_cast<CViewport::HUDNOTICE>(READ_BYTE());
 #define BUFFER_SIZE 256
 		static auto findLocalize = [](char* str, char* outbuffer) {
-			char szutf8[BUFFER_SIZE];
-			if (str[0] == '#') {
-				Q_UnicodeToUTF8(g_pVGuiLocalize->Find(str), szutf8, sizeof(szutf8));
-				strcpy(outbuffer, szutf8);
-			}
+			if (str[0] == '#')
+				Q_UnicodeToUTF8(g_pVGuiLocalize->Find(str), outbuffer, sizeof(outbuffer));
 			else
 				strcpy(outbuffer, str);
 		};
