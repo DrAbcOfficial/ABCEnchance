@@ -24,6 +24,7 @@ class CMotdPanel;
 class CSidePanel;
 class CTextMenu;
 class CFlashLightPanel;
+class CNoticePanel;
 class CKillMarkPanel;
 
 class ISchemel;
@@ -86,6 +87,12 @@ public:
 	void SetFlashLight(bool on, int battery);
 	void SetFlashBattery(int battery);
 
+	enum class HUDNOTICE {
+		PRINTNOTIFY = 1,
+		PRINTCENTER = 4
+	};
+	void ShowNotice(HUDNOTICE type, const char* message);
+
 	void AddKillMark();
 
 	long m_iTimeEnd = 0;
@@ -104,6 +111,8 @@ private:
 	CSidePanel* m_pSidePanel = nullptr;
 	CTextMenu* m_pTextMenu = nullptr;
 	CFlashLightPanel* m_pFlashLight = nullptr;
+	CNoticePanel* m_pNotice = nullptr;
+	CNoticePanel* m_pNoticeCenter = nullptr;
 	CKillMarkPanel* m_pKillMark = nullptr;
 
 	int m_iInterMission;

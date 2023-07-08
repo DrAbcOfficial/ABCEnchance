@@ -210,6 +210,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\vgui\cfefx.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\notice.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\playerboard.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\popnum.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\scoreboard.cpp" />
@@ -410,6 +411,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="SourceSDK\tier1\utlvector.h" />
     <ClInclude Include="SourceSDK\vstdlib\IKeyValuesSystem.h" />
     <ClInclude Include="SourceSDK\vstdlib\random.h" />
+    <ClInclude Include="SourceSDK\vstdlib\strtools.h" />
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
     <ClInclude Include="src\Header\efxenchance.h" />
@@ -431,6 +433,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\vgui\cfefx.h" />
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
+    <ClInclude Include="src\Header\HUD\vgui\notice.h" />
     <ClInclude Include="src\Header\HUD\vgui\playerboard.h" />
     <ClInclude Include="src\Header\HUD\vgui\popnum.h" />
     <ClInclude Include="src\Header\HUD\vgui\scoreboard.h" />

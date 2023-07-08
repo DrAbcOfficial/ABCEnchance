@@ -19,7 +19,6 @@
 #include "deathmsg.h"
 
 CHudDeathMsg m_HudDeathMsg;
-pfnUserMsgHook m_pfnTextMsg;
 pfnUserMsgHook m_pfnDeathMsg;
 
 using namespace std;
@@ -27,52 +26,9 @@ wregex parttenSuicide(MSG_SUICIDENOTIFY);
 wregex parttenKilled(MSG_KILLEDNOTIFY);
 wregex parttenPlayer(MSG_PLAYERKILLNOTIFY);
 
-int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf){
-	if(gCVars.pDeathNotice->value <= 0)
-		return m_pfnTextMsg(pszName, iSize, pbuf);
-	if(!m_HudDeathMsg.bIsDeathMsgOn){
-		BEGIN_READ(pbuf, iSize);
-		if (READ_BYTE() == HUD_PRINTNOTIFY){
-			char* msg_text = READ_STRING();
-			//什么鸡巴东西
-			if (msg_text[0] == '\0')
-				return m_pfnTextMsg(pszName, iSize, pbuf);
-			wchar_t wideBuf[MSG_BUF_SIZE];
-			vgui::localize()->ConvertANSIToUnicode(msg_text, wideBuf, sizeof(wideBuf));
-			wstring stdSzBuf = wideBuf;
-			//剩下的老子才没兴趣
-			//正则捕获匹配
-			wsmatch matched;
-			bool found = false;
-			found = regex_search(stdSzBuf, matched, parttenSuicide);
-			if (found){
-				wstring suicidebuf = vgui::localize()->Find("DeathMsg_Suicide"), empty = L"";
-				m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), suicidebuf, empty);
-				return 1;
-			}
-			found = regex_search(stdSzBuf, matched, parttenKilled);
-			if (found){
-				wstring k = matched.suffix().str();
-				wstring killBuf = vgui::localize()->Find("DeathMsg_MonsterKill");
-				k.erase(k.end() - 2);
-				m_HudDeathMsg.InsertNewMsg(matched.prefix().str(), killBuf, k);
-				return 1;
-			}
-			found = regex_search(stdSzBuf, matched, parttenPlayer);
-			if (found){
-				wstring e = matched.str();
-				wstring sub = e.substr(3, e.length() - 6);
-				wstring k = matched.prefix().str();
-				m_HudDeathMsg.InsertNewMsg(matched.suffix().str(), sub, k);
-				return 1;
-			}
-		}
-	}
-	return m_pfnTextMsg(pszName, iSize, pbuf);
-}
 int __MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf) {
 	if(gCVars.pDeathNotice->value <= 0)
-		return m_pfnTextMsg(pszName, iSize, pbuf);
+		return m_pfnDeathMsg(pszName, iSize, pbuf);
 	BEGIN_READ(pbuf, iSize);
 	int iType = READ_BYTE();
 	if (iType == 0)
@@ -86,8 +42,53 @@ int __MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf) {
 		int iDMGType = READ_LONG();
 		m_HudDeathMsg.InsertNewDeathMsg(vbuf, ebuf, kbuf, iAttacker, iType == 2, iDMGType);
 	}
-	return 1;
+	return m_pfnDeathMsg(pszName, iSize, pbuf);
 }
+
+bool CHudDeathMsg::MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
+	if (gCVars.pDeathNotice->value <= 0)
+		return false;
+	if (!bIsDeathMsgOn) {
+		BEGIN_READ(pbuf, iSize);
+		if (READ_BYTE() == HUD_PRINTNOTIFY) {
+			char* msg_text = READ_STRING();
+			//什么鸡巴东西
+			if (msg_text[0] == '\0')
+				return false;
+			wchar_t wideBuf[MSG_BUF_SIZE];
+			vgui::localize()->ConvertANSIToUnicode(msg_text, wideBuf, sizeof(wideBuf));
+			wstring stdSzBuf = wideBuf;
+			//剩下的老子才没兴趣
+			//正则捕获匹配
+			wsmatch matched;
+			bool found = false;
+			found = regex_search(stdSzBuf, matched, parttenSuicide);
+			if (found) {
+				wstring suicidebuf = vgui::localize()->Find("DeathMsg_Suicide"), empty = L"";
+				InsertNewMsg(matched.prefix().str(), suicidebuf, empty);
+				return true;
+			}
+			found = regex_search(stdSzBuf, matched, parttenKilled);
+			if (found) {
+				wstring k = matched.suffix().str();
+				wstring killBuf = vgui::localize()->Find("DeathMsg_MonsterKill");
+				k.erase(k.end() - 2);
+				InsertNewMsg(matched.prefix().str(), killBuf, k);
+				return true;
+			}
+			found = regex_search(stdSzBuf, matched, parttenPlayer);
+			if (found) {
+				wstring e = matched.str();
+				wstring sub = e.substr(3, e.length() - 6);
+				wstring k = matched.prefix().str();
+				InsertNewMsg(matched.suffix().str(), sub, k);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 int CHudDeathMsg::Draw(float flTime){
 	int x = XOffset;
 	int y = YOffset;
@@ -220,7 +221,6 @@ void CHudDeathMsg::InsertNewMsg(const wstring &v, wstring &e, wstring &k){
 	aryKeepMsg[0].addTime = gEngfuncs.GetClientTime() + gCVars.pDeathNoticeTime->value;
 }
 int CHudDeathMsg::Init(void){
-	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
 	m_pfnDeathMsg = HOOK_MESSAGE(DeathMsg);
 	gCVars.pDeathNotice = CREATE_CVAR("hud_deathnotice", "1", FCVAR_VALUE, NULL);
 	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_VALUE, NULL);

@@ -46,7 +46,9 @@ enum DataType_t
 	DATATYPE_KEYVALUES,
 	DATATYPE_CONSTWCHARPTR,
 	DATATYPE_UINT64,
+	DATATYPE_HANDLE,  // It's an int, really
 };
+
 
 class Panel;
 

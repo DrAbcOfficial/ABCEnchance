@@ -29,4 +29,7 @@ public:
 
 IKeyValuesSystem *KeyValuesSystem(void);
 
+//Used by all code.
+IKeyValuesSystem* keyvalues();
+
 #endif

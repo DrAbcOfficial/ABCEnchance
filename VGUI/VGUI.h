@@ -35,6 +35,8 @@ typedef unsigned short wchar_t;
 #endif
 #endif
 
+#define SOURCE_SDK_GFX_PATH "abcenchance/tga"
+
 namespace vgui
 {
 typedef unsigned int VPANEL;

@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ?1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -19,4 +19,7 @@ const char* ParseFile( const char* pFileBytes, char* pToken, bool* pWasQuoted, c
 char* ParseFile( char* pFileBytes, char* pToken, bool* pWasQuoted );	// (same exact thing as the const version)
 
 
+bool FS_GetFileTypeForFullPath(char const* pFullPath, wchar_t* buf, size_t bufSizeInBytes);
+
+bool FS_IsFileWritable(IFileSystem* pFileSystem, char const* pFileName, const char* pPathID = 0);
 #endif // FILESYSTEM_HELPERS_H

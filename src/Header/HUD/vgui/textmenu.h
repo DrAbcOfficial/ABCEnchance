@@ -29,11 +29,6 @@ public:
 	void SelectMenuItem(int slot);
 	bool MsgShowMenu(const char* pszName, int iSize, void* pbuf);
 private:
-	enum class FADE_FLAG {
-		FNONE,
-		FIN,
-		FOUT
-	};
 	void SetContent(const char* szMenu);
 
 	void StartFade(bool state);
@@ -48,7 +43,5 @@ private:
 	float m_flShutoffTime;
 
 	float m_flFadeAnimateTime;
-	FADE_FLAG m_iFadeFlag;
-	float m_flFadeTime;
 };
 #endif
