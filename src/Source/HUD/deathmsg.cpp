@@ -166,8 +166,8 @@ void CHudDeathMsg::PushDeathNotice(wchar_t* v, wchar_t* e, wchar_t* k) {
 		UnicodeToUTF8((wstring)v, cv);
 		UnicodeToUTF8((wstring)e, ce);
 		UnicodeToUTF8((wstring)k, ck);
-		gEngfuncs.Con_Printf((char*)cl.c_str(), (char*)cv.c_str(), 
-			ck[0] == 0 ? "something" : (char*)ck.c_str(), (char*)ce.c_str());
+		gEngfuncs.Con_Printf(const_cast<char*>(cl.c_str()), const_cast<char*>(cv.c_str()),
+			ck[0] == 0 ? "something" : const_cast<char*>(ck.c_str()), const_cast<char*>(ce.c_str()));
 	}
 	for (size_t i = 0; i < MAX_KEEP_DEATHMSG; i++) {
 		deathmsgItem_t a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];
