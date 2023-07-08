@@ -37,5 +37,6 @@ private:
 	vgui::ImageClipPanel* m_pPowerImage = nullptr;
 
 	int m_iBattery = 0;
+	float m_flFadeAnimateTime = 0;
 };
 #endif

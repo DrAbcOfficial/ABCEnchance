@@ -6,6 +6,7 @@
 #include <vgui/ILocalize.h>
 #include <vgui_controls/Label.h>
 #include <vgui_controls/ImageClipPanel.h>
+#include <vgui_controls/AnimationController.h>
 
 #include "local.h"
 #include "vguilocal.h"
@@ -14,7 +15,6 @@
 
 #include "flashlight.h"
 #include "Viewport.h"
-
 
 #define VIEWPORT_FLASHLIGHT_NAME "FlashLightPanel"
 CFlashLightPanel::CFlashLightPanel()
@@ -49,7 +49,7 @@ void CFlashLightPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 }
 void CFlashLightPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
-
+	m_flFadeAnimateTime = inResourceData->GetFloat("fade_time");
 }
 void CFlashLightPanel::ShowPanel(bool state) {
 	if (state == IsVisible())
@@ -67,6 +67,15 @@ void CFlashLightPanel::SetParent(vgui::VPANEL parent) {
 }
 
 void CFlashLightPanel::SetFlashLight(bool on, int battery){
+	if (on) {
+		m_pOnImage->SetAlpha(1);
+		vgui::GetAnimationController()->RunAnimationCommand(m_pOnImage, "alpha", 255, 0.0f, m_flFadeAnimateTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	}
+	else {
+		m_pOffImage->SetAlpha(1);
+		vgui::GetAnimationController()->RunAnimationCommand(m_pOffImage, "alpha", 255, 0.0f, m_flFadeAnimateTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
+
+	}
 	m_pOnImage->SetVisible(on);
 	m_pOffImage->SetVisible(!on);
 	SetFlashBattery(battery);
