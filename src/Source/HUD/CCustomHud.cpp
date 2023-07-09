@@ -182,24 +182,40 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 #define BUFFER_SIZE 256
 		static auto findLocalize = [](char* str, char* outbuffer) {
 			if (str[0] == '#')
-				Q_UnicodeToUTF8(g_pVGuiLocalize->Find(str), outbuffer, sizeof(outbuffer));
+				Q_UnicodeToUTF8(vgui::localize()->Find(str), outbuffer, sizeof(outbuffer));
 			else
 				strcpy(outbuffer, str);
 		};
+		int type = 0;
 		char msg[BUFFER_SIZE];
 		findLocalize(READ_STRING(), msg);
 		char sstr1[BUFFER_SIZE];
 		findLocalize(READ_STRING(), sstr1);
+		if (strlen(sstr1) <= 0)
+			type++;
 		char sstr2[BUFFER_SIZE];
 		findLocalize(READ_STRING(), sstr2);
+		if (strlen(sstr2) <= 0)
+			type++;
 		char sstr3[BUFFER_SIZE];
 		findLocalize(READ_STRING(), sstr3);
+		if (strlen(sstr3) <= 0)
+			type++;
 		char sstr4[BUFFER_SIZE];
 		findLocalize(READ_STRING(), sstr4);
+		if (strlen(sstr4) <= 0)
+			type++;
 		char buffer[BUFFER_SIZE * 4];
 #undef BUFFER_SIZE
-		sprintf(buffer, msg, sstr1, sstr2, sstr3, sstr4);
-		std::string szBuf = buffer;
+		std::string szBuf;
+		switch (type) {
+		case 1:sprintf_s(buffer, msg, sstr1); szBuf = buffer; break;
+		case 2:sprintf_s(buffer, msg, sstr1, sstr2); szBuf = buffer; break;
+		case 3:sprintf_s(buffer, msg, sstr1, sstr2, sstr3); szBuf = buffer; break;
+		case 4:sprintf_s(buffer, msg, sstr1, sstr2, sstr3, sstr4); szBuf = buffer; break;
+		case 0:
+		default:szBuf = msg; break;
+		}
 		if (szBuf.back() == '\n')
 			szBuf.pop_back();
 		std::replace(szBuf.begin(), szBuf.end(), '\r', '\n');
