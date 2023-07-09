@@ -565,7 +565,7 @@ void UninstallClientHook() {
 }
 
 void CheckAsset() {
-	auto c = gEngfuncs.COM_LoadFile((char*)"abcenchance/ABCEnchance.res", 5, 0);
+	auto c = gEngfuncs.COM_LoadFile(const_cast<char*>("abcenchance/ABCEnchance.res"), 5, 0);
 	if(!c)
 		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMissing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
 	gEngfuncs.COM_FreeFile(c);

@@ -178,32 +178,30 @@ int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
 int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 	if (!gCustomHud.TextDeathMsg(pszName, iSize, pbuf)) {
 		BEGIN_READ(pbuf, iSize);
-		std::string szBuf;
-		auto addBuffer = [&]() {
-			char szutf8[256];
-			char* temp = READ_STRING();
-			if (temp[0] == '#') {
-				Q_UnicodeToUTF8(g_pVGuiLocalize->Find(temp), szutf8, sizeof(szutf8));
-				szBuf += szutf8;
-			}
-			else
-				szBuf += temp;
-			if (szBuf.back() == '\n')
-				szBuf.pop_back();
-		};
-
 		CViewport::HUDNOTICE msg_dest = static_cast<CViewport::HUDNOTICE>(READ_BYTE());
-		//msg
-		addBuffer();
-		//sstr1
-		addBuffer();
-		//sstr2
-		addBuffer();
-		//sstr3
-		addBuffer();
-		//sstr4
-		addBuffer();
-
+#define BUFFER_SIZE 256
+		static auto findLocalize = [](char* str, char* outbuffer) {
+			if (str[0] == '#')
+				Q_UnicodeToUTF8(g_pVGuiLocalize->Find(str), outbuffer, sizeof(outbuffer));
+			else
+				strcpy(outbuffer, str);
+		};
+		char msg[BUFFER_SIZE];
+		findLocalize(READ_STRING(), msg);
+		char sstr1[BUFFER_SIZE];
+		findLocalize(READ_STRING(), sstr1);
+		char sstr2[BUFFER_SIZE];
+		findLocalize(READ_STRING(), sstr2);
+		char sstr3[BUFFER_SIZE];
+		findLocalize(READ_STRING(), sstr3);
+		char sstr4[BUFFER_SIZE];
+		findLocalize(READ_STRING(), sstr4);
+		char buffer[BUFFER_SIZE * 4];
+#undef BUFFER_SIZE
+		sprintf(buffer, msg, sstr1, sstr2, sstr3, sstr4);
+		std::string szBuf = buffer;
+		if (szBuf.back() == '\n')
+			szBuf.pop_back();
 		std::replace(szBuf.begin(), szBuf.end(), '\r', '\n');
 
 		switch (msg_dest)

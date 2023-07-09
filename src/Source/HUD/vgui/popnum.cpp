@@ -7,6 +7,7 @@
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
 #include <vgui_controls/Label.h>
+#include <vgui_controls/AnimationController.h>
 
 #include "local.h"
 #include "vguilocal.h"
@@ -115,7 +116,7 @@ void CPopNumberPanel::OnThink(){
 		float ratio = -sin(gEngfuncs.GetClientTime() - m_flCreateTime) / 2;
 		CVector vecHUD;
 		VEC_WorldToScreen(*m_vecOrigin, vecHUD);
-		SetPos(vecHUD.x - GetWide() / 2, vecHUD.y - (GetTall() / 2 * ratio));
+		SetPos(vecHUD.x - GetWide() / 2, (vecHUD.y - GetTall() * ratio));
 	}
 	int a = m_pNumberLable->GetAlpha();
 	a-=2;
