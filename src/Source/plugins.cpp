@@ -11,7 +11,7 @@ mh_enginesave_t *g_pMetaSave;
 IFileSystem *g_pFileSystem;
 
 HMODULE g_hClientDll = nullptr;
-HINSTANCE g_hInstance, g_hThisModule;
+HINSTANCE g_hThisModule;
 DWORD g_dwEngineBuildnum;
 HINSTANCE g_hEngineModule;
 PVOID g_dwClientBase;
@@ -31,13 +31,11 @@ void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_engin
 	g_pInterface = pInterface;
 	g_pMetaHookAPI = pAPI;
 	g_pMetaSave = pSave;
-	g_hInstance = GetModuleHandle(nullptr);
 }
 
 void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	g_pFileSystem = g_pInterface->FileSystem;
 	g_pFullFileSystem = g_pFileSystem;
-	g_pFileSystem = g_pInterface->FileSystem;
 	g_iEngineType = g_pMetaHookAPI->GetEngineType();
 	g_dwEngineBuildnum = g_pMetaHookAPI->GetEngineBuildnum();
 	g_hEngineModule = g_pMetaHookAPI->GetEngineModule();

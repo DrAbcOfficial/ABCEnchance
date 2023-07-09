@@ -29,13 +29,15 @@ CNoticePanel::CNoticePanel(const char* szControlName)
 }
 void CNoticePanel::ShowMessage(const char* message){
 	m_pMessage->SetText(message);
+	int w, h;
+	m_pMessage->GetContentSize(w, h);
 	if (m_bKeepCenter) {
 		int x, y;
-		int w, h;
-		m_pMessage->GetContentSize(w, h);
 		GetPos(x, y);
 		SetPos((ScreenWidth - w) / 2, y);
 	}
+	SetTall(h);
+	m_pMessage->SetTall(h);
 	m_flCloseTime = gEngfuncs.GetClientTime() + m_flKeepTime;
 	ShowPanel(true);
 }
