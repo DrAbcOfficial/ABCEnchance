@@ -30,20 +30,16 @@
 
 CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 {
-	//vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "KillMarkScheme.res", "KillMarkScheme");
-	SetScheme("KillMarkScheme");
+	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "CFefxScheme.res", "CFefxScheme");
+	SetScheme("CFefxScheme");
 	m_pKillMark = new vgui::ImagePanel(this, "KillMarkPoint");
 	m_pKillMark->SetImage("abcenchance/tga/cfefx/BossDamage");
 	m_pKillMark->SetShouldScaleImage(true);
 	SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
 	SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
-	//LoadControlSettings(VGUI2_ROOT_DIR "KillMark.res");
-	SetVisible(false);
-}
-
-CKillMarkPanel::~CKillMarkPanel()
-{
-	m_pKillMark->DeletePanel();
+	LoadControlSettings(VGUI2_ROOT_DIR "CFefx.res");
+	SetVisible(true);
+	m_pKillMark->SetVisible(true);
 }
 
 void CKillMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
@@ -53,8 +49,10 @@ void CKillMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	//m_pKillMark->SetBgColor(GetSchemeColor("KillMark.BackGoundColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
 
+void CKillMarkPanel::ApplySettings(KeyValues* inResourceData) {
+	BaseClass::ApplySettings(inResourceData);
 
-
+}
 bool CKillMarkPanel::IsVisible() {
 	return BaseClass::IsVisible();
 }
@@ -64,7 +62,7 @@ void CKillMarkPanel::ShowPanel(bool state)
 	if (state == IsVisible())
 		return;
 	SetVisible(state);
-
+	m_pKillMark->SetVisible(state);
 }
 
 void CKillMarkPanel::SetSize(int w, int t) {
@@ -88,7 +86,7 @@ void CKillMarkPanel::OnThink()
 	float a = m_pKillMark->GetAlpha();
 	a -= 0.2;
 	if (a <= 0)
-		DeletePanel();
+		ShowPanel(false);
 	else
 		m_pKillMark->SetAlpha(a);
 }

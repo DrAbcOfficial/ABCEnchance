@@ -261,8 +261,13 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 		CCustomHud::ABCCustomMsg type = static_cast<CCustomHud::ABCCustomMsg>(READ_BYTE());
 		switch (type) {
 		case CCustomHud::ABCCustomMsg::POPNUMBER: {
+			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+			if (!local)
+				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 			CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
 			int iValue = READ_LONG();
+			if (iValue == 0)
+				return 0;
 			if (g_pViewPort->m_pKillMarkEnable > 0)
 			{
 				static int iDmg;
@@ -277,14 +282,11 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 			if (g_pViewPort->m_pPopNumber->value <= 0)
 				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 			Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
-			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-			if (!local)
-				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
-			//�ӽǽǶ�
+			//视角角度
 			CVector vecView;
 			gEngfuncs.GetViewAngles(vecView);
 			mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
-			//�����Һ�Ŀ������ƫ��
+			//计算我和目标的相对偏移
 			CVector vecLength;
 			mathlib::VectorSubtract(vecOrigin, local->curstate.origin, vecLength);
 			vecLength = vecLength.Normalize();

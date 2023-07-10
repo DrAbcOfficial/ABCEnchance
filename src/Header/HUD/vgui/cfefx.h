@@ -10,9 +10,8 @@ public:
 	DECLARE_CLASS_SIMPLE(CKillMarkPanel, vgui::EditablePanel);
 
 	CKillMarkPanel();
-	~CKillMarkPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	//virtual void ApplySettings(KeyValues* inResourceData) override;
+	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual const char* GetName() override;
 	virtual void SetSize(int w, int t);
 	virtual void Reset() override;
