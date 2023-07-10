@@ -116,14 +116,13 @@ bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
 			//Remove all \n from begin and end
 			//someone will send a bunch of \n\n\n\n\n\n\n\n\n\n\n\n\n\n in the beginning, wtf?????
 			m_szMenuString.erase(m_szMenuString.begin(), std::find_if(m_szMenuString.begin(), m_szMenuString.end(), 
-				[](unsigned char ch) {
+				[](char ch) {
 			    	return ch != '\n';
 			}));
-			m_szMenuString.erase(std::find_if(m_szMenuString.rbegin(), m_szMenuString.rend(), 
-				[](unsigned char ch) {
-    				return ch != '\n';
-    			}), 
-			m_szMenuString.end());
+			m_szMenuString.erase(m_szMenuString.rbegin(), std::find_if(m_szMenuString.rbegin(), m_szMenuString.rend(), 
+				[](char ch) {
+			    	return ch != '\n';
+			}));
 
 			SetContent(m_szMenuString.c_str());
 			StartFade(true);
