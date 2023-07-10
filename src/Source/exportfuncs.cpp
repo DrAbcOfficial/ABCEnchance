@@ -282,17 +282,16 @@ void* NewClientFactory(void){
 }
 char* NewV_strncpy(char* a1, const char* a2, size_t a3){
 	char language[128] = { 0 };
-	const char* lang = NULL;
+	const char* lang = nullptr;
 	auto gamedir = gEngfuncs.pfnGetGameDirectory();
 	if (CommandLine()->CheckParm("-forcelang", &lang) && lang && lang[0])
 		a2 = lang;
 	else if ((gamedir && !strcmp(gamedir, "svencoop")) || CommandLine()->CheckParm("-steamlang")){
 		Sys_GetRegKeyValue("Software\\Valve\\Steam", "Language", language, sizeof(language), "");
-		if ((Q_strlen(language) > 0) && (Q_stricmp(language, "english")))
+		if ((strlen(language) > 0) && (stricmp(language, "english")))
 			a2 = language;
 	}
-	gHookFuncs.V_strncpy(m_szCurrentLanguage, a2, sizeof(m_szCurrentLanguage) - 1);
-	m_szCurrentLanguage[sizeof(m_szCurrentLanguage) - 1] = 0;
+	strncpy_s(m_szCurrentLanguage, a2, sizeof(m_szCurrentLanguage));
 	return gHookFuncs.V_strncpy(a1, a2, a3);
 }
 bool NET_StringToAdr(char* param_1, netadr_s* param_2) {
