@@ -68,8 +68,9 @@ void CTextMenu::SetContent(const char* szMenu){
 	m_pMenu->SetText(szMenu);
 	int w, h;
 	m_pMenu->GetTextImage()->GetContentSize(w, h);
-	SetWide(w + 4);
-	SetTall(h + 4);
+	SetWide(w * 1.1f);
+	SetTall(h * 1.1f);
+	m_pMenu->SetPos(GetWide() * 0.05, GetTall() * 0.05);
 }
 
 
