@@ -81,19 +81,6 @@ typedef struct cl_cvars_s{
 	cvar_t* pDamageScreenBase = nullptr;
 
 	cvar_t* pDynamicCrossHair = nullptr;
-	cvar_t* pDynamicCrossHairAH = nullptr;
-	cvar_t* pDynamicCrossHairL = nullptr;
-	cvar_t* pDynamicCrossHairW = nullptr;
-	cvar_t* pDynamicCrossHairO = nullptr;
-	cvar_t* pDynamicCrossHairM = nullptr;
-	cvar_t* pDynamicCrossHairA = nullptr;
-	cvar_t* pDynamicCrossHairCR = nullptr;
-	cvar_t* pDynamicCrossHairCG = nullptr;
-	cvar_t* pDynamicCrossHairCB = nullptr;
-	cvar_t* pDynamicCrossHairOTD = nullptr;
-	cvar_t* pDynamicCrossHairOTDW = nullptr;
-	cvar_t* pDynamicCrossHairT = nullptr;
-	cvar_t* pDynamicCrossHairD = nullptr;
 
 	cvar_t* pDynamicHUD = nullptr;
 

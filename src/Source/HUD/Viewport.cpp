@@ -1,6 +1,8 @@
 #pragma once
 #include <metahook.h>
 #include <vector>
+#include <string>
+
 #include <vgui/VGUI.h>
 #include <vgui/IScheme.h>
 #include <vgui/ILocalize.h>
@@ -8,11 +10,11 @@
 #include <vgui_controls/Controls.h>
 #include <vgui_controls/Label.h>
 #include <vgui_controls/AnimationController.h>
+
 #include "BaseUI.h"
 #include "mymathlib.h"
 #include "local.h"
 #include "vguilocal.h"
-#include <string>
 #include "steam_api.h"
 #include "player_info.h"
 
@@ -25,6 +27,9 @@
 #include "textmenu.h"
 #include "flashlight.h"
 #include "notice.h"
+#include "crosshair.h"
+
+#include "CCustomHud.h"
 
 #include "Viewport.h"
 #include "exportfuncs.h"
@@ -71,6 +76,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
 	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
 	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
+	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -88,6 +94,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pFlashLight->SetParent(GetVPanel());
 	m_pNotice->SetParent(GetVPanel());
 	m_pNoticeCenter->SetParent(GetVPanel());
+	m_pCrossHairPanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -256,4 +263,18 @@ Color CViewport::GetPlayerColor(int index){
 	vec3_t color;
 	mathlib::VectorCopy(gHookFuncs.GetClientColor(index), color);
 	return Color(color[0] * 255, color[1] * 255, color[2] * 255, 255);
+}
+
+void CViewport::ShowCrossHair(bool on) {
+	m_pCrossHairPanel->ShowPanel(on);
+}
+
+bool CViewport::IsInSpectate() {
+	return gCustomHud.IsInSpectate();
+}
+bool CViewport::HasSuit() {
+	return gCustomHud.HasSuit();
+}
+bool CViewport::IsHudHide(int HideToken) {
+	return gCustomHud.IsHudHide(HideToken);
 }

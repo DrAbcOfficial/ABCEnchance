@@ -198,7 +198,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\ammo.cpp" />
     <ClCompile Include="src\Source\HUD\cctv.cpp" />
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
-    <ClCompile Include="src\Source\HUD\crosshair.cpp" />
     <ClCompile Include="src\Source\HUD\deathmsg.cpp" />
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
     <ClCompile Include="src\Source\HUD\efxhud.cpp" />
@@ -207,6 +206,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\historyresource.cpp" />
     <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
     <ClCompile Include="src\Source\HUD\radar.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\crosshair.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\notice.cpp" />
@@ -419,7 +419,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\basehud.h" />
     <ClInclude Include="src\Header\HUD\cctv.h" />
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />
-    <ClInclude Include="src\Header\HUD\crosshair.h" />
     <ClInclude Include="src\Header\HUD\deathmsg.h" />
     <ClInclude Include="src\Header\HUD\eccobuymenu.h" />
     <ClInclude Include="src\Header\HUD\efxhud.h" />
@@ -429,6 +428,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\itemhighlight.h" />
     <ClInclude Include="src\Header\HUD\numdisplay.h" />
     <ClInclude Include="src\Header\HUD\radar.h" />
+    <ClInclude Include="src\Header\HUD\vgui\crosshair.h" />
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
     <ClInclude Include="src\Header\HUD\vgui\notice.h" />

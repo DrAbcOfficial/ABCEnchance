@@ -28,7 +28,7 @@ private:
 	size_t BackGroundY = 0;
 	size_t BackGroundLength = 0;
 
-	GLint iBackGroundTga = 0;
+	int iBackGroundTga = 0;
 
 	Color Ammo1IconColor;
 	Color Ammo1BigTextColor;
