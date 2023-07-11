@@ -26,6 +26,8 @@ typedef struct {
 	CHudFlashlight* m_Flash;
 } cl_hookedHud;
 
+typedef int HSPRITE;
+
 typedef struct cl_spritem_s {
 	HSPRITE spr;
 	wrect_t rect;
@@ -104,12 +106,10 @@ public:
 	size_t m_flCursorSize = 0;
 
 	vec3_t m_vecOverViewOrg;
-	vec3_t m_vecClientEVPunch;
-	vec2_t m_vecThirdPersonCrosshairPos;
-	
+
 	client_sprite_t* m_pSpriteList;
 
-	GLint m_iCursorTga = 0;
+	int m_iCursorTga = 0;
 
 	bool m_bRenderRadarView = false;
 	bool m_bInScore = false;

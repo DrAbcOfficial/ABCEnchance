@@ -446,9 +446,6 @@
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\crosshair.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\deathmsg.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
@@ -585,6 +582,9 @@
       <Filter>VGUI\control</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\notice.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\crosshair.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1174,9 +1174,6 @@
     <ClInclude Include="src\Header\HUD\CCustomHud.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\crosshair.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\deathmsg.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
@@ -1356,6 +1353,9 @@
     </ClInclude>
     <ClInclude Include="SourceSDK\vstdlib\strtools.h">
       <Filter>SourceSDK\vstdlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\crosshair.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

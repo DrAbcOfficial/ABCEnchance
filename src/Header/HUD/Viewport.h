@@ -25,6 +25,7 @@ class CSidePanel;
 class CTextMenu;
 class CFlashLightPanel;
 class CNoticePanel;
+class CCrosshairPanel;
 
 class ISchemel;
 
@@ -53,6 +54,10 @@ public:
 
 	void SetInterMission(int intermission);
 	int GetInterMission();
+
+	bool IsInSpectate();
+	bool HasSuit();
+	bool IsHudHide(int HideToken);
 
 	bool IsScoreBoardVisible();
 	void ShowScoreBoard();
@@ -86,6 +91,8 @@ public:
 	void SetFlashLight(bool on, int battery);
 	void SetFlashBattery(int battery);
 
+	void ShowCrossHair(bool on);
+
 	enum class HUDNOTICE {
 		PRINTNOTIFY = 1,
 		PRINTCENTER = 4
@@ -97,6 +104,9 @@ public:
 	cvar_t* m_pPlayerTitle = nullptr;
 	cvar_t* m_pPlayerTitleDanger = nullptr;
 	cvar_t* m_pPopNumber = nullptr;
+
+	vec3_t m_vecClientEVPunch;
+	vec2_t m_vecThirdPersonCrosshairPos;
 private:
 	std::vector<IViewportPanel*> m_Panels;
 	CScorePanel* m_pScorePanel = nullptr;
@@ -108,6 +118,7 @@ private:
 	CFlashLightPanel* m_pFlashLight = nullptr;
 	CNoticePanel* m_pNotice = nullptr;
 	CNoticePanel* m_pNoticeCenter = nullptr;
+	CCrosshairPanel* m_pCrossHairPanel;
 
 	int m_iInterMission;
 
