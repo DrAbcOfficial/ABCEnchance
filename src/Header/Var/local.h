@@ -4,9 +4,6 @@
 
 #define FCVAR_VALUE (FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE)
 
-#define BASE_GWR_SELECTED 842100225
-#define BASE_GWR_UNSELECTED 842100224
-
 //Lazy Dizzy Short Marco
 #define V_snprintf sprintf_s
 #define HOOK_COMMAND(x, y) g_pMetaHookAPI->HookCmd((char*)x, __UserCmd_##y)
@@ -70,7 +67,7 @@ typedef struct{
 }cl_refHookfunc_t;
 
 //CVars
-typedef struct{
+typedef struct cl_cvars_s{
 	cvar_t* pBloodEfx = nullptr;
 	cvar_t* pBloodSpriteSpeed = nullptr;
 	cvar_t* pBloodSpriteNumber = nullptr;
