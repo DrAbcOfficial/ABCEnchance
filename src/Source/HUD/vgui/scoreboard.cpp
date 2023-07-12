@@ -5,7 +5,7 @@
 #include <metahook.h>
 
 #include <vgui/IImage.h>
-#include <VGUI/IInput.h>
+#include <vgui/IInput.h>
 #include <vgui/IInputInternal.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
@@ -14,6 +14,8 @@
 #include <vgui_controls/SectionedListPanel.h>
 #include <vgui_controls/ImageList.h>
 #include <vgui_controls/Menu.h>
+#include <vgui_controls/AnimationController.h>
+
 #include "client_steam_context.h"
 #include "VGUI2/IClientVGUI.h"
 #include "local.h"
@@ -292,7 +294,7 @@ void CScorePanel::UpdateTimeEndInternal() {
 		wchar_t wbuf[64];
 		vgui::localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
 		m_pTimeEndLable->SetText(wbuf);
-		m_iTimeEndCount--;
+		m_iTimeEndCount -= (flTime - m_flLastUpdateTimeEndTime);
 		m_flLastUpdateTimeEndTime = flTime + 1.0f;
 	}
 }
