@@ -1,4 +1,4 @@
-"abcenchance/res/PopNumber.res"
+"abcenchance/res/CFefx.res"
 {
 	"KillMarkPanel"
 	{
@@ -13,8 +13,8 @@
 	}
 	"DmgMarkPanel"
 	{
-		"ControlName"		"CKillMarkPanel"
-		"fieldName"		"KillMarkPanel"
+		"ControlName"		"CDmgMarkPanel"
+		"fieldName"		"DmgMarkPanel"
 		"xpos"		"54"
 		"ypos"		"36"
 		"wide"		"48"
@@ -39,7 +39,7 @@
 	"DmgMark"
 	{
 		"ControlName"		"ImagePanel"
-		"fieldName"		"KillMarkPoint"
+		"fieldName"		"DmgMark"
 		"xpos"		"c"
 		"ypos"		"c"
 		"wide"		"54"
