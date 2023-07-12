@@ -17,6 +17,7 @@
 #include "mymathlib.h"
 #include "exportfuncs.h"
 #include "keydefs.h"
+#include "encode.h"
 
 #include "local.h"
 #include "gl_draw.h"
@@ -181,7 +182,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 #define BUFFER_SIZE 256
 		static auto findLocalize = [](char* str, char* outbuffer) {
 			if (str[0] == '#')
-				Q_UnicodeToUTF8(vgui::localize()->Find(str), outbuffer, sizeof(outbuffer));
+				UnicodeToUTF8(vgui::localize()->Find(str), outbuffer);
 			else
 				strcpy(outbuffer, str);
 		};
