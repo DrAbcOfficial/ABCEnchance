@@ -107,11 +107,11 @@ public:
 	cvar_t* m_pPlayerTitle = nullptr;
 	cvar_t* m_pPlayerTitleDanger = nullptr;
 	cvar_t* m_pPopNumber = nullptr;
+	cvar_t* m_pKillMarkEnable = nullptr;
+	cvar_t* m_pKillMarkMax = nullptr;
 
 	vec3_t m_vecClientEVPunch;
 	vec2_t m_vecThirdPersonCrosshairPos;
-	cvar_t* m_pKillMarkEnable = nullptr;
-	cvar_t* m_pKillMarkMax = nullptr;
 private:
 	std::vector<IViewportPanel*> m_Panels;
 	CScorePanel* m_pScorePanel = nullptr;
@@ -124,7 +124,7 @@ private:
 	CNoticePanel* m_pNotice = nullptr;
 	CNoticePanel* m_pNoticeCenter = nullptr;
 	CCrosshairPanel* m_pCrossHairPanel;
-	CKillMarkPanel* m_pKillMark = nullptr;
+	CKillMarkPanel* m_pKillMarkPanel = nullptr;
 
 	int m_iInterMission;
 

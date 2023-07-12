@@ -81,7 +81,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
 	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
 	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
-	AddNewPanel(m_pKillMark = new CKillMarkPanel());
+	AddNewPanel(m_pKillMarkPanel = new CKillMarkPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -100,7 +100,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pNotice->SetParent(GetVPanel());
 	m_pNoticeCenter->SetParent(GetVPanel());
 	m_pCrossHairPanel->SetParent(GetVPanel());
-	m_pKillMark->SetParent(GetVPanel());
+	m_pKillMarkPanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -252,7 +252,7 @@ void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 
 void CViewport::AddKillMark()
 {
-	m_pKillMark->ShowPanel(true);
+	m_pKillMarkPanel->ShowPanel(true);
 }
 
 void CViewport::Paint(void){

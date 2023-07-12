@@ -20,39 +20,36 @@
 
 #define VIEWPORT_KILLMARK_NAME "KillMarkPanel"
 #define VIEWPORT_DMGMARK_NAME "DmgMarkPanel"
-//#define KILLMARK_POINT "KillMark_Point"
-//#define KiLLMARK_OKILL "KillMark_OKill"
-//#define KILLMARK_DKILL "KillMark_DKill"
-//#define KILLMARK_TKILL "KillMark_TKill"
-//#define KILLMARK_MKILL "KIllMark_MKill"
 
 
 
 CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 {
+	SetProportional(true);
+	SetKeyBoardInputEnabled(false);
+	SetMouseInputEnabled(false);
 	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "CFefxScheme.res", "CFefxScheme");
 	SetScheme("CFefxScheme");
+
 	m_pKillMark = new vgui::ImagePanel(this, "KillMarkPoint");
-	m_pKillMark->SetImage("abcenchance/tga/cfefx/BossDamage");
-	m_pKillMark->SetShouldScaleImage(true);
+
 	SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
 	SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
+
 	LoadControlSettings(VGUI2_ROOT_DIR "CFefx.res");
-	SetVisible(true);
-	m_pKillMark->SetVisible(true);
 }
+
 
 void CKillMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
-	SetBgColor(Color(0, 0, 0, 0));
-
-	//m_pKillMark->SetBgColor(GetSchemeColor("KillMark.BackGoundColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	SetBgColor(GetSchemeColor("KillMark.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	//m_pKillMark->SetFgColor(GetSchemeColor("KillMark.FgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
 
 void CKillMarkPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
-
 }
+
 bool CKillMarkPanel::IsVisible() {
 	return BaseClass::IsVisible();
 }
@@ -62,12 +59,11 @@ void CKillMarkPanel::ShowPanel(bool state)
 	if (state == IsVisible())
 		return;
 	SetVisible(state);
-	m_pKillMark->SetVisible(state);
 }
 
 void CKillMarkPanel::SetSize(int w, int t) {
 	BaseClass::SetSize(w, t);
-	m_pKillMark->SetSize(w, t);
+	//m_pKillMark->SetSize(w, t);
 }
 vgui::VPANEL CKillMarkPanel::GetVPanel() {
 	return BaseClass::GetVPanel();
@@ -96,31 +92,29 @@ const char* CKillMarkPanel::GetName() {
 }
 
 void CKillMarkPanel::Reset() {
-	ShowPanel(false);
+
 }
 
 
 
-//TODO:屏幕中心移动到右边
+/*TODO:屏幕中心移动到右边
 
-CDmgMarkPanel::CDmgMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
+CDmgMarkPanel::CDmgMarkPanel() : BaseClass(nullptr, VIEWPORT_DMGMARK_NAME)
 {
-	//vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "KillMarkScheme.res", "KillMarkScheme");
-	SetScheme("KillMarkScheme");
+	SetProportional(true);
+	SetKeyBoardInputEnabled(false);
+	SetMouseInputEnabled(false);
+	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "CFefxScheme.res", "CFefxScheme");
+	SetScheme("CFefxScheme");
+
 	m_pDmgMark = new vgui::ImagePanel(this, "DmgMark");
-	m_pDmgMark->SetImage("abcenchance/tga/cfefx/NoBossSide100");
-	m_pDmgMark->SetShouldScaleImage(true);
 
-	SetPos(ScreenWidth / 2, ScreenHeight / 2);
-	SetSize(ScreenWidth * 0.085, ScreenHeight * 0.112);
-	//LoadControlSettings(VGUI2_ROOT_DIR "KillMark.res");
-	SetVisible(true);
+	//SetPos(ScreenWidth / 2, ScreenHeight / 2);
+	//SetSize(ScreenWidth * 0.085, ScreenHeight * 0.112);
+
+	LoadControlSettings(VGUI2_ROOT_DIR "CFefx.res");
 }
 
-CDmgMarkPanel::~CDmgMarkPanel()
-{
-	m_pDmgMark->DeletePanel();
-}
 
 void CDmgMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -172,6 +166,6 @@ void CDmgMarkPanel::Reset() {
 	ShowPanel(false);
 }
 
-
+*/
 
 
