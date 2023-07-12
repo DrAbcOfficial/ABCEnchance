@@ -4,9 +4,6 @@
 
 #define FCVAR_VALUE (FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE)
 
-#define BASE_GWR_SELECTED 842100225
-#define BASE_GWR_UNSELECTED 842100224
-
 //Lazy Dizzy Short Marco
 #define V_snprintf sprintf_s
 #define HOOK_COMMAND(x, y) g_pMetaHookAPI->HookCmd((char*)x, __UserCmd_##y)
@@ -70,7 +67,7 @@ typedef struct{
 }cl_refHookfunc_t;
 
 //CVars
-typedef struct{
+typedef struct cl_cvars_s{
 	cvar_t* pBloodEfx = nullptr;
 	cvar_t* pBloodSpriteSpeed = nullptr;
 	cvar_t* pBloodSpriteNumber = nullptr;
@@ -84,19 +81,6 @@ typedef struct{
 	cvar_t* pDamageScreenBase = nullptr;
 
 	cvar_t* pDynamicCrossHair = nullptr;
-	cvar_t* pDynamicCrossHairAH = nullptr;
-	cvar_t* pDynamicCrossHairL = nullptr;
-	cvar_t* pDynamicCrossHairW = nullptr;
-	cvar_t* pDynamicCrossHairO = nullptr;
-	cvar_t* pDynamicCrossHairM = nullptr;
-	cvar_t* pDynamicCrossHairA = nullptr;
-	cvar_t* pDynamicCrossHairCR = nullptr;
-	cvar_t* pDynamicCrossHairCG = nullptr;
-	cvar_t* pDynamicCrossHairCB = nullptr;
-	cvar_t* pDynamicCrossHairOTD = nullptr;
-	cvar_t* pDynamicCrossHairOTDW = nullptr;
-	cvar_t* pDynamicCrossHairT = nullptr;
-	cvar_t* pDynamicCrossHairD = nullptr;
 
 	cvar_t* pDynamicHUD = nullptr;
 

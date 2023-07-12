@@ -68,8 +68,9 @@ void CTextMenu::SetContent(const char* szMenu){
 	m_pMenu->SetText(szMenu);
 	int w, h;
 	m_pMenu->GetTextImage()->GetContentSize(w, h);
-	SetWide(w + 4);
-	SetTall(h + 4);
+	SetWide(w * 1.1f);
+	SetTall(h * 1.1f);
+	m_pMenu->SetPos(GetWide() * 0.05, GetTall() * 0.05);
 }
 
 
@@ -112,6 +113,12 @@ bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
 	if (m_bitsValidSlots){
 		m_szMenuString += READ_STRING();
 		if (!iNeedMore) {
+
+			//Remove all \n from begin and end
+			//someone will send a bunch of \n\n\n\n\n\n\n\n\n\n\n\n\n\n in the beginning, wtf?????
+			auto searchFunc = [](char ch) {return ch != '\n';};
+			m_szMenuString.erase(m_szMenuString.begin(), std::find_if(m_szMenuString.begin(), m_szMenuString.end(), searchFunc));
+			m_szMenuString.erase(m_szMenuString.rbegin().base(), std::find_if(m_szMenuString.rbegin(), m_szMenuString.rend(), searchFunc).base());
 			SetContent(m_szMenuString.c_str());
 			StartFade(true);
 		}

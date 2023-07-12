@@ -33,7 +33,6 @@
 #include "deathmsg.h"
 #include "radar.h"
 #include "deathmsg.h"
-#include "crosshair.h"
 #include "efxhud.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
@@ -431,7 +430,6 @@ void CCustomHud::HUD_Init(void){
 	m_HudCustomAmmo.Init();
 	m_HudRadar.Init();
 	m_HudDeathMsg.Init();
-	m_HudCrosshair.Init();
 	m_HudEfx.Init();
 	g_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
@@ -485,7 +483,6 @@ void CCustomHud::HUD_VidInit(void){
 }
 void CCustomHud::HUD_Draw(float flTime){
 	SetBaseHudActivity();
-	m_HudCrosshair.Draw(flTime);
 	m_HudDeathMsg.Draw(flTime);
 	m_HudRadar.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
