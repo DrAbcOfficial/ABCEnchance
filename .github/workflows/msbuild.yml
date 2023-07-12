@@ -68,3 +68,18 @@ jobs:
           name: ABCEnchance-${{ github.ref }}
           files: |
             ABCEnchance-windows-x86.zip
+
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 7
+        keep_minimum_runs: 10
+
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      if: !cancelled()
+      with:
+        keep_latest: 10
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.YOUR_GITHUB_TOKEN }}
