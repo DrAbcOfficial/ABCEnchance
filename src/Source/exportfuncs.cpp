@@ -246,7 +246,7 @@ void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 }
 void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
-	mathlib::VectorCopy(punchangle1, gCustomHud.m_vecClientEVPunch);
+	mathlib::VectorCopy(punchangle1, g_pViewPort->m_vecClientEVPunch);
 }
 int CL_IsDevOverview(void){
 	return gCustomHud.m_iIsOverView ? 1 : gHookFuncs.CL_IsDevOverview();

@@ -53,7 +53,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 			pTemp->entity.curstate.rendercolor.r = base_palette1[nColor].r();
 			pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g();
 			pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b();
-			pTemp->entity.curstate.framerate = pModel->numframes * 10; //1s
+			pTemp->entity.curstate.framerate = 10.0f * pModel->numframes; //1s
 			pTemp->die = gEngfuncs.GetClientTime() + (pModel->numframes / pTemp->entity.curstate.framerate);
 			pTemp->entity.angles[2] = RANDOM_FLOAT(0, 360);
 			pTemp->bounceFactor = 0;
@@ -73,12 +73,12 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 				pTemp->entity.curstate.rendercolor.g = base_palette1[nColor].g();
 				pTemp->entity.curstate.rendercolor.b = base_palette1[nColor].b();
 				pTemp->die = gEngfuncs.GetClientTime() + RANDOM_FLOAT(1.0f, 3.0f);
-				pTemp->entity.angles[2] = gEngfuncs.pfnRandomLong(0, 360);
+				pTemp->entity.angles[2] = gEngfuncs.pfnRandomFloat(0.0f, 360.0f);
 				pTemp->bounceFactor = 0;
 				srand((unsigned int)gEngfuncs.GetClientTime() * i - i);
-				dir[0] = forward[0] + rand() / double(RAND_MAX) * 2 - 1;
+				dir[0] = forward[0] + float(rand()) / float(RAND_MAX) * 2.0f - 1;
 				srand((unsigned int)gEngfuncs.GetClientTime() * i + i);
-				dir[1] = forward[1] + rand() / double(RAND_MAX) * 2 - 1;
+				dir[1] = forward[1] + float(rand()) / float(RAND_MAX) * 2.0f - 1;
 				dir[2] = forward[2];
 				mathlib::VectorScale(dir, RANDOM_FLOAT(8.0f * size, 20.0f * size), pTemp->entity.baseline.origin);
 				pTemp->entity.baseline.origin[0] += RANDOM_FLOAT(4.0f, gCVars.pBloodSpriteSpeed->value) * (size);
