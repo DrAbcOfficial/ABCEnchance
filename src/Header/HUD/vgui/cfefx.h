@@ -5,20 +5,19 @@
 
 class CKillMarkPanel : public vgui::EditablePanel, public IViewportPanel
 {
-
 public:
 	DECLARE_CLASS_SIMPLE(CKillMarkPanel, vgui::EditablePanel);
+
 	CKillMarkPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual const char* GetName() override;
-	virtual void SetSize(int w, int t);
 	virtual void Reset() override;
 	virtual void ShowPanel(bool state) override;
 	virtual bool IsVisible() override;
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
-	virtual void OnThink() override;
+	//virtual void OnThink() override;
+	void ShowKillMark();
 
 private:
 	vgui::ImagePanel* m_pKillMark = nullptr;

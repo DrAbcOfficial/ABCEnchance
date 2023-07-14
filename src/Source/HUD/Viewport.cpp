@@ -252,7 +252,7 @@ void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 
 void CViewport::AddKillMark()
 {
-	m_pKillMarkPanel->ShowPanel(true);
+	m_pKillMarkPanel->ShowKillMark();
 }
 
 void CViewport::Paint(void){

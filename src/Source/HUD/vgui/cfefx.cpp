@@ -1,21 +1,17 @@
-﻿#include <vector>
-#include <metahook.h>
+﻿#include <metahook.h>
 
-#include <vgui/IImage.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
-#include <vgui/ILocalize.h>
 #include <vgui_controls/ImagePanel.h>
+#include <vgui_controls/AnimationController.h>
 
 #include "local.h"
 #include "vguilocal.h"
-#include <mymathlib.h>
-#include <CVector.h>
 
-#include "Viewport.h"
+#include "mymathlib.h"
 
-#include "plugins.h"
 #include "cfefx.h"
+//#include "Viewport.h"
 
 
 #define VIEWPORT_KILLMARK_NAME "KillMarkPanel"
@@ -33,8 +29,8 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 
 	m_pKillMark = new vgui::ImagePanel(this, "KillMarkPoint");
 
-	SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
-	SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
+	//SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
+	//SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
 
 	LoadControlSettings(VGUI2_ROOT_DIR "CFefx.res");
 }
@@ -43,12 +39,8 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 void CKillMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("KillMark.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
-	//m_pKillMark->SetFgColor(GetSchemeColor("KillMark.FgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
 
-void CKillMarkPanel::ApplySettings(KeyValues* inResourceData) {
-	BaseClass::ApplySettings(inResourceData);
-}
 
 bool CKillMarkPanel::IsVisible() {
 	return BaseClass::IsVisible();
@@ -61,10 +53,16 @@ void CKillMarkPanel::ShowPanel(bool state)
 	SetVisible(state);
 }
 
-void CKillMarkPanel::SetSize(int w, int t) {
-	BaseClass::SetSize(w, t);
-	//m_pKillMark->SetSize(w, t);
+void CKillMarkPanel::ShowKillMark() {
+	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+	if (!local)
+		return;
+	ShowPanel(true);
+	SetAlpha(255);
+	vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 0, 1.5f, 1.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	ShowPanel(false);
 }
+
 vgui::VPANEL CKillMarkPanel::GetVPanel() {
 	return BaseClass::GetVPanel();
 }
@@ -73,26 +71,26 @@ void CKillMarkPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
 
-void CKillMarkPanel::OnThink()
-{
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	if (!local)
-		return;
-	ShowPanel(true);
-	float a = m_pKillMark->GetAlpha();
-	a -= 0.2;
-	if (a <= 0)
-		ShowPanel(false);
-	else
-		m_pKillMark->SetAlpha(a);
-}
+//void CKillMarkPanel::OnThink()
+//{
+//	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+//	if (!local)
+//		return;
+//	ShowPanel(true);
+//	float a = m_pKillMark->GetAlpha();
+//	a -= 0.2;
+//	if (a <= 0)
+//		ShowPanel(false);
+//	else
+//		m_pKillMark->SetAlpha(a);
+//}
 
 const char* CKillMarkPanel::GetName() {
 	return VIEWPORT_KILLMARK_NAME;
 }
 
 void CKillMarkPanel::Reset() {
-
+	ShowPanel(false);
 }
 
 
