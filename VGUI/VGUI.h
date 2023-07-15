@@ -37,6 +37,8 @@ typedef unsigned short wchar_t;
 
 #define SOURCE_SDK_GFX_PATH "abcenchance/tga"
 
+const static unsigned long INVALID_LOCALIZE_STRING_INDEX = (unsigned long)-1;
+
 namespace vgui
 {
 typedef unsigned int VPANEL;
