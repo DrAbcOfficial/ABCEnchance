@@ -250,6 +250,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="VGUI2\KeyValuesSystemHook.cpp" />
     <ClCompile Include="VGUI2\Scheme.cpp" />
     <ClCompile Include="VGUI2\SchemeHook.cpp" />
+    <ClCompile Include="VGUI2\spr_image.cpp" />
     <ClCompile Include="VGUI2\Surface.cpp" />
     <ClCompile Include="VGUI2\SurfaceHook.cpp" />
     <ClCompile Include="VGUI2\tga_image.cpp" />
@@ -485,6 +486,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\igameui.h" />
     <ClInclude Include="VGUI2\IGameUIFuncs.h" />
     <ClInclude Include="VGUI2\IViewportPanel.h" />
+    <ClInclude Include="VGUI2\spr_image.h" />
     <ClInclude Include="VGUI2\SurfaceHook.h" />
     <ClInclude Include="VGUI2\tga_image.h" />
     <ClInclude Include="VGUI2\viewport_panel_names.h" />
