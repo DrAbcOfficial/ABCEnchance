@@ -155,7 +155,7 @@ void CCrosshairPanel::PaintBackground() {
 				iCenterY - iFinalOffset + iOutLineWidth
 			};
 		}
-		vgui::surface()->DrawFilledRectArray(outlinerects, !pDynamicCrossHairT->value ? 3 : 4);
+		vgui::surface()->DrawFilledRectArray(outlinerects, !pDynamicCrossHairT->value ? 4 : 3);
 	}
 	//ÖÐÐÄ
 	if (pDynamicCrossHairD->value) {
@@ -205,7 +205,7 @@ void CCrosshairPanel::PaintBackground() {
 			iCenterY - iFinalOffset
 		};
 	}
-	vgui::surface()->DrawFilledRectArray(rects, !pDynamicCrossHairT->value ? 3 : 4);
+	vgui::surface()->DrawFilledRectArray(rects, !pDynamicCrossHairT->value ? 4 : 3);
 }
 const char* CCrosshairPanel::GetName() {
 	return VIEWPORT_CROSSHAIR_NAME;
