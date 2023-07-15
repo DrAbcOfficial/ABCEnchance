@@ -15,6 +15,7 @@
 #include <malloc.h>
 #endif
 
+#include <vgui/vgui.h>
 #include <vgui/IPanel.h>
 #include <vgui/ISurface.h>
 #include <vgui/IScheme.h>
@@ -32,8 +33,6 @@
 
 // enable this define if you want unlocalized strings logged to files unfound.txt and unlocalized.txt
 // #define LOG_UNLOCALIZED_STRINGS
-
-const unsigned long INVALID_LOCALIZE_STRING_INDEX = (unsigned long)-1;
 
 using namespace vgui;
 
