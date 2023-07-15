@@ -682,7 +682,7 @@ void CScorePanel::UpdateClientInfo(int client)
 	}
 	Assert(pd.bIsConnected == pi->IsConnected());
 	// Skip unconnected players
-	if (!pi->IsConnected())
+	if (!pi->IsValid())
 		return;
 	if (GetPlayerTeam(pi) != pd.nTeamID){
 		// Player changed team

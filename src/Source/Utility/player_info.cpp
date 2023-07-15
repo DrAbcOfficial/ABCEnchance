@@ -146,9 +146,7 @@ CPlayerInfo *CPlayerInfo::Update(){
 			g_pViewPort->GetScoreBoard()->UpdateOnPlayerInfo(GetIndex());
 	}
 	if (bIsConnected){
-		//Wtf, quit?
-		if (szName[0] == '\0')
-			Reset();
+
 		iTopColor = info->topcolor;
 		iBottomColor = info->bottomcolor;
 		iPing = info->ping;

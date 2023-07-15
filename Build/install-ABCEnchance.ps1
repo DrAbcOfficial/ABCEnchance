@@ -3,7 +3,7 @@ $conflictPlugins = @("CommunicationDemo.dll")
 function WritePluginLine($path){
     $lines = Get-Content($path)
     $new = "ABCEnchance.dll"
-    $newLines = "@($new)`n"
+    $newLines = @("$($new)`n")
     foreach($l in $lines){
         if(!(([string]$l).CompareTo($new))){
             continue
@@ -12,7 +12,7 @@ function WritePluginLine($path){
             Write-Warning "$($l) conflicts with ABCEnchance and has been removed from the load list"
             continue
         }
-        $newLines += @($l)
+        $newLines += @("$($l)`n")
     }
     Set-Content $path -Value $newLines
 }
