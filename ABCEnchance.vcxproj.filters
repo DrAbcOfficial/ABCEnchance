@@ -590,6 +590,9 @@
     <ClCompile Include="src\Source\HUD\vgui\effect.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
+    <ClCompile Include="vgui_controls\ImageSprPanel.cpp">
+      <Filter>VGUI\control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1362,6 +1365,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\effect.h">
       <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\ImageSprPanel.h">
+      <Filter>VGUI\control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

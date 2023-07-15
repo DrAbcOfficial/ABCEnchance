@@ -8,7 +8,7 @@
 
 namespace vgui {
 	class ImagePanel;
-	class CSPRImage;
+	class ImageSprPanel;
 }
 
 class CEffectPanel : public vgui::EditablePanel, public IViewportPanel
@@ -25,8 +25,9 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
-	virtual void OnTick() override;
+	virtual void OnThink() override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
+	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 
 	void SetHealth(int health);
 
@@ -43,17 +44,16 @@ public:
 	};
 	void SetWater(WaterType type);
 private:
-	float m_flInterve = 0;
 	float m_flAlphaAinmeTime = 0;
 	float m_flWaterKeepTime = 0;
-	vgui::CSPRImage* m_pLeftWaterSpr;
-	vgui::CSPRImage* m_pRightWaterSpr;
 
-	vgui::ImagePanel* m_pLeftWater;
-	vgui::ImagePanel* m_pRightWater;
-	vgui::ImagePanel* m_pUnderWater;
-	vgui::ImagePanel* m_pDangerPanel;
+	vgui::ImageSprPanel* m_pLeftWater = nullptr;
+	vgui::ImageSprPanel* m_pRightWater = nullptr;
+	vgui::ImagePanel* m_pUnderWater = nullptr;
+	vgui::ImagePanel* m_pDangerPanel = nullptr;
 
 	int m_iOldWaterStatue = 0;
+
+	WaterType m_iNowWaterType;
 };
 #endif

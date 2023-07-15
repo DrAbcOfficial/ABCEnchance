@@ -285,6 +285,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\ImageClipPanel.cpp" />
     <ClCompile Include="vgui_controls\ImageList.cpp" />
     <ClCompile Include="vgui_controls\ImagePanel.cpp" />
+    <ClCompile Include="vgui_controls\ImageSprPanel.cpp" />
     <ClCompile Include="vgui_controls\InputDialog.cpp" />
     <ClCompile Include="vgui_controls\KeyBindingHelpDialog.cpp" />
     <ClCompile Include="vgui_controls\KeyBoardEditorDialog.cpp" />
@@ -540,6 +541,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\ImageClipPanel.h" />
     <ClInclude Include="vgui_controls\ImageList.h" />
     <ClInclude Include="vgui_controls\ImagePanel.h" />
+    <ClInclude Include="vgui_controls\ImageSprPanel.h" />
     <ClInclude Include="vgui_controls\InputDialog.h" />
     <ClInclude Include="vgui_controls\KeyBindingHelpDialog.h" />
     <ClInclude Include="vgui_controls\KeyBindingMap.h" />

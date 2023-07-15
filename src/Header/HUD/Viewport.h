@@ -56,6 +56,8 @@ public:
 	void SetInterMission(int intermission);
 	int GetInterMission();
 
+	bool LoacalPlayerAvilable();
+
 	bool IsInSpectate();
 	bool HasSuit();
 	bool IsHudHide(int HideToken);
