@@ -51,7 +51,7 @@ namespace vgui {
 
 	private:
 		char m_szPath[256];
-		Color m_Color;
+		Color m_Color = Color(255, 255, 255, 255);
 		float m_flFrame = 0;
 		float m_flAnimeTime = 0;
 		float m_flFrameRate = 0;

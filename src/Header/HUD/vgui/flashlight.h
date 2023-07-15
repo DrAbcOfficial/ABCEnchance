@@ -18,7 +18,7 @@ public:
 
 	CFlashLightPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	void ApplySettings(KeyValues* inResourceData) override;
+	virtual void ApplySettings(KeyValues* inResourceData) override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	virtual void Reset() override;

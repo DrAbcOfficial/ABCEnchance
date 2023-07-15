@@ -34,7 +34,6 @@
 #include "deathmsg.h"
 #include "radar.h"
 #include "deathmsg.h"
-#include "efxhud.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
 #include "grenadeindicator.h"
@@ -55,6 +54,7 @@
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
+pfnUserMsgHook m_pfnHealth;
 pfnUserMsgHook m_pfnScoreInfo;
 pfnUserMsgHook m_pfnSpectator;
 pfnUserMsgHook m_pfnServerName;
@@ -69,6 +69,15 @@ pfnUserMsgHook m_pfnFlashlight;
 pfnUserMsgHook m_pfnTextMsg;
 pfnUserMsgHook m_pfnMetaHook;
 
+int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int x = READ_LONG();
+	if (x != m_HudArmorHealth.m_iHealth) {
+		m_HudArmorHealth.m_iHealth = x;
+		gCustomHud.m_iPlayerHealth = x;
+	}
+	return m_pfnHealth(pszName, iSize, pbuf);
+}
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
@@ -378,6 +387,7 @@ void CCustomHud::GL_Init(void){
 }
 void CCustomHud::HUD_Init(void){
 	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
+	m_pfnHealth = HOOK_MESSAGE(Health);
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 	m_pfnSpectator = HOOK_MESSAGE(Spectator);
 	m_pfnServerName = HOOK_MESSAGE(ServerName);
@@ -418,7 +428,6 @@ void CCustomHud::HUD_Init(void){
 	m_HudCustomAmmo.Init();
 	m_HudRadar.Init();
 	m_HudDeathMsg.Init();
-	m_HudEfx.Init();
 	g_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
 	m_HudGrenadeIndicator.Init();
@@ -482,7 +491,6 @@ void CCustomHud::HUD_Draw(float flTime){
 
 	if (!IsHudEnable())
 		return;
-	m_HudEfx.Draw(flTime);
 	m_HudArmorHealth.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
 }
@@ -493,7 +501,6 @@ void CCustomHud::HUD_Reset(void){
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
 	m_HudDeathMsg.Reset();
-	m_HudEfx.Reset();
 	g_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
 	m_HudGrenadeIndicator.Reset();
