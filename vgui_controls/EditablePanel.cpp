@@ -1,4 +1,4 @@
-//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -10,50 +10,50 @@
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
+#include <KeyValues.h>
+#include "vgui/IVGui.h"
 
-#include <tier1/KeyValues.h>
-
-#include "BuildGroup.h"
-#include "BuildModeDialog.h"
-#include "EditablePanel.h"
+#include <vgui_controls/BuildGroup.h>
+#include <vgui_controls/BuildModeDialog.h>
+#include <vgui_controls/EditablePanel.h>
 
 // these includes are all for the virtual contruction factory Dialog::CreateControlByName()
-#include "Button.h"
-#include "Label.h"
-#include "CheckButton.h"
-#include "ComboBox.h"
-#include "Menu.h"
-#include "MenuItem.h"
-#include "MessageBox.h"
-#include "ProgressBar.h"
-#include "RadioButton.h"
-#include "ScrollBar.h"
-#include "ToggleButton.h"
-#include "ImagePanel.h"
-#include "AnimatingImagePanel.h"
-#include "Divider.h"
-#include "URLLabel.h"
-#include "RichText.h"
-#include "BitmapImagePanel.h"
+#include <vgui_controls/Button.h>
+#include <vgui_controls/Label.h>
+#include <vgui_controls/CheckButton.h>
+#include <vgui_controls/ComboBox.h>
+#include <vgui_controls/Menu.h>
+#include <vgui_controls/MenuItem.h>
+#include <vgui_controls/MessageBox.h>
+#include <vgui_controls/ProgressBar.h>
+#include <vgui_controls/RadioButton.h>
+#include <vgui_controls/ScrollBar.h>
+#include <vgui_controls/ToggleButton.h>
+#include <vgui_controls/ImagePanel.h>
+#include <vgui_controls/AnimatingImagePanel.h>
+#include <vgui_controls/Divider.h>
+#include <vgui_controls/URLLabel.h>
+#include <vgui_controls/RichText.h>
+#include <vgui_controls/BitmapImagePanel.h>
 
-// memdbgon must be the last include file in a .cpp file!!!
-//#include <tier0/memdbgon.h>
+#include "FileSystem.h"
 
 using namespace vgui;
 
-DECLARE_BUILD_FACTORY( EditablePanel );
+DECLARE_BUILD_FACTORY(EditablePanel);
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
 #pragma warning( disable : 4355 )
 
-EditablePanel::EditablePanel(Panel *parent, const char *panelName) : Panel(parent, panelName), m_NavGroup(this)
+EditablePanel::EditablePanel(Panel* parent, const char* panelName) : Panel(parent, panelName), m_NavGroup(this)
 {
 	_buildGroup = new BuildGroup(this, this);
 	m_pszConfigName = NULL;
 	m_iConfigID = 0;
 	m_pDialogVariables = NULL;
+	m_bShouldSkipAutoResize = false;
 
 	// add ourselves to the build group
 	SetBuildGroup(GetBuildGroup());
@@ -62,12 +62,13 @@ EditablePanel::EditablePanel(Panel *parent, const char *panelName) : Panel(paren
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-EditablePanel::EditablePanel(Panel *parent, const char *panelName, HScheme hScheme) : Panel(parent, panelName, hScheme), m_NavGroup(this)
+EditablePanel::EditablePanel(Panel* parent, const char* panelName, HScheme hScheme) : Panel(parent, panelName, hScheme), m_NavGroup(this)
 {
 	_buildGroup = new BuildGroup(this, this);
 	m_pszConfigName = NULL;
 	m_iConfigID = 0;
 	m_pDialogVariables = NULL;
+	m_bShouldSkipAutoResize = false;
 
 	// add ourselves to the build group
 	SetBuildGroup(GetBuildGroup());
@@ -80,7 +81,7 @@ EditablePanel::EditablePanel(Panel *parent, const char *panelName, HScheme hSche
 //-----------------------------------------------------------------------------
 EditablePanel::~EditablePanel()
 {
-	delete [] m_pszConfigName;
+	delete[] m_pszConfigName;
 	delete _buildGroup;
 
 	if (m_pDialogVariables)
@@ -97,7 +98,7 @@ void EditablePanel::OnChildAdded(VPANEL child)
 	BaseClass::OnChildAdded(child);
 
 	// add only if we're in the same module
-	Panel *panel = ipanel()->GetPanel(child, GetModuleName());
+	Panel* panel = ipanel()->GetPanel(child, GetModuleName());
 	if (panel)
 	{
 		panel->SetBuildGroup(_buildGroup);
@@ -108,27 +109,63 @@ void EditablePanel::OnChildAdded(VPANEL child)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void EditablePanel::OnKeyCodeTyped(KeyCode code)
+void EditablePanel::OnKeyCodePressed(KeyCode code)
 {
-	if (code == KEY_ENTER)
+	// GoldSrc: ?
+#if 0
+	static ConVarRef vgui_nav_lock_default_button("vgui_nav_lock_default_button");
+	if (!vgui_nav_lock_default_button.IsValid() || vgui_nav_lock_default_button.GetInt() == 0)
 	{
+		ButtonCode_t nButtonCode = GetBaseButtonCode(code);
+
 		// check for a default button
 		VPANEL panel = GetFocusNavGroup().GetCurrentDefaultButton();
-		if (panel && ipanel()->IsVisible( panel ) && ipanel()->IsEnabled( panel ))
+		if (panel && !IsConsoleStylePanel())
 		{
-			// Activate the button
-			PostMessage(panel, new KeyValues("Hotkey"));
-		}
-		else
-		{
-			BaseClass::OnKeyCodeTyped(code);
+			switch (nButtonCode)
+			{
+			case KEY_XBUTTON_UP:
+			case KEY_XSTICK1_UP:
+			case KEY_XSTICK2_UP:
+			case KEY_UP:
+			case KEY_XBUTTON_DOWN:
+			case KEY_XSTICK1_DOWN:
+			case KEY_XSTICK2_DOWN:
+			case KEY_DOWN:
+			case KEY_XBUTTON_LEFT:
+			case KEY_XSTICK1_LEFT:
+			case KEY_XSTICK2_LEFT:
+			case KEY_LEFT:
+			case KEY_XBUTTON_RIGHT:
+			case KEY_XSTICK1_RIGHT:
+			case KEY_XSTICK2_RIGHT:
+			case KEY_RIGHT:
+			case KEY_XBUTTON_B:
+				// Navigating menus
+				vgui_nav_lock_default_button.SetValue(1);
+				PostMessage(panel, new KeyValues("KeyCodePressed", "code", code));
+				return;
+
+			case KEY_XBUTTON_A:
+			case KEY_ENTER:
+				if (ipanel()->IsVisible(panel) && ipanel()->IsEnabled(panel))
+				{
+					// Activate the button
+					PostMessage(panel, new KeyValues("Hotkey"));
+					return;
+				}
+			}
 		}
 	}
-	else
-	{
-		BaseClass::OnKeyCodeTyped(code);
-	}
+#endif
+
+	if (!m_PassUnhandledInput)
+		return;
+
+	// Nothing to do with the button
+	BaseClass::OnKeyCodePressed(code);
 }
+
 
 
 //-----------------------------------------------------------------------------
@@ -142,63 +179,71 @@ void EditablePanel::OnSizeChanged(int wide, int tall)
 	for (int i = 0; i < GetChildCount(); i++)
 	{
 		// perform auto-layout on the child panel
-		Panel *child = GetChild(i);
-		if ( !child )
+		Panel* child = GetChild(i);
+		if (!child)
 			continue;
 
 		int x, y, w, h;
-		child->GetBounds( x, y, w, h );
+		child->GetBounds(x, y, w, h);
 
 		int px, py;
-		child->GetPinOffset( px, py );
+		child->GetPinOffset(px, py);
 
 		int ox, oy;
-		child->GetResizeOffset( ox, oy );
+		child->GetResizeOffset(ox, oy);
 
 		int ex;
 		int ey;
 
-		AutoResize_e resize = child->GetAutoResize(); 
-		bool bResizeHoriz = ( resize == AUTORESIZE_RIGHT || resize == AUTORESIZE_DOWNANDRIGHT );
-		bool bResizeVert = ( resize == AUTORESIZE_DOWN || resize == AUTORESIZE_DOWNANDRIGHT );
+		AutoResize_e resize = child->GetAutoResize();
+		bool bResizeHoriz = (resize == AUTORESIZE_RIGHT || resize == AUTORESIZE_DOWNANDRIGHT);
+		bool bResizeVert = (resize == AUTORESIZE_DOWN || resize == AUTORESIZE_DOWNANDRIGHT);
 
-		PinCorner_e pinCorner = child->GetPinCorner();
-		if ( pinCorner == PIN_TOPRIGHT || pinCorner == PIN_BOTTOMRIGHT )
+		// The correct version of this code would say:
+		// if ( resize != AUTORESIZE_NO )
+		// but we're very close to shipping and this causes artifacts in other vgui panels that now
+		// depend on this bug.  So, I've added m_bShouldSkipAutoResize, which defaults to false but can
+		// be set using "skip_autoresize" in a .res file
+		if (!m_bShouldSkipAutoResize)
 		{
-			// move along with the right edge
-			ex = wide + px;
-			x = bResizeHoriz ? ox : ex - w;
-		}
-		else
-		{
-			x = px;
-			ex = bResizeHoriz ? wide + ox : px + w;
-		}
+			PinCorner_e pinCorner = child->GetPinCorner();
+			if (pinCorner == PIN_TOPRIGHT || pinCorner == PIN_BOTTOMRIGHT)
+			{
+				// move along with the right edge
+				ex = wide + px;
+				x = bResizeHoriz ? ox : ex - w;
+			}
+			else
+			{
+				x = px;
+				ex = bResizeHoriz ? wide + ox : px + w;
+			}
 
-		if ( pinCorner == PIN_BOTTOMLEFT || pinCorner == PIN_BOTTOMRIGHT )
-		{
-			// move along with the right edge
-			ey = tall + py;
-			y = bResizeVert ? oy : ey - h;
-		}
-		else
-		{
-			y = py;
-			ey = bResizeVert ? tall + oy : py + h;
-		}
+			if (pinCorner == PIN_BOTTOMLEFT || pinCorner == PIN_BOTTOMRIGHT)
+			{
+				// move along with the right edge
+				ey = tall + py;
+				y = bResizeVert ? oy : ey - h;
+			}
+			else
+			{
+				y = py;
+				ey = bResizeVert ? tall + oy : py + h;
+			}
 
-		// Clamp..
-		if ( ex < x )
-		{
-			ex = x;
-		}
-		if ( ey < y )
-		{
-			ey = y;
-		}
+			// Clamp..
+			if (ex < x)
+			{
+				ex = x;
+			}
+			if (ey < y)
+			{
+				ey = y;
+			}
 
-		child->SetBounds( x, y, ex - x, ey - y );
-		child->InvalidateLayout();
+			child->SetBounds(x, y, ex - x, ey - y);
+			child->InvalidateLayout();
+		}
 	}
 	Repaint();
 }
@@ -207,14 +252,14 @@ void EditablePanel::OnSizeChanged(int wide, int tall)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void EditablePanel::OnCurrentDefaultButtonSet(Panel *defaultButton)
+void EditablePanel::OnCurrentDefaultButtonSet(Panel* defaultButton)
 {
 	m_NavGroup.SetCurrentDefaultButton(defaultButton->GetVPanel(), false);
 
 	// forward the message up
 	if (GetVParent())
 	{
-		KeyValues *msg = new KeyValues("CurrentDefaultButtonSet");
+		KeyValues* msg = new KeyValues("CurrentDefaultButtonSet");
 		msg->SetPtr("button", defaultButton);
 		PostMessage(GetVParent(), msg);
 	}
@@ -223,7 +268,7 @@ void EditablePanel::OnCurrentDefaultButtonSet(Panel *defaultButton)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void EditablePanel::OnDefaultButtonSet(Panel *defaultButton)
+void EditablePanel::OnDefaultButtonSet(Panel* defaultButton)
 {
 	m_NavGroup.SetDefaultButton(defaultButton);
 }
@@ -233,17 +278,17 @@ void EditablePanel::OnDefaultButtonSet(Panel *defaultButton)
 //-----------------------------------------------------------------------------
 void EditablePanel::OnFindDefaultButton()
 {
-    if (m_NavGroup.GetDefaultButton())
-    {
-        m_NavGroup.SetCurrentDefaultButton(m_NavGroup.GetDefaultButton());
-    }
-    else
-    {
-        if (GetVParent())
-        {
-            PostMessage(GetVParent(), new KeyValues("FindDefaultButton"));
-        }
-    }
+	if (m_NavGroup.GetDefaultButton())
+	{
+		m_NavGroup.SetCurrentDefaultButton(m_NavGroup.GetDefaultButton());
+	}
+	else
+	{
+		if (GetVParent())
+		{
+			PostMessage(GetVParent(), new KeyValues("FindDefaultButton"));
+		}
+	}
 }
 
 struct leaf_t
@@ -253,21 +298,21 @@ struct leaf_t
 	bool filled;	// true if this is already filled
 	short splitpos;	// place of split
 
-	leaf_t *left;
-	leaf_t *right;
+	leaf_t* left;
+	leaf_t* right;
 };
 
 leaf_t g_Leaves[256];
 int g_iNextLeaf;
 
-inline leaf_t *AllocLeaf()
+inline leaf_t* AllocLeaf()
 {
 	Assert(g_iNextLeaf < 255);
 
 	return &g_Leaves[g_iNextLeaf++];
 }
 
-void AddSolidToTree(leaf_t *leaf, int x, int y, int wide, int tall)
+void AddSolidToTree(leaf_t* leaf, int x, int y, int wide, int tall)
 {
 	// clip to this leaf
 	if (x < leaf->x)
@@ -337,8 +382,8 @@ void AddSolidToTree(leaf_t *leaf, int x, int y, int wide, int tall)
 			leaf->splitpos = (short)x;
 
 			// create 2 new leaves
-			leaf_t *left = AllocLeaf();
-			leaf_t *right = AllocLeaf();
+			leaf_t* left = AllocLeaf();
+			leaf_t* right = AllocLeaf();
 			memset(left, 0, sizeof(leaf_t));
 			memset(right, 0, sizeof(leaf_t));
 			leaf->left = left;
@@ -364,8 +409,8 @@ void AddSolidToTree(leaf_t *leaf, int x, int y, int wide, int tall)
 			leaf->splitpos = (short)y;
 
 			// create 2 new leaves (facing to the east)
-			leaf_t *left = AllocLeaf();
-			leaf_t *right = AllocLeaf();
+			leaf_t* left = AllocLeaf();
+			leaf_t* right = AllocLeaf();
 			memset(left, 0, sizeof(leaf_t));
 			memset(right, 0, sizeof(leaf_t));
 			leaf->left = left;
@@ -391,8 +436,8 @@ void AddSolidToTree(leaf_t *leaf, int x, int y, int wide, int tall)
 			leaf->splitpos = (short)(x + wide);
 
 			// create 2 new leaves
-			leaf_t *left = AllocLeaf();
-			leaf_t *right = AllocLeaf();
+			leaf_t* left = AllocLeaf();
+			leaf_t* right = AllocLeaf();
 			memset(left, 0, sizeof(leaf_t));
 			memset(right, 0, sizeof(leaf_t));
 			leaf->left = left;
@@ -418,8 +463,8 @@ void AddSolidToTree(leaf_t *leaf, int x, int y, int wide, int tall)
 			leaf->splitpos = (short)(y + tall);
 
 			// create 2 new leaves (facing to the east)
-			leaf_t *left = AllocLeaf();
-			leaf_t *right = AllocLeaf();
+			leaf_t* left = AllocLeaf();
+			leaf_t* right = AllocLeaf();
 			memset(left, 0, sizeof(leaf_t));
 			memset(right, 0, sizeof(leaf_t));
 			leaf->left = left;
@@ -455,52 +500,52 @@ void EditablePanel::PaintBackground()
 	BaseClass::PaintBackground();
 	return;
 
-/*
-	test code, using a screenspace bsp tree to reduce overdraw in vgui
-	not yet fully functional
+	/*
+		test code, using a screenspace bsp tree to reduce overdraw in vgui
+		not yet fully functional
 
-//	test: fill background with obnoxious color to show holes
-//	surface()->DrawSetColor(Color(255, 0, 0, 255));
-//	surface()->DrawFilledRect(0, 0, GetWide(), GetTall());
-//	return;
+	//	test: fill background with obnoxious color to show holes
+	//	surface()->DrawSetColor(Color(255, 0, 0, 255));
+	//	surface()->DrawFilledRect(0, 0, GetWide(), GetTall());
+	//	return;
 
-	// reset the leaf memory
-	g_iNextLeaf = 0;
+		// reset the leaf memory
+		g_iNextLeaf = 0;
 
-	leaf_t *headNode = AllocLeaf();
-	memset(headNode, 0, sizeof(leaf_t));
+		leaf_t *headNode = AllocLeaf();
+		memset(headNode, 0, sizeof(leaf_t));
 
-	headNode->wide = (short)GetWide();
-	headNode->tall = (short)GetTall();
+		headNode->wide = (short)GetWide();
+		headNode->tall = (short)GetTall();
 
-	// split the leaf by the first child
-	for (int i = 0; i < GetChildCount(); i++)
-	{
-		Panel *child = GetChild(i);
-		if (child->IsOpaque())
+		// split the leaf by the first child
+		for (int i = 0; i < GetChildCount(); i++)
 		{
-			int x, y, wide, tall;
-			child->GetBounds(x, y, wide, tall);
+			Panel *child = GetChild(i);
+			if (child->IsOpaque())
+			{
+				int x, y, wide, tall;
+				child->GetBounds(x, y, wide, tall);
 
-			// ignore small children
-			if (wide + tall < 100)
-				continue;
+				// ignore small children
+				if (wide + tall < 100)
+					continue;
 
-			AddSolidToTree(headNode, x, y, wide, tall);
+				AddSolidToTree(headNode, x, y, wide, tall);
+			}
 		}
-	}
 
-	// walk the built tree, painting the background
-	Color col = GetBgColor();
-	surface()->DrawSetColor(col);
-	for (i = 0; i < g_iNextLeaf; i++)
-	{
-		leaf_t *leaf = g_Leaves + i;
-		if (leaf->splitpos || leaf->filled)
-			continue;
-		surface()->DrawFilledRect(leaf->x, leaf->y, leaf->x + leaf->wide, leaf->y + leaf->tall);
-	}
-*/
+		// walk the built tree, painting the background
+		Color col = GetBgColor();
+		surface()->DrawSetColor(col);
+		for (i = 0; i < g_iNextLeaf; i++)
+		{
+			leaf_t *leaf = g_Leaves + i;
+			if (leaf->splitpos || leaf->filled)
+				continue;
+			surface()->DrawFilledRect(leaf->x, leaf->y, leaf->x + leaf->wide, leaf->y + leaf->tall);
+		}
+	*/
 }
 
 //-----------------------------------------------------------------------------
@@ -514,9 +559,19 @@ void EditablePanel::ActivateBuildMode()
 //-----------------------------------------------------------------------------
 // Purpose: Loads panel settings from a resource file.
 //-----------------------------------------------------------------------------
-void EditablePanel::LoadControlSettings(const char *resourceName, const char *pathID, KeyValues *pKeyValues)
+void EditablePanel::LoadControlSettings(const char* resourceName, const char* pathID, KeyValues* pKeyValues, KeyValues* pConditions)
 {
-	_buildGroup->LoadControlSettings(resourceName, pathID, pKeyValues);
+#if defined( DBGFLAG_ASSERT ) && !defined(OSX) && !defined(LINUX)
+	extern IFileSystem* g_pFullFileSystem;
+	// Since nobody wants to fix this assert, I'm making it a Msg instead:
+	//     editablepanel.cpp (535) : Resource file "resource\DebugOptionsPanel.res" not found on disk!
+	// AssertMsg( g_pFullFileSystem->FileExists( resourceName ), CFmtStr( "Resource file \"%s\" not found on disk!", resourceName ).Access() );
+	if (!g_pFullFileSystem->FileExists(resourceName))
+	{
+		Warning("Resource file \"%s\" not found on disk!\n", resourceName);
+	}
+#endif
+	_buildGroup->LoadControlSettings(resourceName, pathID, pKeyValues, pConditions);
 	ForceSubPanelsToUpdateWithNewDialogVariables();
 	InvalidateLayout();
 }
@@ -524,7 +579,7 @@ void EditablePanel::LoadControlSettings(const char *resourceName, const char *pa
 //-----------------------------------------------------------------------------
 // Purpose: registers a file in the list of control settings, so the vgui dialog can choose between them to edit
 //-----------------------------------------------------------------------------
-void EditablePanel::RegisterControlSettingsFile(const char *resourceName, const char *pathID)
+void EditablePanel::RegisterControlSettingsFile(const char* resourceName, const char* pathID)
 {
 	_buildGroup->RegisterControlSettingsFile(resourceName, pathID);
 }
@@ -532,14 +587,14 @@ void EditablePanel::RegisterControlSettingsFile(const char *resourceName, const 
 //-----------------------------------------------------------------------------
 // Purpose: sets the name of this dialog so it can be saved in the user config area
 //-----------------------------------------------------------------------------
-void EditablePanel::LoadUserConfig(const char *configName, int dialogID)
+void EditablePanel::LoadUserConfig(const char* configName, int dialogID)
 {
-	KeyValues *data = system()->GetUserConfigFileData(configName, dialogID);
+	KeyValues* data = system()->GetUserConfigFileData(configName, dialogID);
 
-	delete [] m_pszConfigName;
+	delete[] m_pszConfigName;
 	int len = Q_strlen(configName) + 1;
-	m_pszConfigName = new char[ len ];
-	Q_strncpy(m_pszConfigName, configName, len );
+	m_pszConfigName = new char[len];
+	Q_strncpy(m_pszConfigName, configName, len);
 	m_iConfigID = dialogID;
 
 	// apply our user config settings (this will recurse through our children)
@@ -556,7 +611,7 @@ void EditablePanel::SaveUserConfig()
 {
 	if (m_pszConfigName)
 	{
-		KeyValues *data = system()->GetUserConfigFileData(m_pszConfigName, m_iConfigID);
+		KeyValues* data = system()->GetUserConfigFileData(m_pszConfigName, m_iConfigID);
 
 		// get our user config settings (this will recurse through our children)
 		if (data)
@@ -569,7 +624,7 @@ void EditablePanel::SaveUserConfig()
 //-----------------------------------------------------------------------------
 // Purpose: combines both of the above, LoadControlSettings & LoadUserConfig
 //-----------------------------------------------------------------------------
-void EditablePanel::LoadControlSettingsAndUserConfig(const char *dialogResourceName, int dialogID)
+void EditablePanel::LoadControlSettingsAndUserConfig(const char* dialogResourceName, int dialogID)
 {
 	LoadControlSettings(dialogResourceName);
 	LoadUserConfig(dialogResourceName, dialogID);
@@ -578,14 +633,14 @@ void EditablePanel::LoadControlSettingsAndUserConfig(const char *dialogResourceN
 //-----------------------------------------------------------------------------
 // Purpose: applies the user config settings to all the children
 //-----------------------------------------------------------------------------
-void EditablePanel::ApplyUserConfigSettings(KeyValues *userConfig)
+void EditablePanel::ApplyUserConfigSettings(KeyValues* userConfig)
 {
 	for (int i = 0; i < GetChildCount(); i++)
 	{
-		Panel *child = GetChild(i);
+		Panel* child = GetChild(i);
 		if (child->HasUserConfigSettings())
 		{
-			const char *name = child->GetName();
+			const char* name = child->GetName();
 			if (name && *name)
 			{
 				child->ApplyUserConfigSettings(userConfig->FindKey(name, true));
@@ -597,14 +652,14 @@ void EditablePanel::ApplyUserConfigSettings(KeyValues *userConfig)
 //-----------------------------------------------------------------------------
 // Purpose: gets all the children's user config settings
 //-----------------------------------------------------------------------------
-void EditablePanel::GetUserConfigSettings(KeyValues *userConfig)
+void EditablePanel::GetUserConfigSettings(KeyValues* userConfig)
 {
 	for (int i = 0; i < GetChildCount(); i++)
 	{
-		Panel *child = GetChild(i);
+		Panel* child = GetChild(i);
 		if (child->HasUserConfigSettings())
 		{
-			const char *name = child->GetName();
+			const char* name = child->GetName();
 			if (name && *name)
 			{
 				child->GetUserConfigSettings(userConfig->FindKey(name, true));
@@ -624,18 +679,18 @@ void EditablePanel::OnClose()
 //-----------------------------------------------------------------------------
 // Purpose: Handle information requests
 //-----------------------------------------------------------------------------
-bool EditablePanel::RequestInfo(KeyValues *data)
+bool EditablePanel::RequestInfo(KeyValues* data)
 {
 	if (!stricmp(data->GetName(), "BuildDialog"))
 	{
 		// a build dialog is being requested, give it one
 		// a bit hacky, but this is a case where vgui.dll needs to reach out
-		data->SetPtr("PanelPtr", new BuildModeDialog( (BuildGroup *)data->GetPtr("BuildGroupPtr")));
+		data->SetPtr("PanelPtr", new BuildModeDialog((BuildGroup*)data->GetPtr("BuildGroupPtr")));
 		return true;
 	}
 	else if (!stricmp(data->GetName(), "ControlFactory"))
 	{
-		Panel *newPanel = CreateControlByName(data->GetString("ControlName"));
+		Panel* newPanel = CreateControlByName(data->GetString("ControlName"));
 		if (newPanel)
 		{
 			data->SetPtr("PanelPtr", newPanel);
@@ -650,7 +705,7 @@ bool EditablePanel::RequestInfo(KeyValues *data)
 // Input  : 
 // Output : BuildGroup
 //-----------------------------------------------------------------------------
-BuildGroup *EditablePanel::GetBuildGroup()
+BuildGroup* EditablePanel::GetBuildGroup()
 {
 	return _buildGroup;
 }
@@ -659,7 +714,7 @@ BuildGroup *EditablePanel::GetBuildGroup()
 // Purpose: Return a pointer to the nav group
 // Output : FocusNavGroup
 //-----------------------------------------------------------------------------
-FocusNavGroup &EditablePanel::GetFocusNavGroup()
+FocusNavGroup& EditablePanel::GetFocusNavGroup()
 {
 	return m_NavGroup;
 }
@@ -669,7 +724,12 @@ FocusNavGroup &EditablePanel::GetFocusNavGroup()
 //-----------------------------------------------------------------------------
 bool EditablePanel::RequestFocusNext(VPANEL panel)
 {
-	return m_NavGroup.RequestFocusNext(panel);
+	bool bRet = m_NavGroup.RequestFocusNext(panel);
+	if (IsPC() && !bRet && IsConsoleStylePanel())
+	{
+		NavigateDown();
+	}
+	return bRet;
 }
 
 //-----------------------------------------------------------------------------
@@ -677,7 +737,12 @@ bool EditablePanel::RequestFocusNext(VPANEL panel)
 //-----------------------------------------------------------------------------
 bool EditablePanel::RequestFocusPrev(VPANEL panel)
 {
-	return m_NavGroup.RequestFocusPrev(panel);
+	bool bRet = m_NavGroup.RequestFocusPrev(panel);
+	if (IsPC() && !bRet && IsConsoleStylePanel())
+	{
+		NavigateUp();
+	}
+	return bRet;
 }
 
 //-----------------------------------------------------------------------------
@@ -707,7 +772,7 @@ void EditablePanel::RequestFocus(int direction)
 //-----------------------------------------------------------------------------
 void EditablePanel::OnSetFocus()
 {
-	Panel *focus = m_NavGroup.GetCurrentFocus();
+	Panel* focus = m_NavGroup.GetCurrentFocus();
 	if (focus && focus != this)
 	{
 		focus->RequestFocus();
@@ -729,11 +794,13 @@ void EditablePanel::OnSetFocus()
 // Purpose: Called when the resource file is loaded to set up the panel state
 // Input  : *inResourceData - 
 //-----------------------------------------------------------------------------
-void EditablePanel::ApplySettings(KeyValues *inResourceData)
+void EditablePanel::ApplySettings(KeyValues* inResourceData)
 {
-	Panel::ApplySettings(inResourceData);
+	BaseClass::ApplySettings(inResourceData);
 
 	_buildGroup->ApplySettings(inResourceData);
+
+	m_bShouldSkipAutoResize = inResourceData->GetBool("skip_autoresize", false);
 }
 
 
@@ -743,9 +810,9 @@ void EditablePanel::ApplySettings(KeyValues *inResourceData)
 void EditablePanel::OnRequestFocus(VPANEL subFocus, VPANEL defaultPanel)
 {
 	if (!ipanel()->IsPopup(subFocus))
-    {
+	{
 		defaultPanel = m_NavGroup.SetCurrentFocus(subFocus, defaultPanel);
-    }
+	}
 	BaseClass::OnRequestFocus(GetVPanel(), defaultPanel);
 }
 
@@ -754,7 +821,7 @@ void EditablePanel::OnRequestFocus(VPANEL subFocus, VPANEL defaultPanel)
 //-----------------------------------------------------------------------------
 VPANEL EditablePanel::GetCurrentKeyFocus()
 {
-	Panel *focus = m_NavGroup.GetCurrentFocus();
+	Panel* focus = m_NavGroup.GetCurrentFocus();
 	if (focus == this)
 		return NULL;
 
@@ -777,32 +844,32 @@ VPANEL EditablePanel::GetCurrentKeyFocus()
 //-----------------------------------------------------------------------------
 // Purpose: Gets the panel with the specified hotkey
 //-----------------------------------------------------------------------------
-Panel *EditablePanel::HasHotkey(wchar_t key)
+Panel* EditablePanel::HasHotkey(wchar_t key)
 {
-	if( !IsVisible() || !IsEnabled()) // not visible, so can't respond to a hot key 
+	if (!IsVisible() || !IsEnabled()) // not visible, so can't respond to a hot key 
 	{
 		return NULL;
 	}
 
 	for (int i = 0; i < GetChildCount(); i++)
 	{
-		Panel *hot = GetChild(i)->HasHotkey(key);
+		Panel* hot = GetChild(i)->HasHotkey(key);
 		if (hot && hot->IsVisible() && hot->IsEnabled())
 		{
 			return hot;
 		}
 	}
-	
+
 	return NULL;
-	
+
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Shortcut function to setting enabled state of control
 //-----------------------------------------------------------------------------
-void EditablePanel::SetControlEnabled(const char *controlName, bool enabled)
+void EditablePanel::SetControlEnabled(const char* controlName, bool enabled)
 {
-	Panel *control = FindChildByName(controlName);
+	Panel* control = FindChildByName(controlName);
 	if (control)
 	{
 		control->SetEnabled(enabled);
@@ -812,26 +879,26 @@ void EditablePanel::SetControlEnabled(const char *controlName, bool enabled)
 //-----------------------------------------------------------------------------
 // Purpose: Shortcut function to setting visibility state of control
 //-----------------------------------------------------------------------------
-void EditablePanel::SetControlVisible(const char *controlName, bool visible)
+void EditablePanel::SetControlVisible(const char* controlName, bool visible)
 {
-	Panel *control = FindChildByName(controlName);
+	Panel* control = FindChildByName(controlName);
 	if (control)
 	{
 		control->SetVisible(visible);
 	}
 }
-	
+
 //-----------------------------------------------------------------------------
 // Purpose: Shortcut function to set data in child controls
 //-----------------------------------------------------------------------------
-void EditablePanel::SetControlString(const char *controlName, const char *string)
+void EditablePanel::SetControlString(const char* controlName, const char* string)
 {
-	Panel *control = FindChildByName(controlName);
+	Panel* control = FindChildByName(controlName);
 	if (control)
 	{
 		if (string[0] == '#')
 		{
-			const wchar_t *wszText = g_pVGuiLocalize->Find(string);
+			const wchar_t* wszText = g_pVGuiLocalize->Find(string);
 			if (wszText)
 			{
 				PostMessage(control, new KeyValues("SetText", "text", wszText));
@@ -847,9 +914,21 @@ void EditablePanel::SetControlString(const char *controlName, const char *string
 //-----------------------------------------------------------------------------
 // Purpose: Shortcut function to set data in child controls
 //-----------------------------------------------------------------------------
-void EditablePanel::SetControlInt(const char *controlName, int state)
+void EditablePanel::SetControlString(const char* controlName, const wchar_t* string)
 {
-	Panel *control = FindChildByName(controlName);
+	Panel* control = FindChildByName(controlName);
+	if (control)
+	{
+		PostMessage(control, new KeyValues("SetText", "text", string));
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Shortcut function to set data in child controls
+//-----------------------------------------------------------------------------
+void EditablePanel::SetControlInt(const char* controlName, int state)
+{
+	Panel* control = FindChildByName(controlName);
 	if (control)
 	{
 		PostMessage(control, new KeyValues("SetState", "state", state));
@@ -859,12 +938,12 @@ void EditablePanel::SetControlInt(const char *controlName, int state)
 //-----------------------------------------------------------------------------
 // Purpose: Shortcut function to get data in child controls
 //-----------------------------------------------------------------------------
-int EditablePanel::GetControlInt(const char *controlName, int defaultState)
+int EditablePanel::GetControlInt(const char* controlName, int defaultState)
 {
-	Panel *control = FindChildByName(controlName);
+	Panel* control = FindChildByName(controlName);
 	if (control)
 	{
-		KeyValues *data = new KeyValues("GetState");
+		KeyValues* data = new KeyValues("GetState");
 		if (control->RequestInfo(data))
 		{
 			int state = data->GetInt("state", defaultState);
@@ -878,7 +957,7 @@ int EditablePanel::GetControlInt(const char *controlName, int defaultState)
 //-----------------------------------------------------------------------------
 // Purpose: Shortcut function to get data in child controls
 //-----------------------------------------------------------------------------
-const char *EditablePanel::GetControlString(const char *controlName, const char *defaultString)
+const char* EditablePanel::GetControlString(const char* controlName, const char* defaultString)
 {
 	static char buf[512];
 	GetControlString(controlName, buf, sizeof(buf) - 1, defaultString);
@@ -888,10 +967,10 @@ const char *EditablePanel::GetControlString(const char *controlName, const char 
 //-----------------------------------------------------------------------------
 // Purpose: Shortcut function to get data in child controls
 //-----------------------------------------------------------------------------
-void EditablePanel::GetControlString(const char *controlName, char *buf, int bufSize, const char *defaultString)
+void EditablePanel::GetControlString(const char* controlName, char* buf, int bufSize, const char* defaultString)
 {
-	Panel *control = FindChildByName(controlName);
-	KeyValues *data = new KeyValues("GetText");
+	Panel* control = FindChildByName(controlName);
+	KeyValues* data = new KeyValues("GetText");
 	if (control && control->RequestInfo(data))
 	{
 		Q_strncpy(buf, data->GetString("text", defaultString), bufSize);
@@ -912,7 +991,7 @@ void EditablePanel::GetControlString(const char *controlName, char *buf, int buf
 //-----------------------------------------------------------------------------
 // Purpose: localization variables (used in constructing UI strings)
 //-----------------------------------------------------------------------------
-void EditablePanel::SetDialogVariable(const char *varName, const char *value)
+void EditablePanel::SetDialogVariable(const char* varName, const char* value)
 {
 	GetDialogVariables()->SetString(varName, value);
 	ForceSubPanelsToUpdateWithNewDialogVariables();
@@ -921,7 +1000,7 @@ void EditablePanel::SetDialogVariable(const char *varName, const char *value)
 //-----------------------------------------------------------------------------
 // Purpose: localization variables (used in constructing UI strings)
 //-----------------------------------------------------------------------------
-void EditablePanel::SetDialogVariable(const char *varName, const wchar_t *value)
+void EditablePanel::SetDialogVariable(const char* varName, const wchar_t* value)
 {
 	GetDialogVariables()->SetWString(varName, value);
 	ForceSubPanelsToUpdateWithNewDialogVariables();
@@ -930,7 +1009,7 @@ void EditablePanel::SetDialogVariable(const char *varName, const wchar_t *value)
 //-----------------------------------------------------------------------------
 // Purpose: localization variables (used in constructing UI strings)
 //-----------------------------------------------------------------------------
-void EditablePanel::SetDialogVariable(const char *varName, int value)
+void EditablePanel::SetDialogVariable(const char* varName, int value)
 {
 	GetDialogVariables()->SetInt(varName, value);
 	ForceSubPanelsToUpdateWithNewDialogVariables();
@@ -939,7 +1018,7 @@ void EditablePanel::SetDialogVariable(const char *varName, int value)
 //-----------------------------------------------------------------------------
 // Purpose: localization variables (used in constructing UI strings)
 //-----------------------------------------------------------------------------
-void EditablePanel::SetDialogVariable(const char *varName, float value)
+void EditablePanel::SetDialogVariable(const char* varName, float value)
 {
 	GetDialogVariables()->SetFloat(varName, value);
 	ForceSubPanelsToUpdateWithNewDialogVariables();
@@ -963,9 +1042,9 @@ void EditablePanel::ForceSubPanelsToUpdateWithNewDialogVariables()
 //-----------------------------------------------------------------------------
 // Purpose: lazy creation of localization vars object
 //-----------------------------------------------------------------------------
-KeyValues *EditablePanel::GetDialogVariables()
+KeyValues* EditablePanel::GetDialogVariables()
 {
-	if (m_pDialogVariables) 
+	if (m_pDialogVariables)
 		return m_pDialogVariables;
 
 	m_pDialogVariables = new KeyValues("DialogVariables");
@@ -975,10 +1054,10 @@ KeyValues *EditablePanel::GetDialogVariables()
 //-----------------------------------------------------------------------------
 // Purpose: Virtual factory for control creation
 //-----------------------------------------------------------------------------
-Panel *EditablePanel::CreateControlByName(const char *controlName)
+Panel* EditablePanel::CreateControlByName(const char* controlName)
 {
-	Panel *fromFactory = CBuildFactoryHelper::InstancePanel( controlName );
-	if ( fromFactory )
+	Panel* fromFactory = CBuildFactoryHelper::InstancePanel(controlName);
+	if (fromFactory)
 	{
 		return fromFactory;
 	}

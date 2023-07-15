@@ -1,4 +1,4 @@
-#ifndef ISURFACE2_H
+﻿#ifndef ISURFACE2_H
 #define ISURFACE2_H
 
 #include "VGUI.h"
