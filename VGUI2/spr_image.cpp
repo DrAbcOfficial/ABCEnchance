@@ -9,7 +9,6 @@
 using namespace vgui;
 
 CSPRImage::CSPRImage() {
-
 }
 CSPRImage::CSPRImage(const char *pFilePath) : CSPRImage(){
 	LoadSprImage(pFilePath);
@@ -17,16 +16,22 @@ CSPRImage::CSPRImage(const char *pFilePath) : CSPRImage(){
 
 void CSPRImage::SetTextureID(int id) {
 	m_iTextureID = id;
+	if (id < 0)
+		return;
 	m_iAllFrames = SPR_Frames(m_iTextureID);
+	if (m_nRight <= 0)
+		m_nRight = gEngfuncs.pfnSPR_Width(m_iTextureID, 0);
+	if (m_nBottom <= 0)
+		m_nBottom = gEngfuncs.pfnSPR_Width(m_iTextureID, 0);
 }
 void CSPRImage::LoadSprImage(const char *pFilePath){
-	SetTextureID(SPR_Load(pFilePath));
-	strcpy(m_szPath, pFilePath);
+	m_szPath = pFilePath;
+	SetTextureID(SPR_Load(m_szPath.c_str()));
 }
 
 void CSPRImage::Reset(){
-	if(m_szPath[0] != '\0')
-		LoadSprImage(m_szPath);
+	if(m_szPath.size())
+		LoadSprImage(m_szPath.c_str());
 	m_flAnimeTime = 0;
 }
 
@@ -59,11 +64,19 @@ void CSPRImage::Animate(){
 	}
 }
 
+void CSPRImage::SetFrame(float flFrame){
+	m_flFrame = flFrame;
+}
+
 void CSPRImage::SetRect(int l, int r, int t, int b){
 	m_nLeft = l;
 	m_nRight = r;
 	m_nTop = t;
 	m_nBottom = b;
+}
+
+bool CSPRImage::IsInTheEnd(){
+	return m_flFrame >= m_iAllFrames;
 }
 
 void CSPRImage::SetRenderMode(int mode){

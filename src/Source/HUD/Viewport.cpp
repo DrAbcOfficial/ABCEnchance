@@ -69,20 +69,20 @@ CViewport::~CViewport(void){
 }
 
 void CViewport::Start(void){
-	AddNewPanel(m_pScorePanel = new CScorePanel());
-	AddNewPanel(m_pVotePanel = new CVotePanel());
-	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
-	AddNewPanel(m_pSidePanel = new CSidePanel());
-	AddNewPanel(m_pTextMenu = new CTextMenu()); 
-	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
-	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
-	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
-	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
 	AddNewPanel(m_pEffectPanel = new CEffectPanel());
+	AddNewPanel(m_pSidePanel = new CSidePanel());
+	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
+	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
 	}
+	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
+	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
+	AddNewPanel(m_pTextMenu = new CTextMenu()); 
+	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
+	AddNewPanel(m_pVotePanel = new CVotePanel());
+	AddNewPanel(m_pScorePanel = new CScorePanel());
 	SetVisible(false);
 }
 
@@ -162,6 +162,10 @@ void CViewport::SetInterMission(int intermission) {
 }
 int CViewport::GetInterMission() {
 	return m_iInterMission;
+}
+
+bool CViewport::LoacalPlayerAvilable(){
+	return gEngfuncs.GetLocalPlayer() != nullptr;
 }
 
 bool CViewport::IsScoreBoardVisible(){

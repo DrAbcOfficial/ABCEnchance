@@ -1,5 +1,7 @@
 #ifndef VGUI_SPR_IMAGE_H
 #define VGUI_SPR_IMAGE_H
+
+#include <string>
 #include <vgui/IImage.h>
 #include <Color.h>
 
@@ -31,9 +33,13 @@ namespace vgui {
 		/// <param name="flTime">framerate</param>
 		void SetFramerate(float flTime);
 
+		void SetFrame(float flFrame);
+
 		void SetLoop(bool loop);
 
 		void Animate();
+
+		bool IsInTheEnd();
 
 		void SetRect(int l, int r, int t, int b);
 		/// <summary>
@@ -50,7 +56,7 @@ namespace vgui {
 		virtual void SetColor(Color col);
 
 	private:
-		char m_szPath[256];
+		std::string m_szPath;
 		Color m_Color = Color(255, 255, 255, 255);
 		float m_flFrame = 0;
 		float m_flAnimeTime = 0;

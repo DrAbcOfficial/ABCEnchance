@@ -76,6 +76,7 @@ int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf) {
 		m_HudArmorHealth.m_iHealth = x;
 		gCustomHud.m_iPlayerHealth = x;
 	}
+	g_pViewPort->SetHealth(x);
 	return m_pfnHealth(pszName, iSize, pbuf);
 }
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
