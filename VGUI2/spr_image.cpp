@@ -6,13 +6,21 @@
 #include "local.h"
 #include "spr_image.h"
 
-CSPRImage::CSPRImage(const char *pFilePath){
+using namespace vgui;
+
+CSPRImage::CSPRImage() {
+
+}
+CSPRImage::CSPRImage(const char *pFilePath) : CSPRImage(){
 	LoadSprImage(pFilePath);
 }
 
-void CSPRImage::LoadSprImage(const char *pFilePath){
-	m_iTextureID = SPR_Load(pFilePath);
+void CSPRImage::SetTextureID(int id) {
+	m_iTextureID = id;
 	m_iAllFrames = SPR_Frames(m_iTextureID);
+}
+void CSPRImage::LoadSprImage(const char *pFilePath){
+	SetTextureID(SPR_Load(pFilePath));
 	strcpy(m_szPath, pFilePath);
 }
 
@@ -64,11 +72,13 @@ void CSPRImage::SetRenderMode(int mode){
 
 void CSPRImage::Paint(){
 	if (m_iTextureID != -1){
+		float h = gEngfuncs.pfnSPR_Height(m_iTextureID, m_flFrame);
+		float w = gEngfuncs.pfnSPR_Width(m_iTextureID, m_flFrame);
 		rect_s rect = { m_nLeft, m_nRight, m_nTop, m_nBottom };
-		float flLeft = static_cast<float>(rect.left) / m_wide;
-		float flRight = static_cast<float>(rect.right) / m_wide;
-		float flTop = static_cast<float>(rect.top) / m_tall;
-		float flBottom = static_cast<float>(rect.bottom) / m_tall;
+		float flLeft = static_cast<float>(rect.left) / w;
+		float flRight = static_cast<float>(rect.right) / w;
+		float flTop = static_cast<float>(rect.top) / h;
+		float flBottom = static_cast<float>(rect.bottom) / h;
 		int r, g, b, a;
 		m_Color.GetColor(r, g, b, a);
 		gEngfuncs.pTriAPI->SpriteTexture(const_cast<struct model_s*>(gEngfuncs.GetSpritePointer(m_iTextureID, m_iTextureID)), m_flFrame);

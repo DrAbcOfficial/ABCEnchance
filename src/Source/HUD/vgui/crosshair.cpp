@@ -11,6 +11,8 @@
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
+#include <vgui2/spr_image.h>
+#include <vgui_controls/ImagePanel.h>
 
 #include "hud.h"
 #include "local.h"
@@ -55,6 +57,10 @@ CCrosshairPanel::CCrosshairPanel()
 	pCvarDefaultCrosshair = CVAR_GET_POINTER("crosshair");
 
 	SetSize(ScreenWidth, ScreenHeight);
+
+	m_pSprImage = new vgui::CSPRImage();
+	m_pSprImage->SetRenderMode(kRenderTransTexture);
+	m_pSprImage->SetColor(Color(255, 255, 255, 255));
 }
 void CCrosshairPanel::PaintBackground(){
 	if (g_pViewPort->IsInSpectate())
@@ -205,6 +211,7 @@ const char* CCrosshairPanel::GetName() {
 }
 void CCrosshairPanel::Reset() {
 	ShowPanel(true);
+	m_pSprImage->Reset();
 }
 
 void CCrosshairPanel::ShowPanel(bool state) {
@@ -222,31 +229,36 @@ void CCrosshairPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
 
-void CCrosshairPanel::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc) {
-	if (hPic <= 0)
+void CCrosshairPanel::SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc) {
+	if (hPic <= 0) {
+		m_pSprImage->SetTextureID(-1);
 		return;
-	int rx = x + 1 - (hRc.right - hRc.left) / 2;
-	int ry = y + 1 - (hRc.bottom - hRc.top) / 2;
-	SPR_Set(hPic, 255, 255, 255);
-	SPR_DrawHoles(0, rx, ry, &hRc);
+	}
+	int w = hRc->right - hRc->left;
+	int h = hRc->bottom - hRc->top;
+	m_pSprImage->SetTextureID(hPic);
+	m_pSprImage->SetPos(x - w / 2, y - h / 2);
+	m_pSprImage->SetSize(w, h);
+	m_pSprImage->SetRect(hRc->left, hRc->right, hRc->top, hRc->bottom);
 }
 void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
 	WEAPON* pWeapon = m_HudCustomAmmo.m_pWeapon;
-	if (!pWeapon)
+	if (!pWeapon || pWeapon->iId <= 0) {
+		m_pSprImage->SetTextureID(-1);
 		return;
-	if (pWeapon->iId <= 0)
-		return;
+	}
 	bool bOnTarget = m_HudCustomAmmo.m_bIsOnTarget;
 	if (m_hfov >= gCVars.pCvarDefaultFOV->value) {
 		if (bOnTarget && pWeapon->hAutoaim)
-			DrawCrosshairSPR(x, y, pWeapon->hAutoaim, pWeapon->rcAutoaim);
+			SetCrosshairSPR(x, y, pWeapon->hAutoaim, &pWeapon->rcAutoaim);
 		else
-			DrawCrosshairSPR(x, y, pWeapon->hCrosshair, pWeapon->rcCrosshair);
+			SetCrosshairSPR(x, y, pWeapon->hCrosshair, &pWeapon->rcCrosshair);
 	}
 	else {
 		if (bOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
-			DrawCrosshairSPR(x, y, pWeapon->hZoomedAutoaim, pWeapon->rcZoomedAutoaim);
+			SetCrosshairSPR(x, y, pWeapon->hZoomedAutoaim, &pWeapon->rcZoomedAutoaim);
 		else
-			DrawCrosshairSPR(x, y, pWeapon->hZoomedCrosshair, pWeapon->rcZoomedCrosshair);
+			SetCrosshairSPR(x, y, pWeapon->hZoomedCrosshair, &pWeapon->rcZoomedCrosshair);
 	}
+	m_pSprImage->Paint();
 }

@@ -8,6 +8,10 @@
 
 typedef struct cvar_s cvar_t;
 
+namespace vgui {
+	class CSPRImage;
+}
+
 class CCrosshairPanel : public vgui::Panel, public IViewportPanel
 {
 public:
@@ -22,7 +26,6 @@ public:
 	virtual bool IsVisible() override;
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
-
 private:
 	cvar_t* pCvarDefaultCrosshair = nullptr;
 
@@ -44,7 +47,9 @@ private:
 	cvar_t* pDynamicCrossHairT = nullptr;
 	cvar_t* pDynamicCrossHairD = nullptr;
 
-	void DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc);
+	vgui::CSPRImage* m_pSprImage;
+
+	void SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc);
 	void DrawDefaultCrosshair(int x, int y);
 };
 #endif
