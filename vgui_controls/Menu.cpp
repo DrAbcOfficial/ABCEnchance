@@ -7,8 +7,6 @@
 
 #include "vgui_controls/pch_vgui_controls.h"
 
-// memdbgon must be the last include file in a .cpp file
-#include "tier0/memdbgon.h"
 #define MENU_SEPARATOR_HEIGHT 3
 
 using namespace vgui;
@@ -150,10 +148,10 @@ int Menu::AddMenuItem(MenuItem* panel)
 		}
 	}
 
-	//if (panel->GetHotKey())
-	//{
-	//	SetTypeAheadMode(HOT_KEY_MODE);
-	//}
+	if (panel->GetHotKey())
+	{
+		SetTypeAheadMode(HOT_KEY_MODE);
+	}
 
 	return itemID;
 }
@@ -1264,6 +1262,7 @@ void Menu::OnKeyCodeTyped(KeyCode code)
 	switch (code)
 	{
 	case KEY_ESCAPE:
+	case KEY_XBUTTON_B:
 	{
 		// hide the menu on ESC
 		SetVisible(false);
@@ -1272,6 +1271,8 @@ void Menu::OnKeyCodeTyped(KeyCode code)
 	// arrow keys scroll through items on the list.
 	// they should also scroll the scroll bar if needed
 	case KEY_UP:
+	case KEY_XBUTTON_UP:
+	case KEY_XSTICK1_UP:
 	{
 		MoveAlongMenuItemList(MENU_UP, 0);
 		if (m_MenuItems.IsValidIndex(m_iCurrentlySelectedItemID))
@@ -1285,6 +1286,8 @@ void Menu::OnKeyCodeTyped(KeyCode code)
 		break;
 	}
 	case KEY_DOWN:
+	case KEY_XBUTTON_DOWN:
+	case KEY_XSTICK1_DOWN:
 	{
 		MoveAlongMenuItemList(MENU_DOWN, 0);
 		if (m_MenuItems.IsValidIndex(m_iCurrentlySelectedItemID))
@@ -1299,6 +1302,8 @@ void Menu::OnKeyCodeTyped(KeyCode code)
 	}
 	// for now left and right arrows just open or close submenus if they are there.
 	case KEY_RIGHT:
+	case KEY_XBUTTON_RIGHT:
+	case KEY_XSTICK1_RIGHT:
 	{
 		// make sure a menuItem is currently selected
 		if (m_MenuItems.IsValidIndex(m_iCurrentlySelectedItemID))
@@ -1319,6 +1324,8 @@ void Menu::OnKeyCodeTyped(KeyCode code)
 		break;
 	}
 	case KEY_LEFT:
+	case KEY_XBUTTON_LEFT:
+	case KEY_XSTICK1_LEFT:
 	{
 		// if our parent is a menu item then we are a submenu so close us.
 		if (GetParentMenuItem())
@@ -1332,6 +1339,7 @@ void Menu::OnKeyCodeTyped(KeyCode code)
 		break;
 	}
 	case KEY_ENTER:
+	case KEY_XBUTTON_A:
 	{
 		// make sure a menuItem is currently selected
 		if (m_MenuItems.IsValidIndex(m_iCurrentlySelectedItemID))
@@ -1809,7 +1817,7 @@ namespace vgui
 #endif
 	}
 
-}  // end namespace vgui
+}  // end namespace vgui2
 
 //-----------------------------------------------------------------------------
 // Purpose: Static method called on mouse released to see if Menu objects should be aborted
@@ -2678,12 +2686,12 @@ void Menu::SetUseFallbackFont(bool bState, HFont hFallback)
 //-----------------------------------------------------------------------------
 void Menu::Validate(CValidator& validator, char* pchName)
 {
-	validator.Push("vgui::Menu", this, pchName);
+	validator.Push("vgui2::Menu", this, pchName);
 
 	m_MenuItems.Validate(validator, "m_MenuItems");
 	m_SortedItems.Validate(validator, "m_SortedItems");
 
-	BaseClass::Validate(validator, "vgui::Menu");
+	BaseClass::Validate(validator, "vgui2::Menu");
 
 	validator.Pop();
 }

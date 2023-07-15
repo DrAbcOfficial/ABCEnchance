@@ -374,6 +374,6 @@ namespace vgui
 		const char* m_pszLastCategory;
 	};
 
-} // namespace vgui
+} // namespace vgui2
 
 #endif // MENU_H

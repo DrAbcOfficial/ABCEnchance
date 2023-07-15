@@ -17,7 +17,6 @@
 #include <KeyValues.h>
 #include <vgui/MouseCode.h>
 
-#include <inputsystem/ButtonCode.h>
 #include <vguilocal.h>
 
 #include <vgui_controls/SectionedListPanel.h>
