@@ -28,6 +28,7 @@
 #include "flashlight.h"
 #include "notice.h"
 #include "crosshair.h"
+#include "effect.h"
 
 #include "CCustomHud.h"
 
@@ -77,6 +78,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
 	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
 	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
+	AddNewPanel(m_pEffectPanel = new CEffectPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -95,6 +97,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pNotice->SetParent(GetVPanel());
 	m_pNoticeCenter->SetParent(GetVPanel());
 	m_pCrossHairPanel->SetParent(GetVPanel());
+	m_pEffectPanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -231,6 +234,9 @@ void CViewport::SetFlashLight(bool on, int battery){
 }
 void CViewport::SetFlashBattery(int battery){
 	m_pFlashLight->SetFlashBattery(battery);
+}
+void CViewport::SetHealth(int health){
+	m_pEffectPanel->SetHealth(health);
 }
 void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	switch (type)

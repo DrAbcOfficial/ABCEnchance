@@ -10,7 +10,7 @@ metahook_api_t *g_pMetaHookAPI;
 mh_enginesave_t *g_pMetaSave;
 IFileSystem *g_pFileSystem;
 
-HMODULE g_hClientDll = nullptr;
+HMODULE g_hClientDll;
 HINSTANCE g_hThisModule;
 DWORD g_dwEngineBuildnum;
 HINSTANCE g_hEngineModule;
@@ -77,7 +77,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->IN_Accumulate = IN_Accumulate;
 	pExportFunc->CL_CreateMove = CL_CreateMove;
 	pExportFunc->HUD_UpdateClientData = HUD_UpdateClientData;
-	pExportFunc->HUD_Reset = HUD_Reset;
+	//pExportFunc->HUD_Reset = HUD_Reset;
 	pExportFunc->HUD_TxferLocalOverrides = HUD_TxferLocalOverrides;
 	pExportFunc->HUD_PlayerMove = HUD_ClientMove;
 	pExportFunc->HUD_AddEntity = HUD_AddEntity;

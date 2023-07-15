@@ -31,19 +31,9 @@ int aryDmgFlags[NUM_DMG_TYPES] ={
 };
 CHudArmorHealth m_HudArmorHealth;
 
-pfnUserMsgHook m_pfnHealth;
 pfnUserMsgHook m_pfnDamage;
 pfnUserMsgHook m_pfnBattery;
 
-int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf){
-	BEGIN_READ(pbuf, iSize);
-	int x = READ_LONG();
-	if (x != m_HudArmorHealth.m_iHealth){
-		m_HudArmorHealth.m_iHealth = x;
-		gCustomHud.m_iPlayerHealth = x;
-	}
-	return m_pfnHealth(pszName, iSize, pbuf);
-}
 int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int armor = READ_BYTE();
@@ -79,7 +69,6 @@ void CHudArmorHealth::GLInit() {
 	m_hFilterTex = GL_GenTextureRGBA8(ScreenWidth, ScreenHeight);
 }
 void CHudArmorHealth::Init(void){
-	m_pfnHealth = HOOK_MESSAGE(Health);
 	m_pfnDamage = HOOK_MESSAGE(Damage);
 	m_pfnBattery = HOOK_MESSAGE(Battery);
 

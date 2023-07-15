@@ -26,6 +26,7 @@ class CTextMenu;
 class CFlashLightPanel;
 class CNoticePanel;
 class CCrosshairPanel;
+class CEffectPanel;
 
 class ISchemel;
 
@@ -93,6 +94,8 @@ public:
 
 	void ShowCrossHair(bool on);
 
+	void SetHealth(int health);
+
 	enum class HUDNOTICE {
 		PRINTNOTIFY = 1,
 		PRINTCENTER = 4
@@ -118,7 +121,8 @@ private:
 	CFlashLightPanel* m_pFlashLight = nullptr;
 	CNoticePanel* m_pNotice = nullptr;
 	CNoticePanel* m_pNoticeCenter = nullptr;
-	CCrosshairPanel* m_pCrossHairPanel;
+	CCrosshairPanel* m_pCrossHairPanel = nullptr;
+	CEffectPanel* m_pEffectPanel = nullptr;
 
 	int m_iInterMission;
 
