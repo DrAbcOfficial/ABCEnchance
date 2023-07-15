@@ -6,7 +6,6 @@
 
 #include <vgui/IImage.h>
 #include <vgui/IInput.h>
-#include <vgui/IInputInternal.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
@@ -770,6 +769,7 @@ void CScorePanel::UpdateClientInfo(int client)
 	m_pPlayerList->SetItemBgColor(pd.nItemID, SectionColor);
 
 	playerKv->deleteThis();
+	colorKv->deleteThis();
 }
 
 void CScorePanel::UpdatePlayerDonor(CPlayerInfo* pi) {
