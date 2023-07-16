@@ -6,10 +6,22 @@
 		"fieldName"		"Console"
 		"xpos"		"rs1.2"
 		"ypos"		"s0.1"
-		"tall"		"o0.2"
-		"wide"		"640"
+		"wide"		"o0.6"
+		"tall"		"800"
 		"visible"		"1"
 		"enabled"		"1"
+
+		"settitlebarvisible"	"1"
+		"setclosebuttonvisible"		"1"
+		"title"				"#Console_Title"
+		"title_font"		"Default"
+		"titletextinsetY"		"20"
+		"infocus_bgcolor_override"	"0 0 0 125"
+		"outoffocus_bgcolor_override"	"0 0 0 0"
+		"titlebarbgcolor_override"		"0 0 0 0"
+		"titlebardisabledbgcolor_override"	"0 0 0 195"
+		"titlebarfgcolor_override"		"255 255 255 255"
+		"titlebardisabledfgcolor_override"		"125 125 125 125"
 
 		"PaintBackgroundType"	"2"
 	}
@@ -24,6 +36,8 @@
 		"tall"		"f30"
 		"visible"		"1"
 		"enabled"		"1"
+
+		"button_text"		"#Console_Submit"
 		"proportionalToParent" "1"
 
 		"PaintBackgroundType"	"2"

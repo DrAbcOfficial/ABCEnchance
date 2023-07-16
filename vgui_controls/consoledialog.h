@@ -110,6 +110,7 @@ namespace vgui
 		// vgui overrides
 		virtual void PerformLayout();
 		virtual void ApplySchemeSettings(IScheme* pScheme);
+		virtual void ApplySettings(KeyValues* inResourceData);
 		virtual void OnCommand(const char* command);
 		virtual void OnKeyCodePressed(KeyCode code);
 		virtual void OnKeyCodeTyped(KeyCode code);
