@@ -18,6 +18,7 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 	//virtual void OnThink() override;
 	void ShowKillMark(int* iDmg, int iDmgMax);
+	void StartFade(bool state, vgui::ImagePanel* Panel);
 
 private:
 	vgui::ImagePanel* m_pKillMarkPoint = nullptr;
@@ -27,6 +28,7 @@ private:
 	vgui::ImagePanel* m_pDmgMarkFour = nullptr;
 	vgui::ImagePanel* m_pDmgMarkFive = nullptr;
 	vgui::ImagePanel* m_pDmgStar = nullptr;
+	vgui::ImagePanel* m_pDmgEffect = nullptr;
 
 };
 

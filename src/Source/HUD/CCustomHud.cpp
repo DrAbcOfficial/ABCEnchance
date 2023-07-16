@@ -276,8 +276,7 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 			CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
 			int iValue = READ_LONG();
-			if (g_pViewPort->m_pKillMarkEnable->value > 0)
-			{
+			if (g_pViewPort->m_pKillMarkEnable->value > 0) {
 				static int iDmg;
 				iDmg += iValue;
 				g_pViewPort->ShowKillMark(&iDmg, g_pViewPort->m_pKillMarkMax->value);

@@ -35,6 +35,7 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 	m_pDmgMarkThree = new vgui::ImagePanel(this, "DmgMarkThree");
 	m_pDmgMarkFour = new vgui::ImagePanel(this, "DmgMarkFour");
 	m_pDmgMarkFive = new vgui::ImagePanel(this, "DmgMarkFive");
+	m_pDmgEffect = new vgui::ImagePanel(this, "DmgEffect");
 	m_pDmgStar = new vgui::ImagePanel(this, "DmgStar");
 
 	LoadControlSettings(VGUI2_ROOT_DIR "Cfefx.res");
@@ -65,58 +66,63 @@ void CKillMarkPanel::ShowPanel(bool state) {
 	SetVisible(state);
 }
 
+void CKillMarkPanel::StartFade(bool state, vgui::ImagePanel* Panel) 
+{
+	Panel->SetAlpha(state ? 1 : 255);
+	Panel->SetVisible(true);
+	vgui::GetAnimationController()->RunAnimationCommand(Panel, "alpha", state ? 255 : 0, 0, 1, vgui::AnimationController::INTERPOLATOR_LINEAR);
+}
+
 void CKillMarkPanel::ShowKillMark(int* iDmg, int iDmgMax)
 {
+	ShowPanel(true);
 	int i = iDmgMax / 10;
-
 	if (*iDmg >= i)
 	{
 		/*
 		TODO:
 		每100伤害触发
-		星号向左对应伤害图标移动并放大，经过一定距离最大后缩小并移动到当前伤害图标
+		DmgStar向左对应伤害图标移动并放大，经过一定距离最大后缩小并移动到当前伤害图标
 		伤害图标直接在对应位置淡入
 		达到500伤害其它图标向上移动到第一个图标“合并”成一个500伤害图标
+		达到一千伤害后显示DmgEffect从第一个伤害图标的上面移动到击杀图标
 
+		还是用switch算了
 
-		面板得统一放在个数组什么之类的里面 还没学不会写
-		
-
-
+		不知道移动面板的话动画控制器的第二个参数要写什么
 		*/	
-		
-		switch (*iDmg / i)
-		{
-		case 0:
-			break;
+		switch (*iDmg / i) {
 		case 1:
-			m_pDmgMarkOne->SetVisible(true);
-			m_pDmgMarkOne->SetAlpha(0);
-			vgui::GetAnimationController()->RunAnimationCommand(m_pDmgMarkOne, "alpha", 255, 0, 1.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
-			break;
-		case 2:
-			m_pDmgMarkTwo->SetVisible(true);
-			break;
-		case 3:
-			m_pDmgMarkThree->SetVisible(true);
-			break;
-		case 4:
-			m_pDmgMarkFour->SetVisible(true);
-			break;
-		case 5:
-			m_pDmgMarkFive->SetVisible(true);
+		{
+			StartFade(true, m_pDmgMarkOne);
+
 			break;
 		}
-	}
-	if (*iDmg >= iDmgMax)
-	{
-		//TODO:清空伤害图标
-		*iDmg = 0;
-		PlaySoundByName("misc/UI_SPECIALKILL2.wav", 1);
-		ShowPanel(true);
-		SetAlpha(255);
-		vgui::GetAnimationController()->RunAnimationCommand(m_pKillMarkPoint, "alpha", 0, 1.5f, 1.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
-		ShowPanel(false);
+		case 2:
+			StartFade(true, m_pDmgMarkTwo);
+
+			break;
+		case 3: {
+			StartFade(true, m_pDmgMarkThree);
+
+			break;
+		}
+		case 4: {
+			StartFade(true, m_pDmgMarkFour);
+
+			break;
+		}
+		case 5: {
+
+			break;
+		}
+		default: {
+			//TODO:清空伤害图标
+			*iDmg = 0;
+			PlaySoundByName("misc/UI_SPECIALKILL2.wav", 1);
+			StartFade(false, m_pKillMarkPoint);
+		}
+		}
 	}
 }
 
