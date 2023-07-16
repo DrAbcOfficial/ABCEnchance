@@ -1,4 +1,4 @@
-#ifndef ISURFACE_H
+﻿#ifndef ISURFACE_H
 #define ISURFACE_H
 
 #ifdef _WIN32

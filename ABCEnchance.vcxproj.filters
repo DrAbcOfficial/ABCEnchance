@@ -452,9 +452,6 @@
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\efxhud.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\grenadeindicator.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
@@ -586,6 +583,15 @@
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\crosshair.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\spr_image.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\effect.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_controls\ImageSprPanel.cpp">
+      <Filter>VGUI\control</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\cfefx.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
@@ -1183,9 +1189,6 @@
     <ClInclude Include="src\Header\HUD\eccobuymenu.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\efxhud.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\grenadeindicator.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
@@ -1359,6 +1362,15 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\crosshair.h">
       <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\spr_image.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\effect.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\ImageSprPanel.h">
+      <Filter>VGUI\control</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\cfefx.h">
       <Filter>Public\Header\HUD\vgui</Filter>

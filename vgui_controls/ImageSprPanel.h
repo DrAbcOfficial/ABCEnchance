@@ -5,34 +5,33 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#ifndef IMAGEPANEL_H
-#define IMAGEPANEL_H
+#ifndef IMAGESPRPANEL_H
+#define IMAGESPRPANEL_H
 
 #ifdef _WIN32
 #pragma once
 #endif
-
 #include <vgui/vgui.h>
 #include <vgui_controls/Panel.h>
 
 namespace vgui
 {
 
-	class IImage;
+	class CSPRImage;
 
 	//-----------------------------------------------------------------------------
 	// Purpose: Panel that holds a single image
 	//-----------------------------------------------------------------------------
-	class ImagePanel : public Panel
+	class ImageSprPanel : public Panel
 	{
-		DECLARE_CLASS_SIMPLE(ImagePanel, Panel);
+		DECLARE_CLASS_SIMPLE(ImageSprPanel, Panel);
 	public:
-		ImagePanel(Panel* parent, const char* name);
-		virtual ~ImagePanel();
+		ImageSprPanel(Panel* parent, const char* name);
+		virtual ~ImageSprPanel();
 
-		virtual void SetImage(IImage* image);
+		virtual void SetImage(CSPRImage* image);
 		virtual void SetImage(const char* imageName);
-		virtual IImage* GetImage();
+		virtual CSPRImage* GetImage();
 		char* GetImageName();
 
 		void SetShouldCenterImage(bool state) { m_bCenterImage = state; }
@@ -58,6 +57,13 @@ namespace vgui
 		// unhooks and evicts image if possible, caller must re-establish
 		bool EvictImage();
 
+		void SetFramerate(float fl);
+		void SetRect(int l, int r, int t, int b);
+		void SetRenderMode(int mode);
+		void Reset();
+		void Animate();
+		void SetFrame(int frame);
+
 	protected:
 		virtual void PaintBackground();
 		virtual void GetSettings(KeyValues* outResourceData);
@@ -65,7 +71,7 @@ namespace vgui
 		virtual void OnSizeChanged(int newWide, int newTall);
 		virtual void ApplySchemeSettings(IScheme* pScheme);
 
-		IImage* m_pImage;
+		CSPRImage* m_pImage = nullptr;
 		char* m_pszImageName;
 		char* m_pszFillColorName;
 		char* m_pszDrawColorName;

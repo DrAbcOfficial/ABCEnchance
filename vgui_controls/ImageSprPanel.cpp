@@ -13,7 +13,8 @@
 #include <vgui/IBorder.h>
 #include <KeyValues.h>
 
-#include <vgui_controls/ImagePanel.h>
+#include <vgui2/spr_image.h>
+#include <vgui_controls/ImageSprPanel.h>
 #include <vgui_controls/Image.h>
 #include <vgui_controls/Controls.h>
 
@@ -22,12 +23,12 @@
 
 using namespace vgui;
 
-DECLARE_BUILD_FACTORY(ImagePanel);
+DECLARE_BUILD_FACTORY(ImageSprPanel);
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-ImagePanel::ImagePanel(Panel* parent, const char* name) : Panel(parent, name)
+ImageSprPanel::ImageSprPanel(Panel* parent, const char* name) : Panel(parent, name)
 {
 	m_pImage = NULL;
 	m_pszImageName = NULL;
@@ -52,17 +53,18 @@ ImagePanel::ImagePanel(Panel* parent, const char* name) : Panel(parent, name)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-ImagePanel::~ImagePanel()
+ImageSprPanel::~ImageSprPanel()
 {
 	delete[] m_pszImageName;
 	delete[] m_pszFillColorName;
 	delete[] m_pszDrawColorName;	// HPE addition
+	delete m_pImage;
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: handles size changing
 //-----------------------------------------------------------------------------
-void ImagePanel::OnSizeChanged(int newWide, int newTall)
+void ImageSprPanel::OnSizeChanged(int newWide, int newTall)
 {
 	BaseClass::OnSizeChanged(newWide, newTall);
 }
@@ -70,7 +72,7 @@ void ImagePanel::OnSizeChanged(int newWide, int newTall)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void ImagePanel::SetImage(IImage* image)
+void ImageSprPanel::SetImage(CSPRImage* image)
 {
 	m_pImage = image;
 	Repaint();
@@ -79,7 +81,7 @@ void ImagePanel::SetImage(IImage* image)
 //-----------------------------------------------------------------------------
 // Purpose: sets an image by file name
 //-----------------------------------------------------------------------------
-void ImagePanel::SetImage(const char* imageName)
+void ImageSprPanel::SetImage(const char* imageName)
 {
 	if (imageName && m_pszImageName && V_stricmp(imageName, m_pszImageName) == 0)
 		return;
@@ -94,7 +96,7 @@ void ImagePanel::SetImage(const char* imageName)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-IImage* ImagePanel::GetImage()
+CSPRImage* ImageSprPanel::GetImage()
 {
 	return m_pImage;
 }
@@ -102,7 +104,7 @@ IImage* ImagePanel::GetImage()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-Color ImagePanel::GetDrawColor(void)
+Color ImageSprPanel::GetDrawColor(void)
 {
 	return m_DrawColor;
 }
@@ -110,7 +112,7 @@ Color ImagePanel::GetDrawColor(void)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void ImagePanel::SetDrawColor(Color drawColor)
+void ImageSprPanel::SetDrawColor(Color drawColor)
 {
 	m_DrawColor = drawColor;
 }
@@ -118,7 +120,7 @@ void ImagePanel::SetDrawColor(Color drawColor)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void ImagePanel::PaintBackground()
+void ImageSprPanel::PaintBackground()
 {
 	if (m_FillColor[3] > 0)
 	{
@@ -137,7 +139,15 @@ void ImagePanel::PaintBackground()
 		//=============================================================================
 
 		// surface()->DrawSetColor( 255, 255, 255, GetAlpha() );
-		m_pImage->SetColor(GetDrawColor());
+		Color dcolor = GetDrawColor();
+		dcolor.SetColor(dcolor.r(), dcolor.g(), dcolor.b(), GetAlpha());
+		m_pImage->SetColor(dcolor);
+		int w, h;
+		int x, y;
+		GetSize(w, h);
+		GetPos(x, y);
+		m_pImage->SetSize(w, h);
+		m_pImage->SetPos(x, y);
 
 		//=============================================================================
 		// HPE_END
@@ -237,7 +247,7 @@ void ImagePanel::PaintBackground()
 //-----------------------------------------------------------------------------
 // Purpose: Gets control settings for editing
 //-----------------------------------------------------------------------------
-void ImagePanel::GetSettings(KeyValues* outResourceData)
+void ImageSprPanel::GetSettings(KeyValues* outResourceData)
 {
 	BaseClass::GetSettings(outResourceData);
 	if (m_pszImageName)
@@ -277,7 +287,7 @@ void ImagePanel::GetSettings(KeyValues* outResourceData)
 //-----------------------------------------------------------------------------
 // Purpose: Applies designer settings from res file
 //-----------------------------------------------------------------------------
-void ImagePanel::ApplySettings(KeyValues* inResourceData)
+void ImageSprPanel::ApplySettings(KeyValues* inResourceData)
 {
 	delete[] m_pszImageName;
 	delete[] m_pszFillColorName;
@@ -353,24 +363,39 @@ void ImagePanel::ApplySettings(KeyValues* inResourceData)
 	}
 
 	BaseClass::ApplySettings(inResourceData);
+
+	const char* pszRect = inResourceData->GetString("rect", "");
+	if (*pszRect){
+		int l, r, t, b;
+		if (sscanf(pszRect, "%d %d %d %d", &l, &r, &t, &b) >= 3)
+			SetRect(l, r, t, b);
+	}
+
+	SetFramerate(inResourceData->GetFloat("framerate"));
+	SetRenderMode(inResourceData->GetInt("rendermode"));
+
 }
 
 //-----------------------------------------------------------------------------
 // Purpose:  load the image, this is done just before this control is displayed
 //-----------------------------------------------------------------------------
-void ImagePanel::ApplySchemeSettings(IScheme* pScheme)
+void ImageSprPanel::ApplySchemeSettings(IScheme* pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 	if (m_pszImageName && strlen(m_pszImageName) > 0)
 	{
-		SetImage(scheme()->GetImage(m_pszImageName, m_bScaleImage));
+		if (m_pImage) {
+			delete m_pImage;
+			m_pImage = nullptr;
+		}
+		SetImage(new vgui::CSPRImage(m_pszImageName));
 	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Describes editing details
 //-----------------------------------------------------------------------------
-const char* ImagePanel::GetDescription()
+const char* ImageSprPanel::GetDescription()
 {
 	static char buf[1024];
 	_snprintf(buf, sizeof(buf), "%s, string image, string border, string fillcolor, bool scaleImage", BaseClass::GetDescription());
@@ -380,7 +405,7 @@ const char* ImagePanel::GetDescription()
 //-----------------------------------------------------------------------------
 // Purpose: sets whether or not the image should scale to fit the size of the ImagePanel (defaults to false)
 //-----------------------------------------------------------------------------
-void ImagePanel::SetShouldScaleImage(bool state)
+void ImageSprPanel::SetShouldScaleImage(bool state)
 {
 	m_bScaleImage = state;
 }
@@ -388,7 +413,7 @@ void ImagePanel::SetShouldScaleImage(bool state)
 //-----------------------------------------------------------------------------
 // Purpose: gets whether or not the image should be scaled to fit the size of the ImagePanel
 //-----------------------------------------------------------------------------
-bool ImagePanel::GetShouldScaleImage()
+bool ImageSprPanel::GetShouldScaleImage()
 {
 	return m_bScaleImage;
 }
@@ -396,12 +421,12 @@ bool ImagePanel::GetShouldScaleImage()
 //-----------------------------------------------------------------------------
 // Purpose: used in conjunction with setting that the image should scale and defines an absolute scale amount
 //-----------------------------------------------------------------------------
-void ImagePanel::SetScaleAmount(float scale)
+void ImageSprPanel::SetScaleAmount(float scale)
 {
 	m_fScaleAmount = scale;
 }
 
-float ImagePanel::GetScaleAmount(void)
+float ImageSprPanel::GetScaleAmount(void)
 {
 	return m_fScaleAmount;
 }
@@ -409,7 +434,7 @@ float ImagePanel::GetScaleAmount(void)
 //-----------------------------------------------------------------------------
 // Purpose: set the color to fill with, if no Image is specified
 //-----------------------------------------------------------------------------
-void ImagePanel::SetFillColor(Color col)
+void ImageSprPanel::SetFillColor(Color col)
 {
 	m_FillColor = col;
 }
@@ -417,17 +442,17 @@ void ImagePanel::SetFillColor(Color col)
 //-----------------------------------------------------------------------------
 // Purpose: data accessor
 //-----------------------------------------------------------------------------
-Color ImagePanel::GetFillColor()
+Color ImageSprPanel::GetFillColor()
 {
 	return m_FillColor;
 }
 
-char* ImagePanel::GetImageName()
+char* ImageSprPanel::GetImageName()
 {
 	return m_pszImageName;
 }
 
-bool ImagePanel::EvictImage()
+bool ImageSprPanel::EvictImage()
 {
 	// GoldSrc: IDK how to fix it, need more research
 	Assert(false);
@@ -453,4 +478,28 @@ bool ImagePanel::EvictImage()
 #endif
 
 	return true;
+}
+
+void ImageSprPanel::SetFramerate(float fl){
+	m_pImage->SetFramerate(fl);
+}
+
+void ImageSprPanel::SetRect(int l, int r, int t, int b){
+	m_pImage->SetRect(l, r, t, b);
+}
+
+void ImageSprPanel::SetRenderMode(int mode){
+	m_pImage->SetRenderMode(mode);
+}
+
+void ImageSprPanel::Reset(){
+	m_pImage->Reset();
+}
+
+void ImageSprPanel::Animate(){
+	m_pImage->Animate();
+}
+
+void ImageSprPanel::SetFrame(int frame){
+	m_pImage->SetFrame(frame);
 }

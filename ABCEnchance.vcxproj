@@ -200,13 +200,13 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
     <ClCompile Include="src\Source\HUD\deathmsg.cpp" />
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
-    <ClCompile Include="src\Source\HUD\efxhud.cpp" />
     <ClCompile Include="src\Source\HUD\grenadeindicator.cpp" />
     <ClCompile Include="src\Source\HUD\healthhud.cpp" />
     <ClCompile Include="src\Source\HUD\historyresource.cpp" />
     <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
     <ClCompile Include="src\Source\HUD\radar.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\crosshair.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\effect.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\cfefx.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
@@ -251,6 +251,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="VGUI2\KeyValuesSystemHook.cpp" />
     <ClCompile Include="VGUI2\Scheme.cpp" />
     <ClCompile Include="VGUI2\SchemeHook.cpp" />
+    <ClCompile Include="VGUI2\spr_image.cpp" />
     <ClCompile Include="VGUI2\Surface.cpp" />
     <ClCompile Include="VGUI2\SurfaceHook.cpp" />
     <ClCompile Include="VGUI2\tga_image.cpp" />
@@ -285,6 +286,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\ImageClipPanel.cpp" />
     <ClCompile Include="vgui_controls\ImageList.cpp" />
     <ClCompile Include="vgui_controls\ImagePanel.cpp" />
+    <ClCompile Include="vgui_controls\ImageSprPanel.cpp" />
     <ClCompile Include="vgui_controls\InputDialog.cpp" />
     <ClCompile Include="vgui_controls\KeyBindingHelpDialog.cpp" />
     <ClCompile Include="vgui_controls\KeyBoardEditorDialog.cpp" />
@@ -422,7 +424,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />
     <ClInclude Include="src\Header\HUD\deathmsg.h" />
     <ClInclude Include="src\Header\HUD\eccobuymenu.h" />
-    <ClInclude Include="src\Header\HUD\efxhud.h" />
     <ClInclude Include="src\Header\HUD\grenadeindicator.h" />
     <ClInclude Include="src\Header\HUD\healthhud.h" />
     <ClInclude Include="src\Header\HUD\historyresource.h" />
@@ -430,6 +431,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\numdisplay.h" />
     <ClInclude Include="src\Header\HUD\radar.h" />
     <ClInclude Include="src\Header\HUD\vgui\crosshair.h" />
+    <ClInclude Include="src\Header\HUD\vgui\effect.h" />
     <ClInclude Include="src\Header\HUD\vgui\cfefx.h" />
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
@@ -487,6 +489,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\igameui.h" />
     <ClInclude Include="VGUI2\IGameUIFuncs.h" />
     <ClInclude Include="VGUI2\IViewportPanel.h" />
+    <ClInclude Include="VGUI2\spr_image.h" />
     <ClInclude Include="VGUI2\SurfaceHook.h" />
     <ClInclude Include="VGUI2\tga_image.h" />
     <ClInclude Include="VGUI2\viewport_panel_names.h" />
@@ -540,6 +543,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\ImageClipPanel.h" />
     <ClInclude Include="vgui_controls\ImageList.h" />
     <ClInclude Include="vgui_controls\ImagePanel.h" />
+    <ClInclude Include="vgui_controls\ImageSprPanel.h" />
     <ClInclude Include="vgui_controls\InputDialog.h" />
     <ClInclude Include="vgui_controls\KeyBindingHelpDialog.h" />
     <ClInclude Include="vgui_controls\KeyBindingMap.h" />

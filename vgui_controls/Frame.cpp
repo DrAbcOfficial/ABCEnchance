@@ -1,4 +1,4 @@
-//===== Copyright ?1996-2005, Valve Corporation, All rights reserved. ======//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -9,31 +9,28 @@
 #include <math.h> // for ceil()
 #define PROTECTED_THINGS_DISABLE
 
-#include <tier1/KeyValues.h>
-#include <tier1/utlstring.h>
+#include "tier1/utlstring.h"
+#include "vgui/Cursor.h"
+#include "vgui/MouseCode.h"
+#include "vgui/IBorder.h"
+#include "vgui/IInput.h"
+#include "vgui/ILocalize.h"
+#include "vgui/IPanel.h"
+#include "vgui/ISurface.h"
+#include "vgui/IScheme.h"
+#include "vgui/KeyCode.h"
 
-#include <vgui/Cursor.h>
-#include <vgui/MouseCode.h>
-#include <vgui/IBorder.h>
-#include <vgui/IInput.h>
-#include <vgui/ILocalize.h>
-#include <vgui/IPanel.h>
-#include <vgui/ISurface.h>
-#include <vgui/IScheme.h>
-#include <vgui/KeyCode.h>
+#include "vgui_controls/AnimationController.h"
+#include "vgui_controls/Controls.h"
+#include "vgui_controls/Frame.h"
+#include "vgui_controls/Button.h"
+#include "vgui_controls/Menu.h"
+#include "vgui_controls/MenuButton.h"
+#include "vgui_controls/TextImage.h"
 
-#include "AnimationController.h"
-#include "Controls.h"
-#include "Frame.h"
-#include "Button.h"
-#include "Menu.h"
-#include "MenuButton.h"
-#include "TextImage.h"
+#include "KeyValues.h"
 
 #include <stdio.h>
-
-// memdbgon must be the last include file in a .cpp file!!!
-//#include <tier0/memdbgon.h>
 
 using namespace vgui;
 
@@ -49,7 +46,7 @@ namespace
 	class GripPanel : public Panel
 	{
 	public:
-		GripPanel(Frame *dragFrame, const char *name, int xdir, int ydir) : Panel(dragFrame, name)
+		GripPanel(Frame* dragFrame, const char* name, int xdir, int ydir) : Panel(dragFrame, name)
 		{
 			_frame = dragFrame;
 			_dragging = false;
@@ -67,25 +64,25 @@ namespace
 				SetPaintBackgroundEnabled(true);
 			}
 
-			SetBlockDragChaining( true );
+			SetBlockDragChaining(true);
 		}
-		
+
 		// Purpose- handle window resizing
 		// Input- dx, dy, the offet of the mouse pointer from where we started dragging
 		virtual void moved(int dx, int dy)
 		{
 			if (!_frame->IsSizeable())
 				return;
-			
+
 			// Start off with x, y at the coords of where we started to drag
-			int newX = _dragOrgPos[0], newY =_dragOrgPos[1];
+			int newX = _dragOrgPos[0], newY = _dragOrgPos[1];
 			// Start off with width and tall equal from window when we started to drag
 			int newWide = _dragOrgSize[0], newTall = _dragOrgSize[1];
-			
+
 			// get window's minimum size
 			int minWide, minTall;
-			_frame->GetMinimumSize( minWide, minTall);
-			
+			_frame->GetMinimumSize(minWide, minTall);
+
 			// Handle  width resizing
 			newWide += (dx * _dragMultX);
 			// Handle the position of the corner x position
@@ -95,11 +92,11 @@ namespace
 				// if we are at min we have to force the proper offset (dx)
 				if (newWide < minWide)
 				{
-					dx=_dragOrgSize[0]-minWide;
+					dx = _dragOrgSize[0] - minWide;
 				}
 				newX += dx;	  // move window to its new position
 			}
-			
+
 			// Handle height resizing
 			newTall += (dy * _dragMultY);
 			// Handle position of corner y position
@@ -107,29 +104,29 @@ namespace
 			{
 				if (newTall < minTall)
 				{
-					dy=_dragOrgSize[1]-minTall;
+					dy = _dragOrgSize[1] - minTall;
 				}
 				newY += dy;
 			}
-			
-			if ( _frame->GetClipToParent() )
+
+			if (_frame->GetClipToParent())
 			{
 				// If any coordinate is out of range, snap it back
-				if ( newX < 0 )
+				if (newX < 0)
 					newX = 0;
-				if ( newY < 0 )
+				if (newY < 0)
 					newY = 0;
-				
+
 				int sx, sy;
-				surface()->GetScreenSize( sx, sy );
+				surface()->GetScreenSize(sx, sy);
 
 				int w, h;
-				_frame->GetSize( w, h );
-				if ( newX + w > sx )
+				_frame->GetSize(w, h);
+				if (newX + w > sx)
 				{
 					newX = sx - w;
 				}
-				if ( newY + h > sy )
+				if (newY + h > sy)
 				{
 					newY = sy - h;
 				}
@@ -143,7 +140,7 @@ namespace
 			_frame->InvalidateLayout();
 			_frame->Repaint();
 		}
-		
+
 		void OnCursorMoved(int x, int y)
 		{
 			if (!_dragging)
@@ -158,23 +155,23 @@ namespace
 			}
 
 			input()->GetCursorPos(x, y);
-			moved((x - _dragStart[0]), ( y - _dragStart[1]));
+			moved((x - _dragStart[0]), (y - _dragStart[1]));
 			_frame->Repaint();
 		}
-		
+
 		void OnMousePressed(MouseCode code)
 		{
 			if (code == MOUSE_LEFT)
-			{ 
-				_dragging=true;
-				int x,y;
-				input()->GetCursorPos(x,y);
-				_dragStart[0]=x;
-				_dragStart[1]=y;
-				_frame->GetPos(_dragOrgPos[0],_dragOrgPos[1]);
-				_frame->GetSize(_dragOrgSize[0],_dragOrgSize[1]);
+			{
+				_dragging = true;
+				int x, y;
+				input()->GetCursorPos(x, y);
+				_dragStart[0] = x;
+				_dragStart[1] = y;
+				_frame->GetPos(_dragOrgPos[0], _dragOrgPos[1]);
+				_frame->GetSize(_dragOrgSize[0], _dragOrgSize[1]);
 				input()->SetMouseCapture(GetVPanel());
-				
+
 				// if a child doesn't have focus, get it for ourselves
 				VPANEL focus = input()->GetFocus();
 				if (!focus || !ipanel()->HasParent(focus, _frame->GetVPanel()))
@@ -199,10 +196,10 @@ namespace
 			// draw the grab handle in the bottom right of the frame
 			surface()->DrawSetTextFont(_marlettFont);
 			surface()->DrawSetTextPos(0, 0);
-			
+
 			// thin highlight lines
 			surface()->DrawSetTextColor(GetFgColor());
-			surface()->DrawUnicodeChar('p'); 
+			surface()->DrawUnicodeChar('p');
 		}
 
 		void PaintBackground()
@@ -210,12 +207,12 @@ namespace
 			// draw the grab handle in the bottom right of the frame
 			surface()->DrawSetTextFont(_marlettFont);
 			surface()->DrawSetTextPos(0, 0);
-			
+
 			// thick shadow lines
 			surface()->DrawSetTextColor(GetBgColor());
-			surface()->DrawUnicodeChar('o'); 
+			surface()->DrawUnicodeChar('o');
 		}
-		
+
 		void OnMouseReleased(MouseCode code)
 		{
 			_dragging = false;
@@ -228,24 +225,24 @@ namespace
 			_dragging = false;
 		}
 
-		void ApplySchemeSettings(IScheme *pScheme)
+		void ApplySchemeSettings(IScheme* pScheme)
 		{
 			Panel::ApplySchemeSettings(pScheme);
-			bool isSmall = ((Frame *)GetParent())->IsSmallCaption();
+			bool isSmall = ((Frame*)GetParent())->IsSmallCaption();
 
-			_marlettFont = pScheme->GetFont( isSmall ? "MarlettSmall" : "Marlett", IsProportional());
-			SetFgColor(GetSchemeColor("BorderBright", pScheme));
-			SetBgColor(GetSchemeColor("BorderSelection", pScheme));
+			_marlettFont = pScheme->GetFont(isSmall ? "MarlettSmall" : "Marlett", IsProportional());
+			SetFgColor(GetSchemeColor("FrameGrip.Color1", pScheme));
+			SetBgColor(GetSchemeColor("FrameGrip.Color2", pScheme));
 
-			const char *snapRange = pScheme->GetResourceString("AutoSnapRange");
+			const char* snapRange = pScheme->GetResourceString("Frame.AutoSnapRange");
 			if (snapRange && *snapRange)
 			{
 				m_iSnapRange = atoi(snapRange);
 			}
 		}
-		
+
 	protected:
-		Frame *_frame;
+		Frame* _frame;
 		int  _dragMultX;
 		int  _dragMultY;
 		bool _dragging;
@@ -255,17 +252,17 @@ namespace
 		int  m_iSnapRange;
 		HFont _marlettFont;
 	};
-	
+
 	//-----------------------------------------------------------------------------
 	// Purpose: Handles caption grip input for moving dialogs around
 	//-----------------------------------------------------------------------------
 	class CaptionGripPanel : public GripPanel
 	{
 	public:
-		CaptionGripPanel(Frame* frame, const char *name) : GripPanel(frame, name, 0, 0)
+		CaptionGripPanel(Frame* frame, const char* name) : GripPanel(frame, name, 0, 0)
 		{
 		}
-		
+
 		void moved(int dx, int dy)
 		{
 			if (!_frame->IsMoveable())
@@ -289,28 +286,28 @@ namespace
 				for (int i = 0; i < ipanel()->GetChildCount(root); ++i)
 				{
 					VPANEL child = ipanel()->GetChild(root, i);
-					tryToDock (child, newX, newY);
+					tryToDock(child, newX, newY);
 				}
 			}
 
-			if ( _frame->GetClipToParent() )
+			if (_frame->GetClipToParent())
 			{
 				// If any coordinate is out of range, snap it back
-				if ( newX < 0 )
+				if (newX < 0)
 					newX = 0;
-				if ( newY < 0 )
+				if (newY < 0)
 					newY = 0;
-				
+
 				int sx, sy;
-				surface()->GetScreenSize( sx, sy );
+				surface()->GetScreenSize(sx, sy);
 
 				int w, h;
-				_frame->GetSize( w, h );
-				if ( newX + w > sx )
+				_frame->GetSize(w, h);
+				if (newX + w > sx)
 				{
 					newX = sx - w;
 				}
-				if ( newY + h > sy )
+				if (newY + h > sy)
 				{
 					newY = sy - h;
 				}
@@ -319,23 +316,23 @@ namespace
 			_frame->SetPos(newX, newY);
 
 		}
-		
-		void tryToDock(VPANEL window, int &newX, int & newY)
+
+		void tryToDock(VPANEL window, int& newX, int& newY)
 		{
 			// bail if child is this window	
-			if ( window == _frame->GetVPanel())
+			if (window == _frame->GetVPanel())
 				return;
-			
+
 			int cx, cy, cw, ct;
-			if ( (ipanel()->IsVisible(window)) && (ipanel()->IsPopup(window)) )
+			if ((ipanel()->IsVisible(window)) && (ipanel()->IsPopup(window)))
 			{
 				// position
 				ipanel()->GetAbsPos(window, cx, cy);
 				// dimensions
 				ipanel()->GetSize(window, cw, ct);
-				bool snapped = getOutsideSnapPosition (cx, cy, cw, ct, newX, newY);
+				bool snapped = getOutsideSnapPosition(cx, cy, cw, ct, newX, newY);
 				if (snapped)
-				{ 
+				{
 					// if we snapped, we're done with this path
 					// dont try to snap to kids
 					return;
@@ -358,38 +355,38 @@ namespace
 		// Output: snapToX, snapToY new coords for window, unchanged if we dont snap
 		// Returns true if we snapped, false if we did not snap.
 		bool getInsideSnapPosition(int boundX, int boundY, int boundWide, int boundTall,
-			int &snapToX, int &snapToY)
+			int& snapToX, int& snapToY)
 		{
-			
+
 			int wide, tall;
 			_frame->GetSize(wide, tall);
-			Assert (wide > 0);
-			Assert (tall > 0);
-			
-			bool snapped=false;
+			Assert(wide > 0);
+			Assert(tall > 0);
+
+			bool snapped = false;
 			if (abs(snapToX - boundX) < m_iSnapRange)
 			{
 				snapToX = boundX;
-				snapped=true;
+				snapped = true;
 			}
 			else if (abs((snapToX + wide) - (boundX + boundWide)) < m_iSnapRange)
 			{
 				snapToX = boundX + boundWide - wide;
-				snapped=true;
+				snapped = true;
 			}
 
 			if (abs(snapToY - boundY) < m_iSnapRange)
 			{
 				snapToY = boundY;
-				snapped=true;
+				snapped = true;
 			}
 			else if (abs((snapToY + tall) - (boundY + boundTall)) < m_iSnapRange)
 			{
 				snapToY = boundY + boundTall - tall;
-				snapped=true;
+				snapped = true;
 			}
 			return snapped;
-			
+
 		}
 
 		// Purpose: To calculate the windows new x,y position if it snaps
@@ -399,91 +396,91 @@ namespace
 		// Output: snapToX, snapToY new coords for window, unchanged if we dont snap
 		// Returns true if we snapped, false if we did not snap.
 		bool getOutsideSnapPosition(int left, int top, int boundWide, int boundTall,
-			int &snapToX, int &snapToY)
+			int& snapToX, int& snapToY)
 		{
-			Assert (boundWide >= 0);
-			Assert (boundTall >= 0);
-						
-			bool snapped=false;
-			
-			int right=left+boundWide;
-			int bottom=top+boundTall;
+			Assert(boundWide >= 0);
+			Assert(boundTall >= 0);
+
+			bool snapped = false;
+
+			int right = left + boundWide;
+			int bottom = top + boundTall;
 
 			int wide, tall;
 			_frame->GetSize(wide, tall);
-			Assert (wide > 0);
-			Assert (tall > 0);
+			Assert(wide > 0);
+			Assert(tall > 0);
 
 			// we now see if we are going to be able to snap to a window side, and not
 			// just snap to the "open air"
 			// want to make it so that if any part of the window can dock to the candidate, it will
 
 			// is this window horizontally snappable to the candidate
-			bool horizSnappable=( 
+			bool horizSnappable = (
 				//  top of window is in range
-				((snapToY > top) && (snapToY < bottom)) 
+				((snapToY > top) && (snapToY < bottom))
 				// bottom of window is in range
-				|| ((snapToY+tall > top) && (snapToY+tall < bottom)) 
+				|| ((snapToY + tall > top) && (snapToY + tall < bottom))
 				// window is just plain bigger than the window we wanna dock to
-				|| ((snapToY < top) && (snapToY+tall > bottom)) ); 
-			
-			
+				|| ((snapToY < top) && (snapToY + tall > bottom)));
+
+
 			// is this window vertically snappable to the candidate
-			bool vertSnappable=	( 
-				 //  left of window is in range
+			bool vertSnappable = (
+				//  left of window is in range
 				((snapToX > left) && (snapToX < right))
 				//  right of window is in range
-				|| ((snapToX+wide > left) && (snapToX+wide < right)) 
+				|| ((snapToX + wide > left) && (snapToX + wide < right))
 				// window is just plain bigger than the window we wanna dock to
-				|| ((snapToX < left) && (snapToX+wide > right)) ); 
-			
+				|| ((snapToX < left) && (snapToX + wide > right)));
+
 			// if neither, might as well bail
-			if ( !(horizSnappable || vertSnappable) )
+			if (!(horizSnappable || vertSnappable))
 				return false;
 
 			//if we're within the snap threshold then snap
-			if ( (snapToX <= (right+m_iSnapRange)) && 
-				(snapToX >= (right-m_iSnapRange)) ) 
-			{  
+			if ((snapToX <= (right + m_iSnapRange)) &&
+				(snapToX >= (right - m_iSnapRange)))
+			{
 				if (horizSnappable)
 				{
 					//disallow "open air" snaps
-					snapped=true;
-					snapToX = right;  
+					snapped = true;
+					snapToX = right;
 				}
 			}
-			else if ((snapToX + wide) >= (left-m_iSnapRange) &&
-				(snapToX + wide) <= (left+m_iSnapRange)) 
+			else if ((snapToX + wide) >= (left - m_iSnapRange) &&
+				(snapToX + wide) <= (left + m_iSnapRange))
 			{
 				if (horizSnappable)
 				{
-					snapped=true;
-					snapToX = left-wide;
+					snapped = true;
+					snapToX = left - wide;
 				}
 			}
-			
-			if ( (snapToY <= (bottom+m_iSnapRange)) &&
-				(snapToY >= (bottom-m_iSnapRange)) ) 
+
+			if ((snapToY <= (bottom + m_iSnapRange)) &&
+				(snapToY >= (bottom - m_iSnapRange)))
 			{
 				if (vertSnappable)
 				{
-					snapped=true;
+					snapped = true;
 					snapToY = bottom;
 				}
 			}
-			else if ((snapToY + tall) <= (top+m_iSnapRange) &&
-				(snapToY + tall) >= (top-m_iSnapRange)) 
+			else if ((snapToY + tall) <= (top + m_iSnapRange) &&
+				(snapToY + tall) >= (top - m_iSnapRange))
 			{
 				if (vertSnappable)
 				{
-					snapped=true;
-					snapToY = top-tall;
+					snapped = true;
+					snapToY = top - tall;
 				}
 			}
 			return snapped;
 		}
 	};
-	
+
 }
 
 namespace vgui
@@ -494,68 +491,68 @@ namespace vgui
 	class FrameButton : public Button
 	{
 	private:
-		IBorder *_brightBorder, *_depressedBorder, *_disabledBorder;
+		IBorder* _brightBorder, * _depressedBorder, * _disabledBorder;
 		Color _enabledFgColor, _enabledBgColor;
 		Color _disabledFgColor, _disabledBgColor;
 		bool _disabledLook;
-	
+
 	public:
-	
-		static int GetButtonSide( Frame *pFrame )
+
+		static int GetButtonSide(Frame* pFrame)
 		{
-			if ( pFrame->IsSmallCaption() )
+			if (pFrame->IsSmallCaption())
 			{
 				return 12;
 			}
 
 			return 18;
 		}
-		
-		
-		FrameButton(Panel *parent, const char *name, const char *text) : Button(parent, name, text)
+
+
+		FrameButton(Panel* parent, const char* name, const char* text) : Button(parent, name, text)
 		{
-			SetSize( FrameButton::GetButtonSide( (Frame *)parent ), FrameButton::GetButtonSide( (Frame *)parent ) );
+			SetSize(FrameButton::GetButtonSide((Frame*)parent), FrameButton::GetButtonSide((Frame*)parent));
 			_brightBorder = NULL;
 			_depressedBorder = NULL;
 			_disabledBorder = NULL;
 			_disabledLook = true;
 			SetContentAlignment(Label::a_northwest);
 			SetTextInset(2, 1);
-			SetBlockDragChaining( true );
+			SetBlockDragChaining(true);
 		}
-		
-		virtual void ApplySchemeSettings(IScheme *pScheme)
+
+		virtual void ApplySchemeSettings(IScheme* pScheme)
 		{
 			Button::ApplySchemeSettings(pScheme);
-			
-			_enabledFgColor = GetSchemeColor("TitleButtonFgColor", pScheme);
-			_enabledBgColor = GetSchemeColor("TitleButtonBgColor", pScheme);
 
-			_disabledFgColor = GetSchemeColor("TitleButtonDisabledFgColor", pScheme);
-			_disabledBgColor = GetSchemeColor("TitleButtonDisabledBgColor", pScheme);
-			
+			_enabledFgColor = GetSchemeColor("FrameTitleButton.FgColor", pScheme);
+			_enabledBgColor = GetSchemeColor("FrameTitleButton.BgColor", pScheme);
+
+			_disabledFgColor = GetSchemeColor("FrameTitleButton.DisabledFgColor", pScheme);
+			_disabledBgColor = GetSchemeColor("FrameTitleButton.DisabledBgColor", pScheme);
+
 			_brightBorder = pScheme->GetBorder("TitleButtonBorder");
 			_depressedBorder = pScheme->GetBorder("TitleButtonDepressedBorder");
 			_disabledBorder = pScheme->GetBorder("TitleButtonDisabledBorder");
-			
+
 			SetDisabledLook(_disabledLook);
 		}
-		
-		virtual IBorder *GetBorder(bool depressed, bool armed, bool selected, bool keyfocus)
+
+		virtual IBorder* GetBorder(bool depressed, bool armed, bool selected, bool keyfocus)
 		{
 			if (_disabledLook)
 			{
 				return _disabledBorder;
 			}
-			
+
 			if (depressed)
 			{
 				return _depressedBorder;
 			}
-			
+
 			return _brightBorder;
 		}
-		
+
 		virtual void SetDisabledLook(bool state)
 		{
 			_disabledLook = state;
@@ -574,220 +571,227 @@ namespace vgui
 			}
 		}
 
-        virtual void PerformLayout()
-        {
-            Button::PerformLayout();
-            Repaint();
-        }
-		
+		virtual void PerformLayout()
+		{
+			Button::PerformLayout();
+			Repaint();
+		}
+
 		// Don't request focus.
 		// This will keep items in the listpanel selected.
 		virtual void OnMousePressed(MouseCode code)
 		{
 			if (!IsEnabled())
 				return;
-			
+
 			if (!IsMouseClickEnabled(code))
 				return;
-			
+
 			if (IsUseCaptureMouseEnabled())
 			{
 				{
 					SetSelected(true);
 					Repaint();
 				}
-				
+
 				// lock mouse input to going to this button
 				input()->SetMouseCapture(GetVPanel());
 			}
 		}
-};
+	};
 
 
-//-----------------------------------------------------------------------------
-// Purpose: icon button
-//-----------------------------------------------------------------------------
-class FrameSystemButton : public MenuButton
-{
-	DECLARE_CLASS_SIMPLE( FrameSystemButton, MenuButton );
-
-private:
-	IImage *_enabled, *_disabled;
-	Color _enCol, _disCol;
-	bool _respond;
-	CUtlString m_EnabledImage;
-	CUtlString m_DisabledImage;
-	
-public:
-	FrameSystemButton(Panel *parent, const char *panelName) : MenuButton(parent, panelName, "")
+	//-----------------------------------------------------------------------------
+	// Purpose: icon button
+	//-----------------------------------------------------------------------------
+	class FrameSystemButton : public MenuButton
 	{
-		_disabled = _enabled = NULL;
-		_respond = true;
-		SetEnabled(false);
-		// This menu will open if we use the left or right mouse button
-		SetMouseClickEnabled( MOUSE_RIGHT, true );
-		SetBlockDragChaining( true );
-	}
-	
-	void SetImages( const char *pEnabledImage, const char *pDisabledImage = NULL )
-	{
-		m_EnabledImage = pEnabledImage;
-		m_DisabledImage = pDisabledImage ? pDisabledImage : pEnabledImage;
-	}
+		DECLARE_CLASS_SIMPLE(FrameSystemButton, MenuButton);
 
-	void GetImageSize( int &w, int &h )
-	{
-		w = h = 0;
+	private:
+		IImage* _enabled, * _disabled;
+		Color _enCol, _disCol;
+		bool _respond;
+		CUtlString m_EnabledImage;
+		CUtlString m_DisabledImage;
 
-		int tw = 0, th = 0;
-		if ( _enabled )
+	public:
+		FrameSystemButton(Panel* parent, const char* panelName) : MenuButton(parent, panelName, "")
 		{
-			_enabled->GetSize( w, h );
+			_disabled = _enabled = NULL;
+			_respond = true;
+			SetEnabled(false);
+			// This menu will open if we use the left or right mouse button
+			SetMouseClickEnabled(MOUSE_RIGHT, true);
+			SetBlockDragChaining(true);
 		}
-		if ( _disabled )
+
+		void SetImages(const char* pEnabledImage, const char* pDisabledImage = NULL)
 		{
-			_disabled->GetSize( tw, th );
+			m_EnabledImage = pEnabledImage;
+			m_DisabledImage = pDisabledImage ? pDisabledImage : pEnabledImage;
 		}
-		if ( tw > w )
+
+		void GetImageSize(int& w, int& h)
 		{
-			w = tw;
-		}
-		if ( th > h )
-		{
-			h = th;
-		}
-	}
+			w = h = 0;
 
-	virtual void ApplySchemeSettings(IScheme *pScheme)
-	{
-		BaseClass::ApplySchemeSettings(pScheme);
-
-		_enCol = GetSchemeColor("TitleBarBgColor", pScheme);
-		_disCol = GetSchemeColor("TitleBarDisabledBgColor", pScheme);
-		
-		const char *pEnabledImage = m_EnabledImage.Length() ? m_EnabledImage.Get() : 
-			pScheme->GetResourceString( "TitleBarIcon" );
-		const char *pDisabledImage = m_DisabledImage.Length() ? m_DisabledImage.Get() : 
-			pScheme->GetResourceString( "TitleBarDisabledIcon" );
-		_enabled = scheme()->GetImage( pEnabledImage, false);
-		_disabled = scheme()->GetImage( pDisabledImage, false);
-
-		SetTextInset(0, 0);
-	
-		// get our iconic image
-		SetEnabled(IsEnabled());
-	}
-	
-	virtual IBorder *GetBorder(bool depressed, bool armed, bool selected, bool keyfocus)
-	{
-		return NULL;
-	}
-
-	virtual void SetEnabled(bool state)
-	{
-		Button::SetEnabled(state);
-		
-		if (IsEnabled())
-		{
-			if ( _enabled )
+			int tw = 0, th = 0;
+			if (_enabled)
 			{
-				SetImageAtIndex(0, _enabled, 0);
+				_enabled->GetSize(w, h);
 			}
-			SetBgColor(_enCol);
-			SetDefaultColor(_enCol, _enCol);
-			SetArmedColor(_enCol, _enCol);
-			SetDepressedColor(_enCol, _enCol);
-		}
-		else
-		{
-			if ( _disabled )
+			if (_disabled)
 			{
-				SetImageAtIndex(0, _disabled, 0);
+				_disabled->GetSize(tw, th);
 			}
-			SetBgColor(_disCol);
-			SetDefaultColor(_disCol, _disCol);
-			SetArmedColor(_disCol, _disCol);
-			SetDepressedColor(_disCol, _disCol);
-		}
-	}
-	
-	void SetResponsive(bool state)
-	{
-		_respond = state;
-	}
-
-	virtual void OnMousePressed(MouseCode code)
-	{
-		// button may look enabled but not be responsive
-		if (!_respond)
-			return;
-
-		BaseClass::OnMousePressed(code);
-	}
-
-	virtual void OnMouseDoublePressed(MouseCode code)
-	{
-		// button may look enabled but not be responsive
-		if (!_respond)
-			return;
-
-		// only close if left is double pressed 
-		if (code == MOUSE_LEFT)
-		{
-			// double click on the icon closes the window
-			// But only if the menu contains a 'close' item
-			vgui::Menu *pMenu = GetMenu();
-			if ( pMenu && pMenu->FindChildByName("Close") )
+			if (tw > w)
 			{
-				PostMessage(GetVParent(), new KeyValues("CloseFrameButtonPressed"));
+				w = tw;
+			}
+			if (th > h)
+			{
+				h = th;
 			}
 		}
-	}
 
-};
+		virtual void ApplySchemeSettings(IScheme* pScheme)
+		{
+			BaseClass::ApplySchemeSettings(pScheme);
 
-} // namespace vgui
+			_enCol = GetSchemeColor("FrameSystemButton.FgColor", pScheme);
+			_disCol = GetSchemeColor("FrameSystemButton.BgColor", pScheme);
+
+			const char* pEnabledImage = m_EnabledImage.Length() ? m_EnabledImage.Get() :
+				pScheme->GetResourceString("FrameSystemButton.Icon");
+			const char* pDisabledImage = m_DisabledImage.Length() ? m_DisabledImage.Get() :
+				pScheme->GetResourceString("FrameSystemButton.DisabledIcon");
+			_enabled = scheme()->GetImage(pEnabledImage, false);
+			_disabled = scheme()->GetImage(pDisabledImage, false);
+
+			SetTextInset(0, 0);
+
+			// get our iconic image
+			SetEnabled(IsEnabled());
+		}
+
+		virtual IBorder* GetBorder(bool depressed, bool armed, bool selected, bool keyfocus)
+		{
+			return NULL;
+		}
+
+		virtual void SetEnabled(bool state)
+		{
+			Button::SetEnabled(state);
+
+			if (IsEnabled())
+			{
+				if (_enabled)
+				{
+					SetImageAtIndex(0, _enabled, 0);
+				}
+				SetBgColor(_enCol);
+				SetDefaultColor(_enCol, _enCol);
+				SetArmedColor(_enCol, _enCol);
+				SetDepressedColor(_enCol, _enCol);
+			}
+			else
+			{
+				if (_disabled)
+				{
+					SetImageAtIndex(0, _disabled, 0);
+				}
+				SetBgColor(_disCol);
+				SetDefaultColor(_disCol, _disCol);
+				SetArmedColor(_disCol, _disCol);
+				SetDepressedColor(_disCol, _disCol);
+			}
+		}
+
+		void SetResponsive(bool state)
+		{
+			_respond = state;
+		}
+
+		virtual void OnMousePressed(MouseCode code)
+		{
+			// button may look enabled but not be responsive
+			if (!_respond)
+				return;
+
+			BaseClass::OnMousePressed(code);
+		}
+
+		virtual void OnMouseDoublePressed(MouseCode code)
+		{
+			// button may look enabled but not be responsive
+			if (!_respond)
+				return;
+
+			// only close if left is double pressed 
+			if (code == MOUSE_LEFT)
+			{
+				// double click on the icon closes the window
+				// But only if the menu contains a 'close' item
+				vgui::Menu* pMenu = GetMenu();
+				if (pMenu && pMenu->FindChildByName("Close"))
+				{
+					PostMessage(GetVParent(), new KeyValues("CloseFrameButtonPressed"));
+				}
+			}
+		}
+
+	};
+
+} // namespace vgui2
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-Frame::Frame(Panel *parent, const char *panelName, bool showTaskbarIcon) : EditablePanel(parent, panelName)
+Frame::Frame(Panel* parent, const char* panelName, bool showTaskbarIcon /*=true*/, bool bPopup /*=true*/) : EditablePanel(parent, panelName)
 {
 	// frames start invisible, to avoid having window flicker in on taskbar
 	SetVisible(false);
-	MakePopup(showTaskbarIcon);
+	if (bPopup)
+	{
+		MakePopup(showTaskbarIcon);
+	}
 
 	m_hPreviousModal = 0;
 
-	_title=null;
-	_moveable=true;
-	_sizeable=true;
-	m_bHasFocus=false;
-	_flashWindow=false;
-	_drawTitleBar = true; 
+	_title = nullptr;
+	_moveable = true;
+	_sizeable = true;
+	m_bHasFocus = false;
+	_flashWindow = false;
+	_drawTitleBar = true;
 	m_bPreviouslyVisible = false;
 	m_bFadingOut = false;
+	m_bDisableFadeEffect = false;
 	m_flTransitionEffectTime = 0.0f;
 	m_flFocusTransitionEffectTime = 0.0f;
 	m_bDeleteSelfOnClose = false;
-	m_iClientInsetX = 5; 
+	m_iClientInsetX = 5;
 	m_iClientInsetY = 5;
-	m_iTitleTextInsetX = 12;
+	m_iClientInsetXOverridden = false;
+	m_iTitleTextInsetX = 28;
 	m_bClipToParent = false;
 	m_bSmallCaption = false;
 	m_bChainKeysToParent = false;
 	m_bPrimed = false;
+	m_hCustomTitleFont = INVALID_FONT;
 
 	SetTitle("#Frame_Untitled", parent ? false : true);
-	
+
 	// add ourselves to the build group
 	SetBuildGroup(GetBuildGroup());
-	
-	SetMinimumSize(128,66);
-	
-	_sysMenu = NULL;
+
+	SetMinimumSize(128, 66);
 
 	GetFocusNavGroup().SetFocusTopLevel(true);
-	
+
+#if !defined( _X360 )
+	_sysMenu = NULL;
+
 	// add dragging grips
 	_topGrip = new GripPanel(this, "frame_topGrip", 0, -1);
 	_bottomGrip = new GripPanel(this, "frame_bottomGrip", 0, 1);
@@ -797,13 +801,13 @@ Frame::Frame(Panel *parent, const char *panelName, bool showTaskbarIcon) : Edita
 	_topRightGrip = new GripPanel(this, "frame_trGrip", 1, -1);
 	_bottomLeftGrip = new GripPanel(this, "frame_blGrip", -1, 1);
 	_bottomRightGrip = new GripPanel(this, "frame_brGrip", 1, 1);
-	_captionGrip = new CaptionGripPanel(this, "frame_caption" );
+	_captionGrip = new CaptionGripPanel(this, "frame_caption");
 	_captionGrip->SetCursor(dc_arrow);
 
-	_minimizeButton = new FrameButton(this, "frame_minimize","0");
+	_minimizeButton = new FrameButton(this, "frame_minimize", "0");
 	_minimizeButton->AddActionSignalTarget(this);
 	_minimizeButton->SetCommand(new KeyValues("Minimize"));
-	
+
 	_maximizeButton = new FrameButton(this, "frame_maximize", "1");
 	//!! no maximize handler implemented yet, so leave maximize button disabled
 	SetMaximizeButtonVisible(false);
@@ -812,11 +816,11 @@ Frame::Frame(Panel *parent, const char *panelName, bool showTaskbarIcon) : Edita
 	_minimizeToSysTrayButton = new FrameButton(this, "frame_mintosystray", str);
 	_minimizeToSysTrayButton->SetCommand("MinimizeToSysTray");
 	SetMinimizeToSysTrayButtonVisible(false);
-	
+
 	_closeButton = new FrameButton(this, "frame_close", "r");
 	_closeButton->AddActionSignalTarget(this);
 	_closeButton->SetCommand(new KeyValues("CloseFrameButtonPressed"));
-	
+
 	if (!surface()->SupportsFeature(CSurface::FRAME_MINIMIZE_MAXIMIZE))
 	{
 		SetMinimizeButtonVisible(false);
@@ -832,8 +836,16 @@ Frame::Frame(Panel *parent, const char *panelName, bool showTaskbarIcon) : Edita
 
 	_menuButton = new FrameSystemButton(this, "frame_menu");
 	_menuButton->SetMenu(GetSysMenu());
-	
+#endif
+
 	SetupResizeCursors();
+
+	REGISTER_COLOR_AS_OVERRIDABLE(m_InFocusBgColor, "infocus_bgcolor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(m_OutOfFocusBgColor, "outoffocus_bgcolor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_titleBarBgColor, "titlebarbgcolor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_titleBarDisabledBgColor, "titlebardisabledbgcolor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_titleBarFgColor, "titlebarfgcolor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_titleBarDisabledFgColor, "titlebardisabledfgcolor_override");
 }
 
 //-----------------------------------------------------------------------------
@@ -841,16 +853,17 @@ Frame::Frame(Panel *parent, const char *panelName, bool showTaskbarIcon) : Edita
 //-----------------------------------------------------------------------------
 Frame::~Frame()
 {
-	if ( input()->GetAppModalSurface() == GetVPanel() )
+	if (input()->GetAppModalSurface() == GetVPanel())
 	{
-		vgui::input()->ReleaseAppModalSurface();
-		if ( m_hPreviousModal != 0 )
+		input()->ReleaseAppModalSurface();
+		if (m_hPreviousModal != 0)
 		{
-			vgui::input()->SetAppModalSurface( m_hPreviousModal );
+			input()->SetAppModalSurface(m_hPreviousModal);
 			m_hPreviousModal = 0;
 		}
 	}
 
+#if !defined( _X360 )
 	delete _topGrip;
 	delete _bottomGrip;
 	delete _leftGrip;
@@ -864,7 +877,8 @@ Frame::~Frame()
 	delete _maximizeButton;
 	delete _closeButton;
 	delete _menuButton;
-	
+	delete _minimizeToSysTrayButton;
+#endif
 	delete _title;
 }
 
@@ -873,6 +887,7 @@ Frame::~Frame()
 //-----------------------------------------------------------------------------
 void Frame::SetupResizeCursors()
 {
+#if !defined( _X360 )
 	if (IsSizeable())
 	{
 		_topGrip->SetCursor(dc_sizens);
@@ -902,6 +917,7 @@ void Frame::SetupResizeCursors()
 		_bottomRightGrip->SetPaintEnabled(false);
 		_bottomRightGrip->SetPaintBackgroundEnabled(false);
 	}
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -910,7 +926,10 @@ void Frame::SetupResizeCursors()
 void Frame::Activate()
 {
 	MoveToFront();
-	RequestFocus();
+	if (IsKeyBoardInputEnabled())
+	{
+		RequestFocus();
+	}
 	SetVisible(true);
 	SetEnabled(true);
 	if (m_bFadingOut)
@@ -927,14 +946,14 @@ void Frame::Activate()
 //-----------------------------------------------------------------------------
 // Sets up, cleans up modal dialogs
 //-----------------------------------------------------------------------------
-void Frame::DoModal( )
+void Frame::DoModal()
 {
 	// move to the middle of the screen
 	MoveToCenterOfScreen();
 	InvalidateLayout();
 	Activate();
-	m_hPreviousModal = vgui::input()->GetAppModalSurface();
-	vgui::input()->SetAppModalSurface( GetVPanel() );
+	m_hPreviousModal = input()->GetAppModalSurface();
+	input()->SetAppModalSurface(GetVPanel());
 }
 
 
@@ -943,13 +962,13 @@ void Frame::DoModal( )
 //-----------------------------------------------------------------------------
 void Frame::CloseModal()
 {
-	vgui::input()->ReleaseAppModalSurface();
-	if ( m_hPreviousModal != 0 )
+	input()->ReleaseAppModalSurface();
+	if (m_hPreviousModal != 0)
 	{
-		vgui::input()->SetAppModalSurface( m_hPreviousModal );
+		input()->SetAppModalSurface(m_hPreviousModal);
 		m_hPreviousModal = 0;
 	}
-	PostMessage( this, new KeyValues("Close") );
+	PostMessage(this, new KeyValues("Close"));
 }
 
 
@@ -959,7 +978,7 @@ void Frame::CloseModal()
 //-----------------------------------------------------------------------------
 void Frame::ActivateMinimized()
 {
-	if ( IsVisible() && !IsMinimized() || !surface()->SupportsFeature( CSurface::FRAME_MINIMIZE_MAXIMIZE ) )
+	if ((IsVisible() && !IsMinimized()) || !surface()->SupportsFeature(CSurface::FRAME_MINIMIZE_MAXIMIZE))
 	{
 		Activate();
 	}
@@ -998,23 +1017,23 @@ void Frame::MoveToCenterOfScreen()
 }
 
 
-void Frame::LayoutProportional( FrameButton *bt )
+void Frame::LayoutProportional(FrameButton* bt)
 {
 	float scale = 1.0;
 
-	if( IsProportional() )
-	{	
+	if (IsProportional())
+	{
 		int screenW, screenH;
-		surface()->GetScreenSize( screenW, screenH );
+		surface()->GetScreenSize(screenW, screenH);
 
-		int proW,proH;
-		surface()->GetProportionalBase( proW, proH );
+		int proW, proH;
+		surface()->GetProportionalBase(proW, proH);
 
-		scale =	( (float)( screenH ) / (float)( proH ) );
+		scale = ((float)(screenH) / (float)(proH));
 	}
 
-	bt->SetSize( (int)( FrameButton::GetButtonSide( this ) * scale ), (int)( FrameButton::GetButtonSide( this ) * scale ) );
-	bt->SetTextInset( (int)( ceil( 2 * scale ) ), (int) ( ceil(1 * scale ) ) );
+	bt->SetSize((int)(FrameButton::GetButtonSide(this) * scale), (int)(FrameButton::GetButtonSide(this) * scale));
+	bt->SetTextInset((int)(ceil(2 * scale)), (int)(ceil(1 * scale)));
 }
 
 //-----------------------------------------------------------------------------
@@ -1026,12 +1045,12 @@ void Frame::OnThink()
 	BaseClass::OnThink();
 
 	// check for transition effects
-	if (IsVisible() && m_flTransitionEffectTime > 0)
+	if (IsVisible() && m_flTransitionEffectTime > 0 && (!m_bDisableFadeEffect))
 	{
 		if (m_bFadingOut)
 		{
 			// we're fading out, see if we're done so we can fully hide the window
-			if (GetAlpha() < 1)
+			if (GetAlpha() < (IsX360() ? 64 : 1))
 			{
 				FinishClose();
 			}
@@ -1040,22 +1059,33 @@ void Frame::OnThink()
 		{
 			// need to fade-in
 			m_bPreviouslyVisible = true;
-			
+
 			// fade in
-			SetAlpha(0);
+			if (IsX360())
+			{
+				SetAlpha(64);
+			}
+			else
+			{
+				SetAlpha(0);
+			}
 			GetAnimationController()->RunAnimationCommand(this, "alpha", 255.0f, 0.0f, m_flTransitionEffectTime, AnimationController::INTERPOLATOR_LINEAR);
 		}
 	}
 
 	// check for focus changes
 	bool hasFocus = false;
-	VPANEL focus = input()->GetFocus();
-	if (focus && ipanel()->HasParent(focus, GetVPanel()))
+
+	if (input())
 	{
-		if ( input()->GetAppModalSurface() == 0 || 
-			input()->GetAppModalSurface() == GetVPanel() )
+		VPANEL focus = input()->GetFocus();
+		if (focus && ipanel()->HasParent(focus, GetVPanel()))
 		{
-			hasFocus = true;
+			if (input()->GetAppModalSurface() == 0 ||
+				input()->GetAppModalSurface() == GetVPanel())
+			{
+				hasFocus = true;
+			}
 		}
 	}
 	if (hasFocus != m_bHasFocus)
@@ -1063,7 +1093,7 @@ void Frame::OnThink()
 		// Because vgui focus is message based, and focus gets reset to NULL when a focused panel is deleted, we defer the flashing/transition
 		//  animation for an extra frame in case something is deleted, a message is sent, and then we become the focused panel again on the
 		//  next frame
-		if ( !m_bPrimed )
+		if (!m_bPrimed)
 		{
 			m_bPrimed = true;
 			return;
@@ -1083,6 +1113,7 @@ void Frame::OnThink()
 //-----------------------------------------------------------------------------
 void Frame::OnFrameFocusChanged(bool bHasFocus)
 {
+#if !defined( _X360 )
 	// enable/disable the frame buttons
 	_minimizeButton->SetDisabledLook(!bHasFocus);
 	_maximizeButton->SetDisabledLook(!bHasFocus);
@@ -1094,6 +1125,7 @@ void Frame::OnFrameFocusChanged(bool bHasFocus)
 	_minimizeToSysTrayButton->InvalidateLayout();
 	_closeButton->InvalidateLayout();
 	_menuButton->InvalidateLayout();
+#endif
 
 	if (bHasFocus)
 	{
@@ -1107,9 +1139,9 @@ void Frame::OnFrameFocusChanged(bool bHasFocus)
 	// set our background color
 	if (bHasFocus)
 	{
-		if (m_flFocusTransitionEffectTime)
+		if (m_flFocusTransitionEffectTime && (!m_bDisableFadeEffect))
 		{
-			GetAnimationController()->RunAnimationCommand(this, "BgColor", m_InFocusBgColor, 0.0f, m_flTransitionEffectTime, AnimationController::INTERPOLATOR_LINEAR);
+			GetAnimationController()->RunAnimationCommand(this, "BgColor", m_InFocusBgColor, 0.0f, m_bDisableFadeEffect ? 0.0f : m_flTransitionEffectTime, AnimationController::INTERPOLATOR_LINEAR);
 		}
 		else
 		{
@@ -1118,9 +1150,9 @@ void Frame::OnFrameFocusChanged(bool bHasFocus)
 	}
 	else
 	{
-		if (m_flFocusTransitionEffectTime)
+		if (m_flFocusTransitionEffectTime && (!m_bDisableFadeEffect))
 		{
-			GetAnimationController()->RunAnimationCommand(this, "BgColor", m_OutOfFocusBgColor, 0.0f, m_flTransitionEffectTime, AnimationController::INTERPOLATOR_LINEAR);
+			GetAnimationController()->RunAnimationCommand(this, "BgColor", m_OutOfFocusBgColor, 0.0f, m_bDisableFadeEffect ? 0.0f : m_flTransitionEffectTime, AnimationController::INTERPOLATOR_LINEAR);
 		}
 		else
 		{
@@ -1138,40 +1170,40 @@ void Frame::OnFrameFocusChanged(bool bHasFocus)
 int Frame::GetDraggerSize()
 {
 	const int DRAGGER_SIZE = 5;
-	if ( m_bSmallCaption )
+	if (m_bSmallCaption)
 	{
 		return 3;
 	}
-	
+
 	return DRAGGER_SIZE;
 }
 
 int Frame::GetCornerSize()
 {
 	const int CORNER_SIZE = 8;
-	if ( m_bSmallCaption )
+	if (m_bSmallCaption)
 	{
 		return 6;
 	}
-	
+
 	return CORNER_SIZE;
 }
 
 int Frame::GetBottomRightSize()
 {
 	const int BOTTOMRIGHTSIZE = 18;
-	if ( m_bSmallCaption )
+	if (m_bSmallCaption)
 	{
 		return 12;
 	}
-	
+
 	return BOTTOMRIGHTSIZE;
 }
 
 int Frame::GetCaptionHeight()
 {
 	const int CAPTIONHEIGHT = 23;
-	if ( m_bSmallCaption )
+	if (m_bSmallCaption)
 	{
 		return 12;
 	}
@@ -1185,16 +1217,17 @@ void Frame::PerformLayout()
 {
 	// chain back
 	BaseClass::PerformLayout();
-	
+
 	// move everything into place
 	int wide, tall;
 	GetSize(wide, tall);
-	
+
+#if !defined( _X360 )
 	int DRAGGER_SIZE = GetDraggerSize();
 	int CORNER_SIZE = GetCornerSize();
 	int CORNER_SIZE2 = CORNER_SIZE * 2;
 	int BOTTOMRIGHTSIZE = GetBottomRightSize();
-	
+
 	_topGrip->SetBounds(CORNER_SIZE, 0, wide - CORNER_SIZE2, DRAGGER_SIZE);
 	_leftGrip->SetBounds(0, CORNER_SIZE, DRAGGER_SIZE, tall - CORNER_SIZE2);
 	_topLeftGrip->SetBounds(0, 0, CORNER_SIZE, CORNER_SIZE);
@@ -1206,9 +1239,9 @@ void Frame::PerformLayout()
 	_rightGrip->SetBounds(wide - DRAGGER_SIZE, CORNER_SIZE, DRAGGER_SIZE, tall - (CORNER_SIZE + BOTTOMRIGHTSIZE));
 
 	_bottomRightGrip->SetBounds(wide - BOTTOMRIGHTSIZE, tall - BOTTOMRIGHTSIZE, BOTTOMRIGHTSIZE, BOTTOMRIGHTSIZE);
-	
-	_captionGrip->SetSize(wide-10,GetCaptionHeight());
-	
+
+	_captionGrip->SetSize(wide - 10, GetCaptionHeight());
+
 	_topGrip->MoveToFront();
 	_bottomGrip->MoveToFront();
 	_leftGrip->MoveToFront();
@@ -1217,83 +1250,81 @@ void Frame::PerformLayout()
 	_topRightGrip->MoveToFront();
 	_bottomLeftGrip->MoveToFront();
 	_bottomRightGrip->MoveToFront();
-	
+
 	_maximizeButton->MoveToFront();
 	_menuButton->MoveToFront();
 	_minimizeButton->MoveToFront();
 	_minimizeToSysTrayButton->MoveToFront();
-	
-	_menuButton->SetBounds(5+2, 5+3, GetCaptionHeight()-5, GetCaptionHeight()-5);
+	_menuButton->SetBounds(5 + 2, 5 + 3, GetCaptionHeight() - 5, GetCaptionHeight() - 5);
+#endif
 
 	float scale = 1;
-
-	if(IsProportional())
+	if (IsProportional())
 	{
 		int screenW, screenH;
-		surface()->GetScreenSize( screenW, screenH );
+		surface()->GetScreenSize(screenW, screenH);
 
-		int proW,proH;
-		surface()->GetProportionalBase( proW, proH );
+		int proW, proH;
+		surface()->GetProportionalBase(proW, proH);
 
-		scale =	( (float)( screenH ) / (float)( proH ) );
+		scale = ((float)(screenH) / (float)(proH));
 	}
-	
-	int offset_start = (int)( 20 * scale );
-	int offset= offset_start;
 
-	int top_border_offset = (int) ( ( 5+3 ) * scale );
-	if ( m_bSmallCaption )
+#if !defined( _X360 )
+	int offset_start = (int)(20 * scale);
+	int offset = offset_start;
+
+	int top_border_offset = (int)((5 + 3) * scale);
+	if (m_bSmallCaption)
 	{
-		top_border_offset = (int) ( ( 3 ) * scale );
+		top_border_offset = (int)((3) * scale);
 	}
 
-	int side_border_offset = (int) ( 5 * scale );
-
-	// 	 push the buttons against the east side
+	int side_border_offset = (int)(5 * scale);
+	// push the buttons against the east side
 	if (_closeButton->IsVisible())
 	{
-		_closeButton->SetPos((wide-side_border_offset)-offset,top_border_offset);
+		_closeButton->SetPos((wide - side_border_offset) - offset, top_border_offset);
 		offset += offset_start;
-		LayoutProportional( _closeButton );
+		LayoutProportional(_closeButton);
 
 	}
 	if (_minimizeToSysTrayButton->IsVisible())
 	{
-		_minimizeToSysTrayButton->SetPos((wide-side_border_offset)-offset,top_border_offset);
+		_minimizeToSysTrayButton->SetPos((wide - side_border_offset) - offset, top_border_offset);
 		offset += offset_start;
-		LayoutProportional( _minimizeToSysTrayButton );
+		LayoutProportional(_minimizeToSysTrayButton);
 	}
 	if (_maximizeButton->IsVisible())
 	{
-		_maximizeButton->SetPos((wide-side_border_offset)-offset,top_border_offset);
+		_maximizeButton->SetPos((wide - side_border_offset) - offset, top_border_offset);
 		offset += offset_start;
-		LayoutProportional( _maximizeButton );
+		LayoutProportional(_maximizeButton);
 	}
 	if (_minimizeButton->IsVisible())
 	{
-		_minimizeButton->SetPos((wide-side_border_offset)-offset,top_border_offset);
+		_minimizeButton->SetPos((wide - side_border_offset) - offset, top_border_offset);
 		offset += offset_start;
-		LayoutProportional( _minimizeButton );
+		LayoutProportional(_minimizeButton);
 	}
-
-
+#endif
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Set the text in the title bar.
 //-----------------------------------------------------------------------------
-void Frame::SetTitle(const char *title, bool surfaceTitle)
+void Frame::SetTitle(const char* title, bool surfaceTitle)
 {
 	if (!_title)
 	{
-		_title = new TextImage( "" );
+		_title = new TextImage("");
 	}
 
 	Assert(title);
 	_title->SetText(title);
 
-    // see if the combobox text has changed, and if so, post a message detailing the new text
-	const char *newTitle = title;
+	// see if the combobox text has changed, and if so, post a message detailing the new text
+	const char* newTitle = title;
 
 	// check if the new text is a localized string, if so undo it
 	wchar_t unicodeText[128];
@@ -1302,33 +1333,33 @@ void Frame::SetTitle(const char *title, bool surfaceTitle)
 	{
 		// try lookup in localization tables
 		StringIndex_t unlocalizedTextSymbol = g_pVGuiLocalize->FindIndex(newTitle + 1);
-		if (unlocalizedTextSymbol != INVALID_STRING_INDEX)
+		if (unlocalizedTextSymbol != INVALID_LOCALIZE_STRING_INDEX)
 		{
 			// we have a new text value
-			wcsncpy( unicodeText, g_pVGuiLocalize->GetValueByIndex(unlocalizedTextSymbol), sizeof( unicodeText) / sizeof(wchar_t) );
+			wcsncpy(unicodeText, g_pVGuiLocalize->GetValueByIndex(unlocalizedTextSymbol), sizeof(unicodeText) / sizeof(wchar_t));
 		}
 	}
 	else
 	{
-		g_pVGuiLocalize->ConvertANSIToUnicode( newTitle, unicodeText, sizeof(unicodeText) );
+		g_pVGuiLocalize->ConvertANSIToUnicode(newTitle, unicodeText, sizeof(unicodeText));
 	}
 
 	if (surfaceTitle)
 	{
 		surface()->SetTitle(GetVPanel(), unicodeText);
 	}
-	
+
 	Repaint();
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Sets the unicode text in the title bar
 //-----------------------------------------------------------------------------
-void Frame::SetTitle(const wchar_t *title, bool surfaceTitle)
+void Frame::SetTitle(const wchar_t* title, bool surfaceTitle)
 {
 	if (!_title)
 	{
-		_title = new TextImage( "" );
+		_title = new TextImage("");
 	}
 	_title->SetText(title);
 	if (surfaceTitle)
@@ -1341,7 +1372,7 @@ void Frame::SetTitle(const wchar_t *title, bool surfaceTitle)
 //-----------------------------------------------------------------------------
 // Purpose: Set the text in the title bar.
 //-----------------------------------------------------------------------------
-void Frame::InternalSetTitle(const char *title)
+void Frame::InternalSetTitle(const char* title)
 {
 	SetTitle(title, true);
 }
@@ -1351,7 +1382,7 @@ void Frame::InternalSetTitle(const char *title)
 //-----------------------------------------------------------------------------
 void Frame::SetMoveable(bool state)
 {
-	_moveable=state;
+	_moveable = state;
 }
 
 //-----------------------------------------------------------------------------
@@ -1359,13 +1390,13 @@ void Frame::SetMoveable(bool state)
 //-----------------------------------------------------------------------------
 void Frame::SetSizeable(bool state)
 {
-	_sizeable=state;
-	
+	_sizeable = state;
+
 	SetupResizeCursors();
 }
 
 // When moving via caption, don't let any part of window go outside parent's bounds
-void Frame::SetClipToParent( bool state )
+void Frame::SetClipToParent(bool state)
 {
 	m_bClipToParent = state;
 }
@@ -1394,7 +1425,7 @@ bool Frame::IsSizeable()
 //-----------------------------------------------------------------------------
 // Purpose: Get the size of the panel inside the frame edges.
 //-----------------------------------------------------------------------------
-void Frame::GetClientArea(int &x, int &y, int &wide, int &tall)
+void Frame::GetClientArea(int& x, int& y, int& wide, int& tall)
 {
 	x = m_iClientInsetX;
 
@@ -1407,11 +1438,13 @@ void Frame::GetClientArea(int &x, int &y, int &wide, int &tall)
 		int border = m_bSmallCaption ? CAPTION_TITLE_BORDER_SMALL : CAPTION_TITLE_BORDER;
 		int yinset = m_bSmallCaption ? 0 : m_iClientInsetY;
 
+		yinset += m_iTitleTextInsetYOverride;
+
 		y = yinset + captionTall + border + 1;
 		tall = (tall - yinset) - y;
 	}
-	
-	if ( m_bSmallCaption )
+
+	if (m_bSmallCaption)
 	{
 		tall -= 5;
 	}
@@ -1423,11 +1456,11 @@ void Frame::GetClientArea(int &x, int &y, int &wide, int &tall)
 //-----------------------------------------------------------------------------
 // Purpose: applies user configuration settings
 //-----------------------------------------------------------------------------
-void Frame::ApplyUserConfigSettings(KeyValues *userConfig)
+void Frame::ApplyUserConfigSettings(KeyValues* userConfig)
 {
 	// calculate defaults
 	int wx, wy, ww, wt;
-	vgui::surface()->GetWorkspaceBounds(wx, wy, ww, wt);
+	surface()->GetWorkspaceBounds(wx, wy, ww, wt);
 
 	int x, y, wide, tall;
 	GetBounds(x, y, wide, tall);
@@ -1451,13 +1484,13 @@ void Frame::ApplyUserConfigSettings(KeyValues *userConfig)
 		tall = userConfig->GetInt("tall", tall);
 
 		// Make sure it's no larger than the workspace
-		if ( wide > ww )
+		if (wide > ww)
 		{
 			wide = ww;
 		}
-		if ( tall > wt )
+		if (tall > wt)
 		{
-			tall = wt; 
+			tall = wt;
 		}
 	}
 
@@ -1512,7 +1545,7 @@ void Frame::ApplyUserConfigSettings(KeyValues *userConfig)
 //-----------------------------------------------------------------------------
 // Purpose: returns user config settings for this control
 //-----------------------------------------------------------------------------
-void Frame::GetUserConfigSettings(KeyValues *userConfig)
+void Frame::GetUserConfigSettings(KeyValues* userConfig)
 {
 	if (_moveable)
 	{
@@ -1543,7 +1576,7 @@ bool Frame::HasUserConfigSettings()
 //-----------------------------------------------------------------------------
 // Purpose: gets the default position and size on the screen to appear the first time (defaults to centered)
 //-----------------------------------------------------------------------------
-bool Frame::GetDefaultScreenPosition(int &x, int &y, int &wide, int &tall)
+bool Frame::GetDefaultScreenPosition(int& x, int& y, int& wide, int& tall)
 {
 	return false;
 }
@@ -1572,23 +1605,34 @@ void Frame::PaintBackground()
 		// caption
 		surface()->DrawSetColor(titleColor);
 		int inset = m_bSmallCaption ? 3 : 5;
-		int captionHeight = m_bSmallCaption ? 14: 28;
+		int captionHeight = m_bSmallCaption ? 14 : 28;
 
-		surface()->DrawFilledRect(inset, inset, wide - inset, captionHeight );
-		
+		surface()->DrawFilledRect(inset, inset, wide - inset, captionHeight);
+
 		if (_title)
 		{
-			int nTitleX = m_iTitleTextInsetX;
+			int nTitleX = m_iTitleTextInsetXOverride ? m_iTitleTextInsetXOverride : m_iTitleTextInsetX;
 			int nTitleWidth = wide - 72;
-			if ( _menuButton && _menuButton->IsVisible() )
+#if !defined( _X360 )
+			if (_menuButton && _menuButton->IsVisible())
 			{
 				int mw, mh;
-				_menuButton->GetImageSize( mw, mh );
+				_menuButton->GetImageSize(mw, mh);
 				nTitleX += mw;
 				nTitleWidth -= mw;
 			}
-			_title->SetPos( nTitleX, m_bSmallCaption ? 2 : 9 );		
-			_title->SetSize( nTitleWidth, tall);
+#endif
+			int nTitleY;
+			if (m_iTitleTextInsetYOverride)
+			{
+				nTitleY = m_iTitleTextInsetYOverride;
+			}
+			else
+			{
+				nTitleY = m_bSmallCaption ? 2 : 9;
+			}
+			_title->SetPos(nTitleX, nTitleY);
+			_title->SetSize(nTitleWidth, tall);
 			_title->Paint();
 		}
 	}
@@ -1597,61 +1641,74 @@ void Frame::PaintBackground()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void Frame::ApplySchemeSettings(IScheme *pScheme)
+void Frame::ApplySchemeSettings(IScheme* pScheme)
 {
 	// always chain back
 	BaseClass::ApplySchemeSettings(pScheme);
-	
-	_titleBarFgColor = GetSchemeColor("TitleBarFgColor", pScheme);
-	_titleBarBgColor = GetSchemeColor("TitleBarBgColor", pScheme);
-	_titleBarDisabledFgColor = GetSchemeColor("TitleBarDisabledFgColor", pScheme);
-	_titleBarDisabledBgColor = GetSchemeColor("TitleBarDisabledBgColor", pScheme);
 
-	const char *font = NULL;
-	if ( m_bSmallCaption )
+	SetOverridableColor(&_titleBarFgColor, GetSchemeColor("FrameTitleBar.TextColor", pScheme));
+	SetOverridableColor(&_titleBarBgColor, GetSchemeColor("FrameTitleBar.BgColor", pScheme));
+	SetOverridableColor(&_titleBarDisabledFgColor, GetSchemeColor("FrameTitleBar.DisabledTextColor", pScheme));
+	SetOverridableColor(&_titleBarDisabledBgColor, GetSchemeColor("FrameTitleBar.DisabledBgColor", pScheme));
+
+	const char* font = NULL;
+	if (m_bSmallCaption)
 	{
-		font = pScheme->GetResourceString("SmallFont");
+		font = pScheme->GetResourceString("FrameTitleBar.SmallFont");
 	}
 	else
 	{
-		font = pScheme->GetResourceString("Font");
+		font = pScheme->GetResourceString("FrameTitleBar.Font");
 	}
-	_title->SetFont( pScheme->GetFont((font && *font) ? font : "Default", IsProportional()) );
+
+	HFont titlefont;
+	if (m_hCustomTitleFont)
+	{
+		titlefont = m_hCustomTitleFont;
+	}
+	else
+	{
+		titlefont = pScheme->GetFont((font && *font) ? font : "Default", IsProportional());
+	}
+
+	_title->SetFont(titlefont);
 	_title->ResizeImageToContent();
 
+#if !defined( _X360 )
 	HFont marfont = (HFont)0;
-	if ( m_bSmallCaption )
+	if (m_bSmallCaption)
 	{
-		marfont = pScheme->GetFont( "MarlettSmall", IsProportional() );
+		marfont = pScheme->GetFont("MarlettSmall", IsProportional());
 	}
 	else
 	{
-		marfont = pScheme->GetFont( "Marlett", IsProportional() );
+		marfont = pScheme->GetFont("Marlett", IsProportional());
 	}
 
 	_minimizeButton->SetFont(marfont);
 	_maximizeButton->SetFont(marfont);
 	_minimizeToSysTrayButton->SetFont(marfont);
 	_closeButton->SetFont(marfont);
+#endif
 
-	m_flTransitionEffectTime = atof(pScheme->GetResourceString("TransitionEffectTime"));
-	m_flFocusTransitionEffectTime = atof(pScheme->GetResourceString("FocusTransitionEffectTime"));
+	m_flTransitionEffectTime = atof(pScheme->GetResourceString("Frame.TransitionEffectTime"));
+	m_flFocusTransitionEffectTime = atof(pScheme->GetResourceString("Frame.FocusTransitionEffectTime"));
 
-	m_InFocusBgColor = pScheme->GetColor("BgColor", GetBgColor());
-	m_OutOfFocusBgColor = pScheme->GetColor("OutOfFocusBgColor", m_InFocusBgColor);
+	SetOverridableColor(&m_InFocusBgColor, pScheme->GetColor("Frame.BgColor", GetBgColor()));
+	SetOverridableColor(&m_OutOfFocusBgColor, pScheme->GetColor("Frame.OutOfFocusBgColor", m_InFocusBgColor));
 
-	const char *resourceString = pScheme->GetResourceString("ClientInsetX");
-	if ( resourceString && *resourceString )
+	const char* resourceString = pScheme->GetResourceString("Frame.ClientInsetX");
+	if (resourceString)
 	{
 		m_iClientInsetX = atoi(resourceString);
 	}
-	resourceString = pScheme->GetResourceString("ClientInsetY");
-	if ( resourceString && *resourceString )
+	resourceString = pScheme->GetResourceString("Frame.ClientInsetY");
+	if (resourceString)
 	{
 		m_iClientInsetY = atoi(resourceString);
 	}
-	resourceString = pScheme->GetResourceString("TitleTextInsetX");
-	if ( resourceString && *resourceString )
+	resourceString = pScheme->GetResourceString("Frame.TitleTextInsetX");
+	if (resourceString)
 	{
 		m_iTitleTextInsetX = atoi(resourceString);
 	}
@@ -1659,60 +1716,90 @@ void Frame::ApplySchemeSettings(IScheme *pScheme)
 	SetBgColor(m_InFocusBgColor);
 	SetBorder(pScheme->GetBorder("FrameBorder"));
 
-	OnFrameFocusChanged( m_bHasFocus );
+	OnFrameFocusChanged(m_bHasFocus);
 }
 
 // Disables the fade-in/out-effect even if configured in the scheme settings
-void Frame::DisableFadeEffect( void )
+void Frame::DisableFadeEffect(void)
 {
 	m_flFocusTransitionEffectTime = 0.f;
 	m_flTransitionEffectTime = 0.f;
 }
 
+void Frame::SetFadeEffectDisableOverride(bool disabled)
+{
+	m_bDisableFadeEffect = disabled;
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Apply settings loaded from a resource file
 //-----------------------------------------------------------------------------
-void Frame::ApplySettings(KeyValues *inResourceData)
+void Frame::ApplySettings(KeyValues* inResourceData)
 {
 	// Don't change the frame's visibility, remove that setting from the config data
 	inResourceData->SetInt("visible", -1);
 	BaseClass::ApplySettings(inResourceData);
-	if( !inResourceData->GetInt("settitlebarvisible", 1 ) ) // if "title" is "0" then don't draw the title bar
+
+	SetCloseButtonVisible(inResourceData->GetBool("setclosebuttonvisible", true));
+
+	if (!inResourceData->GetInt("settitlebarvisible", 1)) // if "title" is "0" then don't draw the title bar
 	{
-		SetTitleBarVisible( false );
+		SetTitleBarVisible(false);
 	}
-	
+
 	// set the title
-	const char *title = inResourceData->GetString("title", "");
+	const char* title = inResourceData->GetString("title", "");
 	if (title && *title)
 	{
 		SetTitle(title, true);
+	}
+
+	const char* titlefont = inResourceData->GetString("title_font", "");
+	if (titlefont && titlefont[0])
+	{
+		IScheme* pScheme = scheme()->GetIScheme(GetScheme());
+		if (pScheme)
+		{
+			m_hCustomTitleFont = pScheme->GetFont(titlefont);
+		}
+	}
+
+	KeyValues* pKV = inResourceData->FindKey("clientinsetx_override", false);
+	if (pKV)
+	{
+		m_iClientInsetX = pKV->GetInt();
+		m_iClientInsetXOverridden = true;
 	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Apply settings loaded from a resource file
 //-----------------------------------------------------------------------------
-void Frame::GetSettings(KeyValues *outResourceData)
+void Frame::GetSettings(KeyValues* outResourceData)
 {
 	BaseClass::GetSettings(outResourceData);
-	outResourceData->SetInt("settitlebarvisible", _drawTitleBar );
+	outResourceData->SetInt("settitlebarvisible", _drawTitleBar);
 
 	if (_title)
 	{
 		char buf[256];
-		_title->GetUnlocalizedText( buf, 255 );
+		_title->GetUnlocalizedText(buf, 255);
 		if (buf[0])
 		{
 			outResourceData->SetString("title", buf);
 		}
+	}
+
+	if (m_iClientInsetXOverridden)
+	{
+		outResourceData->SetInt("clientinsetx_override", m_iClientInsetX);
 	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: returns a description of the settings possible for a frame
 //-----------------------------------------------------------------------------
-const char *Frame::GetDescription()
+const char* Frame::GetDescription()
 {
 	static char buf[512];
 	Q_snprintf(buf, sizeof(buf), "%s, string title", BaseClass::GetDescription());
@@ -1728,16 +1815,16 @@ void Frame::OnClose()
 	if (input()->GetAppModalSurface() == GetVPanel())
 	{
 		input()->ReleaseAppModalSurface();
-		if ( m_hPreviousModal != 0 )
+		if (m_hPreviousModal != 0)
 		{
-			vgui::input()->SetAppModalSurface( m_hPreviousModal );
+			input()->SetAppModalSurface(m_hPreviousModal);
 			m_hPreviousModal = 0;
 		}
 	}
-	
+
 	BaseClass::OnClose();
 
-	if (m_flTransitionEffectTime)
+	if (m_flTransitionEffectTime && !m_bDisableFadeEffect)
 	{
 		// begin the hide transition effect
 		GetAnimationController()->RunAnimationCommand(this, "alpha", 0.0f, 0.0f, m_flTransitionEffectTime, AnimationController::INTERPOLATOR_LINEAR);
@@ -1763,7 +1850,7 @@ void Frame::OnCloseFrameButtonPressed()
 //-----------------------------------------------------------------------------
 // Purpose: Command handling
 //-----------------------------------------------------------------------------
-void Frame::OnCommand(const char *command)
+void Frame::OnCommand(const char* command)
 {
 	if (!stricmp(command, "Close"))
 	{
@@ -1791,8 +1878,9 @@ void Frame::OnCommand(const char *command)
 //-----------------------------------------------------------------------------
 // Purpose: Get the system menu 
 //-----------------------------------------------------------------------------
-Menu *Frame::GetSysMenu()
+Menu* Frame::GetSysMenu()
 {
+#if !defined( _X360 )
 	if (!_sysMenu)
 	{
 		_sysMenu = new Menu(this, NULL);
@@ -1805,7 +1893,7 @@ Menu *Frame::GetSysMenu()
 
 		// check for enabling/disabling menu items
 		// this might have to be done at other times as well. 
-		Panel *menuItem = _sysMenu->FindChildByName("Minimize");
+		Panel* menuItem = _sysMenu->FindChildByName("Minimize");
 		if (menuItem)
 		{
 			menuItem->SetEnabled(_minimizeButton->IsVisible());
@@ -1821,31 +1909,38 @@ Menu *Frame::GetSysMenu()
 			menuItem->SetEnabled(_closeButton->IsVisible());
 		}
 	}
-	
+
 	return _sysMenu;
+#else
+	return NULL;
+#endif
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Set the system menu  
 //-----------------------------------------------------------------------------
-void Frame::SetSysMenu(Menu *menu)
+void Frame::SetSysMenu(Menu* menu)
 {
+#if !defined( _X360 )
 	if (menu == _sysMenu)
 		return;
-	
+
 	_sysMenu->MarkForDeletion();
 	_sysMenu = menu;
 
 	_menuButton->SetMenu(_sysMenu);
+#endif
 }
 
 
 //-----------------------------------------------------------------------------
 // Set the system menu images
 //-----------------------------------------------------------------------------
-void Frame::SetImages( const char *pEnabledImage, const char *pDisabledImage )
+void Frame::SetImages(const char* pEnabledImage, const char* pDisabledImage)
 {
-	_menuButton->SetImages( pEnabledImage, pDisabledImage );
+#if !defined( _X360 )
+	_menuButton->SetImages(pEnabledImage, pDisabledImage);
+#endif
 }
 
 
@@ -1865,12 +1960,14 @@ void Frame::FinishClose()
 	SetVisible(false);
 	m_bPreviouslyVisible = false;
 	m_bFadingOut = false;
-	if (m_bDeleteSelfOnClose)
-	{
-		MarkForDeletion();
-	}
 
 	OnFinishedClose();
+
+	if (m_bDeleteSelfOnClose)
+	{
+		// Must be last because if vgui is not running then this will call delete this!!!
+		MarkForDeletion();
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1909,7 +2006,7 @@ void Frame::OnMousePressed(MouseCode code)
 			RequestFocus();
 		}
 	}
-	
+
 	BaseClass::OnMousePressed(code);
 }
 
@@ -1918,7 +2015,9 @@ void Frame::OnMousePressed(MouseCode code)
 //-----------------------------------------------------------------------------
 void Frame::SetMenuButtonVisible(bool state)
 {
+#if !defined( _X360 )
 	_menuButton->SetVisible(state);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1928,7 +2027,9 @@ void Frame::SetMenuButtonVisible(bool state)
 //-----------------------------------------------------------------------------
 void Frame::SetMenuButtonResponsive(bool state)
 {
+#if !defined( _X360 )
 	_menuButton->SetResponsive(state);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1936,7 +2037,9 @@ void Frame::SetMenuButtonResponsive(bool state)
 //-----------------------------------------------------------------------------
 void Frame::SetMinimizeButtonVisible(bool state)
 {
+#if !defined( _X360 )
 	_minimizeButton->SetVisible(state);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1944,7 +2047,9 @@ void Frame::SetMinimizeButtonVisible(bool state)
 //-----------------------------------------------------------------------------
 void Frame::SetMaximizeButtonVisible(bool state)
 {
+#if !defined( _X360 )
 	_maximizeButton->SetVisible(state);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1952,7 +2057,9 @@ void Frame::SetMaximizeButtonVisible(bool state)
 //-----------------------------------------------------------------------------
 void Frame::SetMinimizeToSysTrayButtonVisible(bool state)
 {
+#if !defined( _X360 )
 	_minimizeToSysTrayButton->SetVisible(state);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1960,7 +2067,9 @@ void Frame::SetMinimizeToSysTrayButtonVisible(bool state)
 //-----------------------------------------------------------------------------
 void Frame::SetCloseButtonVisible(bool state)
 {
+#if !defined( _X360 )
 	_closeButton->SetVisible(state);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1988,7 +2097,7 @@ void Frame::InternalFlashWindow()
 		_nextFlashState = true;
 		surface()->FlashWindow(GetVPanel(), _nextFlashState);
 		_nextFlashState = !_nextFlashState;
-		
+
 		PostMessage(this, new KeyValues("FlashWindow"), 1.8f);
 	}
 }
@@ -2008,7 +2117,7 @@ void Frame::FlashWindow()
 {
 	_flashWindow = true;
 	_nextFlashState = true;
-	
+
 	InternalFlashWindow();
 }
 
@@ -2025,12 +2134,12 @@ void Frame::FlashWindowStop()
 //-----------------------------------------------------------------------------
 // Purpose: load the control settings - should be done after all the children are added to the dialog
 //-----------------------------------------------------------------------------
-void Frame::LoadControlSettings( const char *dialogResourceName, const char *pathID, KeyValues *pPreloadedKeyValues )
+void Frame::LoadControlSettings(const char* dialogResourceName, const char* pathID, KeyValues* pPreloadedKeyValues, KeyValues* pConditions)
 {
-	BaseClass::LoadControlSettings( dialogResourceName, pathID, pPreloadedKeyValues );
-	
+	BaseClass::LoadControlSettings(dialogResourceName, pathID, pPreloadedKeyValues, pConditions);
+
 	// set the focus on the default control
-	Panel *defaultFocus = GetFocusNavGroup().GetDefaultPanel();
+	Panel* defaultFocus = GetFocusNavGroup().GetDefaultPanel();
 	if (defaultFocus)
 	{
 		defaultFocus->RequestFocus();
@@ -2047,18 +2156,18 @@ void Frame::OnKeyCodeTyped(KeyCode code)
 	bool shift = (input()->IsKeyDown(KEY_LSHIFT) || input()->IsKeyDown(KEY_RSHIFT));
 	bool ctrl = (input()->IsKeyDown(KEY_LCONTROL) || input()->IsKeyDown(KEY_RCONTROL));
 	bool alt = (input()->IsKeyDown(KEY_LALT) || input()->IsKeyDown(KEY_RALT));
-	
-	if ( IsX360() )
+
+	if (IsX360())
 	{
-		vgui::Panel *pMap = FindChildByName( "ControllerMap" );
-		if ( pMap && pMap->IsKeyBoardInputEnabled() )
+		Panel* pMap = FindChildByName("ControllerMap");
+		if (pMap && pMap->IsKeyBoardInputEnabled())
 		{
-			pMap->OnKeyCodeTyped( code );
+			pMap->OnKeyCodeTyped(code);
 			return;
 		}
 	}
 
-	if ( ctrl && shift && alt && code == KEY_B)
+	if (ctrl && shift && alt && code == KEY_B)
 	{
 		// enable build mode
 		ActivateBuildMode();
@@ -2072,7 +2181,7 @@ void Frame::OnKeyCodeTyped(KeyCode code)
 			// reload the data file
 			scheme()->ReloadSchemes();
 
-			Panel *panel = ipanel()->GetPanel(top, GetModuleName());
+			Panel* panel = ipanel()->GetPanel(top, GetModuleName());
 			if (panel)
 			{
 				// make the top-level panel reload it's scheme, it will chain down to all the child panels
@@ -2089,28 +2198,28 @@ void Frame::OnKeyCodeTyped(KeyCode code)
 	{
 		// check for a default button
 		VPANEL panel = GetFocusNavGroup().GetCurrentDefaultButton();
-		if (panel && ipanel()->IsVisible( panel ) && ipanel()->IsEnabled( panel ))
+		if (panel && ipanel()->IsVisible(panel) && ipanel()->IsEnabled(panel))
 		{
 			// Activate the button
 			PostMessage(panel, new KeyValues("Hotkey"));
 		}
 	}
-	else if ( code == KEY_ESCAPE && 
-		surface()->SupportsFeature(CSurface::ESCAPE_KEY) && 
-		input()->GetAppModalSurface() == GetVPanel() )
+	else if (code == KEY_ESCAPE &&
+		surface()->SupportsFeature(CSurface::ESCAPE_KEY) &&
+		input()->GetAppModalSurface() == GetVPanel())
 	{
 		// ESC cancels, unless we're in the engine - in the engine ESC flips between the UI and the game
 		CloseModal();
 	}
 	// Usually don't chain back as Frames are the end of the line for key presses, unless
 	// m_bChainKeysToParent is set
-	else if ( m_bChainKeysToParent )
+	else if (m_bChainKeysToParent)
 	{
-		BaseClass::OnKeyCodeTyped( code );
+		BaseClass::OnKeyCodeTyped(code);
 	}
 	else
 	{
-		input()->OnKeyCodeUnhandled( (int)code );
+		//input()->OnKeyCodeUnhandled( (int)code );
 	}
 }
 
@@ -2118,7 +2227,7 @@ void Frame::OnKeyCodeTyped(KeyCode code)
 // Purpose: If true, then OnKeyCodeTyped messages continue up past the Frame
 // Input  : state - 
 //-----------------------------------------------------------------------------
-void Frame::SetChainKeysToParent( bool state )
+void Frame::SetChainKeysToParent(bool state)
 {
 	m_bChainKeysToParent = state;
 }
@@ -2140,7 +2249,7 @@ bool Frame::CanChainKeysToParent() const
 //-----------------------------------------------------------------------------
 void Frame::OnKeyTyped(wchar_t unichar)
 {
-	Panel *panel = GetFocusNavGroup().FindPanelByHotkey(unichar);
+	Panel* panel = GetFocusNavGroup().FindPanelByHotkey(unichar);
 	if (panel)
 	{
 		// tell the panel to Activate
@@ -2151,9 +2260,9 @@ void Frame::OnKeyTyped(wchar_t unichar)
 //-----------------------------------------------------------------------------
 // Purpose: sets all title bar controls
 //-----------------------------------------------------------------------------
-void Frame::SetTitleBarVisible( bool state )
+void Frame::SetTitleBarVisible(bool state)
 {
-	_drawTitleBar = state; 
+	_drawTitleBar = state;
 	SetMenuButtonVisible(state);
 	SetMinimizeButtonVisible(state);
 	SetMaximizeButtonVisible(state);
@@ -2163,7 +2272,7 @@ void Frame::SetTitleBarVisible( bool state )
 //-----------------------------------------------------------------------------
 // Purpose: sets the frame to delete itself on close
 //-----------------------------------------------------------------------------
-void Frame::SetDeleteSelfOnClose( bool state )
+void Frame::SetDeleteSelfOnClose(bool state)
 {
 	m_bDeleteSelfOnClose = state;
 }
@@ -2171,10 +2280,10 @@ void Frame::SetDeleteSelfOnClose( bool state )
 //-----------------------------------------------------------------------------
 // Purpose: updates localized text
 //-----------------------------------------------------------------------------
-void Frame::OnDialogVariablesChanged( KeyValues *dialogVariables )
+void Frame::OnDialogVariablesChanged(KeyValues* dialogVariables)
 {
 	StringIndex_t index = _title->GetUnlocalizedTextSymbol();
-	if (index != INVALID_STRING_INDEX)
+	if (index != INVALID_LOCALIZE_STRING_INDEX)
 	{
 		// reconstruct the string from the variables
 		wchar_t buf[1024];
@@ -2211,8 +2320,8 @@ void Frame::OnScreenSizeChanged(int iOldWide, int iOldTall)
 	}
 
 	// make sure the top-left is visible
-	x = max( 0, x );
-	y = max( 0, y );
+	x = max(0, x);
+	y = max(0, y);
 
 	// apply
 	SetPos(x, y);
@@ -2222,7 +2331,7 @@ void Frame::OnScreenSizeChanged(int iOldWide, int iOldTall)
 // Purpose: For supporting thin caption bars
 // Input  : state - 
 //-----------------------------------------------------------------------------
-void Frame::SetSmallCaption( bool state )
+void Frame::SetSmallCaption(bool state)
 {
 	m_bSmallCaption = state;
 	InvalidateLayout();
@@ -2242,43 +2351,43 @@ bool Frame::IsSmallCaption() const
 //-----------------------------------------------------------------------------
 // Purpose: Static method to place a frame under the cursor
 //-----------------------------------------------------------------------------
-void Frame::PlaceUnderCursor( )
+void Frame::PlaceUnderCursor()
 {
 	// get cursor position, this is local to this text edit window
 	int cursorX, cursorY;
-	input()->GetCursorPos( cursorX, cursorY );
+	input()->GetCursorPos(cursorX, cursorY);
 
 	// relayout the menu immediately so that we know it's size
 	InvalidateLayout(true);
 	int w, h;
-	GetSize( w, h );
+	GetSize(w, h);
 
 	// work out where the cursor is and therefore the best place to put the frame
 	int sw, sh;
-	surface()->GetScreenSize( sw, sh );
+	surface()->GetScreenSize(sw, sh);
 
 	// Try to center it first
 	int x, y;
-	x = cursorX - ( w / 2 );
-	y = cursorY - ( h / 2 );
+	x = cursorX - (w / 2);
+	y = cursorY - (h / 2);
 
 	// Clamp to various sides
-	if ( x + w > sw )
+	if (x + w > sw)
 	{
 		x = sw - w;
 	}
-	if ( y + h > sh )
+	if (y + h > sh)
 	{
 		y = sh - h;
 	}
-	if ( x < 0 )
+	if (x < 0)
 	{
 		x = 0;
 	}
-	if ( y < 0 )
+	if (y < 0)
 	{
 		y = 0;
 	}
 
-	SetPos( x, y );
+	SetPos(x, y);
 }

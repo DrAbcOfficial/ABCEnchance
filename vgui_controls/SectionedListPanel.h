@@ -14,7 +14,7 @@
 
 #include <utlvector.h>
 #include <utllinkedlist.h>
-#include <vgui/VGUI.h>
+#include <vgui/vgui.h>
 #include <vgui_controls/Panel.h>
 #include <vgui_controls/PHandle.h>
 #include <vgui_controls/Label.h>
@@ -87,7 +87,6 @@ namespace vgui
 
 		// set the text color of an item
 		virtual void SetItemFgColor(int itemID, Color color);
-		void SetItemColorData(int itemID, KeyValues* color);
 		//=============================================================================
 		// HPE_BEGIN:
 		// [menglish] Getters and setters for several item and section objects
@@ -100,9 +99,12 @@ namespace vgui
 		virtual void SetItemFont(int itemID, HFont font);
 		virtual void SetItemEnabled(int itemID, bool bEnabled);
 
+		void SetItemColorData(int itemID, KeyValues* data);
+
 		/* MESSAGES SENT:
 			"ItemSelected"
 				"itemID" - the selected item id, -1 if nothing selected
+
 			// when an item has been clicked on
 			"ItemContextMenu"		"itemID"
 			"ItemLeftClick"			"itemID"
@@ -148,10 +150,6 @@ namespace vgui
 
 		// returns the item ID from the row, again ignoring section dividers - valid from [0, GetItemCount )
 		virtual int GetItemIDFromRow(int row);
-
-		void ItemOnMousePressed(int index, MouseCode code);
-
-		void ItemOnMouseDoublePressed(int index, MouseCode code);
 
 		// returns the row that this itemID occupies. -1 if the itemID is invalid
 		virtual int GetRowFromItemID(int itemID);
@@ -227,12 +225,12 @@ namespace vgui
 		virtual void OnSizeChanged(int wide, int tall);
 		virtual void OnMouseWheeled(int delta);
 		virtual void OnMousePressed(MouseCode code);
+		virtual void NavigateTo(void);
 		virtual void OnKeyCodePressed(KeyCode code);
 		virtual void OnSetFocus();						// called after the panel receives the keyboard focus
 
 	public:
 		virtual void SetFontSection(int sectionID, HFont font);
-	private:
 		MESSAGE_FUNC(OnSliderMoved, "ScrollBarSliderMoved");
 
 		int GetSectionTall();

@@ -5,17 +5,19 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include <stdio.h>
-#include <metahook.h>
+#include <sstream>
 
-#include <VGUI/IInput.h>
-#include <vgui/IInputInternal.h>
+#include <stdio.h>
+
+#include <vgui/IInput.h>
 #include <vgui/IPanel.h>
 #include <vgui/ILocalize.h>
 #include <vgui/IScheme.h>
 #include <vgui/ISurface.h>
 #include <KeyValues.h>
 #include <vgui/MouseCode.h>
+
+#include <vguilocal.h>
 
 #include <vgui_controls/SectionedListPanel.h>
 #include <vgui_controls/Button.h>
@@ -26,9 +28,6 @@
 #include <vgui_controls/ImageList.h>
 
 #include "utlvector.h"
-#include <vguilocal.h>
-#include <mymathlib.h>
-#include <sstream>
 
 using namespace vgui;
 
@@ -44,6 +43,7 @@ enum
 
 namespace vgui
 {
+
 	//-----------------------------------------------------------------------------
 	// Purpose: header label that separates and names each section
 	//-----------------------------------------------------------------------------
@@ -140,6 +140,7 @@ namespace vgui
 					textImage->SetColor(GetFgColor());
 					image = textImage;
 				}
+
 				SetImageAtIndex(i, image, 0);
 			}
 		}
@@ -194,9 +195,13 @@ namespace vgui
 					SetImageBounds(i, xpos + wide - contentWide, wide - COLUMN_DATA_GAP);
 				}
 				else
+				{
 					SetImageBounds(i, xpos, wide - COLUMN_DATA_GAP);
+				}
 				xpos += columnWidth;
-				if (!(columnFlags & SectionedListPanel::HEADER_IMAGE)){
+
+				if (!(columnFlags & SectionedListPanel::HEADER_IMAGE))
+				{
 					Assert(dynamic_cast<TextImage*>(image) != NULL);
 					TextImage* textImage = (TextImage*)image;
 					textImage->SetFont(GetFont());
@@ -278,15 +283,6 @@ namespace vgui
 			m_iSectionID = sectionID;
 		}
 
-		void SetColorData(const KeyValues* data) {
-			if (m_pColorData)
-			{
-				m_pColorData->deleteThis();
-			}
-
-			m_pColorData = data->MakeCopy();
-		}
-
 		void SetData(const KeyValues* data)
 		{
 			if (m_pData)
@@ -297,6 +293,16 @@ namespace vgui
 			m_pData = data->MakeCopy();
 			InvalidateLayout();
 		}
+
+		void SetColorData(const KeyValues* data) {
+			if (m_pColorData)
+			{
+				m_pColorData->deleteThis();
+			}
+
+			m_pColorData = data->MakeCopy();
+		}
+
 
 		KeyValues* GetData()
 		{
@@ -380,7 +386,10 @@ namespace vgui
 						TextImage* textImage = dynamic_cast<TextImage*>(GetImageAtIndex(i));
 						if (textImage)
 						{
-							textImage->SetText(m_pData->GetString(keyname, ""));
+							if (columnFlags & SectionedListPanel::COLUMN_COLORED)
+								textImage->SetColorCodedText(m_pData->GetString(keyname, ""), GetColorCodeArray());
+							else
+								textImage->SetText(m_pData->GetString(keyname, ""));
 							textImage->ResizeImageToContentMaxWidth(maxWidth);
 
 							// set the text color based on the selection state - if one of the children of the SectionedListPanel has focus, then 'we have focus' if we're selected
@@ -465,67 +474,6 @@ namespace vgui
 			}
 
 			BaseClass::PerformLayout();
-		}
-
-		Color GetFgColorEx(const char* keyname) {
-			KeyValues* kv = m_pColorData->FindKey(keyname);
-			if (kv) {
-				switch (m_pColorData->GetDataType(keyname)) {
-				case kv->TYPE_COLOR: {
-					return m_pColorData->GetColor();
-				}
-				case kv->TYPE_INT: {
-					int iColorCode = m_pColorData->GetInt(keyname);
-					if (iColorCode == COLOR_PERCENT || iColorCode == COLOR_PING) {
-						float flTemp = 0;
-						int dataType = m_pData->GetDataType(keyname);
-						if (dataType == kv->TYPE_INT)
-							flTemp = m_pData->GetInt(keyname);
-						else if (dataType == kv->TYPE_FLOAT)
-							flTemp = m_pData->GetFloat(keyname);
-						else if (dataType == kv->TYPE_STRING) {
-							char str[512];
-							strcpy_s(str, m_pData->GetString(keyname));
-							auto isnum = [&](std::string str) {
-								std::stringstream sin(str);
-								double d;
-								char c;
-								if (!(sin >> d))
-									return false;
-								if (sin >> c)
-									return false;
-								return true;
-							};
-							if (iColorCode == COLOR_PING) {
-								char* buf = nullptr;
-								auto p = strtok_s(str, "/", &buf);
-								flTemp += V_atof(p);
-								while (p) {
-									p = strtok_s(nullptr, "/", &buf);
-									if(p)
-										flTemp += V_atof(p);
-								}
-							}
-							else if(isnum(str))
-								flTemp = V_atof(str);
-							else
-								return GetFgColor();
-						}
-						else
-							return GetFgColor();
-						flTemp = mathlib::clamp(fabs(flTemp / (iColorCode == COLOR_PING ? 255.0f : 100.0f) * 90.0f), 0.0f, 90.0f);
-						if (iColorCode == COLOR_PING)
-							flTemp = 90 - flTemp;
-						int r, g, b;
-						mathlib::HSVToRGB(flTemp, 1, 1, r, g, b);
-						return Color(r, g, b, 255);
-					}
-					else
-						return g_aryVGUIColorCode[iColorCode];
-				}
-				}
-			}
-			return GetFgColor();
 		}
 
 		virtual void ApplySchemeSettings(IScheme* pScheme)
@@ -802,6 +750,67 @@ namespace vgui
 		void SetShowColumns(bool bShow)
 		{
 			m_bShowColumns = bShow;
+		}
+
+		Color GetFgColorEx(const char* keyname) {
+			KeyValues* kv = m_pColorData->FindKey(keyname);
+			if (kv) {
+				switch (m_pColorData->GetDataType(keyname)) {
+				case kv->TYPE_COLOR: {
+					return m_pColorData->GetColor();
+				}
+				case kv->TYPE_INT: {
+					int iColorCode = m_pColorData->GetInt(keyname);
+					if (iColorCode == COLOR_PERCENT || iColorCode == COLOR_PING) {
+						float flTemp = 0;
+						int dataType = m_pData->GetDataType(keyname);
+						if (dataType == kv->TYPE_INT)
+							flTemp = m_pData->GetInt(keyname);
+						else if (dataType == kv->TYPE_FLOAT)
+							flTemp = m_pData->GetFloat(keyname);
+						else if (dataType == kv->TYPE_STRING) {
+							char str[512];
+							strcpy_s(str, m_pData->GetString(keyname));
+							auto isnum = [&](std::string str) {
+								std::stringstream sin(str);
+								double d;
+								char c;
+								if (!(sin >> d))
+									return false;
+								if (sin >> c)
+									return false;
+								return true;
+							};
+							if (iColorCode == COLOR_PING) {
+								char* buf = nullptr;
+								auto p = strtok_s(str, "/", &buf);
+								flTemp += V_atof(p);
+								while (p) {
+									p = strtok_s(nullptr, "/", &buf);
+									if (p)
+										flTemp += V_atof(p);
+								}
+							}
+							else if (isnum(str))
+								flTemp = V_atof(str);
+							else
+								return GetFgColor();
+						}
+						else
+							return GetFgColor();
+						flTemp = clamp(fabs(flTemp / (iColorCode == COLOR_PING ? 255.0f : 100.0f) * 90.0f), 0.0f, 90.0f);
+						if (iColorCode == COLOR_PING)
+							flTemp = 90 - flTemp;
+						Vector rgb;
+						HSVtoRGB(Vector(flTemp, 1, 1), rgb);
+						return Color(rgb.x * 255, rgb.y * 255, rgb.z * 255, 255);
+					}
+					else
+						return g_aryVGUIColorCode[iColorCode];
+				}
+				}
+			}
+			return GetFgColor();
 		}
 
 	private:
@@ -1287,10 +1296,10 @@ void SectionedListPanel::RemoveAllSections()
 bool SectionedListPanel::AddColumnToSection(int sectionID, const char* columnName, const char* columnText, int columnFlags, int width, HFont fallbackFont /*= INVALID_FONT*/)
 {
 	wchar_t wtext[64];
-	wchar_t* pwtext = vgui::localize()->Find(columnText);
+	wchar_t* pwtext = g_pVGuiLocalize->Find(columnText);
 	if (!pwtext)
 	{
-		vgui::localize()->ConvertANSIToUnicode(columnText, wtext, sizeof(wtext));
+		g_pVGuiLocalize->ConvertANSIToUnicode(columnText, wtext, sizeof(wtext));
 		pwtext = wtext;
 	}
 	return AddColumnToSection(sectionID, columnName, pwtext, columnFlags, width, fallbackFont);
@@ -1392,7 +1401,6 @@ void SectionedListPanel::SetItemFgColor(int itemID, Color color)
 	m_Items[itemID]->InvalidateLayout();
 }
 
-
 void SectionedListPanel::SetItemColorData(int itemID, KeyValues* data)
 {
 	Assert(m_Items.IsValidIndex(itemID));
@@ -1401,6 +1409,7 @@ void SectionedListPanel::SetItemColorData(int itemID, KeyValues* data)
 
 	m_Items[itemID]->SetColorData(data);
 }
+
 //=============================================================================
 // HPE_BEGIN:
 // [menglish] Setter for the background color similar to the foreground color
@@ -1732,21 +1741,35 @@ void SectionedListPanel::MoveSelectionUp(void)
 	ScrollToItem(newItemID);
 }
 
-int vgui::SectionedListPanel::GetLineSpacing()
+int SectionedListPanel::GetLineSpacing()
 {
 	if (m_iLineSpacingOverride > 0)
 		return m_iLineSpacingOverride;
 	return m_iLineSpacing;
 }
 
-int vgui::SectionedListPanel::GetLineSpacingOverride()
+int SectionedListPanel::GetLineSpacingOverride()
 {
 	return m_iLineSpacingOverride;
 }
 
-void vgui::SectionedListPanel::SetLineSpacingOverride(int value)
+void SectionedListPanel::SetLineSpacingOverride(int value)
 {
 	m_iLineSpacingOverride = value;
+}
+
+void SectionedListPanel::NavigateTo(void)
+{
+	BaseClass::NavigateTo();
+
+	if (m_SortedItems.Count())
+	{
+		int nItemID = m_SortedItems[0]->GetID();
+		SetSelectedItem(m_Items[nItemID]);
+		ScrollToItem(nItemID);
+	}
+
+	RequestFocus();
 }
 
 //-----------------------------------------------------------------------------
@@ -1766,7 +1789,10 @@ void SectionedListPanel::OnKeyCodePressed(KeyCode code)
 
 	KeyCode nButtonCode = code;
 
-	if (code == KEY_DOWN)
+	if (nButtonCode == KEY_XBUTTON_DOWN ||
+		nButtonCode == KEY_XSTICK1_DOWN ||
+		nButtonCode == KEY_XSTICK2_DOWN ||
+		code == KEY_DOWN)
 	{
 		int itemID = GetSelectedItem();
 		MoveSelectionDown();
@@ -1776,7 +1802,10 @@ void SectionedListPanel::OnKeyCodePressed(KeyCode code)
 			return;
 		}
 	}
-	else if (code == KEY_UP)
+	else if (nButtonCode == KEY_XBUTTON_UP ||
+		nButtonCode == KEY_XSTICK1_UP ||
+		nButtonCode == KEY_XSTICK2_UP ||
+		code == KEY_UP)
 	{
 		int itemID = GetSelectedItem();
 		MoveSelectionUp();
@@ -1863,7 +1892,7 @@ void SectionedListPanel::OnKeyCodePressed(KeyCode code)
 		ScrollToItem(itemID);
 		return;
 	}
-	else if (code == KEY_ENTER)
+	else if (code == KEY_ENTER || nButtonCode == KEY_XBUTTON_A)
 	{
 		Panel* pSelectedItem = m_hSelectedItem;
 		if (pSelectedItem)
@@ -2004,16 +2033,7 @@ int SectionedListPanel::GetItemIDFromRow(int row)
 
 	return m_SortedItems[row]->GetID();
 }
-void SectionedListPanel::ItemOnMousePressed(int index, MouseCode code) {
-	if (index < 0 || index >= m_Items.Count())
-		return;
-	m_Items[index]->OnMousePressed(code);
-}
-void SectionedListPanel::ItemOnMouseDoublePressed(int index, MouseCode code) {
-	if (index < 0 || index >= m_Items.Count())
-		return;
-	m_Items[index]->OnMouseDoublePressed(code);
-}
+
 //-----------------------------------------------------------------------------
 // Purpose: returns the row that this itemID occupies. -1 if the itemID is invalid
 //-----------------------------------------------------------------------------
@@ -2128,7 +2148,7 @@ void SectionedListPanel::InvalidateItem(int itemID)
 //-----------------------------------------------------------------------------
 // Purpose: set up a field for editing
 //-----------------------------------------------------------------------------
-void SectionedListPanel::EnterEditMode(int itemID, int column, vgui::Panel* editPanel)
+void SectionedListPanel::EnterEditMode(int itemID, int column, Panel* editPanel)
 {
 	m_hEditModePanel = editPanel;
 	m_iEditModeItemID = itemID;

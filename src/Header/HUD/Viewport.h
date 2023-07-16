@@ -27,6 +27,7 @@ class CFlashLightPanel;
 class CNoticePanel;
 class CCrosshairPanel;
 class CKillMarkPanel;
+class CEffectPanel;
 
 class ISchemel;
 
@@ -55,6 +56,8 @@ public:
 
 	void SetInterMission(int intermission);
 	int GetInterMission();
+
+	bool LoacalPlayerAvilable();
 
 	bool IsInSpectate();
 	bool HasSuit();
@@ -94,6 +97,8 @@ public:
 
 	void ShowCrossHair(bool on);
 
+	void SetHealth(int health);
+
 	enum class HUDNOTICE {
 		PRINTNOTIFY = 1,
 		PRINTCENTER = 4
@@ -125,6 +130,8 @@ private:
 	CNoticePanel* m_pNoticeCenter = nullptr;
 	CCrosshairPanel* m_pCrossHairPanel;
 	CKillMarkPanel* m_pKillMarkPanel = nullptr;
+	CCrosshairPanel* m_pCrossHairPanel = nullptr;
+	CEffectPanel* m_pEffectPanel = nullptr;
 
 	int m_iInterMission;
 

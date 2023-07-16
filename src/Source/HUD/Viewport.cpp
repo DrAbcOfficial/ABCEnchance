@@ -28,6 +28,7 @@
 #include "flashlight.h"
 #include "notice.h"
 #include "crosshair.h"
+#include "effect.h"
 
 #include "CCustomHud.h"
 #include "cfefx.h"
@@ -72,20 +73,21 @@ CViewport::~CViewport(void){
 }
 
 void CViewport::Start(void){
-	AddNewPanel(m_pScorePanel = new CScorePanel());
-	AddNewPanel(m_pVotePanel = new CVotePanel());
-	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
+	AddNewPanel(m_pEffectPanel = new CEffectPanel());
 	AddNewPanel(m_pSidePanel = new CSidePanel());
-	AddNewPanel(m_pTextMenu = new CTextMenu()); 
 	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
-	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
-	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
-	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
+	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
 	AddNewPanel(m_pKillMarkPanel = new CKillMarkPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
 	}
+	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
+	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
+	AddNewPanel(m_pTextMenu = new CTextMenu()); 
+	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
+	AddNewPanel(m_pVotePanel = new CVotePanel());
+	AddNewPanel(m_pScorePanel = new CScorePanel());
 	SetVisible(false);
 }
 
@@ -100,6 +102,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pNotice->SetParent(GetVPanel());
 	m_pNoticeCenter->SetParent(GetVPanel());
 	m_pCrossHairPanel->SetParent(GetVPanel());
+	m_pEffectPanel->SetParent(GetVPanel());
 	m_pKillMarkPanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
@@ -165,6 +168,10 @@ void CViewport::SetInterMission(int intermission) {
 }
 int CViewport::GetInterMission() {
 	return m_iInterMission;
+}
+
+bool CViewport::LoacalPlayerAvilable(){
+	return gEngfuncs.GetLocalPlayer() != nullptr;
 }
 
 bool CViewport::IsScoreBoardVisible(){
@@ -237,6 +244,9 @@ void CViewport::SetFlashLight(bool on, int battery){
 }
 void CViewport::SetFlashBattery(int battery){
 	m_pFlashLight->SetFlashBattery(battery);
+}
+void CViewport::SetHealth(int health){
+	m_pEffectPanel->SetHealth(health);
 }
 void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	switch (type)

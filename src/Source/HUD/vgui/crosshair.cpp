@@ -11,6 +11,8 @@
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
+#include <vgui2/spr_image.h>
+#include <vgui_controls/ImagePanel.h>
 
 #include "hud.h"
 #include "local.h"
@@ -33,7 +35,7 @@ CCrosshairPanel::CCrosshairPanel()
 
 	gCVars.pDynamicCrossHair = CREATE_CVAR("cl_crosshair", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->ShowCrossHair(cvar->value > 0);
-	});
+		});
 	pDynamicCrossHairAH = CREATE_CVAR("cl_crosshairautohide", "1", FCVAR_VALUE, NULL);
 	pDynamicCrossHairL = CREATE_CVAR("cl_crosshairsize", "24", FCVAR_VALUE, NULL);
 	pDynamicCrossHairW = CREATE_CVAR("cl_crosshairthickness", "2", FCVAR_VALUE, NULL);
@@ -55,8 +57,12 @@ CCrosshairPanel::CCrosshairPanel()
 	pCvarDefaultCrosshair = CVAR_GET_POINTER("crosshair");
 
 	SetSize(ScreenWidth, ScreenHeight);
+
+	m_pSprImage = new vgui::CSPRImage();
+	m_pSprImage->SetRenderMode(kRenderTransTexture);
+	m_pSprImage->SetColor(Color(255, 255, 255, 255));
 }
-void CCrosshairPanel::PaintBackground(){
+void CCrosshairPanel::PaintBackground() {
 	if (g_pViewPort->IsInSpectate())
 		return;
 	if (g_pViewPort->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
@@ -126,85 +132,87 @@ void CCrosshairPanel::PaintBackground(){
 			iCenterX - iFinalOffset + iOutLineWidth,
 			iCenterY - iWidthOffset + iWidth + iOutLineWidth
 		};
-		//上
-		if (!pDynamicCrossHairT->value) {
-			outlinerects[1] = {
-				iCenterX - iWidthOffset - iOutLineWidth,
-				iCenterY - iFinalOffset - iLength - iOutLineWidth,
-				iCenterX - iWidthOffset + iOutLineWidth + iWidth,
-				iCenterY - iFinalOffset + iOutLineWidth
-			};
-		}
 		//右
-		outlinerects[2] = {
+		outlinerects[1] = {
 			iCenterX + iFinalOffset - iOutLineWidth,
 			iCenterY - iWidthOffset - iOutLineWidth,
 			iCenterX + iFinalOffset + iOutLineWidth + iLength,
 			iCenterY - iWidthOffset + iOutLineWidth + iWidth
 		};
 		//下
-		outlinerects[3] = {
+		outlinerects[2] = {
 			iCenterX - iWidthOffset - iOutLineWidth,
 			iCenterY + iFinalOffset - iOutLineWidth,
 			iCenterX - iWidthOffset + iOutLineWidth + iWidth,
 			iCenterY + iFinalOffset + iOutLineWidth + iLength
 		};
-		vgui::surface()->DrawFilledRectArray(outlinerects, 4);
+		//上
+		if (!pDynamicCrossHairT->value) {
+			outlinerects[3] = {
+				iCenterX - iWidthOffset - iOutLineWidth,
+				iCenterY - iFinalOffset - iLength - iOutLineWidth,
+				iCenterX - iWidthOffset + iOutLineWidth + iWidth,
+				iCenterY - iFinalOffset + iOutLineWidth
+			};
+		}
+		vgui::surface()->DrawFilledRectArray(outlinerects, !pDynamicCrossHairT->value ? 4 : 3);
 	}
 	//中心
 	if (pDynamicCrossHairD->value) {
 		vgui::surface()->DrawSetColor(otr, otg, otb, ota);
 		vgui::surface()->DrawFilledRect(
-			iCenterX - iWidthOffset - iOutLineWidth, 
-			iCenterY - iWidthOffset - iOutLineWidth, 
-			iCenterX - iWidthOffset + iWidth + iOutLineWidth, 
+			iCenterX - iWidthOffset - iOutLineWidth,
+			iCenterY - iWidthOffset - iOutLineWidth,
+			iCenterX - iWidthOffset + iWidth + iOutLineWidth,
 			iCenterY - iWidthOffset + iWidth + iOutLineWidth);
 		vgui::surface()->DrawSetColor(r, g, b, a);
 		vgui::surface()->DrawFilledRect(
-			iCenterX - iWidthOffset, 
-			iCenterY - iWidthOffset, 
-			iCenterX - iWidthOffset + iWidth, 
+			iCenterX - iWidthOffset,
+			iCenterY - iWidthOffset,
+			iCenterX - iWidthOffset + iWidth,
 			iCenterY - iWidthOffset + iWidth);
 	}
 	//左
 	vgui::surface()->DrawSetColor(r, g, b, a);
 	vgui::IntRect rects[4];
 	rects[0] = {
-		iCenterX - iFinalOffset - iLength, 
-		iCenterY - iWidthOffset, 
+		iCenterX - iFinalOffset - iLength,
+		iCenterY - iWidthOffset,
 		iCenterX - iFinalOffset,
 		iCenterY - iWidthOffset + iWidth
 	};
-	//上
-	if (!pDynamicCrossHairT->value) {
-		rects[1] = {
-			iCenterX - iWidthOffset, 
-			iCenterY - iFinalOffset - iLength, 
-			iCenterX - iWidthOffset + iWidth,
-			iCenterY - iFinalOffset
-		};
-	}
+
 	//右
-	rects[2] = {
-		iCenterX + iFinalOffset, 
-		iCenterY - iWidthOffset, 
+	rects[1] = {
+		iCenterX + iFinalOffset,
+		iCenterY - iWidthOffset,
 		iCenterX + iFinalOffset + iLength,
 		iCenterY - iWidthOffset + iWidth
 	};
 	//下
-	rects[3] = {
-		iCenterX - iWidthOffset, 
-		iCenterY + iFinalOffset, 
+	rects[2] = {
+		iCenterX - iWidthOffset,
+		iCenterY + iFinalOffset,
 		iCenterX - iWidthOffset + iWidth,
 		iCenterY + iFinalOffset + iLength
 	};
-	vgui::surface()->DrawFilledRectArray(rects, 4);
+	//上
+	if (!pDynamicCrossHairT->value) {
+		rects[3] = {
+			iCenterX - iWidthOffset,
+			iCenterY - iFinalOffset - iLength,
+			iCenterX - iWidthOffset + iWidth,
+			iCenterY - iFinalOffset
+		};
+	}
+	vgui::surface()->DrawFilledRectArray(rects, !pDynamicCrossHairT->value ? 4 : 3);
 }
 const char* CCrosshairPanel::GetName() {
 	return VIEWPORT_CROSSHAIR_NAME;
 }
 void CCrosshairPanel::Reset() {
 	ShowPanel(true);
+	m_pSprImage->Reset();
 }
 
 void CCrosshairPanel::ShowPanel(bool state) {
@@ -222,31 +230,36 @@ void CCrosshairPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
 
-void CCrosshairPanel::DrawCrosshairSPR(int x, int y, int hPic, wrect_t hRc) {
-	if (hPic <= 0)
+void CCrosshairPanel::SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc) {
+	if (hPic <= 0) {
+		m_pSprImage->SetTextureID(-1);
 		return;
-	int rx = x + 1 - (hRc.right - hRc.left) / 2;
-	int ry = y + 1 - (hRc.bottom - hRc.top) / 2;
-	SPR_Set(hPic, 255, 255, 255);
-	SPR_DrawHoles(0, rx, ry, &hRc);
+	}
+	int w = hRc->right - hRc->left;
+	int h = hRc->bottom - hRc->top;
+	m_pSprImage->SetTextureID(hPic);
+	m_pSprImage->SetPos(x - w / 2, y - h / 2);
+	m_pSprImage->SetSize(w, h);
+	m_pSprImage->SetRect(hRc->left, hRc->right, hRc->top, hRc->bottom);
 }
 void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
 	WEAPON* pWeapon = m_HudCustomAmmo.m_pWeapon;
-	if (!pWeapon)
+	if (!pWeapon || pWeapon->iId <= 0) {
+		m_pSprImage->SetTextureID(-1);
 		return;
-	if (pWeapon->iId <= 0)
-		return;
+	}
 	bool bOnTarget = m_HudCustomAmmo.m_bIsOnTarget;
 	if (m_hfov >= gCVars.pCvarDefaultFOV->value) {
 		if (bOnTarget && pWeapon->hAutoaim)
-			DrawCrosshairSPR(x, y, pWeapon->hAutoaim, pWeapon->rcAutoaim);
+			SetCrosshairSPR(x, y, pWeapon->hAutoaim, &pWeapon->rcAutoaim);
 		else
-			DrawCrosshairSPR(x, y, pWeapon->hCrosshair, pWeapon->rcCrosshair);
+			SetCrosshairSPR(x, y, pWeapon->hCrosshair, &pWeapon->rcCrosshair);
 	}
 	else {
 		if (bOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
-			DrawCrosshairSPR(x, y, pWeapon->hZoomedAutoaim, pWeapon->rcZoomedAutoaim);
+			SetCrosshairSPR(x, y, pWeapon->hZoomedAutoaim, &pWeapon->rcZoomedAutoaim);
 		else
-			DrawCrosshairSPR(x, y, pWeapon->hZoomedCrosshair, pWeapon->rcZoomedCrosshair);
+			SetCrosshairSPR(x, y, pWeapon->hZoomedCrosshair, &pWeapon->rcZoomedCrosshair);
 	}
+	m_pSprImage->Paint();
 }
