@@ -601,7 +601,9 @@ void HUD_Init(void){
 
 	gCVars.pCVarAutoBunnyJump = CREATE_CVAR("cl_autojump", "0", FCVAR_VALUE, nullptr);
 
-	CREATE_CVAR("models", "", 0, [](cvar_t* cvar) {
+	gEngfuncs.pfnAddCommand("models", []() {
+		if (gEngfuncs.Cmd_Argc() <= 1)
+			return;
 		static auto toLower = [](std::string& sz) {
 			std::transform(sz.begin(), sz.end(), sz.begin(),
 				[](unsigned char c) { return std::tolower(c); });
@@ -615,7 +617,7 @@ void HUD_Init(void){
 					if (std::filesystem::is_directory(entry)) {
 						std::string szName = entry.path().filename().string();
 						toLower(szName);
-						if (szName.find(cvar->string) != std::string::npos)
+						if (szName.find(gEngfuncs.Cmd_Argv(1)) != std::string::npos)
 							gEngfuncs.Con_Printf("%s\n", szName.c_str());
 					}
 				}
@@ -627,8 +629,6 @@ void HUD_Init(void){
 		searchAndprint("_downloads/models/player");
 		searchAndprint("_hd/models/player");
 		gEngfuncs.Con_Printf("==============\n");
-		cvar->string[0] = '\0';
-		cvar->value = 0;
 	});
 
 	gExportfuncs.HUD_Init();
