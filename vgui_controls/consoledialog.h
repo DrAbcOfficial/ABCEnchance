@@ -131,6 +131,7 @@ namespace vgui
 		bool m_bAutoCompleteMode;	// true if the user is currently tabbing through completion options
 		bool m_bWasBackspacing;
 		bool m_bStatusVersion;
+		char m_szSubmitedCommandPrefix[64];
 
 		CUtlVector< CompletionItem* > m_CompletionList;
 		CUtlVector< CHistoryItem >	m_CommandHistory;

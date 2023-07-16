@@ -38,8 +38,9 @@
 		"enabled"		"1"
 
 		"button_text"		"#Console_Submit"
-		"proportionalToParent" "1"
+		"submite_prefix"		"]"
 
+		"proportionalToParent" "1"
 		"PaintBackgroundType"	"2"
 	}
 }

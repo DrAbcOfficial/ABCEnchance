@@ -731,10 +731,9 @@ void CConsolePanel::OnCommand(const char* command)
 		m_pEntry->GetText(szCommand, sizeof(szCommand));
 		PostActionSignal(new KeyValues("CommandSubmitted", "command", szCommand));
 
-		gEngfuncs.pfnClientCmd(szCommand);
-
 		// add to the history
-		Print("] ");
+		Print(m_szSubmitedCommandPrefix);
+		Print(" ");
 		Print(szCommand);
 		Print("\n");
 
@@ -965,6 +964,9 @@ void CConsolePanel::ApplySettings(KeyValues* inResourceData) {
 	const char* labelText = inResourceData->GetString("button_text", NULL);
 	if (labelText)
 		m_pSubmit->SetText(labelText);
+	const char* submittedText = inResourceData->GetString("submite_prefix", "]");
+	if (submittedText)
+		strcpy(m_szSubmitedCommandPrefix, submittedText);
 }
 
 //-----------------------------------------------------------------------------
@@ -1251,6 +1253,7 @@ void CConsoleDialog::Close()
 void CConsoleDialog::OnCommandSubmitted(const char* pCommand)
 {
 	PostActionSignal(new KeyValues("CommandSubmitted", "command", pCommand));
+	gEngfuncs.pfnClientCmd(const_cast<char*>(pCommand));
 }
 
 
