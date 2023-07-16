@@ -1,64 +1,87 @@
-#include "consoledialog.h"
+//========= Copyright Valve Corporation, All rights reserved. ============//
+//
+// Purpose: 
+//
+// $NoKeywords: $
+//===========================================================================//
 
-#include <vgui/IInput.h>
-#include <vgui/IScheme.h>
-#include <vgui/IVGUI.h>
-#include <vgui/ISurface2.h>
-#include <vgui/ILocalize.h>
-#include <vgui/KeyCode.h>
+#include <metahook.h>
+#include <local.h>
+#include "cvardef.h"
 
-#include <tier1/KeyValues.h>
+#include <utlstring.h>
 
-#include <vgui_controls/Button.h>
-#include <vgui_controls/Menu.h>
-#include <vgui_controls/TextEntry.h>
-#include <vgui_controls/RichText.h>
+#include "vgui_controls/consoledialog.h"
 
-#include <filesystem.h>
+#include "vgui/IInput.h"
+#include "vgui/IScheme.h"
+#include "vgui/IVGui.h"
+#include "vgui/ISurface.h"
+#include "vgui/ILocalize.h"
+#include "KeyValues.h"
+#include <vguilocal.h>
+
+#include "vgui_controls/Button.h"
+#include "vgui/KeyCode.h"
+#include "vgui_controls/Menu.h"
+#include "vgui_controls/TextEntry.h"
+#include "vgui_controls/RichText.h"
+#include "FileSystem.h"
+
+#include <stdlib.h>
 
 #if defined( _X360 )
 #include "xbox/xbox_win32stubs.h"
 #endif
 
-//#include <tier0/memdbgon.h>
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
 
 using namespace vgui;
 
+
+//-----------------------------------------------------------------------------
+// Used by the autocompletion system
+//-----------------------------------------------------------------------------
 class CNonFocusableMenu : public Menu
 {
-	DECLARE_CLASS_SIMPLE( CNonFocusableMenu, Menu );
+	DECLARE_CLASS_SIMPLE(CNonFocusableMenu, Menu);
 
 public:
-	CNonFocusableMenu( Panel *parent, const char *panelName )
-		: BaseClass( parent, panelName ),
-		m_pFocus( 0 )
+	CNonFocusableMenu(Panel* parent, const char* panelName)
+		: BaseClass(parent, panelName),
+		m_pFocus(0)
 	{
 	}
 
-	void SetFocusPanel( Panel *panel )
+	void SetFocusPanel(Panel* panel)
 	{
 		m_pFocus = panel;
 	}
 
 	VPANEL GetCurrentKeyFocus()
 	{
-		if ( !m_pFocus )
+		if (!m_pFocus)
 			return GetVPanel();
 
 		return m_pFocus->GetVPanel();
 	}
 
 private:
-	Panel		*m_pFocus;
+	Panel* m_pFocus;
 };
 
+
+//-----------------------------------------------------------------------------
+// Purpose: forwards tab key presses up from the text entry so we can do autocomplete
+//-----------------------------------------------------------------------------
 class TabCatchingTextEntry : public TextEntry
 {
 public:
-	TabCatchingTextEntry(Panel *parent, const char *name, VPANEL comp) : TextEntry(parent, name), m_pCompletionList( comp )
+	TabCatchingTextEntry(Panel* parent, const char* name, VPANEL comp) : TextEntry(parent, name), m_pCompletionList(comp)
 	{
-		SetAllowNonAsciiCharacters( true );
-		SetDragEnabled( true );
+		SetAllowNonAsciiCharacters(true);
+		SetDragEnabled(true);
 	}
 
 	virtual void OnKeyCodeTyped(KeyCode code)
@@ -67,9 +90,9 @@ public:
 		{
 			GetParent()->OnKeyCodeTyped(code);
 		}
-		else if ( code == KEY_ENTER )
+		else if (code == KEY_ENTER)
 		{
-			PostMessage( GetParent()->GetVPanel(), new KeyValues( "Command", "command", "submit" ) );
+			// submit is the default button whose click event will have been called already
 		}
 		else
 		{
@@ -79,7 +102,7 @@ public:
 
 	virtual void OnKillFocus()
 	{
-		if ( input()->GetFocus() != m_pCompletionList )
+		if (input()->GetFocus() != m_pCompletionList) // if its not the completion window trying to steal our focus
 		{
 			PostMessage(GetParent(), new KeyValues("CloseCompletionList"));
 		}
@@ -89,40 +112,43 @@ private:
 	VPANEL m_pCompletionList;
 };
 
-CHistoryItem::CHistoryItem( void )
+
+
+// Things the user typed in and hit submit/return with
+CHistoryItem::CHistoryItem(void)
 {
 	m_text = NULL;
 	m_extraText = NULL;
 	m_bHasExtra = false;
 }
 
-CHistoryItem::CHistoryItem( const char *text, const char *extra )
+CHistoryItem::CHistoryItem(const char* text, const char* extra)
 {
-	Assert( text );
+	Assert(text);
 	m_text = NULL;
 	m_extraText = NULL;
 	m_bHasExtra = false;
-	SetText( text , extra );
+	SetText(text, extra);
 }
 
-CHistoryItem::CHistoryItem( const CHistoryItem& src )
+CHistoryItem::CHistoryItem(const CHistoryItem& src)
 {
 	m_text = NULL;
 	m_extraText = NULL;
 	m_bHasExtra = false;
-	SetText( src.GetText(), src.GetExtra() );
+	SetText(src.GetText(), src.GetExtra());
 }
 
-CHistoryItem::~CHistoryItem( void )
+CHistoryItem::~CHistoryItem(void)
 {
 	delete[] m_text;
 	delete[] m_extraText;
 	m_text = NULL;
 }
 
-const char *CHistoryItem::GetText() const
+const char* CHistoryItem::GetText() const
 {
-	if ( m_text )
+	if (m_text)
 	{
 		return m_text;
 	}
@@ -132,9 +158,9 @@ const char *CHistoryItem::GetText() const
 	}
 }
 
-const char *CHistoryItem::GetExtra() const
+const char* CHistoryItem::GetExtra() const
 {
-	if ( m_extraText )
+	if (m_extraText)
 	{
 		return m_extraText;
 	}
@@ -144,23 +170,23 @@ const char *CHistoryItem::GetExtra() const
 	}
 }
 
-void CHistoryItem::SetText( const char *text, const char *extra )
+void CHistoryItem::SetText(const char* text, const char* extra)
 {
 	delete[] m_text;
-	int len = strlen( text ) + 1;
+	int len = strlen(text) + 1;
 
-	m_text = new char[ len ];
-	Q_memset( m_text, 0x0, len );
-	Q_strncpy( m_text, text, len );
+	m_text = new char[len];
+	Q_memset(m_text, 0x0, len);
+	Q_strncpy(m_text, text, len);
 
-	if ( extra )
+	if (extra)
 	{
 		m_bHasExtra = true;
 		delete[] m_extraText;
-		int elen = strlen( extra ) + 1;
-		m_extraText = new char[ elen ];
-		Q_memset( m_extraText, 0x0, elen);
-		Q_strncpy( m_extraText, extra, elen );
+		int elen = strlen(extra) + 1;
+		m_extraText = new char[elen];
+		Q_memset(m_extraText, 0x0, elen);
+		Q_strncpy(m_extraText, extra, elen);
 	}
 	else
 	{
@@ -168,98 +194,147 @@ void CHistoryItem::SetText( const char *text, const char *extra )
 	}
 }
 
-CConsolePanel::CompletionItem::CompletionItem( void )
+
+//-----------------------------------------------------------------------------
+//
+// Console page completion item starts here
+//
+//-----------------------------------------------------------------------------
+CConsolePanel::CompletionItem::CompletionItem(void)
 {
 	m_bIsCommand = true;
+	m_pCVar = nullptr;
+	m_iCmd = 0;
 	m_pText = NULL;
 }
 
-CConsolePanel::CompletionItem::CompletionItem( const CompletionItem& src )
+CConsolePanel::CompletionItem::CompletionItem(const CompletionItem& src)
 {
-	m_pText = NULL;
+	m_bIsCommand = src.m_bIsCommand;
+	m_pCVar = src.m_pCVar;
+	m_iCmd = src.m_iCmd;
+	if (src.m_pText)
+	{
+		m_pText = new CHistoryItem((const CHistoryItem&)src.m_pText);
+	}
+	else
+	{
+		m_pText = NULL;
+	}
 }
 
-CConsolePanel::CompletionItem& CConsolePanel::CompletionItem::operator =( const CompletionItem& src )
+CConsolePanel::CompletionItem& CConsolePanel::CompletionItem::operator =(const CompletionItem& src)
 {
+	if (this == &src)
+		return *this;
+
+	m_bIsCommand = src.m_bIsCommand;
+	m_pCVar = src.m_pCVar;
+	m_iCmd = src.m_iCmd;
+	if (src.m_pText)
+	{
+		m_pText = new CHistoryItem((const CHistoryItem&)*src.m_pText);
+	}
+	else
+	{
+		m_pText = NULL;
+	}
+
 	return *this;
 }
 
-CConsolePanel::CompletionItem::~CompletionItem( void )
+CConsolePanel::CompletionItem::~CompletionItem(void)
 {
-	if ( m_pText )
+	if (m_pText)
 	{
 		delete m_pText;
 		m_pText = NULL;
 	}
 }
 
-const char *CConsolePanel::CompletionItem::GetName() const
+const char* CConsolePanel::CompletionItem::GetName() const
 {
-	return "";
+	if (m_bIsCommand)
+		return gEngfuncs.GetCmdFunctionName(m_iCmd);
+	return m_pCVar ? m_pCVar->name : GetCommand();
 }
 
-const char *CConsolePanel::CompletionItem::GetItemText( void )
+const char* CConsolePanel::CompletionItem::GetItemText(void)
 {
 	static char text[256];
 	text[0] = 0;
-	if ( m_pText )
+	if (m_pText)
 	{
-		if ( m_pText->HasExtra() )
+		if (m_pText->HasExtra())
 		{
-			Q_snprintf( text, sizeof( text ), "%s %s", m_pText->GetText(), m_pText->GetExtra() );
+			Q_snprintf(text, sizeof(text), "%s %s", m_pText->GetText(), m_pText->GetExtra());
 		}
 		else
 		{
-			Q_strncpy( text, m_pText->GetText(), sizeof( text ) );
+			Q_strncpy(text, m_pText->GetText(), sizeof(text));
 		}
-	}
-	return text;
-}	
-
-const char *CConsolePanel::CompletionItem::GetCommand( void ) const
-{
-	static char text[256];
-	text[0] = 0;
-	if ( m_pText )
-	{
-		Q_strncpy( text, m_pText->GetText(), sizeof( text ) );
 	}
 	return text;
 }
 
-CConsolePanel::CConsolePanel( vgui::Panel *pParent, const char *pName, bool bStatusVersion ) : 
-	BaseClass( pParent, pName ), m_bStatusVersion( bStatusVersion )
+const char* CConsolePanel::CompletionItem::GetCommand(void) const
 {
-	SetKeyBoardInputEnabled( true );
-
-	if ( !m_bStatusVersion )
+	static char text[256];
+	text[0] = 0;
+	if (m_pText)
 	{
-		SetMinimumSize(100,100);
+		Q_strncpy(text, m_pText->GetText(), sizeof(text));
+	}
+	return text;
+}
+
+
+//-----------------------------------------------------------------------------
+//
+// Console page starts here
+//
+//-----------------------------------------------------------------------------
+
+
+#define SUBMIT_BUTTON_COMMAND_CODE "Submit"
+//-----------------------------------------------------------------------------
+// Purpose: Constructor, destuctor
+//-----------------------------------------------------------------------------
+CConsolePanel::CConsolePanel(Panel* pParent, const char* pName, bool bStatusVersion) :
+	BaseClass(pParent, pName), m_bStatusVersion(bStatusVersion)
+{
+	SetKeyBoardInputEnabled(true);
+
+	if (!m_bStatusVersion)
+	{
+		SetMinimumSize(100, 100);
 	}
 
+	// create controls
 	m_pHistory = new RichText(this, "ConsoleHistory");
-	m_pHistory->SetAllowKeyBindingChainToParent( false );
-	SETUP_PANEL( m_pHistory );
-	m_pHistory->SetVerticalScrollbar( !m_bStatusVersion );
-	if ( m_bStatusVersion )
+	m_pHistory->SetAllowKeyBindingChainToParent(false);
+	SETUP_PANEL(m_pHistory);
+	m_pHistory->SetVerticalScrollbar(!m_bStatusVersion);
+	if (m_bStatusVersion)
 	{
-		m_pHistory->SetDrawOffsets( 3, 3 );
+		m_pHistory->SetDrawOffsets(3, 3);
 	}
 	m_pHistory->GotoTextEnd();
 
-	m_pSubmit = new Button(this, "ConsoleSubmit", "#GameUI_Submit");
-	m_pSubmit->SetCommand("submit");
-	m_pSubmit->SetVisible( !m_bStatusVersion );
+	m_pSubmit = new Button(this, "ConsoleSubmit", "#Console_Submit");
+	m_pSubmit->SetCommand(SUBMIT_BUTTON_COMMAND_CODE);
+	m_pSubmit->SetVisible(!m_bStatusVersion);
 
-	CNonFocusableMenu *pCompletionList = new CNonFocusableMenu( this, "CompletionList" );
+	CNonFocusableMenu* pCompletionList = new CNonFocusableMenu(this, "CompletionList");
 	m_pCompletionList = pCompletionList;
 	m_pCompletionList->SetVisible(false);
 
-	m_pEntry = new TabCatchingTextEntry(this, "ConsoleEntry", m_pCompletionList->GetVPanel() );
+	m_pEntry = new TabCatchingTextEntry(this, "ConsoleEntry", m_pCompletionList->GetVPanel());
 	m_pEntry->AddActionSignalTarget(this);
 	m_pEntry->SendNewLine(true);
-	pCompletionList->SetFocusPanel( m_pEntry );
+	pCompletionList->SetFocusPanel(m_pEntry);
 
+	// need to set up default colors, since ApplySchemeSettings won't be called until later
 	m_PrintColor = Color(216, 222, 211, 255);
 	m_DPrintColor = Color(196, 181, 80, 255);
 
@@ -267,53 +342,91 @@ CConsolePanel::CConsolePanel( vgui::Panel *pParent, const char *pName, bool bSta
 
 	m_bAutoCompleteMode = false;
 	m_szPartialText[0] = 0;
-	m_szPreviousPartialText[0]=0;
+	m_szPreviousPartialText[0] = 0;
+
+	// Add to global console list
+	//g_pCVar->InstallConsoleDisplayFunc(this);
 }
 
+
+//-----------------------------------------------------------------------------
+// Purpose: Destructor
+//-----------------------------------------------------------------------------
 CConsolePanel::~CConsolePanel()
 {
 	ClearCompletionList();
 	m_CommandHistory.Purge();
+	//g_pCVar->RemoveConsoleDisplayFunc(this);
 }
 
+
+//-----------------------------------------------------------------------------
+// Updates the completion list
+//-----------------------------------------------------------------------------
 void CConsolePanel::OnThink()
 {
 	BaseClass::OnThink();
 
-	if ( !IsVisible() )
+	if (!IsVisible())
 		return;
 
-	if ( !m_pCompletionList->IsVisible() )
+	if (!m_pCompletionList->IsVisible())
 		return;
 
 	UpdateCompletionListPosition();
 }
 
+
+//-----------------------------------------------------------------------------
+// Purpose: Clears the console
+//-----------------------------------------------------------------------------
 void CConsolePanel::Clear()
 {
 	m_pHistory->SetText("");
 	m_pHistory->GotoTextEnd();
 }
 
-void CConsolePanel::ColorPrint( const Color& clr, const char *msg )
+
+//-----------------------------------------------------------------------------
+// Purpose: color text print
+//-----------------------------------------------------------------------------
+void CConsolePanel::ColorPrint(const Color& clr, const char* msg)
 {
-	if ( m_bStatusVersion )
+	if (m_bStatusVersion)
 	{
 		Clear();
 	}
 
-	m_pHistory->InsertColorChange( clr );
-	m_pHistory->InsertString( msg );
+	m_pHistory->InsertColorChange(clr);
+	m_pHistory->InsertString(msg);
 }
 
-void CConsolePanel::Print(const char *msg)
+
+//-----------------------------------------------------------------------------
+// Purpose: normal text print
+//-----------------------------------------------------------------------------
+void CConsolePanel::Print(const char* msg)
 {
-	ColorPrint( m_PrintColor, msg );
+	if (strstr(msg, "error") || strstr(msg, "Error"))
+		ColorPrint(m_ErrorPrintColor, msg);
+	else if (strstr(msg, "warn") || strstr(msg, "Warn"))
+		ColorPrint(m_WarnPrintColor, msg);
+	else
+		ColorPrint(m_PrintColor, msg);
 }
 
-void CConsolePanel::DPrint( const char *msg )
+
+//-----------------------------------------------------------------------------
+// Purpose: debug text print
+//-----------------------------------------------------------------------------
+void CConsolePanel::DPrint(const char* msg)
 {
-	ColorPrint( m_DPrintColor, msg );
+	if (strstr(msg, "error") || strstr(msg, "Error"))
+		ColorPrint(m_ErrorPrintColor, msg);
+	else if (strstr(msg, "warn") || strstr(msg, "Warn"))
+		ColorPrint(m_WarnPrintColor, msg);
+	else
+		ColorPrint(m_DPrintColor, msg);
 }
 
 
@@ -321,100 +434,254 @@ void CConsolePanel::ClearCompletionList()
 {
 	int c = m_CompletionList.Count();
 	int i;
-	for ( i = c - 1; i >= 0; i-- )
+	for (i = c - 1; i >= 0; i--)
 	{
-		delete m_CompletionList[ i ];
+		delete m_CompletionList[i];
 	}
 	m_CompletionList.Purge();
 }
 
-void CConsolePanel::RebuildCompletionList(const char *text)
+
+static cvar_t* FindAutoCompleteCommmandFromPartial(const char* partial)
 {
-	ClearCompletionList();
+	char command[256];
+	Q_strncpy(command, partial, sizeof(command));
+
+	char* space = Q_strstr(command, " ");
+	if (space)
+	{
+		*space = 0;
+	}
+
+	
+	cvar_t* cmd = CVAR_GET_POINTER(command);
+	if (!cmd)
+		return nullptr;
+	return cmd;
 }
 
+
+//-----------------------------------------------------------------------------
+// Purpose: rebuilds the list of possible completions from the current entered text
+//-----------------------------------------------------------------------------
+void CConsolePanel::RebuildCompletionList(const char* text)
+{
+	ClearCompletionList();
+
+	// we need the length of the text for the partial string compares
+	int len = Q_strlen(text);
+	if (len < 1)
+	{
+		// Fill the completion list with history instead
+		for (int i = 0; i < m_CommandHistory.Count(); i++)
+		{
+			CHistoryItem* item = &m_CommandHistory[i];
+			CompletionItem* comp = new CompletionItem();
+			m_CompletionList.AddToTail(comp);
+			comp->m_bIsCommand = false;
+			comp->m_pCVar = nullptr;
+			comp->m_iCmd = 0;
+			comp->m_pText = new CHistoryItem(*item);
+		}
+		return;
+	}
+
+	bool bNormalBuild = true;
+
+	/*
+	// if there is a space in the text, and the command isn't of the type to know how to autocomplet, then command completion is over
+	const char* space = strstr(text, " ");
+	if (space)
+	{
+		cvar_t* pCommand = FindAutoCompleteCommmandFromPartial(text);
+		if (!pCommand)
+			return;
+
+		bNormalBuild = false;
+
+		CUtlVector< CUtlString > commands;
+		int count = pCommand->AutoCompleteSuggest(text, commands);
+		Assert(count <= COMMAND_COMPLETION_MAXITEMS);
+		int i;
+
+		for (i = 0; i < count; i++)
+		{
+			// match found, add to list
+			CompletionItem* item = new CompletionItem();
+			m_CompletionList.AddToTail(item);
+			item->m_bIsCommand = false;
+			item->m_pCommand = NULL;
+			item->m_pText = new CHistoryItem(commands[i].String());
+		}
+	}
+	*/
+
+	if (bNormalBuild)
+	{
+		// look through the command list for all matches
+		cvar_t* cvar = gEngfuncs.GetFirstCvarPtr();
+		while (cvar)
+		{
+			if (!strnicmp(text, cvar->name, len))
+			{
+				// match found, add to list
+				CompletionItem* item = new CompletionItem();
+				m_CompletionList.AddToTail(item);
+				item->m_pCVar = cvar;
+				item->m_bIsCommand = false;
+				item->m_pText = new CHistoryItem(cvar->name, cvar->string);
+			}
+			cvar = cvar->next;
+		}
+
+		unsigned int cmd = gEngfuncs.GetFirstCmdFunctionHandle();
+		while (cmd) {
+			const char* cmdname = gEngfuncs.GetCmdFunctionName(cmd);
+			if (!strnicmp(text, cmdname, len)){
+				// match found, add to list
+				CompletionItem* item = new CompletionItem();
+				m_CompletionList.AddToTail(item);
+				item->m_iCmd = cmd;
+				item->m_bIsCommand = true;
+				item->m_pText = new CHistoryItem(cmdname);
+			}
+			cmd = gEngfuncs.GetNextCmdFunctionHandle(cmd);
+		}
+
+		// Now sort the list by command name
+		if (m_CompletionList.Count() >= 2)
+		{
+			for (int i = 0; i < m_CompletionList.Count(); i++)
+			{
+				for (int j = i + 1; j < m_CompletionList.Count(); j++)
+				{
+					const CompletionItem* i1, * i2;
+					i1 = m_CompletionList[i];
+					i2 = m_CompletionList[j];
+
+					if (Q_stricmp(i1->GetName(), i2->GetName()) > 0)
+					{
+						CompletionItem* temp = m_CompletionList[i];
+						m_CompletionList[i] = m_CompletionList[j];
+						m_CompletionList[j] = temp;
+					}
+				}
+			}
+		}
+	}
+
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: auto completes current text
+//-----------------------------------------------------------------------------
 void CConsolePanel::OnAutoComplete(bool reverse)
 {
 	if (!m_bAutoCompleteMode)
 	{
+		// we're not in auto-complete mode, Start
 		m_iNextCompletion = 0;
 		m_bAutoCompleteMode = true;
 	}
 
+	// if we're in reverse, move back to before the current
 	if (reverse)
 	{
 		m_iNextCompletion -= 2;
 		if (m_iNextCompletion < 0)
 		{
+			// loop around in reverse
 			m_iNextCompletion = m_CompletionList.Size() - 1;
 		}
 	}
 
+	// get the next completion
 	if (!m_CompletionList.IsValidIndex(m_iNextCompletion))
 	{
+		// loop completion list
 		m_iNextCompletion = 0;
 	}
 
+	// make sure everything is still valid
 	if (!m_CompletionList.IsValidIndex(m_iNextCompletion))
 		return;
 
+	// match found, set text
 	char completedText[256];
-	CompletionItem *item = m_CompletionList[m_iNextCompletion];
-	Assert( item );
+	CompletionItem* item = m_CompletionList[m_iNextCompletion];
+	Assert(item);
 
-	Q_strncpy(completedText, item->GetItemText(), sizeof(completedText) - 2 );
-
-	if ( !Q_strstr( completedText, " " ) )
+	if (!item->m_bIsCommand && item->m_pCVar)
 	{
-		Q_strncat(completedText, " ", sizeof(completedText), COPY_ALL_CHARACTERS );
+		Q_strncpy(completedText, item->GetCommand(), sizeof(completedText) - 2);
+	}
+	else
+	{
+		Q_strncpy(completedText, item->GetItemText(), sizeof(completedText) - 2);
+	}
+
+	if (!Q_strstr(completedText, " "))
+	{
+		Q_strncat(completedText, " ", sizeof(completedText), COPY_ALL_CHARACTERS);
 	}
 
 	m_pEntry->SetText(completedText);
-	m_pEntry->SelectNone();
 	m_pEntry->GotoTextEnd();
+	m_pEntry->SelectNone();
 
 	m_iNextCompletion++;
 }
 
-void CConsolePanel::OnTextChanged(Panel *panel)
+
+//-----------------------------------------------------------------------------
+// Purpose: Called whenever the user types text
+//-----------------------------------------------------------------------------
+void CConsolePanel::OnTextChanged(Panel* panel)
 {
 	if (panel != m_pEntry)
 		return;
 
-	Q_strncpy( m_szPreviousPartialText, m_szPartialText, sizeof( m_szPreviousPartialText ) );
+	Q_strncpy(m_szPreviousPartialText, m_szPartialText, sizeof(m_szPreviousPartialText));
 
+	// get the partial text the user type
 	m_pEntry->GetText(m_szPartialText, sizeof(m_szPartialText));
 
+	// see if they've hit the tilde key (which opens & closes the console)
 	int len = Q_strlen(m_szPartialText);
 
-	bool hitTilde = ( m_szPartialText[len - 1] == '~' || m_szPartialText[len - 1] == '`' ) ? true : false;
+	bool hitTilde = (m_szPartialText[len - 1] == '~' || m_szPartialText[len - 1] == '`') ? true : false;
 
-	bool altKeyDown = ( vgui::input()->IsKeyDown( KEY_LALT ) || vgui::input()->IsKeyDown( KEY_RALT ) ) ? true : false;
-	bool ctrlKeyDown = ( vgui::input()->IsKeyDown( KEY_LCONTROL ) || vgui::input()->IsKeyDown( KEY_RCONTROL ) ) ? true : false;
+	bool altKeyDown = (input()->IsKeyDown(KEY_LALT) || input()->IsKeyDown(KEY_RALT)) ? true : false;
+	bool ctrlKeyDown = (input()->IsKeyDown(KEY_LCONTROL) || input()->IsKeyDown(KEY_RCONTROL)) ? true : false;
 
-	if ( ( len > 0 ) && hitTilde )
+	// Alt-Tilde toggles Japanese IME on/off!!!
+	if ((len > 0) && hitTilde)
 	{
-		m_szPartialText[ len - 1 ] = L'\0';
+		// Strip the last character (tilde)
+		m_szPartialText[len - 1] = L'\0';
 
-		if( !altKeyDown && !ctrlKeyDown )
+		if (!altKeyDown && !ctrlKeyDown)
 		{
-			m_pEntry->SetText( "" );
+			m_pEntry->SetText("");
 
-			PostMessage( this, new KeyValues( "Close" ) );
-			PostActionSignal( new KeyValues( "ClosedByHittingTilde" ) );
+			// close the console
+			PostMessage(this, new KeyValues("Close"));
+			PostActionSignal(new KeyValues("ClosedByHittingTilde"));
 		}
 		else
 		{
-			m_pEntry->SetText( m_szPartialText );
+			m_pEntry->SetText(m_szPartialText);
 		}
 		return;
 	}
 
+	// clear auto-complete state since the user has typed
 	m_bAutoCompleteMode = false;
 
 	RebuildCompletionList(m_szPartialText);
 
-	if ( m_CompletionList.Count() < 1 )
+	// build the menu
+	if (m_CompletionList.Count() < 1)
 	{
 		m_pCompletionList->SetVisible(false);
 	}
@@ -424,61 +691,72 @@ void CConsolePanel::OnTextChanged(Panel *panel)
 		m_pCompletionList->DeleteAllItems();
 		const int MAX_MENU_ITEMS = 10;
 
+		// add the first ten items to the list
 		for (int i = 0; i < m_CompletionList.Count() && i < MAX_MENU_ITEMS; i++)
 		{
 			char text[256];
 			text[0] = 0;
 			if (i == MAX_MENU_ITEMS - 1)
 			{
-				Q_strncpy(text, "...", sizeof( text ) );
+				Q_strncpy(text, "...", sizeof(text));
 			}
 			else
 			{
-				Assert( m_CompletionList[i] );
-				Q_strncpy(text, m_CompletionList[i]->GetItemText(), sizeof( text ) );
+				Assert(m_CompletionList[i]);
+				Q_strncpy(text, m_CompletionList[i]->GetItemText(), sizeof(text));
 			}
-			KeyValues *kv = new KeyValues("CompletionCommand");
-			kv->SetString("command",text);
+			KeyValues* kv = new KeyValues("CompletionCommand");
+			kv->SetString("command", text);
 			m_pCompletionList->AddMenuItem(text, kv, this);
 		}
 
 		UpdateCompletionListPosition();
 	}
-	
+
 	RequestFocus();
 	m_pEntry->RequestFocus();
 
 }
 
-void CConsolePanel::OnCommand(const char *command)
+//-----------------------------------------------------------------------------
+// Purpose: generic vgui command handler
+//-----------------------------------------------------------------------------
+void CConsolePanel::OnCommand(const char* command)
 {
-	if ( !Q_stricmp( command, "Submit" ) )
+	if (!Q_stricmp(command, SUBMIT_BUTTON_COMMAND_CODE))
 	{
+		// submit the entry as a console commmand
 		char szCommand[256];
 		m_pEntry->GetText(szCommand, sizeof(szCommand));
-		PostActionSignal( new KeyValues( "CommandSubmitted", "command", szCommand ) );
+		PostActionSignal(new KeyValues("CommandSubmitted", "command", szCommand));
 
+		gEngfuncs.pfnClientCmd(szCommand);
+
+		// add to the history
 		Print("] ");
 		Print(szCommand);
 		Print("\n");
 
+		// clear the field
 		m_pEntry->SetText("");
 
+		// clear the completion state
 		OnTextChanged(m_pEntry);
 
+		// always go the end of the buffer when the user has typed something
 		m_pHistory->GotoTextEnd();
 
-		char *extra = strchr(szCommand, ' ');
-		if ( extra )
+		// Add the command to the history
+		char* extra = strchr(szCommand, ' ');
+		if (extra)
 		{
 			*extra = '\0';
 			extra++;
 		}
 
-		if ( Q_strlen( szCommand ) > 0 )
+		if (Q_strlen(szCommand) > 0)
 		{
-			AddToHistory( szCommand, extra );
-			// Execute the command in here
+			AddToHistory(szCommand, extra);
 		}
 		m_pCompletionList->SetVisible(false);
 	}
@@ -488,9 +766,13 @@ void CConsolePanel::OnCommand(const char *command)
 	}
 }
 
+
+//-----------------------------------------------------------------------------
+// Focus related methods
+//-----------------------------------------------------------------------------
 bool CConsolePanel::TextEntryHasFocus() const
 {
-	return ( input()->GetFocus() == m_pEntry->GetVPanel() );
+	return (input()->GetFocus() == m_pEntry->GetVPanel());
 }
 
 void CConsolePanel::TextEntryRequestFocus()
@@ -498,110 +780,147 @@ void CConsolePanel::TextEntryRequestFocus()
 	m_pEntry->RequestFocus();
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: swallows tab key pressed
+//-----------------------------------------------------------------------------
 void CConsolePanel::OnKeyCodeTyped(KeyCode code)
 {
 	BaseClass::OnKeyCodeTyped(code);
 
-	if ( TextEntryHasFocus() )
+	// check for processing
+	if (TextEntryHasFocus())
 	{
-		if (code == KEY_TAB)
+		switch (code)
 		{
+		case vgui::KEY_TAB: {
 			bool reverse = false;
 			if (input()->IsKeyDown(KEY_LSHIFT) || input()->IsKeyDown(KEY_RSHIFT))
-			{
 				reverse = true;
-			}
-
+			// attempt auto-completion
 			OnAutoComplete(reverse);
 			m_pEntry->RequestFocus();
+			break;
 		}
-		else if (code == KEY_DOWN)
-		{
-			OnAutoComplete(false);
-		//	UpdateCompletionListPosition();
-		//	m_pCompletionList->SetVisible(true);
-
-			m_pEntry->RequestFocus();
-		}
-		else if (code == KEY_UP)
-		{
+		case vgui::KEY_UP: {
 			OnAutoComplete(true);
 			m_pEntry->RequestFocus();
+			break;
+		}
+		case vgui::KEY_DOWN: {
+			OnAutoComplete(false);
+			//	UpdateCompletionListPosition();
+			//	m_pCompletionList->SetVisible(true);
+
+			m_pEntry->RequestFocus();
+			break;
+		}
 		}
 	}
 }
 
+
+//-----------------------------------------------------------------------------
+// Purpose: swallows enter key pressed
+//-----------------------------------------------------------------------------
+void CConsolePanel::OnKeyCodePressed(KeyCode code)
+{
+	BaseClass::OnKeyCodePressed(code);
+
+	// check for processing
+	if (TextEntryHasFocus())
+	{
+		switch (code)
+		{
+			case vgui::KEY_ENTER: {
+				OnCommand(SUBMIT_BUTTON_COMMAND_CODE);
+				break;
+			}
+		}
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: lays out controls
+//-----------------------------------------------------------------------------
 void CConsolePanel::PerformLayout()
 {
 	BaseClass::PerformLayout();
 
+	// setup tab ordering
 	GetFocusNavGroup().SetDefaultButton(m_pSubmit);
 
-	IScheme *pScheme = scheme()->GetIScheme( GetScheme() );
+	IScheme* pScheme = scheme()->GetIScheme(GetScheme());
 	m_pEntry->SetBorder(pScheme->GetBorder("DepressedButtonBorder"));
 	m_pHistory->SetBorder(pScheme->GetBorder("DepressedButtonBorder"));
 
+	// layout controls
 	int wide, tall;
 	GetSize(wide, tall);
 
-	if ( !m_bStatusVersion )
+	if (!m_bStatusVersion)
 	{
 		const int inset = 8;
 		const int entryHeight = 24;
 		const int topHeight = 4;
 		const int entryInset = 4;
 		const int submitWide = 64;
-		const int submitInset = 7;
+		const int submitInset = 7; // x inset to pull the submit button away from the frame grab
 
-		m_pHistory->SetPos(inset, inset + topHeight); 
+		m_pHistory->SetPos(inset, inset + topHeight);
 		m_pHistory->SetSize(wide - (inset * 2), tall - (entryInset * 2 + inset * 2 + topHeight + entryHeight));
 		m_pHistory->InvalidateLayout();
 
-		int nSubmitXPos = wide - ( inset + submitWide + submitInset );
-		m_pSubmit->SetPos( nSubmitXPos, tall - (entryInset * 2 + entryHeight));
-		m_pSubmit->SetSize( submitWide, entryHeight);
-		 
-		m_pEntry->SetPos( inset, tall - (entryInset * 2 + entryHeight) );
-		m_pEntry->SetSize( nSubmitXPos - entryInset - 2 * inset, entryHeight);
+		int nSubmitXPos = wide - (inset + submitWide + submitInset);
+		m_pSubmit->SetPos(nSubmitXPos, tall - (entryInset * 2 + entryHeight));
+		m_pSubmit->SetSize(submitWide, entryHeight);
+
+		m_pEntry->SetPos(inset, tall - (entryInset * 2 + entryHeight));
+		m_pEntry->SetSize(nSubmitXPos - entryInset - 2 * inset, entryHeight);
 	}
 	else
 	{
 		const int inset = 2;
 
 		int entryWidth = wide / 2;
-		if ( wide > 400 )
+		if (wide > 400)
 		{
 			entryWidth = 200;
 		}
 
-		m_pEntry->SetBounds( inset, inset, entryWidth, tall - 2 * inset );
+		m_pEntry->SetBounds(inset, inset, entryWidth, tall - 2 * inset);
 
-		m_pHistory->SetBounds( inset + entryWidth + inset, inset, ( wide - entryWidth ) - inset, tall - 2 * inset );
+		m_pHistory->SetBounds(inset + entryWidth + inset, inset, (wide - entryWidth) - inset, tall - 2 * inset);
 	}
 
 	UpdateCompletionListPosition();
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: Sets the position of the completion list popup
+//-----------------------------------------------------------------------------
 void CConsolePanel::UpdateCompletionListPosition()
 {
 	int ex, ey;
 	m_pEntry->GetPos(ex, ey);
 
-	if ( !m_bStatusVersion )
+	if (!m_bStatusVersion)
 	{
+		// Position below text entry
 		ey += m_pEntry->GetTall();
 	}
 	else
 	{
+		// Position above text entry
 		int menuwide, menutall;
-		m_pCompletionList->GetSize( menuwide, menutall );
-		ey -= ( menutall + 4 );
+		m_pCompletionList->GetSize(menuwide, menutall);
+		ey -= (menutall + 4);
 	}
 
-	LocalToScreen( ex, ey );
-	m_pCompletionList->SetPos( ex, ey );
+	LocalToScreen(ex, ey);
+	m_pCompletionList->SetPos(ex, ey);
 
-	if ( m_pCompletionList->IsVisible() )
+	if (m_pCompletionList->IsVisible())
 	{
 		m_pEntry->RequestFocus();
 		MoveToFront();
@@ -609,27 +928,45 @@ void CConsolePanel::UpdateCompletionListPosition()
 	}
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: Closes the completion list
+//-----------------------------------------------------------------------------
 void CConsolePanel::CloseCompletionList()
 {
 	m_pCompletionList->SetVisible(false);
 }
 
-void CConsolePanel::ApplySchemeSettings(IScheme *pScheme)
+//-----------------------------------------------------------------------------
+// Purpose: sets up colors
+//-----------------------------------------------------------------------------
+void CConsolePanel::ApplySchemeSettings(IScheme* pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
-	m_PrintColor = GetFgColor();
-	m_DPrintColor = GetSchemeColor("BrightControlText", pScheme);
-//	m_pHistory->SetFont( pScheme->GetFont( "ConsoleText", IsProportional() ) );
-//	m_pCompletionList->SetFont( pScheme->GetFont( "DefaultSmall", IsProportional() ) );
+	SetBgColor(GetSchemeColor("Console.BgColor", GetSchemeColor("Frame.BgColor", pScheme), pScheme));
+	SetFgColor(GetSchemeColor("Console.FgColor", GetSchemeColor("Frame.FgColor", pScheme), pScheme));
+
+	m_pHistory->SetBgColor(GetSchemeColor("Console.TextAreaColor", GetSchemeColor("RichText.BgColor", pScheme), pScheme));
+	m_pSubmit->SetBgColor(GetSchemeColor("Console.ButtonColor", GetSchemeColor("RichText.BgColor", pScheme), pScheme));
+
+	m_PrintColor = GetSchemeColor("Console.TextColor", pScheme);
+	m_ErrorPrintColor = GetSchemeColor("Console.ErrorTextColor", pScheme);
+	m_WarnPrintColor = GetSchemeColor("Console.WarnColor", pScheme);
+
+	m_DPrintColor = GetSchemeColor("Console.DevTextColor", pScheme);
+	m_pHistory->SetFont(pScheme->GetFont("DefaultSmall", IsProportional()));
+	m_pCompletionList->SetFont(pScheme->GetFont("DefaultSmall", IsProportional()));
 	InvalidateLayout();
 }
 
-void CConsolePanel::OnMenuItemSelected(const char *command)
+//-----------------------------------------------------------------------------
+// Purpose: Handles autocompletion menu input
+//-----------------------------------------------------------------------------
+void CConsolePanel::OnMenuItemSelected(const char* command)
 {
-	if ( strstr( command, "..." ) )
+	if (strstr(command, "...")) // stop the menu going away if you click on ...
 	{
-		m_pCompletionList->SetVisible( true );
+		m_pCompletionList->SetVisible(true);
 	}
 	else
 	{
@@ -647,101 +984,125 @@ void CConsolePanel::Hide()
 	RebuildCompletionList("");
 }
 
-void CConsolePanel::AddToHistory( const char *commandText, const char *extraText )
+void CConsolePanel::AddToHistory(const char* commandText, const char* extraText)
 {
-	while ( m_CommandHistory.Count() >= MAX_HISTORY_ITEMS )
+	// Newest at end, oldest at head
+	while (m_CommandHistory.Count() >= MAX_HISTORY_ITEMS)
 	{
-		m_CommandHistory.Remove( 0 );
+		// Remove from head until size is reasonable
+		m_CommandHistory.Remove(0);
 	}
 
-	char *command = static_cast<char *>( _alloca( (strlen( commandText ) + 1 ) * sizeof( char ) ));
-	if ( command )
+	// strip the space off the end of the command before adding it to the history
+	// If this code gets cleaned up then we should remove the redundant calls to strlen,
+	// the check for whether _alloca succeeded, and should use V_strncpy instead of the
+	// error prone memset/strncpy sequence.
+	char* command = static_cast<char*>(_alloca((strlen(commandText) + 1) * sizeof(char)));
+	if (command)
 	{
-		memset( command, 0x0, strlen( commandText ) + 1 );
-		strncpy( command, commandText, strlen( commandText ));
-		if ( command[ strlen( command ) -1 ] == ' ' )
-		{
-			 command[ strlen( command ) -1 ] = '\0';
-		}
-	}
-
-	char *extra = NULL;
-
-	if ( extraText )
-	{
-		extra = static_cast<char *>( malloc( (strlen( extraText ) + 1 ) * sizeof( char ) ));
-		if ( extra )
-		{
-			memset( extra, 0x0, strlen( extraText ) + 1 );
-			strncpy( extra, extraText, strlen( extraText ));
-			
-			int i = strlen( extra ) - 1; 
-			while ( i >= 0 && 
-				extra[ i ] == ' ' )
+		memset(command, 0x0, strlen(commandText) + 1);
+		strncpy(command, commandText, strlen(commandText));
+		// There is no actual bug here, just some sloppy/odd code.
+		// src\vgui2\vgui_controls\consoledialog.cpp(974): warning C6053: The prior call to 'strncpy' might not zero-terminate string 'command'
+			if (command[strlen(command) - 1] == ' ')
 			{
-				extra[ i ] = '\0';
+				command[strlen(command) - 1] = '\0';
+			}
+	}
+
+	// strip the quotes off the extra text
+	char* extra = NULL;
+
+	if (extraText)
+	{
+		extra = static_cast<char*>(malloc((strlen(extraText) + 1) * sizeof(char)));
+		if (extra)
+		{
+			memset(extra, 0x0, strlen(extraText) + 1);
+			strncpy(extra, extraText, strlen(extraText)); // +1 to dodge the starting quote
+
+			// Strip trailing spaces
+			int i = strlen(extra) - 1;
+			while (i >= 0 &&  // Check I before referencing i == -1 into the extra array!
+				extra[i] == ' ')
+			{
+				extra[i] = '\0';
 				i--;
 			}
 		}
 	}
 
-	CHistoryItem *item = NULL;
-	for ( int i = m_CommandHistory.Count() - 1; i >= 0; i-- )
+	// If it's already there, then remove since we'll add it to the end instead
+	CHistoryItem* item = NULL;
+	for (int i = m_CommandHistory.Count() - 1; i >= 0; i--)
 	{
-		item = &m_CommandHistory[ i ];
-		if ( !item )
+		item = &m_CommandHistory[i];
+		if (!item)
 			continue;
 
-		if ( stricmp( item->GetText(), command ) )
+		if (stricmp(item->GetText(), command))
 			continue;
 
-		if ( extra || item->GetExtra() )
+		if (extra || item->GetExtra())
 		{
-			if ( !extra || !item->GetExtra() )
+			if (!extra || !item->GetExtra())
 				continue;
 
-			if ( stricmp( item->GetExtra(), extra ) )	
+			// stricmp so two commands with the same starting text get added
+			if (stricmp(item->GetExtra(), extra))
 				continue;
 		}
-		m_CommandHistory.Remove( i );
+		m_CommandHistory.Remove(i);
 	}
 
-	item = &m_CommandHistory[ m_CommandHistory.AddToTail() ];
-	Assert( item );
-	item->SetText( command, extra );
+	item = &m_CommandHistory[m_CommandHistory.AddToTail()];
+	Assert(item);
+	item->SetText(command, extra);
 
 	m_iNextCompletion = 0;
-	RebuildCompletionList( m_szPartialText );
+	RebuildCompletionList(m_szPartialText);
 
-	free( extra );
+	free(extra);
 }
 
+void CConsolePanel::GetConsoleText(char* pchText, size_t bufSize) const
+{
+	wchar_t* temp = new wchar_t[bufSize];
+	m_pHistory->GetText(0, temp, bufSize * sizeof(wchar_t));
+	g_pVGuiLocalize->ConvertUnicodeToANSI(temp, pchText, bufSize);
+	delete[] temp;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: writes out console to disk
+//-----------------------------------------------------------------------------
 void CConsolePanel::DumpConsoleTextToFile()
 {
 	const int CONDUMP_FILES_MAX_NUM = 1000;
 
 	FileHandle_t handle;
 	bool found = false;
-	char szfile[ 512 ];
+	char szfile[512];
 
-	for ( int i = 0 ; i < CONDUMP_FILES_MAX_NUM ; ++i )
+	// we don't want to overwrite other condump.txt files
+	for (int i = 0; i < CONDUMP_FILES_MAX_NUM; ++i)
 	{
-		_snprintf( szfile, sizeof(szfile), "condump%03d.txt", i );
-		if ( !g_pFullFileSystem->FileExists(szfile) )
+		_snprintf(szfile, sizeof(szfile), "condump%03d.txt", i);
+		if (!g_pFullFileSystem->FileExists(szfile))
 		{
 			found = true;
 			break;
 		}
 	}
 
-	if ( !found )
+	if (!found)
 	{
-		Print( "Can't condump! Too many existing condump output files in the gamedir!\n" );
+		Print("Can't condump! Too many existing condump output files in the gamedir!\n");
 		return;
 	}
 
-	handle = g_pFullFileSystem->Open( szfile, "wb" );
-	if ( handle != FILESYSTEM_INVALID_HANDLE )
+	handle = g_pFullFileSystem->Open(szfile, "wb");
+	if (handle != FILESYSTEM_INVALID_HANDLE)
 	{
 		int pos = 0;
 		while (1)
@@ -750,123 +1111,176 @@ void CConsolePanel::DumpConsoleTextToFile()
 			m_pHistory->GetText(pos, buf, sizeof(buf));
 			pos += sizeof(buf) / sizeof(wchar_t);
 
+			// don't continue if none left
 			if (buf[0] == 0)
 				break;
 
+			// convert to ansi
 			char ansi[512];
 			g_pVGuiLocalize->ConvertUnicodeToANSI(buf, ansi, sizeof(ansi));
 
+			// write to disk
 			int len = strlen(ansi);
 			for (int i = 0; i < len; i++)
 			{
+				// preceed newlines with a return
 				if (ansi[i] == '\n')
 				{
 					char ret = '\r';
-					g_pFullFileSystem->Write( &ret, 1, handle );
+					g_pFullFileSystem->Write(&ret, 1, handle);
 				}
 
-				g_pFullFileSystem->Write( ansi + i, 1, handle );
+				g_pFullFileSystem->Write(ansi + i, 1, handle);
 			}
 		}
 
-		g_pFullFileSystem->Close( handle );
+		g_pFullFileSystem->Close(handle);
 
-		Print( "console dumped to " );
-		Print( szfile );
-		Print( "\n" );
+		Print("console dumped to ");
+		Print(szfile);
+		Print("\n");
 	}
 	else
 	{
-		Print( "Unable to condump to " );
-		Print( szfile );
-		Print( "\n" );
+		Print("Unable to condump to ");
+		Print(szfile);
+		Print("\n");
 	}
 }
 
-CConsoleDialog::CConsoleDialog( vgui::Panel *pParent, const char *pName, bool bStatusVersion ) : 
-	BaseClass( pParent, pName )
+
+//-----------------------------------------------------------------------------
+//
+// Console dialog starts here
+//
+//-----------------------------------------------------------------------------
+CConsoleDialog::CConsoleDialog(Panel* pParent, const char* pName, bool bStatusVersion) :
+	BaseClass(pParent, pName)
 {
-	SetVisible( false );
-	SetTitle( "#GameUI_Console", true );
-	m_pConsolePanel = new CConsolePanel( this, "ConsolePage", bStatusVersion );
+	// initialize dialog
+	SetVisible(false);
+	SetTitle("#Console_Title", false);
+	m_pConsolePanel = new CConsolePanel(this, "ConsolePage", bStatusVersion);
+	m_pConsolePanel->AddActionSignalTarget(this);
+	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "ConsoleScheme.res", "ConsoleScheme");
+	m_pConsolePanel->SetScheme("ConsoleScheme");
+
+	LoadControlSettings(VGUI2_ROOT_DIR "ConsoleDialog.res");
 }
 
-void CConsoleDialog::OnScreenSizeChanged( int iOldWide, int iOldTall )
+void CConsoleDialog::OnScreenSizeChanged(int iOldWide, int iOldTall)
 {
-	BaseClass::OnScreenSizeChanged( iOldWide, iOldTall );
+	BaseClass::OnScreenSizeChanged(iOldWide, iOldTall);
 
 	int sx, sy;
-	surface()->GetScreenSize( sx, sy );
-									 
+	surface()->GetScreenSize(sx, sy);
+
 	int w, h;
-	GetSize( w, h );
-	if ( w > sx || h > sy  )
+	GetSize(w, h);
+	if (w > sx || h > sy)
 	{
-		if ( w > sx )
+		if (w > sx)
 		{
 			w = sx;
 		}
-		if ( h > sy )
+		if (h > sy)
 		{
 			h = sy;
 		}
 
-		SetSize( w, h );
+		// Try and lower the size to match the screen bounds
+		SetSize(w, h);
 	}
 }
 
+
+//-----------------------------------------------------------------------------
+// Purpose: brings dialog to the fore
+//-----------------------------------------------------------------------------
 void CConsoleDialog::PerformLayout()
 {
 	BaseClass::PerformLayout();
 
 	int x, y, w, h;
-	GetClientArea( x, y, w, h );
-	m_pConsolePanel->SetBounds( x, y, w, h );
+	GetClientArea(x, y, w, h);
+	m_pConsolePanel->SetBounds(x, y, w, h);
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: brings dialog to the fore
+//-----------------------------------------------------------------------------
 void CConsoleDialog::Activate()
 {
 	BaseClass::Activate();
 	m_pConsolePanel->m_pEntry->RequestFocus();
 }
 
+
+//-----------------------------------------------------------------------------
+// Hides the dialog
+//-----------------------------------------------------------------------------
 void CConsoleDialog::Hide()
 {
 	OnClose();
 	m_pConsolePanel->Hide();
 }
 
+
+//-----------------------------------------------------------------------------
+// Close just hides the dialog
+//-----------------------------------------------------------------------------
 void CConsoleDialog::Close()
 {
 	Hide();
 }
 
-void CConsoleDialog::OnCommandSubmitted( const char *pCommand )
+
+//-----------------------------------------------------------------------------
+// Submits commands
+//-----------------------------------------------------------------------------
+void CConsoleDialog::OnCommandSubmitted(const char* pCommand)
 {
-	PostActionSignal( new KeyValues( "CommandSubmitted", "command", pCommand ) );
+	PostActionSignal(new KeyValues("CommandSubmitted", "command", pCommand));
 }
 
-void CConsoleDialog::Print( const char *pMessage )
+
+//-----------------------------------------------------------------------------
+// Chain to the page
+//-----------------------------------------------------------------------------
+void CConsoleDialog::Print(const char* pMessage)
 {
-	m_pConsolePanel->Print( pMessage );
+	m_pConsolePanel->Print(pMessage);
 }
 
-void CConsoleDialog::DPrint( const char *pMessage )
+void CConsoleDialog::DPrint(const char* pMessage)
 {
-	m_pConsolePanel->DPrint( pMessage );
+	m_pConsolePanel->DPrint(pMessage);
 }
 
-void CConsoleDialog::ColorPrint( const Color& clr, const char *msg )
+void CConsoleDialog::ColorPrint(const Color& clr, const char* msg)
 {
-	m_pConsolePanel->ColorPrint( clr, msg );
+	m_pConsolePanel->ColorPrint(clr, msg);
 }
 
 void CConsoleDialog::Clear()
 {
-	m_pConsolePanel->Clear( );
+	m_pConsolePanel->Clear();
 }
 
 void CConsoleDialog::DumpConsoleTextToFile()
 {
-	m_pConsolePanel->DumpConsoleTextToFile( );
+	m_pConsolePanel->DumpConsoleTextToFile();
+}
+
+
+void CConsoleDialog::OnKeyCodePressed(KeyCode code)
+{
+	if (code == KEY_XBUTTON_B)
+	{
+		Hide();
+	}
+	else
+	{
+		BaseClass::OnKeyCodePressed(code);
+	}
 }
