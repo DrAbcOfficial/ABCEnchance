@@ -2,7 +2,7 @@
 #define CPLAYERINFOPANEL_H
 #include <string>
 
-#include <vgui_controls/Frame.h>
+#include <vgui_controls/EditablePanel.h>
 #include "IViewportPanel.h"
 
 namespace vgui{
@@ -10,10 +10,10 @@ namespace vgui{
 	class ImagePanel;
 }
 
-class CPlayerInfoPanel : public vgui::Frame, public IViewportPanel
+class CPlayerInfoPanel : public vgui::EditablePanel, public IViewportPanel
 {
 public:
-	DECLARE_CLASS_SIMPLE(CPlayerInfoPanel, vgui::Frame);
+	DECLARE_CLASS_SIMPLE(CPlayerInfoPanel, vgui::EditablePanel);
 
 	CPlayerInfoPanel();
 
