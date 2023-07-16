@@ -596,6 +596,9 @@
     <ClCompile Include="vgui_controls\ImageSprPanel.cpp">
       <Filter>VGUI\control</Filter>
     </ClCompile>
+    <ClCompile Include="VGUI2\GameConsole.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1374,6 +1377,9 @@
     </ClInclude>
     <ClInclude Include="VGUI2\interface\IViewportPanel.h">
       <Filter>VGUI2\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\GameConsole.h">
+      <Filter>VGUI2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
