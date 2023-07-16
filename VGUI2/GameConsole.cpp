@@ -2,7 +2,10 @@
 
 #include "GameConsole.h"
 #include <IGameConsole.h>
-#include <strtools.h>
+
+#include <vgui_controls/consoledialog.h>
+
+vgui::CConsoleDialog* g_ConsoleDialog;
 
 void(__fastcall* m_pfnCGameConsole_Activate)(void* pthis, int);
 void(__fastcall* m_pfnCGameConsole_Initialize)(void* pthis, int);
@@ -28,26 +31,26 @@ public:
 };
 
 void CGameConsole::Activate(void){
-	m_pfnCGameConsole_Activate(this, 0);
+	g_ConsoleDialog->Activate();
 }
 void CGameConsole::Initialize(void){
-	m_pfnCGameConsole_Initialize(this, 0);
+	g_ConsoleDialog = new vgui::CConsoleDialog(nullptr, "Console", false);
 }
 void CGameConsole::Hide(void){
-	m_pfnCGameConsole_Hide(this, 0);
+	g_ConsoleDialog->Hide();
 }
 void CGameConsole::Clear(void){
-	m_pfnCGameConsole_Clear(this, 0);
+	g_ConsoleDialog->Clear();
 }
 bool CGameConsole::IsConsoleVisible(void){
-	return m_pfnCGameConsole_IsConsoleVisible(this, 0);
+	return g_ConsoleDialog->IsVisible();
 }
 void CGameConsole::Printf(const char* format, ...){
 	va_list args;
 	va_start(args, format);
 	static char buf[1024];
 	Q_vsnprintf(buf, sizeof(buf), format, args);
-	m_pfnCGameConsole_Printf(this, 0, "%s", buf);
+	g_ConsoleDialog->Print(buf);
 	va_end(args);
 }
 void CGameConsole::DPrintf(const char* format, ...){
@@ -55,11 +58,11 @@ void CGameConsole::DPrintf(const char* format, ...){
 	va_start(args, format);
 	static char buf[1024];
 	Q_vsnprintf(buf, sizeof(buf), format, args);
-	m_pfnCGameConsole_DPrintf(this, 0, "%s", buf);
+	g_ConsoleDialog->DPrint(buf);
 	va_end(args);
 }
 void CGameConsole::SetParent(int parent){
-	m_pfnCGameConsole_SetParent(this, 0, parent);
+	g_ConsoleDialog->SetParent(parent);
 }
 
 static CGameConsole s_GameConsole;
@@ -73,8 +76,14 @@ void GameConsole_InstallHook(void)
 		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
 		gameconsolefuncs = (IGameConsole*)fnCreateInterface(GAMECONSOLE_INTERFACE_VERSION_GS, NULL);
 		DWORD* pVFTable = *(DWORD**)&s_GameConsole;
+		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 1, (void*)pVFTable[1], (void**)&m_pfnCGameConsole_Activate);
+		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 2, (void*)pVFTable[2], (void**)&m_pfnCGameConsole_Initialize);
+		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 3, (void*)pVFTable[3], (void**)&m_pfnCGameConsole_Hide);
+		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 4, (void*)pVFTable[4], (void**)&m_pfnCGameConsole_Clear);
+		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 5, (void*)pVFTable[5], (void**)&m_pfnCGameConsole_IsConsoleVisible);
 		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 6, (void*)pVFTable[6], (void**)&m_pfnCGameConsole_Printf);
 		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 7, (void*)pVFTable[7], (void**)&m_pfnCGameConsole_DPrintf);
+		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 8, (void*)pVFTable[8], (void**)&m_pfnCGameConsole_SetParent);
 	}
 	else
 		g_pMetaHookAPI->SysError("[ABCEnchace] Can not create interface of gameconsole.");
