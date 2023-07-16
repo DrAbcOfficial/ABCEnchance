@@ -124,34 +124,35 @@ void CPlayerInfo::UpdatePing() {
 }
 CPlayerInfo *CPlayerInfo::Update(){
 	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(m_iIndex);
-	if (info == nullptr) {
-		m_bIsConnected = false;
-		return nullptr;
-	}
 	bool bWasConnected = m_bIsConnected;
-	bool bIsConnected = info->userid != 0;
+	bool bIsConnected = info != nullptr;
 	m_bIsConnected = bIsConnected;
-	//First Time
+
 	if (bIsConnected != bWasConnected){
-		if (!m_pSteamId.IsValid()){
-			if (m_iIndex == gEngfuncs.GetLocalPlayer()->index)
-				m_pSteamId = SteamUser()->GetSteamID();
-			else
-				m_pSteamId = CSteamID(info->m_nSteamID);
-		}
-		//RealNameGet
-		if (m_pSteamId.IsValid())
-			Q_strcpy(m_szRealName, SteamFriends()->GetFriendPersonaName(m_pSteamId));
+		// Player connected or disconnected
+		memset(szName, 0, sizeof(szName));
+		memset(m_szRealName, 0, sizeof(m_szRealName));
+		memset(&m_ExtraInfo, 0, sizeof(m_ExtraInfo));
+		m_pSteamId.Clear();
 		if(g_pViewPort)
 			g_pViewPort->GetScoreBoard()->UpdateOnPlayerInfo(GetIndex());
 	}
 	if (bIsConnected){
-
+		if (!m_pSteamId.IsValid()) {
+			// Player has no SteamID, update it
+			if (m_iIndex == gEngfuncs.GetLocalPlayer()->index)
+				m_pSteamId = SteamUser()->GetSteamID();
+			else
+				m_pSteamId = CSteamID(info->m_nSteamID);
+			//RealNameGet
+			if (m_pSteamId.IsValid())
+				Q_strcpy(m_szRealName, SteamFriends()->GetFriendPersonaName(m_pSteamId));
+		}
 		iTopColor = info->topcolor;
 		iBottomColor = info->bottomcolor;
 		iPing = info->ping;
 		iLoss = info->packet_loss;
-		strcpy_s(szName, info->name);
+		Q_strcpy(szName, info->name);
 		hud_playerinfo_t* extraInfo = gCustomHud.GetPlayerHUDInfo(m_iIndex);
 		m_ExtraInfo.armor = extraInfo->armor;
 		m_ExtraInfo.frags = extraInfo->frags;
@@ -174,7 +175,7 @@ bool CPlayerInfo::HasRealName(){
 void CPlayerInfo::Reset(){
 	memset(szName, 0, sizeof(szName));
 	memset(m_szRealName, 0, sizeof(m_szRealName));
-	m_ExtraInfo = extra_player_info_t();
+	memset(&m_ExtraInfo, 0, sizeof(m_ExtraInfo));
 	m_bIsConnected = false;
 	m_pSteamId.Clear();
 }
