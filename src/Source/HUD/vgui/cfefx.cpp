@@ -24,11 +24,20 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "CFefxScheme.res", "CFefxScheme");
-	SetScheme("CFefxScheme");
 
-	m_pKillMark = new vgui::ImagePanel(this, "KillMarkPoint");
-	LoadControlSettings(VGUI2_ROOT_DIR "CFefx.res");
+	//评价是没必要用Scheme
+	//vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "CfefxScheme.res", "CfefxScheme");
+	//SetScheme("CfefxScheme");
+
+	m_pKillMarkPoint = new vgui::ImagePanel(this, "KillMarkPoint");
+	m_pDmgMarkOne = new vgui::ImagePanel(this, "DmgMarkOne");
+	m_pDmgMarkTwo = new vgui::ImagePanel(this, "DmgMarkTwo");
+	m_pDmgMarkThree = new vgui::ImagePanel(this, "DmgMarkThree");
+	m_pDmgMarkFour = new vgui::ImagePanel(this, "DmgMarkFour");
+	m_pDmgMarkFive = new vgui::ImagePanel(this, "DmgMarkFive");
+	m_pDmgStar = new vgui::ImagePanel(this, "DmgStar");
+
+	LoadControlSettings(VGUI2_ROOT_DIR "Cfefx.res");
 
 	//SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
 	//SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
@@ -42,27 +51,73 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 
 void CKillMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
-	SetBgColor(GetSchemeColor("KillMark.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	//SetBgColor(GetSchemeColor("KillMark.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	SetBgColor(Color(0, 0, 0, 0));
 }
 
 bool CKillMarkPanel::IsVisible() {
 	return BaseClass::IsVisible();
 }
 
-void CKillMarkPanel::ShowPanel(bool state)
-{
+void CKillMarkPanel::ShowPanel(bool state) {
 	if (state == IsVisible())
 		return;
 	SetVisible(state);
 }
 
-void CKillMarkPanel::ShowKillMark(int iValue)
+void CKillMarkPanel::ShowKillMark(int* iDmg, int iDmgMax)
 {
-	PlaySoundByName("misc/UI_SPECIALKILL2.wav", 1);
-	ShowPanel(true);
-	SetAlpha(255);
-	vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 0, 1.5f, 1.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
-	ShowPanel(false);
+	int i = iDmgMax / 10;
+
+	if (*iDmg >= i)
+	{
+		/*
+		TODO:
+		每100伤害触发
+		星号向左对应伤害图标移动并放大，经过一定距离最大后缩小并移动到当前伤害图标
+		伤害图标直接在对应位置淡入
+		达到500伤害其它图标向上移动到第一个图标“合并”成一个500伤害图标
+
+
+		面板得统一放在个数组什么之类的里面 还没学不会写
+		
+
+
+		*/	
+		
+		switch (*iDmg / i)
+		{
+		case 0:
+			break;
+		case 1:
+			m_pDmgMarkOne->SetVisible(true);
+			m_pDmgMarkOne->SetAlpha(0);
+			vgui::GetAnimationController()->RunAnimationCommand(m_pDmgMarkOne, "alpha", 255, 0, 1.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+			break;
+		case 2:
+			m_pDmgMarkTwo->SetVisible(true);
+			break;
+		case 3:
+			m_pDmgMarkThree->SetVisible(true);
+			break;
+		case 4:
+			m_pDmgMarkFour->SetVisible(true);
+			break;
+		case 5:
+			m_pDmgMarkFive->SetVisible(true);
+			break;
+		}
+	}
+	if (*iDmg >= iDmgMax)
+	{
+		//TODO:清空伤害图标
+		*iDmg = 0;
+		PlaySoundByName("misc/UI_SPECIALKILL2.wav", 1);
+		ShowPanel(true);
+		SetAlpha(255);
+		vgui::GetAnimationController()->RunAnimationCommand(m_pKillMarkPoint, "alpha", 0, 1.5f, 1.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+		ShowPanel(false);
+	}
 }
 
 vgui::VPANEL CKillMarkPanel::GetVPanel() {
@@ -71,6 +126,14 @@ vgui::VPANEL CKillMarkPanel::GetVPanel() {
 
 void CKillMarkPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
+}
+
+const char* CKillMarkPanel::GetName() {
+	return VIEWPORT_KILLMARK_NAME;
+}
+
+void CKillMarkPanel::Reset() {
+	ShowPanel(false);
 }
 
 //void CKillMarkPanel::OnThink()
@@ -86,86 +149,3 @@ void CKillMarkPanel::SetParent(vgui::VPANEL parent) {
 //	else
 //		m_pKillMark->SetAlpha(a);
 //}
-
-const char* CKillMarkPanel::GetName() {
-	return VIEWPORT_KILLMARK_NAME;
-}
-
-void CKillMarkPanel::Reset() {
-	ShowPanel(false);
-}
-
-
-
-/*TODO:屏幕中心移动到右边
-
-CDmgMarkPanel::CDmgMarkPanel() : BaseClass(nullptr, VIEWPORT_DMGMARK_NAME)
-{
-	SetProportional(true);
-	SetKeyBoardInputEnabled(false);
-	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "CFefxScheme.res", "CFefxScheme");
-	SetScheme("CFefxScheme");
-
-	m_pDmgMark = new vgui::ImagePanel(this, "DmgMark");
-
-	//SetPos(ScreenWidth / 2, ScreenHeight / 2);
-	//SetSize(ScreenWidth * 0.085, ScreenHeight * 0.112);
-
-	LoadControlSettings(VGUI2_ROOT_DIR "CFefx.res");
-}
-
-
-void CDmgMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
-	BaseClass::ApplySchemeSettings(pScheme);
-	SetBgColor(Color(0, 0, 0, 0));
-
-	//m_pKillMark->SetBgColor(GetSchemeColor("KillMark.BackGoundColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
-}
-
-
-
-bool CDmgMarkPanel::IsVisible() {
-	return BaseClass::IsVisible();
-}
-
-void CDmgMarkPanel::ShowPanel(bool state)
-{
-	if (state == IsVisible())
-		return;
-	SetVisible(state);
-
-}
-
-void CDmgMarkPanel::SetSize(int w, int t) {
-	BaseClass::SetSize(w, t);
-	m_pDmgMark->SetSize(w, t);
-}
-vgui::VPANEL CDmgMarkPanel::GetVPanel() {
-	return BaseClass::GetVPanel();
-}
-
-void CDmgMarkPanel::SetParent(vgui::VPANEL parent) {
-	BaseClass::SetParent(parent);
-}
-
-void CDmgMarkPanel::OnThink()
-{
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	if (!local)
-		return;
-	ShowPanel(true);
-	g_pViewPort;
-}
-
-const char* CDmgMarkPanel::GetName() {
-	return VIEWPORT_KILLMARK_NAME;
-}
-
-void CDmgMarkPanel::Reset() {
-	ShowPanel(false);
-}
-
-*/
-
-

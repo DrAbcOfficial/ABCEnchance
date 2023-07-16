@@ -17,32 +17,16 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 	//virtual void OnThink() override;
-	void ShowKillMark(int iValue);
+	void ShowKillMark(int* iDmg, int iDmgMax);
 
 private:
-	vgui::ImagePanel* m_pKillMark = nullptr;
+	vgui::ImagePanel* m_pKillMarkPoint = nullptr;
+	vgui::ImagePanel* m_pDmgMarkOne = nullptr;
+	vgui::ImagePanel* m_pDmgMarkTwo = nullptr;
+	vgui::ImagePanel* m_pDmgMarkThree = nullptr;
+	vgui::ImagePanel* m_pDmgMarkFour = nullptr;
+	vgui::ImagePanel* m_pDmgMarkFive = nullptr;
+	vgui::ImagePanel* m_pDmgStar = nullptr;
+
 };
 
-/*TODO
-
-class CDmgMarkPanel : public vgui::EditablePanel, public IViewportPanel
-{
-
-public:
-	DECLARE_CLASS_SIMPLE(CDmgMarkPanel, vgui::EditablePanel);
-
-	CDmgMarkPanel();
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	virtual void ApplySettings(KeyValues* inResourceData) override;
-	virtual const char* GetName() override;
-	virtual void Reset() override;
-	virtual void ShowPanel(bool state) override;
-	virtual bool IsVisible() override;
-	virtual vgui::VPANEL GetVPanel() override;
-	virtual void SetParent(vgui::VPANEL parent) override;
-	virtual void OnThink() override;
-
-private:
-	vgui::ImagePanel* m_pDmgMark = nullptr;
-};
-*/

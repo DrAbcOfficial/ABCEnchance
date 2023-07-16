@@ -10,6 +10,6 @@ Scheme
 	{
 		"Notice.BgColor"		"Blank"
 		"Notice.TextBgColor"		"Blank"
-		"Notice.TextFgColor"		"0 255 0 255"
+		"Notice.TextFgColor"		"255 255 0 255"
 	}
 }

@@ -105,7 +105,7 @@ public:
 	};
 	void ShowNotice(HUDNOTICE type, const char* message);
 
-	void ShowKillMark(int iValue);
+	void ShowKillMark(int* iDmg, int iDmgMax);
 
 	long m_iTimeEnd = 0;
 
@@ -128,7 +128,6 @@ private:
 	CFlashLightPanel* m_pFlashLight = nullptr;
 	CNoticePanel* m_pNotice = nullptr;
 	CNoticePanel* m_pNoticeCenter = nullptr;
-	CCrosshairPanel* m_pCrossHairPanel;
 	CKillMarkPanel* m_pKillMarkPanel = nullptr;
 	CCrosshairPanel* m_pCrossHairPanel = nullptr;
 	CEffectPanel* m_pEffectPanel = nullptr;

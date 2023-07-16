@@ -280,8 +280,7 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 			{
 				static int iDmg;
 				iDmg += iValue;
-				if(g_pViewPort->m_pKillMarkMax->value <= iDmg)
-					g_pViewPort->ShowKillMark(iValue);
+				g_pViewPort->ShowKillMark(&iDmg, g_pViewPort->m_pKillMarkMax->value);
 			}
 			if (g_pViewPort->m_pPopNumber->value <= 0)
 				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;

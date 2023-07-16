@@ -4,21 +4,10 @@
 	{
 		"ControlName"		"CKillMarkPanel"
 		"fieldName"		"KillMarkPanel"
-		"xpos"		"320"
-		"ypos"		"240"
-		"wide"		"100"
-		"tall"		"100"
-		"visible"		"1"
-		"enabled"		"1"
-	}
-	"DmgMarkPanel"
-	{
-		"ControlName"		"CDmgMarkPanel"
-		"fieldName"		"DmgMarkPanel"
-		"xpos"		"54"
-		"ypos"		"36"
-		"wide"		"48"
-		"tall"		"64"
+		"xpos"		"0"
+		"ypos"		"0"
+		"wide"		"640"
+		"tall"		"320"
 		"visible"		"1"
 		"enabled"		"1"
 	}
@@ -26,8 +15,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"KillMarkPoint"
-		"xpos"		"320"
-		"ypos"		"240"
+		"xpos"		"c"
+		"ypos"		"c"
 		"wide"		"100"
 		"tall"		"100"
 		"visible"		"1"
@@ -36,10 +25,10 @@
 		"image"			"abcenchance/tga/cfefx/BossDamage"
 		"drawColor"		"255 255 255 255"
 	}
-	"DmgMark"
+	"DmgMarkOne"
 	{
 		"ControlName"		"ImagePanel"
-		"fieldName"		"DmgMark"
+		"fieldName"		"DmgMarkOne"
 		"xpos"		"c"
 		"ypos"		"c"
 		"wide"		"54"
