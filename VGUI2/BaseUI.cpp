@@ -2,6 +2,7 @@
 #include <vector>
 #include "BaseUI.h"
 #include <IGameUI.h>
+#include <IGameConsole.h>
 #include <VGUI\IScheme.h>
 #include <VGUI\ILocalize.h>
 #include <VGUI\ISurface.h>
@@ -47,6 +48,20 @@ public:
 	virtual bool IsGameUIVisible(void);
 	virtual void HideConsole(void);
 	virtual void ShowConsole(void);
+};
+
+class CGameConsole : public IGameConsole
+{
+public:
+	virtual void Activate(void) = 0;
+	virtual void Initialize(void) = 0;
+	virtual void Hide(void) = 0;
+	virtual void Clear(void) = 0;
+	virtual bool IsConsoleVisible(void) = 0;
+	virtual void Printf(const char* format, ...) = 0;
+	virtual void DPrintf(const char* format, ...) = 0;
+	//virtual void ColorPrintf(Color &clr) = 0;	// Doesn't exist on GS
+	virtual void SetParent(int parent) = 0;
 };
 
 static CBaseUI s_BaseUI;

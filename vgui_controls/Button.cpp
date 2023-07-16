@@ -1,4 +1,4 @@
-//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Basic button control
 //
@@ -6,55 +6,54 @@
 //=============================================================================//
 
 #include <stdio.h>
-
-#include <tier1/KeyValues.h>
-#include <tier1/utlsymbol.h>
+#include <utlsymbol.h>
 
 #include <vgui/IBorder.h>
 #include <vgui/IInput.h>
 #include <vgui/IScheme.h>
-#include <vgui/ISurface2.h>
+#include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
-#include <vgui/IVGUI.h>
+#include <vgui/IVGui.h>
 #include <vgui/MouseCode.h>
 #include <vgui/KeyCode.h>
+#include <KeyValues.h>
 
-#include "Button.h"
-#include "FocusNavGroup.h"
+#include <vgui_controls/Button.h>
+#include <vgui_controls/FocusNavGroup.h>
 
 // memdbgon must be the last include file in a .cpp file!!!
-//#include <tier0/memdbgon.h>
+#include <tier0/memdbgon.h>
 
 using namespace vgui;
 
 // global list of all the names of all the sounds played by buttons
 CUtlSymbolTable g_ButtonSoundNames;
 
-DECLARE_BUILD_FACTORY_DEFAULT_TEXT( Button, Button );
+DECLARE_BUILD_FACTORY_DEFAULT_TEXT(Button, Button);
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-Button::Button(Panel *parent, const char *panelName, const char *text, Panel *pActionSignalTarget, const char *pCmd ) : Label(parent, panelName, text)
+Button::Button(Panel* parent, const char* panelName, const char* text, Panel* pActionSignalTarget, const char* pCmd) : Label(parent, panelName, text)
 {
 	Init();
-	if ( pActionSignalTarget && pCmd )
+	if (pActionSignalTarget && pCmd)
 	{
-		AddActionSignalTarget( pActionSignalTarget );
-		SetCommand( pCmd );
+		AddActionSignalTarget(pActionSignalTarget);
+		SetCommand(pCmd);
 	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
-Button::Button(Panel *parent, const char *panelName, const wchar_t *wszText, Panel *pActionSignalTarget, const char *pCmd ) : Label(parent, panelName, wszText)
+Button::Button(Panel* parent, const char* panelName, const wchar_t* wszText, Panel* pActionSignalTarget, const char* pCmd) : Label(parent, panelName, wszText)
 {
 	Init();
-	if ( pActionSignalTarget && pCmd )
+	if (pActionSignalTarget && pCmd)
 	{
-		AddActionSignalTarget( pActionSignalTarget );
-		SetCommand( pCmd );
+		AddActionSignalTarget(pActionSignalTarget);
+		SetCommand(pCmd);
 	}
 }
 
@@ -63,7 +62,7 @@ Button::Button(Panel *parent, const char *panelName, const wchar_t *wszText, Pan
 //-----------------------------------------------------------------------------
 void Button::Init()
 {
-	_buttonFlags.SetFlag( USE_CAPTURE_MOUSE | BUTTON_BORDER_ENABLED );
+	_buttonFlags.SetFlag(USE_CAPTURE_MOUSE | BUTTON_BORDER_ENABLED);
 
 	_mouseClickMask = 0;
 	_actionMessage = NULL;
@@ -71,17 +70,29 @@ void Button::Init()
 	_depressedBorder = NULL;
 	_keyFocusBorder = NULL;
 	m_bSelectionStateSaved = false;
+	m_bStaySelectedOnClick = false;
 	m_sArmedSoundName = UTL_INVAL_SYMBOL;
 	m_sDepressedSoundName = UTL_INVAL_SYMBOL;
 	m_sReleasedSoundName = UTL_INVAL_SYMBOL;
 	SetTextInset(6, 0);
-	SetMouseClickEnabled( MOUSE_LEFT, true );
+	SetMouseClickEnabled(MOUSE_LEFT, true);
 	SetButtonActivationType(ACTIVATE_ONPRESSEDANDRELEASED);
 
 	// labels have this off by default, but we need it on
-	SetPaintBackgroundEnabled( true );
+	SetPaintBackgroundEnabled(true);
 
 	_paint = true;
+
+	REGISTER_COLOR_AS_OVERRIDABLE(_defaultFgColor, "defaultFgColor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_defaultBgColor, "defaultBgColor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_armedFgColor, "armedFgColor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_armedBgColor, "armedBgColor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_depressedFgColor, "depressedFgColor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_depressedBgColor, "depressedBgColor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_selectedFgColor, "selectedFgColor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_selectedBgColor, "selectedBgColor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_keyboardFocusColor, "keyboardFocusColor_override");
+	REGISTER_COLOR_AS_OVERRIDABLE(_blinkFgColor, "blinkFgColor_override");
 }
 
 //-----------------------------------------------------------------------------
@@ -106,11 +117,11 @@ void Button::SetButtonActivationType(ActivationType_t activationType)
 //-----------------------------------------------------------------------------
 // Purpose: Set button border attribute enabled.
 //-----------------------------------------------------------------------------
-void Button::SetButtonBorderEnabled( bool state )
+void Button::SetButtonBorderEnabled(bool state)
 {
-	if ( state != _buttonFlags.IsFlagSet( BUTTON_BORDER_ENABLED ) )
+	if (state != _buttonFlags.IsFlagSet(BUTTON_BORDER_ENABLED))
 	{
-		_buttonFlags.SetFlag( BUTTON_BORDER_ENABLED, state );
+		_buttonFlags.SetFlag(BUTTON_BORDER_ENABLED, state);
 		InvalidateLayout(false);
 	}
 }
@@ -118,21 +129,27 @@ void Button::SetButtonBorderEnabled( bool state )
 //-----------------------------------------------------------------------------
 // Purpose:	Set button selected state.
 //-----------------------------------------------------------------------------
-void Button::SetSelected( bool state )
+void Button::SetSelected(bool state)
 {
-	if ( _buttonFlags.IsFlagSet( SELECTED ) != state )
+	if (_buttonFlags.IsFlagSet(SELECTED) != state)
 	{
-		_buttonFlags.SetFlag( SELECTED, state );
+		_buttonFlags.SetFlag(SELECTED, state);
 		RecalculateDepressedState();
+		InvalidateLayout(false);
+	}
+
+	if (state && _buttonFlags.IsFlagSet(ARMED))
+	{
+		_buttonFlags.SetFlag(ARMED, false);
 		InvalidateLayout(false);
 	}
 }
 
-void Button::SetBlink( bool state )
+void Button::SetBlink(bool state)
 {
-	if ( _buttonFlags.IsFlagSet( BLINK ) != state )
+	if (_buttonFlags.IsFlagSet(BLINK) != state)
 	{
-		_buttonFlags.SetFlag( BLINK, state );
+		_buttonFlags.SetFlag(BLINK, state);
 		RecalculateDepressedState();
 		InvalidateLayout(false);
 	}
@@ -143,9 +160,9 @@ void Button::SetBlink( bool state )
 //-----------------------------------------------------------------------------
 void Button::ForceDepressed(bool state)
 {
-	if ( _buttonFlags.IsFlagSet( FORCE_DEPRESSED ) != state )
+	if (_buttonFlags.IsFlagSet(FORCE_DEPRESSED) != state)
 	{
-		_buttonFlags.SetFlag( FORCE_DEPRESSED, state );
+		_buttonFlags.SetFlag(FORCE_DEPRESSED, state);
 		RecalculateDepressedState();
 		InvalidateLayout(false);
 	}
@@ -154,7 +171,7 @@ void Button::ForceDepressed(bool state)
 //-----------------------------------------------------------------------------
 // Purpose:	Set button depressed state with respect to the force depressed state.
 //-----------------------------------------------------------------------------
-void Button::RecalculateDepressedState( void )
+void Button::RecalculateDepressedState(void)
 {
 	bool newState;
 	if (!IsEnabled())
@@ -163,10 +180,17 @@ void Button::RecalculateDepressedState( void )
 	}
 	else
 	{
-		newState = _buttonFlags.IsFlagSet( FORCE_DEPRESSED ) ? true : (_buttonFlags.IsFlagSet(ARMED) && _buttonFlags.IsFlagSet( SELECTED ) );
+		if (m_bStaySelectedOnClick && _buttonFlags.IsFlagSet(SELECTED))
+		{
+			newState = false;
+		}
+		else
+		{
+			newState = _buttonFlags.IsFlagSet(FORCE_DEPRESSED) ? true : (_buttonFlags.IsFlagSet(ARMED) && _buttonFlags.IsFlagSet(SELECTED));
+		}
 	}
 
-	_buttonFlags.SetFlag( DEPRESSED, newState );
+	_buttonFlags.SetFlag(DEPRESSED, newState);
 }
 
 //-----------------------------------------------------------------------------
@@ -174,18 +198,18 @@ void Button::RecalculateDepressedState( void )
 //			Defaults to true
 //			Should be set to false for things like menu items where there is a higher-level mouse capture
 //-----------------------------------------------------------------------------
-void Button::SetUseCaptureMouse( bool state )
+void Button::SetUseCaptureMouse(bool state)
 {
-	_buttonFlags.SetFlag( USE_CAPTURE_MOUSE, state );
+	_buttonFlags.SetFlag(USE_CAPTURE_MOUSE, state);
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Check if mouse capture is enabled.
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool Button::IsUseCaptureMouseEnabled( void )
+bool Button::IsUseCaptureMouseEnabled(void)
 {
-	return _buttonFlags.IsFlagSet( USE_CAPTURE_MOUSE );
+	return _buttonFlags.IsFlagSet(USE_CAPTURE_MOUSE);
 }
 
 //-----------------------------------------------------------------------------
@@ -193,9 +217,9 @@ bool Button::IsUseCaptureMouseEnabled( void )
 //-----------------------------------------------------------------------------
 void Button::SetArmed(bool state)
 {
-	if ( _buttonFlags.IsFlagSet( ARMED ) != state )
+	if (_buttonFlags.IsFlagSet(ARMED) != state)
 	{
-		_buttonFlags.SetFlag( ARMED, state );
+		_buttonFlags.SetFlag(ARMED, state);
 		RecalculateDepressedState();
 		InvalidateLayout(false);
 
@@ -212,11 +236,11 @@ void Button::SetArmed(bool state)
 //-----------------------------------------------------------------------------
 bool Button::IsArmed()
 {
-	return _buttonFlags.IsFlagSet( ARMED );
+	return _buttonFlags.IsFlagSet(ARMED);
 }
 
 
-KeyValues *Button::GetActionMessage()
+KeyValues* Button::GetActionMessage()
 {
 	return _actionMessage->MakeCopy();
 }
@@ -224,12 +248,11 @@ KeyValues *Button::GetActionMessage()
 void Button::PlayButtonReleasedSound()
 {
 	// check for playing a transition sound
-	if ( m_sReleasedSoundName != UTL_INVAL_SYMBOL )
+	if (m_sReleasedSoundName != UTL_INVAL_SYMBOL)
 	{
-		surface()->PlaySound( g_ButtonSoundNames.String( m_sReleasedSoundName ) );
+		surface()->PlaySound(g_ButtonSoundNames.String(m_sReleasedSoundName));
 	}
 }
-
 
 //-----------------------------------------------------------------------------
 // Purpose:	Activate a button click.
@@ -239,7 +262,20 @@ void Button::DoClick()
 	SetSelected(true);
 	FireActionSignal();
 	PlayButtonReleasedSound();
-	SetSelected(false);
+
+	// GoldSrc: ?
+#if 0
+	static ConVarRef vgui_nav_lock("vgui_nav_lock");
+	if ((!vgui_nav_lock.IsValid() || vgui_nav_lock.GetInt() == 0) && NavigateActivate())
+	{
+		vgui_nav_lock.SetValue(1);
+	}
+#endif
+
+	if (!m_bStaySelectedOnClick)
+	{
+		SetSelected(false);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -247,7 +283,7 @@ void Button::DoClick()
 //-----------------------------------------------------------------------------
 bool Button::IsSelected()
 {
-	return _buttonFlags.IsFlagSet( SELECTED );
+	return _buttonFlags.IsFlagSet(SELECTED);
 }
 
 //-----------------------------------------------------------------------------
@@ -255,12 +291,12 @@ bool Button::IsSelected()
 //-----------------------------------------------------------------------------
 bool Button::IsDepressed()
 {
-	return _buttonFlags.IsFlagSet( DEPRESSED );
+	return _buttonFlags.IsFlagSet(DEPRESSED);
 }
 
-bool Button::IsBlinking( void )
+bool Button::IsBlinking(void)
 {
-	return _buttonFlags.IsFlagSet( BLINK );
+	return _buttonFlags.IsFlagSet(BLINK);
 }
 
 
@@ -269,31 +305,57 @@ bool Button::IsBlinking( void )
 //-----------------------------------------------------------------------------
 bool Button::IsDrawingFocusBox()
 {
-	return _buttonFlags.IsFlagSet( DRAW_FOCUS_BOX );
+	return _buttonFlags.IsFlagSet(DRAW_FOCUS_BOX);
 }
 
-void Button::DrawFocusBox( bool bEnable )
+void Button::DrawFocusBox(bool bEnable)
 {
-	_buttonFlags.SetFlag( DRAW_FOCUS_BOX, bEnable );
+	_buttonFlags.SetFlag(DRAW_FOCUS_BOX, bEnable);
 }
 
-	
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void Button::NavigateTo()
+{
+	BaseClass::NavigateTo();
+
+	SetArmed(true);
+
+	if (IsPC())
+	{
+		RequestFocus(0);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void Button::NavigateFrom()
+{
+	BaseClass::NavigateFrom();
+
+	SetArmed(false);
+
+	OnKeyCodeReleased(KEY_XBUTTON_A);
+}
+
 //-----------------------------------------------------------------------------
 // Purpose:	Paint button on screen
 //-----------------------------------------------------------------------------
 void Button::Paint(void)
 {
-	if ( !ShouldPaint() )
-		return; 
+	if (!ShouldPaint())
+		return;
 
 	BaseClass::Paint();
 
-	if ( HasFocus() && IsEnabled() && IsDrawingFocusBox() )
+	if (HasFocus() && IsEnabled() && IsDrawingFocusBox())
 	{
 		int x0, y0, x1, y1;
 		int wide, tall;
 		GetSize(wide, tall);
-		x0 = 3, y0 = 3, x1 = wide - 4 , y1 = tall - 2;
+		x0 = 3, y0 = 3, x1 = wide - 4, y1 = tall - 2;
 		DrawFocusBorder(x0, y0, x1, y1);
 	}
 }
@@ -304,7 +366,7 @@ void Button::Paint(void)
 void Button::PerformLayout()
 {
 	// reset our border
-	SetBorder( GetBorder(_buttonFlags.IsFlagSet( DEPRESSED ), _buttonFlags.IsFlagSet( ARMED ), _buttonFlags.IsFlagSet( SELECTED ), HasFocus() ) );
+	SetBorder(GetBorder(_buttonFlags.IsFlagSet(DEPRESSED), _buttonFlags.IsFlagSet(ARMED), _buttonFlags.IsFlagSet(SELECTED), HasFocus()));
 
 	// set our color
 	SetFgColor(GetButtonFgColor());
@@ -319,32 +381,36 @@ void Button::PerformLayout()
 //-----------------------------------------------------------------------------
 Color Button::GetButtonFgColor()
 {
-	if ( !_buttonFlags.IsFlagSet( BLINK ) )
+	if (!_buttonFlags.IsFlagSet(BLINK))
 	{
-		if (_buttonFlags.IsFlagSet( DEPRESSED ))
+		if (_buttonFlags.IsFlagSet(DEPRESSED))
 			return _depressedFgColor;
-		if (_buttonFlags.IsFlagSet( ARMED ))
+		if (_buttonFlags.IsFlagSet(ARMED))
 			return _armedFgColor;
+		if (_buttonFlags.IsFlagSet(SELECTED))
+			return _selectedFgColor;
 		return _defaultFgColor;
 	}
 
 	Color cBlendedColor;
 
-	if (_buttonFlags.IsFlagSet( DEPRESSED ))
+	if (_buttonFlags.IsFlagSet(DEPRESSED))
 		cBlendedColor = _depressedFgColor;
-	else if (_buttonFlags.IsFlagSet( ARMED ))
+	else if (_buttonFlags.IsFlagSet(ARMED))
 		cBlendedColor = _armedFgColor;
+	else if (_buttonFlags.IsFlagSet(SELECTED))
+		cBlendedColor = _selectedFgColor;
 	else
 		cBlendedColor = _defaultFgColor;
 
-	float fBlink = ( sinf( system()->GetTimeMillis() * 0.01f ) + 1.0f ) * 0.5f;
+	float fBlink = (sinf(system()->GetTimeMillis() * 0.01f) + 1.0f) * 0.5f;
 
-	if ( _buttonFlags.IsFlagSet( BLINK ) )
+	if (_buttonFlags.IsFlagSet(BLINK))
 	{
-		cBlendedColor[ 0 ] = (float)cBlendedColor[ 0 ] * fBlink + (float)_blinkFgColor[ 0 ] * ( 1.0f - fBlink );
-		cBlendedColor[ 1 ] = (float)cBlendedColor[ 1 ] * fBlink + (float)_blinkFgColor[ 1 ] * ( 1.0f - fBlink );
-		cBlendedColor[ 2 ] = (float)cBlendedColor[ 2 ] * fBlink + (float)_blinkFgColor[ 2 ] * ( 1.0f - fBlink );
-		cBlendedColor[ 3 ] = (float)cBlendedColor[ 3 ] * fBlink + (float)_blinkFgColor[ 3 ] * ( 1.0f - fBlink );
+		cBlendedColor[0] = (float)cBlendedColor[0] * fBlink + (float)_blinkFgColor[0] * (1.0f - fBlink);
+		cBlendedColor[1] = (float)cBlendedColor[1] * fBlink + (float)_blinkFgColor[1] * (1.0f - fBlink);
+		cBlendedColor[2] = (float)cBlendedColor[2] * fBlink + (float)_blinkFgColor[2] * (1.0f - fBlink);
+		cBlendedColor[3] = (float)cBlendedColor[3] * fBlink + (float)_blinkFgColor[3] * (1.0f - fBlink);
 	}
 
 	return cBlendedColor;
@@ -355,10 +421,12 @@ Color Button::GetButtonFgColor()
 //-----------------------------------------------------------------------------
 Color Button::GetButtonBgColor()
 {
-	if (_buttonFlags.IsFlagSet( DEPRESSED ))
+	if (_buttonFlags.IsFlagSet(DEPRESSED))
 		return _depressedBgColor;
-	if (_buttonFlags.IsFlagSet( ARMED ))
+	if (_buttonFlags.IsFlagSet(ARMED))
 		return _armedBgColor;
+	if (_buttonFlags.IsFlagSet(SELECTED))
+		return _selectedBgColor;
 	return _defaultBgColor;
 }
 
@@ -383,7 +451,7 @@ void Button::OnKillFocus()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void Button::ApplySchemeSettings(IScheme *pScheme)
+void Button::ApplySchemeSettings(IScheme* pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
@@ -392,15 +460,18 @@ void Button::ApplySchemeSettings(IScheme *pScheme)
 	_depressedBorder = pScheme->GetBorder("ButtonDepressedBorder");
 	_keyFocusBorder = pScheme->GetBorder("ButtonKeyFocusBorder");
 
-	_defaultFgColor = GetSchemeColor("BaseText", Color(255, 255, 255, 255), pScheme);
-	_defaultBgColor = GetSchemeColor("BgColor", Color(0, 0, 0, 255), pScheme);
+	_defaultFgColor = GetSchemeColor("Button.TextColor", Color(255, 255, 255, 255), pScheme);
+	_defaultBgColor = GetSchemeColor("Button.BgColor", Color(0, 0, 0, 255), pScheme);
 
-	_armedFgColor = GetSchemeColor("ButtonArmedFgColor", _defaultFgColor, pScheme);
-	_armedBgColor = GetSchemeColor("ButtonArmedBgColor", _defaultBgColor, pScheme);
+	_armedFgColor = GetSchemeColor("Button.ArmedTextColor", _defaultFgColor, pScheme);
+	_armedBgColor = GetSchemeColor("Button.ArmedBgColor", _defaultBgColor, pScheme);
 
-	_depressedFgColor = GetSchemeColor("ButtonDepressedFgColor", _defaultFgColor, pScheme);
-	_depressedBgColor = GetSchemeColor("ButtonDepressedBgColor", _defaultBgColor, pScheme);
-	_keyboardFocusColor = GetSchemeColor("Button.FocusBorderColor", Color(0,0,0,255), pScheme);
+	_selectedFgColor = GetSchemeColor("Button.SelectedTextColor", _selectedFgColor, pScheme);
+	_selectedBgColor = GetSchemeColor("Button.SelectedBgColor", _selectedBgColor, pScheme);
+
+	_depressedFgColor = GetSchemeColor("Button.DepressedTextColor", _defaultFgColor, pScheme);
+	_depressedBgColor = GetSchemeColor("Button.DepressedBgColor", _defaultBgColor, pScheme);
+	_keyboardFocusColor = GetSchemeColor("Button.FocusBorderColor", Color(0, 0, 0, 255), pScheme);
 
 	_blinkFgColor = GetSchemeColor("Button.BlinkColor", Color(255, 155, 0, 255), pScheme);
 	InvalidateLayout();
@@ -435,6 +506,19 @@ void Button::SetArmedColor(Color fgColor, Color bgColor)
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: Set armed button colors
+//-----------------------------------------------------------------------------
+void Button::SetSelectedColor(Color fgColor, Color bgColor)
+{
+	if (!(_selectedFgColor == fgColor && _selectedBgColor == bgColor))
+	{
+		_selectedFgColor = fgColor;
+		_selectedBgColor = bgColor;
+
+		InvalidateLayout(false);
+	}
+}
+//-----------------------------------------------------------------------------
 // Purpose: Set depressed button colors
 //-----------------------------------------------------------------------------
 void Button::SetDepressedColor(Color fgColor, Color bgColor)
@@ -464,7 +548,7 @@ void Button::SetBlinkColor(Color fgColor)
 //-----------------------------------------------------------------------------
 // Purpose: Set default button border attributes.
 //-----------------------------------------------------------------------------
-void Button::SetDefaultBorder(IBorder *border)
+void Button::SetDefaultBorder(IBorder* border)
 {
 	_defaultBorder = border;
 	InvalidateLayout(false);
@@ -473,7 +557,7 @@ void Button::SetDefaultBorder(IBorder *border)
 //-----------------------------------------------------------------------------
 // Purpose: Set depressed button border attributes.
 //-----------------------------------------------------------------------------
-void Button::SetDepressedBorder(IBorder *border)
+void Button::SetDepressedBorder(IBorder* border)
 {
 	_depressedBorder = border;
 	InvalidateLayout(false);
@@ -482,7 +566,7 @@ void Button::SetDepressedBorder(IBorder *border)
 //-----------------------------------------------------------------------------
 // Purpose: Set key focus button border attributes.
 //-----------------------------------------------------------------------------
-void Button::SetKeyFocusBorder(IBorder *border)
+void Button::SetKeyFocusBorder(IBorder* border)
 {
 	_keyFocusBorder = border;
 	InvalidateLayout(false);
@@ -492,16 +576,16 @@ void Button::SetKeyFocusBorder(IBorder *border)
 //-----------------------------------------------------------------------------
 // Purpose: Get button border attributes.
 //-----------------------------------------------------------------------------
-IBorder *Button::GetBorder(bool depressed, bool armed, bool selected, bool keyfocus)
+IBorder* Button::GetBorder(bool depressed, bool armed, bool selected, bool keyfocus)
 {
-	if ( _buttonFlags.IsFlagSet( BUTTON_BORDER_ENABLED ) )
+	if (_buttonFlags.IsFlagSet(BUTTON_BORDER_ENABLED))
 	{
 		// raised buttons with no armed state
 		if (depressed)
 			return _depressedBorder;
 		if (keyfocus)
 			return _keyFocusBorder;
-		if (IsEnabled() && _buttonFlags.IsFlagSet( DEFAULT_BUTTON ))
+		if (IsEnabled() && _buttonFlags.IsFlagSet(DEFAULT_BUTTON))
 			return _keyFocusBorder;
 		return _defaultBorder;
 	}
@@ -523,19 +607,15 @@ IBorder *Button::GetBorder(bool depressed, bool armed, bool selected, bool keyfo
 //-----------------------------------------------------------------------------
 void Button::SetAsCurrentDefaultButton(int state)
 {
-	if ( _buttonFlags.IsFlagSet( DEFAULT_BUTTON ) != (bool)state )
+	if (_buttonFlags.IsFlagSet(DEFAULT_BUTTON) != (bool)state)
 	{
-		_buttonFlags.SetFlag( DEFAULT_BUTTON, state );
+		_buttonFlags.SetFlag(DEFAULT_BUTTON, state);
 		if (state)
 		{
 			// post a message up notifying our nav group that we're now the default button
-			if (GetVParent())
-			{
-				KeyValues *msg = new KeyValues("CurrentDefaultButtonSet");
-				msg->SetPtr("button", this);
-
-				ivgui()->PostMessage(GetVParent(), msg, GetVPanel());
-			}
+			KeyValues* msg = new KeyValues("CurrentDefaultButtonSet");
+			msg->SetPtr("button", this);
+			CallParentFunction(msg);
 		}
 
 		InvalidateLayout();
@@ -549,19 +629,15 @@ void Button::SetAsCurrentDefaultButton(int state)
 //-----------------------------------------------------------------------------
 void Button::SetAsDefaultButton(int state)
 {
-	if ( _buttonFlags.IsFlagSet( DEFAULT_BUTTON ) != (bool)state )
+	if (_buttonFlags.IsFlagSet(DEFAULT_BUTTON) != (bool)state)
 	{
-		_buttonFlags.SetFlag( DEFAULT_BUTTON, state );
+		_buttonFlags.SetFlag(DEFAULT_BUTTON, state);
 		if (state)
 		{
 			// post a message up notifying our nav group that we're now the default button
-			if (GetVParent())
-			{
-				KeyValues *msg = new KeyValues("DefaultButtonSet");
-				msg->SetPtr("button", this);
-
-				ivgui()->PostMessage(GetVParent(), msg, GetVPanel());
-			}
+			KeyValues* msg = new KeyValues("DefaultButtonSet");
+			msg->SetInt("button", ToHandle());
+			CallParentFunction(msg);
 		}
 
 		InvalidateLayout();
@@ -572,7 +648,7 @@ void Button::SetAsDefaultButton(int state)
 //-----------------------------------------------------------------------------
 // Purpose: sets rollover sound
 //-----------------------------------------------------------------------------
-void Button::SetArmedSound(const char *sound)
+void Button::SetArmedSound(const char* sound)
 {
 	if (sound)
 	{
@@ -587,7 +663,7 @@ void Button::SetArmedSound(const char *sound)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void Button::SetDepressedSound(const char *sound)
+void Button::SetDepressedSound(const char* sound)
 {
 	if (sound)
 	{
@@ -602,7 +678,7 @@ void Button::SetDepressedSound(const char *sound)
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void Button::SetReleasedSound(const char *sound)
+void Button::SetReleasedSound(const char* sound)
 {
 	if (sound)
 	{
@@ -617,18 +693,18 @@ void Button::SetReleasedSound(const char *sound)
 //-----------------------------------------------------------------------------
 // Purpose: Set button to be mouse clickable or not.
 //-----------------------------------------------------------------------------
-void Button::SetMouseClickEnabled(MouseCode code,bool state)
+void Button::SetMouseClickEnabled(MouseCode code, bool state)
 {
-	if(state)
+	if (state)
 	{
 		//set bit to 1
-		_mouseClickMask|=1<<((int)(code+1));
+		_mouseClickMask |= 1 << ((int)(code + 1));
 	}
 	else
 	{
 		//set bit to 0
-		_mouseClickMask&=~(1<<((int)(code+1)));
-	}	
+		_mouseClickMask &= ~(1 << ((int)(code + 1)));
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -636,7 +712,7 @@ void Button::SetMouseClickEnabled(MouseCode code,bool state)
 //-----------------------------------------------------------------------------
 bool Button::IsMouseClickEnabled(MouseCode code)
 {
-	if(_mouseClickMask&(1<<((int)(code+1))))
+	if (_mouseClickMask & (1 << ((int)(code + 1))))
 	{
 		return true;
 	}
@@ -646,7 +722,7 @@ bool Button::IsMouseClickEnabled(MouseCode code)
 //-----------------------------------------------------------------------------
 // Purpose: sets the command to send when the button is pressed
 //-----------------------------------------------------------------------------
-void Button::SetCommand( const char *command )
+void Button::SetCommand(const char* command)
 {
 	SetCommand(new KeyValues("Command", "command", command));
 }
@@ -654,7 +730,7 @@ void Button::SetCommand( const char *command )
 //-----------------------------------------------------------------------------
 // Purpose: sets the message to send when the button is pressed
 //-----------------------------------------------------------------------------
-void Button::SetCommand( KeyValues *message )
+void Button::SetCommand(KeyValues* message)
 {
 	// delete the old message
 	if (_actionMessage)
@@ -670,7 +746,7 @@ void Button::SetCommand( KeyValues *message )
 // Input  :  - 
 // Output : KeyValues
 //-----------------------------------------------------------------------------
-KeyValues *Button::GetCommand()
+KeyValues* Button::GetCommand()
 {
 	return _actionMessage;
 }
@@ -698,7 +774,7 @@ void Button::FireActionSignal()
 //-----------------------------------------------------------------------------
 // Purpose: gets info about the button
 //-----------------------------------------------------------------------------
-bool Button::RequestInfo(KeyValues *outputData)
+bool Button::RequestInfo(KeyValues* outputData)
 {
 	if (!stricmp(outputData->GetName(), "CanBeDefaultButton"))
 	{
@@ -710,15 +786,15 @@ bool Button::RequestInfo(KeyValues *outputData)
 		outputData->SetInt("state", IsSelected());
 		return true;
 	}
-	else if ( !stricmp( outputData->GetName(), "GetCommand" ))
+	else if (!stricmp(outputData->GetName(), "GetCommand"))
 	{
-		if ( _actionMessage )
+		if (_actionMessage)
 		{
-			outputData->SetString( "command", _actionMessage->GetString( "command", "" ) );
+			outputData->SetString("command", _actionMessage->GetString("command", ""));
 		}
 		else
 		{
-			outputData->SetString( "command", "" );
+			outputData->SetString("command", "");
 		}
 		return true;
 	}
@@ -732,14 +808,14 @@ bool Button::RequestInfo(KeyValues *outputData)
 //-----------------------------------------------------------------------------
 bool Button::CanBeDefaultButton(void)
 {
-    return true;
+	return true;
 }
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Get control settings for editing
 //-----------------------------------------------------------------------------
-void Button::GetSettings( KeyValues *outResourceData )
+void Button::GetSettings(KeyValues* outResourceData)
 {
 	BaseClass::GetSettings(outResourceData);
 
@@ -747,21 +823,21 @@ void Button::GetSettings( KeyValues *outResourceData )
 	{
 		outResourceData->SetString("command", _actionMessage->GetString("command", ""));
 	}
-	outResourceData->SetInt("default", _buttonFlags.IsFlagSet( DEFAULT_BUTTON ) );
-	if ( m_bSelectionStateSaved )
+	outResourceData->SetInt("default", _buttonFlags.IsFlagSet(DEFAULT_BUTTON));
+	if (m_bSelectionStateSaved)
 	{
-		outResourceData->SetInt( "selected", IsSelected() );
+		outResourceData->SetInt("selected", IsSelected());
 	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void Button::ApplySettings( KeyValues *inResourceData )
+void Button::ApplySettings(KeyValues* inResourceData)
 {
 	BaseClass::ApplySettings(inResourceData);
 
-	const char *cmd = inResourceData->GetString("command", "");
+	const char* cmd = inResourceData->GetString("command", "");
 	if (*cmd)
 	{
 		// add in the command
@@ -776,19 +852,41 @@ void Button::ApplySettings( KeyValues *inResourceData )
 	}
 
 	// saved selection state
-	int iSelected = inResourceData->GetInt( "selected", -1 );
-	if ( iSelected != -1 )
+	int iSelected = inResourceData->GetInt("selected", -1);
+	if (iSelected != -1)
 	{
-		SetSelected( iSelected != 0 );
+		SetSelected(iSelected != 0);
 		m_bSelectionStateSaved = true;
 	}
+
+	// Not saved into res file so don't load
+	//m_bStaySelectedOnClick = inResourceData->GetBool( "stayselectedonclick", false );
+
+	const char* sound = inResourceData->GetString("sound_armed", "");
+	if (*sound)
+	{
+		SetArmedSound(sound);
+	}
+	sound = inResourceData->GetString("sound_depressed", "");
+	if (*sound)
+	{
+		SetDepressedSound(sound);
+	}
+	sound = inResourceData->GetString("sound_released", "");
+	if (*sound)
+	{
+		SetReleasedSound(sound);
+	}
+
+	// Not saved into res file so don't load
+	//_activationType = (ActivationType_t)inResourceData->GetInt( "button_activation_type", ACTIVATE_ONPRESSEDANDRELEASED);
 }
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Describes editing details
 //-----------------------------------------------------------------------------
-const char *Button::GetDescription( void )
+const char* Button::GetDescription(void)
 {
 	static char buf[1024];
 	Q_snprintf(buf, sizeof(buf), "%s, string command, int default", BaseClass::GetDescription());
@@ -809,7 +907,7 @@ void Button::OnSetState(int state)
 //-----------------------------------------------------------------------------
 void Button::OnCursorEntered()
 {
-	if (IsEnabled())
+	if (IsEnabled() && !IsSelected())
 	{
 		SetArmed(true);
 	}
@@ -820,7 +918,7 @@ void Button::OnCursorEntered()
 //-----------------------------------------------------------------------------
 void Button::OnCursorExited()
 {
-	if ( !_buttonFlags.IsFlagSet( BUTTON_KEY_DOWN ) )
+	if (!_buttonFlags.IsFlagSet(BUTTON_KEY_DOWN) && !IsSelected())
 	{
 		SetArmed(false);
 	}
@@ -833,13 +931,13 @@ void Button::OnMousePressed(MouseCode code)
 {
 	if (!IsEnabled())
 		return;
-	
+
 	if (!IsMouseClickEnabled(code))
 		return;
 
 	if (_activationType == ACTIVATE_ONPRESSED)
 	{
-		if ( IsKeyBoardInputEnabled() )
+		if (IsKeyBoardInputEnabled())
 		{
 			RequestFocus();
 		}
@@ -856,7 +954,7 @@ void Button::OnMousePressed(MouseCode code)
 	if (IsUseCaptureMouseEnabled() && _activationType == ACTIVATE_ONPRESSEDANDRELEASED)
 	{
 		{
-			if ( IsKeyBoardInputEnabled() )
+			if (IsKeyBoardInputEnabled())
 			{
 				RequestFocus();
 			}
@@ -898,11 +996,11 @@ void Button::OnMouseReleased(MouseCode code)
 		return;
 
 	// it has to be both enabled and (mouse over the button or using a key) to fire
-	if ( IsEnabled() && ( GetVPanel() == input()->GetMouseOver() || _buttonFlags.IsFlagSet( BUTTON_KEY_DOWN ) ) )
+	if (IsEnabled() && (GetVPanel() == input()->GetMouseOver() || _buttonFlags.IsFlagSet(BUTTON_KEY_DOWN)))
 	{
 		DoClick();
 	}
-	else
+	else if (!m_bStaySelectedOnClick)
 	{
 		SetSelected(false);
 	}
@@ -916,10 +1014,19 @@ void Button::OnMouseReleased(MouseCode code)
 //-----------------------------------------------------------------------------
 void Button::OnKeyCodePressed(KeyCode code)
 {
-	if (code == KEY_SPACE || code == KEY_ENTER)
+	if ((code == KEY_XBUTTON_A) && IsEnabled())
 	{
 		SetArmed(true);
-		_buttonFlags.SetFlag( BUTTON_KEY_DOWN );
+		_buttonFlags.SetFlag(BUTTON_KEY_DOWN);
+		if (_activationType != ACTIVATE_ONRELEASED)
+		{
+			DoClick();
+		}
+	}
+	else if (code == KEY_SPACE || code == KEY_ENTER)
+	{
+		SetArmed(true);
+		_buttonFlags.SetFlag(BUTTON_KEY_DOWN);
 		OnMousePressed(MOUSE_LEFT);
 		if (IsUseCaptureMouseEnabled()) // undo the mouse capture since its a fake mouse click!
 		{
@@ -928,7 +1035,7 @@ void Button::OnKeyCodePressed(KeyCode code)
 	}
 	else
 	{
-		_buttonFlags.ClearFlag( BUTTON_KEY_DOWN );
+		_buttonFlags.ClearFlag(BUTTON_KEY_DOWN);
 		BaseClass::OnKeyCodePressed(code);
 	}
 }
@@ -938,7 +1045,15 @@ void Button::OnKeyCodePressed(KeyCode code)
 //-----------------------------------------------------------------------------
 void Button::OnKeyCodeReleased(KeyCode code)
 {
-	if (_buttonFlags.IsFlagSet( BUTTON_KEY_DOWN ) && (code == KEY_SPACE || code == KEY_ENTER))
+	if (_buttonFlags.IsFlagSet(BUTTON_KEY_DOWN) && (code == KEY_XBUTTON_A || code == KEY_XBUTTON_START))
+	{
+		SetArmed(true);
+		if (_activationType != ACTIVATE_ONPRESSED)
+		{
+			DoClick();
+		}
+	}
+	else if (_buttonFlags.IsFlagSet(BUTTON_KEY_DOWN) && (code == KEY_SPACE || code == KEY_ENTER))
 	{
 		SetArmed(true);
 		OnMouseReleased(MOUSE_LEFT);
@@ -947,8 +1062,15 @@ void Button::OnKeyCodeReleased(KeyCode code)
 	{
 		BaseClass::OnKeyCodeReleased(code);
 	}
-	_buttonFlags.ClearFlag( BUTTON_KEY_DOWN );
-	SetArmed(false);
+	_buttonFlags.ClearFlag(BUTTON_KEY_DOWN);
+
+	if (!(code == KEY_XSTICK1_UP || code == KEY_XSTICK1_DOWN || code == KEY_XSTICK1_LEFT || code == KEY_XSTICK1_RIGHT ||
+		code == KEY_XSTICK2_UP || code == KEY_XSTICK2_DOWN || code == KEY_XSTICK2_LEFT || code == KEY_XSTICK2_RIGHT ||
+		code == KEY_XBUTTON_UP || code == KEY_XBUTTON_DOWN || code == KEY_XBUTTON_LEFT || code == KEY_XBUTTON_RIGHT ||
+		code == KEY_UP || code == KEY_DOWN || code == KEY_LEFT || code == KEY_RIGHT))
+	{
+		SetArmed(false);
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -957,10 +1079,10 @@ void Button::OnKeyCodeReleased(KeyCode code)
 void Button::DrawFocusBorder(int tx0, int ty0, int tx1, int ty1)
 {
 	surface()->DrawSetColor(_keyboardFocusColor);
-	DrawDashedLine(tx0, ty0, tx1, ty0+1, 1, 1);		// top
-	DrawDashedLine(tx0, ty0, tx0+1, ty1, 1, 1);		// left
-	DrawDashedLine(tx0, ty1-1, tx1, ty1, 1, 1);		// bottom
-	DrawDashedLine(tx1-1, ty0, tx1, ty1, 1, 1);		// right
+	DrawDashedLine(tx0, ty0, tx1, ty0 + 1, 1, 1);		// top
+	DrawDashedLine(tx0, ty0, tx0 + 1, ty1, 1, 1);		// left
+	DrawDashedLine(tx0, ty1 - 1, tx1, ty1, 1, 1);		// bottom
+	DrawDashedLine(tx1 - 1, ty0, tx1, ty1, 1, 1);		// right
 }
 
 //-----------------------------------------------------------------------------
@@ -972,4 +1094,3 @@ void Button::SizeToContents()
 	GetContentSize(wide, tall);
 	SetSize(wide + Label::Content, tall + Label::Content);
 }
-
