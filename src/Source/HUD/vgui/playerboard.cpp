@@ -26,9 +26,6 @@
 CPlayerInfoPanel::CPlayerInfoPanel()
 	: BaseClass(nullptr, VIEWPORT_PLAYERBOARD_NAME)
 {
-	SetCloseButtonVisible(false);
-	SetMoveable(false);
-	SetSizeable(false);
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
@@ -56,7 +53,6 @@ void CPlayerInfoPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("PlayerBoardPanel.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
-	SetTitleBarVisible(false);
 }
 
 void CPlayerInfoPanel::Think(){
@@ -97,7 +93,7 @@ void CPlayerInfoPanel::Think(){
 		vecEntityOrigin = entity->curstate.origin;
 		vecEntityOrigin.z += 45;
 		VEC_WorldToScreen(vecEntityOrigin, vecHUD);
-		this->SetPos(vecHUD.x - this->GetWide() / 2, vecHUD.y - this->GetCaptionHeight());
+		this->SetPos(vecHUD.x - this->GetWide() / 2, vecHUD.y);
 	}
 	else{
 		SetVisible(false);
@@ -123,11 +119,6 @@ void CPlayerInfoPanel::ShowPanel(bool state)
 {
 	if (state == IsVisible())
 		return;
-
-	if (state)
-	{
-		Activate();
-	}
 	SetVisible(state);
 }
 
