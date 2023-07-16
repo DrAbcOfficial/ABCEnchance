@@ -55,7 +55,6 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	//SVC_FillAddress();
 	InstallEngineHook();
 	BaseUI_InstallHook();
-	
 }
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
