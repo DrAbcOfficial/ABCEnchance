@@ -1,13 +1,13 @@
-"abcenchance/res/CFefx.res"
+""abcenchance/res/Cfefx.res"
 {
-	"KillMarkPanel"
+	"CKillMarkPanel"
 	{
 		"ControlName"		"CKillMarkPanel"
 		"fieldName"		"KillMarkPanel"
 		"xpos"		"320"
 		"ypos"		"240"
-		"wide"		"60"
-		"tall"		"60"
+		"wide"		"100"
+		"tall"		"100"
 		"visible"		"1"
 		"enabled"		"1"
 	}
@@ -28,8 +28,8 @@
 		"fieldName"		"KillMarkPoint"
 		"xpos"		"320"
 		"ypos"		"240"
-		"wide"		"60"
-		"tall"		"60"
+		"wide"		"100"
+		"tall"		"100"
 		"visible"		"1"
 		"tabPosition"		"0"
 		"scaleImage"		"1"

@@ -8,7 +8,7 @@ Scheme
 	}
 	BaseSettings
 	{
-		"KillMark.BgColor"		"Blank"
+		"KillMark.BgColor"		"0 0 0 0"
 		"KillMark.FgColor"		"255 255 255 255"
 	}
 }

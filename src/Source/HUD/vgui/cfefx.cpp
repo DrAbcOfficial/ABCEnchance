@@ -11,7 +11,7 @@
 #include "mymathlib.h"
 
 #include "cfefx.h"
-//#include "Viewport.h"
+#include "Viewport.h"
 
 
 #define VIEWPORT_KILLMARK_NAME "KillMarkPanel"
@@ -28,19 +28,22 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 	SetScheme("CFefxScheme");
 
 	m_pKillMark = new vgui::ImagePanel(this, "KillMarkPoint");
+	LoadControlSettings(VGUI2_ROOT_DIR "CFefx.res");
 
 	//SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
 	//SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
-
-	LoadControlSettings(VGUI2_ROOT_DIR "CFefx.res");
+	//m_pKillMark->SetShouldScaleImage(true);
+	//m_pKillMark->SetImage("abcenchance/tga/cfefx/BossDamage");
+	//m_pKillMark->SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
+	//m_pKillMark->SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
+	//m_pKillMark->SetVisible(true);
+	//SetVisible(true);
 }
-
 
 void CKillMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("KillMark.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
-
 
 bool CKillMarkPanel::IsVisible() {
 	return BaseClass::IsVisible();
@@ -53,10 +56,9 @@ void CKillMarkPanel::ShowPanel(bool state)
 	SetVisible(state);
 }
 
-void CKillMarkPanel::ShowKillMark() {
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	if (!local)
-		return;
+void CKillMarkPanel::ShowKillMark(int iValue)
+{
+	PlaySoundByName("misc/UI_SPECIALKILL2.wav", 1);
 	ShowPanel(true);
 	SetAlpha(255);
 	vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 0, 1.5f, 1.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);

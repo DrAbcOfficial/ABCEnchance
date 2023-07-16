@@ -100,7 +100,7 @@ public:
 	};
 	void ShowNotice(HUDNOTICE type, const char* message);
 
-	void AddKillMark();
+	void ShowKillMark(int iValue);
 
 	long m_iTimeEnd = 0;
 
