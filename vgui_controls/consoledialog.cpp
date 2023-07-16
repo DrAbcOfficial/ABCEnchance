@@ -26,6 +26,7 @@
 #include "vgui_controls/Menu.h"
 #include "vgui_controls/TextEntry.h"
 #include "vgui_controls/RichText.h"
+#include "vgui_controls/ScrollBar.h"
 #include "FileSystem.h"
 
 #include <stdlib.h>
@@ -313,8 +314,8 @@ CConsolePanel::CConsolePanel(Panel* pParent, const char* pName, bool bStatusVers
 	// create controls
 	m_pHistory = new RichText(this, "ConsoleHistory");
 	m_pHistory->SetAllowKeyBindingChainToParent(false);
-	SETUP_PANEL(m_pHistory);
-	m_pHistory->SetVerticalScrollbar(!m_bStatusVersion);
+	//SETUP_PANEL(m_pHistory);
+	m_pHistory->SetVerticalScrollbar(true);
 	if (m_bStatusVersion)
 	{
 		m_pHistory->SetDrawOffsets(3, 3);
@@ -954,9 +955,16 @@ void CConsolePanel::ApplySchemeSettings(IScheme* pScheme)
 	m_WarnPrintColor = GetSchemeColor("Console.WarnColor", pScheme);
 
 	m_DPrintColor = GetSchemeColor("Console.DevTextColor", pScheme);
-	m_pHistory->SetFont(pScheme->GetFont("DefaultSmall", IsProportional()));
+	m_pHistory->SetFont(pScheme->GetFont("ConsoleFont", IsProportional()));
 	m_pCompletionList->SetFont(pScheme->GetFont("DefaultSmall", IsProportional()));
 	InvalidateLayout();
+}
+
+void CConsolePanel::ApplySettings(KeyValues* inResourceData) {
+	BaseClass::ApplySettings(inResourceData);
+	const char* labelText = inResourceData->GetString("button_text", NULL);
+	if (labelText)
+		m_pSubmit->SetText(labelText);
 }
 
 //-----------------------------------------------------------------------------
@@ -1158,14 +1166,16 @@ CConsoleDialog::CConsoleDialog(Panel* pParent, const char* pName, bool bStatusVe
 	BaseClass(pParent, pName)
 {
 	// initialize dialog
-	SetVisible(false);
-	SetTitle("#Console_Title", false);
+	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "ConsoleScheme.res", "ConsoleScheme");
 	m_pConsolePanel = new CConsolePanel(this, "ConsolePage", bStatusVersion);
 	m_pConsolePanel->AddActionSignalTarget(this);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "ConsoleScheme.res", "ConsoleScheme");
 	m_pConsolePanel->SetScheme("ConsoleScheme");
 
 	LoadControlSettings(VGUI2_ROOT_DIR "ConsoleDialog.res");
+	SetMenuButtonVisible(false);
+
+	((Button*)_closeButton)->SetScheme("ConsoleScheme");
+	SetVisible(false);
 }
 
 void CConsoleDialog::OnScreenSizeChanged(int iOldWide, int iOldTall)
