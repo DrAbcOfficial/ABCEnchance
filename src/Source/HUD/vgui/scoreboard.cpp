@@ -16,7 +16,6 @@
 #include <vgui_controls/AnimationController.h>
 
 #include "client_steam_context.h"
-#include "VGUI2/IClientVGUI.h"
 #include "local.h"
 #include "vguilocal.h"
 #include "player_info.h"

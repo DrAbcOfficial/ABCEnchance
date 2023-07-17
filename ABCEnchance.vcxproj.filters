@@ -78,6 +78,9 @@
     <Filter Include="Public\Particleman">
       <UniqueIdentifier>{022c55ca-987d-47f3-bc42-d90dcab1b592}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VGUI2\interface">
+      <UniqueIdentifier>{57059889-dcf1-4422-bbb4-a16b2ded33b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp">
@@ -592,6 +595,9 @@
     </ClCompile>
     <ClCompile Include="vgui_controls\ImageSprPanel.cpp">
       <Filter>VGUI\control</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\GameConsole.cpp">
+      <Filter>VGUI2</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\cfefx.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
@@ -1111,9 +1117,6 @@
     <ClInclude Include="SourceSDK\mathlib\mathlib.h">
       <Filter>SourceSDK\mathlib</Filter>
     </ClInclude>
-    <ClInclude Include="VGUI2\IClientVGUI.h">
-      <Filter>VGUI2</Filter>
-    </ClInclude>
     <ClInclude Include="VGUI2\VPanel.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
@@ -1121,12 +1124,6 @@
       <Filter>VGUI2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\FontTextureCache.h">
-      <Filter>VGUI2</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\igameui.h">
-      <Filter>VGUI2</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\IGameUIFuncs.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\FontManager.h">
@@ -1145,9 +1142,6 @@
       <Filter>VGUI2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\Win32Font.h">
-      <Filter>VGUI2</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\IViewportPanel.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\avatar_image.h">
@@ -1371,6 +1365,24 @@
     </ClInclude>
     <ClInclude Include="vgui_controls\ImageSprPanel.h">
       <Filter>VGUI\control</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\interface\IClientVGUI.h">
+      <Filter>VGUI2\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\interface\IGameConsole.h">
+      <Filter>VGUI2\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\interface\IGameUI.h">
+      <Filter>VGUI2\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\interface\IGameUIFuncs.h">
+      <Filter>VGUI2\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\interface\IViewportPanel.h">
+      <Filter>VGUI2\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\GameConsole.h">
+      <Filter>VGUI2</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\cfefx.h">
       <Filter>Public\Header\HUD\vgui</Filter>

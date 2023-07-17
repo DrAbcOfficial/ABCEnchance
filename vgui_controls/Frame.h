@@ -190,7 +190,7 @@ namespace vgui
 		// optimization, return true if this control has any user config settings
 		virtual bool HasUserConfigSettings();
 
-	private:
+	protected:
 		MESSAGE_FUNC_CHARPTR(InternalSetTitle, "SetTitle", text);
 		MESSAGE_FUNC(InternalFlashWindow, "FlashWindow");
 		MESSAGE_FUNC_PARAMS(OnDialogVariablesChanged, "DialogVariables", dialogVariables);

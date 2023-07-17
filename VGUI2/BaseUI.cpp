@@ -2,6 +2,7 @@
 #include <vector>
 #include "BaseUI.h"
 #include <IGameUI.h>
+#include <GameConsole.h>
 #include <VGUI\IScheme.h>
 #include <VGUI\ILocalize.h>
 #include <VGUI\ISurface.h>
@@ -78,6 +79,7 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 
 	KeyValuesSystem_InstallHook();
 	Surface_InstallHooks();
+	GameConsole_InstallHook();
 	if(!g_metaplugins.captionmod)
 		Scheme_InstallHook();
 }

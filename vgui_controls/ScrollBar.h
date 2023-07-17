@@ -1,4 +1,4 @@
-//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -13,100 +13,120 @@
 #endif
 
 #include <vgui/VGUI.h>
-#include "Panel.h"
+#include <vgui_controls/Panel.h>
 
 namespace vgui
 {
 
-class Button;
-class ScrollBarSlider;
+	class Button;
+	class ScrollBarSlider;
 
-//-----------------------------------------------------------------------------
-// Purpose: Generic scrollbar
-//			Uses Buttons & SliderBars for the main functionality
-//-----------------------------------------------------------------------------
-class ScrollBar : public Panel
-{
-	DECLARE_CLASS_SIMPLE( ScrollBar, Panel );
+	//-----------------------------------------------------------------------------
+	// Purpose: Generic scrollbar
+	//			Uses Buttons & SliderBars for the main functionality
+	//-----------------------------------------------------------------------------
+	class ScrollBar : public Panel
+	{
+		DECLARE_CLASS_SIMPLE(ScrollBar, Panel);
 
-public:
-	ScrollBar(Panel *parent, const char *panelName, bool vertical);
+	public:
+		ScrollBar(Panel* parent, const char* panelName, bool vertical);
 
-	// Set the value of the scroll bar slider.
-	virtual void    SetValue(int value);
+		// Set the value of the scroll bar slider.
+		virtual void    SetValue(int value);
 
-	// Get the value of the scroll bar slider.
-	virtual int     GetValue();
+		// Get the value of the scroll bar slider.
+		virtual int     GetValue();
 
-	// Set the rangeof numbers the slider can scroll through
-	virtual void    SetRange(int min,int max);
+		// Set the rangeof numbers the slider can scroll through
+		virtual void    SetRange(int min, int max);
 
-    virtual void    GetRange(int &min, int &max);
+		virtual void    GetRange(int& min, int& max);
 
-	// Set how many lines are displayed at one time 
-	// in the window the scroll bar is attached to.
-	virtual void    SetRangeWindow(int rangeWindow);
-	
-	// Get how many lines are displayed at one time 
-	// in the window the scroll bar is attached to.
-	virtual int    GetRangeWindow();
+		// Set how many lines are displayed at one time 
+		// in the window the scroll bar is attached to.
+		virtual void    SetRangeWindow(int rangeWindow);
 
-	// Check if the scrollbar is vertical or horizontal
-	virtual bool    IsVertical();
+		// Get how many lines are displayed at one time 
+		// in the window the scroll bar is attached to.
+		virtual int    GetRangeWindow();
 
-	// Purpose: Check if the slider can move through one or more pixels per
-	// unit of its range.
-	virtual bool    HasFullRange();
+		// Check if the scrollbar is vertical or horizontal
+		virtual bool    IsVertical();
 
-	// Setup the indexed scroll bar button with the input params.
-	virtual void    SetButton(Button* button,int index);
-	// Return the indexed scroll bar button
-	virtual Button *GetButton(int index);
-	// Set up the slider.
-	virtual void    SetSlider(ScrollBarSlider* slider);
-	// Return a pointer to the slider.
-	virtual ScrollBarSlider *GetSlider();
-	// Set how far the scroll bar slider moves 
-	// when a scroll bar button is pressed
-	virtual void    SetButtonPressedScrollValue(int value);
+		// Purpose: Check if the slider can move through one or more pixels per
+		// unit of its range.
+		virtual bool    HasFullRange();
 
-	virtual void    Validate();
-	
-	// Update and look for clicks when mouse is in the scroll bar window.
-	virtual void	OnMouseFocusTicked();
+		// Setup the indexed scroll bar button with the input params.
+		virtual void    SetButton(Button* button, int index);
+		// Return the indexed scroll bar button
+		virtual Button* GetButton(int index);
+		// Set up the slider.
+		virtual void    SetSlider(ScrollBarSlider* slider);
+		// Return a pointer to the slider.
+		virtual ScrollBarSlider* GetSlider();
+		// Set how far the scroll bar slider moves 
+		// when a scroll bar button is pressed
+		virtual void    SetButtonPressedScrollValue(int value);
 
-	// Set the slider's Paint border enabled.
-	virtual void   SetPaintBorderEnabled(bool state);
-	// Set the slider's Paint background enabled.
-	virtual void   SetPaintBackgroundEnabled(bool state);
-	// Set the slider's Paint enabled.
-	virtual void   SetPaintEnabled(bool state);
+		virtual void    Validate();
 
-	// Sets the scrollbar buttons visible or not
-	virtual void    SetScrollbarButtonsVisible(bool visible);
+		// Update and look for clicks when mouse is in the scroll bar window.
+		virtual void	OnMouseFocusTicked();
 
-	/* MESSAGES SENT:
-		"ScrollBarSliderMoved"
-			"position" - new value of the slider
-	*/
+		// Set the slider's Paint border enabled.
+		virtual void   SetPaintBorderEnabled(bool state);
+		// Set the slider's Paint background enabled.
+		virtual void   SetPaintBackgroundEnabled(bool state);
+		// Set the slider's Paint enabled.
+		virtual void   SetPaintEnabled(bool state);
 
-protected:
+		// Sets the scrollbar buttons visible or not
+		virtual void    SetScrollbarButtonsVisible(bool visible);
 
-	virtual void PerformLayout();
-	virtual void SendSliderMoveMessage(int value);
-	virtual void ApplySchemeSettings(IScheme *pScheme);
-	virtual void OnSizeChanged(int wide, int tall);
+		void			SetAutohideButtons(bool bAutohide) { m_bAutoHideButtons = bAutohide; }
 
-	MESSAGE_FUNC_INT( OnSliderMoved, "ScrollBarSliderMoved", position );
-	virtual void RespondToScrollArrow(int const direction);
+		void			UseImages(const char* pszUpArrow, const char* pszDownArrow, const char* pszLine, const char* pszBox);
 
-private:
-	Button* _button[2];
-	ScrollBarSlider* _slider;
-	int     _buttonPressedScrollValue;
-	int		_scrollDelay; // used to control delays in scrolling
-	bool	_respond;
-};
+		/* MESSAGES SENT:
+			"ScrollBarSliderMoved"
+				"position" - new value of the slider
+		*/
+
+		void			SetOverriddenButtons(Button* pB1, Button* pB2) { m_pOverriddenButtons[0] = pB1; m_pOverriddenButtons[1] = pB2; }
+
+		virtual void	ApplySettings(KeyValues* pInResourceData);
+
+	protected:
+
+		virtual void PerformLayout();
+		virtual void SendSliderMoveMessage(int value);
+		virtual void ApplySchemeSettings(IScheme* pScheme);
+		virtual void OnSizeChanged(int wide, int tall);
+
+		MESSAGE_FUNC_INT(OnSliderMoved, "ScrollBarSliderMoved", position);
+		virtual void RespondToScrollArrow(int const direction);
+
+		virtual void UpdateButtonsForImages(void);
+		virtual void UpdateSliderImages(void);
+		Button* GetDepressedButton(int iIndex);
+
+	private:
+		Button* _button[2];
+		ScrollBarSlider* _slider;
+		int     _buttonPressedScrollValue;
+		int		_scrollDelay; // used to control delays in scrolling
+		bool	_respond;
+		bool	m_bNoButtons;
+		CPanelAnimationVar(bool, m_bAutoHideButtons, "autohide_buttons", "0");
+
+		ImagePanel* m_pUpArrow;
+		ImagePanel* m_pLine;
+		ImagePanel* m_pDownArrow;
+		ImagePanel* m_pBox;
+		Button* m_pOverriddenButtons[2];
+	};
 
 }
 
