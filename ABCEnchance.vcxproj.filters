@@ -599,9 +599,6 @@
     <ClCompile Include="VGUI2\GameConsole.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
-    <ClCompile Include="vgui_controls\ModelPanel.cpp">
-      <Filter>VGUI\control</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1386,9 +1383,6 @@
     </ClInclude>
     <ClInclude Include="src\Header\Var\StudioModelRenderer.h">
       <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="vgui_controls\ModelPanel.h">
-      <Filter>VGUI\control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
