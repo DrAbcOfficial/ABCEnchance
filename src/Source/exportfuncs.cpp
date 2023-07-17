@@ -9,6 +9,7 @@
 #include "com_model.h"
 #include "triangleapi.h"
 #include "pm_movevars.h"
+#include "cvardef.h"
 #include "cvar_hook.h"
 #include <capstone.h>
 #include "CVector.h"
@@ -23,6 +24,7 @@
 #include "regquery.h"
 #include "pm_defs.h"
 #include "usercmd.h"
+#include "StudioModelRenderer.h"
 #include "vgui_controls/Controls.h"
 //GL
 #include "glew.h"
@@ -51,7 +53,8 @@
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 metaplugins_t g_metaplugins;
-engine_studio_api_t gEngineStudio;
+engine_studio_api_t IEngineStudio;
+CGameStudioModelRenderer* g_StudioRenderer;
 DWORD g_dwHUDListAddr;
 
 const clientdata_t* gClientData;
@@ -244,6 +247,12 @@ void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 	//mission brief shit2 is 4, but fku all vgui shit
 	gHookFuncs.TFV_ShowVGUIMenu(pthis, dummy, iVguiMenu);
 }
+
+void __fastcall CStudioModelRenderer_Init(void* pthis, int dummy) {
+	g_StudioRenderer = static_cast<CGameStudioModelRenderer*>(pthis);
+	gHookFuncs.CStudioModelRenderer_Init(pthis, dummy);
+}
+
 void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
 	mathlib::VectorCopy(punchangle1, g_pViewPort->m_vecClientEVPunch);
@@ -499,7 +508,8 @@ void FillAddress(){
 		Fill_Sig(TFV_SHOWSCOREBOARD_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowScoreBoard);
 #define TFV_SHOWVGUIMENU_SHIT_SIG "\xA1\x2A\x2A\x2A\x2A\x57\x8B\xF9\x8B\x40\x04\xFF\xD0\x85\xC0\x0F\x85\x2A\x2A\x2A\x2A\x55\x8B\x6C\x24\x0C\x39\x05"
 		Fill_Sig(TFV_SHOWVGUIMENU_SHIT_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowVGUIMenu);
-
+#define CStudioModelRenderer_Init_SIG "\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x24\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x38\xFF\x15\x2A\x2A\x2A\x2A\x89\x46\x3C\xFF\x15\x2A\x2A\x2A\x2A\x6A\x00"
+		Fill_Sig(CStudioModelRenderer_Init_SIG, g_dwClientBase, g_dwClientSize, CStudioModelRenderer_Init);
 		DWORD addr;
 #define R_SETPUNCHANGLE_SIG "\x83\xC4\x04\xD9\x1C\x24\x6A\x00\xE8\x93\x56\x05\x00\x83\xC4\x08\xF3\x0F\x10\x74\x24\x34\xF3\x0F\x10\xAC\x24\x98\x00\x00\x00\xF3\x0F\x10\x25\x2A\x2A\x2A\x2A\xF3\x0F\x58\xEE\xF3\x0F\x10\x44\x24\x74"
 		{
@@ -542,13 +552,13 @@ void InstallEngineHook() {
 	Install_InlineEngHook(Cvar_DirectSet);
 	Install_InlineEngHook(CL_GetModelByIndex);
 	Install_InlineEngHook(NET_StringToAdr);
-	//Install_InlineEngHook(VGuiWrap2_HideGameUI);
 }
 void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);
 	Install_InlineHook(R_CrossHair_ReDraw);
 	Install_InlineHook(TFV_ShowScoreBoard);
 	Install_InlineHook(TFV_ShowVGUIMenu);
+	Install_InlineHook(CStudioModelRenderer_Init);
 }
 void UninstallEngineHook() {
 	for (hook_t* h : aryEngineHook) {
@@ -638,7 +648,7 @@ void HUD_Init(void){
 		g_pParticleMan->ResetParticles();
 }
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
-	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
+	memcpy(&IEngineStudio, pstudio, sizeof(IEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
 int HUD_VidInit(void){

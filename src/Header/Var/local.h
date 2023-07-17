@@ -47,6 +47,8 @@ typedef struct{
 	int(__fastcall* R_CrossHair_ReDraw)		(void* pthis, int dummy, int param_1);
 	void(__fastcall* TFV_ShowScoreBoard)	(void* pthis);
 	void(__fastcall* TFV_ShowVGUIMenu)		(void* pthis, int dummy, int iVguiMenu);
+	void(__fastcall* CStudioModelRenderer_Init)		(void* pthis, int dummy);
+
 	void		(*EVVectorScale)			(float* pucnangle1, float scale, float* pucnangle2);
 	void		(*R_NewMap)					();
 	int			(*CL_IsDevOverview)			();

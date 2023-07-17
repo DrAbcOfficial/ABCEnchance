@@ -301,6 +301,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\MenuItem.cpp" />
     <ClCompile Include="vgui_controls\MessageBox.cpp" />
     <ClCompile Include="vgui_controls\MessageDialog.cpp" />
+    <ClCompile Include="vgui_controls\ModelPanel.cpp" />
     <ClCompile Include="vgui_controls\Panel.cpp" />
     <ClCompile Include="vgui_controls\PanelListPanel.cpp" />
     <ClCompile Include="vgui_controls\ProgressBar.cpp" />
@@ -465,6 +466,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\Var\local.h" />
     <ClInclude Include="src\Header\Var\palette.h" />
     <ClInclude Include="src\Header\Var\player_infosc.h" />
+    <ClInclude Include="src\Header\Var\StudioModelRenderer.h" />
     <ClInclude Include="src\Header\Var\vguilocal.h" />
     <ClInclude Include="src\Header\Var\voice_banmgr.h" />
     <ClInclude Include="src\Header\Var\voice_common.h" />
@@ -561,6 +563,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\MessageBox.h" />
     <ClInclude Include="vgui_controls\MessageDialog.h" />
     <ClInclude Include="vgui_controls\MessageMap.h" />
+    <ClInclude Include="vgui_controls\ModelPanel.h" />
     <ClInclude Include="vgui_controls\Panel.h" />
     <ClInclude Include="vgui_controls\PanelAnimationVar.h" />
     <ClInclude Include="vgui_controls\PanelListPanel.h" />
