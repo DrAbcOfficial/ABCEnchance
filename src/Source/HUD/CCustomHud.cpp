@@ -30,7 +30,7 @@
 #include "CCustomHud.h"
 
 #include "ammo.h"
-#include "healthhud.h"
+#include "indicator.h"
 #include "deathmsg.h"
 #include "radar.h"
 #include "deathmsg.h"
@@ -81,7 +81,7 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf) {
 		vecFrom[i] = READ_COORD();
 	}
 	if(damageTaken > 0 || armor > 0)
-		m_HudArmorHealth.AddIdicator(damageTaken, armor, vecFrom);
+		m_HudIndicator.AddIdicator(damageTaken, armor, vecFrom);
 	return m_pfnDamage(pszName, iSize, pbuf);
 }
 int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf) {
@@ -397,7 +397,7 @@ void __UserCmd_Attack1(void) {
 
 void CCustomHud::GL_Init(void){
 	m_HudRadar.GLInit();
-	m_HudArmorHealth.GLInit();
+	m_HudIndicator.GLInit();
 	m_HudEccoBuyMenu.GLInit();
 #ifdef _DEBUG
 	m_HudCCTV.GLInit();
@@ -449,7 +449,7 @@ void CCustomHud::HUD_Init(void){
 	gCVars.pDangerArmor = CREATE_CVAR("cl_dangerarmor", "45", FCVAR_VALUE, nullptr);
 	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
 
-	m_HudArmorHealth.Init();
+	m_HudIndicator.Init();
 	m_HudCustomAmmo.Init();
 	m_HudRadar.Init();
 	m_HudDeathMsg.Init();
@@ -496,7 +496,7 @@ void CCustomHud::HUD_VidInit(void){
 	}
 	m_HudGrenadeIndicator.VidInit();
 	m_HudDeathMsg.VidInit();
-	m_HudArmorHealth.VidInit();
+	m_HudIndicator.VidInit();
 	m_HudCustomAmmo.VidInit();
 	m_HudRadar.VidInit();
 	m_HudEccoBuyMenu.VidInit();
@@ -516,13 +516,13 @@ void CCustomHud::HUD_Draw(float flTime){
 
 	if (!IsHudEnable())
 		return;
-	m_HudArmorHealth.Draw(flTime);
+	m_HudIndicator.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
 }
 void CCustomHud::HUD_Reset(void){
 	m_iPlayerHealth = 100;
 	m_flOverViewScale = 0;
-	m_HudArmorHealth.Reset();
+	m_HudIndicator.Reset();
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
 	m_HudDeathMsg.Reset();
@@ -556,7 +556,7 @@ void CCustomHud::HUD_Clear(void){
 	m_HudRadar.Clear();
 	m_HudCustomAmmo.Clear();
 	m_HudEccoBuyMenu.Clear();
-	m_HudArmorHealth.Clear();
+	m_HudIndicator.Clear();
 	m_HudGrenadeIndicator.Clear();
 }
 void CCustomHud::HUD_BlitRadarFramebuffer()

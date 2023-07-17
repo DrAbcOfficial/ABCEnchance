@@ -40,7 +40,6 @@
 #include "player_info.h"
 //HUD
 #include "ammo.h"
-#include "healthhud.h"
 #include "scoreboard.h"
 #include "Viewport.h"
 //efx

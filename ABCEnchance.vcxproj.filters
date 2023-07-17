@@ -458,7 +458,7 @@
     <ClCompile Include="src\Source\HUD\grenadeindicator.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\healthhud.cpp">
+    <ClCompile Include="src\Source\HUD\indicator.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\historyresource.cpp">
@@ -1186,7 +1186,7 @@
     <ClInclude Include="src\Header\HUD\grenadeindicator.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\healthhud.h">
+    <ClInclude Include="src\Header\HUD\indicator.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\historyresource.h">

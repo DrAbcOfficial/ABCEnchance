@@ -3,7 +3,7 @@
 #define NUM_MAX_INDICATOR 4
 
 
-class CHudArmorHealth{
+class CHudIndicator{
 public:
 	void GLInit();
 	void Init(void);
@@ -46,4 +46,4 @@ private:
 	Color PainIndicatorColor;
 	Color PainIndicatorColorA;
 };
-extern CHudArmorHealth m_HudArmorHealth;
+extern CHudIndicator m_HudIndicator;
