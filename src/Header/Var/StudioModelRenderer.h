@@ -142,6 +142,18 @@ public:
 	//
 	// Use high quality models?
 	cvar_t* m_pCvarHiModels;
+	
+
+	// Index 1234
+	cvar_t* m_pCvarIndex1;
+	cvar_t* m_pCvarIndex2;
+	cvar_t* m_pCvarIndex3;
+	cvar_t* m_pCvarIndex4;
+
+	// Developer debug output desired?
+	cvar_t* m_pCvarDeveloper;
+	// Draw entities bone hit boxes, etc?
+	cvar_t* m_pCvarDrawEntities;
 
 	// The entity which we are currently rendering.
 	cl_entity_t* m_pCurrentEntity;
