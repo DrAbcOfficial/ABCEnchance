@@ -6,9 +6,12 @@
 
 #define PLUGIN_VERSION 100017
 
+class CGameStudioModelRenderer;
+
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
-extern engine_studio_api_t gEngineStudio;
+extern engine_studio_api_t IEngineStudio;
+extern CGameStudioModelRenderer* g_StudioRenderer;
 
 extern const clientdata_t* gClientData;
 extern float m_hfov;
