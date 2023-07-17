@@ -16,19 +16,19 @@
 #include "CCustomHud.h"
 #include "vgui_controls/Controls.h"
 
-#include "healthhud.h"
+#include "indicator.h"
 
-CHudArmorHealth m_HudArmorHealth;
+CHudIndicator m_HudIndicator;
 
 
-void CHudArmorHealth::GLInit() {
+void CHudIndicator::GLInit() {
 	glGenFramebuffersEXT(1, &m_hFilterFBO);
 	m_hFilterTex = GL_GenTextureRGBA8(ScreenWidth, ScreenHeight);
 }
-void CHudArmorHealth::Init(void){
+void CHudIndicator::Init(void){
 	Reset();
 }
-int CHudArmorHealth::VidInit(void){
+int CHudIndicator::VidInit(void){
 	PainColorTime = atof(pSchemeData->GetResourceString("HealthArmor.PainColorTime"));
 	PainIndicatorTime = atof(pSchemeData->GetResourceString("HealthArmor.PainIndicatorTime"));
 	ShockIndicatorTime = atof(pSchemeData->GetResourceString("HealthArmor.ShockIndicatorTime"));
@@ -37,18 +37,18 @@ int CHudArmorHealth::VidInit(void){
 	PainIndicatorColorA = pSchemeData->GetColor("HealthArmor.PainIndicatorColorA", gDefaultColor);
 	return 1;
 }
-void CHudArmorHealth::Reset(void){
+void CHudIndicator::Reset(void){
 	iPainIndicator = SPR_Load("abcenchance/spr/pain_indicator.spr");
 	memset(&m_hScreenFilter, 0, sizeof(m_hScreenFilter));
 	memset(aryIndicators, 0, sizeof(aryIndicators));
 	iNowSelectIndicator = 0;
 	flPainColorKeepTime = 0.0f;
 }
-void CHudArmorHealth::Clear() {
+void CHudIndicator::Clear() {
 	if (m_hFilterTex)
 		glDeleteTextures(1, &m_hFilterTex);
 }
-void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDiffer){
+void CHudIndicator::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDiffer){
 	vec3_t hsv,thsv;
 	int tr, tg, tb, ta;
 	c->GetColor(tr, tg, tb, ta);
@@ -59,20 +59,20 @@ void CHudArmorHealth::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeD
 	}
 	mathlib::HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
 }
-int CHudArmorHealth::Draw(float flTime) {
+int CHudIndicator::Draw(float flTime) {
 	if (gCustomHud.IsInSpectate())
 		return 1;
 	if (gCustomHud.IsHudHide(HUD_HIDEALL))
 		return 1;
 	DrawPain(flTime);
 }
-void CHudArmorHealth::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
+void CHudIndicator::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
 	float flTime = gEngfuncs.GetClientTime();
-	for (indicatorinfo_t& var : m_HudArmorHealth.aryIndicators) {
+	for (indicatorinfo_t& var : m_HudIndicator.aryIndicators) {
 		if (var.flKeepTime < flTime)
 			continue;
 		if (mathlib::VectorCompare(var.vecFrom, vecFrom)) {
-			var.flKeepTime = flTime + m_HudArmorHealth.PainColorTime;
+			var.flKeepTime = flTime + m_HudIndicator.PainColorTime;
 			return;
 		}
 	}
@@ -92,7 +92,7 @@ void CHudArmorHealth::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
 		iNowSelectIndicator = 0;
 	flPainColorKeepTime = gEngfuncs.GetClientTime() + PainColorTime;
 }
-void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
+void CHudIndicator::CalcDamageDirection(indicatorinfo_s &var){
 	vec3_t vecFinal;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	vecFinal[0] = var.vecFrom[0] - local->curstate.origin[0];
@@ -128,7 +128,7 @@ void CHudArmorHealth::CalcDamageDirection(indicatorinfo_s &var){
 	mathlib::CenterPos2OpenGLPos(var.vecHUDC, ScreenWidth, ScreenHeight);
 	mathlib::CenterPos2OpenGLPos(var.vecHUDD, ScreenWidth, ScreenHeight);
 }
-int CHudArmorHealth::DrawPain(float flTime){
+int CHudIndicator::DrawPain(float flTime){
 	int r, g, b, a;
 	if (gCVars.pDamageScreenFilter->value > 0 && 
 		m_hScreenFilter.flKeepTime > flTime && 
