@@ -180,6 +180,8 @@ void CViewport::HudHideCallBack(int code){
 		SetVisible(false);
 		return;
 	}
+	else
+		SetVisible(true);
 	m_pHealthPanel->SetArmorVisible((code & HUD_HIDEBATTERY) == 0);
 	m_pHealthPanel->SetHealthVisible((code & HUD_HIDEHEALTH) == 0);
 	m_pFlashLight->ShowPanel((code & HUD_HIDEFLASHLIGHT) == 0);
