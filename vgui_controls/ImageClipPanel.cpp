@@ -91,3 +91,11 @@ Color vgui::ImageClipPanel::GetDrawColor(void){
 void vgui::ImageClipPanel::SetDrawColor(Color inColor){
 	m_DrawColor = inColor;
 }
+
+int ImageClipPanel::GetOldWide(){
+	return m_iOldWide;
+}
+
+int ImageClipPanel::GetOldTall(){
+	return m_iOldTall;
+}
