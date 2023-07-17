@@ -63,7 +63,6 @@ float m_hfov;
 overviewInfo_t* gDevOverview;
 uint* g_arySlotPuVar = nullptr;
 refdef_t* g_refdef = nullptr;
-netadr_s* g_pConnectingServer = nullptr;
 
 struct playerppmoveinfo {
 	bool onground;
@@ -303,11 +302,6 @@ char* NewV_strncpy(char* a1, const char* a2, size_t a3){
 	strncpy_s(m_szCurrentLanguage, a2, sizeof(m_szCurrentLanguage));
 	return gHookFuncs.V_strncpy(a1, a2, a3);
 }
-bool NET_StringToAdr(char* param_1, netadr_s* param_2) {
-	bool result = gHookFuncs.NET_StringToAdr(param_1, param_2);
-	g_pConnectingServer = param_2;
-	return result;
-}
 //void VGuiWrap2_HideGameUI() {
 //
 //}
@@ -353,7 +347,11 @@ void FillEngineAddress() {
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
 #define NET_STRINGTOADR_SIG "\x56\x57\x8B\x7C\x24\x0C\x68\x2A\x2A\x2A\x2A\x57\xE8\xDF\x5C\xFC\xFF\x83\xC4\x08\x85\xC0"
-		Fill_Sig(NET_STRINGTOADR_SIG, g_dwEngineBase, g_dwEngineSize, NET_StringToAdr);
+#define CVAR_DIRECTSET_SIG "\x81\xEC\x0C\x04\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\x08\x04\x00\x00\x56\x8B\xB4\x24\x18\x04\x00\x00\x57\x8B\xBC\x24\x18\x04\x00\x00\x85\xFF\x0F\x84\x00\x03\x00\x00"
+		Fill_Sig(CVAR_DIRECTSET_SIG, g_dwEngineBase, g_dwEngineSize, Cvar_DirectSet);
+
+		auto x = gHookFuncs.Cvar_DirectSet;
+		auto y = 1 + 1;
 //#define VGuiWrap2_HideGameUI_SIG "\x8B\x0D\x2A\x2A\x2A\x2A\x85\xC9\x74\x05\x8B\x01\xFF\x60\x1C\xC3"
 		//Fill_Sig(VGuiWrap2_HideGameUI_SIG, g_dwEngineBase, g_dwEngineSize, VGuiWrap2_HideGameUI);
 
@@ -378,19 +376,6 @@ void FillEngineAddress() {
 			addr = (DWORD)Search_Pattern(DEVOVERVIEW_SIG);
 			Sig_AddrNotFound(gDevOverview);
 			gDevOverview = (decltype(gDevOverview))(*(DWORD*)(addr + 9) - 0xC);
-		}
-		if (1){
-			const char sigs1[] = "***PROTECTED***";
-			auto Cvar_DirectSet_String = Search_Pattern_Data(sigs1);
-			if (!Cvar_DirectSet_String)
-				Cvar_DirectSet_String = Search_Pattern_Rdata(sigs1);
-			Sig_VarNotFound(Cvar_DirectSet_String);
-			char pattern[] = "\x68\x2A\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\xE8";
-			*(DWORD*)(pattern + 1) = (DWORD)Cvar_DirectSet_String;
-			auto Cvar_DirectSet_Call = Search_Pattern(pattern);
-			Sig_VarNotFound(Cvar_DirectSet_Call);
-			gHookFuncs.Cvar_DirectSet = (decltype(gHookFuncs.Cvar_DirectSet))g_pMetaHookAPI->ReverseSearchFunctionBegin(Cvar_DirectSet_Call, 0x500);
-			Sig_FuncNotFound(Cvar_DirectSet);
 		}
 		if (1)
 		{
@@ -551,7 +536,6 @@ void InstallEngineHook() {
 	Install_InlineEngHook(CL_SetDevOverView);
 	Install_InlineEngHook(Cvar_DirectSet);
 	Install_InlineEngHook(CL_GetModelByIndex);
-	Install_InlineEngHook(NET_StringToAdr);
 }
 void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);

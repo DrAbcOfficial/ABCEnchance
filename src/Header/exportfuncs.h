@@ -15,7 +15,6 @@ extern CGameStudioModelRenderer* g_StudioRenderer;
 
 extern const clientdata_t* gClientData;
 extern float m_hfov;
-extern netadr_s* g_pConnectingServer;
 
 extern overviewInfo_t* gDevOverview;
 extern refdef_t* g_refdef;
