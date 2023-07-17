@@ -10,7 +10,6 @@
 #include "triangleapi.h"
 #include "pm_movevars.h"
 #include "cvardef.h"
-#include "cvar_hook.h"
 #include <capstone.h>
 #include "CVector.h"
 //Def
@@ -279,11 +278,6 @@ model_t* CL_GetModelByIndex (int index){
 		return g_ExtraPreacheModel[index - EXTRPRECACHE_INDEX_BASE];
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
-void Cvar_DirectSet(cvar_t* var, char* value) {
-	gHookFuncs.Cvar_DirectSet(var, value);
-	if (gCVarsHookMap.find(var) != gCVarsHookMap.end())
-		gCVarsHookMap[var](var);
-}
 void* NewClientFactory(void){
 	return Sys_GetFactoryThis();
 }
@@ -345,9 +339,6 @@ void FillEngineAddress() {
 		Fill_Sig(R_FORCECVAR_SIG, g_dwEngineBase, g_dwEngineSize, R_ForceCVars);
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
-#define NET_STRINGTOADR_SIG "\x56\x57\x8B\x7C\x24\x0C\x68\x2A\x2A\x2A\x2A\x57\xE8\xDF\x5C\xFC\xFF\x83\xC4\x08\x85\xC0"
-#define CVAR_DIRECTSET_SIG "\x81\xEC\x0C\x04\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\x08\x04\x00\x00\x56\x8B\xB4\x24\x18\x04\x00\x00\x57\x8B\xBC\x24\x18\x04\x00\x00\x85\xFF\x0F\x84\x00\x03\x00\x00"
-		Fill_Sig(CVAR_DIRECTSET_SIG, g_dwEngineBase, g_dwEngineSize, Cvar_DirectSet);
 //#define VGuiWrap2_HideGameUI_SIG "\x8B\x0D\x2A\x2A\x2A\x2A\x85\xC9\x74\x05\x8B\x01\xFF\x60\x1C\xC3"
 		//Fill_Sig(VGuiWrap2_HideGameUI_SIG, g_dwEngineBase, g_dwEngineSize, VGuiWrap2_HideGameUI);
 
@@ -530,7 +521,6 @@ void InstallEngineHook() {
 	Install_InlineEngHook(R_ForceCVars);
 	Install_InlineEngHook(CL_IsDevOverview);
 	Install_InlineEngHook(CL_SetDevOverView);
-	Install_InlineEngHook(Cvar_DirectSet);
 	Install_InlineEngHook(CL_GetModelByIndex);
 }
 void InstallClientHook(){

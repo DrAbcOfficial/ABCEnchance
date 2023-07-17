@@ -512,9 +512,6 @@
     <ClCompile Include="src\Source\Utility\svc_hook.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Var\cvar_hook.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Var\extraprecache.cpp">
       <Filter>Public\Source\Var</Filter>
     </ClCompile>
@@ -1247,9 +1244,6 @@
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\weapon.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\cvar_hook.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\enginedef.h">

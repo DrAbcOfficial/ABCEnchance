@@ -16,6 +16,6 @@
     <LocalDebuggerCommand>svencoop.exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArguments />
-    <LocalDebuggerWorkingDirectory>G:\SteamLibrary\steamapps\common\Sven Co-op\</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>D:\SteamLibrary\steamapps\common\Sven Co-op\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
 </Project>

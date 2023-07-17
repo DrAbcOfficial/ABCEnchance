@@ -1,5 +1,5 @@
 #pragma once
-#include "cvar_hook.h"
+#include "cvardef.h"
 #include "com_model.h"
 
 #define FCVAR_VALUE (FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE)
@@ -12,6 +12,13 @@
 #define CVAR_GET_POINTER(x) gEngfuncs.pfnGetCvarPointer(x)
 #define CVAR_GET_FLOAT(x) gEngfuncs.pfnGetCvarFloat(x)
 #define CVAR_GET_STRING(x) gEngfuncs.pfnGetCvarString(x)
+inline cvar_t* CREATE_CVAR(char* name, char* val, int flag, cvar_callback_t callback) {
+	cvar_t* cvar = gEngfuncs.pfnRegisterVariable(name, val, flag); 
+	if (callback) { 
+		g_pMetaHookAPI->RegisterCvarCallback(name, callback, nullptr); 
+	}
+	return cvar;
+}
 #define SPR_Load (*gEngfuncs.pfnSPR_Load)
 #define SPR_Set (*gEngfuncs.pfnSPR_Set)
 #define SPR_Frames (*gEngfuncs.pfnSPR_Frames)
@@ -58,7 +65,6 @@ typedef struct{
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
 	void		(*R_ForceCVars)				(qboolean mp);
-	void		(*Cvar_DirectSet)			(cvar_t* var, char* value);
 	void		(*SetPunchAngle)			(int y, float value);
 	void		(*VGuiWrap2_HideGameUI)		();
 
