@@ -40,9 +40,11 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 
 	gCVars.pCfefx = CREATE_CVAR("cl_cfefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pCfefxDmgMax = CREATE_CVAR("cl_cfefx_max", "1000", FCVAR_VALUE, nullptr);
-
+	SetPos(ScreenWidth / 2, ScreenHeight / 2);
+	SetSize(ScreenWidth / 10, ScreenHeight / 10);
+	ShowPanel(true);
 	MakeReadyForUse();
-	LoadControlSettings(VGUI2_ROOT_DIR "Cfefx.res");
+	//LoadControlSettings(VGUI2_ROOT_DIR "Cfefx.res");
 
 	//SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
 	//SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
@@ -66,6 +68,11 @@ void CKillMarkPanel::ShowPanel(bool state) {
 	if (state == IsVisible())
 		return;
 	SetVisible(state);
+}
+
+void CKillMarkPanel::SetSize(int x, int y) {
+	BaseClass::SetSize(x, y);
+	m_pKillMarkPoint->SetSize(x, y);
 }
 
 void CKillMarkPanel::StartFade(bool state, vgui::ImagePanel* panel, float delaytime, float fadetime) 
@@ -94,8 +101,8 @@ void CKillMarkPanel::ShowKillMark(int* iDmg)
 {
 	int dmg = *iDmg;
 	int i = gCVars.pCfefxDmgMax->value / 10;
-	if (dmg >= i && dmg / i != 0)
-	{
+	if (dmg >= i)
+	{	//有bug 应该调转顺序删掉break
 		switch (dmg / i) {
 		case 1:
 			ShowDmgMark(m_pDmgMarkOne, 0);
