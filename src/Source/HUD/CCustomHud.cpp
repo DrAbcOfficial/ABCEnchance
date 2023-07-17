@@ -68,15 +68,32 @@ pfnUserMsgHook m_pfnFlashBat;
 pfnUserMsgHook m_pfnFlashlight;
 pfnUserMsgHook m_pfnTextMsg;
 pfnUserMsgHook m_pfnMetaHook;
+pfnUserMsgHook m_pfnDamage;
+pfnUserMsgHook m_pfnBattery;
 
+int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int armor = READ_BYTE();
+	int damageTaken = READ_BYTE();
+	int tiles = READ_LONG();
+	vec3_t vecFrom;
+	for (size_t i = 0; i < 3; i++) {
+		vecFrom[i] = READ_COORD();
+	}
+	if(damageTaken > 0 || armor > 0)
+		m_HudArmorHealth.AddIdicator(damageTaken, armor, vecFrom);
+	return m_pfnDamage(pszName, iSize, pbuf);
+}
+int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int battery = READ_SHORT();
+	g_pViewPort->SetArmor(battery);
+	return m_pfnBattery(pszName, iSize, pbuf);
+}
 int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
-	int x = READ_LONG();
-	if (x != m_HudArmorHealth.m_iHealth) {
-		m_HudArmorHealth.m_iHealth = x;
-		gCustomHud.m_iPlayerHealth = x;
-	}
-	g_pViewPort->SetHealth(x);
+	int health = READ_LONG();
+	g_pViewPort->SetHealth(health);
 	return m_pfnHealth(pszName, iSize, pbuf);
 }
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
@@ -388,6 +405,8 @@ void CCustomHud::GL_Init(void){
 }
 void CCustomHud::HUD_Init(void){
 	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
+	m_pfnDamage = HOOK_MESSAGE(Damage);
+	m_pfnBattery = HOOK_MESSAGE(Battery);
 	m_pfnHealth = HOOK_MESSAGE(Health);
 	m_pfnScoreInfo = HOOK_MESSAGE(ScoreInfo);
 	m_pfnSpectator = HOOK_MESSAGE(Spectator);
@@ -423,6 +442,11 @@ void CCustomHud::HUD_Init(void){
 	UserCmd_ShowScores = HOOK_COMMAND("+showscores", OpenScoreboard);
 	UserCmd_HideScores = HOOK_COMMAND("-showscores", CloseScoreboard);
 
+	gCVars.pDamageScreenFilter = CREATE_CVAR("cl_damageshock", "1", FCVAR_VALUE, nullptr);
+	gCVars.pDamageScreenFactor = CREATE_CVAR("cl_damageshock_factor", "0.015", FCVAR_VALUE, nullptr);
+	gCVars.pDamageScreenBase = CREATE_CVAR("cl_damageshock_base", "15", FCVAR_VALUE, nullptr);
+	gCVars.pDangerHealth = CREATE_CVAR("cl_dangerhealth", "45", FCVAR_VALUE, nullptr);
+	gCVars.pDangerArmor = CREATE_CVAR("cl_dangerarmor", "45", FCVAR_VALUE, nullptr);
 	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
 
 	m_HudArmorHealth.Init();
@@ -522,6 +546,7 @@ void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 		return;
 	m_iWeaponBits = cdata->iWeaponBits;
 	m_bPlayerLongjump = mathlib::fatoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
+	g_pViewPort->LongjumpCallBack(m_bPlayerLongjump);
 }
 void CCustomHud::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	if (!IsHudEnable())
@@ -608,6 +633,10 @@ bool CCustomHud::IsInSpectate() {
 }
 bool CCustomHud::HasSuit() {
 	return (m_iWeaponBits & (1 << WEAPON_SUIT)) != 0;
+}
+void CCustomHud::HudHideCallBack(int hidetoken){
+	m_iHideHUDDisplay = hidetoken;
+	g_pViewPort->HudHideCallBack(hidetoken);
 }
 bool CCustomHud::IsHudHide(int HideToken) {
 	return (m_iHideHUDDisplay & HideToken) != 0;

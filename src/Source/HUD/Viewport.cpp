@@ -17,6 +17,7 @@
 #include "vguilocal.h"
 #include "steam_api.h"
 #include "player_info.h"
+#include "hud.h"
 
 #include "motd.h"
 #include "popnum.h"
@@ -29,6 +30,7 @@
 #include "notice.h"
 #include "crosshair.h"
 #include "effect.h"
+#include "health.h"
 
 #include "CCustomHud.h"
 
@@ -77,6 +79,7 @@ void CViewport::Start(void){
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
 	}
+	AddNewPanel(m_pHealthPanel = new CHealthPanel());
 	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
 	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
 	AddNewPanel(m_pTextMenu = new CTextMenu()); 
@@ -98,6 +101,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pNoticeCenter->SetParent(GetVPanel());
 	m_pCrossHairPanel->SetParent(GetVPanel());
 	m_pEffectPanel->SetParent(GetVPanel());
+	m_pHealthPanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -171,8 +175,20 @@ bool CViewport::LoacalPlayerAvilable(){
 bool CViewport::IsScoreBoardVisible(){
 	return m_pScorePanel->IsVisible();
 }
+void CViewport::HudHideCallBack(int code){
+	if (code & HUD_HIDEALL) {
+		SetVisible(false);
+		return;
+	}
+	m_pHealthPanel->SetArmorVisible((code & HUD_HIDEBATTERY) == 0);
+	m_pHealthPanel->SetHealthVisible((code & HUD_HIDEHEALTH) == 0);
+	m_pFlashLight->ShowPanel((code & HUD_HIDEFLASHLIGHT) == 0);
+}
 void CViewport::ShowScoreBoard(){
 	m_pScorePanel->ShowPanel(true);
+}
+void CViewport::LongjumpCallBack(bool state){
+	m_pHealthPanel->SetLongJump(state);
 }
 void CViewport::HideScoreBoard(){
 	m_pScorePanel->ShowPanel(false);
@@ -241,6 +257,10 @@ void CViewport::SetFlashBattery(int battery){
 }
 void CViewport::SetHealth(int health){
 	m_pEffectPanel->SetHealth(health);
+	m_pHealthPanel->SetHealth(health);
+}
+void CViewport::SetArmor(int armor) {
+	m_pHealthPanel->SetArmor(armor);
 }
 void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	switch (type)

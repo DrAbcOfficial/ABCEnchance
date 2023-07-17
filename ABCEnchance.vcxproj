@@ -208,6 +208,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\vgui\crosshair.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\effect.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\notice.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\playerboard.cpp" />
@@ -433,6 +434,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\vgui\crosshair.h" />
     <ClInclude Include="src\Header\HUD\vgui\effect.h" />
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
+    <ClInclude Include="src\Header\HUD\vgui\health.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
     <ClInclude Include="src\Header\HUD\vgui\notice.h" />
     <ClInclude Include="src\Header\HUD\vgui\playerboard.h" />

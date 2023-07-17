@@ -29,6 +29,9 @@ public:
 	virtual Color GetDrawColor(void) override;
 	void SetDrawColor(Color inColor);
 
+	int GetOldWide();
+	int GetOldTall();
+
 protected:
 	virtual void PaintBackground();
 	virtual void ApplySettings(KeyValues *inResourceData);

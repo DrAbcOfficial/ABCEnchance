@@ -67,6 +67,7 @@ public:
 	void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
 	bool IsInSpectate();
 	bool HasSuit();
+	void HudHideCallBack(int hidetoken);
 	bool IsHudHide(int HideToken);
 	bool IsHudEnable();
 	bool IsSpectator(int client);
