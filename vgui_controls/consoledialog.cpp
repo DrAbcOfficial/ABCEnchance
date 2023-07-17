@@ -37,6 +37,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+#include <BaseUI.h>
 
 using namespace vgui;
 
@@ -268,7 +269,9 @@ const char* CConsolePanel::CompletionItem::GetItemText(void)
 	{
 		if (m_pText->HasExtra())
 		{
-			Q_snprintf(text, sizeof(text), "%s %s", m_pText->GetText(), m_pText->GetExtra());
+			static char buf[256];
+			Q_UnicodeToUTF8(localize()->Find("#Console_Protected"), buf, sizeof(buf));
+			Q_snprintf(text, sizeof(text), "%s %s", m_pText->GetText(), m_bIsProtected ? buf : m_pText->GetExtra());
 		}
 		else
 		{
@@ -530,6 +533,7 @@ void CConsolePanel::RebuildCompletionList(const char* text)
 				m_CompletionList.AddToTail(item);
 				item->m_pCVar = cvar;
 				item->m_bIsCommand = false;
+				item->m_bIsProtected = cvar->flags & FCVAR_PROTECTED;
 				item->m_pText = new CHistoryItem(cvar->name, cvar->string);
 			}
 			cvar = cvar->next;
@@ -612,7 +616,7 @@ void CConsolePanel::OnAutoComplete(bool reverse)
 	CompletionItem* item = m_CompletionList[m_iNextCompletion];
 	Assert(item);
 
-	if (!item->m_bIsCommand && item->m_pCVar)
+	if ((!item->m_bIsCommand && item->m_pCVar) || item->m_bIsProtected)
 	{
 		Q_strncpy(completedText, item->GetCommand(), sizeof(completedText) - 2);
 	}
@@ -695,19 +699,18 @@ void CConsolePanel::OnTextChanged(Panel* panel)
 		// add the first ten items to the list
 		for (int i = 0; i < m_CompletionList.Count() && i < MAX_MENU_ITEMS; i++)
 		{
+			CompletionItem* item = m_CompletionList[i];
 			char text[256];
 			text[0] = 0;
 			if (i == MAX_MENU_ITEMS - 1)
-			{
 				Q_strncpy(text, "...", sizeof(text));
-			}
 			else
 			{
-				Assert(m_CompletionList[i]);
-				Q_strncpy(text, m_CompletionList[i]->GetItemText(), sizeof(text));
+				Assert(item);
+				Q_strncpy(text, item->GetItemText(), sizeof(text));
 			}
 			KeyValues* kv = new KeyValues("CompletionCommand");
-			kv->SetString("command", text);
+			kv->SetString("command", item->m_bIsProtected ? item->GetName() : text);
 			m_pCompletionList->AddMenuItem(text, kv, this);
 		}
 
@@ -961,7 +964,7 @@ void CConsolePanel::ApplySchemeSettings(IScheme* pScheme)
 
 void CConsolePanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
-	const char* labelText = inResourceData->GetString("button_text", NULL);
+	const char* labelText = inResourceData->GetString("button_text", nullptr);
 	if (labelText)
 		m_pSubmit->SetText(labelText);
 	const char* submittedText = inResourceData->GetString("submite_prefix", "]");
@@ -1214,8 +1217,9 @@ void CConsoleDialog::PerformLayout()
 	BaseClass::PerformLayout();
 
 	int x, y, w, h;
+	int xygap = 4;
 	GetClientArea(x, y, w, h);
-	m_pConsolePanel->SetBounds(x, y, w, h);
+	m_pConsolePanel->SetBounds(x + xygap, y, w - 2 * xygap, h);
 }
 
 //-----------------------------------------------------------------------------
@@ -1287,7 +1291,7 @@ void CConsoleDialog::DumpConsoleTextToFile()
 
 
 void CConsoleDialog::OnKeyCodePressed(KeyCode code)
-{
+{	
 	if (code == KEY_XBUTTON_B)
 	{
 		Hide();
