@@ -248,8 +248,8 @@ void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 }
 
 void __fastcall CStudioModelRenderer_Init(void* pthis, int dummy) {
-	g_StudioRenderer = static_cast<CGameStudioModelRenderer*>(pthis);
 	gHookFuncs.CStudioModelRenderer_Init(pthis, dummy);
+	g_StudioRenderer = static_cast<CGameStudioModelRenderer*>(pthis);
 }
 
 void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
