@@ -10,6 +10,7 @@ public:
 
 	CKillMarkPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual const char* GetName() override;
 	virtual void Reset() override;
 	virtual void ShowPanel(bool state) override;
@@ -17,8 +18,10 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 	//virtual void OnThink() override;
-	void ShowKillMark(int* iDmg, int iDmgMax);
-	void StartFade(bool state, vgui::ImagePanel* Panel);
+
+	void ShowKillMark(int* iDmg);
+	void StartFade(bool state, vgui::ImagePanel* panel, float delaytime, float fadetime);
+	void ShowDmgMark(vgui::ImagePanel* panel, bool state);
 
 private:
 	vgui::ImagePanel* m_pKillMarkPoint = nullptr;
@@ -29,6 +32,8 @@ private:
 	vgui::ImagePanel* m_pDmgMarkFive = nullptr;
 	vgui::ImagePanel* m_pDmgStar = nullptr;
 	vgui::ImagePanel* m_pDmgEffect = nullptr;
+
+	int m_ioffestYPos;
 
 };
 

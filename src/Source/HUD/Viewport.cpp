@@ -62,8 +62,6 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	m_pPlayerTitleDanger = CREATE_CVAR("cl_playertitle_danger", "30", FCVAR_VALUE, nullptr);
 	m_pPopNumber = CREATE_CVAR("cl_popnumber", "1", FCVAR_VALUE, nullptr);
 
-	m_pKillMarkEnable = CREATE_CVAR("cl_cfefx", "1", FCVAR_VALUE, nullptr);
-	m_pKillMarkMax = CREATE_CVAR("cl_cfefx_max", "150", FCVAR_VALUE, nullptr);
 }
 
 CViewport::~CViewport(void){
@@ -260,9 +258,9 @@ void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	}
 }
 
-void CViewport::ShowKillMark(int* iDmg, int iDmgMax)
+void CViewport::ShowKillMark(int* iDmg)
 {
-	m_pKillMarkPanel->ShowKillMark(iDmg, iDmgMax);
+	m_pKillMarkPanel->ShowKillMark(iDmg);
 }
 
 void CViewport::Paint(void){

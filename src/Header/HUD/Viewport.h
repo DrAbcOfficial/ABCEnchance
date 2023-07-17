@@ -105,15 +105,13 @@ public:
 	};
 	void ShowNotice(HUDNOTICE type, const char* message);
 
-	void ShowKillMark(int* iDmg, int iDmgMax);
+	void ShowKillMark(int* iDmg);
 
 	long m_iTimeEnd = 0;
 
 	cvar_t* m_pPlayerTitle = nullptr;
 	cvar_t* m_pPlayerTitleDanger = nullptr;
 	cvar_t* m_pPopNumber = nullptr;
-	cvar_t* m_pKillMarkEnable = nullptr;
-	cvar_t* m_pKillMarkMax = nullptr;
 
 	vec3_t m_vecClientEVPunch;
 	vec2_t m_vecThirdPersonCrosshairPos;

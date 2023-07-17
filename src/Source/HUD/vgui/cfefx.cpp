@@ -37,23 +37,24 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 	m_pDmgMarkFive = new vgui::ImagePanel(this, "DmgMarkFive");
 	m_pDmgEffect = new vgui::ImagePanel(this, "DmgEffect");
 	m_pDmgStar = new vgui::ImagePanel(this, "DmgStar");
+	
+	gCVars.pCfefx = CREATE_CVAR("cl_cfefx", "1", FCVAR_VALUE, nullptr);
+	gCVars.pCfefxDmgMax = CREATE_CVAR("cl_cfefx_max", "1000", FCVAR_VALUE, nullptr);
 
 	LoadControlSettings(VGUI2_ROOT_DIR "Cfefx.res");
 
 	//SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
 	//SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
-	//m_pKillMark->SetShouldScaleImage(true);
-	//m_pKillMark->SetImage("abcenchance/tga/cfefx/BossDamage");
-	//m_pKillMark->SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
-	//m_pKillMark->SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
-	//m_pKillMark->SetVisible(true);
-	//SetVisible(true);
 }
 
 void CKillMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
-	//SetBgColor(GetSchemeColor("KillMark.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	SetBgColor(Color(0, 0, 0, 0));
+}
+
+void CKillMarkPanel::ApplySettings(KeyValues* inResourceData) {
+	BaseClass::ApplySettings(inResourceData);
+	m_ioffestYPos = inResourceData->GetInt("offest_ypos");
 }
 
 bool CKillMarkPanel::IsVisible() {
@@ -66,61 +67,72 @@ void CKillMarkPanel::ShowPanel(bool state) {
 	SetVisible(state);
 }
 
-void CKillMarkPanel::StartFade(bool state, vgui::ImagePanel* Panel) 
+void CKillMarkPanel::StartFade(bool state, vgui::ImagePanel* panel, float delaytime, float fadetime) 
 {
-	Panel->SetAlpha(state ? 1 : 255);
-	Panel->SetVisible(true);
-	vgui::GetAnimationController()->RunAnimationCommand(Panel, "alpha", state ? 255 : 0, 0, 1, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	panel->SetAlpha(state ? 1 : 255);
+	panel->SetVisible(true);
+	vgui::GetAnimationController()->RunAnimationCommand(panel, "alpha", state ? 255 : 0, delaytime, fadetime, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	panel->SetVisible(state);
 }
 
-void CKillMarkPanel::ShowKillMark(int* iDmg, int iDmgMax)
+void CKillMarkPanel::ShowDmgMark(vgui::ImagePanel* panel, bool state)
+{
+	//偏移YPos重复利用Panel
+	if (state == 1)
+		panel->SetPos(GetXPos(), GetYPos() + m_ioffestYPos);
+
+	//DmgStar从屏幕中间淡入向对应伤害图标移动并放大，经过一定距离最大后缩小并移动到当前伤害图标
+	//StartFade(true, m_pDmgStar, 0, 1);
+	//vgui::GetAnimationController()->RunAnimationCommand(m_pDmgStar, "xpos", (float)panel->GetXPos(), 0, 1, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	//vgui::GetAnimationController()->RunAnimationCommand(m_pDmgStar, "ypos", (float)panel->GetYPos(), 0, 1, vgui::AnimationController::INTERPOLATOR_LINEAR);
+
+	StartFade(true, panel, 0, 1);
+}
+
+void CKillMarkPanel::ShowKillMark(int* iDmg)
 {
 	ShowPanel(true);
-	int i = iDmgMax / 10;
+	int i = gCVars.pCfefxDmgMax->value / 10;
 	if (*iDmg >= i)
 	{
-		/*
-		TODO:
-		每100伤害触发
-		DmgStar向左对应伤害图标移动并放大，经过一定距离最大后缩小并移动到当前伤害图标
-		伤害图标直接在对应位置淡入
-		达到500伤害其它图标向上移动到第一个图标“合并”成一个500伤害图标
-		达到一千伤害后显示DmgEffect从第一个伤害图标的上面移动到击杀图标
-
-		还是用switch算了
-
-		不知道移动面板的话动画控制器的第二个参数要写什么
-		*/	
 		switch (*iDmg / i) {
+		case 0:
+			return;
 		case 1:
-		{
-			StartFade(true, m_pDmgMarkOne);
-
+			ShowDmgMark(m_pDmgMarkOne, 0);
 			break;
-		}
-		case 2:
-			StartFade(true, m_pDmgMarkTwo);
-
+		case 2: 
+			ShowDmgMark(m_pDmgMarkTwo, 0);
 			break;
-		case 3: {
-			StartFade(true, m_pDmgMarkThree);
-
+		case 3: 
+			ShowDmgMark(m_pDmgMarkThree, 0);
 			break;
-		}
-		case 4: {
-			StartFade(true, m_pDmgMarkFour);
-
+		case 4: 
+			ShowDmgMark(m_pDmgMarkFour, 0);
 			break;
-		}
 		case 5: {
-
+			m_pDmgMarkOne->SetVisible(false);
+			//TODO:达到500伤害其它图标向上移动到第一个图标“合并”成一个500伤害图标
+			ShowDmgMark(m_pDmgMarkFive, 0);
 			break;
 		}
+		case 6:
+			ShowDmgMark(m_pDmgMarkOne, 1);
+			break;
+		case 7: 
+			ShowDmgMark(m_pDmgMarkTwo, 1);
+			break;
+		case 8:
+			ShowDmgMark(m_pDmgMarkThree, 1);
+			break;
+		case 9:
+			ShowDmgMark(m_pDmgMarkFour, 1);
+			break;
 		default: {
-			//TODO:清空伤害图标
+			//TODO:清空伤害图标,达到一千伤害后显示DmgEffect从第一个伤害图标的上面移动到击杀图标
 			*iDmg = 0;
 			PlaySoundByName("misc/UI_SPECIALKILL2.wav", 1);
-			StartFade(false, m_pKillMarkPoint);
+			StartFade(false, m_pKillMarkPoint, 1.5, 1);
 		}
 		}
 	}

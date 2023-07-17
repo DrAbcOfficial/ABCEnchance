@@ -110,6 +110,8 @@ typedef struct cl_cvars_s{
 	cvar_t* pDeathNoticeTime = nullptr;
 
 	cvar_t* pHudEfx = nullptr;
+	cvar_t* pCfefx = nullptr;
+	cvar_t* pCfefxDmgMax = nullptr;
 
 	cvar_t* pEccoCheckInfo = nullptr;
 	cvar_t* pEccoEnable = nullptr;
