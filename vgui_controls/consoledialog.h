@@ -91,6 +91,7 @@ namespace vgui
 			const char* GetName() const;
 
 			bool	m_bIsCommand;
+			bool	m_bIsProtected;
 			cvar_t* m_pCVar;
 			unsigned int m_iCmd;
 			CHistoryItem* m_pText;

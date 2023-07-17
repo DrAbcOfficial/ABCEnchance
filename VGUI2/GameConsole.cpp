@@ -16,7 +16,6 @@ void(__fastcall* m_pfnCGameConsole_Printf)(void* pthis, int, const char* format,
 void(__fastcall* m_pfnCGameConsole_DPrintf)(void* pthis, int, const char* format, ...);
 void(__fastcall* m_pfnCGameConsole_SetParent)(void* pthis, int, int parent);
 
-
 class CGameConsole : public IGameConsole{
 public:
 	virtual void Activate(void);
