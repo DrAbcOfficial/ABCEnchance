@@ -29,18 +29,19 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 	//vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "CfefxScheme.res", "CfefxScheme");
 	//SetScheme("CfefxScheme");
 
-	m_pKillMarkPoint = new vgui::ImagePanel(this, "KillMarkPoint");
-	m_pDmgMarkOne = new vgui::ImagePanel(this, "DmgMarkOne");
-	m_pDmgMarkTwo = new vgui::ImagePanel(this, "DmgMarkTwo");
-	m_pDmgMarkThree = new vgui::ImagePanel(this, "DmgMarkThree");
-	m_pDmgMarkFour = new vgui::ImagePanel(this, "DmgMarkFour");
-	m_pDmgMarkFive = new vgui::ImagePanel(this, "DmgMarkFive");
-	m_pDmgEffect = new vgui::ImagePanel(this, "DmgEffect");
-	m_pDmgStar = new vgui::ImagePanel(this, "DmgStar");
-	
+	m_pKillMarkPoint = CREATE_PANEL(vgui::ImagePanel, this, "KillMarkPoint");
+	m_pDmgMarkOne = CREATE_PANEL(vgui::ImagePanel, this, "DmgMarkOne");
+	m_pDmgMarkTwo = CREATE_PANEL(vgui::ImagePanel, this, "DmgMarkTwo");
+	m_pDmgMarkThree = CREATE_PANEL(vgui::ImagePanel, this, "DmgMarkThree");
+	m_pDmgMarkFour = CREATE_PANEL(vgui::ImagePanel, this, "DmgMarkFour");
+	m_pDmgMarkFive = CREATE_PANEL(vgui::ImagePanel, this, "DmgMarkFive");
+	m_pDmgEffect = CREATE_PANEL(vgui::ImagePanel, this, "DmgEffect");
+	m_pDmgStar = CREATE_PANEL(vgui::ImagePanel, this, "DmgStar");
+
 	gCVars.pCfefx = CREATE_CVAR("cl_cfefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pCfefxDmgMax = CREATE_CVAR("cl_cfefx_max", "1000", FCVAR_VALUE, nullptr);
 
+	MakeReadyForUse();
 	LoadControlSettings(VGUI2_ROOT_DIR "Cfefx.res");
 
 	//SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
@@ -82,22 +83,20 @@ void CKillMarkPanel::ShowDmgMark(vgui::ImagePanel* panel, bool state)
 		panel->SetPos(GetXPos(), GetYPos() + m_ioffestYPos);
 
 	//DmgStar从屏幕中间淡入向对应伤害图标移动并放大，经过一定距离最大后缩小并移动到当前伤害图标
+	//两个参数咋传
 	//StartFade(true, m_pDmgStar, 0, 1);
-	//vgui::GetAnimationController()->RunAnimationCommand(m_pDmgStar, "xpos", (float)panel->GetXPos(), 0, 1, vgui::AnimationController::INTERPOLATOR_LINEAR);
-	//vgui::GetAnimationController()->RunAnimationCommand(m_pDmgStar, "ypos", (float)panel->GetYPos(), 0, 1, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	vgui::GetAnimationController()->RunAnimationCommand(m_pDmgStar, "position", 0, 0, 1, vgui::AnimationController::INTERPOLATOR_LINEAR);
 
 	StartFade(true, panel, 0, 1);
 }
 
 void CKillMarkPanel::ShowKillMark(int* iDmg)
 {
-	ShowPanel(true);
+	int dmg = *iDmg;
 	int i = gCVars.pCfefxDmgMax->value / 10;
-	if (*iDmg >= i)
+	if (dmg >= i && dmg / i != 0)
 	{
-		switch (*iDmg / i) {
-		case 0:
-			return;
+		switch (dmg / i) {
 		case 1:
 			ShowDmgMark(m_pDmgMarkOne, 0);
 			break;
@@ -130,8 +129,14 @@ void CKillMarkPanel::ShowKillMark(int* iDmg)
 			break;
 		default: {
 			//TODO:清空伤害图标,达到一千伤害后显示DmgEffect从第一个伤害图标的上面移动到击杀图标
+			m_pDmgMarkOne->SetVisible(false);
+			m_pDmgMarkTwo->SetVisible(false);
+			m_pDmgMarkThree->SetVisible(false);
+			m_pDmgMarkFour->SetVisible(false);
+			m_pDmgMarkFive->SetVisible(false);
 			*iDmg = 0;
 			PlaySoundByName("misc/UI_SPECIALKILL2.wav", 1);
+			gEngfuncs.Con_Printf("sound played\n");
 			StartFade(false, m_pKillMarkPoint, 1.5, 1);
 		}
 		}

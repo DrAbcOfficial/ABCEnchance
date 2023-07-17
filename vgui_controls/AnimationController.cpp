@@ -63,8 +63,8 @@ AnimationController::AnimationController(Panel *parent) : BaseClass(parent, NULL
 
 	// get the names of common types
 	m_sPosition = g_ScriptSymbols.AddString("position");
-	m_sSize = g_ScriptSymbols.AddString("size"); 
-	m_sFgColor = g_ScriptSymbols.AddString("fgcolor"); 
+	m_sSize = g_ScriptSymbols.AddString("size");
+	m_sFgColor = g_ScriptSymbols.AddString("fgcolor");
 	m_sBgColor = g_ScriptSymbols.AddString("bgcolor");
 	m_sAlpha = g_ScriptSymbols.AddString("alpha");
 
