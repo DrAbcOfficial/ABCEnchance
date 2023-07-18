@@ -31,6 +31,7 @@
 #include "crosshair.h"
 #include "effect.h"
 #include "health.h"
+#include "ammobar.h"
 
 #include "CCustomHud.h"
 
@@ -80,6 +81,7 @@ void CViewport::Start(void){
 		m_pPlayerInfoPanels[i]->SetId(i);
 	}
 	AddNewPanel(m_pHealthPanel = new CHealthPanel());
+	AddNewPanel(m_pAmmoPanel = new CAmmoPanel());
 	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
 	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
 	AddNewPanel(m_pTextMenu = new CTextMenu()); 
@@ -102,6 +104,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pCrossHairPanel->SetParent(GetVPanel());
 	m_pEffectPanel->SetParent(GetVPanel());
 	m_pHealthPanel->SetParent(GetVPanel());
+	m_pAmmoPanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -185,6 +188,7 @@ void CViewport::HudHideCallBack(int code){
 	m_pHealthPanel->SetArmorVisible((code & HUD_HIDEBATTERY) == 0);
 	m_pHealthPanel->SetHealthVisible((code & HUD_HIDEHEALTH) == 0);
 	m_pFlashLight->ShowPanel((code & HUD_HIDEFLASHLIGHT) == 0);
+	m_pAmmoPanel->ShowPanel((code & HUD_HIDEWEAPONS) == 0);
 }
 void CViewport::ShowScoreBoard(){
 	m_pScorePanel->ShowPanel(true);
@@ -263,6 +267,12 @@ void CViewport::SetHealth(int health){
 }
 void CViewport::SetArmor(int armor) {
 	m_pHealthPanel->SetArmor(armor);
+}
+WEAPON* CViewport::GetCurWeapon(){
+	return gCustomHud.GetCurWeapon();
+}
+void CViewport::SetCurWeapon(WEAPON* weapon){
+	m_pAmmoPanel->SetWeapon(weapon);
 }
 void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	switch (type)

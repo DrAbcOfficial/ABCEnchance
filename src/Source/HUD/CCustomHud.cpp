@@ -554,7 +554,6 @@ void CCustomHud::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 }
 void CCustomHud::HUD_Clear(void){
 	m_HudRadar.Clear();
-	m_HudCustomAmmo.Clear();
 	m_HudEccoBuyMenu.Clear();
 	m_HudIndicator.Clear();
 	m_HudGrenadeIndicator.Clear();
@@ -672,6 +671,12 @@ void CCustomHud::SetMouseVisible(bool state) {
 }
 bool CCustomHud::TextDeathMsg(const char* pszName, int iSize, void* pbuf){
 	return m_HudDeathMsg.MsgFunc_TextMsg(pszName, iSize, pbuf);
+}
+WEAPON* CCustomHud::GetCurWeapon(){
+	return m_HudCustomAmmo.GetCurWeapon();
+}
+void CCustomHud::SetCurWeapon(WEAPON* weapon){
+	g_pViewPort->SetCurWeapon(weapon);
 }
 void CCustomHud::OnMousePressed(int code) {
 	switch (code) {

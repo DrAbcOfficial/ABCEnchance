@@ -17,11 +17,10 @@
 #include <CVector.h>
 
 #include "mymathlib.h"
+#include <weapon.h>
+#include "Viewport.h"
 
 #include "crosshair.h"
-#include "Viewport.h"
-#include <weapon.h>
-#include <ammo.h>
 #include <exportfuncs.h>
 
 #define VIEWPORT_CROSSHAIR_NAME "CrosshairPanel"
@@ -241,12 +240,12 @@ void CCrosshairPanel::SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc) {
 	m_pSprImage->SetRect(hRc->left, hRc->right, hRc->top, hRc->bottom);
 }
 void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
-	WEAPON* pWeapon = m_HudCustomAmmo.m_pWeapon;
+	WEAPON* pWeapon = g_pViewPort->GetCurWeapon();
 	if (!pWeapon || pWeapon->iId <= 0) {
 		m_pSprImage->SetTextureID(-1);
 		return;
 	}
-	bool bOnTarget = m_HudCustomAmmo.m_bIsOnTarget;
+	bool bOnTarget = pWeapon->iState & (1 << 1);
 	if (m_hfov >= gCVars.pCvarDefaultFOV->value) {
 		if (bOnTarget && pWeapon->hAutoaim)
 			SetCrosshairSPR(x, y, pWeapon->hAutoaim, &pWeapon->rcAutoaim);
@@ -254,7 +253,7 @@ void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
 			SetCrosshairSPR(x, y, pWeapon->hCrosshair, &pWeapon->rcCrosshair);
 	}
 	else {
-		if (bOnTarget && m_HudCustomAmmo.m_pWeapon->hZoomedAutoaim)
+		if (bOnTarget && pWeapon->hZoomedAutoaim)
 			SetCrosshairSPR(x, y, pWeapon->hZoomedAutoaim, &pWeapon->rcZoomedAutoaim);
 		else
 			SetCrosshairSPR(x, y, pWeapon->hZoomedCrosshair, &pWeapon->rcZoomedCrosshair);

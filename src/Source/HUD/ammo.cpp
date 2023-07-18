@@ -47,6 +47,7 @@ int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf){
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
 	gWR.SetAmmo(iIndex, abs(iCount));
+	gCustomHud.SetCurWeapon(gCustomHud.GetCurWeapon());
 	return m_pfnAmmoX(pszName, iSize, pbuf);
 }
 int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf){
@@ -117,16 +118,11 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf){
 	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
 }
-enum WEAPONSTATE {
-	NOTVALID = 0,
-	VALID = 1 << 0,
-	ONTARGET = 1 << 1,
-	UZI = 1 << 2
-};
+
 int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iState = READ_BYTE();
-	if (iState & VALID){
+	if (iState){
 		int iId = READ_SHORT();
 		//sc反编汇后如此
 		if (iId == -1){
@@ -143,8 +139,9 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 		//更新弹匣信息
 		pWeapon->iClip = iClip;
 		pWeapon->iClip2 = iClip2;
-		m_HudCustomAmmo.m_pWeapon = pWeapon;
-		m_HudCustomAmmo.m_bIsOnTarget = iState & ONTARGET;
+		pWeapon->iState = iState;
+		m_HudCustomAmmo.SetCurWeapon(pWeapon);
+		gCustomHud.SetCurWeapon(pWeapon);
 	}
 	else{
 		int iFlag1 = READ_BYTE();
@@ -212,10 +209,6 @@ int CHudCustomAmmo::Init(void){
 };
 void CHudCustomAmmo::Reset(void){
 	m_bSelectBlock = false;
-	m_pWeapon = nullptr;
-	m_bIsOnTarget = false;
-	VGUI_CREATE_NEWTGA_TEXTURE(iBackGroundTga, "abcenchance/tga/ammobar_background");
-
 	//所有选择菜单都要加载
 	m_HudWMenuSlot.Reset();
 
@@ -223,20 +216,6 @@ void CHudCustomAmmo::Reset(void){
 	gHR.Reset();
 }
 int CHudCustomAmmo::VidInit(void){
-	ElementGap = GET_SCREEN_PIXEL(true, "AmmoHUD.ElementGap");
-	BackGroundY = GET_SCREEN_PIXEL(true, "AmmoHUD.BackGroundY");
-	BackGroundLength = GET_SCREEN_PIXEL(false, "AmmoHUD.BackGroundLength");
-
-	Ammo1IconColor = pSchemeData->GetColor("AmmoHUD.Ammo1IconColor", gDefaultColor);
-	Ammo1BigTextColor = pSchemeData->GetColor("AmmoHUD.Ammo1BigTextColor", gDefaultColor);
-	Ammo1TextColor = pSchemeData->GetColor("AmmoHUD.Ammo1TextColor", gDefaultColor);
-	Ammo2IconColor = pSchemeData->GetColor("AmmoHUD.Ammo2IconColor", gDefaultColor);
-	Ammo2BigTextColor = pSchemeData->GetColor("AmmoHUD.Ammo2BigTextColor", gDefaultColor);
-	Ammo2TextColor = pSchemeData->GetColor("AmmoHUD.Ammo2TextColor", gDefaultColor);
-
-	HUDFont = pSchemeData->GetFont("HUDShitFont", true);
-	HUDSmallFont = pSchemeData->GetFont("HUDSmallShitFont", true);
-
 	gHR.VidInit();
 	gWR.LoadAllWeaponSprites();
 	m_HudWMenuSlot.VidInit();
@@ -281,108 +260,6 @@ int CHudCustomAmmo::Draw(float flTime){
 	// Draw Weapon Menu
 	DrawWList(flTime);
 	gHR.DrawAmmoHistory(flTime);
-	if (!m_pWeapon)
-		return 0;
-	//Yeah thats stupid
-	//if (!gWR.HasUsableWeaponSize()) {
-	//	m_pWeapon = nullptr;
-	//	return 0;
-	//}
-	WEAPON* pw = m_pWeapon;
-	if (pw->iId <= 0)
-		return 0;
-	if ((pw->iAmmoType < 0) && (pw->iAmmo2Type < 0))
-		return 0;
-
-	int r, g, b, a;
-	int nowX = ScreenWidth;
-	int nowY = ScreenHeight;
-	int HalfY = ScreenHeight - ((ScreenHeight - BackGroundY) / 2);
-	int iTextHeight;
-	int iTextWidth;
-	wchar_t buf[16];
-	//从右往左绘制
-	vgui::surface()->DrawSetTexture(-1);
-	vgui::surface()->DrawSetColor(255, 255, 255, 255);
-	vgui::surface()->DrawSetTexture(iBackGroundTga);
-	vgui::surface()->DrawTexturedRect(nowX - BackGroundLength, BackGroundY, ScreenWidth, ScreenHeight);
-
-	nowX -= BackGroundLength / 6;
-	if (pw->iAmmo2Type > 0) {
-		Ammo2IconColor.GetColor(r, g, b, a);
-		nowX -= (m_pWeapon->rcAmmo2.right - m_pWeapon->rcAmmo2.left);
-		nowY = HalfY - (m_pWeapon->rcAmmo2.bottom - m_pWeapon->rcAmmo2.top) / 2;
-		SPR_Set(m_pWeapon->hAmmo2, r, g, b);
-		SPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo2);
-		nowX -= ElementGap;
-		if (pw->iClip2 >= 0) {
-			Ammo2TextColor.GetColor(r, g, b, a);
-			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
-			nowY = HalfY - iTextHeight / 2;
-			nowX -= iTextWidth;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
-
-			Ammo2BigTextColor.GetColor(r, g, b, a);
-			wsprintfW(buf, L"%d/", pw->iClip2);
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = HalfY - iTextHeight / 2;
-			nowX -= iTextWidth;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-		}
-		else {
-			Ammo2BigTextColor.GetColor(r, g, b, a);
-			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmo2Type));
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowY = HalfY - iTextHeight / 2;
-			nowX -= iTextWidth;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-		}
-		nowX -= ElementGap;
-		wsprintfW(buf, L"|");
-		GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-		nowY = HalfY - iTextHeight / 2;
-		nowX -= iTextWidth;
-		DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-		nowX -= ElementGap;
-	}
-	if (pw->iAmmoType > 0){
-		if (pw->iAmmo2Type <= 0)
-			nowX = ScreenWidth - (BackGroundLength / 3);
-		if (pw->iClip >= 0){
-			Ammo1TextColor.GetColor(r, g, b, a);
-			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDSmallFont);
-			nowX -= iTextWidth;
-			nowY = HalfY - iTextHeight / 2;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDSmallFont);
-
-			Ammo1BigTextColor.GetColor(r, g, b, a);
-			//ITEM_FLAG_DUALWIELD
-			if(pw->iFlags & 32 && pw->iClip2 >= 0 && pw->iClip2 != 255)
-				wsprintfW(buf, L"%dx%d/", pw->iClip, pw->iClip2);
-			else
-				wsprintfW(buf, L"%d/", pw->iClip);
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowX -= iTextWidth;
-			nowY = HalfY - iTextHeight / 2;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-		}
-		else{
-			Ammo1BigTextColor.GetColor(r, g, b, a);
-			wsprintfW(buf, L"%d", gWR.CountAmmo(pw->iAmmoType));
-			GetStringSize(buf, &iTextWidth, &iTextHeight, HUDFont);
-			nowX -= iTextWidth;
-			nowY = HalfY - iTextHeight / 2;
-			DrawVGUI2String(buf, nowX, nowY, r, g, b, HUDFont);
-		}
-		nowX -= ElementGap;
-		Ammo1IconColor.GetColor(r, g, b, a);
-		nowX -= (m_pWeapon->rcAmmo.right - m_pWeapon->rcAmmo.left);
-		nowY = HalfY - (m_pWeapon->rcAmmo.bottom - m_pWeapon->rcAmmo.top) / 2;
-		SPR_Set(m_pWeapon->hAmmo, r, g, b);
-		SPR_DrawAdditive(0, nowX, nowY, &m_pWeapon->rcAmmo);
-	}
 	return 1;
 }
 void CHudCustomAmmo::ChosePlayerWeapon(){
@@ -402,8 +279,12 @@ void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bWheel){
 		return;
 	gWR.SelectSlot(iSlot, fAdvance, bWheel);
 }
+WEAPON* CHudCustomAmmo::GetCurWeapon(){
+	return m_pWeapon;
+}
+void CHudCustomAmmo::SetCurWeapon(WEAPON* wp){
+	m_pWeapon = wp;
+}
 int CHudCustomAmmo::DrawWList(float flTime){
 	return m_HudWMenuSlot.DrawWList(flTime);
-}
-void CHudCustomAmmo::Clear(){
 }

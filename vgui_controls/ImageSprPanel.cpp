@@ -481,25 +481,31 @@ bool ImageSprPanel::EvictImage()
 }
 
 void ImageSprPanel::SetFramerate(float fl){
-	m_pImage->SetFramerate(fl);
+	if(m_pImage)
+		m_pImage->SetFramerate(fl);
 }
 
 void ImageSprPanel::SetRect(int l, int r, int t, int b){
-	m_pImage->SetRect(l, r, t, b);
+	if (m_pImage)
+		m_pImage->SetRect(l, r, t, b);
 }
 
 void ImageSprPanel::SetRenderMode(int mode){
-	m_pImage->SetRenderMode(mode);
+	if (m_pImage)
+		m_pImage->SetRenderMode(mode);
 }
 
 void ImageSprPanel::Reset(){
-	m_pImage->Reset();
+	if (m_pImage)
+		m_pImage->Reset();
 }
 
 void ImageSprPanel::Animate(){
-	m_pImage->Animate();
+	if (m_pImage)
+		m_pImage->Animate();
 }
 
 void ImageSprPanel::SetFrame(int frame){
-	m_pImage->SetFrame(frame);
+	if (m_pImage)
+		m_pImage->SetFrame(frame);
 }
