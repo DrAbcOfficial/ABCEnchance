@@ -8,7 +8,7 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Liquid Crystal"
 				"tall"		"24"
 				"weight"	"700"
 				"yres"		"480 599"
@@ -16,7 +16,7 @@ Scheme
 			}
 			"2"
 			{
-				"name"		"Verdana"
+				"name"		"Liquid Crystal"
 				"tall"		"28"
 				"weight"	"700"
 				"yres"		"600 767"
@@ -24,7 +24,7 @@ Scheme
 			}
 			"3"
 			{
-				"name"		"Verdana"
+				"name"		"Liquid Crystal"
 				"tall"		"30"
 				"weight"	"700"
 				"yres"		"768 1023"
@@ -32,7 +32,7 @@ Scheme
 			}
 			"4"
 			{
-				"name"		"Verdana"
+				"name"		"Liquid Crystal"
 				"tall"		"32"
 				"weight"	"700"
 				"yres"		"1024 1199"
@@ -40,7 +40,7 @@ Scheme
 			}
 			"5"
 			{
-				"name"		"Verdana"
+				"name"		"Liquid Crystal"
 				"tall"		"42"
 				"weight"	"700"
 				"yres"		"1200 10000"
@@ -52,9 +52,15 @@ Scheme
 	{
 		"HealthBar.ListViewBgColor"		"Blank"
 		"HealthBar.BgColor"		"Blank"
-		"HealthBar.HealthFgColor"		"0 255 0 255"
-		"HealthBar.ArmorFgColor"		"0 255 0 255"
+		"HealthBar.HealthFgColor"		"SvenCoop"
+		"HealthBar.ArmorFgColor"		"SvenCoop"
 		"HealthBar.HealthDangerColor"		"255 0 0 255"
 		"HealthBar.ArmorDangerColor"		"255 0 0 255"
+	}
+
+	CustomFontFiles
+	{
+		"1"		"abcenchance/font/LiquidCrystal-Bold.ttf"
+	
 	}
 }
