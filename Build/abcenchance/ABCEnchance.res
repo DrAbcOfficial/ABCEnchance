@@ -10,34 +10,34 @@ Scheme
 		"HealthArmor.BitDamageColor"		"0 255 0 255"
 
         //主要子弹图标颜色
-		"AmmoHUD.Ammo1IconColor"		"255 202 0 255"
+		"AmmoHUD.Ammo1IconColor"		"0 255 0 255"
 		//弹匣文字颜色
-		"AmmoHUD.Ammo1BigTextColor"		"255 202 0 255"
+		"AmmoHUD.Ammo1BigTextColor"		"0 255 0 255"
 		//后备子弹文字颜色
-		"AmmoHUD.Ammo1TextColor"		"255 202 0 255"
+		"AmmoHUD.Ammo1TextColor"		"0 255 0 255"
 		//次要子弹图标颜色
-		"AmmoHUD.Ammo2IconColor"		"255 202 0255"
+		"AmmoHUD.Ammo2IconColor"		"0 255 0 255"
 		//次要子弹弹匣文字颜色
-		"AmmoHUD.Ammo2BigTextColor"			"255 202 0 255"
+		"AmmoHUD.Ammo2BigTextColor"			"0 255 0 255"
 		//次要子弹后备文字颜色
-		"AmmoHUD.Ammo2TextColor"		"255 202 0 255"
+		"AmmoHUD.Ammo2TextColor"		"0 255 0 255"
 		//拾取子弹图标颜色
-		"AmmoHUD.AmmoPickUpIconColor"		"255 202 0 255"
+		"AmmoHUD.AmmoPickUpIconColor"		"0 255 0 255"
 		//拾取子弹数量颜色
-		"AmmoHUD.AmmoPickUpTextColor"		"255 202 0 255"
+		"AmmoHUD.AmmoPickUpTextColor"		"0 255 0 255"
 		//拾取武器图标颜色
-		"AmmoHUD.WeaponPickUpColor"		"255 202 0 255"
+		"AmmoHUD.WeaponPickUpColor"		"0 255 0 255"
 		//拾取空武器图标颜色
 		"AmmoHUD.WeaponPickUpEmptyColor"		"255 0 0 255"
 		//拾取物品图标颜色
-		"AmmoHUD.ItemPickUpColor"		"255 202 0 255"
+		"AmmoHUD.ItemPickUpColor"		"0 255 0 255"
 
         //经典菜单颜色
-		"WMenuBucket.SelectColor"			"255 202 0 255"
+		"WMenuBucket.SelectColor"			"0 255 0 255"
 		//经典菜单图标颜色
-		"WMenuBucket.SelectIconColor"		"255 202 0 255"
+		"WMenuBucket.SelectIconColor"		"255 255 0 255"
 		//经典菜单空武器颜色
-		"WMenuBucket.SelectEmptyColor"		"255 202 0  255"
+		"WMenuBucket.SelectEmptyColor"		"255 0 0 255"
 
         //死亡消息背景颜色
 		"DeathMsg.BackGoundColor"		"180 180 180 255"

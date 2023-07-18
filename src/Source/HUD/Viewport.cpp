@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <metahook.h>
 #include <vector>
 #include <string>
@@ -33,7 +33,6 @@
 #include "health.h"
 
 #include "CCustomHud.h"
-#include "cfefx.h"
 
 #include "Viewport.h"
 #include "exportfuncs.h"
@@ -63,7 +62,6 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	m_pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, nullptr);
 	m_pPlayerTitleDanger = CREATE_CVAR("cl_playertitle_danger", "30", FCVAR_VALUE, nullptr);
 	m_pPopNumber = CREATE_CVAR("cl_popnumber", "1", FCVAR_VALUE, nullptr);
-
 }
 
 CViewport::~CViewport(void){
@@ -88,7 +86,6 @@ void CViewport::Start(void){
 	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
 	AddNewPanel(m_pVotePanel = new CVotePanel());
 	AddNewPanel(m_pScorePanel = new CScorePanel());
-	AddNewPanel(m_pKillMarkPanel = new CKillMarkPanel());
 	SetVisible(false);
 }
 
@@ -105,7 +102,6 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pCrossHairPanel->SetParent(GetVPanel());
 	m_pEffectPanel->SetParent(GetVPanel());
 	m_pHealthPanel->SetParent(GetVPanel());
-	m_pKillMarkPanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -279,12 +275,6 @@ void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 		break;
 	}
 }
-
-void CViewport::ShowKillMark(int* iDmg, int iValue)
-{
-	m_pKillMarkPanel->ShowKillMark(iDmg, iValue);
-}
-
 void CViewport::Paint(void){
 	BaseClass::Paint();
 }

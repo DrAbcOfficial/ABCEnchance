@@ -15,7 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E7CEEA29-17CF-4468-B2B4-33E15EB8F1ED}</ProjectGuid>
+    <ProjectGuid>{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}</ProjectGuid>
     <RootNamespace>StudioEvents</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>ABCEnchance</ProjectName>
@@ -207,7 +207,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\radar.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\crosshair.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\effect.cpp" />
-    <ClCompile Include="src\Source\HUD\vgui\cfefx.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
@@ -433,7 +432,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\radar.h" />
     <ClInclude Include="src\Header\HUD\vgui\crosshair.h" />
     <ClInclude Include="src\Header\HUD\vgui\effect.h" />
-    <ClInclude Include="src\Header\HUD\vgui\cfefx.h" />
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\health.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />

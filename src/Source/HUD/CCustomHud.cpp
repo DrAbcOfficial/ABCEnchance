@@ -1,4 +1,4 @@
-ï»¿#include <metahook.h>
+#include <metahook.h>
 #include <string>
 #include <map>
 #include <vector>
@@ -288,24 +288,19 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 		CCustomHud::ABCCustomMsg type = static_cast<CCustomHud::ABCCustomMsg>(READ_BYTE());
 		switch (type) {
 		case CCustomHud::ABCCustomMsg::POPNUMBER: {
-			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-			if (!local)
+			if (g_pViewPort->m_pPopNumber->value <= 0)
 				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 			CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
 			int iValue = READ_LONG();
-			if (gCVars.pCfefx->value > 0 && gCVars.pCfefxDmgMax->value >= 10) {
-				static int iDmg;
-				iDmg += iValue;
-				g_pViewPort->ShowKillMark(&iDmg, iValue);
-			}
-			if (g_pViewPort->m_pPopNumber->value <= 0)
-				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 			Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
-			//è§†è§’è§’åº¦
+			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+			if (!local)
+				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
+			//ÊÓ½Ç½Ç¶È
 			CVector vecView;
 			gEngfuncs.GetViewAngles(vecView);
 			mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
-			//è®¡ç®—æˆ‘å’Œç›®æ ‡çš„ç›¸å¯¹åç§»
+			//¼ÆËãÎÒºÍÄ¿±êµÄÏà¶ÔÆ«ÒÆ
 			CVector vecLength;
 			mathlib::VectorSubtract(vecOrigin, local->curstate.origin, vecLength);
 			vecLength = vecLength.Normalize();
@@ -572,14 +567,14 @@ void CCustomHud::IN_MouseEvent(int mstate){
 	if (!IsHudEnable())
 		return;
 	auto MouseTest = [&](int mstate, int testBit, vgui::MouseCode enumMouse) {
-		//ç°åœ¨æœ‰
+		//ÏÖÔÚÓĞ
 		if ((mstate & testBit) != 0) {
-			//ä¹‹å‰æ²¡æœ‰
+			//Ö®Ç°Ã»ÓĞ
 			if ((m_iMouseState & testBit) == 0) {
 				//Press
 				this->OnMousePressed(enumMouse);
 				//g_pViewPort->OnMousePressed(enumMouse);
-				//åŠ ä¸ŠBit
+				//¼ÓÉÏBit
 				m_iMouseState += testBit;
 				if (m_iLastClick == enumMouse) {
 					//g_pViewPort->OnMouseDoublePressed(enumMouse);
@@ -589,19 +584,19 @@ void CCustomHud::IN_MouseEvent(int mstate){
 					m_iLastClick = enumMouse;
 			}
 		}
-		//ç°åœ¨æ²¡æœ‰ä¹‹å‰æœ‰
+		//ÏÖÔÚÃ»ÓĞÖ®Ç°ÓĞ
 		else if ((m_iMouseState & testBit) != 0) {
-			//è§¦å‘Release
+			//´¥·¢Release
 			m_iMouseState -= testBit;
 			//g_pViewPort->OnMouseReleased(enumMouse);
 		}
 	};
 	/**	
-	* å·¦é”®æ£€æµ‹ 0
-	* å³é”®æ£€æµ‹ 1
-	* ä¸­é”®æ£€æµ‹ 2
-	* 4é”®æ£€æµ‹  3
-	* 5é”®æ£€æµ‹  4 
+	* ×ó¼ü¼ì²â 0
+	* ÓÒ¼ü¼ì²â 1
+	* ÖĞ¼ü¼ì²â 2
+	* 4¼ü¼ì²â  3
+	* 5¼ü¼ì²â  4 
 	**/
 	for (size_t i = 0; i < 5; i++) {
 		MouseTest(mstate, 1 << i, static_cast<vgui::MouseCode>(i));

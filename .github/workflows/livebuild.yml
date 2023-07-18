@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
     
 env:
-  SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance_CFefx
+  SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance
   BUILD_CONFIGURATION: Release
   BUILD_CONFIGURATION_AVX: Release_AVX2
 
@@ -28,8 +28,8 @@ jobs:
     - name: Git Clone This
       uses: sudosubin/git-clone-action@v1.0.1
       with:
-        repository: GAYd0N/ABCEnchance_CFefx
-        path: MetaHookSv/Plugins/ABCEnchance_CFefx
+        repository: DrAbcOfficial/ABCEnchance
+        path: MetaHookSv/Plugins/ABCEnchance
 
     - name: Setup build env
       working-directory: MetaHookSv
@@ -53,12 +53,12 @@ jobs:
     - name: Copy to build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-          Copy-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance_CFefx/Release/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance_CFefx/Build/ABCEnchance.dll"
-          Copy-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance_CFefx/Release_AVX2/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance_CFefx/Build/ABCEnchance_AVX2.dll"
+          Copy-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Release/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/ABCEnchance.dll"
+          Copy-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Release_AVX2/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/ABCEnchance_AVX2.dll"
     - name: Zipping All
       uses: vimtor/action-zip@v1
       with:
-          files: MetaHookSv/Plugins/ABCEnchance_CFefx/build/
+          files: MetaHookSv/Plugins/ABCEnchance/build/
           dest: ABCEnchance-windows-x86.zip
     - name: Current Time
       uses: srfrnk/current-time@master
@@ -70,18 +70,3 @@ jobs:
       with:
         name: ABCEnchance-${{steps.current-time.outputs.formattedTime}}.zip
         path: ABCEnchance-windows-x86.zip
-        
-    - name: Delete workflow runs
-      uses: GitRML/delete-workflow-runs@main
-      with:
-        retain_days: 7
-        keep_minimum_runs: 10
-
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.1.0
-      if: !cancelled()
-      with:
-        keep_latest: 10
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.YOUR_GITHUB_TOKEN }}

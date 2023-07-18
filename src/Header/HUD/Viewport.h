@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifdef GetCurrentTime
 #undef GetCurrentTime
@@ -26,7 +26,6 @@ class CTextMenu;
 class CFlashLightPanel;
 class CNoticePanel;
 class CCrosshairPanel;
-class CKillMarkPanel;
 class CEffectPanel;
 class CHealthPanel;
 
@@ -109,8 +108,6 @@ public:
 	};
 	void ShowNotice(HUDNOTICE type, const char* message);
 
-	void ShowKillMark(int* iDmg, int iValue);
-
 	long m_iTimeEnd = 0;
 
 	cvar_t* m_pPlayerTitle = nullptr;
@@ -130,7 +127,6 @@ private:
 	CFlashLightPanel* m_pFlashLight = nullptr;
 	CNoticePanel* m_pNotice = nullptr;
 	CNoticePanel* m_pNoticeCenter = nullptr;
-	CKillMarkPanel* m_pKillMarkPanel = nullptr;
 	CCrosshairPanel* m_pCrossHairPanel = nullptr;
 	CEffectPanel* m_pEffectPanel = nullptr;
 	CHealthPanel* m_pHealthPanel = nullptr;
