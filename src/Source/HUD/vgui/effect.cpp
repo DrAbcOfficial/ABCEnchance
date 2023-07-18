@@ -110,8 +110,10 @@ void CEffectPanel::SetHealth(int health){
 		m_pDangerPanel->SetVisible(true);
 		vgui::GetAnimationController()->RunAnimationCommand(m_pDangerPanel, "alpha", flTarget, 0.0f, m_flAlphaAinmeTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
 	}
-	else
+	else {
+		m_pDangerPanel->SetAlpha(0);
 		m_pDangerPanel->SetVisible(false);
+	}
 }
 
 void CEffectPanel::SetWater(WaterType type){
