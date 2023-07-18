@@ -82,6 +82,7 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf) {
 	}
 	if(damageTaken > 0 || armor > 0)
 		m_HudIndicator.AddIdicator(damageTaken, armor, vecFrom);
+	g_pViewPort->UpdateTiles(tiles);
 	return m_pfnDamage(pszName, iSize, pbuf);
 }
 int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf) {
