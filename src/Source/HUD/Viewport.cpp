@@ -258,9 +258,9 @@ void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	}
 }
 
-void CViewport::ShowKillMark(int* iDmg)
+void CViewport::ShowKillMark(int* iDmg, int iValue)
 {
-	m_pKillMarkPanel->ShowKillMark(iDmg);
+	m_pKillMarkPanel->ShowKillMark(iDmg, iValue);
 }
 
 void CViewport::Paint(void){

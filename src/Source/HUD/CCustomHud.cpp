@@ -279,7 +279,7 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 			if (gCVars.pCfefx->value > 0 && gCVars.pCfefxDmgMax->value >= 10) {
 				static int iDmg;
 				iDmg += iValue;
-				g_pViewPort->ShowKillMark(&iDmg);
+				g_pViewPort->ShowKillMark(&iDmg, iValue);
 			}
 			if (g_pViewPort->m_pPopNumber->value <= 0)
 				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;

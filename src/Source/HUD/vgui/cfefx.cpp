@@ -40,10 +40,8 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 
 	gCVars.pCfefx = CREATE_CVAR("cl_cfefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pCfefxDmgMax = CREATE_CVAR("cl_cfefx_max", "1000", FCVAR_VALUE, nullptr);
-	SetPos(ScreenWidth / 2, ScreenHeight / 2);
-	SetSize(ScreenWidth / 10, ScreenHeight / 10);
-	ShowPanel(true);
 	MakeReadyForUse();
+	ShowPanel(true);
 	//LoadControlSettings(VGUI2_ROOT_DIR "Cfefx.res");
 
 	//SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
@@ -70,11 +68,6 @@ void CKillMarkPanel::ShowPanel(bool state) {
 	SetVisible(state);
 }
 
-void CKillMarkPanel::SetSize(int x, int y) {
-	BaseClass::SetSize(x, y);
-	m_pKillMarkPoint->SetSize(x, y);
-}
-
 void CKillMarkPanel::StartFade(bool state, vgui::ImagePanel* panel, float delaytime, float fadetime) 
 {
 	panel->SetAlpha(state ? 1 : 255);
@@ -85,6 +78,8 @@ void CKillMarkPanel::StartFade(bool state, vgui::ImagePanel* panel, float delayt
 
 void CKillMarkPanel::ShowDmgMark(vgui::ImagePanel* panel, bool state)
 {
+	if (panel->IsVisible() == 1)
+		return;
 	//偏移YPos重复利用Panel
 	if (state == 1)
 		panel->SetPos(GetXPos(), GetYPos() + m_ioffestYPos);
@@ -92,48 +87,17 @@ void CKillMarkPanel::ShowDmgMark(vgui::ImagePanel* panel, bool state)
 	//DmgStar从屏幕中间淡入向对应伤害图标移动并放大，经过一定距离最大后缩小并移动到当前伤害图标
 	//两个参数咋传
 	//StartFade(true, m_pDmgStar, 0, 1);
-	vgui::GetAnimationController()->RunAnimationCommand(m_pDmgStar, "position", 0, 0, 1, vgui::AnimationController::INTERPOLATOR_LINEAR);
-
+	//vgui::GetAnimationController()->RunAnimationCommand(m_pDmgStar, "position", 0, 0, 1, vgui::AnimationController::INTERPOLATOR_LINEAR);
 	StartFade(true, panel, 0, 1);
 }
 
-void CKillMarkPanel::ShowKillMark(int* iDmg)
+void CKillMarkPanel::ShowKillMark(int* iDmg, int iValue)
 {
 	int dmg = *iDmg;
 	int i = gCVars.pCfefxDmgMax->value / 10;
 	if (dmg >= i)
-	{	//有bug 应该调转顺序删掉break
+	{	//有bug
 		switch (dmg / i) {
-		case 1:
-			ShowDmgMark(m_pDmgMarkOne, 0);
-			break;
-		case 2: 
-			ShowDmgMark(m_pDmgMarkTwo, 0);
-			break;
-		case 3: 
-			ShowDmgMark(m_pDmgMarkThree, 0);
-			break;
-		case 4: 
-			ShowDmgMark(m_pDmgMarkFour, 0);
-			break;
-		case 5: {
-			m_pDmgMarkOne->SetVisible(false);
-			//TODO:达到500伤害其它图标向上移动到第一个图标“合并”成一个500伤害图标
-			ShowDmgMark(m_pDmgMarkFive, 0);
-			break;
-		}
-		case 6:
-			ShowDmgMark(m_pDmgMarkOne, 1);
-			break;
-		case 7: 
-			ShowDmgMark(m_pDmgMarkTwo, 1);
-			break;
-		case 8:
-			ShowDmgMark(m_pDmgMarkThree, 1);
-			break;
-		case 9:
-			ShowDmgMark(m_pDmgMarkFour, 1);
-			break;
 		default: {
 			//TODO:清空伤害图标,达到一千伤害后显示DmgEffect从第一个伤害图标的上面移动到击杀图标
 			m_pDmgMarkOne->SetVisible(false);
@@ -145,7 +109,58 @@ void CKillMarkPanel::ShowKillMark(int* iDmg)
 			PlaySoundByName("misc/UI_SPECIALKILL2.wav", 1);
 			gEngfuncs.Con_Printf("sound played\n");
 			StartFade(false, m_pKillMarkPoint, 1.5, 1);
+			break;
 		}
+		case 9:
+			if (iValue < i * 9) {
+				ShowDmgMark(m_pDmgMarkFour, 1);
+				break;
+			}
+			ShowDmgMark(m_pDmgMarkFive, 1);
+		case 8:
+			if (iValue < i * 8) { 
+				ShowDmgMark(m_pDmgMarkThree, 1);
+				break;
+			}
+			ShowDmgMark(m_pDmgMarkTwo, 1);
+		case 7:
+			if (iValue < i * 7) {
+				ShowDmgMark(m_pDmgMarkTwo, 1);
+				break;
+			}
+			ShowDmgMark(m_pDmgMarkThree, 1);
+		case 6:
+			if (iValue < i * 6) {
+				ShowDmgMark(m_pDmgMarkOne, 1);
+				break;
+			}
+			ShowDmgMark(m_pDmgMarkFour, 1);
+		case 5: {
+			m_pDmgMarkOne->SetVisible(false);
+			//TODO:达到500伤害其它图标向上移动到第一个图标
+			ShowDmgMark(m_pDmgMarkFive, 0);
+		}
+		case 4:
+			if (iValue < i * 4) {
+				ShowDmgMark(m_pDmgMarkFour, 0);
+				break;
+			}
+			ShowDmgMark(m_pDmgMarkOne, 0);
+		case 3:
+			if (iValue < i * 3) {
+				ShowDmgMark(m_pDmgMarkThree, 0);
+				break;
+			}
+			ShowDmgMark(m_pDmgMarkTwo, 0);
+		case 2:
+			if (iValue < i * 2) {
+				ShowDmgMark(m_pDmgMarkTwo, 0);
+				break;
+			}
+			ShowDmgMark(m_pDmgMarkThree, 0);
+		case 1:
+			ShowDmgMark(m_pDmgMarkFour, 0);
+
 		}
 	}
 }

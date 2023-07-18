@@ -105,7 +105,7 @@ public:
 	};
 	void ShowNotice(HUDNOTICE type, const char* message);
 
-	void ShowKillMark(int* iDmg);
+	void ShowKillMark(int* iDmg, int iValue);
 
 	long m_iTimeEnd = 0;
 

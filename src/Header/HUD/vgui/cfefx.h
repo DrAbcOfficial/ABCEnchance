@@ -17,10 +17,9 @@ public:
 	virtual bool IsVisible() override;
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
-	virtual void SetSize(int x, int y);
 	//virtual void OnThink() override;
 
-	void ShowKillMark(int* iDmg);
+	void ShowKillMark(int* iDmg, int iValue);
 	void StartFade(bool state, vgui::ImagePanel* panel, float delaytime, float fadetime);
 	void ShowDmgMark(vgui::ImagePanel* panel, bool state);
 
