@@ -49,7 +49,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/healthbar_icon"
 		"scaleImage"		"1"
-		"drawColor"		"255 25 25 255"
+		"drawColor"		"0 255 0 255"
 	}
 
 	"Health"
@@ -81,7 +81,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/healthbar"
 		"scaleImage"		"1"
-		"drawColor"		"255 50 96 200"
+		"drawColor"		"0 255 0 200"
 		"zpos"		"999"
 	}
 	"HealthBackground"
@@ -96,7 +96,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/healthbar_bg"
 		"scaleImage"		"1"
-		"drawColor"		"0 0 0 50"
+		"drawColor"		"0 50 0 50"
 		"zpos"		"0"
 	}
 
@@ -112,7 +112,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/armorbar_icon"
 		"scaleImage"		"1"
-		"drawColor"		"0 255 255 255"
+		"drawColor"		"0 255 0 255"
 	}
 	"Armor"
 	{
@@ -143,7 +143,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/armorbar"
 		"scaleImage"		"1"
-		"drawColor"		"40 255 255 200"
+		"drawColor"		"0 255 0 200"
 		"zpos"		"999"
 	}
 	"ArmorBackground"
@@ -158,7 +158,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/armorbar_bg"
 		"scaleImage"		"1"
-		"drawColor"		"0 0 0 50"
+		"drawColor"		"0 50 0 50"
 		"zpos"		"0"
 	}
 
@@ -174,7 +174,7 @@
 		"proportionalToParent" "1"
 		"scaleImage"		"1"
 		"image"			"abcenchance/tga/longjump"
-		"drawColor"		"255 188 33 255"
+		"drawColor"		"0 255 0 255"
 	}
 
 	"DMGImages"
