@@ -4,8 +4,8 @@
 	{
 		"ControlName"		"CKillMarkPanel"
 		"fieldName"			"KillMarkPanel"
-		"wide"				"f0"
-		"tall"				"f0"
+		"wide"				"640"
+		"tall"				"480"
 		"visible"			"1"
 		"enabled"			"1"
 		"offest_ypos"		"30"

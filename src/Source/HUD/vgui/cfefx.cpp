@@ -15,8 +15,6 @@
 
 
 #define VIEWPORT_KILLMARK_NAME "KillMarkPanel"
-#define VIEWPORT_DMGMARK_NAME "DmgMarkPanel"
-
 
 
 CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
@@ -42,7 +40,7 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 	gCVars.pCfefxDmgMax = CREATE_CVAR("cl_cfefx_max", "1000", FCVAR_VALUE, nullptr);
 	MakeReadyForUse();
 	ShowPanel(true);
-	//LoadControlSettings(VGUI2_ROOT_DIR "Cfefx.res");
+	LoadControlSettings(VGUI2_ROOT_DIR "Cfefx.res");
 
 	//SetPos(mathlib::GetScreenPixel(ScreenWidth, 0.464), mathlib::GetScreenPixel(ScreenHeight, 0.768));
 	//SetSize(mathlib::GetScreenPixel(ScreenWidth, 0.087), mathlib::GetScreenPixel(ScreenHeight, 0.112));
@@ -50,7 +48,7 @@ CKillMarkPanel::CKillMarkPanel() : BaseClass(nullptr, VIEWPORT_KILLMARK_NAME)
 
 void CKillMarkPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
-	SetBgColor(Color(0, 0, 0, 0));
+	//SetBgColor(Color(0, 0, 0, 0));
 }
 
 void CKillMarkPanel::ApplySettings(KeyValues* inResourceData) {
