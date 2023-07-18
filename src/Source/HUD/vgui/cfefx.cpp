@@ -178,7 +178,7 @@ const char* CKillMarkPanel::GetName() {
 }
 
 void CKillMarkPanel::Reset() {
-	ShowPanel(false);
+	ShowPanel(true);
 }
 
 //void CKillMarkPanel::OnThink()

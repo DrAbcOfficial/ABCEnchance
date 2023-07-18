@@ -77,7 +77,6 @@ void CViewport::Start(void){
 	AddNewPanel(m_pSidePanel = new CSidePanel());
 	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
 	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
-	AddNewPanel(m_pKillMarkPanel = new CKillMarkPanel());
 	for (size_t i = 0; i < 32; i++) {
 		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
 		m_pPlayerInfoPanels[i]->SetId(i);
@@ -89,6 +88,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
 	AddNewPanel(m_pVotePanel = new CVotePanel());
 	AddNewPanel(m_pScorePanel = new CScorePanel());
+	AddNewPanel(m_pKillMarkPanel = new CKillMarkPanel());
 	SetVisible(false);
 }
 
@@ -104,8 +104,8 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pNoticeCenter->SetParent(GetVPanel());
 	m_pCrossHairPanel->SetParent(GetVPanel());
 	m_pEffectPanel->SetParent(GetVPanel());
-	m_pKillMarkPanel->SetParent(GetVPanel());
 	m_pHealthPanel->SetParent(GetVPanel());
+	m_pKillMarkPanel->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
