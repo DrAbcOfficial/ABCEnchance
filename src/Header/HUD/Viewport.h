@@ -29,6 +29,7 @@ class CCrosshairPanel;
 class CEffectPanel;
 class CHealthPanel;
 class CAmmoPanel;
+class CDmgTilesPanel;
 
 class ISchemel;
 
@@ -103,6 +104,7 @@ public:
 
 	void SetHealth(int health);
 	void SetArmor(int armor);
+	void UpdateTiles(long tiles);
 
 	WEAPON* GetCurWeapon();
 	void SetCurWeapon(WEAPON* weapon);
@@ -136,6 +138,7 @@ private:
 	CEffectPanel* m_pEffectPanel = nullptr;
 	CHealthPanel* m_pHealthPanel = nullptr;
 	CAmmoPanel* m_pAmmoPanel = nullptr;
+	CDmgTilesPanel* m_pDmgTiles = nullptr;
 
 	int m_iInterMission;
 

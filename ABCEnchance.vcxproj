@@ -207,6 +207,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\radar.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\ammobar.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\crosshair.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\dmgtiles.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\effect.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
@@ -433,6 +434,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\radar.h" />
     <ClInclude Include="src\Header\HUD\vgui\ammobar.h" />
     <ClInclude Include="src\Header\HUD\vgui\crosshair.h" />
+    <ClInclude Include="src\Header\HUD\vgui\dmgtiles.h" />
     <ClInclude Include="src\Header\HUD\vgui\effect.h" />
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\health.h" />

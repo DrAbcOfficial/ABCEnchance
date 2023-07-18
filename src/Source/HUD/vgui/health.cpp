@@ -9,8 +9,6 @@
 #include <VGUI2/tga_image.h>
 #include <vgui_controls/Label.h>
 #include "vgui_controls/ImagePanel.h"
-#include "vgui_controls/ImageList.h"
-#include "vgui_controls/ListViewPanel.h"
 #include <vgui_controls/AnimationController.h>
 
 #include "local.h"
@@ -46,8 +44,6 @@ CHealthPanel::CHealthPanel()
 
 	m_pLongJumpImagePanel = new ImagePanel(this, "Longjump");
 
-	m_pDmgImages = new ListViewPanel(this, "DMGImages");
-
 	LoadControlSettings(VGUI2_ROOT_DIR "HealthPanel.res");
 	SetVisible(false);
 
@@ -55,19 +51,6 @@ CHealthPanel::CHealthPanel()
 	m_iRestoredArmorWide = m_pArmorImagePanel->GetWide();
 	m_cRestoredHealth = m_pHealthImagePanel->GetDrawColor();
 	m_cRestoredArmor = m_pArmorImagePanel->GetDrawColor();
-
-	dmgimageitem_t some[] = {
-		{ "Poison", "icon_poison", DMG_POISON, 0.0f},
-		{ "Acid", "icon_acid", DMG_ACID, 0.0f},
-		{ "Freeze","icon_freeze", DMG_FREEZE | DMG_SLOWFREEZE, 0.0f},
-		{ "Drown", "icon_drown", DMG_DROWN, 0.0f},
-		{ "Burn", "icon_burn", DMG_BURN | DMG_SLOWBURN, 0.0f},
-		{ "Gas", "icon_gas", DMG_NERVEGAS, 0.0f},
-		{ "Radiation", "icon_radiation", DMG_RADIATION, 0.0f},
-		{ "Shock", "icon_shock", DMG_SHOCK, 0.0f}
-	};
-	m_aryDmgImageList = std::vector<dmgimageitem_t>(some, some + sizeof(some) / sizeof(some[0]));
-	
 }
 const char* CHealthPanel::GetName(){
 	return VIEWPORT_HEALTH_NAME;
@@ -75,18 +58,11 @@ const char* CHealthPanel::GetName(){
 void CHealthPanel::Reset(){
 	if (!IsVisible())
 		ShowPanel(true);
-	for (auto iter = m_aryDmgImageList.begin(); iter != m_aryDmgImageList.end(); iter++) {
-		iter->fExpire = 0;
-	}
-	for (size_t i = 0; i < m_pDmgImages->GetItemCount(); i++) {
-		m_pDmgImages->RemoveItem(m_pDmgImages->GetItemIDFromPos(i));
-	}
 	SetLongJump(false);
 }
 void CHealthPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("HealthBar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
-	m_pDmgImages->SetBgColor(GetSchemeColor("HealthBar.ListViewBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pHealthLable->SetFgColor(GetSchemeColor("HealthBar.HealthFgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme));
 	m_pArmorLable->SetFgColor(GetSchemeColor("HealthBar.ArmorFgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme));
 
@@ -95,17 +71,6 @@ void CHealthPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 }
 void CHealthPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
-	ImageList* list = new ImageList(true);
-	for (size_t i = 0; i < m_aryDmgImageList.size(); i++) {
-		auto iter = m_aryDmgImageList[i];
-		const char* icon = inResourceData->GetString(iter.szIconKey, nullptr);
-		if (icon) {
-			iter.iIndex = i;
-			CTGAImage* img = new CTGAImage(icon);
-			list->AddImage(img);
-		}
-	}
-	m_pDmgImages->SetImageList(list, true);
 }
 void CHealthPanel::ShowPanel(bool state){
 	if (state == IsVisible())
@@ -120,23 +85,6 @@ vgui::VPANEL CHealthPanel::GetVPanel(){
 }
 void CHealthPanel::SetParent(vgui::VPANEL parent){
 	BaseClass::SetParent(parent);
-}
-
-void CHealthPanel::UpdateTiles(long bitsDamage) {
-	float flTime = ClientTime();
-	for (auto iter = m_aryDmgImageList.begin(); iter != m_aryDmgImageList.end(); iter++) {
-		if (iter->iDmg & bitsDamage) {
-			int id = iter->iDmg;
-			iter->fExpire = flTime;
-			if (!m_pDmgImages->GetItem(id)) {
-				KeyValues* pkv = new KeyValues(iter->szName);
-				pkv->SetString("text", iter->szName);
-				pkv->SetInt("image", iter->iIndex);
-				m_pDmgImages->AddItem(pkv, false, true);
-				delete pkv;
-			}
-		}
-	}
 }
 
 void CHealthPanel::SetHealth(int health){

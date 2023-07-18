@@ -32,6 +32,7 @@
 #include "effect.h"
 #include "health.h"
 #include "ammobar.h"
+#include "dmgtiles.h"
 
 #include "CCustomHud.h"
 
@@ -81,6 +82,7 @@ void CViewport::Start(void){
 		m_pPlayerInfoPanels[i]->SetId(i);
 	}
 	AddNewPanel(m_pHealthPanel = new CHealthPanel());
+	AddNewPanel(m_pDmgTiles = new CDmgTilesPanel());
 	AddNewPanel(m_pAmmoPanel = new CAmmoPanel());
 	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
 	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
@@ -105,6 +107,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pEffectPanel->SetParent(GetVPanel());
 	m_pHealthPanel->SetParent(GetVPanel());
 	m_pAmmoPanel->SetParent(GetVPanel());
+	m_pDmgTiles->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -267,6 +270,9 @@ void CViewport::SetHealth(int health){
 }
 void CViewport::SetArmor(int armor) {
 	m_pHealthPanel->SetArmor(armor);
+}
+void CViewport::UpdateTiles(long tiles){
+	m_pDmgTiles->UpdateTiles(tiles);
 }
 WEAPON* CViewport::GetCurWeapon(){
 	return gCustomHud.GetCurWeapon();
