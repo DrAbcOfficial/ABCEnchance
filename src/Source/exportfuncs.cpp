@@ -9,7 +9,7 @@
 #include "com_model.h"
 #include "triangleapi.h"
 #include "pm_movevars.h"
-#include "cvar_hook.h"
+#include "cvardef.h"
 #include <capstone.h>
 #include "CVector.h"
 //Def
@@ -23,6 +23,7 @@
 #include "regquery.h"
 #include "pm_defs.h"
 #include "usercmd.h"
+#include "StudioModelRenderer.h"
 #include "vgui_controls/Controls.h"
 //GL
 #include "glew.h"
@@ -38,7 +39,6 @@
 #include "player_info.h"
 //HUD
 #include "ammo.h"
-#include "healthhud.h"
 #include "scoreboard.h"
 #include "Viewport.h"
 //efx
@@ -51,7 +51,8 @@
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 metaplugins_t g_metaplugins;
-engine_studio_api_t gEngineStudio;
+engine_studio_api_t IEngineStudio;
+CGameStudioModelRenderer* g_StudioRenderer;
 DWORD g_dwHUDListAddr;
 
 const clientdata_t* gClientData;
@@ -60,7 +61,6 @@ float m_hfov;
 overviewInfo_t* gDevOverview;
 uint* g_arySlotPuVar = nullptr;
 refdef_t* g_refdef = nullptr;
-netadr_s* g_pConnectingServer = nullptr;
 
 struct playerppmoveinfo {
 	bool onground;
@@ -244,6 +244,12 @@ void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 	//mission brief shit2 is 4, but fku all vgui shit
 	gHookFuncs.TFV_ShowVGUIMenu(pthis, dummy, iVguiMenu);
 }
+
+void __fastcall CStudioModelRenderer_Init(void* pthis, int dummy) {
+	gHookFuncs.CStudioModelRenderer_Init(pthis, dummy);
+	g_StudioRenderer = static_cast<CGameStudioModelRenderer*>(pthis);
+}
+
 void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
 	mathlib::VectorCopy(punchangle1, g_pViewPort->m_vecClientEVPunch);
@@ -272,11 +278,6 @@ model_t* CL_GetModelByIndex (int index){
 		return g_ExtraPreacheModel[index - EXTRPRECACHE_INDEX_BASE];
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
-void Cvar_DirectSet(cvar_t* var, char* value) {
-	gHookFuncs.Cvar_DirectSet(var, value);
-	if (gCVarsHookMap.find(var) != gCVarsHookMap.end())
-		gCVarsHookMap[var](var);
-}
 void* NewClientFactory(void){
 	return Sys_GetFactoryThis();
 }
@@ -293,11 +294,6 @@ char* NewV_strncpy(char* a1, const char* a2, size_t a3){
 	}
 	strncpy_s(m_szCurrentLanguage, a2, sizeof(m_szCurrentLanguage));
 	return gHookFuncs.V_strncpy(a1, a2, a3);
-}
-bool NET_StringToAdr(char* param_1, netadr_s* param_2) {
-	bool result = gHookFuncs.NET_StringToAdr(param_1, param_2);
-	g_pConnectingServer = param_2;
-	return result;
 }
 //void VGuiWrap2_HideGameUI() {
 //
@@ -343,8 +339,6 @@ void FillEngineAddress() {
 		Fill_Sig(R_FORCECVAR_SIG, g_dwEngineBase, g_dwEngineSize, R_ForceCVars);
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
-#define NET_STRINGTOADR_SIG "\x56\x57\x8B\x7C\x24\x0C\x68\x2A\x2A\x2A\x2A\x57\xE8\xDF\x5C\xFC\xFF\x83\xC4\x08\x85\xC0"
-		Fill_Sig(NET_STRINGTOADR_SIG, g_dwEngineBase, g_dwEngineSize, NET_StringToAdr);
 //#define VGuiWrap2_HideGameUI_SIG "\x8B\x0D\x2A\x2A\x2A\x2A\x85\xC9\x74\x05\x8B\x01\xFF\x60\x1C\xC3"
 		//Fill_Sig(VGuiWrap2_HideGameUI_SIG, g_dwEngineBase, g_dwEngineSize, VGuiWrap2_HideGameUI);
 
@@ -369,19 +363,6 @@ void FillEngineAddress() {
 			addr = (DWORD)Search_Pattern(DEVOVERVIEW_SIG);
 			Sig_AddrNotFound(gDevOverview);
 			gDevOverview = (decltype(gDevOverview))(*(DWORD*)(addr + 9) - 0xC);
-		}
-		if (1){
-			const char sigs1[] = "***PROTECTED***";
-			auto Cvar_DirectSet_String = Search_Pattern_Data(sigs1);
-			if (!Cvar_DirectSet_String)
-				Cvar_DirectSet_String = Search_Pattern_Rdata(sigs1);
-			Sig_VarNotFound(Cvar_DirectSet_String);
-			char pattern[] = "\x68\x2A\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\xE8";
-			*(DWORD*)(pattern + 1) = (DWORD)Cvar_DirectSet_String;
-			auto Cvar_DirectSet_Call = Search_Pattern(pattern);
-			Sig_VarNotFound(Cvar_DirectSet_Call);
-			gHookFuncs.Cvar_DirectSet = (decltype(gHookFuncs.Cvar_DirectSet))g_pMetaHookAPI->ReverseSearchFunctionBegin(Cvar_DirectSet_Call, 0x500);
-			Sig_FuncNotFound(Cvar_DirectSet);
 		}
 		if (1)
 		{
@@ -499,7 +480,8 @@ void FillAddress(){
 		Fill_Sig(TFV_SHOWSCOREBOARD_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowScoreBoard);
 #define TFV_SHOWVGUIMENU_SHIT_SIG "\xA1\x2A\x2A\x2A\x2A\x57\x8B\xF9\x8B\x40\x04\xFF\xD0\x85\xC0\x0F\x85\x2A\x2A\x2A\x2A\x55\x8B\x6C\x24\x0C\x39\x05"
 		Fill_Sig(TFV_SHOWVGUIMENU_SHIT_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowVGUIMenu);
-
+#define CStudioModelRenderer_Init_SIG "\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x24\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x38\xFF\x15\x2A\x2A\x2A\x2A\x89\x46\x3C\xFF\x15\x2A\x2A\x2A\x2A\x6A\x00"
+		Fill_Sig(CStudioModelRenderer_Init_SIG, g_dwClientBase, g_dwClientSize, CStudioModelRenderer_Init);
 		DWORD addr;
 #define R_SETPUNCHANGLE_SIG "\x83\xC4\x04\xD9\x1C\x24\x6A\x00\xE8\x93\x56\x05\x00\x83\xC4\x08\xF3\x0F\x10\x74\x24\x34\xF3\x0F\x10\xAC\x24\x98\x00\x00\x00\xF3\x0F\x10\x25\x2A\x2A\x2A\x2A\xF3\x0F\x58\xEE\xF3\x0F\x10\x44\x24\x74"
 		{
@@ -539,16 +521,14 @@ void InstallEngineHook() {
 	Install_InlineEngHook(R_ForceCVars);
 	Install_InlineEngHook(CL_IsDevOverview);
 	Install_InlineEngHook(CL_SetDevOverView);
-	Install_InlineEngHook(Cvar_DirectSet);
 	Install_InlineEngHook(CL_GetModelByIndex);
-	Install_InlineEngHook(NET_StringToAdr);
-	//Install_InlineEngHook(VGuiWrap2_HideGameUI);
 }
 void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);
 	Install_InlineHook(R_CrossHair_ReDraw);
 	Install_InlineHook(TFV_ShowScoreBoard);
 	Install_InlineHook(TFV_ShowVGUIMenu);
+	Install_InlineHook(CStudioModelRenderer_Init);
 }
 void UninstallEngineHook() {
 	for (hook_t* h : aryEngineHook) {
@@ -638,7 +618,7 @@ void HUD_Init(void){
 		g_pParticleMan->ResetParticles();
 }
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
-	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
+	memcpy(&IEngineStudio, pstudio, sizeof(IEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
 int HUD_VidInit(void){

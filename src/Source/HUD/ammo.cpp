@@ -166,13 +166,13 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 int __MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
-	gCustomHud.m_iHideHUDDisplay = READ_BYTE();
+	gCustomHud.HudHideCallBack(READ_BYTE());
 	return m_pfnHideWeapon(pszName, iSize, pbuf);
 }
 int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
-	gCustomHud.m_iHideHUDDisplay = READ_BYTE();
+	gCustomHud.HudHideCallBack(READ_BYTE());
 	return m_pfnHideHUD(pszName, iSize, pbuf);
 }
 //uzi akimbo

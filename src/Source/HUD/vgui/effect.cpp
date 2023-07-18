@@ -35,8 +35,7 @@ CEffectPanel::CEffectPanel()
 	m_pUnderWater = new vgui::ImagePanel(this, "UnderWater");
 	m_pDangerPanel = new vgui::ImagePanel(this, "Danger");
 
-	gCVars.pHudEfx = CREATE_CVAR("cl_efxhud", "1", FCVAR_VALUE, NULL);
-
+	gCVars.pHudEfx = CREATE_CVAR("cl_efxhud", "1", FCVAR_VALUE, nullptr);
 	LoadControlSettings(VGUI2_ROOT_DIR "EffectPanel.res");
 }
 

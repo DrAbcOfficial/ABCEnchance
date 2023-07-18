@@ -458,7 +458,7 @@
     <ClCompile Include="src\Source\HUD\grenadeindicator.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\healthhud.cpp">
+    <ClCompile Include="src\Source\HUD\indicator.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\historyresource.cpp">
@@ -511,9 +511,6 @@
     </ClCompile>
     <ClCompile Include="src\Source\Utility\svc_hook.cpp">
       <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Var\cvar_hook.cpp">
-      <Filter>Public\Source\Var</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Var\extraprecache.cpp">
       <Filter>Public\Source\Var</Filter>
@@ -598,6 +595,9 @@
     </ClCompile>
     <ClCompile Include="VGUI2\GameConsole.cpp">
       <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\health.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\cfefx.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
@@ -1186,7 +1186,7 @@
     <ClInclude Include="src\Header\HUD\grenadeindicator.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\healthhud.h">
+    <ClInclude Include="src\Header\HUD\indicator.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\historyresource.h">
@@ -1247,9 +1247,6 @@
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\weapon.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\cvar_hook.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\enginedef.h">
@@ -1383,6 +1380,12 @@
     </ClInclude>
     <ClInclude Include="VGUI2\GameConsole.h">
       <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Var\StudioModelRenderer.h">
+      <Filter>Public\Header\Var</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\health.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\cfefx.h">
       <Filter>Public\Header\HUD\vgui</Filter>

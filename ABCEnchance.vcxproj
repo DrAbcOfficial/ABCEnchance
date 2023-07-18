@@ -201,7 +201,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\deathmsg.cpp" />
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
     <ClCompile Include="src\Source\HUD\grenadeindicator.cpp" />
-    <ClCompile Include="src\Source\HUD\healthhud.cpp" />
+    <ClCompile Include="src\Source\HUD\indicator.cpp" />
     <ClCompile Include="src\Source\HUD\historyresource.cpp" />
     <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
     <ClCompile Include="src\Source\HUD\radar.cpp" />
@@ -209,6 +209,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\vgui\effect.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\cfefx.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\notice.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\playerboard.cpp" />
@@ -233,7 +234,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\Utility\regquery.cpp" />
     <ClCompile Include="src\Source\Utility\steamid.cpp" />
     <ClCompile Include="src\Source\Utility\svc_hook.cpp" />
-    <ClCompile Include="src\Source\Var\cvar_hook.cpp" />
     <ClCompile Include="src\Source\Var\extraprecache.cpp" />
     <ClCompile Include="src\Source\Var\local.cpp" />
     <ClCompile Include="src\Source\Var\vguilocal.cpp" />
@@ -426,7 +426,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\deathmsg.h" />
     <ClInclude Include="src\Header\HUD\eccobuymenu.h" />
     <ClInclude Include="src\Header\HUD\grenadeindicator.h" />
-    <ClInclude Include="src\Header\HUD\healthhud.h" />
+    <ClInclude Include="src\Header\HUD\indicator.h" />
     <ClInclude Include="src\Header\HUD\historyresource.h" />
     <ClInclude Include="src\Header\HUD\itemhighlight.h" />
     <ClInclude Include="src\Header\HUD\numdisplay.h" />
@@ -435,6 +435,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\vgui\effect.h" />
     <ClInclude Include="src\Header\HUD\vgui\cfefx.h" />
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
+    <ClInclude Include="src\Header\HUD\vgui\health.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
     <ClInclude Include="src\Header\HUD\vgui\notice.h" />
     <ClInclude Include="src\Header\HUD\vgui\playerboard.h" />
@@ -461,12 +462,12 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\Utility\regquery.h" />
     <ClInclude Include="src\Header\Utility\svc_hook.h" />
     <ClInclude Include="src\Header\Var\bitvec.h" />
-    <ClInclude Include="src\Header\Var\cvar_hook.h" />
     <ClInclude Include="src\Header\Var\enginedef.h" />
     <ClInclude Include="src\Header\Var\extraprecache.h" />
     <ClInclude Include="src\Header\Var\local.h" />
     <ClInclude Include="src\Header\Var\palette.h" />
     <ClInclude Include="src\Header\Var\player_infosc.h" />
+    <ClInclude Include="src\Header\Var\StudioModelRenderer.h" />
     <ClInclude Include="src\Header\Var\vguilocal.h" />
     <ClInclude Include="src\Header\Var\voice_banmgr.h" />
     <ClInclude Include="src\Header\Var\voice_common.h" />

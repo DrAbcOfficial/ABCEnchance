@@ -1,12 +1,9 @@
 #pragma once
 #include <metahook.h>
 
-#include "cvar_hook.h"
-
 #include "event_api.h"
 #include "triangleapi.h"
 #include <pm_defs.h>
-#include <CVector.h>
 
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
@@ -17,6 +14,7 @@
 #include "hud.h"
 #include "local.h"
 #include "vguilocal.h"
+#include <CVector.h>
 
 #include "mymathlib.h"
 
@@ -35,7 +33,7 @@ CCrosshairPanel::CCrosshairPanel()
 
 	gCVars.pDynamicCrossHair = CREATE_CVAR("cl_crosshair", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->ShowCrossHair(cvar->value > 0);
-		});
+	});
 	pDynamicCrossHairAH = CREATE_CVAR("cl_crosshairautohide", "1", FCVAR_VALUE, NULL);
 	pDynamicCrossHairL = CREATE_CVAR("cl_crosshairsize", "24", FCVAR_VALUE, NULL);
 	pDynamicCrossHairW = CREATE_CVAR("cl_crosshairthickness", "2", FCVAR_VALUE, NULL);

@@ -2,31 +2,6 @@ Scheme
 {
 	Colors
 	{
-        //生命值图标颜色
-		"HealthArmor.HealthIconColor"		"255 50 96 255"
-		//血条颜色
-		"HealthArmor.HealthBarColor"		"255 50 96  255"
-		//生命值数值颜色
-		"HealthArmor.HealthTextColor"		"255 50 96  255"
-		//生命值受伤变色
-		"HealthArmor.HealthPainColor"		"255 50 96 255"
-		//生命值濒死颜色
-		"HealthArmor.HealthDangerColor"		"250 0 0 255"
-
-		//护甲图标颜色
-		"HealthArmor.ArmorIconColor"		"40 255 255 255"
-		//护甲条颜色
-		"HealthArmor.ArmorBarColor"		"40 255 255 255"
-		//护甲文字颜色
-		"HealthArmor.ArmorTextColor"		"40 255 255 255"
-		//护甲受伤变色
-		"HealthArmor.ArmorPainColor"		"40 255 255 255"
-		//护甲危险颜色
-		"HealthArmor.ArmorDangerColor"		"40 255 255 255"
-
-        //长跳图标颜色
-		"HealthArmor.LongjumpIconColor"		"255 188 33 255"
-
         //伤害指示器颜色
 		"HealthArmor.PainIndicatorColor"	"255 0 0 255"
 		//伤害指示器仅减少护甲颜色
@@ -75,18 +50,6 @@ Scheme
 		//死亡消息攻击武器颜色
 		"DeathMsg.InflictorColor"		"178 178 178 255"
 
-        //投票菜单外框颜色
-		"Vote.OutlineColor"		"255 255 255 180"
-		//投票菜单背景颜色
-		"Vote.BackGoundColor"		"139 137 137 180"
-
-        //分数，金钱增加颜色
-		"Ecco.MoneyIncreseColor"		"0 255 0 255"
-		//分数，金钱减少颜色
-		"Ecco.MoneyDecreseColor"		"255 0 0 255"
-		//分数，金钱颜色
-		"Ecco.MoneyColor"		"0 255 0 255"
-
         //购买菜单文字颜色
 		"BuyMenu.TextColor"		"255 255 255 255"
 		//购买菜单背景颜色
@@ -103,26 +66,6 @@ Scheme
 		//[尺寸]鼠标光标大小
 		"Common.CursorSize"             "0.03"
 
-        //[长度]血条护甲条起始宽
-		"HealthArmor.StartX"			"0.013"
-		//[尺寸]图标大小
-		"HealthArmor.IconSize"			"0.03"
-		//[尺寸]血条长度
-		"HealthArmor.BarLength"			"0.07"
-		//[尺寸]血条高度
-		"HealthArmor.BarWidth"			"0.02"
-		//[尺寸]图标，文字，血条各元素间隔
-		"HealthArmor.ElementGap"		"0.01"
-		//[长度]血条护甲条背景图片起始高
-		"HealthArmor.BackGroundY"		"0.95"
-		//[长度]伤害类型图标起始宽
-		"HealthArmor.DamageIconX"		"0"
-		//[长度]伤害类型图标起始高
-		"HealthArmor.DamageIconY"		"0.85"
-		//[尺寸]伤害类型图标尺寸
-		"HealthArmor.DamageIconSize"	"0.08"
-		//受伤变色持续时间
-		"HealthArmor.PainColorTime"		"0.5"
 		//伤害指示器持续时间
 		"HealthArmor.PainIndicatorTime"	"3"
 		//色差伤害指示器持续时间

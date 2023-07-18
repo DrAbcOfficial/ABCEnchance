@@ -2,8 +2,8 @@ $conflictPlugins = @("CommunicationDemo.dll")
 
 function WritePluginLine($path){
     $lines = Get-Content($path)
-    $new = "ABCEnchance.dll"
-    $newLines = @("$($new)`n")
+    $new = "ABCEnchance.dll`n"
+    $newLines = @($new)
     foreach($l in $lines){
         if(!(([string]$l).CompareTo($new))){
             continue

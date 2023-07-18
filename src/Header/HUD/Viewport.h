@@ -28,6 +28,7 @@ class CNoticePanel;
 class CCrosshairPanel;
 class CKillMarkPanel;
 class CEffectPanel;
+class CHealthPanel;
 
 class ISchemel;
 
@@ -62,6 +63,8 @@ public:
 	bool IsInSpectate();
 	bool HasSuit();
 	bool IsHudHide(int HideToken);
+	void HudHideCallBack(int token);
+	void LongjumpCallBack(bool state);
 
 	bool IsScoreBoardVisible();
 	void ShowScoreBoard();
@@ -98,6 +101,7 @@ public:
 	void ShowCrossHair(bool on);
 
 	void SetHealth(int health);
+	void SetArmor(int armor);
 
 	enum class HUDNOTICE {
 		PRINTNOTIFY = 1,
@@ -129,6 +133,7 @@ private:
 	CKillMarkPanel* m_pKillMarkPanel = nullptr;
 	CCrosshairPanel* m_pCrossHairPanel = nullptr;
 	CEffectPanel* m_pEffectPanel = nullptr;
+	CHealthPanel* m_pHealthPanel = nullptr;
 
 	int m_iInterMission;
 
