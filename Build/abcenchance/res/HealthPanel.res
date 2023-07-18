@@ -22,6 +22,7 @@
 		"icon_radiation"	"abcenchance/tga/icon_radiation"
 		"icon_shock"	"abcenchance/tga/icon_shock"
 	}
+
 	"Background"
 	{
 		"ControlName"		"ImagePanel"
@@ -175,19 +176,5 @@
 		"scaleImage"		"1"
 		"image"			"abcenchance/tga/longjump"
 		"drawColor"		"0 255 0 255"
-	}
-
-	"DMGImages"
-	{
-		"ControlName"		"ListViewPanel"
-		"fieldName"		"DMGImages"
-		"xpos"		"4"
-		"ypos"		"rs2.0"
-		"wide"		"80"
-		"tall"		"144"
-		"visible"		"1"
-		"enabled"		"1"
-		"proportionalToParent" "1"
-		"scaleImage"		"1"
 	}
 }
