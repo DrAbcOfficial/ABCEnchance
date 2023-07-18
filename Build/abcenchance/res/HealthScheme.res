@@ -52,9 +52,9 @@ Scheme
 	{
 		"HealthBar.ListViewBgColor"		"Blank"
 		"HealthBar.BgColor"		"Blank"
-		"HealthBar.HealthFgColor"		"0 255 0 255"
-		"HealthBar.ArmorFgColor"		"0 255 0 255"
-		"HealthBar.HealthDangerColor"		"255 0 0 255"
-		"HealthBar.ArmorDangerColor"		"255 0 0 255"
+		"HealthBar.HealthFgColor"		"255 50 96  255"
+		"HealthBar.ArmorFgColor"		"40 255 255 255"
+		"HealthBar.HealthDangerColor"		"250 0 0 255"
+		"HealthBar.ArmorDangerColor"		"40 255 255 255"
 	}
 }
