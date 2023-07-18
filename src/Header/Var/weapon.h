@@ -31,6 +31,8 @@ public:
 
 	int		iCount;
 
+	int iState;
+
 	HSPRITE hActive;
 	wrect_t rcActive;
 	HSPRITE hInactive;

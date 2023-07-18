@@ -9,18 +9,6 @@ Scheme
 		//伤害类型突变颜色
 		"HealthArmor.BitDamageColor"		"100 130 200 255"
 
-        //主要子弹图标颜色
-		"AmmoHUD.Ammo1IconColor"		"100 130 200 160"
-		//弹匣文字颜色
-		"AmmoHUD.Ammo1BigTextColor"		"100 130 200 160"
-		//后备子弹文字颜色
-		"AmmoHUD.Ammo1TextColor"		"100 130 200 160"
-		//次要子弹图标颜色
-		"AmmoHUD.Ammo2IconColor"		"100 130 200 160"
-		//次要子弹弹匣文字颜色
-		"AmmoHUD.Ammo2BigTextColor"			"100 130 200 160"
-		//次要子弹后备文字颜色
-		"AmmoHUD.Ammo2TextColor"		"100 130 200 160"
 		//拾取子弹图标颜色
 		"AmmoHUD.AmmoPickUpIconColor"		"100 130 200 160"
 		//拾取子弹数量颜色
@@ -70,13 +58,6 @@ Scheme
 		"HealthArmor.PainIndicatorTime"	"3"
 		//色差伤害指示器持续时间
 		"HealthArmor.ShockIndicatorTime""0.2"
-
-		//文字图标间隔
-		"AmmoHUD.ElementGap"		"0.01"
-		//背景图片起始高
-		"AmmoHUD.BackGroundY"		"0.95"
-		//背景图片长度
-		"AmmoHUD.BackGroundLength"	"0.2"
 
         //拾取子弹起始宽
 		"AmmoHUD.AmmoPickUpX"	"0.83"

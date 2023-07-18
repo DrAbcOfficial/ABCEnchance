@@ -599,6 +599,9 @@
     <ClCompile Include="src\Source\HUD\vgui\health.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\ammobar.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1382,6 +1385,9 @@
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\health.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\ammobar.h">
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>

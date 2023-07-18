@@ -28,9 +28,11 @@ class CNoticePanel;
 class CCrosshairPanel;
 class CEffectPanel;
 class CHealthPanel;
+class CAmmoPanel;
 
 class ISchemel;
 
+class WEAPON;
 class CViewport : public vgui::Panel
 {
 	DECLARE_CLASS_SIMPLE(CViewport, vgui::Panel);
@@ -102,6 +104,9 @@ public:
 	void SetHealth(int health);
 	void SetArmor(int armor);
 
+	WEAPON* GetCurWeapon();
+	void SetCurWeapon(WEAPON* weapon);
+
 	enum class HUDNOTICE {
 		PRINTNOTIFY = 1,
 		PRINTCENTER = 4
@@ -130,6 +135,7 @@ private:
 	CCrosshairPanel* m_pCrossHairPanel = nullptr;
 	CEffectPanel* m_pEffectPanel = nullptr;
 	CHealthPanel* m_pHealthPanel = nullptr;
+	CAmmoPanel* m_pAmmoPanel = nullptr;
 
 	int m_iInterMission;
 
