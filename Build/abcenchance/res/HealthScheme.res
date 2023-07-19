@@ -50,7 +50,10 @@ Scheme
 	}
 	BaseSettings
 	{
-		"HealthBar.ListViewBgColor"		"Blank"
+		"DMGTiles.BgColor"		"Blank"
+		"DMGTiles.IconColor"		"0 255 0 255"
+		"DMGTiles.TextColor"		"0 255 0 255"
+		"DMGTiles.ListViewBgColor"		"Blank"
 		"HealthBar.BgColor"		"Blank"
 		"HealthBar.HealthFgColor"		"0 255 0 255"
 		"HealthBar.ArmorFgColor"		"0 255 0 255"
