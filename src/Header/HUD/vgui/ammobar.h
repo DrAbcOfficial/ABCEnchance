@@ -46,5 +46,7 @@ private:
 
 	vgui::CSPRImage* m_pSpr1 = nullptr;
 	vgui::CSPRImage* m_pSpr2 = nullptr;
+
+	WEAPON* m_pHandledWeapon = nullptr;
 };
 #endif
