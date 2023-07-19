@@ -56,14 +56,14 @@ CDmgTilesPanel::CDmgTilesPanel()
 	SetMouseInputEnabled(false);
 	SetScheme("HealthScheme");
 	dmgimageitem_t some[] = {
-		{ "Poison", "icon_poison", DMG_POISON, 0.0f},
-		{ "Acid", "icon_acid", DMG_ACID, 0.0f},
-		{ "Freeze","icon_freeze", DMG_FREEZE | DMG_SLOWFREEZE, 0.0f},
-		{ "Drown", "icon_drown", DMG_DROWN, 0.0f},
-		{ "Burn", "icon_burn", DMG_BURN | DMG_SLOWBURN, 0.0f},
-		{ "Gas", "icon_gas", DMG_NERVEGAS, 0.0f},
-		{ "Radiation", "icon_radiation", DMG_RADIATION, 0.0f},
-		{ "Shock", "icon_shock", DMG_SHOCK, 0.0f}
+		{ "#DMGTiles_Poison", "icon_poison", DMG_POISON, 0.0f},
+		{ "#DMGTiles_Acid", "icon_acid", DMG_ACID, 0.0f},
+		{ "#DMGTiles_Freeze","icon_freeze", DMG_FREEZE | DMG_SLOWFREEZE, 0.0f},
+		{ "#DMGTiles_Drown", "icon_drown", DMG_DROWN, 0.0f},
+		{ "#DMGTiles_Burn", "icon_burn", DMG_BURN | DMG_SLOWBURN, 0.0f},
+		{ "#DMGTiles_Gas", "icon_gas", DMG_NERVEGAS, 0.0f},
+		{ "#DMGTiles_Radiation", "icon_radiation", DMG_RADIATION, 0.0f},
+		{ "#DMGTiles_Shock", "icon_shock", DMG_SHOCK, 0.0f}
 	};
 	m_aryDmgImageList = std::vector<dmgimageitem_t>(some, some + sizeof(some) / sizeof(some[0]));
 	for (size_t i = 0; i < m_aryDmgImageList.size(); i++)
