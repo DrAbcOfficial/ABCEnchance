@@ -14,6 +14,7 @@
 #include "local.h"
 #include <vguilocal.h>
 #include "Viewport.h"
+#include "mymathlib.h"
 
 #include "health.h"
 #include <hud.h>
@@ -51,6 +52,8 @@ CHealthPanel::CHealthPanel()
 	m_iRestoredArmorWide = m_pArmorImagePanel->GetWide();
 	m_cRestoredHealth = m_pHealthImagePanel->GetDrawColor();
 	m_cRestoredArmor = m_pArmorImagePanel->GetDrawColor();
+	m_cRestoredHealthIcon = m_HealthIcon->GetDrawColor();
+	m_cRestoredArmorIcon = m_ArmorIcon->GetDrawColor();
 }
 const char* CHealthPanel::GetName(){
 	return VIEWPORT_HEALTH_NAME;
@@ -63,8 +66,10 @@ void CHealthPanel::Reset(){
 void CHealthPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("HealthBar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
-	m_pHealthLable->SetFgColor(GetSchemeColor("HealthBar.HealthFgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme));
-	m_pArmorLable->SetFgColor(GetSchemeColor("HealthBar.ArmorFgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme));
+	m_cRestoredHealthLabel = GetSchemeColor("HealthBar.HealthFgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme);
+	m_pHealthLable->SetFgColor(m_cRestoredHealthLabel);
+	m_cRestoredArmorLabel = GetSchemeColor("HealthBar.ArmorFgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme);
+	m_pArmorLable->SetFgColor(m_cRestoredArmorLabel);
 
 	m_cHealthDanger = GetSchemeColor("HealthBar.HealthDangerColor", pScheme);
 	m_cArmorDanger = GetSchemeColor("HealthBar.ArmorDangerColor", pScheme);
@@ -93,19 +98,17 @@ void CHealthPanel::SetHealth(int health){
 	m_pHealthLable->SetText(buf);
 
 	if (health < gCVars.pDangerHealth->value) {
-		float flRatio = health / gCVars.pDangerHealth->value;
-		Color drawcolor = m_pHealthImagePanel->GetDrawColor();
-		Vector org = Vector(drawcolor.r(), drawcolor.g(), drawcolor.b());
-		Vector dng = Vector(m_cHealthDanger.r(), m_cHealthDanger.g(), m_cHealthDanger.b());
-		RGBtoHSV(org, org);
-		RGBtoHSV(dng, dng);
-		org.x += (dng.x - org.x) * flRatio;
-		HSVtoRGB(org, org);
-		m_pHealthImagePanel->SetDrawColor(Color(org.x, org.y, org.z, drawcolor.a()));
+		float flRatio = (float)health / gCVars.pDangerHealth->value;
+		m_pHealthLable->SetFgColor(GetDifferColor(flRatio, m_pHealthLable->GetFgColor(), m_cHealthDanger));
+		m_pHealthImagePanel->SetDrawColor(GetDifferColor(flRatio, m_pHealthImagePanel->GetDrawColor(), m_cHealthDanger));
+		m_HealthIcon->SetDrawColor(GetDifferColor(flRatio, m_HealthIcon->GetDrawColor(), m_cHealthDanger));
 	}
-	else
+	else {
+		m_pHealthLable->SetFgColor(m_cRestoredHealthLabel);
 		m_pHealthImagePanel->SetDrawColor(m_cRestoredHealth);
-	int newWide = clamp<int>((float)health / 100.0f * m_iRestoredHealWide, 0, 1);
+		m_HealthIcon->SetDrawColor(m_cRestoredHealthIcon);
+	}	
+	int newWide = clamp((float)health / 100.0f, 0.0f, 1.0f) * m_iRestoredHealWide;
 	vgui::GetAnimationController()->RunAnimationCommand(m_pHealthImagePanel, "wide", newWide, 0.0f, 0.15f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
 
@@ -115,19 +118,17 @@ void CHealthPanel::SetArmor(int armor){
 	m_pArmorLable->SetText(buf);
 
 	if (armor < gCVars.pDangerArmor->value) {
-		float flRatio = armor / gCVars.pDangerHealth->value;
-		Color drawcolor = m_pArmorImagePanel->GetDrawColor();
-		Vector org = Vector(drawcolor.r(), drawcolor.g(), drawcolor.b());
-		Vector dng = Vector(m_cArmorDanger.r(), m_cArmorDanger.g(), m_cArmorDanger.b());
-		RGBtoHSV(org, org);
-		RGBtoHSV(dng, dng);
-		org.x += (dng.x - org.x) * flRatio;
-		HSVtoRGB(org, org);
-		m_pArmorImagePanel->SetDrawColor(Color(org.x, org.y, org.z, drawcolor.a()));
+		float flRatio = (float)armor / gCVars.pDangerHealth->value;
+		m_pArmorImagePanel->SetDrawColor(GetDifferColor(flRatio, m_pArmorImagePanel->GetDrawColor(), m_cArmorDanger));
+		m_pArmorLable->SetFgColor(GetDifferColor(flRatio, m_pArmorLable->GetFgColor(), m_cHealthDanger));
+		m_ArmorIcon->SetDrawColor(GetDifferColor(flRatio, m_ArmorIcon->GetDrawColor(), m_cHealthDanger));
 	}
-	else
+	else {
+		m_pArmorLable->SetFgColor(m_cRestoredArmorLabel);
 		m_pArmorImagePanel->SetDrawColor(m_cRestoredArmor);
-	int newWide = clamp<int>((float)armor / 100.0f * m_iRestoredArmorWide,0,1);
+		m_ArmorIcon->SetDrawColor(m_cRestoredArmorIcon);
+	}
+	int newWide = clamp((float)armor / 100.0f, 0.0f, 1.0f) * m_iRestoredArmorWide;
 	vgui::GetAnimationController()->RunAnimationCommand(m_pArmorImagePanel, "wide", newWide, 0.0f, 0.15f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
 
@@ -143,4 +144,18 @@ void CHealthPanel::SetHealthVisible(bool state) {
 	m_pHealthImagePanel->SetVisible(state);
 	m_pHealthLable->SetVisible(state);
 	m_HealthImageBackround->SetVisible(state);
+}
+
+Color CHealthPanel::GetDifferColor(float flRatio, Color c1, Color c2){
+	Color color;
+	float h1, h2, s, v;
+	mathlib::RGBToHSV(c1.r(), c1.g(), c1.b(), h1, s, v);
+	mathlib::RGBToHSV(c2.r(), c2.g(), c2.b(), h2, s, v);
+	h1 = fmodf(h2 + (h1 - h2) * flRatio, 360.0f);
+	if (h1 < 0)
+		h1 += 360.0f;
+	int r, g, b;
+	mathlib::HSVToRGB(h1, s, v, r, g, b);
+	color.SetColor(r, g, b, c1.a());
+	return color;
 }

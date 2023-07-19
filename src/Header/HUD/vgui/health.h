@@ -33,11 +33,17 @@ public:
 	void SetArmorVisible(bool state);
 	void SetHealthVisible(bool state);
 private:
+	Color GetDifferColor(float flRatio, Color c1, Color c2);
 	int m_iRestoredHealWide = 0;
 	int m_iRestoredArmorWide = 0;
 
 	Color m_cRestoredHealth;
+	Color m_cRestoredHealthLabel;
+	Color m_cRestoredHealthIcon;
+
 	Color m_cRestoredArmor;
+	Color m_cRestoredArmorLabel;
+	Color m_cRestoredArmorIcon;
 
 	Color m_cHealthDanger;
 	Color m_cArmorDanger;
