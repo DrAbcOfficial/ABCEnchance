@@ -50,7 +50,10 @@ Scheme
 	}
 	BaseSettings
 	{
-		"HealthBar.ListViewBgColor"		"Blank"
+		"DMGTiles.BgColor"		"Blank"
+		"DMGTiles.IconColor"		"SvenCoop"
+		"DMGTiles.TextColor"		"SvenCoop"
+		"DMGTiles.ListViewBgColor"		"Blank"
 		"HealthBar.BgColor"		"Blank"
 		"HealthBar.HealthFgColor"		"SvenCoop"
 		"HealthBar.ArmorFgColor"		"SvenCoop"
