@@ -71,8 +71,6 @@ namespace vgui
 		bool TextEntryHasFocus() const;
 		void TextEntryRequestFocus();
 
-
-
 	private:
 		enum
 		{
@@ -154,6 +152,7 @@ namespace vgui
 
 		// brings dialog to the fore
 		MESSAGE_FUNC(Activate, "Activate");
+		MESSAGE_FUNC(ClosedByHittingTilde, "ClosedByHittingTilde");
 		MESSAGE_FUNC_CHARPTR(OnCommandSubmitted, "CommandSubmitted", command);
 
 		// hides the console

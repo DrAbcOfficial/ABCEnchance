@@ -1,3 +1,4 @@
+#pragma once
 #include <IGameConsole.h>
 
 extern IGameConsole* gameconsolefuncs;

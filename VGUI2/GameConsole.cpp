@@ -32,8 +32,6 @@ public:
 void CGameConsole::Activate(void){
 	g_ConsoleDialog->Activate();
 }
-#define STR1(R) #R
-#define STR2(R) STR1(R)
 void CGameConsole::Initialize(void){
 	g_ConsoleDialog = new vgui::CConsoleDialog(nullptr, "Console", false);
 	g_ConsoleDialog->ColorPrint(Color(0, 255, 0, 200), "[ABCEnchance] ABCEnchance has run successfully!\n");

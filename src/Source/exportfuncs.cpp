@@ -244,7 +244,6 @@ void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 	//mission brief shit2 is 4, but fku all vgui shit
 	gHookFuncs.TFV_ShowVGUIMenu(pthis, dummy, iVguiMenu);
 }
-
 void __fastcall CStudioModelRenderer_Init(void* pthis, int dummy) {
 	gHookFuncs.CStudioModelRenderer_Init(pthis, dummy);
 	g_StudioRenderer = static_cast<CGameStudioModelRenderer*>(pthis);
@@ -295,9 +294,6 @@ char* NewV_strncpy(char* a1, const char* a2, size_t a3){
 	strncpy_s(m_szCurrentLanguage, a2, sizeof(m_szCurrentLanguage));
 	return gHookFuncs.V_strncpy(a1, a2, a3);
 }
-//void VGuiWrap2_HideGameUI() {
-//
-//}
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 	g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info);
@@ -502,6 +498,7 @@ void FillAddress(){
 		}
 	}
 }
+
 std::vector<hook_t*> aryEngineHook = {};
 std::vector<hook_t*> aryClientHook = {};
 
