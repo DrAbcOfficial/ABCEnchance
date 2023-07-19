@@ -105,6 +105,7 @@ void CDmgTilesPanel::ApplySettings(KeyValues* inResourceData) {
 		const char* icon = inResourceData->GetString(iter.szIconKey, nullptr);
 		m_aryDmg.push_back(new CTileIconItem(this, iter.szIconKey, iter.szName, icon));
 	}
+	m_flKeepTime = inResourceData->GetFloat("keep_time");
 }
 void CDmgTilesPanel::OnThink(){
 	float flTime = ClientTime();
@@ -149,7 +150,7 @@ void CDmgTilesPanel::UpdateTiles(long bitsDamage) {
 	float flTime = ClientTime();
 	for (auto iter = m_aryDmgImageList.begin(); iter != m_aryDmgImageList.end(); iter++) {
 		if (iter->iDmg & bitsDamage) {
-			iter->fExpire = flTime + 15.0f;
+			iter->fExpire = flTime + m_flKeepTime;
 			auto tile = m_aryDmg[iter->iIndex];
 			tile->SetVisible(true);
 			tile->SetAlpha(0);

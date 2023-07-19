@@ -94,6 +94,7 @@ public:
 		int iIndex;
 	};
 private:
+	float m_flKeepTime;
 	std::vector<dmgimageitem_t> m_aryDmgImageList;
 	std::vector<CTileIconItem*> m_aryDmg;
 };
