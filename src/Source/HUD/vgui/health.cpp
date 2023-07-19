@@ -105,7 +105,7 @@ void CHealthPanel::SetHealth(int health){
 	}
 	else
 		m_pHealthImagePanel->SetDrawColor(m_cRestoredHealth);
-	int newWide = (float)health / 100.0f * m_iRestoredHealWide;
+	int newWide = clamp<int>((float)health / 100.0f * m_iRestoredHealWide, 0, 1);
 	vgui::GetAnimationController()->RunAnimationCommand(m_pHealthImagePanel, "wide", newWide, 0.0f, 0.15f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
 
@@ -127,7 +127,7 @@ void CHealthPanel::SetArmor(int armor){
 	}
 	else
 		m_pArmorImagePanel->SetDrawColor(m_cRestoredArmor);
-	int newWide = (float)armor / 100.0f * m_iRestoredArmorWide;
+	int newWide = clamp<int>((float)armor / 100.0f * m_iRestoredArmorWide,0,1);
 	vgui::GetAnimationController()->RunAnimationCommand(m_pArmorImagePanel, "wide", newWide, 0.0f, 0.15f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
 
