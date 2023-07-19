@@ -491,9 +491,6 @@
     <ClCompile Include="src\Source\Utility\client_steam_context.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\encode.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\mymathlib.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
@@ -1214,9 +1211,6 @@
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\CVector.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\encode.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\mymathlib.h">

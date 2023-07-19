@@ -10,8 +10,6 @@
 #include "glew.h"
 #include "gl_draw.h"
 
-#include "encode.h"
-
 #include "mymathlib.h"
 #include "vgui_controls/Controls.h"
 
@@ -160,13 +158,12 @@ void CHudDeathMsg::Reset(void){
 void CHudDeathMsg::PushDeathNotice(wchar_t* v, wchar_t* e, wchar_t* k) {
 	//无插件服务器输出控制台
 	if (!bIsDeathMsgOn) {
-		string cl, cv, ce, ck;
-		UnicodeToUTF8((wstring)vgui::localize()->Find("DeathMsg_ConsolePrint"), cl);
-		UnicodeToUTF8((wstring)v, cv);
-		UnicodeToUTF8((wstring)e, ce);
-		UnicodeToUTF8((wstring)k, ck);
-		gEngfuncs.Con_Printf(const_cast<char*>(cl.c_str()), const_cast<char*>(cv.c_str()),
-			ck[0] == 0 ? "something" : const_cast<char*>(ck.c_str()), const_cast<char*>(ce.c_str()));
+		char cl[256], cv[256], ce[256], ck[256];
+		Q_UnicodeToUTF8(vgui::localize()->Find("DeathMsg_ConsolePrint"), cl, sizeof(cl));
+		Q_UnicodeToUTF8(v, cv, sizeof(cv));
+		Q_UnicodeToUTF8(e, ce, sizeof(ce));
+		Q_UnicodeToUTF8(k, ck, sizeof(ck));
+		gEngfuncs.Con_Printf(cl, cv, ck[0] == 0 ? "something" : ck, ce);
 	}
 	for (size_t i = 0; i < MAX_KEEP_DEATHMSG; i++) {
 		deathmsgItem_t a = aryKeepMsg[MAX_KEEP_DEATHMSG - 1];

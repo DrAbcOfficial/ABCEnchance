@@ -224,7 +224,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\weaponselect.cpp" />
     <ClCompile Include="src\Source\plugins.cpp" />
     <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
-    <ClCompile Include="src\Source\Utility\encode.cpp" />
     <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp" />
@@ -453,7 +452,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\plugins.h" />
     <ClInclude Include="src\Header\Utility\client_steam_context.h" />
     <ClInclude Include="src\Header\Utility\CVector.h" />
-    <ClInclude Include="src\Header\Utility\encode.h" />
     <ClInclude Include="src\Header\Utility\mymathlib.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_def.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_draw.h" />
