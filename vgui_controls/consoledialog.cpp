@@ -20,6 +20,7 @@
 #include "vgui/ILocalize.h"
 #include "KeyValues.h"
 #include <vguilocal.h>
+#include <BaseUI.h>
 
 #include "vgui_controls/Button.h"
 #include "vgui/KeyCode.h"
@@ -37,7 +38,6 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-#include <BaseUI.h>
 
 using namespace vgui;
 
@@ -654,10 +654,11 @@ void CConsolePanel::OnTextChanged(Panel* panel)
 	// see if they've hit the tilde key (which opens & closes the console)
 	int len = Q_strlen(m_szPartialText);
 
-	bool hitTilde = (m_szPartialText[len - 1] == '~' || m_szPartialText[len - 1] == '`') ? true : false;
-
-	bool altKeyDown = (input()->IsKeyDown(KEY_LALT) || input()->IsKeyDown(KEY_RALT)) ? true : false;
-	bool ctrlKeyDown = (input()->IsKeyDown(KEY_LCONTROL) || input()->IsKeyDown(KEY_RCONTROL)) ? true : false;
+	//old code can not work anymore because of some stupid IME change in win11
+	KeyCode consoleKey = gameuifuncs->GetVGUI2KeyCodeForBind("toggleconsole");
+	bool hitTilde = input()->IsKeyDown(consoleKey);
+	bool altKeyDown = input()->IsKeyDown(KEY_LALT) || input()->IsKeyDown(KEY_RALT);
+	bool ctrlKeyDown = input()->IsKeyDown(KEY_LCONTROL) || input()->IsKeyDown(KEY_RCONTROL);
 
 	// Alt-Tilde toggles Japanese IME on/off!!!
 	if ((len > 0) && hitTilde)
@@ -719,7 +720,6 @@ void CConsolePanel::OnTextChanged(Panel* panel)
 
 	RequestFocus();
 	m_pEntry->RequestFocus();
-
 }
 
 //-----------------------------------------------------------------------------
@@ -827,8 +827,12 @@ void CConsolePanel::OnKeyCodeTyped(KeyCode code)
 //-----------------------------------------------------------------------------
 void CConsolePanel::OnKeyCodePressed(KeyCode code)
 {
+	if (code == gameuifuncs->GetVGUI2KeyCodeForBind("toggleconsole")) {
+		PostActionSignal(new KeyValues("ClosedByHittingTilde"));
+		return;
+	}
+		
 	BaseClass::OnKeyCodePressed(code);
-
 	// check for processing
 	if (TextEntryHasFocus())
 	{
@@ -1260,6 +1264,10 @@ void CConsoleDialog::OnCommandSubmitted(const char* pCommand)
 	gEngfuncs.pfnClientCmd(const_cast<char*>(pCommand));
 }
 
+void CConsoleDialog::ClosedByHittingTilde() {
+	if (baseuifuncs->IsGameUIVisible())
+		baseuifuncs->HideGameUI();
+}
 
 //-----------------------------------------------------------------------------
 // Chain to the page
@@ -1292,12 +1300,10 @@ void CConsoleDialog::DumpConsoleTextToFile()
 
 void CConsoleDialog::OnKeyCodePressed(KeyCode code)
 {	
-	if (code == KEY_XBUTTON_B)
-	{
+	if (code == gameuifuncs->GetVGUI2KeyCodeForBind("toggleconsole"))
+		ClosedByHittingTilde();
+	else if (code == KEY_XBUTTON_B)
 		Hide();
-	}
 	else
-	{
 		BaseClass::OnKeyCodePressed(code);
-	}
 }
