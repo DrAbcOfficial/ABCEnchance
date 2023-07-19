@@ -1,8 +1,26 @@
 #ifndef CDMGTILESPANEL_H
 #define CDMGTILESPANEL_H
+#include <vector>
 #include <vgui_controls/EditablePanel.h>
 #include "IViewportPanel.h"
 
+namespace vgui {
+	class Label;
+	class ImagePanel;
+}
+class CTileIconItem : public vgui::EditablePanel {
+public:
+	DECLARE_CLASS_SIMPLE(CTileIconItem, vgui::EditablePanel);
+	CTileIconItem(Panel* parent, const char* controller, const char* text, const char* image);
+
+	virtual void PaintBackground() override;
+	
+	void SetIconColor(Color in);
+	void SetTextColor(Color in);
+private:
+	vgui::Label* m_pText;
+	vgui::ImagePanel* m_pPanel;
+};
 class CDmgTilesPanel : public vgui::EditablePanel, public IViewportPanel
 {
 public:
@@ -12,6 +30,7 @@ public:
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual void OnThink() override;
+	virtual void PaintBackground() override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	virtual void Reset() override;
@@ -75,8 +94,7 @@ public:
 		int iIndex;
 	};
 private:
-	vgui::ListViewPanel* m_pDmgImages = nullptr;
-
 	std::vector<dmgimageitem_t> m_aryDmgImageList;
+	std::vector<CTileIconItem*> m_aryDmg;
 };
 #endif

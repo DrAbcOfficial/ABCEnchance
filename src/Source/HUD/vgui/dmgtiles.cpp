@@ -6,10 +6,11 @@
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
-#include <VGUI2/tga_image.h>
-#include "vgui_controls/ImageList.h"
+#include <VGUI2/spr_image.h>
+
 #include "vgui_controls/Panel.h"
-#include "vgui_controls/ListViewPanel.h"
+#include "vgui_controls/Label.h"
+#include "vgui_controls/ImagePanel.h"
 #include <vgui_controls/AnimationController.h>
 
 #include "local.h"
@@ -22,14 +23,38 @@
 
 using namespace vgui;
 
+CTileIconItem::CTileIconItem(Panel* parent, const char* controller, const char* text, const char* image) 
+	: BaseClass(parent, controller) {
+	m_pPanel = new ImagePanel(this, "Panel");
+	m_pPanel->SetShouldScaleImage(true);
+	m_pPanel->SetImage(image);
+	m_pText = new Label(this, "Text", text);
+}
+
+void CTileIconItem::PaintBackground(){
+	int w, h;
+	GetSize(w, h);
+	int img = min(w * 0.25, h);
+	m_pPanel->SetSize(img, img);
+	m_pText->SetPos(w * 0.25, 0);
+	m_pText->SetSize(w * 0.75, h);
+	BaseClass::PaintBackground();
+}
+
+void CTileIconItem::SetIconColor(Color in){
+	m_pPanel->SetDrawColor(in);
+}
+
+void CTileIconItem::SetTextColor(Color in){
+	m_pText->SetFgColor(in);
+}
+
 CDmgTilesPanel::CDmgTilesPanel()
 	: BaseClass(nullptr, VIEWPORT_DMGTILES_NAME){
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 	SetScheme("HealthScheme");
-	m_pDmgImages = new ListViewPanel(this, "DMGImages");
-
 	dmgimageitem_t some[] = {
 		{ "Poison", "icon_poison", DMG_POISON, 0.0f},
 		{ "Acid", "icon_acid", DMG_ACID, 0.0f},
@@ -56,34 +81,54 @@ void CDmgTilesPanel::Reset(){
 	for (auto iter = m_aryDmgImageList.begin(); iter != m_aryDmgImageList.end(); iter++) {
 		iter->fExpire = 0;
 	}
-	m_pDmgImages->DeleteAllItems();
+	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
+		(*iter)->SetVisible(false);
+		(*iter)->SetAlpha(255);
+	}
 }
 void CDmgTilesPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
-	SetBgColor(GetSchemeColor("HealthBar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
-	m_pDmgImages->SetBgColor(GetSchemeColor("HealthBar.ListViewBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	SetBgColor(GetSchemeColor("DMGTiles.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	Color itemBg = GetSchemeColor("DMGTiles.ListViewBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme);
+	Color itemIcon = GetSchemeColor("DMGTiles.IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
+	Color itemText = GetSchemeColor("DMGTiles.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme);
+	for (auto iter = m_aryDmg.rbegin(); iter != m_aryDmg.rend(); iter++) {
+		(*iter)->SetBgColor(itemBg);
+		(*iter)->SetIconColor(itemIcon);
+		(*iter)->SetTextColor(itemText);
+	}
 }
 void CDmgTilesPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
-	ImageList* list = new ImageList(true);
 	for (size_t i = 0; i < m_aryDmgImageList.size(); i++) {
 		auto iter = m_aryDmgImageList[i];
 		const char* icon = inResourceData->GetString(iter.szIconKey, nullptr);
-		if (icon) {
-			CTGAImage* img = new CTGAImage(icon);
-			img->SetColor(Color(255, 255, 255, 255));
-			list->AddImage(img);
-		}
+		m_aryDmg.push_back(new CTileIconItem(this, iter.szIconKey, iter.szName, icon));
 	}
-	m_pDmgImages->SetImageList(list, true);
 }
 void CDmgTilesPanel::OnThink(){
 	float flTime = ClientTime();
 	for (auto iter = m_aryDmgImageList.begin(); iter != m_aryDmgImageList.end(); iter++) {
 		if (iter->fExpire < flTime) {
-			m_pDmgImages->RemoveItem(iter->iIndex);
+			GetAnimationController()->RunAnimationCommand(m_aryDmg[iter->iIndex], "alpha", 0, 0.0f, 0.3f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 		}
 	}
+}
+void CDmgTilesPanel::PaintBackground(){
+	if (m_aryDmg.size() == 0)
+		return;
+	int w, h;
+	GetSize(w, h);
+	int itemh = h / m_aryDmg.size();
+	int y = h - itemh;
+	for (auto iter = m_aryDmg.rbegin(); iter != m_aryDmg.rend(); iter++) {
+		if ((*iter)->IsVisible()) {
+			(*iter)->SetSize(w, itemh);
+			(*iter)->SetPos(0, y);
+			y -= itemh;
+		}
+	}
+	BaseClass::PaintBackground();
 }
 void CDmgTilesPanel::ShowPanel(bool state){
 	if (state == IsVisible())
@@ -101,18 +146,14 @@ void CDmgTilesPanel::SetParent(vgui::VPANEL parent){
 }
 
 void CDmgTilesPanel::UpdateTiles(long bitsDamage) {
-	bitsDamage = -1;
 	float flTime = ClientTime();
 	for (auto iter = m_aryDmgImageList.begin(); iter != m_aryDmgImageList.end(); iter++) {
 		if (iter->iDmg & bitsDamage) {
 			iter->fExpire = flTime + 15.0f;
-			if (!m_pDmgImages->GetItem(iter->iIndex)) {
-				KeyValues* pkv = new KeyValues(iter->szName);
-				pkv->SetString("text", iter->szName);
-				pkv->SetInt("image", iter->iIndex);
-				m_pDmgImages->AddItem(pkv, false, true);
-				delete pkv;
-			}
+			auto tile = m_aryDmg[iter->iIndex];
+			tile->SetVisible(true);
+			tile->SetAlpha(0);
+			GetAnimationController()->RunAnimationCommand(tile, "alpha", 255, 0.0f, 0.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 		}
 	}
 }
