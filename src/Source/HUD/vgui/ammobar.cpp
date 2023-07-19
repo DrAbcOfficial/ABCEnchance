@@ -53,6 +53,7 @@ const char* CAmmoPanel::GetName(){
 void CAmmoPanel::Reset(){
 	if (!IsVisible())
 		ShowPanel(true);
+	m_pHandledWeapon = nullptr;
 }
 void CAmmoPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -79,22 +80,30 @@ void CAmmoPanel::SetParent(vgui::VPANEL parent){
 }
 
 void CAmmoPanel::SetWeapon(WEAPON* weapon){
-	if (!weapon)
+	m_pHandledWeapon = weapon;
+	if (!m_pHandledWeapon) {
+		ShowPanel(false);
+		return;
+	}
+	ShowPanel(true);
+	if (!(m_pHandledWeapon->iState & VALID))
 		return;
 	char buf[64];
-	if (weapon->iAmmoType > 0) {
+	if (m_pHandledWeapon->iAmmoType > 0) {
 		m_Ammo1Icon->SetVisible(true);
 		m_pAmmo1Label->SetVisible(true);
-		m_pSpr1->SetTextureID(weapon->hAmmo);
-		m_pSpr1->SetRect(weapon->rcAmmo.left, weapon->rcAmmo.right, weapon->rcAmmo.top, weapon->rcAmmo.bottom);
+		m_pSpr1->SetTextureID(m_pHandledWeapon->hAmmo);
+		m_pSpr1->SetRect(m_pHandledWeapon->rcAmmo.left, m_pHandledWeapon->rcAmmo.right, m_pHandledWeapon->rcAmmo.top, m_pHandledWeapon->rcAmmo.bottom);
 		m_pSpr1->SetRenderMode(kRenderTransAdd);
 		m_Ammo1Icon->SetImage(m_pSpr1);
 		int iAmmoLeft = gWR.CountAmmo(weapon->iAmmoType);
-		if (weapon->iClip >= 0) {
-			if (weapon->iFlags & 32 && weapon->iClip2 >= 0 && weapon->iClip2 != 255)
-				Q_snprintf(buf, "%dx%d/%d", weapon->iClip2, weapon->iClip, iAmmoLeft);
+		if (m_pHandledWeapon->iClip >= 0) {
+			if (m_pHandledWeapon->iState & UZI && 
+				m_pHandledWeapon->iFlags & 32 && 
+				m_pHandledWeapon->iClip2 >= 0)
+				Q_snprintf(buf, "%dx%d/%d", m_pHandledWeapon->iClip2, m_pHandledWeapon->iClip, iAmmoLeft);
 			else
-				Q_snprintf(buf, "%d/%d", weapon->iClip, iAmmoLeft);
+				Q_snprintf(buf, "%d/%d", m_pHandledWeapon->iClip, iAmmoLeft);
 		}
 		else
 			Q_snprintf(buf, "%d", iAmmoLeft);
@@ -104,17 +113,17 @@ void CAmmoPanel::SetWeapon(WEAPON* weapon){
 		m_Ammo1Icon->SetVisible(false);
 		m_pAmmo1Label->SetVisible(false);
 	}
-	if (weapon->iAmmo2Type > 0) {
+	if (m_pHandledWeapon->iAmmo2Type > 0 && m_pHandledWeapon->iState & VALID) {
 		m_Ammo2Icon->SetVisible(true);
 		m_pAmmo2Label->SetVisible(true);
 		m_pSlashLabel->SetVisible(true);
-		m_pSpr2->SetTextureID(weapon->hAmmo2);
-		m_pSpr2->SetRect(weapon->rcAmmo2.left, weapon->rcAmmo2.right, weapon->rcAmmo2.top, weapon->rcAmmo2.bottom);
+		m_pSpr2->SetTextureID(m_pHandledWeapon->hAmmo2);
+		m_pSpr2->SetRect(m_pHandledWeapon->rcAmmo2.left, m_pHandledWeapon->rcAmmo2.right, m_pHandledWeapon->rcAmmo2.top, m_pHandledWeapon->rcAmmo2.bottom);
 		m_pSpr2->SetRenderMode(kRenderTransAdd);
 		m_Ammo2Icon->SetImage(m_pSpr2);
-		int iAmmoLeft2 = gWR.CountAmmo(weapon->iAmmo2Type);
-		if (weapon->iClip2 >= 0)
-			Q_snprintf(buf, "%d/%d", weapon->iClip2, iAmmoLeft2);
+		int iAmmoLeft2 = gWR.CountAmmo(m_pHandledWeapon->iAmmo2Type);
+		if (m_pHandledWeapon->iClip2 >= 0)
+			Q_snprintf(buf, "%d/%d", m_pHandledWeapon->iClip2, iAmmoLeft2);
 		else
 			Q_snprintf(buf, "%d", iAmmoLeft2);
 		m_pAmmo2Label->SetText(buf);
