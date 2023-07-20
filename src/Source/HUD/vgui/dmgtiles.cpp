@@ -23,12 +23,14 @@
 
 using namespace vgui;
 
-CTileIconItem::CTileIconItem(Panel* parent, const char* controller, const char* text, const char* image) 
-	: BaseClass(parent, controller) {
+CTileIconItem::CTileIconItem(Panel* parent, const char* text, const char* icon, int dmg)
+	: BaseClass(parent, text) {
 	m_pPanel = new ImagePanel(this, "Panel");
 	m_pPanel->SetShouldScaleImage(true);
-	m_pPanel->SetImage(image);
 	m_pText = new Label(this, "Text", text);
+
+	Q_strcpy(szIconKey, icon);
+	iDmg = dmg;
 }
 
 void CTileIconItem::PaintBackground(){
@@ -41,6 +43,14 @@ void CTileIconItem::PaintBackground(){
 	BaseClass::PaintBackground();
 }
 
+const char* CTileIconItem::GetIconKey(){
+	return szIconKey;
+}
+
+int CTileIconItem::GetDMG(){
+	return iDmg;
+}
+
 void CTileIconItem::SetIconColor(Color in){
 	m_pPanel->SetDrawColor(in);
 }
@@ -49,26 +59,48 @@ void CTileIconItem::SetTextColor(Color in){
 	m_pText->SetFgColor(in);
 }
 
+void CTileIconItem::SetImage(const char* image){
+	m_pPanel->SetImage(image);
+}
+
+void CTileIconItem::Show(float flTime){
+	float current = ClientTime();
+	fExpire = current + flTime;
+	SetVisible(true);
+	SetAlpha(0);
+	GetAnimationController()->RunAnimationCommand(this, "alpha", 255, 0.0f, 0.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+}
+
+void CTileIconItem::Reset(){
+	fExpire = 0;
+	SetVisible(false);
+	SetAlpha(255);
+}
+void CTileIconItem::SetExpire(float f){
+	fExpire = f;
+}
+void CTileIconItem::CheckExpire(){
+	float flTime = ClientTime();
+	if (fExpire < flTime)
+		GetAnimationController()->RunAnimationCommand(this, "alpha", 0, 0.0f, 0.3f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+}
+
 CDmgTilesPanel::CDmgTilesPanel()
 	: BaseClass(nullptr, VIEWPORT_DMGTILES_NAME){
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 	SetScheme("HealthScheme");
-	dmgimageitem_t some[] = {
-		{ "#DMGTiles_Poison", "icon_poison", DMG_POISON, 0.0f},
-		{ "#DMGTiles_Acid", "icon_acid", DMG_ACID, 0.0f},
-		{ "#DMGTiles_Freeze","icon_freeze", DMG_FREEZE | DMG_SLOWFREEZE, 0.0f},
-		{ "#DMGTiles_Drown", "icon_drown", DMG_DROWN, 0.0f},
-		{ "#DMGTiles_Burn", "icon_burn", DMG_BURN | DMG_SLOWBURN, 0.0f},
-		{ "#DMGTiles_Gas", "icon_gas", DMG_NERVEGAS, 0.0f},
-		{ "#DMGTiles_Radiation", "icon_radiation", DMG_RADIATION, 0.0f},
-		{ "#DMGTiles_Shock", "icon_shock", DMG_SHOCK, 0.0f}
+	m_aryDmg = {
+		new CTileIconItem(this, "#DMGTiles_Poison", "icon_poison", DMG_POISON),
+		new CTileIconItem(this, "#DMGTiles_Acid", "icon_acid", DMG_ACID),
+		new CTileIconItem(this, "#DMGTiles_Freeze","icon_freeze", DMG_FREEZE | DMG_SLOWFREEZE),
+		new CTileIconItem(this, "#DMGTiles_Drown", "icon_drown", DMG_DROWN),
+		new CTileIconItem(this, "#DMGTiles_Burn", "icon_burn", DMG_BURN | DMG_SLOWBURN),
+		new CTileIconItem(this, "#DMGTiles_Gas", "icon_gas", DMG_NERVEGAS),
+		new CTileIconItem(this, "#DMGTiles_Radiation", "icon_radiation", DMG_RADIATION),
+		new CTileIconItem(this, "#DMGTiles_Shock", "icon_shock", DMG_SHOCK)
 	};
-	m_aryDmgImageList = std::vector<dmgimageitem_t>(some, some + sizeof(some) / sizeof(some[0]));
-	for (size_t i = 0; i < m_aryDmgImageList.size(); i++)
-		m_aryDmgImageList[i].iIndex = i;
-
 	LoadControlSettings(VGUI2_ROOT_DIR "DMGTilesPanel.res");
 	SetVisible(false);
 }
@@ -78,12 +110,9 @@ const char* CDmgTilesPanel::GetName(){
 void CDmgTilesPanel::Reset(){
 	if (!IsVisible())
 		ShowPanel(true);
-	for (auto iter = m_aryDmgImageList.begin(); iter != m_aryDmgImageList.end(); iter++) {
-		iter->fExpire = 0;
-	}
+
 	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
-		(*iter)->SetVisible(false);
-		(*iter)->SetAlpha(255);
+		(*iter)->Reset();
 	}
 }
 void CDmgTilesPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
@@ -100,19 +129,17 @@ void CDmgTilesPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 }
 void CDmgTilesPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
-	for (size_t i = 0; i < m_aryDmgImageList.size(); i++) {
-		auto iter = m_aryDmgImageList[i];
-		const char* icon = inResourceData->GetString(iter.szIconKey, nullptr);
-		m_aryDmg.push_back(new CTileIconItem(this, iter.szIconKey, iter.szName, icon));
+	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
+		(*iter)->Reset();
+		const char* icon = inResourceData->GetString((*iter)->GetIconKey(), nullptr);
+		if(icon)
+			(*iter)->SetImage(icon);
 	}
 	m_flKeepTime = inResourceData->GetFloat("keep_time");
 }
 void CDmgTilesPanel::OnThink(){
-	float flTime = ClientTime();
-	for (auto iter = m_aryDmgImageList.begin(); iter != m_aryDmgImageList.end(); iter++) {
-		if (iter->fExpire < flTime) {
-			GetAnimationController()->RunAnimationCommand(m_aryDmg[iter->iIndex], "alpha", 0, 0.0f, 0.3f, vgui::AnimationController::INTERPOLATOR_LINEAR);
-		}
+	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
+		(*iter)->CheckExpire();
 	}
 }
 void CDmgTilesPanel::PaintBackground(){
@@ -145,16 +172,9 @@ vgui::VPANEL CDmgTilesPanel::GetVPanel(){
 void CDmgTilesPanel::SetParent(vgui::VPANEL parent){
 	BaseClass::SetParent(parent);
 }
-
 void CDmgTilesPanel::UpdateTiles(long bitsDamage) {
-	float flTime = ClientTime();
-	for (auto iter = m_aryDmgImageList.begin(); iter != m_aryDmgImageList.end(); iter++) {
-		if (iter->iDmg & bitsDamage) {
-			iter->fExpire = flTime + m_flKeepTime;
-			auto tile = m_aryDmg[iter->iIndex];
-			tile->SetVisible(true);
-			tile->SetAlpha(0);
-			GetAnimationController()->RunAnimationCommand(tile, "alpha", 255, 0.0f, 0.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
-		}
+	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
+		if ((*iter)->GetDMG() & bitsDamage)
+			(*iter)->Show(m_flKeepTime);
 	}
 }
