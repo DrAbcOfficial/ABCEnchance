@@ -175,7 +175,6 @@ void CDmgTilesPanel::SetParent(vgui::VPANEL parent){
 	BaseClass::SetParent(parent);
 }
 void CDmgTilesPanel::UpdateTiles(long bitsDamage) {
-	bitsDamage = -1;
 	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
 		if ((*iter)->GetDMG() & bitsDamage)
 			(*iter)->Show(m_flKeepTime);
