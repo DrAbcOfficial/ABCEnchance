@@ -99,7 +99,9 @@ CDmgTilesPanel::CDmgTilesPanel()
 		new CTileIconItem(this, "#DMGTiles_Burn", "icon_burn", DMG_BURN | DMG_SLOWBURN),
 		new CTileIconItem(this, "#DMGTiles_Gas", "icon_gas", DMG_NERVEGAS),
 		new CTileIconItem(this, "#DMGTiles_Radiation", "icon_radiation", DMG_RADIATION),
-		new CTileIconItem(this, "#DMGTiles_Shock", "icon_shock", DMG_SHOCK)
+		new CTileIconItem(this, "#DMGTiles_Shock", "icon_shock", DMG_SHOCK | DMG_SHOCK_GLOW),
+		new CTileIconItem(this, "#DMGTiles_Energybeam", "icon_beam", DMG_ENERGYBEAM),
+		new CTileIconItem(this, "#DMGTiles_Sonic", "icon_sonic", DMG_SONIC)
 	};
 	LoadControlSettings(VGUI2_ROOT_DIR "DMGTilesPanel.res");
 	SetVisible(false);
@@ -173,6 +175,7 @@ void CDmgTilesPanel::SetParent(vgui::VPANEL parent){
 	BaseClass::SetParent(parent);
 }
 void CDmgTilesPanel::UpdateTiles(long bitsDamage) {
+	bitsDamage = -1;
 	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
 		if ((*iter)->GetDMG() & bitsDamage)
 			(*iter)->Show(m_flKeepTime);
