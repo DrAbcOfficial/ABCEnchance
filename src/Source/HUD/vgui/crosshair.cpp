@@ -245,6 +245,9 @@ void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
 		m_pSprImage->SetTextureID(-1);
 		return;
 	}
+	else if (!(pWeapon->iState & (1 << 0))) {
+		return;
+	}
 	bool bOnTarget = pWeapon->iState & (1 << 1);
 	if (m_hfov >= gCVars.pCvarDefaultFOV->value) {
 		if (bOnTarget && pWeapon->hAutoaim)
