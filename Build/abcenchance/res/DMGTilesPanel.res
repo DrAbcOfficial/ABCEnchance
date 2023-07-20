@@ -24,5 +24,7 @@
 		"icon_gas"	"abcenchance/tga/icon_gas"
 		"icon_radiation"	"abcenchance/tga/icon_radiation"
 		"icon_shock"	"abcenchance/tga/icon_shock"
+		"icon_beam"	"abcenchance/tga/icon_beam"
+		"icon_sonic"	"abcenchance/tga/icon_sonic"
 	}
 }
