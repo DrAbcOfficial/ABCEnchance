@@ -11,15 +11,28 @@ namespace vgui {
 class CTileIconItem : public vgui::EditablePanel {
 public:
 	DECLARE_CLASS_SIMPLE(CTileIconItem, vgui::EditablePanel);
-	CTileIconItem(Panel* parent, const char* controller, const char* text, const char* image);
+	CTileIconItem(Panel* parent, const char* text, const char* icon, int dmg);
 
 	virtual void PaintBackground() override;
 	
+	const char* GetIconKey();
+	int GetDMG();
+
 	void SetIconColor(Color in);
 	void SetTextColor(Color in);
+	void SetImage(const char* image);
+	void Show(float flTime);
+
+	void Reset();
+	void SetExpire(float f);
+	void CheckExpire();
 private:
 	vgui::Label* m_pText;
 	vgui::ImagePanel* m_pPanel;
+
+	char szIconKey[32];
+	int iDmg;
+	float fExpire;
 };
 class CDmgTilesPanel : public vgui::EditablePanel, public IViewportPanel
 {
@@ -85,17 +98,8 @@ public:
 		DMG_GIB_CORPSE = 993, // Gib corpse.These are the damage types that are allowed to gib corpses.
 		DMG_SHOWNHUD = 7815448 // Shown on HUD.These are the damage types that have clien hud art.
 	};
-
-	struct dmgimageitem_t {
-		const char szName[32];
-		const char szIconKey[32];
-		const int iDmg;
-		float fExpire;
-		int iIndex;
-	};
 private:
 	float m_flKeepTime;
-	std::vector<dmgimageitem_t> m_aryDmgImageList;
 	std::vector<CTileIconItem*> m_aryDmg;
 };
 #endif
