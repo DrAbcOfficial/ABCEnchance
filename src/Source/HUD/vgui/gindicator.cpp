@@ -80,6 +80,7 @@ const char* CGenadeIndicatorPanel::GetName() {
 	return VIEWPORT_GINDICATOR_NAME;
 }
 void CGenadeIndicatorPanel::Reset() {
+	ShowPanel(true);
 	for (auto it = m_aryImages.begin(); it != m_aryImages.end();) {
 		(*it)->DeletePanel();
 		it = m_aryImages.erase(it);
@@ -145,7 +146,7 @@ void CGenadeIndicatorPanel::AddEntity(cl_entity_s* ent, const char* modelname){
 			return true;
 		return  false;
 		})) {
-		CGIndicatorItem* img = new CGIndicatorItem(this, "grenade");
+		CGIndicatorItem* img = new CGIndicatorItem(this, "Grenade");
 		img->SetImage(m_szImageName);
 		img->SetDrawColor(m_cImageDrawColor);
 		img->SetSize(m_iImageWide, m_iImageTall);
