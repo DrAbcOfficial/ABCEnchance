@@ -51,8 +51,8 @@ const char* CAmmoPanel::GetName(){
 	return VIEWPORT_AMMO_NAME;
 }
 void CAmmoPanel::Reset(){
-	if (!IsVisible())
-		ShowPanel(true);
+	if (IsVisible())
+		ShowPanel(false);
 	m_pHandledWeapon = nullptr;
 }
 void CAmmoPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
