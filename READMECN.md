@@ -90,13 +90,11 @@
 |---|---|---|---|
 |cl_autojump|启用按住空格自动连跳|0|0/1|
 |---|---|---|---|
-|cl_menudrawpos|是否绘制武器Pos|0|0/1|
 |cl_rainbowmenu|绘制武器菜单彩虹圈|0|0/1/2|
 |---|---|---|---|
 |cl_itemhighlight|是否显示物品高亮|1|0/1|
 |cl_itemhighlightrange|物品高亮范围|344|0~500|
 |---|---|---|---|
-|cl_hud_healthammo_style|隐藏血条护甲条|0|0/1|
 |cl_dangerhealth|濒死生命值|45|0~9999|
 |cl_dangerarmor|濒死护甲值|45|0~9999|
 |cl_damageshock|启用受伤色差|0|0/1|
@@ -149,7 +147,8 @@
 |cam_idealheight|第三人称摄像机高度|0|-9999-9999|
 |cam_idealright|第三人称摄像机左右|0|-9999-9999|
 |---|---|---|---|
-|cl_curdebug|Curweapon Debug|0|0/1|
+|hud_scoreboard_xxxxx|计分版相关|xxx|xxx|
+|hud_motd|-1 关闭Motd, 0原版motd, 1新motd|1|0
 
 ----
 
