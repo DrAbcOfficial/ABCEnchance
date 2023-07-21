@@ -14,9 +14,8 @@
 #define CVAR_GET_STRING(x) gEngfuncs.pfnGetCvarString(x)
 inline cvar_t* CREATE_CVAR(char* name, char* val, int flag, cvar_callback_t callback) {
 	cvar_t* cvar = gEngfuncs.pfnRegisterVariable(name, val, flag); 
-	if (callback) { 
+	if (callback)
 		g_pMetaHookAPI->RegisterCvarCallback(name, callback, nullptr); 
-	}
 	return cvar;
 }
 #define SPR_Load (*gEngfuncs.pfnSPR_Load)
