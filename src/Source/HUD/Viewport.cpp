@@ -33,6 +33,7 @@
 #include "health.h"
 #include "ammobar.h"
 #include "dmgtiles.h"
+#include "gindicator.h"
 
 #include "CCustomHud.h"
 
@@ -75,6 +76,7 @@ CViewport::~CViewport(void){
 void CViewport::Start(void){
 	AddNewPanel(m_pEffectPanel = new CEffectPanel());
 	AddNewPanel(m_pSidePanel = new CSidePanel());
+	AddNewPanel(m_pGIndicator = new CGenadeIndicatorPanel());
 	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
 	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
 	for (size_t i = 0; i < 32; i++) {
@@ -108,6 +110,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pHealthPanel->SetParent(GetVPanel());
 	m_pAmmoPanel->SetParent(GetVPanel());
 	m_pDmgTiles->SetParent(GetVPanel());
+	m_pGIndicator->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -163,6 +166,10 @@ bool CViewport::KeyInput(int down, int keynum, const char* pszCurrentBinding){
 		return m_pVotePanel->KeyCodeTyped(keynum);
 	}
 	return true;
+}
+
+void CViewport::AddEntity(int type, cl_entity_s* ent, const char* modelname){
+	m_pGIndicator->AddEntity(ent, modelname);
 }
 
 void CViewport::SetInterMission(int intermission) {

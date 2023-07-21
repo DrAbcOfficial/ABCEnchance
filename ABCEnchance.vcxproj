@@ -200,7 +200,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
     <ClCompile Include="src\Source\HUD\deathmsg.cpp" />
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
-    <ClCompile Include="src\Source\HUD\grenadeindicator.cpp" />
     <ClCompile Include="src\Source\HUD\indicator.cpp" />
     <ClCompile Include="src\Source\HUD\historyresource.cpp" />
     <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
@@ -210,6 +209,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\vgui\dmgtiles.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\effect.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\gindicator.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\notice.cpp" />
@@ -425,7 +425,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />
     <ClInclude Include="src\Header\HUD\deathmsg.h" />
     <ClInclude Include="src\Header\HUD\eccobuymenu.h" />
-    <ClInclude Include="src\Header\HUD\grenadeindicator.h" />
     <ClInclude Include="src\Header\HUD\indicator.h" />
     <ClInclude Include="src\Header\HUD\historyresource.h" />
     <ClInclude Include="src\Header\HUD\itemhighlight.h" />
@@ -436,6 +435,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\vgui\dmgtiles.h" />
     <ClInclude Include="src\Header\HUD\vgui\effect.h" />
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
+    <ClInclude Include="src\Header\HUD\vgui\gindicator.h" />
     <ClInclude Include="src\Header\HUD\vgui\health.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
     <ClInclude Include="src\Header\HUD\vgui\notice.h" />

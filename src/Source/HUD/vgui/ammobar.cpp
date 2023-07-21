@@ -10,7 +10,6 @@
 #include <vgui_controls/Label.h>
 #include <vgui_controls/ImagePanel.h>
 #include "vgui_controls/ImageSprPanel.h"
-#include <vgui_controls/AnimationController.h>
 
 #include <hud.h>
 #include "local.h"
