@@ -95,13 +95,11 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |hud_deathnotice|use new death message|1|0~1|
 |hud_deathnotice_time|the death message keep time|6|0~9999|
 |---|---|---|---|
-|cl_menudrawpos|Draw weapon Pos|0|0/1|
 |cl_rainbowmenu|Draw weapon menu in rainbow|0|0/1/2|
 |---|---|---|---|
 |cl_itemhighlight|Draw item high light|1|0/1|
 |cl_itemhighlightrange|Item high light range|344|0~500|
 |---|---|---|---|
-|cl_hud_healthammo_style|Hide health and armor bar|0|0/1|
 |cl_dangerhealth|Danger health value|45|0~9999|
 |cl_dangerarmor|Danger armor value|45|0~9999|
 |cl_damageshock|Enable shock pain indicator|0|0/1|
@@ -151,7 +149,8 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |cam_idealheight|Change thirdperson camera height|0|-9999-9999|
 |cam_idealright|Change thirdperson camera right|0|-9999-9999|
 |---|---|---|---|
-|cl_curdebug|Curweapon Debug|0|0/1|
+|hud_scoreboard_xxxxx|scoreboard thing|xxx|xxx|
+|hud_motd|-1 close Motd, 0 vanillia motd, 1 new motd|1|0
 
 ----
 
