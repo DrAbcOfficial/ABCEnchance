@@ -648,6 +648,8 @@ bool CCustomHud::IsSpectator(int client){
 }
 void CCustomHud::SetSpectator(int client, bool value){
 	m_SpectatePlayer[client] = value;
+	if (client == gEngfuncs.GetLocalPlayer()->index)
+		g_pViewPort->SetSpectate(value);
 }
 bool CCustomHud::IsMouseVisible(){
 	if(g_pViewPort)

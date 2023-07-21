@@ -274,6 +274,10 @@ void CViewport::SetArmor(int armor) {
 void CViewport::UpdateTiles(long tiles){
 	m_pDmgTiles->UpdateTiles(tiles);
 }
+void CViewport::SetSpectate(bool state){
+	m_pHealthPanel->ShowPanel(!state);
+	m_pAmmoPanel->ShowPanel(!state);
+}
 WEAPON* CViewport::GetCurWeapon(){
 	return gCustomHud.GetCurWeapon();
 }
