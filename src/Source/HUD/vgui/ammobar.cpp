@@ -133,4 +133,6 @@ void CAmmoPanel::SetWeapon(WEAPON* weapon){
 		m_pAmmo2Label->SetVisible(false);
 		m_pSlashLabel->SetVisible(false);
 	}
+	if (m_pHandledWeapon->iAmmoType <= 0 && m_pHandledWeapon->iAmmo2Type <= 0)
+		ShowPanel(false);
 }
