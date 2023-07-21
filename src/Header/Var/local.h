@@ -43,7 +43,7 @@ inline cvar_t* CREATE_CVAR(char* name, char* val, int flag, cvar_callback_t call
 #define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
 #define PlaySoundByName(x, y) (*gEngfuncs.pfnPlaySoundByName)((char*)x, y)
 #define VEC_WorldToScreen(w, s) (*gEngfuncs.pTriAPI->WorldToScreen)(w, s);s[0]=(1.0f+s[0])*ScreenWidth/2;s[1]=(1.0f-s[1])*ScreenHeight/2
-#define ClientTime() (gEngfuncs.GetClientTime());
+#define ClientTime() (gEngfuncs.GetClientTime())
 
 //Hooked Address
 typedef struct{

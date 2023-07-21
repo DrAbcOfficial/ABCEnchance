@@ -35,7 +35,6 @@
 #include "deathmsg.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
-#include "grenadeindicator.h"
 
 #include "vgui_controls/Controls.h"
 
@@ -455,7 +454,6 @@ void CCustomHud::HUD_Init(void){
 	m_HudDeathMsg.Init();
 	g_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
-	m_HudGrenadeIndicator.Init();
 #ifdef _DEBUG
 	m_HudCCTV.Init();
 #endif
@@ -494,7 +492,6 @@ void CCustomHud::HUD_VidInit(void){
 			p++;
 		}
 	}
-	m_HudGrenadeIndicator.VidInit();
 	m_HudDeathMsg.VidInit();
 	m_HudIndicator.VidInit();
 	m_HudCustomAmmo.VidInit();
@@ -508,7 +505,6 @@ void CCustomHud::HUD_Draw(float flTime){
 	m_HudDeathMsg.Draw(flTime);
 	m_HudRadar.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
-	m_HudGrenadeIndicator.Draw(flTime);
 
 #ifdef _DEBUG
 	m_HudCCTV.Draw(flTime);
@@ -528,7 +524,6 @@ void CCustomHud::HUD_Reset(void){
 	m_HudDeathMsg.Reset();
 	g_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
-	m_HudGrenadeIndicator.Reset();
 #ifdef _DEBUG
 	m_HudCCTV.Reset();
 #endif
@@ -556,7 +551,6 @@ void CCustomHud::HUD_Clear(void){
 	m_HudRadar.Clear();
 	m_HudEccoBuyMenu.Clear();
 	m_HudIndicator.Clear();
-	m_HudGrenadeIndicator.Clear();
 }
 void CCustomHud::HUD_BlitRadarFramebuffer()
 {
@@ -619,7 +613,7 @@ int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 	bool result = true;
 	result = result && m_HudEccoBuyMenu.AddEntity(type, ent, modelname);
 	g_HudItemHighLight.AddEntity(type, ent, modelname);
-	m_HudGrenadeIndicator.HUD_AddEntity(type, ent, modelname);
+	g_pViewPort->AddEntity(type, ent, modelname);
 	return result;
 }
 void CCustomHud::HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {

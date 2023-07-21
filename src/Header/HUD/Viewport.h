@@ -30,6 +30,7 @@ class CEffectPanel;
 class CHealthPanel;
 class CAmmoPanel;
 class CDmgTilesPanel;
+class CGenadeIndicatorPanel;
 
 class ISchemel;
 
@@ -56,6 +57,8 @@ public:
 	void ActivateClientUI(void);
 	void HideClientUI(void);
 	bool KeyInput(int down, int keynum, const char* pszCurrentBinding);
+
+	void AddEntity(int type, cl_entity_s* ent, const char* modelname);
 
 	void SetInterMission(int intermission);
 	int GetInterMission();
@@ -141,6 +144,7 @@ private:
 	CHealthPanel* m_pHealthPanel = nullptr;
 	CAmmoPanel* m_pAmmoPanel = nullptr;
 	CDmgTilesPanel* m_pDmgTiles = nullptr;
+	CGenadeIndicatorPanel* m_pGIndicator = nullptr;
 
 	int m_iInterMission;
 
