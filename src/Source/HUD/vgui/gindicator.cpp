@@ -49,7 +49,9 @@ void CGIndicatorItem::Update() {
 	if (angledotResult > 0.5) {
 		CVector vecHUD;
 		VEC_WorldToScreen(m_pEnt->curstate.origin, vecHUD);
-		SetPos(vecHUD.x - GetWide() / 2, vecHUD.y - GetTall());
+		Vector vec = { vecHUD.x - GetWide() / 2, vecHUD.y - GetTall(), 0 };
+		vgui::GetAnimationController()->RunAnimationCommand(this, "position", vec,
+			0.0f, 0.01f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 	}
 }
 cl_entity_t* CGIndicatorItem::GetEnt(){
