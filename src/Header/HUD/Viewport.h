@@ -106,6 +106,8 @@ public:
 	void SetArmor(int armor);
 	void UpdateTiles(long tiles);
 
+	void SetSpectate(bool state);
+
 	WEAPON* GetCurWeapon();
 	void SetCurWeapon(WEAPON* weapon);
 
