@@ -129,6 +129,8 @@ typedef struct cl_cvars_s{
 	cvar_t* pGrenadeIndicatorRange = nullptr;
 	cvar_t* pGrenadeInicatorTime = nullptr;
 
+	cvar_t* pMotd = nullptr;
+
 	cvar_t* pCVarDevOverview = nullptr;
 	cvar_t* pCVarDrawEntities = nullptr;
 	cvar_t* pCVarDrawViewModel = nullptr;

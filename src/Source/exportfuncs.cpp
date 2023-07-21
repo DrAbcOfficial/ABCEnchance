@@ -221,9 +221,11 @@ void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 		case 4: return;
 		//MOTD
 		case 5: {
-			gCustomHud.m_bInScore = true;
-			g_pViewPort->ShowMOTD();
-			return;
+			if (gCVars.pMotd->value != 0) {
+				if(gCVars.pMotd->value >= 1)
+					g_pViewPort->ShowMOTD();
+				return;
+			}
 		}
 		//TeamMenu
 		case 2:

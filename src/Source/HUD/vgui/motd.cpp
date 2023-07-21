@@ -28,6 +28,14 @@ CMotdPanel::CMotdPanel()
 	m_pMessage = new vgui::Label(this, "Message", "");
 	m_pProgressBar = new vgui::Panel(this, "Progress");
 
+	gCVars.pMotd = CREATE_CVAR("hud_motd", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+		switch (static_cast<int>(cvar->value)){
+			case 1:
+			case -1 : g_pViewPort->GetMotdPanel()->ShowPanel(false); break;
+			default: break;
+		}
+	});
+
 	LoadControlSettings(VGUI2_ROOT_DIR "MotdPanel.res");
 	SetVisible(false);
 }
@@ -125,6 +133,8 @@ void CMotdPanel::ChangePage(size_t iNewPage){;
 	m_pMessage->SetText(m_aryClipedPage[m_iNowPage].c_str());	
 }
 void CMotdPanel::ShowMotd(){
+	if (gCVars.pMotd->value < 1)
+		return;
 	LoadMissionBrief();
 	BuildPage();
 	if (m_aryClipedPage.size() > 0) {
