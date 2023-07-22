@@ -72,7 +72,7 @@
 	}
 	"HealthBar"
 	{
-		"ControlName"		"ImagePanel"
+		"ControlName"		"ImageClipPanel"
 		"fieldName"		"HealthBar"
 		"xpos"		"55"
 		"ypos"		"cs-0.5"
@@ -134,7 +134,7 @@
 	}
 	"ArmorBar"
 	{
-		"ControlName"		"ImagePanel"
+		"ControlName"		"ImageClipPanel"
 		"fieldName"		"ArmorBar"
 		"xpos"		"169"
 		"ypos"		"cs-0.5"
