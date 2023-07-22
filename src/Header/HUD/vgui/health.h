@@ -52,11 +52,11 @@ private:
 
 	vgui::ImagePanel* m_HealthIcon = nullptr;
 	vgui::Label* m_pHealthLable = nullptr;
-	vgui::ImagePanel* m_pHealthImagePanel = nullptr;
+	vgui::ImageClipPanel* m_pHealthImagePanel = nullptr;
 	vgui::ImagePanel* m_HealthImageBackround = nullptr;
 
 	vgui::ImagePanel* m_ArmorIcon = nullptr;
-	vgui::ImagePanel* m_pArmorImagePanel = nullptr;
+	vgui::ImageClipPanel* m_pArmorImagePanel = nullptr;
 	vgui::Label* m_pArmorLable = nullptr;
 	vgui::ImagePanel* m_ArmorImageBackround = nullptr;
 

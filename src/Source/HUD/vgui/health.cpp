@@ -9,6 +9,7 @@
 #include <VGUI2/tga_image.h>
 #include <vgui_controls/Label.h>
 #include "vgui_controls/ImagePanel.h"
+#include "vgui_controls/ImageClipPanel.h"
 #include <vgui_controls/AnimationController.h>
 
 #include "local.h"
@@ -34,12 +35,12 @@ CHealthPanel::CHealthPanel()
 
 	m_HealthIcon = new ImagePanel(this, "HealthIcon");
 	m_pHealthLable = new Label(this, "Health", "0");
-	m_pHealthImagePanel = new ImagePanel(this, "HealthBar");
+	m_pHealthImagePanel = new ImageClipPanel(this, "HealthBar");
 	m_HealthImageBackround = new ImagePanel(this, "HealthBackground");
 
 	m_ArmorIcon = new ImagePanel(this, "ArmorIcon");
 	m_pArmorLable = new Label(this, "Armor", "0");
-	m_pArmorImagePanel = new ImagePanel(this, "ArmorBar");
+	m_pArmorImagePanel = new ImageClipPanel(this, "ArmorBar");
 	m_ArmorImageBackround = new ImagePanel(this, "ArmorBackground");
 
 	m_pLongJumpImagePanel = new ImagePanel(this, "Longjump");
