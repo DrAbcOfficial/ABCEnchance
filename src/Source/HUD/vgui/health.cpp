@@ -14,7 +14,6 @@
 #include "local.h"
 #include <vguilocal.h>
 #include "Viewport.h"
-#include "mymathlib.h"
 
 #include "health.h"
 #include <hud.h>
@@ -148,14 +147,15 @@ void CHealthPanel::SetHealthVisible(bool state) {
 
 Color CHealthPanel::GetDifferColor(float flRatio, Color c1, Color c2){
 	Color color;
-	float h1, h2, s, v;
-	mathlib::RGBToHSV(c1.r(), c1.g(), c1.b(), h1, s, v);
-	mathlib::RGBToHSV(c2.r(), c2.g(), c2.b(), h2, s, v);
-	h1 = fmodf(h2 + (h1 - h2) * flRatio, 360.0f);
-	if (h1 < 0)
-		h1 += 360.0f;
-	int r, g, b;
-	mathlib::HSVToRGB(h1, s, v, r, g, b);
-	color.SetColor(r, g, b, c1.a());
+	Vector v1 = { (float)c1.r() / 255.0f,(float)c1.g() / 255.0f ,(float)c1.b() / 255.0f };
+	Vector v2 = { (float)c2.r() / 255.0f,(float)c2.g() / 255.0f ,(float)c2.b() / 255.0f };
+	RGBtoHSV(v1, v1);
+	RGBtoHSV(v2, v2);
+	v1.x = fmodf(v2.x + (v1.x - v2.x) * flRatio, 360.0f);
+	if (v1.x < 0)
+		v1.x += 360.0f;
+	HSVtoRGB(v1, v1);
+	v1 *= 255;
+	color.SetColor(v1.x, v1.y, v1.z, c1.a());
 	return color;
 }
