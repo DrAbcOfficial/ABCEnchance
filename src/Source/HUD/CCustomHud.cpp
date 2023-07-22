@@ -502,6 +502,8 @@ void CCustomHud::HUD_VidInit(void){
 }
 void CCustomHud::HUD_Draw(float flTime){
 	SetBaseHudActivity();
+	CheckSpectator();
+
 	m_HudDeathMsg.Draw(flTime);
 	m_HudRadar.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
@@ -621,9 +623,6 @@ void CCustomHud::HUD_TxferPredictionData(struct entity_state_s* ps, const struct
 }
 void CCustomHud::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {
 }
-bool CCustomHud::IsInSpectate() {
-	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
-}
 bool CCustomHud::HasSuit() {
 	return (m_iWeaponBits & (1 << WEAPON_SUIT)) != 0;
 }
@@ -637,13 +636,21 @@ bool CCustomHud::IsHudHide(int HideToken) {
 bool CCustomHud::IsHudEnable() {
 	return gCVars.pDynamicHUD->value > 0;
 }
+bool CCustomHud::IsInSpectate() {
+	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
+}
 bool CCustomHud::IsSpectator(int client){
 	return m_SpectatePlayer[client];
 }
 void CCustomHud::SetSpectator(int client, bool value){
 	m_SpectatePlayer[client] = value;
-	if (client == gEngfuncs.GetLocalPlayer()->index)
-		g_pViewPort->SetSpectate(value);
+}
+void CCustomHud::CheckSpectator(){
+	float newuser = gEngfuncs.GetLocalPlayer()->curstate.iuser1;
+	static float iuser;
+	if(iuser != newuser)
+		g_pViewPort->SetSpectate(newuser > 0);
+	iuser = newuser;
 }
 bool CCustomHud::IsMouseVisible(){
 	if(g_pViewPort)
