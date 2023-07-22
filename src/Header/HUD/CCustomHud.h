@@ -71,8 +71,11 @@ public:
 	void HudHideCallBack(int hidetoken);
 	bool IsHudHide(int HideToken);
 	bool IsHudEnable();
+
 	bool IsSpectator(int client);
 	void SetSpectator(int client, bool value);
+	void CheckSpectator();
+
 	bool IsMouseVisible();
 	bool IsTextMenuOpening();
 	bool SelectTextMenuItem(int slot);
