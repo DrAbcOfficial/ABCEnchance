@@ -13,9 +13,9 @@
     <LocalDebuggerWorkingDirectory>$(MetaHookGameDirectory)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommand>svencoop.exe</LocalDebuggerCommand>
+    <LocalDebuggerCommand>$(MetaHookLaunchName)</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments />
-    <LocalDebuggerWorkingDirectory>D:\SteamLibrary\steamapps\common\Sven Co-op\</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerCommandArguments>$(MetaHookLaunchCommnand)</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>$(MetaHookGameDirectory)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
 </Project>
