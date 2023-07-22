@@ -27,7 +27,7 @@ class ImageClipPanel : public ImagePanel
 public:
 	ImageClipPanel(Panel *parent, const char *name);
 	virtual Color GetDrawColor(void) override;
-	void SetDrawColor(Color inColor);
+	virtual void SetDrawColor(Color inColor) override;
 
 	int GetOldWide();
 	int GetOldTall();

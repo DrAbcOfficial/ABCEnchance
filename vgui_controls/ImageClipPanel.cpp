@@ -77,6 +77,20 @@ void ImageClipPanel::PaintBackground(){
 void ImageClipPanel::ApplySettings(KeyValues *inResourceData){
 	BaseClass::ApplySettings(inResourceData);
 	GetSize(m_iOldWide, m_iOldTall);
+	const char* pszDrawColor = inResourceData->GetString("drawcolor", "");
+	if (*pszDrawColor){
+		int r = 255, g = 255, b = 255, a = 255;
+		int len = Q_strlen(pszDrawColor) + 1;
+		m_pszDrawColorName = new char[len];
+		Q_strncpy(m_pszDrawColorName, pszDrawColor, len);
+
+		if (sscanf(pszDrawColor, "%d %d %d %d", &r, &g, &b, &a) >= 3)
+			m_DrawColor = Color(r, g, b, a);
+		else{
+			IScheme* pScheme = scheme()->GetIScheme(GetScheme());
+			m_DrawColor = pScheme->GetColor(pszDrawColor, Color(255, 255, 255, 255));
+		}
+	}
 }
 
 void vgui::ImageClipPanel::SetImageSize(int wide, int tall){
