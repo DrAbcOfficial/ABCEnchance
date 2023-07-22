@@ -5,16 +5,10 @@
 #include <vgui_controls/ImagePanel.h>
 #include "IViewportPanel.h"
 
-class CGIndicatorItem : public vgui::ImagePanel {
+class CGIndicatorItem {
 public:
-	DECLARE_CLASS_SIMPLE(CGIndicatorItem, vgui::ImagePanel);
-
-	CGIndicatorItem(vgui::Panel* parent, const char* img);
 	void SetExpire(float fl);
 	bool IsExpire();
-	bool IsValid();
-	void Update();
-
 	cl_entity_t* GetEnt();
 	void SetEnt(cl_entity_t* ent);
 private:
@@ -38,12 +32,13 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 	virtual void OnThink() override;
+	virtual void Paint() override;
 
 	void AddEntity(cl_entity_s* ent, const char* modelname);
 private:
 	std::vector<CGIndicatorItem*> m_aryImages;
 	Color m_cImageDrawColor;
-	char m_szImageName[256];
+	int m_iImageTexture;
 	int m_iImageWide;
 	int m_iImageTall;
 };

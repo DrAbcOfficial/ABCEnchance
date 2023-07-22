@@ -20,39 +20,12 @@
 
 #define GRENADE_MODEL_PATH "models/w_grenade.mdl"
 
-CGIndicatorItem::CGIndicatorItem(vgui::Panel* parent, const char* name) : BaseClass(parent, name){
-}
 void CGIndicatorItem::SetExpire(float fl) {
 	m_flExpire = fl;
 }
 bool CGIndicatorItem::IsExpire() {
 	float flTime = ClientTime();
 	return m_flExpire <= flTime;
-}
-bool CGIndicatorItem::IsValid() {
-	return GetAlpha() > 0 && m_pEnt;
-}
-void CGIndicatorItem::Update() {
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	if (!local)
-		return;
-	//视角角度
-	CVector vecView;
-	gEngfuncs.GetViewAngles(vecView);
-	mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
-	//计算我和目标的相对偏移
-	CVector vecLength;
-	mathlib::VectorSubtract(m_pEnt->curstate.origin, local->curstate.origin, vecLength);
-	vecLength = vecLength.Normalize();
-	float angledotResult = mathlib::DotProduct(vecLength, vecView);
-	//cos 60
-	if (angledotResult > 0.5) {
-		CVector vecHUD;
-		VEC_WorldToScreen(m_pEnt->curstate.origin, vecHUD);
-		Vector vec = { vecHUD.x - GetWide() / 2, vecHUD.y - GetTall(), 0 };
-		vgui::GetAnimationController()->RunAnimationCommand(this, "position", vec,
-			0.0f, 0.01f, vgui::AnimationController::INTERPOLATOR_LINEAR);
-	}
 }
 cl_entity_t* CGIndicatorItem::GetEnt(){
 	return m_pEnt;
@@ -81,10 +54,7 @@ const char* CGenadeIndicatorPanel::GetName() {
 }
 void CGenadeIndicatorPanel::Reset() {
 	ShowPanel(true);
-	for (auto it = m_aryImages.begin(); it != m_aryImages.end();) {
-		(*it)->DeletePanel();
-		it = m_aryImages.erase(it);
-	}
+	m_aryImages.clear();
 }
 void CGenadeIndicatorPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -94,8 +64,9 @@ void CGenadeIndicatorPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 void CGenadeIndicatorPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
 	const char* img = inResourceData->GetString("image", nullptr);
-	if (img)
-		Q_strcpy(m_szImageName, img);
+	if (img) {
+		VGUI_CREATE_NEWTGA_TEXTURE(m_iImageTexture, img);
+	}
 	m_iImageWide = inResourceData->GetInt("imagewide", 24);
 	m_iImageTall = inResourceData->GetInt("imagetall", 24);
 }
@@ -117,16 +88,41 @@ void CGenadeIndicatorPanel::OnThink() {
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	for (auto it = m_aryImages.begin(); it != m_aryImages.end(); ) {
 		CGIndicatorItem* img = (*it);
-		if (!img || !img->IsValid()) {
-			img->DeletePanel();
+		if (!img || !img->GetEnt() || img->IsExpire()) {
+			delete img;
 			it = m_aryImages.erase(it);
 			continue;
 		}
-		if(img->IsExpire())
-			vgui::GetAnimationController()->RunAnimationCommand(img, "alpha", 0, 0.0f, 0.15f, vgui::AnimationController::INTERPOLATOR_LINEAR);
-		else
-			img->Update();
 		it++;
+	}
+}
+void CGenadeIndicatorPanel::Paint(){
+	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+	if (!local)
+		return;
+	//视角角度
+	CVector vecView;
+	gEngfuncs.GetViewAngles(vecView);
+	mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
+	for (auto it = m_aryImages.begin(); it != m_aryImages.end(); it++) {
+		CGIndicatorItem* img = (*it);
+		//计算我和目标的相对偏移
+		CVector vecLength;
+		mathlib::VectorSubtract(img->GetEnt()->curstate.origin, local->curstate.origin, vecLength);
+		vecLength = vecLength.Normalize();
+		float angledotResult = mathlib::DotProduct(vecLength, vecView);
+		//cos 60
+		if (angledotResult > 0.5) {
+			CVector vecHUD;
+			VEC_WorldToScreen(img->GetEnt()->curstate.origin, vecHUD);
+			int x1 = vecHUD.x - m_iImageWide / 2;
+			int y1 = vecHUD.y - m_iImageTall / 2;
+			int x2 = vecHUD.x + m_iImageWide / 2;
+			int y2 = vecHUD.y + m_iImageTall / 2;
+			vgui::surface()->DrawSetTexture(m_iImageTexture);
+			vgui::surface()->DrawSetColor(m_cImageDrawColor);
+			vgui::surface()->DrawTexturedRect(x1, y1, x2, y2);
+		}
 	}
 }
 void CGenadeIndicatorPanel::AddEntity(cl_entity_s* ent, const char* modelname){
@@ -146,10 +142,7 @@ void CGenadeIndicatorPanel::AddEntity(cl_entity_s* ent, const char* modelname){
 			return true;
 		return  false;
 		})) {
-		CGIndicatorItem* img = new CGIndicatorItem(this, "Grenade");
-		img->SetImage(m_szImageName);
-		img->SetDrawColor(m_cImageDrawColor);
-		img->SetSize(m_iImageWide, m_iImageTall);
+		CGIndicatorItem* img = new CGIndicatorItem();
 		img->SetExpire(ClientTime() + gCVars.pGrenadeInicatorTime->value);
 		img->SetEnt(ent);
 		m_aryImages.push_back(img);
