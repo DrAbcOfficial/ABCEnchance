@@ -45,7 +45,7 @@ void CFlashLightPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	SetBgColor(GetSchemeColor("FlashLight.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pMessage->SetBgColor(GetSchemeColor("FlashLight.TextBgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme));
 	m_pMessage->SetFgColor(GetSchemeColor("FlashLight.TextFgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
-
+	m_cIconColor = GetSchemeColor("FlashLight.IconFgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
 }
 void CFlashLightPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
@@ -85,10 +85,12 @@ void CFlashLightPanel::SetFlashBattery(int battery){
 	float flRatio = static_cast<float>(m_iBattery) / 100.0f;
 	m_pPowerImage->SetWide(flRatio * m_pOffImage->GetWide());
 	//120 ~ 0 Green To Red
-	Vector vecColor = { flRatio * 120.0f, 1.0f, 1.0f };
+	Vector vecColor = { (float)m_cIconColor.r() / 255.0f, (float)m_cIconColor.g() / 255.0f, (float)m_cIconColor.b() / 255.0f };
+	RGBtoHSV(vecColor, vecColor);
+	vecColor.x *= flRatio;
 	HSVtoRGB(vecColor, vecColor);
 	vecColor *= 255;
-	m_pPowerImage->SetDrawColor(Color(vecColor.x, vecColor.y, vecColor.z, m_pPowerImage->GetAlpha()));
+	m_pPowerImage->SetDrawColor(Color(vecColor.x, vecColor.y, vecColor.z, m_cIconColor.a()));
 	char temp[32];
 	snprintf(temp, sizeof(temp), "%d%%", m_iBattery);
 	m_pMessage->SetText(temp);

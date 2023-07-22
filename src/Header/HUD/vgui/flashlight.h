@@ -36,6 +36,8 @@ private:
 	vgui::ImagePanel* m_pOnImage = nullptr;
 	vgui::ImageClipPanel* m_pPowerImage = nullptr;
 
+	Color m_cIconColor;
+
 	int m_iBattery = 0;
 	float m_flFadeAnimateTime = 0;
 };
