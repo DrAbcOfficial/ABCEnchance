@@ -11,8 +11,6 @@
 #include "local.h"
 #include "vguilocal.h"
 
-#include "mymathlib.h"
-
 #include "flashlight.h"
 #include "Viewport.h"
 
