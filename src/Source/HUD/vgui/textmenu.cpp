@@ -75,7 +75,7 @@ void CTextMenu::SetContent(const char* szMenu){
 
 
 void CTextMenu::StartFade(bool state){
-	SetAlpha(state ? 1 : 255);
+	SetAlpha(state ? 0 : 255);
 	ShowPanel(true);
 	vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", state ? 255 : 0, 0.0f, m_flFadeAnimateTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
