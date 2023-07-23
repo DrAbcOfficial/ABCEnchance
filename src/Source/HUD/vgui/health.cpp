@@ -120,8 +120,8 @@ void CHealthPanel::SetArmor(int armor){
 	if (armor < gCVars.pDangerArmor->value) {
 		float flRatio = (float)armor / gCVars.pDangerHealth->value;
 		m_pArmorImagePanel->SetDrawColor(GetDifferColor(flRatio, m_pArmorImagePanel->GetDrawColor(), m_cArmorDanger));
-		m_pArmorLable->SetFgColor(GetDifferColor(flRatio, m_pArmorLable->GetFgColor(), m_cHealthDanger));
-		m_ArmorIcon->SetDrawColor(GetDifferColor(flRatio, m_ArmorIcon->GetDrawColor(), m_cHealthDanger));
+		m_pArmorLable->SetFgColor(GetDifferColor(flRatio, m_pArmorLable->GetFgColor(), m_cArmorDanger));
+		m_ArmorIcon->SetDrawColor(GetDifferColor(flRatio, m_ArmorIcon->GetDrawColor(), m_cArmorDanger));
 	}
 	else {
 		m_pArmorLable->SetFgColor(m_cRestoredArmorLabel);
