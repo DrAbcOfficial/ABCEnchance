@@ -90,7 +90,7 @@ void CFlashLightPanel::SetFlashBattery(int battery){
 	vecColor *= 255;
 	m_pPowerImage->SetDrawColor(Color(vecColor.x, vecColor.y, vecColor.z, m_cIconColor.a()));
 	char temp[32];
-	snprintf(temp, sizeof(temp), "%d%%", m_iBattery);
+	Q_snprintf(temp, sizeof(temp), "%d%%", m_iBattery);
 	m_pMessage->SetText(temp);
 	ShowPanel(true);
 }
