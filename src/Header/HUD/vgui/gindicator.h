@@ -32,7 +32,7 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 	virtual void OnThink() override;
-	virtual void Paint() override;
+	virtual void PaintBackground() override;
 
 	void AddEntity(cl_entity_s* ent, const char* modelname);
 private:

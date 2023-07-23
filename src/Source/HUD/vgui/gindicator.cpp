@@ -96,7 +96,7 @@ void CGenadeIndicatorPanel::OnThink() {
 		it++;
 	}
 }
-void CGenadeIndicatorPanel::Paint(){
+void CGenadeIndicatorPanel::PaintBackground(){
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	if (!local)
 		return;
