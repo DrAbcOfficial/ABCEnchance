@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 #include <metahook.h>
 
 #include <vgui/IImage.h>
@@ -15,6 +14,7 @@
 #include "vgui_controls/ImagePanel.h"
 #include "vote.h"
 #include "Viewport.h"
+#include "BaseUI.h"
 
 #include "plugins.h"
 #include <regex>
@@ -51,6 +51,12 @@ CVotePanel::CVotePanel()
 	SetVisible(false);
 
 	m_pHudVote = CREATE_CVAR("cl_hud_vote", "1", FCVAR_VALUE, nullptr);
+	m_pHudVoteKeyYes = CREATE_CVAR("cl_hud_votekey_yes", "F1", FCVAR_VALUE, [](cvar_t* cvar) {
+		g_pViewPort->GetVotePanel()->m_iYes = gameuifuncs->Key_KeyStringToKeyNum(cvar->string);
+	});
+	m_pHudVoteKeyNo = CREATE_CVAR("cl_hud_votekey_no", "F2", FCVAR_VALUE, [](cvar_t* cvar) {
+		g_pViewPort->GetVotePanel()->m_iNo = gameuifuncs->Key_KeyStringToKeyNum(cvar->string);
+	});
 }
 const char* CVotePanel::GetName(){
 	return VIEWPORT_VOTE_NAME;
@@ -58,6 +64,8 @@ const char* CVotePanel::GetName(){
 void CVotePanel::Reset(){
 	if (IsVisible())
 		ShowPanel(false);
+	m_iYes = gameuifuncs->Key_KeyStringToKeyNum(m_pHudVoteKeyYes->string);
+	m_iNo = gameuifuncs->Key_KeyStringToKeyNum(m_pHudVoteKeyNo->string);
 }
 void CVotePanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -86,18 +94,15 @@ void CVotePanel::SetParent(vgui::VPANEL parent){
 }
 bool CVotePanel::KeyCodeTyped(int code){
 	if (IsVisible()) {
-		switch (code){
-			case K_F1: {
-				ServerCmd("voteyes");
-				ShowPanel(false);
-				return false;
-			}
-			case K_F2: {
-				ServerCmd("voteno");
-				ShowPanel(false);
-				return false;
-			}
-			default:break;
+		if (code == m_iYes) {
+			ServerCmd("voteyes");
+			ShowPanel(false);
+			return false;
+		}
+		else if (code == m_iNo) {
+			ServerCmd("voteno");
+			ShowPanel(false);
+			return false;
 		}
 	}
 	return true;
@@ -118,6 +123,15 @@ void CVotePanel::StartVote(char* szContent, char* szYes, char* szNo, int iVoteTy
 	std::string strContent = szContent;
 	std::string szPatten;
 	std::string szToken;
+
+#define BUFSIZE 256
+	wchar_t buf[BUFSIZE];
+	Q_UTF8ToUnicode(gameuifuncs->Key_NameForKey(m_iYes), buf, BUFSIZE);
+	std::wstring wszYes = buf;
+	wszYes += L" ";
+	Q_UTF8ToUnicode(gameuifuncs->Key_NameForKey(m_iNo), buf, BUFSIZE);
+	std::wstring wszNo = buf;
+	wszNo += L" ";
 	switch (iVoteType){
 		case KILL: {
 			szPatten = "Would you like to kill \"(.*)\"\\?";
@@ -142,22 +156,30 @@ void CVotePanel::StartVote(char* szContent, char* szYes, char* szNo, int iVoteTy
 		case SURVIVAL:
 		case DONKNOW:{
 			m_pContentLable->SetText(szContent);
-			m_pYesLable->SetText(VOTE_YES_LOCALIZE_TOKEN);
-			m_pNoLable->SetText(VOTE_NO_LOCALIZE_TOKEN);
+			wszYes += vgui::localize()->Find(VOTE_YES_LOCALIZE_TOKEN);
+			m_pYesLable->SetText(wszYes.c_str());
+			wszNo += vgui::localize()->Find(VOTE_NO_LOCALIZE_TOKEN);
+			m_pNoLable->SetText(wszNo.c_str());
 			break;
 		}
 		case CUSTOM:
 		default: {
 			m_pContentLable->SetText(szContent);
-			m_pYesLable->SetText(szYes);
-			m_pNoLable->SetText(szNo);
+			Q_UTF8ToUnicode(szYes, buf, BUFSIZE);
+			wszYes += buf;
+			m_pYesLable->SetText(wszYes.c_str());
+			Q_UTF8ToUnicode(szNo, buf, BUFSIZE);
+			wszNo += buf;
+			m_pNoLable->SetText(wszNo.c_str());
 			break;
 		}
 	}
 	if (iVoteType >= KILL && iVoteType <= MAP) {
 		VotePattern(strContent, szPatten, szToken);
-		m_pYesLable->SetText(VOTE_YES_LOCALIZE_TOKEN);
-		m_pNoLable->SetText(VOTE_NO_LOCALIZE_TOKEN);
+		wszYes += vgui::localize()->Find(VOTE_YES_LOCALIZE_TOKEN);
+		m_pYesLable->SetText(wszYes.c_str());
+		wszNo += vgui::localize()->Find(VOTE_NO_LOCALIZE_TOKEN);
+		m_pNoLable->SetText(wszNo.c_str());
 	}
 	ShowPanel(true);
 }

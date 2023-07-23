@@ -2,7 +2,7 @@
 #define CVOTEPANEL_H
 #include <string>
 
-#include <vgui_controls/Frame.h>
+#include <vgui_controls/EditablePanel.h>
 #include "IViewportPanel.h"
 
 namespace vgui {
@@ -29,6 +29,9 @@ public:
 	void EndVote();
 	bool IsVoteEnable();
 	bool KeyCodeTyped(int code);
+
+	int m_iYes;
+	int m_iNo;
 private:
 	vgui::Label* m_pTitleLable = nullptr;
 	vgui::Panel* m_pContentPanel = nullptr;
@@ -37,7 +40,6 @@ private:
 	vgui::Label* m_pNoLable = nullptr;
 	vgui::ImagePanel* m_pYesIconImagePanel = nullptr;
 	vgui::ImagePanel* m_pNoImagePanel = nullptr;
-
 	enum VoteType {
 		NONE = 0,
 		KILL = 1,
@@ -50,5 +52,7 @@ private:
 	};
 
 	cvar_t* m_pHudVote = nullptr;
+	cvar_t* m_pHudVoteKeyYes = nullptr;
+	cvar_t* m_pHudVoteKeyNo = nullptr;
 };
 #endif
