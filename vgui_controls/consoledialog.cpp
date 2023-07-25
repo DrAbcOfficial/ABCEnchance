@@ -338,6 +338,8 @@ CConsolePanel::CConsolePanel(Panel* pParent, const char* pName, bool bStatusVers
 	m_pEntry->SendNewLine(true);
 	pCompletionList->SetFocusPanel(m_pEntry);
 
+	m_pIME = new Label(this, "ConsoleIME", "");
+
 	// need to set up default colors, since ApplySchemeSettings won't be called until later
 	m_PrintColor = Color(216, 222, 211, 255);
 	m_DPrintColor = Color(196, 181, 80, 255);
@@ -373,6 +375,11 @@ void CConsolePanel::OnThink()
 
 	if (!IsVisible())
 		return;
+
+	//Update IME
+	wchar_t buf[8];
+	input()->GetIMELanguageShortCode(buf, 8);
+	m_pIME->SetText(buf);
 
 	if (!m_pCompletionList->IsVisible())
 		return;
@@ -873,17 +880,23 @@ void CConsolePanel::PerformLayout()
 		const int entryInset = 4;
 		const int submitWide = 64;
 		const int submitInset = 7; // x inset to pull the submit button away from the frame grab
+		const int imeWide = 48;
+		const int imeInset = 3;
 
 		m_pHistory->SetPos(inset, inset + topHeight);
 		m_pHistory->SetSize(wide - (inset * 2), tall - (entryInset * 2 + inset * 2 + topHeight + entryHeight));
 		m_pHistory->InvalidateLayout();
 
 		int nSubmitXPos = wide - (inset + submitWide + submitInset);
-		m_pSubmit->SetPos(nSubmitXPos, tall - (entryInset * 2 + entryHeight));
+		int nYPos = tall - (entryInset * 2 + entryHeight);
+		m_pSubmit->SetPos(nSubmitXPos, nYPos);
 		m_pSubmit->SetSize(submitWide, entryHeight);
 
-		m_pEntry->SetPos(inset, tall - (entryInset * 2 + entryHeight));
+		m_pEntry->SetPos(inset, nYPos);
 		m_pEntry->SetSize(nSubmitXPos - entryInset - 2 * inset, entryHeight);
+
+		m_pIME->SetPos(nSubmitXPos - entryInset - inset - imeInset - imeWide, nYPos);
+		m_pIME->SetSize(imeWide, entryHeight);
 	}
 	else
 	{
@@ -959,6 +972,9 @@ void CConsolePanel::ApplySchemeSettings(IScheme* pScheme)
 	m_PrintColor = GetSchemeColor("Console.TextColor", pScheme);
 	m_ErrorPrintColor = GetSchemeColor("Console.ErrorTextColor", pScheme);
 	m_WarnPrintColor = GetSchemeColor("Console.WarnColor", pScheme);
+
+	m_pIME->SetBgColor(GetSchemeColor("Console.IMEBgColor", GetSchemeColor("Console.TextAreaColor", pScheme), pScheme));
+	m_pIME->SetFgColor(GetSchemeColor("Console.IMEFgColor", m_PrintColor, pScheme));
 
 	m_DPrintColor = GetSchemeColor("Console.DevTextColor", pScheme);
 	m_pHistory->SetFont(pScheme->GetFont("ConsoleFont", IsProportional()));
