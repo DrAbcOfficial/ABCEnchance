@@ -209,6 +209,7 @@ const char* CCrosshairPanel::GetName() {
 }
 void CCrosshairPanel::Reset() {
 	m_pSprImage->Reset();
+	m_pHandledWeapon = nullptr;
 }
 
 void CCrosshairPanel::ShowPanel(bool state) {
