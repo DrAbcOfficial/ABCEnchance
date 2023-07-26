@@ -51,7 +51,7 @@ private:
 	cvar_t* pDynamicCrossHairD = nullptr;
 
 	vgui::CSPRImage* m_pSprImage;
-	WEAPON* m_pHandledWeapon;
+	WEAPON* m_pHandledWeapon = nullptr;
 
 	void SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc);
 	void DrawDefaultCrosshair(int x, int y);
