@@ -26,6 +26,8 @@ public:
 	virtual bool IsVisible() override;
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
+
+	void SetWeapon(WEAPON* weapon);
 private:
 	cvar_t* pCvarDefaultCrosshair = nullptr;
 
@@ -48,6 +50,7 @@ private:
 	cvar_t* pDynamicCrossHairD = nullptr;
 
 	vgui::CSPRImage* m_pSprImage;
+	WEAPON* m_pHandledWeapon;
 
 	void SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc);
 	void DrawDefaultCrosshair(int x, int y);

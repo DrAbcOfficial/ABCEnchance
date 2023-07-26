@@ -208,7 +208,6 @@ const char* CCrosshairPanel::GetName() {
 	return VIEWPORT_CROSSHAIR_NAME;
 }
 void CCrosshairPanel::Reset() {
-	ShowPanel(true);
 	m_pSprImage->Reset();
 }
 
@@ -239,27 +238,27 @@ void CCrosshairPanel::SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc) {
 	m_pSprImage->SetSize(w, h);
 	m_pSprImage->SetRect(hRc->left, hRc->right, hRc->top, hRc->bottom);
 }
+void CCrosshairPanel::SetWeapon(WEAPON* weapon) {
+	m_pHandledWeapon = weapon;
+	if (!m_pHandledWeapon || !(m_pHandledWeapon->iState & 1) || m_pHandledWeapon->iId <= 0) {
+		ShowPanel(false);
+		return;
+	}
+	ShowPanel(true);
+}
 void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
-	WEAPON* pWeapon = g_pViewPort->GetCurWeapon();
-	if (!pWeapon || pWeapon->iId <= 0) {
-		m_pSprImage->SetTextureID(-1);
-		return;
-	}
-	else if (!(pWeapon->iState & (1 << 0))) {
-		return;
-	}
-	bool bOnTarget = pWeapon->iState & (1 << 1);
+	bool bOnTarget = m_pHandledWeapon->iState & (1 << 1);
 	if (m_hfov >= gCVars.pCvarDefaultFOV->value) {
-		if (bOnTarget && pWeapon->hAutoaim)
-			SetCrosshairSPR(x, y, pWeapon->hAutoaim, &pWeapon->rcAutoaim);
+		if (bOnTarget && m_pHandledWeapon->hAutoaim)
+			SetCrosshairSPR(x, y, m_pHandledWeapon->hAutoaim, &m_pHandledWeapon->rcAutoaim);
 		else
-			SetCrosshairSPR(x, y, pWeapon->hCrosshair, &pWeapon->rcCrosshair);
+			SetCrosshairSPR(x, y, m_pHandledWeapon->hCrosshair, &m_pHandledWeapon->rcCrosshair);
 	}
 	else {
-		if (bOnTarget && pWeapon->hZoomedAutoaim)
-			SetCrosshairSPR(x, y, pWeapon->hZoomedAutoaim, &pWeapon->rcZoomedAutoaim);
+		if (bOnTarget && m_pHandledWeapon->hZoomedAutoaim)
+			SetCrosshairSPR(x, y, m_pHandledWeapon->hZoomedAutoaim, &m_pHandledWeapon->rcZoomedAutoaim);
 		else
-			SetCrosshairSPR(x, y, pWeapon->hZoomedCrosshair, &pWeapon->rcZoomedCrosshair);
+			SetCrosshairSPR(x, y, m_pHandledWeapon->hZoomedCrosshair, &m_pHandledWeapon->rcZoomedCrosshair);
 	}
 	m_pSprImage->Paint();
 }
