@@ -247,6 +247,8 @@ void CCrosshairPanel::SetWeapon(WEAPON* weapon) {
 	ShowPanel(true);
 }
 void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
+	if (!m_pHandledWeapon)
+		return;
 	bool bOnTarget = m_pHandledWeapon->iState & (1 << 1);
 	if (m_hfov >= gCVars.pCvarDefaultFOV->value) {
 		if (bOnTarget && m_pHandledWeapon->hAutoaim)
