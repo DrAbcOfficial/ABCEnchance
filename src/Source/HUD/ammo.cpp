@@ -134,7 +134,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 		if(gCustomHud.m_iPlayerHealth > 0)
 			m_HudCustomAmmo.m_bAcceptDeadMessage = false;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
-		if (!pWeapon)
+		if (!pWeapon || (iState & 1) == 0)
 			return m_pfnCurWeapon(pszName, iSize, pbuf);
 		//更新弹匣信息
 		pWeapon->iClip = iClip;
