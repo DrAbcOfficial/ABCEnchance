@@ -290,6 +290,7 @@ WEAPON* CViewport::GetCurWeapon(){
 }
 void CViewport::SetCurWeapon(WEAPON* weapon){
 	m_pAmmoPanel->SetWeapon(weapon);
+	m_pCrossHairPanel->SetWeapon(weapon);
 }
 void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	switch (type)
