@@ -206,39 +206,43 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 		BEGIN_READ(pbuf, iSize);
 		CViewport::HUDNOTICE msg_dest = static_cast<CViewport::HUDNOTICE>(READ_BYTE());
 #define BUFFER_SIZE 256
-		static auto findLocalize = [](char* str, char* outbuffer) {
-			if (str[0] == '#')
-				Q_UnicodeToUTF8(vgui::localize()->Find(str), outbuffer, BUFFER_SIZE);
-			else
-				Q_strcpy(outbuffer, str);
+		static auto findLocalize = [](std::string& str) {
+			if (str.front() == '#') {
+				const wchar_t* find = vgui::localize()->Find(str.c_str());
+				if (find) {
+					char buffer[BUFFER_SIZE];
+					Q_UnicodeToUTF8(find, buffer, BUFFER_SIZE);
+					str = buffer;
+				}	
+			}
 		};
 		int type = 0;
-		char msg[BUFFER_SIZE];
-		findLocalize(READ_STRING(), msg);
-		char sstr1[BUFFER_SIZE];
-		findLocalize(READ_STRING(), sstr1);
-		if (strlen(sstr1) <= 0)
+		std::string msg = READ_STRING();
+		std::string sstr1 = READ_STRING();
+		std::string sstr2 = READ_STRING();
+		std::string sstr3 = READ_STRING();
+		std::string sstr4 = READ_STRING();
+		findLocalize(msg);
+		findLocalize(sstr1);
+		if (sstr1.size() > 0)
 			type++;
-		char sstr2[BUFFER_SIZE];
-		findLocalize(READ_STRING(), sstr2);
-		if (strlen(sstr2) <= 0)
+		findLocalize(sstr2);
+		if (sstr2.size() > 0)
 			type++;
-		char sstr3[BUFFER_SIZE];
-		findLocalize(READ_STRING(), sstr3);
-		if (strlen(sstr3) <= 0)
+		findLocalize(sstr3);
+		if (sstr3.size() > 0)
 			type++;
-		char sstr4[BUFFER_SIZE];
-		findLocalize(READ_STRING(), sstr4);
-		if (strlen(sstr4) <= 0)
+		findLocalize(sstr4);
+		if (sstr4.size() > 0)
 			type++;
 		char buffer[BUFFER_SIZE * 4];
 #undef BUFFER_SIZE
 		std::string szBuf;
 		switch (type) {
-		case 1:sprintf_s(buffer, msg, sstr1); szBuf = buffer; break;
-		case 2:sprintf_s(buffer, msg, sstr1, sstr2); szBuf = buffer; break;
-		case 3:sprintf_s(buffer, msg, sstr1, sstr2, sstr3); szBuf = buffer; break;
-		case 4:sprintf_s(buffer, msg, sstr1, sstr2, sstr3, sstr4); szBuf = buffer; break;
+		case 1:Q_snprintf(buffer, msg.c_str(), sstr1.c_str()); szBuf = buffer; break;
+		case 2:Q_snprintf(buffer, msg.c_str(), sstr1.c_str(), sstr2.c_str()); szBuf = buffer; break;
+		case 3:Q_snprintf(buffer, msg.c_str(), sstr1.c_str(), sstr2.c_str(), sstr3.c_str()); szBuf = buffer; break;
+		case 4:Q_snprintf(buffer, msg.c_str(), sstr1.c_str(), sstr2.c_str(), sstr3.c_str(), sstr4.c_str()); szBuf = buffer; break;
 		case 0:
 		default:szBuf = msg; break;
 		}
