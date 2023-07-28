@@ -241,10 +241,12 @@ void CCrosshairPanel::SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc) {
 }
 void CCrosshairPanel::SetWeapon(WEAPON* weapon) {
 	m_pHandledWeapon = weapon;
-	if (!m_pHandledWeapon || !(m_pHandledWeapon->iState & 1) || m_pHandledWeapon->iId <= 0) {
+	if (!m_pHandledWeapon || m_pHandledWeapon->iId <= 0) {
 		ShowPanel(false);
 		return;
 	}
+	else if (!(m_pHandledWeapon->iState & 1))
+		return;
 	ShowPanel(true);
 }
 void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
