@@ -80,7 +80,6 @@ public:
 	bool IsTextMenuOpening();
 	bool SelectTextMenuItem(int slot);
 	void SetMouseVisible(bool state);
-	bool TextDeathMsg(const char* pszName, int iSize, void* pbuf);
 
 	WEAPON* GetCurWeapon();
 	void SetCurWeapon(WEAPON* weapon);

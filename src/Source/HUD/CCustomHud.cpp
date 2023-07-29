@@ -30,9 +30,7 @@
 
 #include "ammo.h"
 #include "indicator.h"
-#include "deathmsg.h"
 #include "radar.h"
-#include "deathmsg.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
 
@@ -202,11 +200,12 @@ int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
 	return m_pfnFlashlight(pszName, iSize, pbuf);
 }
 int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
-	if (!gCustomHud.TextDeathMsg(pszName, iSize, pbuf)) {
-		BEGIN_READ(pbuf, iSize);
-		CViewport::HUDNOTICE msg_dest = static_cast<CViewport::HUDNOTICE>(READ_BYTE());
+	if (g_pViewPort && g_pViewPort->TextMsg(pszName, iSize, pbuf))
+		return 1;
+	BEGIN_READ(pbuf, iSize);
+	CViewport::HUDNOTICE msg_dest = static_cast<CViewport::HUDNOTICE>(READ_BYTE());
 #define BUFFER_SIZE 256
-		static auto findLocalize = [](std::string& str) {
+	static auto findLocalize = [](std::string& str) {
 			if (str.front() == '#') {
 				const wchar_t* find = vgui::localize()->Find(str.c_str());
 				if (find) {
@@ -216,52 +215,50 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 				}	
 			}
 		};
-		int type = 0;
-		std::string msg = READ_STRING();
-		std::string sstr1 = READ_STRING();
-		std::string sstr2 = READ_STRING();
-		std::string sstr3 = READ_STRING();
-		std::string sstr4 = READ_STRING();
-		findLocalize(msg);
-		findLocalize(sstr1);
-		if (sstr1.size() > 0)
-			type++;
-		findLocalize(sstr2);
-		if (sstr2.size() > 0)
-			type++;
-		findLocalize(sstr3);
-		if (sstr3.size() > 0)
-			type++;
-		findLocalize(sstr4);
-		if (sstr4.size() > 0)
-			type++;
-		char buffer[BUFFER_SIZE * 4];
+	int type = 0;
+	std::string msg = READ_STRING();
+	std::string sstr1 = READ_STRING();
+	std::string sstr2 = READ_STRING();
+	std::string sstr3 = READ_STRING();
+	std::string sstr4 = READ_STRING();
+	findLocalize(msg);
+	findLocalize(sstr1);
+	if (sstr1.size() > 0)
+		type++;
+	findLocalize(sstr2);
+	if (sstr2.size() > 0)
+		type++;
+	findLocalize(sstr3);
+	if (sstr3.size() > 0)
+		type++;
+	findLocalize(sstr4);
+	if (sstr4.size() > 0)
+		type++;
+	char buffer[BUFFER_SIZE * 4];
 #undef BUFFER_SIZE
-		std::string szBuf;
-		switch (type) {
-		case 1:Q_snprintf(buffer, msg.c_str(), sstr1.c_str()); szBuf = buffer; break;
-		case 2:Q_snprintf(buffer, msg.c_str(), sstr1.c_str(), sstr2.c_str()); szBuf = buffer; break;
-		case 3:Q_snprintf(buffer, msg.c_str(), sstr1.c_str(), sstr2.c_str(), sstr3.c_str()); szBuf = buffer; break;
-		case 4:Q_snprintf(buffer, msg.c_str(), sstr1.c_str(), sstr2.c_str(), sstr3.c_str(), sstr4.c_str()); szBuf = buffer; break;
-		case 0:
-		default:szBuf = msg; break;
-		}
-		if (szBuf.back() == '\n')
-			szBuf.pop_back();
-		std::replace(szBuf.begin(), szBuf.end(), '\r', '\n');
-
-		switch (msg_dest)
-		{
-		case CViewport::HUDNOTICE::PRINTNOTIFY:
-		case CViewport::HUDNOTICE::PRINTCENTER:
-			if (g_pViewPort)
-				g_pViewPort->ShowNotice(msg_dest, szBuf.c_str());
-			break;
-		default:
-			return m_pfnTextMsg(pszName, iSize, pbuf);
-		}
+	std::string szBuf;
+	switch (type) {
+	case 1:Q_snprintf(buffer, msg.c_str(), sstr1.c_str()); szBuf = buffer; break;
+	case 2:Q_snprintf(buffer, msg.c_str(), sstr1.c_str(), sstr2.c_str()); szBuf = buffer; break;
+	case 3:Q_snprintf(buffer, msg.c_str(), sstr1.c_str(), sstr2.c_str(), sstr3.c_str()); szBuf = buffer; break;
+	case 4:Q_snprintf(buffer, msg.c_str(), sstr1.c_str(), sstr2.c_str(), sstr3.c_str(), sstr4.c_str()); szBuf = buffer; break;
+	case 0:
+	default:szBuf = msg; break;
 	}
-	return 1;
+	if (szBuf.back() == '\n')
+		szBuf.pop_back();
+	std::replace(szBuf.begin(), szBuf.end(), '\r', '\n');
+
+	switch (msg_dest)
+	{
+	case CViewport::HUDNOTICE::PRINTNOTIFY:
+	case CViewport::HUDNOTICE::PRINTCENTER:
+		if (g_pViewPort)
+			g_pViewPort->ShowNotice(msg_dest, szBuf.c_str());
+		break;
+	default:
+		return m_pfnTextMsg(pszName, iSize, pbuf);
+	}
 }
 int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
@@ -455,7 +452,6 @@ void CCustomHud::HUD_Init(void){
 	m_HudIndicator.Init();
 	m_HudCustomAmmo.Init();
 	m_HudRadar.Init();
-	m_HudDeathMsg.Init();
 	g_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
 #ifdef _DEBUG
@@ -496,7 +492,6 @@ void CCustomHud::HUD_VidInit(void){
 			p++;
 		}
 	}
-	m_HudDeathMsg.VidInit();
 	m_HudIndicator.VidInit();
 	m_HudCustomAmmo.VidInit();
 	m_HudRadar.VidInit();
@@ -508,7 +503,6 @@ void CCustomHud::HUD_Draw(float flTime){
 	SetBaseHudActivity();
 	CheckSpectator();
 
-	m_HudDeathMsg.Draw(flTime);
 	m_HudRadar.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
 
@@ -527,7 +521,6 @@ void CCustomHud::HUD_Reset(void){
 	m_HudIndicator.Reset();
 	m_HudCustomAmmo.Reset();
 	m_HudRadar.Reset();
-	m_HudDeathMsg.Reset();
 	g_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
 #ifdef _DEBUG
@@ -675,9 +668,6 @@ bool CCustomHud::SelectTextMenuItem(int slot){
 void CCustomHud::SetMouseVisible(bool state) {
 	if(g_pViewPort)
 		g_pViewPort->SetMouseInputEnabled(state);
-}
-bool CCustomHud::TextDeathMsg(const char* pszName, int iSize, void* pbuf){
-	return m_HudDeathMsg.MsgFunc_TextMsg(pszName, iSize, pbuf);
 }
 WEAPON* CCustomHud::GetCurWeapon(){
 	return m_HudCustomAmmo.GetCurWeapon();

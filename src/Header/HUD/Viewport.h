@@ -31,6 +31,7 @@ class CHealthPanel;
 class CAmmoPanel;
 class CDmgTilesPanel;
 class CGenadeIndicatorPanel;
+class CDeathMsgPanel;
 
 class ISchemel;
 
@@ -111,6 +112,9 @@ public:
 
 	void SetSpectate(bool state);
 
+	bool TextMsg(const char* pszName, int iSize, void* pbuf);
+	void ShowDeathMsg(bool state);
+
 	WEAPON* GetCurWeapon();
 	void SetCurWeapon(WEAPON* weapon);
 
@@ -145,6 +149,7 @@ private:
 	CAmmoPanel* m_pAmmoPanel = nullptr;
 	CDmgTilesPanel* m_pDmgTiles = nullptr;
 	CGenadeIndicatorPanel* m_pGIndicator = nullptr;
+	CDeathMsgPanel* m_pDeahMsg = nullptr;
 
 	int m_iInterMission;
 

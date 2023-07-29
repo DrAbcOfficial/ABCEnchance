@@ -10,6 +10,7 @@
 #include <vgui/ILocalize.h>
 #include <vgui2/spr_image.h>
 #include <vgui_controls/ImagePanel.h>
+#include "ammobar.h"
 
 #include "hud.h"
 #include "local.h"
@@ -245,14 +246,14 @@ void CCrosshairPanel::SetWeapon(WEAPON* weapon) {
 		ShowPanel(false);
 		return;
 	}
-	else if (!(m_pHandledWeapon->iState & 1))
+	else if (!(m_pHandledWeapon->iState & CAmmoPanel::WEAPONSTATE::VALID))
 		return;
 	ShowPanel(true);
 }
 void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
 	if (!m_pHandledWeapon)
 		return;
-	bool bOnTarget = m_pHandledWeapon->iState & (1 << 1);
+	bool bOnTarget = m_pHandledWeapon->iState & CAmmoPanel::WEAPONSTATE::ONTARGET;
 	if (m_hfov >= gCVars.pCvarDefaultFOV->value) {
 		if (bOnTarget && m_pHandledWeapon->hAutoaim)
 			SetCrosshairSPR(x, y, m_pHandledWeapon->hAutoaim, &m_pHandledWeapon->rcAutoaim);
