@@ -24,6 +24,7 @@
 #include "exportfuncs.h"
 
 #include "weaponselect.h"
+#include "ammobar.h"
 
 #include "weaponbank.h"
 #include "historyresource.h"
@@ -122,7 +123,7 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf){
 int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iState = READ_BYTE();
-	if (iState){
+	if (iState & CAmmoPanel::WEAPONSTATE::VALID){
 		int iId = READ_SHORT();
 		//sc反编汇后如此
 		if (iId == -1){
