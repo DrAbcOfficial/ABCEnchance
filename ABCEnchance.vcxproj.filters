@@ -449,9 +449,6 @@
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\deathmsg.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
@@ -600,6 +597,9 @@
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\gindicator.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\deadmsg.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1177,9 +1177,6 @@
     <ClInclude Include="src\Header\HUD\CCustomHud.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\deathmsg.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\eccobuymenu.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
@@ -1388,6 +1385,9 @@
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\gindicator.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\deadmsg.h">
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>

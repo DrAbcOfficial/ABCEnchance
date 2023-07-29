@@ -14,6 +14,7 @@
 		"tabPosition"		"0"
 
 		"fade_time"		"0.5"
+		"icon_hue"		"170"
 	}
 	"Message"
 	{

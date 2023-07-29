@@ -26,18 +26,7 @@ Scheme
 		"WMenuBucket.SelectIconColor"		"255 255 0 255"
 		//经典菜单空武器颜色
 		"WMenuBucket.SelectEmptyColor"		"255 0 0 255"
-
-        //死亡消息背景颜色
-		"DeathMsg.BackGoundColor"		"180 180 180 255"
-		//死亡消息外框颜色
-		"DeathMsg.BackGoundOutLineColor"		"255 182 193 255"
-		//死亡消息受害者文字颜色
-		"DeathMsg.VictimColor"		"0 178 178 255"
-		//死亡消息攻击者文字颜色
-		"DeathMsg.AttackerColor"		"204 0 0 255"
-		//死亡消息攻击武器颜色
-		"DeathMsg.InflictorColor"		"178 178 178 255"
-
+		
         //购买菜单文字颜色
 		"BuyMenu.TextColor"		"255 255 255 255"
 		//购买菜单背景颜色

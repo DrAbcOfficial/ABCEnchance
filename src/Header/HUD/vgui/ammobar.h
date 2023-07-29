@@ -28,13 +28,13 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 
 	void SetWeapon(WEAPON* weapon);
-private:
-	enum WEAPONSTATE {
+	static enum WEAPONSTATE {
 		NOTVALID = 0,
 		VALID = 1 << 0,
 		ONTARGET = 1 << 1,
 		UZI = 1 << 2
 	};
+private:
 	vgui::ImagePanel* m_pBackground = nullptr;
 	vgui::ImageSprPanel* m_Ammo1Icon = nullptr;
 	vgui::Label* m_pAmmo1Label = nullptr;

@@ -34,12 +34,15 @@
 #include "ammobar.h"
 #include "dmgtiles.h"
 #include "gindicator.h"
+#include "deadmsg.h"
 
 #include "CCustomHud.h"
 
 #include "Viewport.h"
 #include "exportfuncs.h"
 #include "keydefs.h"
+#include <parsemsg.h>
+#include <regex>
 
 using namespace vgui;
 
@@ -84,6 +87,7 @@ void CViewport::Start(void){
 		m_pPlayerInfoPanels[i]->SetId(i);
 	}
 	AddNewPanel(m_pHealthPanel = new CHealthPanel());
+	AddNewPanel(m_pDeahMsg = new CDeathMsgPanel());
 	AddNewPanel(m_pDmgTiles = new CDmgTilesPanel());
 	AddNewPanel(m_pAmmoPanel = new CAmmoPanel());
 	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
@@ -111,6 +115,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pAmmoPanel->SetParent(GetVPanel());
 	m_pDmgTiles->SetParent(GetVPanel());
 	m_pGIndicator->SetParent(GetVPanel());
+	m_pDeahMsg->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -284,6 +289,49 @@ void CViewport::UpdateTiles(long tiles){
 void CViewport::SetSpectate(bool state){
 	m_pHealthPanel->ShowPanel(!state);
 	m_pAmmoPanel->ShowPanel(!state);
+}
+bool CViewport::TextMsg(const char* pszName, int iSize, void* pbuf){
+	const static std::wregex parttenSuicide(L" committed suicide.");
+	const static std::wregex parttenKilled(L" was killed by a ");
+	const static std::wregex parttenPlayer(L" : (.*) : ");
+	BEGIN_READ(pbuf, iSize);
+	if (READ_BYTE() == static_cast<int>(CViewport::HUDNOTICE::PRINTNOTIFY)) {
+		char* msg_text = READ_STRING();
+		//什么鸡巴东西
+		if (msg_text[0] == '\0')
+			return false;
+		wchar_t wideBuf[256];
+		Q_UTF8ToUnicode(msg_text, wideBuf, sizeof(wideBuf));
+		std::wstring stdSzBuf = wideBuf;
+		//剩下的老子才没兴趣
+		//正则捕获匹配
+		std::wsmatch matched;
+		bool found = false;
+		found = regex_search(stdSzBuf, matched, parttenSuicide);
+		if (found) {
+			m_pDeahMsg->AddItem(matched.prefix().str().c_str(), L"", vgui::localize()->Find("DeathMsg_Suicide"));
+			return true;
+		}
+		found = regex_search(stdSzBuf, matched, parttenKilled);
+		if (found) {
+			std::wstring k = matched.suffix().str();
+			k.erase(k.end() - 2);
+			m_pDeahMsg->AddItem(matched.prefix().str().c_str(), k.c_str(), vgui::localize()->Find("DeathMsg_MonsterKill"));
+			return true;
+		}
+		found = regex_search(stdSzBuf, matched, parttenPlayer);
+		if (found) {
+			std::wstring e = matched.str();
+			std::wstring sub = e.substr(3, e.length() - 6);
+			std::wstring k = matched.prefix().str();
+			m_pDeahMsg->AddItem(matched.suffix().str().c_str(), k.c_str(), sub.c_str());
+			return true;
+		}
+	}
+	return false;
+}
+void CViewport::ShowDeathMsg(bool state){
+	m_pDeahMsg->ShowPanel(state);
 }
 WEAPON* CViewport::GetCurWeapon(){
 	return gCustomHud.GetCurWeapon();
