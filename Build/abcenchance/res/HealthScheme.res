@@ -51,13 +51,19 @@ Scheme
 	BaseSettings
 	{
 		"DMGTiles.BgColor"		"Blank"
+		//伤害类型图标颜色
 		"DMGTiles.IconColor"		"0 255 0 255"
+		//伤害类型文本颜色
 		"DMGTiles.TextColor"		"0 255 0 255"
 		"DMGTiles.ListViewBgColor"		"Blank"
 		"HealthBar.BgColor"		"Blank"
+		//生命值数值颜色
 		"HealthBar.HealthFgColor"		"0 255 0 255"
+		//护甲数值颜色
 		"HealthBar.ArmorFgColor"		"0 255 0 255"
+		//低生命值数值颜色
 		"HealthBar.HealthDangerColor"		"255 0 0 255"
+		//低护甲数值颜色
 		"HealthBar.ArmorDangerColor"		"255 0 0 255"
 	}
 }

@@ -50,6 +50,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/healthbar_icon"
 		"scaleImage"		"1"
+		//生命值图标颜色
 		"drawColor"		"0 255 0 255"
 	}
 
@@ -82,6 +83,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/healthbar"
 		"scaleImage"		"1"
+		//血条颜色
 		"drawColor"		"0 255 0 200"
 		"zpos"		"999"
 	}
@@ -97,6 +99,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/healthbar_bg"
 		"scaleImage"		"1"
+		//血条背景颜色
 		"drawColor"		"0 50 0 50"
 		"zpos"		"0"
 	}
@@ -113,6 +116,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/armorbar_icon"
 		"scaleImage"		"1"
+		//护甲图标颜色
 		"drawColor"		"0 255 0 255"
 	}
 	"Armor"
@@ -144,6 +148,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/armorbar"
 		"scaleImage"		"1"
+		//护甲条颜色
 		"drawColor"		"0 255 0 200"
 		"zpos"		"999"
 	}
@@ -159,6 +164,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/armorbar_bg"
 		"scaleImage"		"1"
+		//护甲条背景颜色
 		"drawColor"		"0 50 0 50"
 		"zpos"		"0"
 	}
@@ -175,6 +181,7 @@
 		"proportionalToParent" "1"
 		"scaleImage"		"1"
 		"image"			"abcenchance/tga/longjump"
+		//长跳图标颜色
 		"drawColor"		"0 255 0 255"
 	}
 }
