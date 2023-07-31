@@ -15,7 +15,7 @@
 		"visible"		"0"
 		"enabled"		"1"
 		"tabPosition"		"0"
-
+		//  左侧数值信息显示，修改template_text改变类型
 		//  {MAXSPEED} Max speed
 		//  {SPEED} Speed
 		//  {SCORE} Score
