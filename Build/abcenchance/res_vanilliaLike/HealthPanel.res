@@ -50,6 +50,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/healthbar_icon"
 		"scaleImage"		"1"
+		//生命值图标颜色
 		"drawColor"		"SvenCoop"
 	}
 
@@ -82,6 +83,7 @@
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/armorbar_icon"
 		"scaleImage"		"1"
+		//护甲图标颜色
 		"drawColor"		"SvenCoop"
 	}
 	"Armor"
@@ -113,6 +115,7 @@
 		"proportionalToParent" "1"
 		"scaleImage"		"1"
 		"image"			"abcenchance/tga/longjump"
+		//长跳图标颜色
 		"drawColor"		"SvenCoop"
 	}
 
