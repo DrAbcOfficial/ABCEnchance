@@ -9,6 +9,7 @@ Scheme
 	BaseSettings
 	{
 		"GIndicator.BgColor"			"Blank"
+		//手雷指示器图标颜色
 		"GIndicator.DrawColor"		"SvenCoop"
 	}
 }

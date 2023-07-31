@@ -51,13 +51,19 @@ Scheme
 	BaseSettings
 	{
 		"DMGTiles.BgColor"		"Blank"
+		//伤害类型图标颜色
 		"DMGTiles.IconColor"		"SvenCoop"
+		//伤害类型文本颜色
 		"DMGTiles.TextColor"		"SvenCoop"
 		"DMGTiles.ListViewBgColor"		"Blank"
 		"HealthBar.BgColor"		"Blank"
+		//生命值数值颜色
 		"HealthBar.HealthFgColor"		"SvenCoop"
+		//护甲数值颜色
 		"HealthBar.ArmorFgColor"		"SvenCoop"
+		//低生命值数值颜色
 		"HealthBar.HealthDangerColor"		"255 0 0 255"
+		//低护甲数值颜色
 		"HealthBar.ArmorDangerColor"		"255 0 0 255"
 	}
 
