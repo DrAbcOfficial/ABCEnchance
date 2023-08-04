@@ -650,6 +650,9 @@ int HUD_VidInit(void){
 }
 void HUD_VoiceStatus(int entindex, qboolean talking) {
 	GetClientVoiceMgr()->UpdateSpeakerStatus(entindex, talking);
+	//sorry, i dont wanna hear your shit
+	if (talking && GetClientVoiceMgr()->IsPlayerBlocked(entindex))
+		return;
 	gExportfuncs.HUD_VoiceStatus(entindex, talking);
 }
 void HUD_Frame(double frametime) {
