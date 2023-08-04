@@ -35,11 +35,13 @@ namespace vgui
 		const char* GetExtra() const;
 		void SetText(const char* text, const char* extra);
 		bool HasExtra() { return m_bHasExtra; }
+		bool IsProtected();
 
 	private:
 		char* m_text;
 		char* m_extraText;
-		bool		m_bHasExtra;
+		bool m_bHasExtra;
+		bool m_bIsProtected;
 	};
 
 	//-----------------------------------------------------------------------------
