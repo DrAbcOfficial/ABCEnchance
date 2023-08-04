@@ -82,6 +82,11 @@ CSteamID* CPlayerInfo::GetSteamID() {
 const char* CPlayerInfo::GetSteamIDString() {
 	return m_pSteamId.Render();
 }
+const char* CPlayerInfo::GetSteamIDString64() {
+	char buffer[64];
+	Q_snprintf(buffer, sizeof(buffer), "%llu", m_pSteamId.ConvertToUint64());
+	return buffer;
+}
 int CPlayerInfo::GetFrags(){
 	Assert(m_bIsConnected);
 	return m_ExtraInfo.frags;

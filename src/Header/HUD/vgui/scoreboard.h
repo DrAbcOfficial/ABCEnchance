@@ -71,6 +71,7 @@ public:
 	cvar_t* hud_scoreboard_showavatars;
 	cvar_t* hud_scoreboard_showloss;
 	cvar_t* hud_scoreboard_showsteamid;
+	cvar_t* hud_scoreboard_showsteamidtype;
 	cvar_t* hud_scoreboard_showrealname;
 	cvar_t* hud_scoreboard_size;
 	cvar_t* hud_scoreboard_spacing_normal;

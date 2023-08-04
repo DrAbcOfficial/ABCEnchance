@@ -82,6 +82,7 @@ public:
 	 */
 	CSteamID* GetSteamID();
 	const char* GetSteamIDString();
+	const char* GetSteamIDString64();
 
 	void UpdatePing();
 	// Should be called before reading engine info.
