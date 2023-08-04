@@ -81,6 +81,9 @@
     <Filter Include="VGUI2\interface">
       <UniqueIdentifier>{57059889-dcf1-4422-bbb4-a16b2ded33b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="avilib">
+      <UniqueIdentifier>{886a4df6-c5df-493f-a849-89ee66feb171}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp">
@@ -604,6 +607,15 @@
     </ClCompile>
     <ClCompile Include="VGUI2\BasePanel.cpp">
       <Filter>VGUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="avilib\reader.cpp">
+      <Filter>avilib</Filter>
+    </ClCompile>
+    <ClCompile Include="avilib\writer.cpp">
+      <Filter>avilib</Filter>
+    </ClCompile>
+    <ClCompile Include="avilib\avilib.cpp">
+      <Filter>avilib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1395,6 +1407,21 @@
     </ClInclude>
     <ClInclude Include="VGUI2\BasePanel.h">
       <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="avilib\common.h">
+      <Filter>avilib</Filter>
+    </ClInclude>
+    <ClInclude Include="avilib\reader.h">
+      <Filter>avilib</Filter>
+    </ClInclude>
+    <ClInclude Include="avilib\writer.h">
+      <Filter>avilib</Filter>
+    </ClInclude>
+    <ClInclude Include="avilib\avidef.h">
+      <Filter>avilib</Filter>
+    </ClInclude>
+    <ClInclude Include="avilib\avilib.h">
+      <Filter>avilib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
