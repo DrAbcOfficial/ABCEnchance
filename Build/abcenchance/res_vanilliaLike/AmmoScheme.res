@@ -51,10 +51,15 @@ Scheme
 	BaseSettings
 	{
 		"AmmoBar.BgColor"			"Blank"
+		//主要弹药数值颜色
 		"AmmoBar.Ammo1FgColor"		"SvenCoop"
+		//次要子弹数值颜色
 		"AmmoBar.Ammo2FgColor"		"SvenCoop"
+		//主次弹药分划线颜色
 		"AmmoBar.SlashFgColor"		"SvenCoop"
+		//主要弹药图标颜色
 		"AmmoBar.Ammo1IconColor"	"SvenCoop"
+		//次要弹药图标颜色
 		"AmmoBar.Ammo2IconColor"	"SvenCoop"
 	}
 	CustomFontFiles
