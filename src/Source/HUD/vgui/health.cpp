@@ -33,15 +33,15 @@ CHealthPanel::CHealthPanel()
 
 	m_Backround = new ImagePanel(this, "Background");
 
-	m_HealthIcon = new ImagePanel(this, "HealthIcon");
+	m_pHealthIcon = new ImagePanel(this, "HealthIcon");
 	m_pHealthLable = new Label(this, "Health", "0");
 	m_pHealthImagePanel = new ImageClipPanel(this, "HealthBar");
-	m_HealthImageBackround = new ImagePanel(this, "HealthBackground");
+	m_pHealthImageBackround = new ImagePanel(this, "HealthBackground");
 
-	m_ArmorIcon = new ImagePanel(this, "ArmorIcon");
+	m_pArmorIcon = new ImagePanel(this, "ArmorIcon");
 	m_pArmorLable = new Label(this, "Armor", "0");
 	m_pArmorImagePanel = new ImageClipPanel(this, "ArmorBar");
-	m_ArmorImageBackround = new ImagePanel(this, "ArmorBackground");
+	m_pArmorImageBackround = new ImagePanel(this, "ArmorBackground");
 
 	m_pLongJumpImagePanel = new ImagePanel(this, "Longjump");
 
@@ -52,8 +52,8 @@ CHealthPanel::CHealthPanel()
 	m_iRestoredArmorWide = m_pArmorImagePanel->GetWide();
 	m_cRestoredHealth = m_pHealthImagePanel->GetDrawColor();
 	m_cRestoredArmor = m_pArmorImagePanel->GetDrawColor();
-	m_cRestoredHealthIcon = m_HealthIcon->GetDrawColor();
-	m_cRestoredArmorIcon = m_ArmorIcon->GetDrawColor();
+	m_cRestoredHealthIcon = m_pHealthIcon->GetDrawColor();
+	m_cRestoredArmorIcon = m_pArmorIcon->GetDrawColor();
 }
 const char* CHealthPanel::GetName(){
 	return VIEWPORT_HEALTH_NAME;
@@ -101,12 +101,12 @@ void CHealthPanel::SetHealth(int health){
 		float flRatio = (float)health / gCVars.pDangerHealth->value;
 		m_pHealthLable->SetFgColor(GetDifferColor(flRatio, m_pHealthLable->GetFgColor(), m_cHealthDanger));
 		m_pHealthImagePanel->SetDrawColor(GetDifferColor(flRatio, m_pHealthImagePanel->GetDrawColor(), m_cHealthDanger));
-		m_HealthIcon->SetDrawColor(GetDifferColor(flRatio, m_HealthIcon->GetDrawColor(), m_cHealthDanger));
+		m_pHealthIcon->SetDrawColor(GetDifferColor(flRatio, m_pHealthIcon->GetDrawColor(), m_cHealthDanger));
 	}
 	else {
 		m_pHealthLable->SetFgColor(m_cRestoredHealthLabel);
 		m_pHealthImagePanel->SetDrawColor(m_cRestoredHealth);
-		m_HealthIcon->SetDrawColor(m_cRestoredHealthIcon);
+		m_pHealthIcon->SetDrawColor(m_cRestoredHealthIcon);
 	}	
 	int newWide = clamp((float)health / 100.0f, 0.0f, 1.0f) * m_iRestoredHealWide;
 	vgui::GetAnimationController()->RunAnimationCommand(m_pHealthImagePanel, "wide", newWide, 0.0f, 0.15f, vgui::AnimationController::INTERPOLATOR_LINEAR);
@@ -121,12 +121,12 @@ void CHealthPanel::SetArmor(int armor){
 		float flRatio = (float)armor / gCVars.pDangerHealth->value;
 		m_pArmorImagePanel->SetDrawColor(GetDifferColor(flRatio, m_pArmorImagePanel->GetDrawColor(), m_cArmorDanger));
 		m_pArmorLable->SetFgColor(GetDifferColor(flRatio, m_pArmorLable->GetFgColor(), m_cArmorDanger));
-		m_ArmorIcon->SetDrawColor(GetDifferColor(flRatio, m_ArmorIcon->GetDrawColor(), m_cArmorDanger));
+		m_pArmorIcon->SetDrawColor(GetDifferColor(flRatio, m_pArmorIcon->GetDrawColor(), m_cArmorDanger));
 	}
 	else {
 		m_pArmorLable->SetFgColor(m_cRestoredArmorLabel);
 		m_pArmorImagePanel->SetDrawColor(m_cRestoredArmor);
-		m_ArmorIcon->SetDrawColor(m_cRestoredArmorIcon);
+		m_pArmorIcon->SetDrawColor(m_cRestoredArmorIcon);
 	}
 	int newWide = clamp((float)armor / 100.0f, 0.0f, 1.0f) * m_iRestoredArmorWide;
 	vgui::GetAnimationController()->RunAnimationCommand(m_pArmorImagePanel, "wide", newWide, 0.0f, 0.15f, vgui::AnimationController::INTERPOLATOR_LINEAR);
@@ -138,14 +138,14 @@ void CHealthPanel::SetLongJump(bool lj){
 void CHealthPanel::SetArmorVisible(bool state) {
 	m_pArmorImagePanel->SetVisible(state);
 	m_pArmorLable->SetVisible(state);
-	m_ArmorImageBackround->SetVisible(state);
-	m_ArmorIcon->SetVisible(state);
+	m_pArmorImageBackround->SetVisible(state);
+	m_pArmorIcon->SetVisible(state);
 }
 void CHealthPanel::SetHealthVisible(bool state) {
 	m_pHealthImagePanel->SetVisible(state);
 	m_pHealthLable->SetVisible(state);
-	m_HealthImageBackround->SetVisible(state);
-	m_HealthIcon->SetVisible(state);
+	m_pHealthImageBackround->SetVisible(state);
+	m_pHealthIcon->SetVisible(state);
 }
 
 Color CHealthPanel::GetDifferColor(float flRatio, Color c1, Color c2){

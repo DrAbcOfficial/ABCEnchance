@@ -50,15 +50,15 @@ private:
 
 	vgui::ImagePanel* m_Backround = nullptr;
 
-	vgui::ImagePanel* m_HealthIcon = nullptr;
+	vgui::ImagePanel* m_pHealthIcon = nullptr;
 	vgui::Label* m_pHealthLable = nullptr;
 	vgui::ImageClipPanel* m_pHealthImagePanel = nullptr;
-	vgui::ImagePanel* m_HealthImageBackround = nullptr;
+	vgui::ImagePanel* m_pHealthImageBackround = nullptr;
 
-	vgui::ImagePanel* m_ArmorIcon = nullptr;
+	vgui::ImagePanel* m_pArmorIcon = nullptr;
 	vgui::ImageClipPanel* m_pArmorImagePanel = nullptr;
 	vgui::Label* m_pArmorLable = nullptr;
-	vgui::ImagePanel* m_ArmorImageBackround = nullptr;
+	vgui::ImagePanel* m_pArmorImageBackround = nullptr;
 
 	vgui::ImagePanel* m_pLongJumpImagePanel = nullptr;
 };
