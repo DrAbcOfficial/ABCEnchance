@@ -236,6 +236,7 @@ CScorePanel::CScorePanel()
 	hud_scoreboard_showavatars = CREATE_CVAR("hud_scoreboard_showavatars", "1", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_showloss = CREATE_CVAR("hud_scoreboard_showloss", "1", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_showsteamid = CREATE_CVAR("hud_scoreboard_showsteamid", "1", FCVAR_ARCHIVE, nullptr);
+	hud_scoreboard_showsteamidtype = CREATE_CVAR("hud_scoreboard_showsteamidtype", "1", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_showrealname = CREATE_CVAR("hud_scoreboard_showrealname", "1", FCVAR_ARCHIVE, nullptr);
 
 	hud_scoreboard_size = CREATE_CVAR("hud_scoreboard_size", "0", FCVAR_ARCHIVE, nullptr);
@@ -699,7 +700,7 @@ void CScorePanel::UpdateClientInfo(int client)
 			snprintf(buf, sizeof(buf), "%s", pi->GetName());
 		playerKv->SetString(NAME_KEY, buf);
 		// SteamID
-		playerKv->SetString(STEAMID_KEY, pi->GetSteamIDString());
+		playerKv->SetString(STEAMID_KEY, hud_scoreboard_showsteamidtype->value > 0 ? pi->GetSteamIDString64() :  pi->GetSteamIDString());
 
 		if (pi->IsSpectator()) {
 			colorKv->SetInt(HEALTH_KEY,COLOR_GREY);
@@ -955,15 +956,15 @@ void CScorePanel::OpenPlayerMenu(int itemID){
 	bool thisPlayer = kv->GetBool("thisplayer", 0);
 	if (thisPlayer){
 		// Can't mute yourself
-		m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuMute", new KeyValues("Command", "command", "MenuMute"));
+		m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuMute", new KeyValues("MenuMute"));
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nMuteItemID, false);
 	}
 	else{
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nMuteItemID, true);
 		if (GetClientVoiceMgr()->IsPlayerBlocked(m_MenuData.nClient))
-			m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuUnmute", new KeyValues("Command", "command", "MenuMute"));
+			m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuUnmute", new KeyValues("MenuMute"));
 		else
-			m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuMute", new KeyValues("Command", "command", "MenuMute"));
+			m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuMute", new KeyValues("MenuMute"));
 	}
 	m_pPlayerMenu->PositionRelativeToPanel(this, vgui::Menu::CURSOR, 0, true);
 }
