@@ -196,6 +196,13 @@ void CHistoryItem::SetText(const char* text, const char* extra)
 	}
 }
 
+bool CHistoryItem::IsProtected(){
+	cvar_t* cvar = CVAR_GET_POINTER(m_text);
+	if (cvar)
+		return cvar->flags& FCVAR_PROTECTED;
+	return false;
+}
+
 
 //-----------------------------------------------------------------------------
 //
@@ -492,6 +499,7 @@ void CConsolePanel::RebuildCompletionList(const char* text)
 			comp->m_bIsCommand = false;
 			comp->m_pCVar = nullptr;
 			comp->m_iCmd = 0;
+			comp->m_bIsProtected = item->IsProtected();
 			comp->m_pText = new CHistoryItem(*item);
 		}
 		return;

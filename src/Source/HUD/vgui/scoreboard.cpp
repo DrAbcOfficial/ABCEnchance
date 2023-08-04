@@ -662,9 +662,10 @@ void CScorePanel::UpdateClientInfo(int client)
 		// Player just connected
 		pd.bIsConnected = true;
 
-		if (pd.nItemID != -1 && m_pPlayerList->IsItemIDValid(pd.nItemID))
+		if (pd.nItemID != -1 && m_pPlayerList->IsItemIDValid(pd.nItemID)) {
 			m_pPlayerList->RemoveItem(pd.nItemID);
-
+			pi->Reset();
+		}
 		pd.nItemID = -1;
 		pd.nTeamID = pi->GetTeamNumber();
 	}
