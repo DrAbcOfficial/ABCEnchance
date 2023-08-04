@@ -531,6 +531,7 @@ void CCustomHud::HUD_Reset(void){
 	m_bRenderRadarView = false;
 	m_iMouseState = 0;
 	m_iLastClick = 5;
+	m_iHideHUDDisplay = 0;
 	memset(m_SpectatePlayer, 0, sizeof(m_SpectatePlayer));
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
