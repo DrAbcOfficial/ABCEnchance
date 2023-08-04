@@ -241,6 +241,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\Var\voice_status.cpp" />
     <ClCompile Include="src\Source\viewmodellag.cpp" />
     <ClCompile Include="VGUI2\avatar_image.cpp" />
+    <ClCompile Include="VGUI2\BasePanel.cpp" />
     <ClCompile Include="VGUI2\BaseUI.cpp" />
     <ClCompile Include="VGUI2\Bitmap.cpp" />
     <ClCompile Include="VGUI2\Border.cpp" />
@@ -481,6 +482,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Particleman\pman_particlemem.h" />
     <ClInclude Include="src\Particleman\pman_triangleffect.h" />
     <ClInclude Include="VGUI2\avatar_image.h" />
+    <ClInclude Include="VGUI2\BasePanel.h" />
     <ClInclude Include="VGUI2\BaseUI.h" />
     <ClInclude Include="VGUI2\Bitmap.h" />
     <ClInclude Include="VGUI2\Border.h" />

@@ -14,6 +14,7 @@
 
 #include "exportfuncs.h"
 #include <plugins.h>
+#include <BasePanel.h>
 
 namespace vgui
 {
@@ -78,6 +79,7 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 	KeyValuesSystem_InstallHook();
 	Surface_InstallHooks();
 	GameConsole_InstallHook();
+	BasePanel_InstallHook();
 	if(!g_metaplugins.captionmod)
 		Scheme_InstallHook();
 }

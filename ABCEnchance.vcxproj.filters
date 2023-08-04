@@ -602,6 +602,9 @@
     <ClCompile Include="src\Source\HUD\vgui\deadmsg.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
+    <ClCompile Include="VGUI2\BasePanel.cpp">
+      <Filter>VGUI2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1389,6 +1392,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\deadmsg.h">
       <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\BasePanel.h">
+      <Filter>VGUI2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

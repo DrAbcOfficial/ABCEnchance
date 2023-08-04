@@ -1,0 +1,1 @@
+void BasePanel_InstallHook(void);
