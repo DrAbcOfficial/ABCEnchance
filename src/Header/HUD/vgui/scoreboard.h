@@ -51,7 +51,14 @@ public:
 	// Frame overrides
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void OnThink() override;
-	virtual void OnCommand(const char* command) override;
+
+	MESSAGE_FUNC(MenuMute, "MenuMute");
+	MESSAGE_FUNC(MenuSteamProfile, "MenuSteamProfile");
+	MESSAGE_FUNC(MenuSteamURL, "MenuSteamURL");
+	MESSAGE_FUNC(MenuCopyName, "MenuCopyName");
+	MESSAGE_FUNC(MenuCopyNameRaw, "MenuCopyNameRaw");
+	MESSAGE_FUNC(MenuCopySteamID, "MenuCopySteamID");
+	MESSAGE_FUNC(MenuCopySteamID64, "MenuCopySteamID64");
 
 	// IViewportPanel overrides
 	virtual const char* GetName() override;

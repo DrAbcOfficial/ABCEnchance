@@ -370,40 +370,26 @@ void CScorePanel::OnThink(){
 	UpdateTimeEndInternal();
 }
 
-void CScorePanel::OnCommand(const char* command)
-{
-	if (!Q_stricmp(command, "MenuMute"))
-	{
-		OnPlayerMenuCommand(MenuAction::Mute);
-	}
-	else if (!Q_stricmp(command, "MenuSteamProfile"))
-	{
-		OnPlayerMenuCommand(MenuAction::SteamProfile);
-	}
-	else if (!Q_stricmp(command, "MenuSteamURL"))
-	{
-		OnPlayerMenuCommand(MenuAction::SteamURL);
-	}
-	else if (!Q_stricmp(command, "MenuCopyName"))
-	{
-		OnPlayerMenuCommand(MenuAction::CopyName);
-	}
-	else if (!Q_stricmp(command, "MenuCopyNameRaw"))
-	{
-		OnPlayerMenuCommand(MenuAction::CopyNameRaw);
-	}
-	else if (!Q_stricmp(command, "MenuCopySteamID"))
-	{
-		OnPlayerMenuCommand(MenuAction::CopySteamID);
-	}
-	else if (!Q_stricmp(command, "MenuCopySteamID64"))
-	{
-		OnPlayerMenuCommand(MenuAction::CopySteamID64);
-	}
-	else
-	{
-		BaseClass::OnCommand(command);
-	}
+void CScorePanel::MenuMute() {
+	OnPlayerMenuCommand(MenuAction::Mute);
+}
+void CScorePanel::MenuSteamProfile() {
+	OnPlayerMenuCommand(MenuAction::SteamProfile);
+}
+void CScorePanel::MenuSteamURL() {
+	OnPlayerMenuCommand(MenuAction::SteamURL);
+}
+void CScorePanel::MenuCopyName() {
+	OnPlayerMenuCommand(MenuAction::CopyName);
+}
+void CScorePanel::MenuCopyNameRaw() {
+	OnPlayerMenuCommand(MenuAction::CopyNameRaw);
+}
+void CScorePanel::MenuCopySteamID() {
+	OnPlayerMenuCommand(MenuAction::CopySteamID);
+}
+void CScorePanel::MenuCopySteamID64() {
+	OnPlayerMenuCommand(MenuAction::CopySteamID64);
 }
 
 const char* CScorePanel::GetName()
@@ -930,17 +916,17 @@ void CScorePanel::CreatePlayerMenu(){
 	m_pPlayerMenu->SetVisible(false);
 	m_pPlayerMenu->AddActionSignalTarget(this);
 
-	m_MenuData.nMuteItemID = m_pPlayerMenu->AddMenuItem("Mute", "#Scores_MenuMute", "MenuMute", this);
+	m_MenuData.nMuteItemID = m_pPlayerMenu->AddMenuItem("Mute", "#Scores_MenuMute", new KeyValues("MenuMute"), this);
 	m_pPlayerMenu->AddSeparator();
 
-	m_MenuData.nProfilePageItemID = m_pPlayerMenu->AddMenuItem("SteamProfile", "#Scores_MenuSteamProfile", "MenuSteamProfile", this);
-	m_MenuData.nProfileUrlItemID = m_pPlayerMenu->AddMenuItem("SteamURL", "#Scores_MenuSteamURL", "MenuSteamURL", this);
+	m_MenuData.nProfilePageItemID = m_pPlayerMenu->AddMenuItem("SteamProfile", "#Scores_MenuSteamProfile", new KeyValues("MenuSteamProfile"), this);
+	m_MenuData.nProfileUrlItemID = m_pPlayerMenu->AddMenuItem("SteamURL", "#Scores_MenuSteamURL", new KeyValues("MenuSteamURL"), this);
 	m_pPlayerMenu->AddSeparator();
 
-	m_pPlayerMenu->AddMenuItem("CopyName", "#Scores_MenuCopyName", "MenuCopyName", this);
-	m_pPlayerMenu->AddMenuItem("CopyNameRaw", "#Scores_MenuCopyNameRaw", "MenuCopyNameRaw", this);
-	m_pPlayerMenu->AddMenuItem("CopySteamID", "#Scores_MenuCopySteamID", "MenuCopySteamID", this);
-	m_pPlayerMenu->AddMenuItem("CopySteamID64", "#Scores_MenuCopySteamID64", "MenuCopySteamID64", this);
+	m_pPlayerMenu->AddMenuItem("CopyName", "#Scores_MenuCopyName", new KeyValues("MenuCopyName"), this);
+	m_pPlayerMenu->AddMenuItem("CopyNameRaw", "#Scores_MenuCopyNameRaw", new KeyValues("MenuCopyNameRaw"), this);
+	m_pPlayerMenu->AddMenuItem("CopySteamID", "#Scores_MenuCopySteamID", new KeyValues("MenuCopySteamID"), this);
+	m_pPlayerMenu->AddMenuItem("CopySteamID64", "#Scores_MenuCopySteamID64", new KeyValues("MenuCopySteamID64"), this);
 }
 
 void CScorePanel::OpenPlayerMenu(int itemID){
