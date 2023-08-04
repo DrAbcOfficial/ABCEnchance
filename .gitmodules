@@ -1,0 +1,3 @@
+[submodule "avilib"]
+	path = avilib
+	url = https://github.com/arionik/avilib
