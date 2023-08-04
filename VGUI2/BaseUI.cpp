@@ -80,6 +80,7 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 	Surface_InstallHooks();
 	GameConsole_InstallHook();
 	BasePanel_InstallHook();
+	BackGroundVideoInit();
 	if(!g_metaplugins.captionmod)
 		Scheme_InstallHook();
 }
@@ -92,6 +93,7 @@ void CBaseUI::Start(struct cl_enginefuncs_s *engineFuncs, int interfaceVersion)
 void CBaseUI::Shutdown(void)
 {
 	ClientVGUI_Shutdown();
+	BackGroundVideoClose();
 
 	//GameUI.dll and vgui2.dll will be unloaded by engine!CBaseUI::Shutdown
 	m_pfnCBaseUI_Shutdown(this, 0);
