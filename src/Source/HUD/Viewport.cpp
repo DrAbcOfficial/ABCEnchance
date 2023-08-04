@@ -194,10 +194,8 @@ bool CViewport::IsScoreBoardVisible(){
 	return m_pScorePanel->IsVisible();
 }
 void CViewport::HudHideCallBack(int code){
-	if (code & HUD_HIDEALL) {
+	if (code & HUD_HIDEALL)
 		SetVisible(false);
-		return;
-	}
 	else
 		SetVisible(true);
 	m_pHealthPanel->SetArmorVisible((code & HUD_HIDEBATTERY) == 0);
