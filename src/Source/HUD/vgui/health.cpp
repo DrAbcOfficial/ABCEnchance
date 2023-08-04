@@ -139,11 +139,13 @@ void CHealthPanel::SetArmorVisible(bool state) {
 	m_pArmorImagePanel->SetVisible(state);
 	m_pArmorLable->SetVisible(state);
 	m_ArmorImageBackround->SetVisible(state);
+	m_ArmorIcon->SetVisible(state);
 }
 void CHealthPanel::SetHealthVisible(bool state) {
 	m_pHealthImagePanel->SetVisible(state);
 	m_pHealthLable->SetVisible(state);
 	m_HealthImageBackround->SetVisible(state);
+	m_HealthIcon->SetVisible(state);
 }
 
 Color CHealthPanel::GetDifferColor(float flRatio, Color c1, Color c2){
