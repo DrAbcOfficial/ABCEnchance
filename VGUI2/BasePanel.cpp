@@ -157,9 +157,9 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 		gHookFuncs.CBasePanel_PaintBackground(pthis, dummy);
 		return;
 	}
-	float time = vgui::system()->GetCurrentTime();
+	float time = gEngfuncs.GetClientTime();
 	if (time >= g_flNextFrameTime) {
-		g_flNextFrameTime = time + (1 / g_pInfo->time_base.numerator);
+		g_flNextFrameTime = time + (1.0f / g_pInfo->time_base.numerator);
 		int result = vpx_video_reader_read_frame(g_pReader);
 		if (!result) {
 			CloseVideo();
