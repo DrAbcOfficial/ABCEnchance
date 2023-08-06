@@ -150,7 +150,6 @@ void YUV2RGB(int Y, int Cb, int Cr, int* R, int* G, int* B){
 	*R = clamp<int>(iTmpR, 0, 255);
 	*G = clamp<int>(iTmpG, 0, 255);
 	*B = clamp<int>(iTmpB, 0, 255);
-	//printf("--%d %d %d %d %d %d--\n", iTmpR, iTmpG, iTmpB, *R, *G, *B);
 }
 
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
