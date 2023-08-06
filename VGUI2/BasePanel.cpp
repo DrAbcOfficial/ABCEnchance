@@ -102,16 +102,13 @@ void BackGroundVideoInit() {
 	}
 	else
 		g_pMetaHookAPI->SysError("[ABCEnchace] Can not open vpx.dll!");
-
 	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar){
 		if (cvar->value > 0)
 			OpenVideo();
 		else
 			CloseVideo();
 	});
-
 	ReadBackGroundList();
-
 	g_pNowChose = g_aryBackGrounds[rand() % g_aryBackGrounds.size()];
 	OpenVideo();
 }
