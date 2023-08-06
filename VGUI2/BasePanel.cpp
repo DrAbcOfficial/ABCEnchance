@@ -4,6 +4,7 @@
 #include "vguilocal.h"
 #include "IFileSystem.h"
 
+#include <ctime>
 #include <vector>
 #include <string>
 
@@ -55,21 +56,21 @@ void ReadBackGroundList() {
 			g_aryBackGrounds.push_back(info);
 			c = 0;
 		}
-		c++;
+		else
+			c++;
 	}
 }
-void OpenVideo(bool flushsound = true) {
+void OpenVideo() {
 	g_pReader = vpx_video_reader_open(g_pNowChose->video);
 	g_pInfo = vpx_video_reader_get_info(g_pReader);
 	g_pDecoder = get_vpx_decoder_by_fourcc(g_pInfo->codec_fourcc);
 	g_pCodec = new vpx_codec_ctx_t();
 	vpx_codec_dec_init(g_pCodec, g_pDecoder->codec_interface(), nullptr, 0);
-
-	if (flushsound) {
-		char soundcmd[MAX_PATH + 8];
-		Q_snprintf(soundcmd, "mp3 loop %s", g_pNowChose->audio);
-		EngineClientCmd(soundcmd);
-	}
+}
+void PlayMp3() {
+	char soundcmd[MAX_PATH + 8];
+	Q_snprintf(soundcmd, "mp3 loop %s ui", g_pNowChose->audio);
+	EngineClientCmd(soundcmd);
 }
 void CloseVideo() {
 	vpx_codec_destroy(g_pCodec);
@@ -108,6 +109,7 @@ void BackGroundVideoInit() {
 			CloseVideo();
 	});
 	ReadBackGroundList();
+	srand(time(0));
 	g_pNowChose = g_aryBackGrounds[rand() % g_aryBackGrounds.size()];
 	OpenVideo();
 }
@@ -118,6 +120,11 @@ void BackGroundVideoClose() {
 		delete (*iter);
 	}
 	g_aryBackGrounds.clear();
+}
+
+void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
+	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
+	PlayMp3();
 }
 
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
@@ -142,7 +149,7 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 		int result = vpx_video_reader_read_frame(g_pReader);
 		if (!result) {
 			CloseVideo();
-			OpenVideo(false);
+			OpenVideo();
 			vpx_video_reader_read_frame(g_pReader);
 		}
 		size_t frame_size = 0;
@@ -201,9 +208,9 @@ void BasePanel_InstallHook(void){
 #define SC_CBASEPANEL_CTOR_SIG "\x55\x8B\xEC\x51\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\x6A\x00\x89\x75\xFC\xE8\x2A\x2A\x2A\x2A\xC7"
 			Fill_Sig(SC_CBASEPANEL_CTOR_SIG, hGameUI, moduleSize, CBasePanel_ctor);
 			Install_InlineHook(CBasePanel_ctor);
-//#define SC_CBASEPANEL_SETBKGRRENDERSTATE_SIG "\x55\x8B\xEC\x8B\x45\x08\x89\x41\x70\x5D\xC2\x04\x00\xCC\xCC\xCC\x32\xC0\xC3"
-			//Fill_Sig(SC_CBASEPANEL_SETBKGRRENDERSTATE_SIG, hGameUI, moduleSize, CBasePanel_SetBackgroundRenderState);
-			//Install_InlineHook(CBasePanel_SetBackgroundRenderState);
+#define SC_GAMEUI_START_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x81\xEC\x30\x03\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xF0\x53"
+			Fill_Sig(SC_GAMEUI_START_SIG, hGameUI, moduleSize, CGameUI_Start);
+			Install_InlineHook(CGameUI_Start);
 		}
 	}
 	else
