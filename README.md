@@ -37,7 +37,7 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 
     Manual:
 
-    1. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory. The results will be as follows.
+    1. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory and put `vpx.dll` into game directory. The results will be as follows:
    
     ```
         Sven Coop
@@ -48,11 +48,14 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
         │  │  ├─shader
         │  │  ├─spr
         │  │  ├─tga
+        │  │  ├─....
         │  │  ABCEnchance.res
         │  └─metahook
         │     └─plugins
         │        └─ABCEnchance.dll       
         svencoop.exe
+        vpx.dll
+
 
     ```
 
@@ -89,6 +92,8 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |CVar|uses|default|range|
 |---|---|---|---|
 |cl_hud_csgo|enable hud or not|1|0/1|
+|---|---|---|---|
+|hud_dynamic_background|use dynamic background|1|0/1|
 |---|---|---|---|
 |cl_autojump|enable auto bhop|0|0/1|
 |---|---|---|---|
@@ -188,3 +193,4 @@ This repository uses code from the following repositories:
 4. [CaptionMod](https://github.com/hzqst/CaptionMod)
 5. [CKF3](https://github.com/CKFDevPowered/CKF3Alpha)
 6. [hl1_source_sdk](https://github.com/tmp64/hl1_source_sdk)
+7. [libvpx](https://github.com/webmproject/libvpx)

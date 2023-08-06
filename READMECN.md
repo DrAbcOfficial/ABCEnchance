@@ -35,7 +35,7 @@
 
     手动:
 
-    1. 从release或者action下载压缩包，解压到 `svencoop`文件夹里, 再把dll文件移动到`svencoop/metahook/plugins`，最终看起来像是这样👇
+    1. 从release或者action下载压缩包，解压到 `svencoop`文件夹里, 再把`ABCEnchance.dll`文件移动到`svencoop/metahook/plugins`，把`vpx.dll`移动到安装目录，最终看起来像是这样👇
    
     ```
         Sven Coop
@@ -46,11 +46,13 @@
         │  │  ├─shader
         │  │  ├─spr
         │  │  ├─tga
+        │  │  ├─....
         │  │  ABCEnchance.res
         │  └─metahook
         │     └─plugins
         │        └─ABCEnchance.dll       
         svencoop.exe
+        vpx.dll
 
     ```
 
@@ -87,6 +89,8 @@
 |CVar|作用|默认值|取值范围|
 |---|---|---|---|
 |cl_hud_csgo|启用HUD|1|0/1|
+|---|---|---|---|
+|hud_dynamic_background|启用动态背景|1|0/1|
 |---|---|---|---|
 |cl_autojump|启用按住空格自动连跳|0|0/1|
 |---|---|---|---|
@@ -175,3 +179,15 @@
 |🪔 高光|😗 没用的efx特效|
 |--|--|
 |<img src="img/highlight.jpg" width="100%">|<img src="img/efx.jpg" width="100%">|
+
+# Acknowledgements:
+
+This repository uses code from the following repositories:
+
+1. [PrimeXT](https://github.com/SNMetamorph/PrimeXT)
+2. [BugfixedHL-Rebased](https://github.com/tmp64/BugfixedHL-Rebased)
+3. [OpenAG](https://github.com/YaLTeR/OpenAG)
+4. [CaptionMod](https://github.com/hzqst/CaptionMod)
+5. [CKF3](https://github.com/CKFDevPowered/CKF3Alpha)
+6. [hl1_source_sdk](https://github.com/tmp64/hl1_source_sdk)
+7. [libvpx](https://github.com/webmproject/libvpx)
