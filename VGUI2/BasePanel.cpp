@@ -69,7 +69,7 @@ void OpenVideo() {
 }
 void PlayMp3() {
 	char soundcmd[MAX_PATH + 8];
-	Q_snprintf(soundcmd, "mp3 loop %s ui", g_pNowChose->audio);
+	Q_snprintf(soundcmd, "mp3 stop;mp3 loop %s ui", g_pNowChose->audio);
 	EngineClientCmd(soundcmd);
 }
 void CloseVideo() {
@@ -113,7 +113,6 @@ void BackGroundVideoInit() {
 	g_pNowChose = g_aryBackGrounds[rand() % g_aryBackGrounds.size()];
 	OpenVideo();
 }
-
 void BackGroundVideoClose() {
 	CloseVideo();
 	for (auto iter = g_aryBackGrounds.begin(); iter != g_aryBackGrounds.end(); iter++) {
@@ -121,21 +120,37 @@ void BackGroundVideoClose() {
 	}
 	g_aryBackGrounds.clear();
 }
-
 void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
 	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
 	PlayMp3();
 }
-
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
 	return gHookFuncs.CBasePanel_ctor(pthis, dummy);
 }
 
-void YUV2RGB(byte y, byte u, byte v, byte* r, byte* g, byte* b){
-	*r = clamp<byte>(y + (v - 128) * 1.14, 0.0, 255.0); // clamp the value to [0, 255]
-	*g = clamp<byte>(y - (u - 128) * 0.39 - (v - 128) * 0.58, 0.0, 255.0);
-	*b = clamp<byte>(y + (u - 128) * 2.03, 0.0, 255.0);
+constexpr int RoundShr(int Dividend, int iShiftRightCount) {
+	return Dividend >= 0 ? 
+		-((-Dividend & (1 << (iShiftRightCount-1))) ? ((-(Dividend)) >> (iShiftRightCount)) + 1 : ((-(Dividend)) >> (iShiftRightCount))) : 
+		Dividend & (1 << ((iShiftRightCount)-1)) ? (Dividend >> iShiftRightCount) + 1 : (Dividend >> iShiftRightCount);
+}
+void YUV2RGB(int Y, int Cb, int Cr, int* R, int* G, int* B){
+	int iTmpR = 0;
+	int iTmpG = 0;
+	int iTmpB = 0;
+
+	iTmpR = (((int)Y) << 14) + 22970 * (((int)Cr) - 128);
+	iTmpG = (((int)Y) << 14) - 5638 * (((int)Cb) - 128) - 11700 * (((int)Cr) - 128);
+	iTmpB = (((int)Y) << 14) + 29032 * (((int)Cb) - 128);
+
+	iTmpR = RoundShr(iTmpR, 14);
+	iTmpG = RoundShr(iTmpG, 14);
+	iTmpB = RoundShr(iTmpB, 14);
+
+	*R = clamp<int>(iTmpR, 0, 255);
+	*G = clamp<int>(iTmpG, 0, 255);
+	*B = clamp<int>(iTmpB, 0, 255);
+	//printf("--%d %d %d %d %d %d--\n", iTmpR, iTmpG, iTmpB, *R, *G, *B);
 }
 
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
@@ -172,7 +187,8 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 					if (w >= img->d_w)
 						break;
 					size_t i = w + (h * enumW);
-					byte r, g, b, a;
+					//use int damit!
+					int r, g, b, a;
 					YUV2RGB(
 						img->planes[VPX_PLANE_Y][i],
 						img->planes[VPX_PLANE_U][i],
@@ -195,7 +211,6 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	vgui::surface()->DrawSetTexture(g_iTextureID);
 	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 }
-
 void BasePanel_InstallHook(void){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
 	if (hGameUI) {
