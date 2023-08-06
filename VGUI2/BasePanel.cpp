@@ -38,6 +38,9 @@ void OpenVideo() {
 void CloseVideo() {
 	vpx_codec_destroy(g_pCodec);
 	vpx_video_reader_close(g_pReader);
+	delete g_pCodec;
+	g_pCodec = nullptr;
+	g_pReader = nullptr;
 }
 void BackGroundVideoInit() {
 	g_pVpxdll = LoadLibrary("vpx.dll");
