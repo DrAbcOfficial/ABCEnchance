@@ -77,7 +77,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -162,9 +162,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp" />
-    <ClCompile Include="avilib\avilib.cpp" />
-    <ClCompile Include="avilib\reader.cpp" />
-    <ClCompile Include="avilib\writer.cpp" />
     <ClCompile Include="SourceSDK\filesystem.cpp" />
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp" />
     <ClCompile Include="SourceSDK\InputWin32.cpp" />
@@ -338,15 +335,16 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\vgui_controls.cpp" />
     <ClCompile Include="vgui_controls\WizardPanel.cpp" />
     <ClCompile Include="vgui_controls\WizardSubPanel.cpp" />
+    <ClCompile Include="vpx\ivfdec.cpp" />
+    <ClCompile Include="vpx\tools_common.cpp" />
+    <ClCompile Include="vpx\video_reader.cpp" />
+    <ClCompile Include="vpx\vpx_codec.cpp" />
+    <ClCompile Include="vpx\vpx_decoder.cpp" />
+    <ClCompile Include="vpx\vpx_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h" />
     <ClInclude Include="..\..\metahook.h" />
-    <ClInclude Include="avilib\avidef.h" />
-    <ClInclude Include="avilib\avilib.h" />
-    <ClInclude Include="avilib\common.h" />
-    <ClInclude Include="avilib\reader.h" />
-    <ClInclude Include="avilib\writer.h" />
     <ClInclude Include="SourceSDK\appframework\IAppSystem.h" />
     <ClInclude Include="SourceSDK\Color.h" />
     <ClInclude Include="SourceSDK\common\xbox\xbox_console.h" />
@@ -608,6 +606,16 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\URLLabel.h" />
     <ClInclude Include="vgui_controls\WizardPanel.h" />
     <ClInclude Include="vgui_controls\WizardSubPanel.h" />
+    <ClInclude Include="vpx\ivfdec.h" />
+    <ClInclude Include="vpx\memle.h" />
+    <ClInclude Include="vpx\tools_common.h" />
+    <ClInclude Include="vpx\video_common.h" />
+    <ClInclude Include="vpx\video_reader.h" />
+    <ClInclude Include="vpx\vpx_codec.h" />
+    <ClInclude Include="vpx\vpx_decoder.h" />
+    <ClInclude Include="vpx\vpx_frame_buffer.h" />
+    <ClInclude Include="vpx\vpx_image.h" />
+    <ClInclude Include="vpx\vpx_integer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
