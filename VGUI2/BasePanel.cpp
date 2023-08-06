@@ -129,19 +129,19 @@ void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	return gHookFuncs.CBasePanel_ctor(pthis, dummy);
 }
 
-constexpr int RoundShr(int Dividend, int iShiftRightCount) {
-	return Dividend >= 0 ? 
-		-((-Dividend & (1 << (iShiftRightCount-1))) ? ((-(Dividend)) >> (iShiftRightCount)) + 1 : ((-(Dividend)) >> (iShiftRightCount))) : 
-		Dividend & (1 << ((iShiftRightCount)-1)) ? (Dividend >> iShiftRightCount) + 1 : (Dividend >> iShiftRightCount);
+constexpr int RoundShr(int d, int s) {
+	return d >= 0 ?
+		-((-d & (1 << (s -1))) ? ((-(d)) >> (s)) + 1 : ((-(d)) >> (s))) :
+		d & (1 << ((s)-1)) ? (d >> s) + 1 : (d >> s);
 }
-void YUV2RGB(int Y, int Cb, int Cr, int* R, int* G, int* B){
+void YUV2RGB(int Y, int U, int V, int* R, int* G, int* B){
 	int iTmpR = 0;
 	int iTmpG = 0;
 	int iTmpB = 0;
 
-	iTmpR = (((int)Y) << 14) + 22970 * (((int)Cr) - 128);
-	iTmpG = (((int)Y) << 14) - 5638 * (((int)Cb) - 128) - 11700 * (((int)Cr) - 128);
-	iTmpB = (((int)Y) << 14) + 29032 * (((int)Cb) - 128);
+	iTmpR = (((int)Y) << 14) + 22970 * (((int)V) - 128);
+	iTmpG = (((int)Y) << 14) - 5638 * (((int)U) - 128) - 11700 * (((int)V) - 128);
+	iTmpB = (((int)Y) << 14) + 29032 * (((int)U) - 128);
 
 	iTmpR = RoundShr(iTmpR, 14);
 	iTmpG = RoundShr(iTmpG, 14);
