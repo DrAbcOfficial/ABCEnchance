@@ -4,6 +4,9 @@
 #include "vguilocal.h"
 #include "IFileSystem.h"
 
+#include <vector>
+#include <string>
+
 #include "vpx/vpx_decoder.h"
 #include "vpx/video_reader.h"
 #include "vpx/tools_common.h"
@@ -19,6 +22,14 @@ int g_iTextureID;
 float g_flNextFrameTime;
 EBackgroundState g_eNowState;
 
+typedef struct backgroundinfo_s {
+	char video[MAX_PATH];
+	char audio[MAX_PATH];
+} backgroundinfo_t;
+
+backgroundinfo_t* g_pNowChose;
+std::vector<backgroundinfo_t*> g_aryBackGrounds;
+
 const VpxVideoInfo* g_pInfo;
 const VpxInterface* g_pDecoder;
 vpx_codec_ctx_t* g_pCodec;
@@ -26,15 +37,40 @@ VpxVideoReader* g_pReader;
 
 HMODULE g_pVpxdll;
 
-void OpenVideo() {
-	char fileFullName[MAX_PATH];
-	g_pFileSystem->GetLocalPath("abcenchance/avi/background.ivf", fileFullName, MAX_PATH);
+void ReadBackGroundList() {
+	char buffer2[MAX_PATH];
+	char buffer1[MAX_PATH];
 
-	g_pReader = vpx_video_reader_open(fileFullName);
+	char* pfile = (char*)gEngfuncs.COM_LoadFile(const_cast<char*>("abcenchance/scence/background.txt"), 5, nullptr);
+	size_t c = 0;
+	while (true) {
+		if (c >= 1)
+			strcpy(buffer1, buffer2);
+		pfile = gEngfuncs.COM_ParseFile(pfile, buffer2);
+		if (!pfile)
+			break;
+		if (c >= 1) {
+			backgroundinfo_t* info = new backgroundinfo_t();
+			g_pFileSystem->GetLocalPath(buffer1, info->video, MAX_PATH);
+			strcpy(info->audio, buffer2);
+			g_aryBackGrounds.push_back(info);
+			c = 0;
+		}
+		c++;
+	}
+}
+void OpenVideo(bool flushsound = true) {
+	g_pReader = vpx_video_reader_open(g_pNowChose->video);
 	g_pInfo = vpx_video_reader_get_info(g_pReader);
 	g_pDecoder = get_vpx_decoder_by_fourcc(g_pInfo->codec_fourcc);
 	g_pCodec = new vpx_codec_ctx_t();
 	vpx_codec_dec_init(g_pCodec, g_pDecoder->codec_interface(), nullptr, 0);
+
+	if (flushsound) {
+		char soundcmd[MAX_PATH + 8];
+		Q_snprintf(soundcmd, "mp3 loop %s", g_pNowChose->audio);
+		EngineClientCmd(soundcmd);
+	}
 }
 void CloseVideo() {
 	vpx_codec_destroy(g_pCodec);
@@ -73,11 +109,19 @@ void BackGroundVideoInit() {
 		else
 			CloseVideo();
 	});
+
+	ReadBackGroundList();
+
+	g_pNowChose = g_aryBackGrounds[rand() % g_aryBackGrounds.size()];
 	OpenVideo();
 }
 
 void BackGroundVideoClose() {
 	CloseVideo();
+	for (auto iter = g_aryBackGrounds.begin(); iter != g_aryBackGrounds.end(); iter++) {
+		delete (*iter);
+	}
+	g_aryBackGrounds.clear();
 }
 
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
@@ -108,7 +152,7 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 		int result = vpx_video_reader_read_frame(g_pReader);
 		if (!result) {
 			CloseVideo();
-			OpenVideo();
+			OpenVideo(false);
 			vpx_video_reader_read_frame(g_pReader);
 		}
 		size_t frame_size = 0;
