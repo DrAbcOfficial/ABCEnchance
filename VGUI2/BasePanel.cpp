@@ -17,11 +17,12 @@
 
 int g_iTextureID;
 float g_flNextFrameTime;
+EBackgroundState g_eNowState;
 
-VpxVideoReader* g_pReader;
 const VpxVideoInfo* g_pInfo;
 const VpxInterface* g_pDecoder;
 vpx_codec_ctx_t* g_pCodec;
+VpxVideoReader* g_pReader;
 
 HMODULE g_pVpxdll;
 
@@ -79,9 +80,13 @@ void BackGroundVideoClose() {
 	CloseVideo();
 }
 
-void __fastcall CBasePanel_ApplySchemeSettings(void* pthis, int dummy, void* shcemebutidontcare) {
+void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
-	gHookFuncs.CBasePanel_ApplySchemeSettings(pthis, dummy, shcemebutidontcare);
+	return gHookFuncs.CBasePanel_ctor(pthis, dummy);
+}
+void __fastcall CBasePanel_SetBackgroundRenderState(void* pthis, int dummy, int state) {
+	g_eNowState = static_cast<EBackgroundState>(state);
+	gHookFuncs.CBasePanel_SetBackgroundRenderState(pthis, dummy, state);
 }
 
 void YUV2RGB(byte y, byte u, byte v, byte* r, byte* g, byte* b){
@@ -95,6 +100,8 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 		gHookFuncs.CBasePanel_PaintBackground(pthis, dummy);
 		return;
 	}
+	if (g_eNowState != BACKGROUND_MAINMENU)
+		return;
 	float time = vgui::system()->GetCurrentTime();
 	if (time >= g_flNextFrameTime) {
 		g_flNextFrameTime = time + (1 / g_pInfo->time_base.numerator);
@@ -152,13 +159,17 @@ void BasePanel_InstallHook(void){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
 	if (hGameUI) {
 		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
+		DWORD moduleSize = g_pMetaHookAPI->GetModuleSize(hGameUI);
 		if (fnCreateInterface) {
 #define SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG "\x55\x8B\xEC\x83\xEC\x38\x53\x8D\x45\xCC\x8B\xD9\x50\x8D\x45\xC8\x89\x5D\xD0\x50\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8D\x4D\xD4\x51"
-			Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, hGameUI, g_pMetaHookAPI->GetModuleSize(hGameUI), CBasePanel_PaintBackground);
+			Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, hGameUI, moduleSize, CBasePanel_PaintBackground);
 			Install_InlineHook(CBasePanel_PaintBackground);
-#define SC_CBASEPANEL_APPLYSCHEMESETTING_SIG "\x55\x8B\xEC\x81\xEC\x20\x02\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xFC\x8B\x45\x08\x53\x56\x50"
-			Fill_Sig(SC_CBASEPANEL_APPLYSCHEMESETTING_SIG, hGameUI, g_pMetaHookAPI->GetModuleSize(hGameUI), CBasePanel_ApplySchemeSettings);
-			Install_InlineHook(CBasePanel_ApplySchemeSettings);
+#define SC_CBASEPANEL_CTOR_SIG "\x55\x8B\xEC\x51\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\x6A\x00\x89\x75\xFC\xE8\x2A\x2A\x2A\x2A\xC7"
+			Fill_Sig(SC_CBASEPANEL_CTOR_SIG, hGameUI, moduleSize, CBasePanel_ctor);
+			Install_InlineHook(CBasePanel_ctor);
+#define SC_CBASEPANEL_SETBKGRRENDERSTATE_SIG "\x55\x8B\xEC\x8B\x45\x08\x89\x41\x70\x5D\xC2\x04\x00\xCC\xCC\xCC\x32\xC0\xC3"
+			Fill_Sig(SC_CBASEPANEL_SETBKGRRENDERSTATE_SIG, hGameUI, moduleSize, CBasePanel_SetBackgroundRenderState);
+			Install_InlineHook(CBasePanel_SetBackgroundRenderState);
 		}
 	}
 	else
