@@ -3,52 +3,70 @@
 #include "local.h"
 #include "vguilocal.h"
 #include "IFileSystem.h"
-#include "avilib/avilib.h"
 
-#include <Controls.h>
+#include <vector>
+
+#include "vpx/vpx_decoder.h"
+#include "vpx/video_reader.h"
+#include "vpx/tools_common.h"
+
+#include "Controls.h"
 
 #include "BasePanel.h"
 
 #include "exportfuncs.h"
 #include "plugins.h"
-#include <vector>
 
-avireader_t* g_pReader = nullptr;
-byte* g_pVideoBuffer = nullptr;
-int i_stream = ~0u;
 int g_iTextureID;
-float g_frameTime;
-float g_nextFrameTime;
-uint g_maxFrame = 0;
-uint g_Frameidx = 0;
+float g_flNextFrameTime;
 
+VpxVideoReader* g_pReader;
+const VpxVideoInfo* g_pInfo;
+const VpxInterface* g_pDecoder;
+vpx_codec_ctx_t* g_pCodec;
+
+HMODULE g_pVpxdll;
+
+void OpenVideo() {
+	char fileFullName[MAX_PATH];
+	g_pFileSystem->GetLocalPath("abcenchance/avi/background.ivf", fileFullName, MAX_PATH);
+
+	g_pReader = vpx_video_reader_open(fileFullName);
+	g_pInfo = vpx_video_reader_get_info(g_pReader);
+	g_pDecoder = get_vpx_decoder_by_fourcc(g_pInfo->codec_fourcc);
+	g_pCodec = new vpx_codec_ctx_t();
+	vpx_codec_dec_init(g_pCodec, g_pDecoder->codec_interface(), nullptr, 0);
+}
+void CloseVideo() {
+	vpx_codec_destroy(g_pCodec);
+	vpx_video_reader_close(g_pReader);
+}
 void BackGroundVideoInit() {
-	g_pReader = avireader_create();
-	static char localPath[256];
-	g_pFileSystem->GetLocalPath("abcenchance/avi/background.avi", localPath, 256);
-	if (!avireader_open(g_pReader, localPath)) {
-		g_pMetaHookAPI->SysError("[ABCEnchace] Can not open avi/background.avi!");
-		return;
+	g_pVpxdll = LoadLibrary("vpx.dll");
+	if (g_pVpxdll) {
+#define GetFuncVPX(name) name = (decltype(name))(GetProcAddress(g_pVpxdll, #name))
+		GetFuncVPX(vpx_codec_dec_init_ver);
+		GetFuncVPX(vpx_codec_peek_stream_info);
+		GetFuncVPX(vpx_codec_get_stream_info);
+		GetFuncVPX(vpx_codec_decode);
+		GetFuncVPX(vpx_codec_get_frame);
+		GetFuncVPX(vpx_codec_register_put_frame_cb);
+		GetFuncVPX(vpx_codec_register_put_slice_cb);
+		GetFuncVPX(vpx_codec_set_frame_buffer_functions);
+		GetFuncVPX(vpx_codec_vp8_dx);
+		GetFuncVPX(vpx_codec_vp9_dx);
+		GetFuncVPX(vpx_codec_destroy);
+		GetFuncVPX(vpx_codec_error);
+		GetFuncVPX(vpx_codec_error_detail);
+		GetFuncVPX(vpx_img_wrap);
+		GetFuncVPX(vpx_img_free);
+#undef GetFuncVPX
 	}
-	avilib_BITMAPINFO bm_info = { 0 };
-	avilib_streamtype_t streamtype = avilib_UnknownStreamtype;
-	avilib_streamtype_t desired_streamtype = avilib_Video;
-	uint32_t alloc_size;
-	while (streamtype != desired_streamtype)
-		avireader_get_stream_type(g_pReader, ++i_stream, &streamtype);
-	if (streamtype == avilib_Video)
-		avireader_get_vformat(g_pReader, i_stream, &bm_info);
-	avireader_get_alloc_size(g_pReader, i_stream, &alloc_size);
-	avireader_get_frame_count(g_pReader, i_stream, &g_maxFrame);
-	double vrate;
-	avireader_get_vrate(g_pReader, &vrate);
-	g_frameTime = 1 / vrate;
-	g_pVideoBuffer = new byte[alloc_size];
+	OpenVideo();
 }
 
 void BackGroundVideoClose() {
-	avireader_destroy(g_pReader);
-	delete g_pVideoBuffer;
+	CloseVideo();
 }
 
 void __fastcall CBasePanel_ApplySchemeSettings(void* pthis, int dummy, void* shcemebutidontcare) {
@@ -56,53 +74,64 @@ void __fastcall CBasePanel_ApplySchemeSettings(void* pthis, int dummy, void* shc
 	gHookFuncs.CBasePanel_ApplySchemeSettings(pthis, dummy, shcemebutidontcare);
 }
 
+
+void yuv2rgb(byte y, byte u, byte v,
+	byte* r, byte* g, byte* b){
+	*r = clamp(y + (v - 128) * 1.14, 0.0, 255.0); // clamp the value to [0, 255]
+	*g = clamp(y - (u - 128) * 0.39 - (v - 128) * 0.58, 0.0, 255.0);
+	*b = clamp(y + (u - 128) * 2.03, 0.0, 255.0);
+}
+
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	float time = vgui::system()->GetFrameTime();
-	if (time >= g_nextFrameTime) {
-		g_nextFrameTime = time + g_frameTime;
-		g_Frameidx++;
-		if (g_Frameidx >= g_maxFrame - 1)
-			g_Frameidx = 0;
-		int w, h;
-		avireader_get_size(g_pReader, &w, &h);
-		int readsize = avireader_read_frame(g_pReader, g_Frameidx, i_stream, g_pVideoBuffer);
-		std::vector<byte> temp;
-		byte u, y1, v, y2;
-		size_t c = 0;
-		const static auto yuv2rgb = [](byte yValue, byte uValue, byte vValue, byte* r, byte* g, byte* b) {
-			*r = yValue + (1.370705 * (vValue - 128));
-			*g = yValue - (0.698001 * (vValue - 128)) - (0.337633 * (uValue - 128));
-			*b = yValue + (1.732446 * (uValue - 128));
-			*r = clamp<byte>(*r, 0, 255);
-			*g = clamp<byte>(*g, 0, 255);
-			*b = clamp<byte>(*b, 0, 255);
-		};
-		for (uint i = 0; i < readsize / sizeof(byte); i++) {
-			if (c == 0)
-				u = g_pVideoBuffer[i];
-			else if (c == 1)
-				y1 = g_pVideoBuffer[i];
-			else if (c == 2)
-				v = g_pVideoBuffer[i];
-			else {
-				y2 = g_pVideoBuffer[i];
-				byte r, g, b;
-				yuv2rgb(y1, u, v, &r, &g, &b);
-				temp.push_back(r);
-				temp.push_back(g);
-				temp.push_back(b);
-				temp.push_back(255);
-				yuv2rgb(y2, u, v, &r, &g, &b);
-				temp.push_back(r);
-				temp.push_back(g);
-				temp.push_back(b);
-				temp.push_back(255);
-				c = 0;
-				continue;
-			}
-			c++;
+	if (time >= g_flNextFrameTime) {
+		g_flNextFrameTime = time + (1 / g_pInfo->time_base.numerator);
+		int result = vpx_video_reader_read_frame(g_pReader);
+		if (!result) {
+			CloseVideo();
+			OpenVideo();
+			vpx_video_reader_read_frame(g_pReader);
 		}
-		vgui::surface()->DrawSetTextureRGBA(g_iTextureID, temp.data(), w, h, false, false);
+		size_t frame_size = 0;
+		const byte* frame = vpx_video_reader_get_frame(g_pReader, &frame_size);
+		vpx_codec_err_t err = vpx_codec_decode(g_pCodec, frame, frame_size, nullptr, 0);
+		vpx_codec_iter_t iter = nullptr;
+		vpx_image_t* img = vpx_codec_get_frame(g_pCodec, &iter);
+		if (img) {
+			//not 444, fuck it
+			if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))
+				return;
+			size_t len = img->d_w * img->d_h;
+			size_t c = 0;
+			byte* buf = new byte[img->d_w * img->d_h * 4];
+
+			size_t enumW = img->stride[VPX_PLANE_Y];
+			size_t enumH = img->h;
+			for (size_t h = 0; h < enumH; h++) {
+				if (h >= img->d_h)
+					continue;
+				for (size_t w = 0; w < enumW; w++) {
+					if (w >= img->d_w)
+						break;
+					size_t i = w + (h * enumW);
+					byte r, g, b, a;
+					yuv2rgb(
+						img->planes[VPX_PLANE_Y][i],
+						img->planes[VPX_PLANE_U][i],
+						img->planes[VPX_PLANE_V][i],
+						&r, &g, &b
+					);
+					a = img->planes[VPX_PLANE_ALPHA] ? img->planes[VPX_PLANE_ALPHA][i] : 255;
+					buf[c * 4 + 0] = r;
+					buf[c * 4 + 1] = g;
+					buf[c * 4 + 2] = b;
+					buf[c * 4 + 3] = a;
+					c++;
+				}
+			}
+			vgui::surface()->DrawSetTextureRGBA(g_iTextureID, buf, img->d_w, img->d_h, true, false);
+			delete[] buf;
+		};
 	}
 	vgui::surface()->DrawSetColor(255, 255, 255, 255);
 	vgui::surface()->DrawSetTexture(g_iTextureID);
