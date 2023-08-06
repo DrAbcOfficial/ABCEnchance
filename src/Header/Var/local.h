@@ -77,6 +77,8 @@ typedef struct{
 
 //CVars
 typedef struct cl_cvars_s{
+	cvar_t* pDynamicBackground = nullptr;
+
 	cvar_t* pBloodEfx = nullptr;
 	cvar_t* pBloodSpriteSpeed = nullptr;
 	cvar_t* pBloodSpriteNumber = nullptr;

@@ -4,8 +4,6 @@
 #include "vguilocal.h"
 #include "IFileSystem.h"
 
-#include <vector>
-
 #include "vpx/vpx_decoder.h"
 #include "vpx/video_reader.h"
 #include "vpx/tools_common.h"
@@ -62,6 +60,15 @@ void BackGroundVideoInit() {
 		GetFuncVPX(vpx_img_free);
 #undef GetFuncVPX
 	}
+	else
+		g_pMetaHookAPI->SysError("[ABCEnchace] Can not open vpx.dll!");
+
+	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar){
+		if (cvar->value > 0)
+			OpenVideo();
+		else
+			CloseVideo();
+	});
 	OpenVideo();
 }
 
@@ -74,16 +81,18 @@ void __fastcall CBasePanel_ApplySchemeSettings(void* pthis, int dummy, void* shc
 	gHookFuncs.CBasePanel_ApplySchemeSettings(pthis, dummy, shcemebutidontcare);
 }
 
-
-void yuv2rgb(byte y, byte u, byte v,
-	byte* r, byte* g, byte* b){
-	*r = clamp(y + (v - 128) * 1.14, 0.0, 255.0); // clamp the value to [0, 255]
-	*g = clamp(y - (u - 128) * 0.39 - (v - 128) * 0.58, 0.0, 255.0);
-	*b = clamp(y + (u - 128) * 2.03, 0.0, 255.0);
+void YUV2RGB(byte y, byte u, byte v, byte* r, byte* g, byte* b){
+	*r = clamp<byte>(y + (v - 128) * 1.14, 0.0, 255.0); // clamp the value to [0, 255]
+	*g = clamp<byte>(y - (u - 128) * 0.39 - (v - 128) * 0.58, 0.0, 255.0);
+	*b = clamp<byte>(y + (u - 128) * 2.03, 0.0, 255.0);
 }
 
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
-	float time = vgui::system()->GetFrameTime();
+	if (gCVars.pDynamicBackground->value <= 0) {
+		gHookFuncs.CBasePanel_PaintBackground(pthis, dummy);
+		return;
+	}
+	float time = vgui::system()->GetCurrentTime();
 	if (time >= g_flNextFrameTime) {
 		g_flNextFrameTime = time + (1 / g_pInfo->time_base.numerator);
 		int result = vpx_video_reader_read_frame(g_pReader);
@@ -101,10 +110,8 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 			//not 444, fuck it
 			if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))
 				return;
-			size_t len = img->d_w * img->d_h;
 			size_t c = 0;
 			byte* buf = new byte[img->d_w * img->d_h * 4];
-
 			size_t enumW = img->stride[VPX_PLANE_Y];
 			size_t enumH = img->h;
 			for (size_t h = 0; h < enumH; h++) {
@@ -115,7 +122,7 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 						break;
 					size_t i = w + (h * enumW);
 					byte r, g, b, a;
-					yuv2rgb(
+					YUV2RGB(
 						img->planes[VPX_PLANE_Y][i],
 						img->planes[VPX_PLANE_U][i],
 						img->planes[VPX_PLANE_V][i],
@@ -138,8 +145,7 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 }
 
-void BasePanel_InstallHook(void)
-{
+void BasePanel_InstallHook(void){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
 	if (hGameUI) {
 		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
