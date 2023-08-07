@@ -152,8 +152,10 @@ void BackGroundVideoInit() {
 	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar){
 		if (cvar->value > 0)
 			OpenVideo();
-		else
+		else {
 			CloseVideo();
+			EngineClientCmd("mp3 stop;mp3 loop gamestartup.mp3 ui");
+		}
 	});
 	ReadBackGroundList();
 	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size()-1)];
@@ -167,7 +169,7 @@ void BackGroundVideoClose() {
 	g_aryBackGrounds.clear();
 }
 void BackGroundPushFrame() {
-	if (!g_pBasePanel->IsVisible())
+	if (!g_pBasePanel->IsVisible() || gCVars.pDynamicBackground->value <= 0)
 		return;
 	float time = vgui::system()->GetCurrentTime();
 	if (time >= g_flNextFrameTime) {
@@ -272,7 +274,8 @@ void BackGroundPushFrame() {
 }
 void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
 	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
-	PlayMp3();
+	if (gCVars.pDynamicBackground->value > 0) 
+		PlayMp3();
 }
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_pBasePanel = static_cast<IBasePanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
