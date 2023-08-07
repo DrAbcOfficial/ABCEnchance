@@ -149,12 +149,14 @@ void BackGroundVideoInit() {
 	}
 	else
 		g_pMetaHookAPI->SysError("[ABCEnchace] Can not open vpx.dll!");
-	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar){
-		if (cvar->value > 0)
+	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+		if (cvar->value > 0){
 			OpenVideo();
+			PlayMp3();
+		}
 		else {
 			CloseVideo();
-			EngineClientCmd("mp3 stop;mp3 loop gamestartup.mp3 ui");
+			EngineClientCmd("mp3 stop;mp3 loop media/gamestartup.mp3 ui");
 		}
 	});
 	ReadBackGroundList();
