@@ -163,33 +163,6 @@ void BackGroundVideoClose() {
 	}
 	g_aryBackGrounds.clear();
 }
-void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
-	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
-	PlayMp3();
-}
-constexpr int RoundShr(int d, int s) {
-	return d >= 0 ?
-		-((-d & (1 << (s - 1))) ? ((-(d)) >> (s)) + 1 : ((-(d)) >> (s))) :
-		d & (1 << ((s)-1)) ? (d >> s) + 1 : (d >> s);
-}
-void YUV2RGB(int Y, int U, int V, int* R, int* G, int* B) {
-	int iTmpR = 0;
-	int iTmpG = 0;
-	int iTmpB = 0;
-
-	iTmpR = (((int)Y) << 14) + 22970 * (((int)V) - 128);
-	iTmpG = (((int)Y) << 14) - 5638 * (((int)U) - 128) - 11700 * (((int)V) - 128);
-	iTmpB = (((int)Y) << 14) + 29032 * (((int)U) - 128);
-
-	iTmpR = RoundShr(iTmpR, 14);
-	iTmpG = RoundShr(iTmpG, 14);
-	iTmpB = RoundShr(iTmpB, 14);
-
-	*R = clamp<int>(iTmpR, 0, 255);
-	*G = clamp<int>(iTmpG, 0, 255);
-	*B = clamp<int>(iTmpB, 0, 255);
-}
-
 void BackGroundPushFrame() {
 	if (!g_pBasePanel->IsVisible())
 		return;
@@ -237,6 +210,27 @@ void BackGroundPushFrame() {
 					size_t enumW = img->stride[VPX_PLANE_Y];
 					size_t enumH = img->h;
 					asyncResult returnVal;
+					const static constexpr auto YUV2RGB = [](int Y, int U, int V, int* R, int* G, int* B) {
+						int iTmpR = 0;
+						int iTmpG = 0;
+						int iTmpB = 0;
+
+						iTmpR = (((int)Y) << 14) + 22970 * (((int)V) - 128);
+						iTmpG = (((int)Y) << 14) - 5638 * (((int)U) - 128) - 11700 * (((int)V) - 128);
+						iTmpB = (((int)Y) << 14) + 29032 * (((int)U) - 128);
+						const static constexpr auto RoundShr = [](int d, int s) -> int {
+							return d >= 0 ?
+								-((-d & (1 << (s - 1))) ? ((-(d)) >> (s)) + 1 : ((-(d)) >> (s))) :
+								d & (1 << ((s)-1)) ? (d >> s) + 1 : (d >> s);
+						};
+						iTmpR = RoundShr(iTmpR, 14);
+						iTmpG = RoundShr(iTmpG, 14);
+						iTmpB = RoundShr(iTmpB, 14);
+
+						*R = clamp<int>(iTmpR, 0, 255);
+						*G = clamp<int>(iTmpG, 0, 255);
+						*B = clamp<int>(iTmpB, 0, 255);
+					};
 					for (size_t h = 0; h < enumH; h++) {
 						if (h >= img->d_h)
 							continue;
@@ -270,6 +264,10 @@ void BackGroundPushFrame() {
 		}
 		g_bOldInLevel = inLevel;
 	}
+}
+void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
+	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
+	PlayMp3();
 }
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_pBasePanel = static_cast<IBasePanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
