@@ -116,6 +116,9 @@ void PlayMp3() {
 	Q_snprintf(soundcmd, "mp3 stop;mp3 loop %s ui", g_pNowChose->audio);
 	EngineClientCmd(soundcmd);
 }
+void StopMp3() {
+	EngineClientCmd("mp3 stop");
+}
 void CloseVideo() {
 	vpx_codec_destroy(g_pCodec);
 	vpx_video_reader_close(g_pReader);
@@ -182,6 +185,8 @@ void BackGroundPushFrame() {
 			OpenVideo();
 			PlayMp3();
 		}
+		else if (!g_bOldInLevel && inLevel)
+			StopMp3();
 		if (!inLevel) {
 			g_pAsyncFunc = std::async([]() -> asyncResult* {
 				int result = vpx_video_reader_read_frame(g_pReader);
