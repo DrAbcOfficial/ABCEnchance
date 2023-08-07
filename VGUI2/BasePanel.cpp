@@ -189,6 +189,7 @@ void YUV2RGB(int Y, int U, int V, int* R, int* G, int* B) {
 	*G = clamp<int>(iTmpG, 0, 255);
 	*B = clamp<int>(iTmpB, 0, 255);
 }
+
 void BackGroundPushFrame() {
 	if (!g_pBasePanel->IsVisible())
 		return;
@@ -209,10 +210,6 @@ void BackGroundPushFrame() {
 			PlayMp3();
 		}
 		if (!inLevel) {
-			if (g_pAsyncFunc.valid()) {
-				asyncResult* result = g_pAsyncFunc.get();
-				delete[] result->data;
-			}
 			g_pAsyncFunc = std::async([]() -> asyncResult* {
 				int result = vpx_video_reader_read_frame(g_pReader);
 				if (!result) {
@@ -229,7 +226,13 @@ void BackGroundPushFrame() {
 					//not 444, fuck it
 					if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))
 						return nullptr;
-					byte* buf = new byte[img->d_w * img->d_h * 4];
+					static int s_iArea;
+					static byte* s_pBuf;
+					if (s_iArea < img->d_w * img->d_h) {
+						s_iArea = img->d_w * img->d_h;
+						delete[] s_pBuf;
+						s_pBuf = new byte[img->d_w * img->d_h * 4];
+					}
 					size_t c = 0;
 					size_t enumW = img->stride[VPX_PLANE_Y];
 					size_t enumH = img->h;
@@ -250,14 +253,14 @@ void BackGroundPushFrame() {
 								&r, &g, &b
 							);
 							a = img->planes[VPX_PLANE_ALPHA] ? img->planes[VPX_PLANE_ALPHA][i] : 255;
-							buf[c * 4 + 0] = r;
-							buf[c * 4 + 1] = g;
-							buf[c * 4 + 2] = b;
-							buf[c * 4 + 3] = a;
+							s_pBuf[c * 4 + 0] = r;
+							s_pBuf[c * 4 + 1] = g;
+							s_pBuf[c * 4 + 2] = b;
+							s_pBuf[c * 4 + 3] = a;
 							c++;
 						}
 					}
-					returnVal.data = buf;
+					returnVal.data = s_pBuf;
 					returnVal.wide = img->d_w;
 					returnVal.tall = img->d_h;
 					return &returnVal;
@@ -280,10 +283,8 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	}
 	if (g_pAsyncFunc.valid()) {
 		asyncResult* value = g_pAsyncFunc.get();
-		if (value) {
+		if (value)
 			vgui::surface()->DrawSetTextureRGBA(g_iTextureID, value->data, value->wide, value->tall, true, false);
-			delete[] value->data;
-		}
 	}
 	vgui::surface()->DrawSetColor(255, 255, 255, 255);
 	vgui::surface()->DrawSetTexture(g_iTextureID);
