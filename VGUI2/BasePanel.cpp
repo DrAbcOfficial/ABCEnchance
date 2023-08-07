@@ -4,7 +4,6 @@
 #include "vguilocal.h"
 #include "IFileSystem.h"
 
-#include <ctime>
 #include <vector>
 #include <string>
 #include <future>
@@ -154,8 +153,7 @@ void BackGroundVideoInit() {
 			CloseVideo();
 	});
 	ReadBackGroundList();
-	srand(time(0));
-	g_pNowChose = g_aryBackGrounds[rand() % g_aryBackGrounds.size()];
+	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size())];
 	OpenVideo();
 }
 void BackGroundVideoClose() {
@@ -169,7 +167,6 @@ void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idonca
 	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
 	PlayMp3();
 }
-
 constexpr int RoundShr(int d, int s) {
 	return d >= 0 ?
 		-((-d & (1 << (s - 1))) ? ((-(d)) >> (s)) + 1 : ((-(d)) >> (s))) :
@@ -192,7 +189,6 @@ void YUV2RGB(int Y, int U, int V, int* R, int* G, int* B) {
 	*G = clamp<int>(iTmpG, 0, 255);
 	*B = clamp<int>(iTmpB, 0, 255);
 }
-
 void BackGroundPushFrame() {
 	if (!g_pBasePanel->IsVisible())
 		return;
@@ -272,7 +268,6 @@ void BackGroundPushFrame() {
 		g_bOldInLevel = inLevel;
 	}
 }
-
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_pBasePanel = static_cast<IBasePanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
