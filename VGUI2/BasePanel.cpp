@@ -153,7 +153,7 @@ void BackGroundVideoInit() {
 			CloseVideo();
 	});
 	ReadBackGroundList();
-	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size())];
+	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size()-1)];
 	OpenVideo();
 }
 void BackGroundVideoClose() {
