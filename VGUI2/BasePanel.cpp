@@ -7,6 +7,7 @@
 #include <ctime>
 #include <vector>
 #include <string>
+#include <future>
 
 #include "vpx/vpx_decoder.h"
 #include "vpx/video_reader.h"
@@ -21,6 +22,42 @@
 
 int g_iTextureID;
 float g_flNextFrameTime;
+bool g_bOldInLevel;
+class IBasePanel {
+public:
+	virtual void* idontcare1() = 0;
+	virtual void* idontcare2() = 0;
+	virtual void* idontcare3() = 0;
+	virtual void* idontcare4() = 0;
+	virtual void* idontcare5() = 0;
+	virtual void* idontcare6() = 0;
+	virtual void* idontcare7() = 0;
+	virtual void* idontcare8() = 0;
+	virtual void* idontcare9() = 0;
+	virtual void* idontcare10() = 0;
+	virtual void* idontcare11() = 0;
+	virtual void* idontcare12() = 0;
+	virtual void* idontcare13() = 0;
+	virtual void* idontcare14() = 0;
+	virtual void* idontcare15() = 0;
+	virtual void* idontcare16() = 0;
+	virtual void* idontcare17() = 0;
+	virtual void* idontcare18() = 0;
+	virtual void* idontcare19() = 0;
+	virtual void* idontcare20() = 0;
+	virtual void* idontcare21() = 0;
+	virtual void* idontcare22() = 0;
+	virtual void* idontcare23() = 0;
+	virtual void* idontcare24() = 0;
+	virtual void* idontcare25() = 0;
+	virtual void* idontcare26() = 0;
+	virtual void* idontcare27() = 0;
+	virtual int GetMessageMap() = 0;
+	virtual void* dtor() = 0;
+	virtual void SetVisible(bool state) = 0;
+	virtual bool IsVisible() = 0;
+};
+IBasePanel* g_pBasePanel;
 
 typedef struct backgroundinfo_s {
 	char video[MAX_PATH];
@@ -36,6 +73,13 @@ vpx_codec_ctx_t* g_pCodec;
 VpxVideoReader* g_pReader;
 
 HMODULE g_pVpxdll;
+
+typedef struct asyncResult {
+	byte* data;
+	uint wide;
+	uint tall;
+};
+std::future<asyncResult*> g_pAsyncFunc;
 
 void ReadBackGroundList() {
 	char buffer2[MAX_PATH];
@@ -59,6 +103,7 @@ void ReadBackGroundList() {
 		else
 			c++;
 	}
+	gEngfuncs.COM_FreeFile(pfile);
 }
 void OpenVideo() {
 	g_pReader = vpx_video_reader_open(g_pNowChose->video);
@@ -124,17 +169,13 @@ void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idonca
 	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
 	PlayMp3();
 }
-void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
-	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
-	return gHookFuncs.CBasePanel_ctor(pthis, dummy);
-}
 
 constexpr int RoundShr(int d, int s) {
 	return d >= 0 ?
-		-((-d & (1 << (s -1))) ? ((-(d)) >> (s)) + 1 : ((-(d)) >> (s))) :
+		-((-d & (1 << (s - 1))) ? ((-(d)) >> (s)) + 1 : ((-(d)) >> (s))) :
 		d & (1 << ((s)-1)) ? (d >> s) + 1 : (d >> s);
 }
-void YUV2RGB(int Y, int U, int V, int* R, int* G, int* B){
+void YUV2RGB(int Y, int U, int V, int* R, int* G, int* B) {
 	int iTmpR = 0;
 	int iTmpG = 0;
 	int iTmpB = 0;
@@ -152,59 +193,102 @@ void YUV2RGB(int Y, int U, int V, int* R, int* G, int* B){
 	*B = clamp<int>(iTmpB, 0, 255);
 }
 
+void BackGroundPushFrame() {
+	if (!g_pBasePanel->IsVisible())
+		return;
+	float time = vgui::system()->GetCurrentTime();
+	if (time >= g_flNextFrameTime) {
+		g_flNextFrameTime = time + (1.0f / g_pInfo->time_base.numerator);
+		const static auto IsInLevel = []() -> bool {
+			const char* levelName = gEngfuncs.pfnGetLevelName();
+			if (strlen(levelName) > 0)
+				return true;
+			return false;
+		};
+		bool inLevel = IsInLevel();
+		//back to main menu
+		if (g_bOldInLevel && !inLevel) {
+			CloseVideo();
+			OpenVideo();
+			PlayMp3();
+		}
+		if (!inLevel) {
+			if (g_pAsyncFunc.valid()) {
+				asyncResult* result = g_pAsyncFunc.get();
+				delete[] result->data;
+			}
+			g_pAsyncFunc = std::async([]() -> asyncResult* {
+				int result = vpx_video_reader_read_frame(g_pReader);
+				if (!result) {
+					CloseVideo();
+					OpenVideo();
+					vpx_video_reader_read_frame(g_pReader);
+				}
+				size_t frame_size = 0;
+				const byte* frame = vpx_video_reader_get_frame(g_pReader, &frame_size);
+				vpx_codec_err_t err = vpx_codec_decode(g_pCodec, frame, frame_size, nullptr, 0);
+				vpx_codec_iter_t iter = nullptr;
+				vpx_image_t* img = vpx_codec_get_frame(g_pCodec, &iter);
+				if (img) {
+					//not 444, fuck it
+					if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))
+						return nullptr;
+					byte* buf = new byte[img->d_w * img->d_h * 4];
+					size_t c = 0;
+					size_t enumW = img->stride[VPX_PLANE_Y];
+					size_t enumH = img->h;
+					asyncResult returnVal;
+					for (size_t h = 0; h < enumH; h++) {
+						if (h >= img->d_h)
+							continue;
+						for (size_t w = 0; w < enumW; w++) {
+							if (w >= img->d_w)
+								break;
+							size_t i = w + (h * enumW);
+							//use int damit!
+							int r, g, b, a;
+							YUV2RGB(
+								img->planes[VPX_PLANE_Y][i],
+								img->planes[VPX_PLANE_U][i],
+								img->planes[VPX_PLANE_V][i],
+								&r, &g, &b
+							);
+							a = img->planes[VPX_PLANE_ALPHA] ? img->planes[VPX_PLANE_ALPHA][i] : 255;
+							buf[c * 4 + 0] = r;
+							buf[c * 4 + 1] = g;
+							buf[c * 4 + 2] = b;
+							buf[c * 4 + 3] = a;
+							c++;
+						}
+					}
+					returnVal.data = buf;
+					returnVal.wide = img->d_w;
+					returnVal.tall = img->d_h;
+					return &returnVal;
+				};
+				return nullptr;
+				});
+		}
+		g_bOldInLevel = inLevel;
+	}
+}
+
+void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
+	g_pBasePanel = static_cast<IBasePanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
+	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
+	return g_pBasePanel;
+}
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	if (gCVars.pDynamicBackground->value <= 0) {
 		gHookFuncs.CBasePanel_PaintBackground(pthis, dummy);
 		return;
 	}
-	float time = gEngfuncs.GetClientTime();
-	if (time >= g_flNextFrameTime) {
-		g_flNextFrameTime = time + (1.0f / g_pInfo->time_base.numerator);
-		int result = vpx_video_reader_read_frame(g_pReader);
-		if (!result) {
-			CloseVideo();
-			OpenVideo();
-			vpx_video_reader_read_frame(g_pReader);
+	if (g_pAsyncFunc.valid()) {
+		asyncResult* value = g_pAsyncFunc.get();
+		if (value) {
+			vgui::surface()->DrawSetTextureRGBA(g_iTextureID, value->data, value->wide, value->tall, true, false);
+			delete[] value->data;
 		}
-		size_t frame_size = 0;
-		const byte* frame = vpx_video_reader_get_frame(g_pReader, &frame_size);
-		vpx_codec_err_t err = vpx_codec_decode(g_pCodec, frame, frame_size, nullptr, 0);
-		vpx_codec_iter_t iter = nullptr;
-		vpx_image_t* img = vpx_codec_get_frame(g_pCodec, &iter);
-		if (img) {
-			//not 444, fuck it
-			if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))
-				return;
-			size_t c = 0;
-			byte* buf = new byte[img->d_w * img->d_h * 4];
-			size_t enumW = img->stride[VPX_PLANE_Y];
-			size_t enumH = img->h;
-			for (size_t h = 0; h < enumH; h++) {
-				if (h >= img->d_h)
-					continue;
-				for (size_t w = 0; w < enumW; w++) {
-					if (w >= img->d_w)
-						break;
-					size_t i = w + (h * enumW);
-					//use int damit!
-					int r, g, b, a;
-					YUV2RGB(
-						img->planes[VPX_PLANE_Y][i],
-						img->planes[VPX_PLANE_U][i],
-						img->planes[VPX_PLANE_V][i],
-						&r, &g, &b
-					);
-					a = img->planes[VPX_PLANE_ALPHA] ? img->planes[VPX_PLANE_ALPHA][i] : 255;
-					buf[c * 4 + 0] = r;
-					buf[c * 4 + 1] = g;
-					buf[c * 4 + 2] = b;
-					buf[c * 4 + 3] = a;
-					c++;
-				}
-			}
-			vgui::surface()->DrawSetTextureRGBA(g_iTextureID, buf, img->d_w, img->d_h, true, false);
-			delete[] buf;
-		};
 	}
 	vgui::surface()->DrawSetColor(255, 255, 255, 255);
 	vgui::surface()->DrawSetTexture(g_iTextureID);
