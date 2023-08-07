@@ -47,6 +47,7 @@
 #include <voice_status.h>
 #include <CVector.h>
 #include <ClientParticleMan.h>
+#include <BasePanel.h>
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -657,6 +658,7 @@ void HUD_VoiceStatus(int entindex, qboolean talking) {
 }
 void HUD_Frame(double frametime) {
 	GetClientVoiceMgr()->Frame(frametime);
+	BackGroundPushFrame();
 	gExportfuncs.HUD_Frame(frametime);
 }
 int HUD_Redraw(float time, int intermission){
