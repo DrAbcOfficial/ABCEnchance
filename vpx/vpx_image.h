@@ -68,6 +68,13 @@ typedef enum vpx_color_range {
   VPX_CR_FULL_RANGE = 1    /**< YUV/RGB [0..255] */
 } vpx_color_range_t;       /**< alias for enum vpx_color_range */
 
+enum vpx_image_panels {
+    VPX_PLANE_PACKED = 0,  /**< To be used for all packed formats */
+    VPX_PLANE_Y = 0,       /**< Y (Luminance) plane */
+    VPX_PLANE_U,       /**< U (Chroma) plane */
+    VPX_PLANE_V,       /**< V (Chroma) plane */
+    VPX_PLANE_ALPHA,  /**< A (Transparency) plane */
+};
 /**\brief Image Descriptor */
 typedef struct vpx_image {
   vpx_img_fmt_t fmt;       /**< Image Format */
@@ -92,11 +99,6 @@ typedef struct vpx_image {
   unsigned int y_chroma_shift; /**< subsampling order, Y */
 
 /* Image data pointers. */
-#define VPX_PLANE_PACKED 0  /**< To be used for all packed formats */
-#define VPX_PLANE_Y 0       /**< Y (Luminance) plane */
-#define VPX_PLANE_U 1       /**< U (Chroma) plane */
-#define VPX_PLANE_V 2       /**< V (Chroma) plane */
-#define VPX_PLANE_ALPHA 3   /**< A (Transparency) plane */
   unsigned char *planes[4]; /**< pointer to the top left pixel for each plane */
   int stride[4];            /**< stride between rows for each plane */
 

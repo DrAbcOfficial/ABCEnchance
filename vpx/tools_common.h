@@ -10,7 +10,7 @@
 #ifndef VPX_TOOLS_COMMON_H_
 #define VPX_TOOLS_COMMON_H_
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "vpx/vpx_codec.h"
 #include "vpx/vpx_image.h"
@@ -27,89 +27,63 @@
 
 #define RAW_FRAME_HDR_SZ sizeof(uint32_t)
 
-#define VP8_FOURCC 0x30385056
-#define VP9_FOURCC 0x30395056
-
+enum DecoderFourCC {
+    VP8 = 0x30385056,
+    VP9 = 0x30395056
+};
 enum VideoFileType {
-  FILE_TYPE_RAW,
-  FILE_TYPE_IVF,
-  FILE_TYPE_Y4M,
-  FILE_TYPE_WEBM
+    FILE_TYPE_RAW,
+    FILE_TYPE_IVF,
+    FILE_TYPE_Y4M,
+    FILE_TYPE_WEBM
 };
-
 struct FileTypeDetectionBuffer {
-  char buf[4];
-  size_t buf_read;
-  size_t position;
+    char buf[4];
+    size_t buf_read;
+    size_t position;
 };
-
 struct VpxRational {
-  int numerator;
-  int denominator;
+    int numerator;
+    int denominator;
 };
-
 struct VpxInputContext {
-  const char *filename;
-  FILE *file;
-  int64_t length;
-  struct FileTypeDetectionBuffer detect;
-  enum VideoFileType file_type;
-  uint32_t width;
-  uint32_t height;
-  struct VpxRational pixel_aspect_ratio;
-  vpx_img_fmt_t fmt;
-  vpx_bit_depth_t bit_depth;
-  int only_i420;
-  uint32_t fourcc;
-  struct VpxRational framerate;
+    const char *filename;
+    std::FILE *file;
+    int64_t length;
+    struct FileTypeDetectionBuffer detect;
+    enum VideoFileType file_type;
+    uint32_t width;
+    uint32_t height;
+    struct VpxRational pixel_aspect_ratio;
+    vpx_img_fmt_t fmt;
+    vpx_bit_depth_t bit_depth;
+    int only_i420;
+    uint32_t fourcc;
+    struct VpxRational framerate;
 };
 
-
-#define VPX_NO_RETURN __declspec(noreturn)
-
-// Tells the compiler to perform `printf` format string checking if the
-// compiler supports it; see the 'format' attribute in
-// <https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html>.
-#define VPX_TOOLS_FORMAT_PRINTF(string_index, first_to_check)
-#if defined(__has_attribute)
-#if __has_attribute(format)
-#undef VPX_TOOLS_FORMAT_PRINTF
-#define VPX_TOOLS_FORMAT_PRINTF(string_index, first_to_check) \
-  __attribute__((__format__(__printf__, string_index, first_to_check)))
-#endif
-#endif
-
-/* Sets a stdio stream into binary mode */
-FILE *set_binary_mode(FILE *stream);
-
-VPX_NO_RETURN void die(const char *fmt, ...) VPX_TOOLS_FORMAT_PRINTF(1, 2);
-VPX_NO_RETURN void fatal(const char *fmt, ...) VPX_TOOLS_FORMAT_PRINTF(1, 2);
-void warn(const char *fmt, ...) VPX_TOOLS_FORMAT_PRINTF(1, 2);
-
-VPX_NO_RETURN void die_codec(vpx_codec_ctx_t *ctx, const char *s);
-
-#undef VPX_NO_RETURN
+void die(const char* fmt, ...);
+void fatal(const char* fmt, ...);
+void warn(const char* fmt, ...);
 
 int read_yuv_frame(struct VpxInputContext *input_ctx, vpx_image_t *yuv_frame);
+size_t get_vpx_decoder_count(void);
 
 typedef struct VpxInterface {
-  const char *name;
-  uint32_t fourcc;
-  vpx_codec_iface_t *(*codec_interface)(void);
+    const char* name;
+    uint32_t fourcc;
+    vpx_codec_iface_t* (*codec_interface)(void);
 } VpxInterface;
-
-int get_vpx_decoder_count(void);
 const VpxInterface* get_vpx_decoder_by_index(int i);
 const VpxInterface* get_vpx_decoder_by_name(const char *name);
 const VpxInterface* get_vpx_decoder_by_fourcc(uint32_t fourcc);
 
 int vpx_img_plane_width(const vpx_image_t *img, int plane);
 int vpx_img_plane_height(const vpx_image_t *img, int plane);
-void vpx_img_write(const vpx_image_t *img, FILE *file);
-int vpx_img_read(vpx_image_t *img, FILE *file);
+void vpx_img_write(const vpx_image_t *img, std::FILE *file);
+bool vpx_img_read(vpx_image_t *img, std::FILE *file);
 
 double sse_to_psnr(double samples, double peak, double mse);
-
 int compare_img(const vpx_image_t *const img1, const vpx_image_t *const img2);
 void find_mismatch(const vpx_image_t *const img1, const vpx_image_t *const img2,
                    int yloc[4], int uloc[4], int vloc[4]);

@@ -35,7 +35,7 @@ VpxVideoReader *vpx_video_reader_open(const char *filename);
 void vpx_video_reader_close(VpxVideoReader *reader);
 
 // Reads frame from the file and stores it in internal buffer.
-int vpx_video_reader_read_frame(VpxVideoReader *reader);
+bool vpx_video_reader_read_frame(VpxVideoReader *reader);
 
 // Returns the pointer to memory buffer with frame data read by last call to
 // vpx_video_reader_read_frame().

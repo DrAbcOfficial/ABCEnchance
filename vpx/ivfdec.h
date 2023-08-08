@@ -9,16 +9,8 @@
  */
 #ifndef VPX_IVFDEC_H_
 #define VPX_IVFDEC_H_
-
 #include "./tools_common.h"
-
-extern "C" {
-
-int file_is_ivf(struct VpxInputContext *input);
-
-int ivf_read_frame(FILE *infile, uint8_t **buffer, size_t *bytes_read,
-                   size_t *buffer_size);
-
-}
+bool file_is_ivf(struct VpxInputContext *input);
+bool ivf_read_frame(std::FILE *infile, uint8_t **buffer, size_t *bytes_read, size_t *buffer_size);
 
 #endif  // VPX_IVFDEC_H_
