@@ -68,7 +68,7 @@ std::vector<backgroundinfo_t*> g_aryBackGrounds;
 
 const VpxVideoInfo* g_pInfo;
 const VpxInterface* g_pDecoder;
-vpx_codec_ctx_t* g_pCodec;
+vpx_codec_ctx_t g_pCodec;
 VpxVideoReader* g_pReader;
 
 HMODULE g_pVpxdll;
@@ -108,8 +108,7 @@ void OpenVideo() {
 	g_pReader = vpx_video_reader_open(g_pNowChose->video);
 	g_pInfo = vpx_video_reader_get_info(g_pReader);
 	g_pDecoder = get_vpx_decoder_by_fourcc(g_pInfo->codec_fourcc);
-	g_pCodec = new vpx_codec_ctx_t();
-	vpx_codec_dec_init(g_pCodec, g_pDecoder->codec_interface(), nullptr, 0);
+	vpx_codec_dec_init(&g_pCodec, g_pDecoder->codec_interface(), nullptr, 0);
 }
 void PlayMp3() {
 	char soundcmd[MAX_PATH + 8];
@@ -120,11 +119,8 @@ void StopMp3() {
 	EngineClientCmd("mp3 stop");
 }
 void CloseVideo() {
-	vpx_codec_destroy(g_pCodec);
+	vpx_codec_destroy(&g_pCodec);
 	vpx_video_reader_close(g_pReader);
-	delete g_pCodec;
-	g_pCodec = nullptr;
-	g_pReader = nullptr;
 }
 void BackGroundVideoInit() {
 	g_pVpxdll = LoadLibrary("vpx.dll");
@@ -201,9 +197,9 @@ void BackGroundPushFrame() {
 				}
 				size_t frame_size = 0;
 				const byte* frame = vpx_video_reader_get_frame(g_pReader, &frame_size);
-				vpx_codec_err_t err = vpx_codec_decode(g_pCodec, frame, frame_size, nullptr, 0);
+				vpx_codec_err_t err = vpx_codec_decode(&g_pCodec, frame, frame_size, nullptr, 0);
 				vpx_codec_iter_t iter = nullptr;
-				vpx_image_t* img = vpx_codec_get_frame(g_pCodec, &iter);
+				vpx_image_t* img = vpx_codec_get_frame(&g_pCodec, &iter);
 				if (img) {
 					//not 444, fuck it
 					if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))

@@ -9,6 +9,9 @@
  */
 
 #include "metahook.h"
+#include <strtools.h>
+
+#include <algorithm>
 #include <corecrt_math.h>
 
 #include "tools_common.h"
@@ -17,19 +20,25 @@
 
 
 void die(const char *fmt, ...) {
-
+    va_list marker;
+    va_start(marker, fmt);
+    fatal(fmt, marker);
 }
-
 void fatal(const char *fmt, ...) {
-
+    va_list marker;
+    char msg[2048];
+    va_start(marker, fmt);
+    Q_vsnprintf(msg, sizeof(msg), fmt, marker);
+    va_end(marker);
+    g_pMetaHookAPI->SysError("VPX Fatal Error: %s", msg);
 }
-
 void warn(const char *fmt, ...) { 
-
-}
-
-void die_codec(vpx_codec_ctx_t *ctx, const char *s) {
-
+    va_list marker;
+    char msg[2048];
+    va_start(marker, fmt);
+    Q_vsnprintf(msg, sizeof(msg), fmt, marker);
+    va_end(marker);
+    gEngfuncs.Con_Printf("VPX Warn: %s", msg);
 }
 
 int read_yuv_frame(struct VpxInputContext *input_ctx, vpx_image_t *yuv_frame) {
@@ -96,225 +105,207 @@ vpx_codec_iface_t* GetVP9Decoder() {
     return vpx_codec_vp9_dx();
 }
 
-static const VpxInterface vpx_decoders[] = {
-  { "vp8", VP8_FOURCC, &GetVP8Decoder },
-  { "vp9", VP9_FOURCC, &GetVP9Decoder },
+constexpr VpxInterface vpx_decoders[] = {
+  { "vp8", DecoderFourCC::VP8, &GetVP8Decoder },
+  { "vp9", DecoderFourCC::VP9, &GetVP9Decoder },
 };
 
-int get_vpx_decoder_count(void) {
+size_t get_vpx_decoder_count(void) {
   return sizeof(vpx_decoders) / sizeof(vpx_decoders[0]);
 }
 
 const VpxInterface *get_vpx_decoder_by_index(int i) { return &vpx_decoders[i]; }
 
 const VpxInterface *get_vpx_decoder_by_name(const char *name) {
-  int i;
-
-  for (i = 0; i < get_vpx_decoder_count(); ++i) {
-    const VpxInterface *const decoder = get_vpx_decoder_by_index(i);
-    if (strcmp(decoder->name, name) == 0) return decoder;
-  }
-
-  return NULL;
+    for (size_t i = 0; i < get_vpx_decoder_count(); ++i) {
+        const VpxInterface *const decoder = get_vpx_decoder_by_index(i);
+        if (!strcmp(decoder->name, name)) 
+            return decoder;
+    }
+    return nullptr;
 }
 
 const VpxInterface *get_vpx_decoder_by_fourcc(uint32_t fourcc) {
-  int i;
-
-  for (i = 0; i < get_vpx_decoder_count(); ++i) {
-    const VpxInterface *const decoder = get_vpx_decoder_by_index(i);
-    if (decoder->fourcc == fourcc) return decoder;
-  }
-
-  return NULL;
+    for (size_t i = 0; i < get_vpx_decoder_count(); ++i) {
+        const VpxInterface *const decoder = get_vpx_decoder_by_index(i);
+        if (decoder->fourcc == fourcc) 
+            return decoder;
+    }
+    return nullptr;
 }
 
 int vpx_img_plane_width(const vpx_image_t *img, int plane) {
-  if (plane > 0 && img->x_chroma_shift > 0)
-    return (img->d_w + 1) >> img->x_chroma_shift;
-  else
-    return img->d_w;
+    if (plane > 0 && img->x_chroma_shift > 0)
+        return (img->d_w + 1) >> img->x_chroma_shift;
+    else
+        return img->d_w;
 }
-
 int vpx_img_plane_height(const vpx_image_t *img, int plane) {
-  if (plane > 0 && img->y_chroma_shift > 0)
-    return (img->d_h + 1) >> img->y_chroma_shift;
-  else
-    return img->d_h;
+    if (plane > 0 && img->y_chroma_shift > 0)
+        return (img->d_h + 1) >> img->y_chroma_shift;
+    else
+        return img->d_h;
 }
 
 void vpx_img_write(const vpx_image_t *img, FILE *file) {
-  int plane;
+    for (size_t plane = 0; plane < 3; ++plane) {
+        const unsigned char *buf = img->planes[plane];
+        const int stride = img->stride[plane];
+        const int w = vpx_img_plane_width(img, plane) *
+                      ((img->fmt & VPX_IMG_FMT_HIGHBITDEPTH) ? 2 : 1);
+        const int h = vpx_img_plane_height(img, plane);
+        int y;
 
-  for (plane = 0; plane < 3; ++plane) {
-    const unsigned char *buf = img->planes[plane];
-    const int stride = img->stride[plane];
-    const int w = vpx_img_plane_width(img, plane) *
-                  ((img->fmt & VPX_IMG_FMT_HIGHBITDEPTH) ? 2 : 1);
-    const int h = vpx_img_plane_height(img, plane);
-    int y;
-
-    for (y = 0; y < h; ++y) {
-      fwrite(buf, 1, w, file);
-      buf += stride;
+        for (y = 0; y < h; ++y) {
+            std::fwrite(buf, 1, w, file);
+            buf += stride;
+        }
     }
-  }
 }
+bool vpx_img_read(vpx_image_t *img, std::FILE *file) {
+    for (size_t plane = 0; plane < 3; ++plane) {
+        unsigned char *buf = img->planes[plane];
+        const int stride = img->stride[plane];
+        const int w = vpx_img_plane_width(img, plane) *
+                      ((img->fmt & VPX_IMG_FMT_HIGHBITDEPTH) ? 2 : 1);
+        const int h = vpx_img_plane_height(img, plane);
+        int y;
 
-int vpx_img_read(vpx_image_t *img, FILE *file) {
-  int plane;
-
-  for (plane = 0; plane < 3; ++plane) {
-    unsigned char *buf = img->planes[plane];
-    const int stride = img->stride[plane];
-    const int w = vpx_img_plane_width(img, plane) *
-                  ((img->fmt & VPX_IMG_FMT_HIGHBITDEPTH) ? 2 : 1);
-    const int h = vpx_img_plane_height(img, plane);
-    int y;
-
-    for (y = 0; y < h; ++y) {
-      if (fread(buf, 1, w, file) != (size_t)w) return 0;
-      buf += stride;
+        for (y = 0; y < h; ++y) {
+            if (std::fread(buf, 1, w, file) != (size_t)w) 
+                 return false;
+            buf += stride;
+        }
     }
-  }
-
-  return 1;
+    return true;
 }
 
 // TODO(dkovalev) change sse_to_psnr signature: double -> int64_t
 double sse_to_psnr(double samples, double peak, double sse) {
-  static const double kMaxPSNR = 100.0;
-
-  if (sse > 0.0) {
-    const double psnr = 10.0 * log10(samples * peak * peak / sse);
-    return psnr > kMaxPSNR ? kMaxPSNR : psnr;
-  } else {
-    return kMaxPSNR;
-  }
+    static const double kMaxPSNR = 100.0;
+    if (sse > 0.0) {
+        const double psnr = 10.0 * log10(samples * peak * peak / sse);
+        return psnr > kMaxPSNR ? kMaxPSNR : psnr;
+    } 
+    else
+        return kMaxPSNR;
 }
-int compare_img(const vpx_image_t *const img1, const vpx_image_t *const img2) {
-  uint32_t l_w = img1->d_w;
-  uint32_t c_w = (img1->d_w + img1->x_chroma_shift) >> img1->x_chroma_shift;
-  const uint32_t c_h =
-      (img1->d_h + img1->y_chroma_shift) >> img1->y_chroma_shift;
-  uint32_t i;
-  int match = 1;
+int compare_img(const vpx_image_t* const img1, const vpx_image_t* const img2) {
+    uint32_t l_w = img1->d_w;
+    uint32_t c_w = (img1->d_w + img1->x_chroma_shift) >> img1->x_chroma_shift;
+    const uint32_t c_h = (img1->d_h + img1->y_chroma_shift) >> img1->y_chroma_shift;
+    int match = 1;
+    match &= (img1->fmt == img2->fmt);
+    match &= (img1->d_w == img2->d_w);
+    match &= (img1->d_h == img2->d_h);
 
-  match &= (img1->fmt == img2->fmt);
-  match &= (img1->d_w == img2->d_w);
-  match &= (img1->d_h == img2->d_h);
-#if CONFIG_VP9_HIGHBITDEPTH
-  if (img1->fmt & VPX_IMG_FMT_HIGHBITDEPTH) {
-    l_w *= 2;
-    c_w *= 2;
-  }
+    size_t i;
+    for (i = 0; i < img1->d_h; ++i) {
+        match &= (memcmp(img1->planes[VPX_PLANE_Y] + i * img1->stride[VPX_PLANE_Y],
+            img2->planes[VPX_PLANE_Y] + i * img2->stride[VPX_PLANE_Y],
+            l_w) == 0);
+    }
+    for (i = 0; i < c_h; ++i) {
+        match &= (memcmp(img1->planes[VPX_PLANE_U] + i * img1->stride[VPX_PLANE_U],
+            img2->planes[VPX_PLANE_U] + i * img2->stride[VPX_PLANE_U],
+            c_w) == 0);
+    }
+    for (i = 0; i < c_h; ++i) {
+        match &= (memcmp(img1->planes[VPX_PLANE_V] + i * img1->stride[VPX_PLANE_V],
+            img2->planes[VPX_PLANE_V] + i * img2->stride[VPX_PLANE_V],
+            c_w) == 0);
+    }
+    return match;
+}
+
+#ifdef min
+#undef min
 #endif
 
-  for (i = 0; i < img1->d_h; ++i)
-    match &= (memcmp(img1->planes[VPX_PLANE_Y] + i * img1->stride[VPX_PLANE_Y],
-                     img2->planes[VPX_PLANE_Y] + i * img2->stride[VPX_PLANE_Y],
-                     l_w) == 0);
-
-  for (i = 0; i < c_h; ++i)
-    match &= (memcmp(img1->planes[VPX_PLANE_U] + i * img1->stride[VPX_PLANE_U],
-                     img2->planes[VPX_PLANE_U] + i * img2->stride[VPX_PLANE_U],
-                     c_w) == 0);
-
-  for (i = 0; i < c_h; ++i)
-    match &= (memcmp(img1->planes[VPX_PLANE_V] + i * img1->stride[VPX_PLANE_V],
-                     img2->planes[VPX_PLANE_V] + i * img2->stride[VPX_PLANE_V],
-                     c_w) == 0);
-
-  return match;
-}
-
-#define mmin(a, b) ((a) < (b) ? (a) : (b))
-
-void find_mismatch(const vpx_image_t *const img1, const vpx_image_t *const img2,
-                   int yloc[4], int uloc[4], int vloc[4]) {
-  const uint32_t bsize = 64;
-  const uint32_t bsizey = bsize >> img1->y_chroma_shift;
-  const uint32_t bsizex = bsize >> img1->x_chroma_shift;
-  const uint32_t c_w =
-      (img1->d_w + img1->x_chroma_shift) >> img1->x_chroma_shift;
-  const uint32_t c_h =
-      (img1->d_h + img1->y_chroma_shift) >> img1->y_chroma_shift;
-  int match = 1;
-  uint32_t i, j;
-  yloc[0] = yloc[1] = yloc[2] = yloc[3] = -1;
-  for (i = 0, match = 1; match && i < img1->d_h; i += bsize) {
-    for (j = 0; match && j < img1->d_w; j += bsize) {
-      int k, l;
-      const int si = mmin(i + bsize, img1->d_h) - i;
-      const int sj = mmin(j + bsize, img1->d_w) - j;
-      for (k = 0; match && k < si; ++k) {
-        for (l = 0; match && l < sj; ++l) {
-          if (*(img1->planes[VPX_PLANE_Y] +
-                (i + k) * img1->stride[VPX_PLANE_Y] + j + l) !=
-              *(img2->planes[VPX_PLANE_Y] +
-                (i + k) * img2->stride[VPX_PLANE_Y] + j + l)) {
-            yloc[0] = i + k;
-            yloc[1] = j + l;
-            yloc[2] = *(img1->planes[VPX_PLANE_Y] +
-                        (i + k) * img1->stride[VPX_PLANE_Y] + j + l);
-            yloc[3] = *(img2->planes[VPX_PLANE_Y] +
-                        (i + k) * img2->stride[VPX_PLANE_Y] + j + l);
-            match = 0;
-            break;
-          }
+void find_mismatch(const vpx_image_t* const img1, const vpx_image_t* const img2,
+    int yloc[4], int uloc[4], int vloc[4]) {
+    const uint32_t bsize = 64;
+    const uint32_t bsizey = bsize >> img1->y_chroma_shift;
+    const uint32_t bsizex = bsize >> img1->x_chroma_shift;
+    const uint32_t c_w =
+        (img1->d_w + img1->x_chroma_shift) >> img1->x_chroma_shift;
+    const uint32_t c_h =
+        (img1->d_h + img1->y_chroma_shift) >> img1->y_chroma_shift;
+    int match = 1;
+    uint32_t i, j;
+    yloc[0] = yloc[1] = yloc[2] = yloc[3] = -1;
+    for (i = 0, match = 1; match && i < img1->d_h; i += bsize) {
+        for (j = 0; match && j < img1->d_w; j += bsize) {
+            int k, l;
+            const int si = std::min(i + bsize, img1->d_h) - i;
+            const int sj = std::min(j + bsize, img1->d_w) - j;
+            for (k = 0; match && k < si; ++k) {
+                for (l = 0; match && l < sj; ++l) {
+                    if (*(img1->planes[VPX_PLANE_Y] +
+                        (i + k) * img1->stride[VPX_PLANE_Y] + j + l) !=
+                        *(img2->planes[VPX_PLANE_Y] +
+                            (i + k) * img2->stride[VPX_PLANE_Y] + j + l)) {
+                        yloc[0] = i + k;
+                        yloc[1] = j + l;
+                        yloc[2] = *(img1->planes[VPX_PLANE_Y] +
+                            (i + k) * img1->stride[VPX_PLANE_Y] + j + l);
+                        yloc[3] = *(img2->planes[VPX_PLANE_Y] +
+                            (i + k) * img2->stride[VPX_PLANE_Y] + j + l);
+                        match = 0;
+                        break;
+                    }
+                }
+            }
         }
-      }
     }
-  }
-
-  uloc[0] = uloc[1] = uloc[2] = uloc[3] = -1;
-  for (i = 0, match = 1; match && i < c_h; i += bsizey) {
-    for (j = 0; match && j < c_w; j += bsizex) {
-      int k, l;
-      const int si = mmin(i + bsizey, c_h - i);
-      const int sj = mmin(j + bsizex, c_w - j);
-      for (k = 0; match && k < si; ++k) {
-        for (l = 0; match && l < sj; ++l) {
-          if (*(img1->planes[VPX_PLANE_U] +
-                (i + k) * img1->stride[VPX_PLANE_U] + j + l) !=
-              *(img2->planes[VPX_PLANE_U] +
-                (i + k) * img2->stride[VPX_PLANE_U] + j + l)) {
-            uloc[0] = i + k;
-            uloc[1] = j + l;
-            uloc[2] = *(img1->planes[VPX_PLANE_U] +
-                        (i + k) * img1->stride[VPX_PLANE_U] + j + l);
-            uloc[3] = *(img2->planes[VPX_PLANE_U] +
-                        (i + k) * img2->stride[VPX_PLANE_U] + j + l);
-            match = 0;
-            break;
-          }
+    uloc[0] = uloc[1] = uloc[2] = uloc[3] = -1;
+    for (i = 0, match = 1; match && i < c_h; i += bsizey) {
+        for (j = 0; match && j < c_w; j += bsizex) {
+            int k, l;
+            const int si = std::min(i + bsizey, c_h - i);
+            const int sj = std::min(j + bsizex, c_w - j);
+            for (k = 0; match && k < si; ++k) {
+                for (l = 0; match && l < sj; ++l) {
+                    if (*(img1->planes[VPX_PLANE_U] +
+                        (i + k) * img1->stride[VPX_PLANE_U] + j + l) !=
+                        *(img2->planes[VPX_PLANE_U] +
+                            (i + k) * img2->stride[VPX_PLANE_U] + j + l)) {
+                        uloc[0] = i + k;
+                        uloc[1] = j + l;
+                        uloc[2] = *(img1->planes[VPX_PLANE_U] +
+                            (i + k) * img1->stride[VPX_PLANE_U] + j + l);
+                        uloc[3] = *(img2->planes[VPX_PLANE_U] +
+                            (i + k) * img2->stride[VPX_PLANE_U] + j + l);
+                        match = 0;
+                        break;
+                    }
+                }
+            }
         }
-      }
     }
-  }
-  vloc[0] = vloc[1] = vloc[2] = vloc[3] = -1;
-  for (i = 0, match = 1; match && i < c_h; i += bsizey) {
-    for (j = 0; match && j < c_w; j += bsizex) {
-      int k, l;
-      const int si = mmin(i + bsizey, c_h - i);
-      const int sj = mmin(j + bsizex, c_w - j);
-      for (k = 0; match && k < si; ++k) {
-        for (l = 0; match && l < sj; ++l) {
-          if (*(img1->planes[VPX_PLANE_V] +
-                (i + k) * img1->stride[VPX_PLANE_V] + j + l) !=
-              *(img2->planes[VPX_PLANE_V] +
-                (i + k) * img2->stride[VPX_PLANE_V] + j + l)) {
-            vloc[0] = i + k;
-            vloc[1] = j + l;
-            vloc[2] = *(img1->planes[VPX_PLANE_V] +
-                        (i + k) * img1->stride[VPX_PLANE_V] + j + l);
-            vloc[3] = *(img2->planes[VPX_PLANE_V] +
-                        (i + k) * img2->stride[VPX_PLANE_V] + j + l);
-            match = 0;
-            break;
-          }
+    vloc[0] = vloc[1] = vloc[2] = vloc[3] = -1;
+    for (i = 0, match = 1; match && i < c_h; i += bsizey) {
+        for (j = 0; match && j < c_w; j += bsizex) {
+            int k, l;
+            const int si = std::min(i + bsizey, c_h - i);
+            const int sj = std::min(j + bsizex, c_w - j);
+            for (k = 0; match && k < si; ++k) {
+                for (l = 0; match && l < sj; ++l) {
+                    if (*(img1->planes[VPX_PLANE_V] +
+                        (i + k) * img1->stride[VPX_PLANE_V] + j + l) !=
+                        *(img2->planes[VPX_PLANE_V] +
+                            (i + k) * img2->stride[VPX_PLANE_V] + j + l)) {
+                        vloc[0] = i + k;
+                        vloc[1] = j + l;
+                        vloc[2] = *(img1->planes[VPX_PLANE_V] +
+                            (i + k) * img1->stride[VPX_PLANE_V] + j + l);
+                        vloc[3] = *(img2->planes[VPX_PLANE_V] +
+                            (i + k) * img2->stride[VPX_PLANE_V] + j + l);
+                        match = 0;
+                        break;
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
