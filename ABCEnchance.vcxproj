@@ -335,7 +335,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\vgui_controls.cpp" />
     <ClCompile Include="vgui_controls\WizardPanel.cpp" />
     <ClCompile Include="vgui_controls\WizardSubPanel.cpp" />
-    <ClCompile Include="vpx\ivfdec.cpp" />
     <ClCompile Include="vpx\tools_common.cpp" />
     <ClCompile Include="vpx\video_reader.cpp" />
     <ClCompile Include="vpx\vpx_codec.cpp" />
@@ -606,7 +605,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\URLLabel.h" />
     <ClInclude Include="vgui_controls\WizardPanel.h" />
     <ClInclude Include="vgui_controls\WizardSubPanel.h" />
-    <ClInclude Include="vpx\ivfdec.h" />
     <ClInclude Include="vpx\memle.h" />
     <ClInclude Include="vpx\tools_common.h" />
     <ClInclude Include="vpx\video_common.h" />

@@ -66,10 +66,9 @@ typedef struct backgroundinfo_s {
 backgroundinfo_t* g_pNowChose;
 std::vector<backgroundinfo_t*> g_aryBackGrounds;
 
-const VpxVideoInfo* g_pInfo;
 const VpxInterface* g_pDecoder;
 vpx_codec_ctx_t g_pCodec;
-VpxVideoReader* g_pReader;
+CIVFVideoReader g_pReader;
 
 HMODULE g_pVpxdll;
 
@@ -105,10 +104,12 @@ void ReadBackGroundList() {
 	gEngfuncs.COM_FreeFile(pfile);
 }
 void OpenVideo() {
-	g_pReader = vpx_video_reader_open(g_pNowChose->video);
-	g_pInfo = vpx_video_reader_get_info(g_pReader);
-	g_pDecoder = get_vpx_decoder_by_fourcc(g_pInfo->codec_fourcc);
+	g_pReader.Open(g_pNowChose->video);
+	g_pDecoder = get_vpx_decoder_by_fourcc(g_pReader.GetInfo()->codec_fourcc);
 	vpx_codec_dec_init(&g_pCodec, g_pDecoder->codec_interface(), nullptr, 0);
+}
+void ResetVideo() {
+	g_pReader.ResetToBegine();
 }
 void PlayMp3() {
 	char soundcmd[MAX_PATH + 8];
@@ -120,7 +121,7 @@ void StopMp3() {
 }
 void CloseVideo() {
 	vpx_codec_destroy(&g_pCodec);
-	vpx_video_reader_close(g_pReader);
+	g_pReader.Close();
 }
 void BackGroundVideoInit() {
 	g_pVpxdll = LoadLibrary("vpx.dll");
@@ -147,11 +148,10 @@ void BackGroundVideoInit() {
 		g_pMetaHookAPI->SysError("[ABCEnchace] Can not open vpx.dll!");
 	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (cvar->value > 0){
-			OpenVideo();
+			ResetVideo();
 			PlayMp3();
 		}
 		else {
-			CloseVideo();
 			EngineClientCmd("mp3 stop;mp3 loop media/gamestartup.mp3 ui");
 		}
 	});
@@ -167,11 +167,11 @@ void BackGroundVideoClose() {
 	g_aryBackGrounds.clear();
 }
 void BackGroundPushFrame() {
-	if (!g_pBasePanel->IsVisible() || gCVars.pDynamicBackground->value <= 0)
+	if (!g_pBasePanel->IsVisible() || gCVars.pDynamicBackground->value <= 0 || !g_pReader.IsValid())
 		return;
 	float time = vgui::system()->GetCurrentTime();
 	if (time >= g_flNextFrameTime) {
-		g_flNextFrameTime = time + (1.0f / g_pInfo->time_base.numerator);
+		g_flNextFrameTime = time + (1.0f / g_pReader.GetInfo()->time_base.numerator);
 		const static auto IsInLevel = []() -> bool {
 			const char* levelName = gEngfuncs.pfnGetLevelName();
 			if (strlen(levelName) > 0)
@@ -181,22 +181,20 @@ void BackGroundPushFrame() {
 		bool inLevel = IsInLevel();
 		//back to main menu
 		if (g_bOldInLevel && !inLevel) {
-			CloseVideo();
-			OpenVideo();
+			ResetVideo();
 			PlayMp3();
 		}
 		else if (!g_bOldInLevel && inLevel)
 			StopMp3();
 		if (!inLevel) {
 			g_pAsyncFunc = std::async([]() -> asyncResult* {
-				int result = vpx_video_reader_read_frame(g_pReader);
+				int result = g_pReader.ReadFrame();
 				if (!result) {
-					CloseVideo();
-					OpenVideo();
-					vpx_video_reader_read_frame(g_pReader);
+					ResetVideo();
+					g_pReader.ReadFrame();
 				}
 				size_t frame_size = 0;
-				const byte* frame = vpx_video_reader_get_frame(g_pReader, &frame_size);
+				const byte* frame = g_pReader.GetFrame(&frame_size);
 				vpx_codec_err_t err = vpx_codec_decode(&g_pCodec, frame, frame_size, nullptr, 0);
 				vpx_codec_iter_t iter = nullptr;
 				vpx_image_t* img = vpx_codec_get_frame(&g_pCodec, &iter);
