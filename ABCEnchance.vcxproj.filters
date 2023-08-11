@@ -614,9 +614,6 @@
     <ClCompile Include="vpx\vpx_codec.cpp">
       <Filter>vpx</Filter>
     </ClCompile>
-    <ClCompile Include="vpx\ivfdec.cpp">
-      <Filter>vpx</Filter>
-    </ClCompile>
     <ClCompile Include="vpx\tools_common.cpp">
       <Filter>vpx</Filter>
     </ClCompile>
@@ -1418,9 +1415,6 @@
       <Filter>VGUI2</Filter>
     </ClInclude>
     <ClInclude Include="vpx\tools_common.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\ivfdec.h">
       <Filter>vpx</Filter>
     </ClInclude>
     <ClInclude Include="vpx\video_reader.h">
