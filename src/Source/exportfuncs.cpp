@@ -658,8 +658,8 @@ void HUD_VoiceStatus(int entindex, qboolean talking) {
 }
 void HUD_Frame(double frametime) {
 	GetClientVoiceMgr()->Frame(frametime);
-	BackGroundPushFrame();
 	gExportfuncs.HUD_Frame(frametime);
+	BackGroundPushFrame();
 }
 int HUD_Redraw(float time, int intermission){
 	gCustomHud.HUD_Draw(time);
