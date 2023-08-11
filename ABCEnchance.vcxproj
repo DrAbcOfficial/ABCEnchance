@@ -499,6 +499,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\interface\IGameConsole.h" />
     <ClInclude Include="VGUI2\interface\IGameUI.h" />
     <ClInclude Include="VGUI2\interface\IGameUIFuncs.h" />
+    <ClInclude Include="VGUI2\interface\IVanilliaPanel.h" />
     <ClInclude Include="VGUI2\interface\IViewportPanel.h" />
     <ClInclude Include="VGUI2\spr_image.h" />
     <ClInclude Include="VGUI2\SurfaceHook.h" />

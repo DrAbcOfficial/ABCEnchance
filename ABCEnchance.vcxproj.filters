@@ -1441,5 +1441,8 @@
     <ClInclude Include="vpx\memle.h">
       <Filter>vpx</Filter>
     </ClInclude>
+    <ClInclude Include="VGUI2\interface\IVanilliaPanel.h">
+      <Filter>VGUI2\interface</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
