@@ -85,12 +85,12 @@ bool CIVFVideoReader::ReadFrame(){
     if (!std::feof(m_pFile)) {
         if (std::fread(m_pBuffer, 1, frame_size, m_pFile) != frame_size) {
             warn("Failed to read full frame");
-            return true;
+            return false;
         }
         m_iFrameSize = frame_size;
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 void CIVFVideoReader::ResetToBegine(){
     if(IsValid())
