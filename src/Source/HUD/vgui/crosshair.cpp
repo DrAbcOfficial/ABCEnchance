@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <metahook.h>
 
 #include "event_api.h"
@@ -67,7 +67,8 @@ void CCrosshairPanel::PaintBackground() {
 		return;
 	if (!g_pViewPort->HasSuit())
 		return;
-
+	if (!gCVars.pDynamicCrossHair->value)
+		return;
 	int iCenterX;
 	int iCenterY;
 	if (gExportfuncs.CL_IsThirdPerson()) {
@@ -93,7 +94,7 @@ void CCrosshairPanel::PaintBackground() {
 		iCenterX = ScreenWidth / 2;
 		iCenterY = ScreenHeight / 2;
 	}
-	//Ä¬ÈÏ×¼ÐÄ
+	//é»˜è®¤å‡†å¿ƒ
 	if (pCvarDefaultCrosshair->value > 0)
 		DrawDefaultCrosshair(iCenterX, iCenterY);
 
@@ -119,10 +120,10 @@ void CCrosshairPanel::PaintBackground() {
 	int iOutLineWidth = pDynamicCrossHairOTDW->value;
 	int iWidthOffset = iWidth / 2;
 	int iFinalOffset = iDrift + iOffset + iWidthOffset;
-	//Ãè±ß
+	//æè¾¹
 	if (pDynamicCrossHairOTD->value) {
 		vgui::IntRect outlinerects[4];
-		//×ó
+		//å·¦
 		vgui::surface()->DrawSetColor(otr, otg, otb, ota);
 		outlinerects[0] = {
 			iCenterX - iFinalOffset - iLength - iOutLineWidth,
@@ -130,21 +131,21 @@ void CCrosshairPanel::PaintBackground() {
 			iCenterX - iFinalOffset + iOutLineWidth,
 			iCenterY - iWidthOffset + iWidth + iOutLineWidth
 		};
-		//ÓÒ
+		//å³
 		outlinerects[1] = {
 			iCenterX + iFinalOffset - iOutLineWidth,
 			iCenterY - iWidthOffset - iOutLineWidth,
 			iCenterX + iFinalOffset + iOutLineWidth + iLength,
 			iCenterY - iWidthOffset + iOutLineWidth + iWidth
 		};
-		//ÏÂ
+		//ä¸‹
 		outlinerects[2] = {
 			iCenterX - iWidthOffset - iOutLineWidth,
 			iCenterY + iFinalOffset - iOutLineWidth,
 			iCenterX - iWidthOffset + iOutLineWidth + iWidth,
 			iCenterY + iFinalOffset + iOutLineWidth + iLength
 		};
-		//ÉÏ
+		//ä¸Š
 		if (!pDynamicCrossHairT->value) {
 			outlinerects[3] = {
 				iCenterX - iWidthOffset - iOutLineWidth,
@@ -155,7 +156,7 @@ void CCrosshairPanel::PaintBackground() {
 		}
 		vgui::surface()->DrawFilledRectArray(outlinerects, !pDynamicCrossHairT->value ? 4 : 3);
 	}
-	//ÖÐÐÄ
+	//ä¸­å¿ƒ
 	if (pDynamicCrossHairD->value) {
 		vgui::surface()->DrawSetColor(otr, otg, otb, ota);
 		vgui::surface()->DrawFilledRect(
@@ -170,7 +171,7 @@ void CCrosshairPanel::PaintBackground() {
 			iCenterX - iWidthOffset + iWidth,
 			iCenterY - iWidthOffset + iWidth);
 	}
-	//×ó
+	//å·¦
 	vgui::surface()->DrawSetColor(r, g, b, a);
 	vgui::IntRect rects[4];
 	rects[0] = {
@@ -180,21 +181,21 @@ void CCrosshairPanel::PaintBackground() {
 		iCenterY - iWidthOffset + iWidth
 	};
 
-	//ÓÒ
+	//å³
 	rects[1] = {
 		iCenterX + iFinalOffset,
 		iCenterY - iWidthOffset,
 		iCenterX + iFinalOffset + iLength,
 		iCenterY - iWidthOffset + iWidth
 	};
-	//ÏÂ
+	//ä¸‹
 	rects[2] = {
 		iCenterX - iWidthOffset,
 		iCenterY + iFinalOffset,
 		iCenterX - iWidthOffset + iWidth,
 		iCenterY + iFinalOffset + iLength
 	};
-	//ÉÏ
+	//ä¸Š
 	if (!pDynamicCrossHairT->value) {
 		rects[3] = {
 			iCenterX - iWidthOffset,
