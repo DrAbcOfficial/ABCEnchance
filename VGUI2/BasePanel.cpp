@@ -6,7 +6,8 @@
 
 #include <vector>
 #include <string>
-#include <future>
+#include <thread>
+#include <atomic>
 
 #include "vpx/vpx_decoder.h"
 #include "vpx/video_reader.h"
@@ -20,8 +21,7 @@
 #include "plugins.h"
 
 int g_iTextureID;
-float g_flNextFrameTime;
-bool g_bOldInLevel;
+std::atomic_bool g_bOldInLevel;
 class IBasePanel {
 public:
 	virtual void* idontcare1() = 0;
@@ -66,10 +66,10 @@ typedef struct backgroundinfo_s {
 backgroundinfo_t* g_pNowChose;
 std::vector<backgroundinfo_t*> g_aryBackGrounds;
 
-const VpxVideoInfo* g_pInfo;
+std::atomic <const VpxVideoInfo*> g_pInfo;
 const VpxInterface* g_pDecoder;
-vpx_codec_ctx_t g_pCodec;
-VpxVideoReader* g_pReader;
+std::atomic<vpx_codec_ctx_t*> g_pCodec;
+std::atomic<VpxVideoReader*> g_pReader;
 
 HMODULE g_pVpxdll;
 
@@ -78,7 +78,9 @@ typedef struct asyncResult {
 	uint wide;
 	uint tall;
 };
-std::future<asyncResult*> g_pAsyncFunc;
+std::atomic<asyncResult*> g_pVideoResult;
+std::thread g_pDecodeThread;
+std::atomic_bool g_pThreadStop(false);
 
 void ReadBackGroundList() {
 	char buffer2[MAX_PATH];
@@ -107,8 +109,10 @@ void ReadBackGroundList() {
 void OpenVideo() {
 	g_pReader = vpx_video_reader_open(g_pNowChose->video);
 	g_pInfo = vpx_video_reader_get_info(g_pReader);
-	g_pDecoder = get_vpx_decoder_by_fourcc(g_pInfo->codec_fourcc);
-	vpx_codec_dec_init(&g_pCodec, g_pDecoder->codec_interface(), nullptr, 0);
+	g_pDecoder = get_vpx_decoder_by_fourcc(g_pInfo.load()->codec_fourcc);
+	static vpx_codec_ctx_t s_Codec;
+	vpx_codec_dec_init(&s_Codec, g_pDecoder->codec_interface(), nullptr, 0);
+	g_pCodec = &s_Codec;
 }
 void PlayMp3() {
 	char soundcmd[MAX_PATH + 8];
@@ -119,8 +123,93 @@ void StopMp3() {
 	EngineClientCmd("mp3 stop");
 }
 void CloseVideo() {
-	vpx_codec_destroy(&g_pCodec);
+	vpx_codec_destroy(g_pCodec.load());
 	vpx_video_reader_close(g_pReader);
+}
+void DecodeVideo() {
+	do {
+		auto start = std::chrono::high_resolution_clock::now();
+		int result = vpx_video_reader_read_frame(g_pReader);
+		if (!result) {
+			CloseVideo();
+			OpenVideo();
+			vpx_video_reader_read_frame(g_pReader);
+		}
+		size_t frame_size = 0;
+		const byte* frame = vpx_video_reader_get_frame(g_pReader, &frame_size);
+		vpx_codec_err_t err = vpx_codec_decode(g_pCodec.load(), frame, frame_size, nullptr, 0);
+		vpx_codec_iter_t iter = nullptr;
+		vpx_image_t* img = vpx_codec_get_frame(g_pCodec.load(), &iter);
+		if (img) {
+			//not 444, fuck it
+			if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))
+				return;
+			static int s_iArea;
+			static byte* s_pBuf;
+			if (s_iArea < img->d_w * img->d_h) {
+				s_iArea = img->d_w * img->d_h;
+				delete[] s_pBuf;
+				s_pBuf = new byte[img->d_w * img->d_h * 4];
+			}
+			size_t c = 0;
+			size_t enumW = img->stride[VPX_PLANE_Y];
+			size_t enumH = img->h;
+			asyncResult returnVal;
+			const static constexpr auto YUV2RGB = [](int Y, int U, int V, int* R, int* G, int* B) {
+				int iTmpR = 0;
+				int iTmpG = 0;
+				int iTmpB = 0;
+
+				iTmpR = (((int)Y) << 14) + 22970 * (((int)V) - 128);
+				iTmpG = (((int)Y) << 14) - 5638 * (((int)U) - 128) - 11700 * (((int)V) - 128);
+				iTmpB = (((int)Y) << 14) + 29032 * (((int)U) - 128);
+				const static constexpr auto RoundShr = [](int d, int s) -> int {
+					return d >= 0 ?
+						-((-d & (1 << (s - 1))) ? ((-(d)) >> (s)) + 1 : ((-(d)) >> (s))) :
+						d & (1 << ((s)-1)) ? (d >> s) + 1 : (d >> s);
+					};
+				iTmpR = RoundShr(iTmpR, 14);
+				iTmpG = RoundShr(iTmpG, 14);
+				iTmpB = RoundShr(iTmpB, 14);
+
+				*R = clamp<int>(iTmpR, 0, 255);
+				*G = clamp<int>(iTmpG, 0, 255);
+				*B = clamp<int>(iTmpB, 0, 255);
+				};
+			for (size_t h = 0; h < enumH; h++) {
+				if (h >= img->d_h)
+					continue;
+				for (size_t w = 0; w < enumW; w++) {
+					if (w >= img->d_w)
+						break;
+					size_t i = w + (h * enumW);
+					//use int damit!
+					int r, g, b, a;
+					YUV2RGB(
+						img->planes[VPX_PLANE_Y][i],
+						img->planes[VPX_PLANE_U][i],
+						img->planes[VPX_PLANE_V][i],
+						&r, &g, &b
+					);
+					a = img->planes[VPX_PLANE_ALPHA] ? img->planes[VPX_PLANE_ALPHA][i] : 255;
+					s_pBuf[c * 4 + 0] = r;
+					s_pBuf[c * 4 + 1] = g;
+					s_pBuf[c * 4 + 2] = b;
+					s_pBuf[c * 4 + 3] = a;
+					c++;
+				}
+			}
+			returnVal.data = s_pBuf;
+			returnVal.wide = img->d_w;
+			returnVal.tall = img->d_h;
+			g_pVideoResult = &returnVal;
+		};
+		auto end = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+		auto tbr = std::chrono::milliseconds(g_pInfo.load()->time_base.numerator / 1000);
+		auto gap = duration > tbr ? std::chrono::milliseconds(0) : tbr - duration;
+		std::this_thread::sleep_for(std::chrono::milliseconds(gap));
+	} while (!g_pThreadStop);
 }
 void BackGroundVideoInit() {
 	g_pVpxdll = LoadLibrary("vpx.dll");
@@ -149,8 +238,12 @@ void BackGroundVideoInit() {
 		if (cvar->value > 0){
 			OpenVideo();
 			PlayMp3();
+			g_pThreadStop = false;
+			g_pDecodeThread = std::thread(DecodeVideo);
+			g_pDecodeThread.detach();
 		}
 		else {
+			g_pThreadStop = true;
 			CloseVideo();
 			EngineClientCmd("mp3 stop;mp3 loop media/gamestartup.mp3 ui");
 		}
@@ -169,106 +262,23 @@ void BackGroundVideoClose() {
 void BackGroundPushFrame() {
 	if (!g_pBasePanel->IsVisible() || gCVars.pDynamicBackground->value <= 0)
 		return;
-	float time = vgui::system()->GetCurrentTime();
-	if (time >= g_flNextFrameTime) {
-		g_flNextFrameTime = time + (1.0f / g_pInfo->time_base.numerator);
-		const static auto IsInLevel = []() -> bool {
-			const char* levelName = gEngfuncs.pfnGetLevelName();
-			if (strlen(levelName) > 0)
-				return true;
-			return false;
-		};
-		bool inLevel = IsInLevel();
-		//back to main menu
-		if (g_bOldInLevel && !inLevel) {
-			CloseVideo();
-			OpenVideo();
-			PlayMp3();
-		}
-		else if (!g_bOldInLevel && inLevel)
-			StopMp3();
-		if (!inLevel) {
-			g_pAsyncFunc = std::async([]() -> asyncResult* {
-				int result = vpx_video_reader_read_frame(g_pReader);
-				if (!result) {
-					CloseVideo();
-					OpenVideo();
-					vpx_video_reader_read_frame(g_pReader);
-				}
-				size_t frame_size = 0;
-				const byte* frame = vpx_video_reader_get_frame(g_pReader, &frame_size);
-				vpx_codec_err_t err = vpx_codec_decode(&g_pCodec, frame, frame_size, nullptr, 0);
-				vpx_codec_iter_t iter = nullptr;
-				vpx_image_t* img = vpx_codec_get_frame(&g_pCodec, &iter);
-				if (img) {
-					//not 444, fuck it
-					if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))
-						return nullptr;
-					static int s_iArea;
-					static byte* s_pBuf;
-					if (s_iArea < img->d_w * img->d_h) {
-						s_iArea = img->d_w * img->d_h;
-						delete[] s_pBuf;
-						s_pBuf = new byte[img->d_w * img->d_h * 4];
-					}
-					size_t c = 0;
-					size_t enumW = img->stride[VPX_PLANE_Y];
-					size_t enumH = img->h;
-					asyncResult returnVal;
-					const static constexpr auto YUV2RGB = [](int Y, int U, int V, int* R, int* G, int* B) {
-						int iTmpR = 0;
-						int iTmpG = 0;
-						int iTmpB = 0;
-
-						iTmpR = (((int)Y) << 14) + 22970 * (((int)V) - 128);
-						iTmpG = (((int)Y) << 14) - 5638 * (((int)U) - 128) - 11700 * (((int)V) - 128);
-						iTmpB = (((int)Y) << 14) + 29032 * (((int)U) - 128);
-						const static constexpr auto RoundShr = [](int d, int s) -> int {
-							return d >= 0 ?
-								-((-d & (1 << (s - 1))) ? ((-(d)) >> (s)) + 1 : ((-(d)) >> (s))) :
-								d & (1 << ((s)-1)) ? (d >> s) + 1 : (d >> s);
-						};
-						iTmpR = RoundShr(iTmpR, 14);
-						iTmpG = RoundShr(iTmpG, 14);
-						iTmpB = RoundShr(iTmpB, 14);
-
-						*R = clamp<int>(iTmpR, 0, 255);
-						*G = clamp<int>(iTmpG, 0, 255);
-						*B = clamp<int>(iTmpB, 0, 255);
-					};
-					for (size_t h = 0; h < enumH; h++) {
-						if (h >= img->d_h)
-							continue;
-						for (size_t w = 0; w < enumW; w++) {
-							if (w >= img->d_w)
-								break;
-							size_t i = w + (h * enumW);
-							//use int damit!
-							int r, g, b, a;
-							YUV2RGB(
-								img->planes[VPX_PLANE_Y][i],
-								img->planes[VPX_PLANE_U][i],
-								img->planes[VPX_PLANE_V][i],
-								&r, &g, &b
-							);
-							a = img->planes[VPX_PLANE_ALPHA] ? img->planes[VPX_PLANE_ALPHA][i] : 255;
-							s_pBuf[c * 4 + 0] = r;
-							s_pBuf[c * 4 + 1] = g;
-							s_pBuf[c * 4 + 2] = b;
-							s_pBuf[c * 4 + 3] = a;
-							c++;
-						}
-					}
-					returnVal.data = s_pBuf;
-					returnVal.wide = img->d_w;
-					returnVal.tall = img->d_h;
-					return &returnVal;
-				};
-				return nullptr;
-				});
-		}
-		g_bOldInLevel = inLevel;
+	const static auto IsInLevel = []() -> bool {
+		const char* levelName = gEngfuncs.pfnGetLevelName();
+		if (strlen(levelName) > 0)
+			return true;
+		return false;
+	};
+	bool inLevel = IsInLevel();
+	//back to main menu
+	if (g_bOldInLevel && !inLevel) {
+		CloseVideo();
+		OpenVideo();
+		PlayMp3();
 	}
+	else if (!g_bOldInLevel && inLevel)
+		StopMp3();
+
+	g_bOldInLevel = inLevel;
 }
 void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
 	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
@@ -285,8 +295,8 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 		gHookFuncs.CBasePanel_PaintBackground(pthis, dummy);
 		return;
 	}
-	if (g_pAsyncFunc.valid()) {
-		asyncResult* value = g_pAsyncFunc.get();
+	if (g_pVideoResult.is_lock_free()) {
+		asyncResult* value = g_pVideoResult.load();
 		if (value)
 			vgui::surface()->DrawSetTextureRGBA(g_iTextureID, value->data, value->wide, value->tall, true, false);
 	}
