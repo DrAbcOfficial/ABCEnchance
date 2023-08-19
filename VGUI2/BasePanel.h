@@ -1,3 +1,5 @@
+#pragma once
+
 enum EBackgroundState{
 	BACKGROUND_INITIAL,
 	BACKGROUND_LOADING,
@@ -11,3 +13,6 @@ void BasePanel_InstallHook(void);
 void BackGroundVideoInit();
 void BackGroundVideoClose();
 void BackGroundPushFrame();
+
+class IVanilliaPanel;
+IVanilliaPanel* BasePanel();
