@@ -3,6 +3,7 @@
 #include "local.h"
 #include "vguilocal.h"
 #include "IFileSystem.h"
+#include "IVanilliaPanel.h"
 
 #include <vector>
 #include <string>
@@ -57,6 +58,9 @@ public:
 };
 IBasePanel* g_pBasePanel;
 HMODULE g_hVpxdll;
+
+IVanilliaPanel* g_pBasePanel;
+IVanilliaPanel* g_pLoadingDialog;
 
 typedef struct backgroundinfo_s {
 	char video[MAX_PATH];
@@ -282,9 +286,17 @@ void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idonca
 		PlayMp3();
 }
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
-	g_pBasePanel = static_cast<IBasePanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
+	g_pBasePanel = static_cast<IVanilliaPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
 	return g_pBasePanel;
+}
+void* __fastcall CLoadingDialog_ctor(void* pthis, int dummy, void* pPanel) {
+	g_pLoadingDialog = static_cast<IVanilliaPanel*>(gHookFuncs.CLoadingDialog_ctor(pthis, dummy, pPanel));
+	return g_pLoadingDialog;
+}
+void* __fastcall CLoadingDialog_dtor(void* pthis, int dummy, byte idoncare) {
+	g_pLoadingDialog = nullptr;
+	return gHookFuncs.CLoadingDialog_dtor(pthis, dummy, idoncare);
 }
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	if (gCVars.pDynamicBackground->value <= 0) {
@@ -312,6 +324,13 @@ void BasePanel_InstallHook(void){
 #define SC_CBASEPANEL_CTOR_SIG "\x55\x8B\xEC\x51\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\x6A\x00\x89\x75\xFC\xE8\x2A\x2A\x2A\x2A\xC7"
 			Fill_Sig(SC_CBASEPANEL_CTOR_SIG, hGameUI, moduleSize, CBasePanel_ctor);
 			Install_InlineHook(CBasePanel_ctor);
+#define SC_CLOADINGDIALOG_CTOR_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x51\x56\xA1\x2A\x2A\x2A\x2A\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x2A\x2A\x2A\x2A\x8B\xF1\x89\x75\xF0\x6A\x01\x68"
+			Fill_Sig(SC_CLOADINGDIALOG_CTOR_SIG, hGameUI, moduleSize, CLoadingDialog_ctor);
+			Install_InlineHook(CLoadingDialog_ctor);
+#define SC_CLOADINGDIALOG_DTOR_SIG "\x55\x8B\xEC\x56\x8B\xF1\xC7\x06\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\xF6\x45\x08\x01\x74\x0E\x68\x80\x01\x00\x00"
+			Fill_Sig(SC_CLOADINGDIALOG_DTOR_SIG, hGameUI, moduleSize, CLoadingDialog_dtor);
+			auto x = gHookFuncs.CLoadingDialog_dtor;
+			Install_InlineHook(CLoadingDialog_dtor);
 #define SC_GAMEUI_START_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x81\xEC\x30\x03\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xF0\x53"
 			Fill_Sig(SC_GAMEUI_START_SIG, hGameUI, moduleSize, CGameUI_Start);
 			Install_InlineHook(CGameUI_Start);
