@@ -128,6 +128,8 @@ void CloseVideo() {
 }
 void DecodeVideo() {
 	do {
+		if (g_bOldInLevel)
+			continue;
 		auto start = std::chrono::high_resolution_clock::now();
 		int result = vpx_video_reader_read_frame(g_pReader);
 		if (!result) {
@@ -204,11 +206,9 @@ void DecodeVideo() {
 			returnVal.tall = img->d_h;
 			g_pVideoResult = &returnVal;
 		};
-		auto end = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start);
 		auto tbr = std::chrono::milliseconds(g_pInfo.load()->time_base.numerator / 1000);
-		auto gap = duration > tbr ? std::chrono::milliseconds(0) : tbr - duration;
-		std::this_thread::sleep_for(std::chrono::milliseconds(gap));
+		std::this_thread::sleep_for(std::chrono::milliseconds(duration > tbr ? std::chrono::milliseconds(0) : tbr - duration));
 	} while (!g_pThreadStop);
 }
 void BackGroundVideoInit() {
@@ -250,7 +250,6 @@ void BackGroundVideoInit() {
 	});
 	ReadBackGroundList();
 	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size()-1)];
-	OpenVideo();
 }
 void BackGroundVideoClose() {
 	CloseVideo();
