@@ -21,7 +21,6 @@
 #include "plugins.h"
 
 int g_iTextureID;
-std::atomic_bool g_bOldInLevel;
 class IBasePanel {
 public:
 	virtual void* idontcare1() = 0;
@@ -57,21 +56,18 @@ public:
 	virtual bool IsVisible() = 0;
 };
 IBasePanel* g_pBasePanel;
+HMODULE g_hVpxdll;
 
 typedef struct backgroundinfo_s {
 	char video[MAX_PATH];
 	char audio[MAX_PATH];
 } backgroundinfo_t;
-
 backgroundinfo_t* g_pNowChose;
 std::vector<backgroundinfo_t*> g_aryBackGrounds;
 
 std::atomic <const VpxVideoInfo*> g_pInfo;
-const VpxInterface* g_pDecoder;
 std::atomic<vpx_codec_ctx_t*> g_pCodec;
 std::atomic<VpxVideoReader*> g_pReader;
-
-HMODULE g_pVpxdll;
 
 typedef struct asyncResult {
 	byte* data;
@@ -81,6 +77,8 @@ typedef struct asyncResult {
 std::atomic<asyncResult*> g_pVideoResult;
 std::thread g_pDecodeThread;
 std::atomic_bool g_pThreadStop(false);
+
+std::atomic_bool g_bOldInLevel;
 
 void ReadBackGroundList() {
 	char buffer2[MAX_PATH];
@@ -109,9 +107,9 @@ void ReadBackGroundList() {
 void OpenVideo() {
 	g_pReader = vpx_video_reader_open(g_pNowChose->video);
 	g_pInfo = vpx_video_reader_get_info(g_pReader);
-	g_pDecoder = get_vpx_decoder_by_fourcc(g_pInfo.load()->codec_fourcc);
+	const VpxInterface* pDecoder = get_vpx_decoder_by_fourcc(g_pInfo.load()->codec_fourcc);
 	static vpx_codec_ctx_t s_Codec;
-	vpx_codec_dec_init(&s_Codec, g_pDecoder->codec_interface(), nullptr, 0);
+	vpx_codec_dec_init(&s_Codec, pDecoder->codec_interface(), nullptr, 0);
 	g_pCodec = &s_Codec;
 }
 void CloseVideo() {
@@ -212,9 +210,9 @@ void DecodeVideo() {
 	} while (!g_pThreadStop);
 }
 void BackGroundVideoInit() {
-	g_pVpxdll = LoadLibrary("vpx.dll");
-	if (g_pVpxdll) {
-#define GetFuncVPX(name) name = (decltype(name))(GetProcAddress(g_pVpxdll, #name))
+	g_hVpxdll = LoadLibrary("vpx.dll");
+	if (g_hVpxdll) {
+#define GetFuncVPX(name) name = (decltype(name))(GetProcAddress(g_hVpxdll, #name))
 		GetFuncVPX(vpx_codec_dec_init_ver);
 		GetFuncVPX(vpx_codec_peek_stream_info);
 		GetFuncVPX(vpx_codec_get_stream_info);
