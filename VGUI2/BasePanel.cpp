@@ -231,6 +231,9 @@ void BackGroundPushFrame() {
 	s_bOldInLevel = inLevel;
 	g_bPauseDecode = inLevel;
 }
+IVanilliaPanel* BasePanel(){
+	return g_pBasePanel;
+}
 void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
 	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
 	if (gCVars.pDynamicBackground->value > 0) 

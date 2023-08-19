@@ -88,3 +88,7 @@ void GameConsole_InstallHook(void)
 	else
 		g_pMetaHookAPI->SysError("[ABCEnchace] Can not create interface of gameconsole.");
 }
+
+IGameConsole* GameConsole() {
+	return &s_GameConsole;
+}
