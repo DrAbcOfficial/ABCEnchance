@@ -205,7 +205,7 @@ void DecodeVideo() {
 			g_pVideoResult = &returnVal;
 		};
 		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start);
-		auto tbr = std::chrono::milliseconds(g_pInfo.load()->time_base.numerator / 1000);
+		auto tbr = std::chrono::milliseconds(g_pInfo.load()->time_base.numerator / g_pInfo.load()->time_base.denominator);
 		std::this_thread::sleep_for(std::chrono::milliseconds(duration > tbr ? std::chrono::milliseconds(0) : tbr - duration));
 	} while (!g_pThreadStop);
 }
@@ -250,7 +250,7 @@ void BackGroundVideoInit() {
 	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size()-1)];
 }
 void BackGroundVideoClose() {
-	CloseVideo();
+	g_pThreadStop = true;
 	for (auto iter = g_aryBackGrounds.begin(); iter != g_aryBackGrounds.end(); iter++) {
 		delete (*iter);
 	}
@@ -274,7 +274,6 @@ void BackGroundPushFrame() {
 	}
 	else if (!g_bOldInLevel && inLevel)
 		StopMp3();
-
 	g_bOldInLevel = inLevel;
 }
 void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
