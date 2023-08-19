@@ -229,8 +229,14 @@ void BackGroundVideoClose() {
 	g_aryBackGrounds.clear();
 }
 void BackGroundPushFrame() {
-	if (!g_pBasePanel->IsVisible() || gCVars.pDynamicBackground->value <= 0)
+	if (!g_pBasePanel->IsVisible() || gCVars.pDynamicBackground->value <= 0) {
+		g_bOldInLevel = false;
 		return;
+	}
+	if (g_pLoadingDialog != nullptr && g_pLoadingDialog->IsVisible()) {
+		g_bOldInLevel = false;
+		return;
+	}
 	const static auto IsInLevel = []() -> bool {
 		const char* levelName = gEngfuncs.pfnGetLevelName();
 		if (strlen(levelName) > 0)
@@ -297,7 +303,6 @@ void BasePanel_InstallHook(void){
 			Install_InlineHook(CLoadingDialog_ctor);
 #define SC_CLOADINGDIALOG_DTOR_SIG "\x55\x8B\xEC\x56\x8B\xF1\xC7\x06\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\xF6\x45\x08\x01\x74\x0E\x68\x80\x01\x00\x00"
 			Fill_Sig(SC_CLOADINGDIALOG_DTOR_SIG, hGameUI, moduleSize, CLoadingDialog_dtor);
-			auto x = gHookFuncs.CLoadingDialog_dtor;
 			Install_InlineHook(CLoadingDialog_dtor);
 #define SC_GAMEUI_START_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x81\xEC\x30\x03\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xF0\x53"
 			Fill_Sig(SC_GAMEUI_START_SIG, hGameUI, moduleSize, CGameUI_Start);
