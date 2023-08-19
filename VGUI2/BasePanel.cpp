@@ -22,41 +22,6 @@
 #include "plugins.h"
 
 int g_iTextureID;
-class IBasePanel {
-public:
-	virtual void* idontcare1() = 0;
-	virtual void* idontcare2() = 0;
-	virtual void* idontcare3() = 0;
-	virtual void* idontcare4() = 0;
-	virtual void* idontcare5() = 0;
-	virtual void* idontcare6() = 0;
-	virtual void* idontcare7() = 0;
-	virtual void* idontcare8() = 0;
-	virtual void* idontcare9() = 0;
-	virtual void* idontcare10() = 0;
-	virtual void* idontcare11() = 0;
-	virtual void* idontcare12() = 0;
-	virtual void* idontcare13() = 0;
-	virtual void* idontcare14() = 0;
-	virtual void* idontcare15() = 0;
-	virtual void* idontcare16() = 0;
-	virtual void* idontcare17() = 0;
-	virtual void* idontcare18() = 0;
-	virtual void* idontcare19() = 0;
-	virtual void* idontcare20() = 0;
-	virtual void* idontcare21() = 0;
-	virtual void* idontcare22() = 0;
-	virtual void* idontcare23() = 0;
-	virtual void* idontcare24() = 0;
-	virtual void* idontcare25() = 0;
-	virtual void* idontcare26() = 0;
-	virtual void* idontcare27() = 0;
-	virtual int GetMessageMap() = 0;
-	virtual void* dtor() = 0;
-	virtual void SetVisible(bool state) = 0;
-	virtual bool IsVisible() = 0;
-};
-IBasePanel* g_pBasePanel;
 HMODULE g_hVpxdll;
 
 IVanilliaPanel* g_pBasePanel;
@@ -71,7 +36,7 @@ std::vector<backgroundinfo_t*> g_aryBackGrounds;
 
 std::atomic <const VpxVideoInfo*> g_pInfo;
 std::atomic<vpx_codec_ctx_t*> g_pCodec;
-std::atomic<VpxVideoReader*> g_pReader;
+std::atomic<CIVFVideoReader*> g_pReader;
 
 typedef struct asyncResult {
 	byte* data;
@@ -109,16 +74,17 @@ void ReadBackGroundList() {
 	gEngfuncs.COM_FreeFile(pfile);
 }
 void OpenVideo() {
-	g_pReader = vpx_video_reader_open(g_pNowChose->video);
-	g_pInfo = vpx_video_reader_get_info(g_pReader);
+	static CIVFVideoReader pReader = CIVFVideoReader(g_pNowChose->video);
+	g_pInfo = pReader.GetInfo();
 	const VpxInterface* pDecoder = get_vpx_decoder_by_fourcc(g_pInfo.load()->codec_fourcc);
 	static vpx_codec_ctx_t s_Codec;
 	vpx_codec_dec_init(&s_Codec, pDecoder->codec_interface(), nullptr, 0);
 	g_pCodec = &s_Codec;
+	g_pReader = &pReader;
 }
 void CloseVideo() {
 	vpx_codec_destroy(g_pCodec.load());
-	vpx_video_reader_close(g_pReader);
+	g_pReader.load()->Close();
 }
 void PlayMp3() {
 	char soundcmd[MAX_PATH + 8];
@@ -133,14 +99,14 @@ void DecodeVideo() {
 		if (g_bOldInLevel)
 			continue;
 		auto start = std::chrono::high_resolution_clock::now();
-		int result = vpx_video_reader_read_frame(g_pReader);
+		int result = g_pReader.load()->ReadFrame();
 		if (!result) {
 			CloseVideo();
 			OpenVideo();
-			vpx_video_reader_read_frame(g_pReader);
+			g_pReader.load()->ReadFrame();
 		}
 		size_t frame_size = 0;
-		const byte* frame = vpx_video_reader_get_frame(g_pReader, &frame_size);
+		const byte* frame = g_pReader.load()->GetFrame(&frame_size);
 		vpx_codec_err_t err = vpx_codec_decode(g_pCodec.load(), frame, frame_size, nullptr, 0);
 		vpx_codec_iter_t iter = nullptr;
 		vpx_image_t* img = vpx_codec_get_frame(g_pCodec.load(), &iter);
@@ -212,6 +178,8 @@ void DecodeVideo() {
 		auto tbr = std::chrono::milliseconds(g_pInfo.load()->time_base.numerator / g_pInfo.load()->time_base.denominator);
 		std::this_thread::sleep_for(std::chrono::milliseconds(duration > tbr ? std::chrono::milliseconds(0) : tbr - duration));
 	} while (!g_pThreadStop);
+	if (!g_pThreadStop)
+		CloseVideo();
 }
 void BackGroundVideoInit() {
 	g_hVpxdll = LoadLibrary("vpx.dll");
