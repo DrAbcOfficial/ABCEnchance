@@ -22,7 +22,6 @@
 #include "plugins.h"
 
 int g_iTextureID;
-HMODULE g_hVpxdll;
 
 IVanilliaPanel* g_pBasePanel;
 IVanilliaPanel* g_pLoadingDialog;
@@ -47,7 +46,7 @@ std::atomic<asyncResult*> g_pVideoResult;
 std::thread g_pDecodeThread;
 std::atomic_bool g_pThreadStop(false);
 
-std::atomic_bool g_bOldInLevel;
+std::atomic_bool g_bPauseDecode;
 
 void ReadBackGroundList() {
 	char buffer2[MAX_PATH];
@@ -96,13 +95,12 @@ void StopMp3() {
 }
 void DecodeVideo() {
 	do {
-		if (g_bOldInLevel)
+		if (g_bPauseDecode)
 			continue;
 		auto start = std::chrono::high_resolution_clock::now();
 		int result = g_pReader.load()->ReadFrame();
 		if (!result) {
-			CloseVideo();
-			OpenVideo();
+			g_pReader.load()->ResetToBegine();
 			g_pReader.load()->ReadFrame();
 		}
 		size_t frame_size = 0;
@@ -182,28 +180,6 @@ void DecodeVideo() {
 		CloseVideo();
 }
 void BackGroundVideoInit() {
-	g_hVpxdll = LoadLibrary("vpx.dll");
-	if (g_hVpxdll) {
-#define GetFuncVPX(name) name = (decltype(name))(GetProcAddress(g_hVpxdll, #name))
-		GetFuncVPX(vpx_codec_dec_init_ver);
-		GetFuncVPX(vpx_codec_peek_stream_info);
-		GetFuncVPX(vpx_codec_get_stream_info);
-		GetFuncVPX(vpx_codec_decode);
-		GetFuncVPX(vpx_codec_get_frame);
-		GetFuncVPX(vpx_codec_register_put_frame_cb);
-		GetFuncVPX(vpx_codec_register_put_slice_cb);
-		GetFuncVPX(vpx_codec_set_frame_buffer_functions);
-		GetFuncVPX(vpx_codec_vp8_dx);
-		GetFuncVPX(vpx_codec_vp9_dx);
-		GetFuncVPX(vpx_codec_destroy);
-		GetFuncVPX(vpx_codec_error);
-		GetFuncVPX(vpx_codec_error_detail);
-		GetFuncVPX(vpx_img_wrap);
-		GetFuncVPX(vpx_img_free);
-#undef GetFuncVPX
-	}
-	else
-		g_pMetaHookAPI->SysError("[ABCEnchace] Can not open vpx.dll!");
 	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (cvar->value > 0){
 			OpenVideo();
@@ -230,11 +206,11 @@ void BackGroundVideoClose() {
 }
 void BackGroundPushFrame() {
 	if (!g_pBasePanel->IsVisible() || gCVars.pDynamicBackground->value <= 0) {
-		g_bOldInLevel = false;
+		g_bPauseDecode = true;
 		return;
 	}
 	if (g_pLoadingDialog != nullptr && g_pLoadingDialog->IsVisible()) {
-		g_bOldInLevel = false;
+		g_bPauseDecode = true;
 		return;
 	}
 	const static auto IsInLevel = []() -> bool {
@@ -244,15 +220,16 @@ void BackGroundPushFrame() {
 		return false;
 	};
 	bool inLevel = IsInLevel();
+	static bool s_bOldInLevel = false;
 	//back to main menu
-	if (g_bOldInLevel && !inLevel) {
-		CloseVideo();
-		OpenVideo();
+	if (s_bOldInLevel && !inLevel) {
+		g_pReader.load()->ResetToBegine();
 		PlayMp3();
 	}
-	else if (!g_bOldInLevel && inLevel)
+	else if (!s_bOldInLevel && inLevel)
 		StopMp3();
-	g_bOldInLevel = inLevel;
+	s_bOldInLevel = inLevel;
+	g_bPauseDecode = inLevel;
 }
 void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
 	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
@@ -311,4 +288,27 @@ void BasePanel_InstallHook(void){
 	}
 	else
 		g_pMetaHookAPI->SysError("[ABCEnchace] Can not find game ui for dynamic background.");
+
+	HMODULE hVPX= LoadLibrary("vpx.dll");
+	if (hVPX) {
+#define GetFuncVPX(name) name = (decltype(name))(GetProcAddress(hVPX, #name))
+		GetFuncVPX(vpx_codec_dec_init_ver);
+		GetFuncVPX(vpx_codec_peek_stream_info);
+		GetFuncVPX(vpx_codec_get_stream_info);
+		GetFuncVPX(vpx_codec_decode);
+		GetFuncVPX(vpx_codec_get_frame);
+		GetFuncVPX(vpx_codec_register_put_frame_cb);
+		GetFuncVPX(vpx_codec_register_put_slice_cb);
+		GetFuncVPX(vpx_codec_set_frame_buffer_functions);
+		GetFuncVPX(vpx_codec_vp8_dx);
+		GetFuncVPX(vpx_codec_vp9_dx);
+		GetFuncVPX(vpx_codec_destroy);
+		GetFuncVPX(vpx_codec_error);
+		GetFuncVPX(vpx_codec_error_detail);
+		GetFuncVPX(vpx_img_wrap);
+		GetFuncVPX(vpx_img_free);
+#undef GetFuncVPX
+	}
+	else
+		g_pMetaHookAPI->SysError("[ABCEnchace] Can not open vpx.dll!");
 }
