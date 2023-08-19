@@ -614,9 +614,6 @@
     <ClCompile Include="vpx\vpx_codec.cpp">
       <Filter>vpx</Filter>
     </ClCompile>
-    <ClCompile Include="vpx\ivfdec.cpp">
-      <Filter>vpx</Filter>
-    </ClCompile>
     <ClCompile Include="vpx\tools_common.cpp">
       <Filter>vpx</Filter>
     </ClCompile>
@@ -1420,9 +1417,6 @@
     <ClInclude Include="vpx\tools_common.h">
       <Filter>vpx</Filter>
     </ClInclude>
-    <ClInclude Include="vpx\ivfdec.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
     <ClInclude Include="vpx\video_reader.h">
       <Filter>vpx</Filter>
     </ClInclude>
@@ -1446,6 +1440,9 @@
     </ClInclude>
     <ClInclude Include="vpx\memle.h">
       <Filter>vpx</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\interface\IVanilliaPanel.h">
+      <Filter>VGUI2\interface</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

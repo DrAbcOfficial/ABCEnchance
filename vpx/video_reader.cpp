@@ -10,68 +10,100 @@
 #include <cstdio>
 #include <string>
 #include <corecrt_malloc.h>
-#include "ivfdec.h"
 #include "video_reader.h"
 #include "memle.h"
 
 constexpr char *const kIVFSignature = "DKIF";
 
-struct VpxVideoReaderStruct {
-  VpxVideoInfo info;
-  std::FILE *file;
-  uint8_t *buffer;
-  size_t buffer_size;
-  size_t frame_size;
-};
-VpxVideoReader *vpx_video_reader_open(const char *filename) {
+CIVFVideoReader::CIVFVideoReader(){
+}
+CIVFVideoReader::CIVFVideoReader(const char* filename){
+    Open(filename);
+}
+CIVFVideoReader::~CIVFVideoReader(){
+    Close();
+    delete this;
+}
+bool CIVFVideoReader::Open(const char* filename){
     char header[32];
-    VpxVideoReader *reader = nullptr;
-    std::FILE * file = std::fopen(filename, "rb");
-    if (!file) {
+    m_pFile = std::fopen(filename, "rb");
+    if (!m_pFile) {
         std::fprintf(stderr, "%s can't be opened.\n", filename);  // Can't open file
-        return nullptr;
+        return false;
     }
-    if (std::fread(header, 1, 32, file) != 32) {
+    if (std::fread(header, 1, 32, m_pFile) != 32) {
         std::fprintf(stderr, "File header on %s can't be read.\n", filename);  // Can't read file header
-        return nullptr;
+        return false;
     }
     if (memcmp(kIVFSignature, header, 4) != 0) {
         std::fprintf(stderr, "The IVF signature on %s is wrong.\n", filename);  // Wrong IVF signature
-        return nullptr;
+        return false;
     }
     if (mem_get_le16<int>(header + 4) != 0) {
         std::fprintf(stderr, "%s uses the wrong IVF version.\n", filename);  // Wrong IVF version
-        return nullptr;
+        return false;
     }
-    reader = static_cast<VpxVideoReader*>(calloc(1, sizeof(*reader)));
-    if (!reader) {
-        std::fprintf(stderr, "Can't allocate VpxVideoReader\n");  // Can't allocate VpxVideoReader
-        return nullptr;
+    std::fgetpos(m_pFile, &m_pFpos);
+    m_pInfo.codec_fourcc = mem_get_le32<uint32_t>(header + 8);
+    m_pInfo.frame_width = mem_get_le16<int>(header + 12);
+    m_pInfo.frame_height = mem_get_le16<int>(header + 14);
+    m_pInfo.time_base.numerator = mem_get_le32<int>(header + 16);
+    m_pInfo.time_base.denominator = mem_get_le32<int>(header + 20);
+    m_pInfo.frame_count = mem_get_le32<int>(header + 24);
+    return true;
+}
+void CIVFVideoReader::Close(){
+    std::fclose(m_pFile);
+    free(m_pBuffer);
+}
+bool CIVFVideoReader::ReadFrame(){
+    char raw_header[IVF_FRAME_HDR_SZ] = { 0 };
+    size_t frame_size = 0;
+
+    if (std::fread(raw_header, IVF_FRAME_HDR_SZ, 1, m_pFile) != 1) {
+        if (!std::feof(m_pFile))
+            warn("Failed to read frame size");
     }
-     reader->file = file;
-    reader->info.codec_fourcc = mem_get_le32<uint32_t>(header + 8);
-    reader->info.frame_width = mem_get_le16<int>(header + 12);
-    reader->info.frame_height = mem_get_le16<int>(header + 14);
-    reader->info.time_base.numerator = mem_get_le32<int>(header + 16);
-    reader->info.time_base.denominator = mem_get_le32<int>(header + 20);
-    reader->info.frame_count = mem_get_le32<int>(header + 24);
-    return reader;
-}
-void vpx_video_reader_close(VpxVideoReader *reader) {
-    if (reader) {
-        std::fclose(reader->file);
-        free(reader->buffer);
-        free(reader);
+    else {
+        frame_size = mem_get_le32<size_t>(raw_header);
+        if (frame_size > 256 * 1024 * 1024) {
+            warn("Read invalid frame size (%u)", (unsigned int)frame_size);
+            frame_size = 0;
+        }
+        if (frame_size > m_iBufferSize) {
+            uint8_t* new_buffer = static_cast<uint8_t*>(realloc(m_pBuffer, 2 * frame_size));
+            if (new_buffer) {
+                m_pBuffer = new_buffer;
+                m_iBufferSize = 2 * frame_size;
+            }
+            else {
+                warn("Failed to allocate compressed data buffer");
+                frame_size = 0;
+            }
+        }
     }
+    if (!std::feof(m_pFile)) {
+        if (std::fread(m_pBuffer, 1, frame_size, m_pFile) != frame_size) {
+            warn("Failed to read full frame");
+            return false;
+        }
+        m_iFrameSize = frame_size;
+        return true;
+    }
+    return false;
 }
-bool vpx_video_reader_read_frame(VpxVideoReader *reader) {
-  return !ivf_read_frame(reader->file, &reader->buffer, &reader->frame_size, &reader->buffer_size);
+void CIVFVideoReader::ResetToBegine(){
+    if(IsValid())
+        std::fsetpos(m_pFile, &m_pFpos);
 }
-const uint8_t *vpx_video_reader_get_frame(VpxVideoReader *reader, size_t *size) {
-    if (size) 
-        *size = reader->frame_size;
-    return reader->buffer;
+bool CIVFVideoReader::IsValid(){
+    return m_pFile != nullptr;
 }
-const VpxVideoInfo *vpx_video_reader_get_info(VpxVideoReader *reader) {
-  return &reader->info;
+const uint8_t* CIVFVideoReader::GetFrame(size_t* size){
+    if (size)
+        *size = m_iFrameSize;
+    return m_pBuffer;
+}
+const VpxVideoInfo* CIVFVideoReader::GetInfo(){
+    return &m_pInfo;
 }
