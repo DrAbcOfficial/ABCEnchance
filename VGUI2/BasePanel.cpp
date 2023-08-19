@@ -114,6 +114,10 @@ void OpenVideo() {
 	vpx_codec_dec_init(&s_Codec, g_pDecoder->codec_interface(), nullptr, 0);
 	g_pCodec = &s_Codec;
 }
+void CloseVideo() {
+	vpx_codec_destroy(g_pCodec.load());
+	vpx_video_reader_close(g_pReader);
+}
 void PlayMp3() {
 	char soundcmd[MAX_PATH + 8];
 	Q_snprintf(soundcmd, "mp3 stop;mp3 loop %s ui", g_pNowChose->audio);
@@ -121,10 +125,6 @@ void PlayMp3() {
 }
 void StopMp3() {
 	EngineClientCmd("mp3 stop");
-}
-void CloseVideo() {
-	vpx_codec_destroy(g_pCodec.load());
-	vpx_video_reader_close(g_pReader);
 }
 void DecodeVideo() {
 	do {
