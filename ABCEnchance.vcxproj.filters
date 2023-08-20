@@ -84,6 +84,9 @@
     <Filter Include="vpx">
       <UniqueIdentifier>{a1f28372-aa4c-49ce-9f8e-6ee600e9caa4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VGUI2\gameui">
+      <UniqueIdentifier>{42740f0e-8fa8-480d-984a-fc1be9d4e576}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp">
@@ -587,9 +590,6 @@
     <ClCompile Include="vgui_controls\ImageSprPanel.cpp">
       <Filter>VGUI\control</Filter>
     </ClCompile>
-    <ClCompile Include="VGUI2\GameConsole.cpp">
-      <Filter>VGUI2</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\health.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
@@ -605,9 +605,6 @@
     <ClCompile Include="src\Source\HUD\vgui\deadmsg.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
-    <ClCompile Include="VGUI2\BasePanel.cpp">
-      <Filter>VGUI2</Filter>
-    </ClCompile>
     <ClCompile Include="vpx\vpx_decoder.cpp">
       <Filter>vpx</Filter>
     </ClCompile>
@@ -622,6 +619,21 @@
     </ClCompile>
     <ClCompile Include="vpx\vpx_image.cpp">
       <Filter>vpx</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\BasePanel.cpp">
+      <Filter>VGUI2\gameui</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\GameConsole.cpp">
+      <Filter>VGUI2\gameui</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\GameUI.cpp">
+      <Filter>VGUI2\gameui</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\CGameLoading.cpp">
+      <Filter>VGUI2\gameui</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\LoadingDialog.cpp">
+      <Filter>VGUI2\gameui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1390,9 +1402,6 @@
     <ClInclude Include="VGUI2\interface\IViewportPanel.h">
       <Filter>VGUI2\interface</Filter>
     </ClInclude>
-    <ClInclude Include="VGUI2\GameConsole.h">
-      <Filter>VGUI2</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Var\StudioModelRenderer.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
@@ -1410,9 +1419,6 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\deadmsg.h">
       <Filter>Public\Header\HUD\vgui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\BasePanel.h">
-      <Filter>VGUI2</Filter>
     </ClInclude>
     <ClInclude Include="vpx\tools_common.h">
       <Filter>vpx</Filter>
@@ -1443,6 +1449,21 @@
     </ClInclude>
     <ClInclude Include="VGUI2\interface\IVanilliaPanel.h">
       <Filter>VGUI2\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\BasePanel.h">
+      <Filter>VGUI2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\GameConsole.h">
+      <Filter>VGUI2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\LoadingDialog.h">
+      <Filter>VGUI2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\GameUI.h">
+      <Filter>VGUI2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\CGameLoading.h">
+      <Filter>VGUI2\gameui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
