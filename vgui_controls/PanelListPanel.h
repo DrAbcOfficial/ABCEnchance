@@ -40,6 +40,7 @@ public:
 	// DATA & ROW HANDLING
 	// The list now owns the panel
 	virtual int AddItem( Panel *labelPanel, Panel *panel );
+	virtual int AddItem( Panel* panel);
 	int	GetItemCount() const;
 	int GetItemIDFromRow( int nRow ) const;
 

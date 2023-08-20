@@ -11,14 +11,13 @@
 #include <vgui_controls/Button.h>
 #include <vgui_controls/HTML.h>
 #include <vgui_controls/RichText.h>
+#include <vgui_controls/BitmapImagePanel.h>
 
 #include <metahook.h>
 #include <local.h>
 
-#include "BitmapImagePanel.h"
-#include "BasePanel.h"
-
-#include "LoadingDialog.h"
+#include "GameUI/BasePanel.h"
+#include "GameUI/LoadingDialog.h"
 
 vgui::CBitmapImagePanel* CLoadingDialog::m_pLoadingBackground = NULL;
 
@@ -44,7 +43,7 @@ CLoadingDialog::CLoadingDialog(vgui::Panel* parent) : Frame(parent, "LoadingDial
 	m_pCancelButton->SetCommand("Cancel");
 
 	if (!m_pLoadingBackground)
-		m_pLoadingBackground = new vgui::CBitmapImagePanel(NULL, "Background");
+		m_pLoadingBackground = new vgui::CBitmapImagePanel(nullptr, "Background");
 
 	SetMinimizeButtonVisible(false);
 	SetMaximizeButtonVisible(false);

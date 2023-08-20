@@ -2,10 +2,11 @@
 
 #include <VGUI/VGUI.h>
 #include <IVanilliaPanel.h>
-#include <LoadingDialog.h>
-#include <CGameLoading.h>
-#include <GameConsole.h>
-#include <BasePanel.h>
+#include <GameUI/LoadingDialog.h>
+#include <GameUI/CGameLoading.h>
+#include <GameUI/GameConsole.h>
+#include <GameUI/BasePanel.h>
+#include <GameUI/ModInfo.h>
 
 #include "GameUI.h"
 
@@ -69,6 +70,7 @@ vgui::DHANDLE<CLoadingDialog> g_hLoadingDialog;
 vgui::DHANDLE<CGameLoading>g_hGameLoading;
 
 void CGameUI::Initialize(CreateInterfaceFn* factories, int count) {
+	ModInfo().LoadCurrentGameInfo();
 	g_pfnInitialize(this, 0, factories, count);
 }
 void CGameUI::Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system) {

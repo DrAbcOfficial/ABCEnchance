@@ -46,14 +46,14 @@ CKeyBoardEditorPage::SaveMapping_t::SaveMapping_t( const SaveMapping_t& src )
 // Purpose: Special list subclass to handle drawing of trap mode prompt on top of
 //			lists client area
 //-----------------------------------------------------------------------------
-class VControlsListPanel : public ListPanel
+class CVControlsListPanel : public ListPanel
 {
-	DECLARE_CLASS_SIMPLE( VControlsListPanel, ListPanel );
+	DECLARE_CLASS_SIMPLE( CVControlsListPanel, ListPanel );
 
 public:
 	// Construction
-					VControlsListPanel( vgui::Panel *parent, const char *listName );
-	virtual			~VControlsListPanel();
+					CVControlsListPanel( vgui::Panel *parent, const char *listName );
+	virtual			~CVControlsListPanel();
 
 	// Start/end capturing
 	virtual void	StartCaptureMode(vgui::HCursor hCursor = NULL);
@@ -136,7 +136,7 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: Construction
 //-----------------------------------------------------------------------------
-VControlsListPanel::VControlsListPanel( vgui::Panel *parent, const char *listName )	: BaseClass( parent, listName )
+CVControlsListPanel::CVControlsListPanel( vgui::Panel *parent, const char *listName )	: BaseClass( parent, listName )
 {
 	m_bCaptureMode	= false;
 	m_nClickRow		= 0;
@@ -147,7 +147,7 @@ VControlsListPanel::VControlsListPanel( vgui::Panel *parent, const char *listNam
 //-----------------------------------------------------------------------------
 // Purpose: Destructor
 //-----------------------------------------------------------------------------
-VControlsListPanel::~VControlsListPanel()
+CVControlsListPanel::~CVControlsListPanel()
 {
 	m_pInlineEditPanel->MarkForDeletion();
 }
@@ -155,7 +155,7 @@ VControlsListPanel::~VControlsListPanel()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void VControlsListPanel::ApplySchemeSettings(IScheme *pScheme )
+void CVControlsListPanel::ApplySchemeSettings(IScheme *pScheme )
 {
 	BaseClass::ApplySchemeSettings( pScheme );
 	m_hFont	= pScheme->GetFont("DefaultVerySmall", IsProportional() ); 
@@ -164,7 +164,7 @@ void VControlsListPanel::ApplySchemeSettings(IScheme *pScheme )
 //-----------------------------------------------------------------------------
 // Purpose: Start capture prompt display
 //-----------------------------------------------------------------------------
-void VControlsListPanel::StartCaptureMode( HCursor hCursor )
+void CVControlsListPanel::StartCaptureMode( HCursor hCursor )
 {
 	m_bCaptureMode = true;
 	EnterEditMode(m_nClickRow, 1, m_pInlineEditPanel);
@@ -180,7 +180,7 @@ void VControlsListPanel::StartCaptureMode( HCursor hCursor )
 	}
 }
 
-void VControlsListPanel::OnClearBinding()
+void CVControlsListPanel::OnClearBinding()
 {
 	if ( m_bCaptureMode )
 		return;
@@ -194,7 +194,7 @@ void VControlsListPanel::OnClearBinding()
 //-----------------------------------------------------------------------------
 // Purpose: Finish capture prompt display
 //-----------------------------------------------------------------------------
-void VControlsListPanel::EndCaptureMode( HCursor hCursor )
+void CVControlsListPanel::EndCaptureMode( HCursor hCursor )
 {
 	m_bCaptureMode = false;
 	input()->SetMouseCapture(NULL);
@@ -215,7 +215,7 @@ void VControlsListPanel::EndCaptureMode( HCursor hCursor )
 //-----------------------------------------------------------------------------
 // Purpose: Set active row column
 //-----------------------------------------------------------------------------
-void VControlsListPanel::SetItemOfInterest(int itemID)
+void CVControlsListPanel::SetItemOfInterest(int itemID)
 {
 	m_nClickRow	= itemID;
 }
@@ -223,7 +223,7 @@ void VControlsListPanel::SetItemOfInterest(int itemID)
 //-----------------------------------------------------------------------------
 // Purpose: Retrieve row, column of interest
 //-----------------------------------------------------------------------------
-int VControlsListPanel::GetItemOfInterest()
+int CVControlsListPanel::GetItemOfInterest()
 {
 	return m_nClickRow;
 }
@@ -231,7 +231,7 @@ int VControlsListPanel::GetItemOfInterest()
 //-----------------------------------------------------------------------------
 // Purpose: returns true if we're currently waiting to capture a key
 //-----------------------------------------------------------------------------
-bool VControlsListPanel::IsCapturing( void )
+bool CVControlsListPanel::IsCapturing( void )
 {
 	return m_bCaptureMode;
 }
@@ -239,7 +239,7 @@ bool VControlsListPanel::IsCapturing( void )
 //-----------------------------------------------------------------------------
 // Purpose: Forwards mouse pressed message up to keyboard page when in capture
 //-----------------------------------------------------------------------------
-void VControlsListPanel::OnMousePressed(vgui::MouseCode code)
+void CVControlsListPanel::OnMousePressed(vgui::MouseCode code)
 {
 	if (IsCapturing())
 	{
@@ -259,7 +259,7 @@ void VControlsListPanel::OnMousePressed(vgui::MouseCode code)
 //-----------------------------------------------------------------------------
 // Purpose: input handler
 //-----------------------------------------------------------------------------
-void VControlsListPanel::OnMouseDoublePressed( vgui::MouseCode code )
+void CVControlsListPanel::OnMouseDoublePressed( vgui::MouseCode code )
 {
 	int c = GetSelectedItemsCount();
 	if ( c > 0 )
@@ -280,7 +280,7 @@ CKeyBoardEditorPage::CKeyBoardEditorPage( Panel *parent, Panel *panelToEdit, Key
 {
 	Assert( m_pPanel );
 
-	m_pList = new VControlsListPanel( this, "KeyBindings" );
+	m_pList = new CVControlsListPanel( this, "KeyBindings" );
 	m_pList->SetIgnoreDoubleClick( true );
 	m_pList->AddColumnHeader(0, "Action", "#KBEditorBindingName", 175, 0);
 	m_pList->AddColumnHeader(1, "Binding", "#KBEditorBinding", 175, 0);

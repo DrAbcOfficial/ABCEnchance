@@ -151,6 +151,17 @@ int PanelListPanel::AddItem( Panel *labelPanel, Panel *panel)
 	return itemID;
 }
 
+int PanelListPanel::AddItem(Panel* panel){
+	int itemID = m_DataItems.AddToTail();
+	DATAITEM& newitem = m_DataItems[itemID];
+	newitem.panel = panel;
+	panel->SetParent(m_pPanelEmbedded);
+	m_SortedItems.AddToTail(itemID);
+
+	InvalidateLayout();
+	return itemID;
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: iteration accessor
 //-----------------------------------------------------------------------------

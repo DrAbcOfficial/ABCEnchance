@@ -1,6 +1,6 @@
 
 #include "vgui/ISurface.h"
-#include "CGameLoading.h"
+#include "GameUI/CGameLoading.h"
 
 CGameLoading::CGameLoading(Panel* parent, const char* name) : Panel(parent, name)
 {

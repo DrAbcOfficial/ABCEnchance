@@ -2,8 +2,8 @@
 #include <vector>
 #include "BaseUI.h"
 #include <IGameUI.h>
-#include <GameConsole.h>
-#include <GameUI.h>
+#include <GameUI/GameConsole.h>
+#include <GameUI/GameUI.h>
 
 #include <VGUI\IScheme.h>
 #include <VGUI\ILocalize.h>
@@ -16,7 +16,7 @@
 
 #include "exportfuncs.h"
 #include <plugins.h>
-#include <BasePanel.h>
+#include <GameUI/BasePanel.h>
 
 namespace vgui
 {

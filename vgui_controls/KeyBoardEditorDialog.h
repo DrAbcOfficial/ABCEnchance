@@ -16,7 +16,7 @@
 #include "PropertySheet.h"
 #include "PropertyPage.h"
 
-class VControlsListPanel;
+class CVControlsListPanel;
 
 namespace vgui
 {
@@ -70,7 +70,7 @@ protected:
 	Panel			*m_pPanel;
 	KeyBindingContextHandle_t m_Handle;
 
-	VControlsListPanel	*m_pList;
+	CVControlsListPanel*m_pList;
 
 	struct SaveMapping_t
 	{
