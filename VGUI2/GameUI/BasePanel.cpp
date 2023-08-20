@@ -27,10 +27,10 @@ int g_iTextureID;
 IVanilliaPanel* g_pBasePanel;
 IVanilliaPanel* g_pLoadingDialog;
 
-typedef struct backgroundinfo_s {
+struct backgroundinfo_t {
 	char video[MAX_PATH];
 	char audio[MAX_PATH];
-} backgroundinfo_t;
+};
 backgroundinfo_t* g_pNowChose;
 std::vector<backgroundinfo_t*> g_aryBackGrounds;
 
@@ -38,7 +38,7 @@ std::atomic <const VpxVideoInfo*> g_pInfo;
 std::atomic<vpx_codec_ctx_t*> g_pCodec;
 std::atomic<CIVFVideoReader*> g_pReader;
 
-typedef struct asyncResult {
+struct asyncResult {
 	byte* data;
 	uint wide;
 	uint tall;
@@ -113,7 +113,7 @@ void DecodeVideo() {
 			//not 444, fuck it
 			if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))
 				return;
-			static int s_iArea;
+			static size_t s_iArea;
 			static byte* s_pBuf;
 			if (s_iArea < img->d_w * img->d_h) {
 				s_iArea = img->d_w * img->d_h;
