@@ -66,21 +66,11 @@ COptionsSubMultiplayer::COptionsSubMultiplayer(vgui::Panel *parent) : vgui::Prop
 	if(parent)
 		SetSize(parent->GetWide(), parent->GetTall());
 
-	SetScheme("OptionDialogScheme");
 	LoadControlSettings(VGUI2_ROOT_DIR "OptionsSubMultiplayer.res");
 }
 
 COptionsSubMultiplayer::~COptionsSubMultiplayer(void)
 {
-}
-
-void COptionsSubMultiplayer::ApplySchemeSettings(vgui::IScheme* pScheme)
-{
-	BaseClass::ApplySchemeSettings(pScheme);
-
-	SetBgColor(GetSchemeColor("OptionsSubMultiplayer.BgColor", GetSchemeColor("PropertyDialog.BgColor", pScheme), pScheme));
-	SetFgColor(GetSchemeColor("OptionsSubMultiplayer.FgColor", GetSchemeColor("PropertyDialog.FgColor", pScheme), pScheme));
-	InvalidateLayout();
 }
 
 void COptionsSubMultiplayer::OnCommand(const char *command)

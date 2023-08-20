@@ -30,7 +30,7 @@ COptionsDialog::COptionsDialog(vgui::Panel *parent) : PropertyDialog(parent, "Op
 	SetBounds(0, 0, 512, 406);
 	SetSizeable(false);
 	SetMoveable(false);
-	SetMenuButtonVisible(false);
+	SetMenuButtonVisible(true);
 
 	SetTitle("#GameUI_Options", true);
 	SetSize(gScreenInfo.iWidth / 3 * 2, gScreenInfo.iHeight);
@@ -74,7 +74,9 @@ void COptionsDialog::ApplySchemeSettings(vgui::IScheme* pScheme)
 
 	SetBgColor(GetSchemeColor("PropertyDialog.BgColor", GetSchemeColor("Frame.BgColor", pScheme), pScheme));
 	SetFgColor(GetSchemeColor("PropertyDialog.FgColor", GetSchemeColor("Frame.FgColor", pScheme), pScheme));
-	InvalidateLayout();
+
+	GetPropertySheet()->SetBgColor(GetSchemeColor("PropertySheet.BgColor", GetSchemeColor("Frame.BgColor", pScheme), pScheme));
+	GetPropertySheet()->SetFgColor(GetSchemeColor("PropertySheet.FgColor", GetSchemeColor("Frame.FgColor", pScheme), pScheme));
 }
 
 void COptionsDialog::Activate(void)
