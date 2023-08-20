@@ -7,6 +7,12 @@
 
 #include "tier1/interface.h"
 
+typedef struct vmode_s{
+	int width;
+	int height;
+	int bpp;
+} vmode_t;
+
 class IGameUIFuncs : public IBaseInterface
 {
 public:
@@ -14,7 +20,7 @@ public:
 	virtual const char *Key_NameForKey(int keynum) = 0;
 	virtual const char *Key_BindingForKey(int keynum) = 0;
 	virtual vgui::KeyCode GetVGUI2KeyCodeForBind(const char *bind) = 0;
-	virtual void GetVideoModes(struct vmode_s **liststart, int *count) = 0;
+	virtual void GetVideoModes(vmode_t **liststart, int *count) = 0;
 	virtual void GetCurrentVideoMode(int *wide, int *tall, int *bpp) = 0;
 	virtual void GetCurrentRenderer(char *name, int namelen, int *windowed) = 0;
 	virtual bool IsConnectedToVACSecureServer(void) = 0;

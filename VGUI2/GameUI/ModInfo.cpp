@@ -4,13 +4,13 @@
 //
 // $NoKeywords: $
 //=============================================================================
-#include <string.h>
-
-#include "ModInfo.h"
+#include <string>
 #include <KeyValues.h>
-#include <vgui_controls/Controls.h>
 #include <FileSystem.h>
+#include <vgui_controls/Controls.h>
 #include <metahook.h>
+
+#include "GameUI/ModInfo.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: singleton accessor
