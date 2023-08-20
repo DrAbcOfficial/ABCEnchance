@@ -398,9 +398,6 @@
     <ClCompile Include="VGUI2\VPanel.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
-    <ClCompile Include="VGUI2\BaseUI.cpp">
-      <Filter>VGUI2</Filter>
-    </ClCompile>
     <ClCompile Include="VGUI2\FontTextureCache.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
@@ -633,6 +630,9 @@
       <Filter>VGUI2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\LoadingDialog.cpp">
+      <Filter>VGUI2\gameui</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\BaseUI.cpp">
       <Filter>VGUI2\gameui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1153,9 +1153,6 @@
     <ClInclude Include="VGUI2\VPanel.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
-    <ClInclude Include="VGUI2\BaseUI.h">
-      <Filter>VGUI2</Filter>
-    </ClInclude>
     <ClInclude Include="VGUI2\FontTextureCache.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
@@ -1463,6 +1460,9 @@
       <Filter>VGUI2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\CGameLoading.h">
+      <Filter>VGUI2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\BaseUI.h">
       <Filter>VGUI2\gameui</Filter>
     </ClInclude>
   </ItemGroup>
