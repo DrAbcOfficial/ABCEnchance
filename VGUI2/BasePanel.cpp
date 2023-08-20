@@ -43,10 +43,10 @@ typedef struct asyncResult {
 	uint tall;
 };
 std::atomic<asyncResult*> g_pVideoResult;
-std::thread g_pDecodeThread;
 std::atomic_bool g_pThreadStop(false);
-
 std::atomic_bool g_bPauseDecode;
+
+std::thread g_pDecodeThread;
 
 void ReadBackGroundList() {
 	char buffer2[MAX_PATH];
@@ -172,12 +172,12 @@ void DecodeVideo() {
 			returnVal.tall = img->d_h;
 			g_pVideoResult = &returnVal;
 		};
-		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start);
-		auto tbr = std::chrono::milliseconds(g_pInfo.load()->time_base.numerator / g_pInfo.load()->time_base.denominator);
-		std::this_thread::sleep_for(std::chrono::milliseconds(duration > tbr ? std::chrono::milliseconds(0) : tbr - duration));
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start);
+		auto tbr = std::chrono::microseconds(static_cast<int>(static_cast<float>(g_pInfo.load()->time_base.numerator) / static_cast<float >(g_pInfo.load()->time_base.denominator) * 1000));
+		std::this_thread::sleep_for(std::chrono::microseconds(duration > tbr ? std::chrono::microseconds(0) : tbr - duration));
 	} while (!g_pThreadStop);
-	if (!g_pThreadStop)
-		CloseVideo();
+
+	CloseVideo();
 }
 void BackGroundVideoInit() {
 	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
@@ -204,41 +204,23 @@ void BackGroundVideoClose() {
 	}
 	g_aryBackGrounds.clear();
 }
-void BackGroundPushFrame() {
-	if (!g_pBasePanel->IsVisible() || gCVars.pDynamicBackground->value <= 0) {
-		g_bPauseDecode = true;
-		return;
-	}
-	if (g_pLoadingDialog != nullptr && g_pLoadingDialog->IsVisible()) {
-		g_bPauseDecode = true;
-		return;
-	}
-	const static auto IsInLevel = []() -> bool {
-		const char* levelName = gEngfuncs.pfnGetLevelName();
-		if (strlen(levelName) > 0)
-			return true;
-		return false;
-	};
-	bool inLevel = IsInLevel();
-	static bool s_bOldInLevel = false;
-	//back to main menu
-	if (s_bOldInLevel && !inLevel) {
+void BackGroundSetDecodeState(bool state) {
+	if (state) {
 		g_pReader.load()->ResetToBegine();
 		PlayMp3();
 	}
-	else if (!s_bOldInLevel && inLevel)
+	else
 		StopMp3();
-	s_bOldInLevel = inLevel;
-	g_bPauseDecode = inLevel;
+	g_bPauseDecode = !state;
+}
+void BackGroundInitMusic() {
+	if (gCVars.pDynamicBackground->value > 0)
+		PlayMp3();
 }
 IVanilliaPanel* BasePanel(){
 	return g_pBasePanel;
 }
-void __fastcall CGameUI_Start(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem) {
-	gHookFuncs.CGameUI_Start(pthis, dummy, engfuncs, idoncare, ibasesystem);
-	if (gCVars.pDynamicBackground->value > 0) 
-		PlayMp3();
-}
+
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_pBasePanel = static_cast<IVanilliaPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
@@ -284,9 +266,6 @@ void BasePanel_InstallHook(void){
 #define SC_CLOADINGDIALOG_DTOR_SIG "\x55\x8B\xEC\x56\x8B\xF1\xC7\x06\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\xF6\x45\x08\x01\x74\x0E\x68\x80\x01\x00\x00"
 			Fill_Sig(SC_CLOADINGDIALOG_DTOR_SIG, hGameUI, moduleSize, CLoadingDialog_dtor);
 			Install_InlineHook(CLoadingDialog_dtor);
-#define SC_GAMEUI_START_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x81\xEC\x30\x03\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xF0\x53"
-			Fill_Sig(SC_GAMEUI_START_SIG, hGameUI, moduleSize, CGameUI_Start);
-			Install_InlineHook(CGameUI_Start);
 		}
 	}
 	else

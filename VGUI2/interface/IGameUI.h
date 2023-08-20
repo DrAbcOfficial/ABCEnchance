@@ -30,6 +30,10 @@ public:
 	virtual int SetProgressBarStatusText(const char *statusText) = 0;
 	virtual void SetSecondaryProgressBar(float progress) = 0;
 	virtual void SetSecondaryProgressBarText(const char *statusText) = 0;
+	virtual void ValidateCDKey(bool force, bool inConnect) = 0;
+	virtual void OnDisconnectFromServer(int maybeport, char* maybeip) = 0;
+	virtual void ShowPasswordPromptAndRetry(char* passwd, bool correct) = 0;
+	virtual void OnExitToDesktop() = 0;
 };
 
 #define GAMEUI_INTERFACE_VERSION "GameUI007"
