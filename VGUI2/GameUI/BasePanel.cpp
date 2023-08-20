@@ -228,16 +228,16 @@ void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	return g_pBasePanel;
 }
 void __fastcall CBasePanel_RunMenuCommand(void* pthis, int dummy, const char* command) {
-	if (!Q_strcmp(command, "OpenOptionsDialog")) {
+	/*if (!Q_strcmp(command, "OpenOptionsDialog")) {
 		COptionsDialog* dialog = OptionsDialog();
 		if (!dialog)
 			dialog = CeateOptionDialog(nullptr);
 		if (dialog->IsVisible())
 			dialog->Deactivate();
 		else
-			dialog->Activate();
+			dialog->Run();
 	}
-	else
+	else*/
 		gHookFuncs.CBasePanel_RunMenuCommand(pthis, dummy, command);
 }
 void* __fastcall CLoadingDialog_ctor(void* pthis, int dummy, void* pPanel) {

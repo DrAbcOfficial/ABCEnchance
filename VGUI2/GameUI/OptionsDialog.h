@@ -16,7 +16,7 @@ public:
 	void Activate();
 	void Deactivate();
 
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	virtual void ApplySchemeSettings(vgui::IScheme* pScheme);
 public:
 	void OnClose();
 	virtual void OnThink() override;

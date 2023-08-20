@@ -29,7 +29,6 @@ public:
 
 public:
 	virtual vgui::Panel *CreateControlByName(const char *controlName);
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 
 protected:
 	virtual void OnPageShow(void);
