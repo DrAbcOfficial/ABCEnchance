@@ -635,6 +635,9 @@
     <ClCompile Include="VGUI2\BaseUI.cpp">
       <Filter>VGUI2\gameui</Filter>
     </ClCompile>
+    <ClCompile Include="VGUI2\ModInfo.cpp">
+      <Filter>VGUI2\gameui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1463,6 +1466,9 @@
       <Filter>VGUI2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\BaseUI.h">
+      <Filter>VGUI2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\ModInfo.h">
       <Filter>VGUI2\gameui</Filter>
     </ClInclude>
   </ItemGroup>
