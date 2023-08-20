@@ -9,10 +9,11 @@ enum EBackgroundState{
 	BACKGROUND_EXITING,
 };
 
-void BasePanel_InstallHook(void);
+void BasePanel_InstallHook();
 void BackGroundVideoInit();
 void BackGroundVideoClose();
-void BackGroundPushFrame();
+void BackGroundSetDecodeState(bool state);
+void BackGroundInitMusic();
 
 class IVanilliaPanel;
 IVanilliaPanel* BasePanel();

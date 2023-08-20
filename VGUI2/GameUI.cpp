@@ -28,20 +28,24 @@ void (__fastcall *g_pfnStopProgressBar)(void* pThis, int, bool bError, const cha
 int  (__fastcall *g_pfnSetProgressBarStatusText)(void* pThis, int, const char* statusText);
 void (__fastcall *g_pfnSetSecondaryProgressBar)(void* pThis, int, float progress);
 void (__fastcall *g_pfnSetSecondaryProgressBarText)(void* pThis, int, const char* statusText);
+void (__fastcall *g_pfnValidateCDKey)(void* pThis, int, bool force, bool inConnect);
+void (__fastcall *g_pfnOnDisconnectFromServer)(void* pThis, int, int maybeport, char* maybeip);
+void (__fastcall *g_pfnShowPasswordPromptAndRetry)(void* pThis, int, char* passwd, bool correct);
+void (__fastcall *g_pfnOnExitToDesktop)(void* pThis, int);
 
 class CGameUI : public IGameUI{
 public:
 	virtual void Initialize(CreateInterfaceFn* factories, int count);
 	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system);
-	virtual void Shutdown(void);
-	virtual int ActivateGameUI(void);
-	virtual int ActivateDemoUI(void);
-	virtual int HasExclusiveInput(void);
-	virtual void RunFrame(void);
+	virtual void Shutdown();
+	virtual int ActivateGameUI();
+	virtual int ActivateDemoUI();
+	virtual int HasExclusiveInput();
+	virtual void RunFrame();
 	virtual void ConnectToServer(const char* game, int IP, int port);
-	virtual void DisconnectFromServer(void);
-	virtual void HideGameUI(void);
-	virtual bool IsGameUIActive(void);
+	virtual void DisconnectFromServer();
+	virtual void HideGameUI();
+	virtual bool IsGameUIActive();
 	virtual void LoadingStarted(const char* resourceType, const char* resourceName);
 	virtual void LoadingFinished(const char* resourceType, const char* resourceName);
 	virtual void StartProgressBar(const char* progressType, int progressSteps);
@@ -50,6 +54,10 @@ public:
 	virtual int SetProgressBarStatusText(const char* statusText);
 	virtual void SetSecondaryProgressBar(float progress);
 	virtual void SetSecondaryProgressBarText(const char* statusText);
+	virtual void ValidateCDKey(bool force, bool inConnect);
+	virtual void OnDisconnectFromServer(int maybeport, char* maybeip);
+	virtual void ShowPasswordPromptAndRetry(char* passwd, bool correct);
+	virtual void OnExitToDesktop();
 
 	bool m_bLoadlingLevel;
 	char m_szPreviousStatusText[128];
@@ -65,6 +73,7 @@ void CGameUI::Initialize(CreateInterfaceFn* factories, int count) {
 }
 void CGameUI::Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system) {
 	g_pfnStart(this, 0, engineFuncs, interfaceVersion, system);
+	BackGroundInitMusic();
 }
 void CGameUI::Shutdown(void) {
 	g_pfnShutdown(this, 0);
@@ -82,9 +91,11 @@ void CGameUI::RunFrame(void) {
 	g_pfnRunFrame(this, 0);
 }
 void CGameUI::ConnectToServer(const char* game, int IP, int port) {
+	BackGroundSetDecodeState(false);
 	g_pfnConnectToServer(this, 0, game, IP, port);
 }
 void CGameUI::DisconnectFromServer(void) {
+	BackGroundSetDecodeState(true);
 	g_pfnDisconnectFromServer(this, 0);
 }
 void CGameUI::HideGameUI(void) {
@@ -94,26 +105,25 @@ bool CGameUI::IsGameUIActive(void) {
 	return g_pfnIsGameUIActive(this, 0);
 }
 void CGameUI::LoadingStarted(const char* resourceType, const char* resourceName) {
-	//m_bLoadlingLevel = true;
-	//if (!g_hGameLoading.Get())
-	//	g_hGameLoading = new CGameLoading((vgui::Panel*)(BasePanel()), "GameLoading");
-	//g_hGameLoading->Activate();
-	//GameConsole()->Hide();
+	/*m_bLoadlingLevel = true;
+	if (!g_hGameLoading.Get())
+		g_hGameLoading = new CGameLoading((vgui::Panel*)(BasePanel()), "GameLoading");
+	g_hGameLoading->Activate();
+	GameConsole()->Hide();*/
 	g_pfnLoadingStarted(this, 0, resourceType, resourceName);
 }
 void CGameUI::LoadingFinished(const char* resourceType, const char* resourceName) {
-	//m_bLoadlingLevel = false;
-	//if (g_hGameLoading.Get()){
-	//	g_hGameLoading->SetVisible(false);
-	//	g_hGameLoading->SetAutoDelete(true);
-	//}
-	//StopProgressBar(false, "");
-	//HideGameUI();
+	/*m_bLoadlingLevel = false;
+	if (g_hGameLoading.Get()){
+		g_hGameLoading->SetVisible(false);
+		g_hGameLoading->SetAutoDelete(true);
+	}
+	StopProgressBar(false, "");
+	HideGameUI();*/
 	g_pfnLoadingFinished(this, 0, resourceType, resourceName);
 }
 void CGameUI::StartProgressBar(const char* progressType, int progressSteps) {
-	/*
-	if (g_hGameLoading.Get()){
+	/*if (g_hGameLoading.Get()){
 		if (g_hGameLoading->IsVisible()){
 			g_hGameLoading->SetProgressRange(0, progressSteps);
 			g_hGameLoading->SetProgressPoint(0);
@@ -129,15 +139,14 @@ void CGameUI::StartProgressBar(const char* progressType, int progressSteps) {
 	m_szPreviousStatusText[0] = 0;
 	g_hLoadingDialog->SetProgressRange(0, progressSteps);
 	g_hLoadingDialog->SetProgressPoint(0);
-	g_hLoadingDialog->Open();
-	*/
+	g_hLoadingDialog->Open();*/
 	g_pfnStartProgressBar(this, 0, progressType, progressSteps);
 }
 int  CGameUI::ContinueProgressBar(int progressPoint, float progressFraction) {
-	/*
-	if (g_hGameLoading.Get()){
-		if (g_hGameLoading->IsVisible())
+	/*if (g_hGameLoading.Get()){
+		if (g_hGameLoading->IsVisible()) {
 			return g_hGameLoading->SetProgressPoint(progressPoint);
+		}
 	}
 	if (!g_hLoadingDialog.Get()){
 		g_hLoadingDialog = new CLoadingDialog((vgui::Panel*)(BasePanel()));
@@ -146,27 +155,22 @@ int  CGameUI::ContinueProgressBar(int progressPoint, float progressFraction) {
 		g_hLoadingDialog->Open();
 	}
 	g_hLoadingDialog->Activate();
-	return g_hLoadingDialog->SetProgressPoint(progressPoint);
-	*/
+	return g_hLoadingDialog->SetProgressPoint(progressPoint);*/
 	return g_pfnContinueProgressBar(this, 0, progressPoint, progressFraction);
 }
 void CGameUI::StopProgressBar(bool bError, const char* failureReason, const char* extendedReason) {
-	/*
-	if (g_hGameLoading.Get()){
-		if (g_hGameLoading->IsVisible())
-			return;
-	}
-	if (!g_hLoadingDialog.Get() && bError)
-		g_hLoadingDialog = new CLoadingDialog((vgui::Panel*)(BasePanel()));
-	if (!g_hLoadingDialog.Get())
-		return;
-	if (bError)
-		g_hLoadingDialog->DisplayGenericError(failureReason, extendedReason);
-	else{
-		g_hLoadingDialog->Close();
-		g_hLoadingDialog = NULL;
-	}
-	*/
+	//int* piVar3;
+	//if (!g_hLoadingDialog.Get() && bError)
+	//	g_hLoadingDialog = new CLoadingDialog((vgui::Panel*)(BasePanel()));
+	//if (g_hLoadingDialog.Get()) {
+	//	if (bError) 
+	//		g_hLoadingDialog->DisplayGenericError(failureReason, extendedReason);
+	//	else {
+	//		g_hLoadingDialog->Close();
+	//		g_hLoadingDialog = nullptr;
+	//	}
+	//	//CBasePanel::SetBackgroundRenderState((CBasePanel*)staticPanel, 2);
+	//}
 	g_pfnStopProgressBar(this, 0, bError, failureReason, extendedReason);
 }
 int  CGameUI::SetProgressBarStatusText(const char* statusText) {
@@ -190,28 +194,36 @@ int  CGameUI::SetProgressBarStatusText(const char* statusText) {
 	return g_pfnSetProgressBarStatusText(this, 0, statusText);
 }
 void CGameUI::SetSecondaryProgressBar(float progress) {
-	/*
-	if (g_hGameLoading.Get()){
+	/*if (g_hGameLoading.Get()){
 		if (g_hGameLoading->IsVisible())
 			return;
 	}
 	if (!g_hLoadingDialog.Get())
 		return;
-	g_hLoadingDialog->SetSecondaryProgress(progress);
-	*/
+	g_hLoadingDialog->SetSecondaryProgress(progress);*/
 	g_pfnSetSecondaryProgressBar(this, 0, progress);
 }
 void CGameUI::SetSecondaryProgressBarText(const char* statusText) {
-	/*
-	if (g_hLoadingDialog.Get()){
+	/*if (g_hLoadingDialog.Get()){
 		if (g_hLoadingDialog->IsVisible())
 			return;
 	}
 	if (!g_hLoadingDialog.Get())
 		return;
-	g_hLoadingDialog->SetSecondaryProgressText(statusText);
-	*/
+	g_hLoadingDialog->SetSecondaryProgressText(statusText);*/
 	g_pfnSetSecondaryProgressBarText(this, 0, statusText);
+}
+void CGameUI::ValidateCDKey(bool force, bool inConnect) {
+	g_pfnValidateCDKey(this, 0, force, inConnect);
+}
+void CGameUI::OnDisconnectFromServer(int maybeport, char* maybeip) {
+	g_pfnOnDisconnectFromServer(this, 0, maybeport, maybeip);
+}
+void CGameUI::ShowPasswordPromptAndRetry(char* passwd, bool correct) {
+	g_pfnShowPasswordPromptAndRetry(this, 0, passwd, correct);
+}
+void CGameUI::OnExitToDesktop() {
+	g_pfnOnExitToDesktop(this, 0);
 }
 
 void GameUI_InstallHook(){
@@ -240,6 +252,10 @@ void GameUI_InstallHook(){
 		GAMEUI_VFTHOOK(17, SetProgressBarStatusText);
 		GAMEUI_VFTHOOK(18, SetSecondaryProgressBar);
 		GAMEUI_VFTHOOK(19, SetSecondaryProgressBarText);
+		GAMEUI_VFTHOOK(20, ValidateCDKey);
+		GAMEUI_VFTHOOK(21, OnDisconnectFromServer);
+		GAMEUI_VFTHOOK(22, ShowPasswordPromptAndRetry);
+		GAMEUI_VFTHOOK(23, OnExitToDesktop);
 	}
 #undef GAMEUI_VFTHOOK
 }
