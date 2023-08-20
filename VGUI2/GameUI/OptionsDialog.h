@@ -30,3 +30,5 @@ private:
 	class COptionsSubVoice *m_pOptionsSubVoice;
 	class COptionsSubAdvanced *m_pOptionsSubAdvanced;
 };
+COptionsDialog* CeateOptionDialog(vgui::Panel* parent);
+COptionsDialog* OptionsDialog();

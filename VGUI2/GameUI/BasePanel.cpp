@@ -16,6 +16,7 @@
 
 #include "Controls.h"
 
+#include "GameUI/OptionsDialog.h"
 #include "GameUI/BasePanel.h"
 
 #include "exportfuncs.h"
@@ -62,7 +63,7 @@ void ReadBackGroundList() {
 			break;
 		if (c >= 1) {
 			backgroundinfo_t* info = new backgroundinfo_t();
-			g_pFileSystem->GetLocalPath(buffer1, info->video, MAX_PATH);
+			vgui::filesystem()->GetLocalPath(buffer1, info->video, MAX_PATH);
 			strcpy(info->audio, buffer2);
 			g_aryBackGrounds.push_back(info);
 			c = 0;
@@ -226,6 +227,19 @@ void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
 	return g_pBasePanel;
 }
+void __fastcall CBasePanel_RunMenuCommand(void* pthis, int dummy, const char* command) {
+	if (!Q_strcmp(command, "OpenOptionsDialog")) {
+		COptionsDialog* dialog = OptionsDialog();
+		if (!dialog)
+			dialog = CeateOptionDialog(nullptr);
+		if (dialog->IsVisible())
+			dialog->SetVisible(false);
+		else
+			dialog->Activate();
+	}
+	else
+		gHookFuncs.CBasePanel_RunMenuCommand(pthis, dummy, command);
+}
 void* __fastcall CLoadingDialog_ctor(void* pthis, int dummy, void* pPanel) {
 	g_pLoadingDialog = static_cast<IVanilliaPanel*>(gHookFuncs.CLoadingDialog_ctor(pthis, dummy, pPanel));
 	return g_pLoadingDialog;
@@ -266,6 +280,10 @@ void BasePanel_InstallHook(void){
 #define SC_CLOADINGDIALOG_DTOR_SIG "\x55\x8B\xEC\x56\x8B\xF1\xC7\x06\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\xF6\x45\x08\x01\x74\x0E\x68\x80\x01\x00\x00"
 			Fill_Sig(SC_CLOADINGDIALOG_DTOR_SIG, hGameUI, moduleSize, CLoadingDialog_dtor);
 			Install_InlineHook(CLoadingDialog_dtor);
+#define SC_CBASEPANEL_RUNMENUCOMMAND_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x51\x53\x56\x57\xA1\x2A\x2A\x2A\x2A\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x2A\x2A\x2A\x2A\x8B\xD9\x8B\x75\x08\x68\x2A\x2A\x2A\x2A\x56"
+			Fill_Sig(SC_CBASEPANEL_RUNMENUCOMMAND_SIG, hGameUI, moduleSize, CBasePanel_RunMenuCommand);
+			auto x = gHookFuncs.CBasePanel_RunMenuCommand;
+			Install_InlineHook(CBasePanel_RunMenuCommand);
 		}
 	}
 	else
