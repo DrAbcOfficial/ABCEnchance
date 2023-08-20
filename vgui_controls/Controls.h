@@ -111,6 +111,9 @@ inline vgui::ILocalize *localize()
 {
 	return g_pVGuiLocalize;
 }
+inline IFileSystem* filesystem() {
+	return g_pFullFileSystem;
+}
 
 // predeclare all the vgui control class names
 class AnalogBar;
