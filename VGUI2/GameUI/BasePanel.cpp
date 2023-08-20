@@ -233,7 +233,7 @@ void __fastcall CBasePanel_RunMenuCommand(void* pthis, int dummy, const char* co
 		if (!dialog)
 			dialog = CeateOptionDialog(nullptr);
 		if (dialog->IsVisible())
-			dialog->SetVisible(false);
+			dialog->Deactivate();
 		else
 			dialog->Activate();
 	}

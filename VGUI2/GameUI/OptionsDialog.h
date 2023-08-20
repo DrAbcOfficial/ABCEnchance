@@ -9,19 +9,25 @@ class COptionsDialog : public vgui::PropertyDialog
 
 public:
 	COptionsDialog(vgui::Panel *parent);
-	~COptionsDialog(void);
+	~COptionsDialog();
 
 public:
-	void Run(void);
-	void Activate(void);
+	void Run();
+	void Activate();
+	void Deactivate();
 
+	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 public:
-	void OnClose(void);
+	void OnClose();
+	virtual void OnThink() override;
 
 public:
 	MESSAGE_FUNC(OnGameUIHidden, "GameUIHidden");
 
 private:
+	bool m_bPushIn;
+	bool m_bPushOut;
+	float m_flAnimeTime;
 	class COptionsSubMultiplayer *m_pOptionsSubMultiplayer;
 	class COptionsSubKeyboard *m_pOptionsSubKeyboard;
 	class COptionsSubMouse *m_pOptionsSubMouse;
