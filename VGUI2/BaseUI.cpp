@@ -83,9 +83,9 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 	GameConsole_InstallHook();
 	GameUI_InstallHook();
 	BasePanel_InstallHook();
+	Scheme_InstallHook();
+
 	BackGroundVideoInit();
-	if(!g_metaplugins.captionmod)
-		Scheme_InstallHook();
 }
 
 void CBaseUI::Start(struct cl_enginefuncs_s *engineFuncs, int interfaceVersion)
