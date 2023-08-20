@@ -11,6 +11,8 @@
 #include "vgui/ISystem.h"
 #include "vgui/IVGui.h"
 
+#include "vguilocal.h"
+
 #include "GameUI/OptionsSubMultiplayer.h"
 #include "GameUI/OptionsSubKeyboard.h"
 #include "GameUI/OptionsSubMouse.h"
@@ -22,11 +24,19 @@
 
 #include "KeyValues.h"
 
+
 COptionsDialog::COptionsDialog(vgui::Panel *parent) : PropertyDialog(parent, "OptionsDialog")
 {
 	SetBounds(0, 0, 512, 406);
 	SetSizeable(false);
+	SetMoveable(false);
+	SetMenuButtonVisible(false);
+
 	SetTitle("#GameUI_Options", true);
+	SetSize(gScreenInfo.iWidth / 3 * 2, gScreenInfo.iHeight);
+
+	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "OptionDialogScheme.res", "OptionDialogScheme");
+	SetScheme("OptionDialogScheme");
 
 	if ((ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()) || (!ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()))
 		m_pOptionsSubMultiplayer = new COptionsSubMultiplayer(this);
@@ -53,8 +63,18 @@ COptionsDialog::COptionsDialog(vgui::Panel *parent) : PropertyDialog(parent, "Op
 	GetPropertySheet()->SetTabWidth(84);
 }
 
+
 COptionsDialog::~COptionsDialog(void)
 {
+}
+
+void COptionsDialog::ApplySchemeSettings(vgui::IScheme* pScheme)
+{
+	BaseClass::ApplySchemeSettings(pScheme);
+
+	SetBgColor(GetSchemeColor("PropertyDialog.BgColor", GetSchemeColor("Frame.BgColor", pScheme), pScheme));
+	SetFgColor(GetSchemeColor("PropertyDialog.FgColor", GetSchemeColor("Frame.FgColor", pScheme), pScheme));
+	InvalidateLayout();
 }
 
 void COptionsDialog::Activate(void)
@@ -73,6 +93,18 @@ void COptionsDialog::Activate(void)
 	}
 	ResetAllData();
 	EnableApplyButton(false);
+	SetSize(gScreenInfo.iWidth / 3 * 2, gScreenInfo.iHeight);
+	
+	SetPos(gScreenInfo.iWidth, 0);
+	m_flAnimeTime = vgui::system()->GetCurrentTime() + 0.5f;
+	m_bPushIn = true;
+	m_bPushOut = false;
+}
+
+void COptionsDialog::Deactivate(){
+	m_flAnimeTime = vgui::system()->GetCurrentTime() + 0.5f;
+	m_bPushIn = false;
+	m_bPushOut = true;
 }
 
 void COptionsDialog::Run(void)
@@ -84,6 +116,33 @@ void COptionsDialog::Run(void)
 void COptionsDialog::OnClose(void)
 {
 	BaseClass::OnClose();
+}
+
+void COptionsDialog::OnThink(){
+	if (m_bPushIn) {
+		int xpos, ypos;
+		int iHalfScreen = gScreenInfo.iWidth / 3 * 2;
+		GetPos(xpos, ypos);
+		if (xpos <= iHalfScreen) {
+			SetPos(iHalfScreen, ypos);
+			m_bPushIn = false;
+			return;
+		}
+		float flRatio = (m_flAnimeTime - vgui::system()->GetCurrentTime()) / 0.5f;
+		SetPos(iHalfScreen + iHalfScreen * flRatio, ypos);
+	}
+	else if (m_bPushOut) {
+		int xpos, ypos;
+		int iHalfScreen = gScreenInfo.iWidth / 3 * 2;
+		GetPos(xpos, ypos);
+		if (xpos >= gScreenInfo.iWidth) {
+			SetVisible(false);
+			m_bPushOut = false;
+			return;
+		}
+		float flRatio = 1 - ((m_flAnimeTime - vgui::system()->GetCurrentTime()) / 0.5f);
+		SetPos(iHalfScreen + iHalfScreen * flRatio, ypos);
+	}
 }
 
 void COptionsDialog::OnGameUIHidden(void)
