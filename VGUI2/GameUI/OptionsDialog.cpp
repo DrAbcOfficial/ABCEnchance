@@ -28,21 +28,14 @@ COptionsDialog::COptionsDialog(vgui::Panel *parent) : PropertyDialog(parent, "Op
 	SetSizeable(false);
 	SetTitle("#GameUI_Options", true);
 
-	m_pOptionsSubMultiplayer = nullptr;
-	m_pOptionsSubKeyboard = nullptr;
-	m_pOptionsSubMouse = nullptr;
-	m_pOptionsSubAudio = nullptr;
-	m_pOptionsSubVideo = nullptr;
-	m_pOptionsSubVoice = nullptr;
-	m_pOptionsSubAdvanced = nullptr;
-
 	if ((ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()) || (!ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()))
 		m_pOptionsSubMultiplayer = new COptionsSubMultiplayer(this);
 
 	m_pOptionsSubKeyboard = new COptionsSubKeyboard(this);
 	m_pOptionsSubMouse = new COptionsSubMouse(this);
 	m_pOptionsSubAudio = new COptionsSubAudio(this);
-	m_pOptionsSubVideo = new COptionsSubVideo(this);
+	//m_pOptionsSubVideo = new COptionsSubVideo(this);
+	m_pOptionsSubAdvanced = new COptionsSubAdvanced(this);
 	if (!ModInfo().IsSinglePlayerOnly())
 	{
 		m_pOptionsSubVoice = new COptionsSubVoice(this);
@@ -52,7 +45,7 @@ COptionsDialog::COptionsDialog(vgui::Panel *parent) : PropertyDialog(parent, "Op
 	AddPage(m_pOptionsSubKeyboard, "#GameUI_Keyboard");
 	AddPage(m_pOptionsSubMouse, "#GameUI_Mouse");
 	AddPage(m_pOptionsSubAudio, "#GameUI_Audio");
-	AddPage(m_pOptionsSubVideo, "#GameUI_Video");
+	//AddPage(m_pOptionsSubVideo, "#GameUI_Video");
 	AddPage(m_pOptionsSubVoice, "#GameUI_Voice");
 	AddPage(m_pOptionsSubAdvanced, "#GameUI_Advanced");
 
@@ -102,4 +95,13 @@ void COptionsDialog::OnGameUIHidden(void)
 		if (pChild)
 			PostMessage(pChild, new KeyValues("GameUIHidden"));
 	}
+}
+
+static COptionsDialog* s_OptDialog;
+COptionsDialog* CeateOptionDialog(vgui::Panel* parent) {
+	s_OptDialog = new COptionsDialog(parent);
+	return s_OptDialog;
+}
+COptionsDialog* OptionsDialog(){
+	return s_OptDialog;
 }
