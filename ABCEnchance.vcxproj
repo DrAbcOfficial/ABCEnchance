@@ -77,7 +77,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -93,7 +93,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;libglew32d.lib;../../SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;libglew32d.lib;Bcrypt.lib;../../SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>if exist "$(MetaHookGameDirectory)" copy "$(OutDir)$(TargetName)$(TargetExt)" "$(MetaHookGameDirectory)$(MetaHookModName)\metahook\plugins\"</Command>
@@ -114,7 +114,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -122,7 +122,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;libglew32.lib;../../SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;libglew32.lib;Bcrypt.lib;../../SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "$(ProjectDir)..\..\Build\svencoop\metahook\plugins\"
@@ -145,7 +145,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,7 +153,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\..\glew\build\lib\Release\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;libglew32.lib;../../SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;libglew32.lib;Bcrypt.lib;../../SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "$(ProjectDir)..\..\Build\svencoop\metahook\plugins\$(TargetName)_AVX2$(TargetExt)"
@@ -193,6 +193,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
     <ClCompile Include="src\Particleman\ClientParticleMan.cpp" />
+    <ClCompile Include="src\Source\crypto.cpp" />
     <ClCompile Include="src\Source\efxenchance.cpp" />
     <ClCompile Include="src\Source\exportfuncs.cpp" />
     <ClCompile Include="src\Source\HUD\ammo.cpp" />
@@ -224,7 +225,9 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\weaponselect.cpp" />
     <ClCompile Include="src\Source\plugins.cpp" />
     <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
+    <ClCompile Include="src\Source\Utility\curl.cpp" />
     <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
+    <ClCompile Include="src\Source\Utility\NeteaseApi.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_shader.cpp" />
@@ -480,8 +483,11 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\IEngineSurface.h" />
     <ClInclude Include="src\Header\plugins.h" />
     <ClInclude Include="src\Header\Utility\client_steam_context.h" />
+    <ClInclude Include="src\Header\Utility\crypto.h" />
+    <ClInclude Include="src\Header\Utility\curl.h" />
     <ClInclude Include="src\Header\Utility\CVector.h" />
     <ClInclude Include="src\Header\Utility\mymathlib.h" />
+    <ClInclude Include="src\Header\Utility\NeteaseApi.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_def.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_draw.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_shader.h" />

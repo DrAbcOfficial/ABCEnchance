@@ -22,6 +22,8 @@
 #include "exportfuncs.h"
 #include "plugins.h"
 
+#include "NeteaseApi.h"
+
 int g_iTextureID;
 
 IVanilliaPanel* g_pBasePanel;

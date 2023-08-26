@@ -1,6 +1,7 @@
 #include <metahook.h>
 #include "exportfuncs.h"
 #include "ClientParticleMan.h"
+#include "curl.h"
 #include <vgui_controls/Controls.h>
 #include <svc_hook.h>
 
@@ -92,6 +93,8 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	InstallClientHook();
 	ClientVGUI_InstallHook();
 	InitCreateParticleMan();
+	LoadLibcurl();
+
 
 	EnumWindows([](HWND hwnd, LPARAM lParam
 		)
@@ -120,6 +123,7 @@ void IPluginsV4::ExitGame(int iResult){
 	UninstallClientHook();
 	UninstallEngineHook();
 	FreeParticleMan();
+	CloseLibcurl();
 }
 
 #define STR1(R) #R
