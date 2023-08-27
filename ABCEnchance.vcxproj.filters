@@ -710,6 +710,9 @@
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\soundengine.cpp">
+      <Filter>Public\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1647,6 +1650,9 @@
     </ClInclude>
     <ClInclude Include="src\Fmod\fmodwindowsstoreapp.h">
       <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\soundengine.h">
+      <Filter>Public\Header</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

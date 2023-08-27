@@ -77,7 +77,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -114,7 +114,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,7 +145,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
       <MinimalRebuild>false</MinimalRebuild>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -224,6 +224,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\weaponbank.cpp" />
     <ClCompile Include="src\Source\HUD\weaponselect.cpp" />
     <ClCompile Include="src\Source\plugins.cpp" />
+    <ClCompile Include="src\Source\soundengine.cpp" />
     <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
     <ClCompile Include="src\Source\Utility\curl.cpp" />
     <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
@@ -494,6 +495,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\weaponselect.h" />
     <ClInclude Include="src\Header\IEngineSurface.h" />
     <ClInclude Include="src\Header\plugins.h" />
+    <ClInclude Include="src\Header\soundengine.h" />
     <ClInclude Include="src\Header\Utility\client_steam_context.h" />
     <ClInclude Include="src\Header\Utility\crypto.h" />
     <ClInclude Include="src\Header\Utility\curl.h" />

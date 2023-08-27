@@ -2,6 +2,7 @@
 #include "exportfuncs.h"
 #include "ClientParticleMan.h"
 #include "curl.h"
+#include "soundengine.h"
 #include <vgui_controls/Controls.h>
 #include <svc_hook.h>
 
@@ -94,7 +95,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	ClientVGUI_InstallHook();
 	InitCreateParticleMan();
 	LoadLibcurl();
-
+	InitFModLibrary();
 
 	EnumWindows([](HWND hwnd, LPARAM lParam
 		)
@@ -124,6 +125,7 @@ void IPluginsV4::ExitGame(int iResult){
 	UninstallEngineHook();
 	FreeParticleMan();
 	CloseLibcurl();
+	FreeFModLibrary();
 }
 
 #define STR1(R) #R
