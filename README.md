@@ -194,3 +194,4 @@ This repository uses code from the following repositories:
 5. [CKF3](https://github.com/CKFDevPowered/CKF3Alpha)
 6. [hl1_source_sdk](https://github.com/tmp64/hl1_source_sdk)
 7. [libvpx](https://github.com/webmproject/libvpx)
+8. [qrgen](https://www.nayuki.io/page/qr-code-generator-library)
