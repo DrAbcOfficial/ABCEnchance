@@ -704,6 +704,9 @@
     <ClCompile Include="src\Source\Utility\curl.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1604,6 +1607,9 @@
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\curl.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\qrcodegen.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>
