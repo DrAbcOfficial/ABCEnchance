@@ -199,6 +199,10 @@ void BackGroundVideoInit() {
 	});
 	ReadBackGroundList();
 	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size()-1)];
+
+	netease::CNeteaseMusicAPI g_MusicApi;
+	auto x = g_MusicApi.GetSongDetail(530756434);
+
 }
 void BackGroundVideoClose() {
 	g_pThreadStop = true;

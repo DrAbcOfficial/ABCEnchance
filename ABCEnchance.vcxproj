@@ -234,6 +234,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\Utility\opengl\gl_utility.cpp" />
     <ClCompile Include="src\Source\Utility\parsemsg.cpp" />
     <ClCompile Include="src\Source\Utility\player_info.cpp" />
+    <ClCompile Include="src\Source\Utility\qrcodegen.cpp" />
     <ClCompile Include="src\Source\Utility\regquery.cpp" />
     <ClCompile Include="src\Source\Utility\steamid.cpp" />
     <ClCompile Include="src\Source\Utility\svc_hook.cpp" />
@@ -494,6 +495,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\Utility\opengl\gl_utility.h" />
     <ClInclude Include="src\Header\Utility\parsemsg.h" />
     <ClInclude Include="src\Header\Utility\player_info.h" />
+    <ClInclude Include="src\Header\Utility\qrcodegen.h" />
     <ClInclude Include="src\Header\Utility\regquery.h" />
     <ClInclude Include="src\Header\Utility\svc_hook.h" />
     <ClInclude Include="src\Header\Var\bitvec.h" />

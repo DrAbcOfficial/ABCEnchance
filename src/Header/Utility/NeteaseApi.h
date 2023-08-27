@@ -4,17 +4,19 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 
-using std::string;
+#include <rapidjson/document.h>
 
 #define NETEASEAPI_VERSION "1.0.0"
 
 namespace netease {
+	using std::string;
+
 	struct Action {
 		string url;
-		string post;
-
-		Action(string u, string p) : url("https://music.163.com/api" + u), post(p) {}
+		std::map<string, string> post;
+		Action(string u, std::map<string, string> p) : url("https://music.163.com/api" + u), post(p) {}
 	};
 
 	enum SearchType {
@@ -30,38 +32,76 @@ namespace netease {
 		DTT_WEB = 1
 	};
 
-	struct singer_t {
-		string name;
-		int id;
-	};
+	typedef long long neteaseid_t;
+	typedef int neteasecode_t;
 
-	struct album_t {
+	class CBase163Object {
+	public:
 		string name;
-		int id;
+		neteaseid_t id;
+		CBase163Object(rapidjson::Value& json);
+	};
+	class CArtist : public CBase163Object {
+	public:
+		CArtist(rapidjson::Value& json);
+	};
+	class CAlbum : public CBase163Object {
+	public:
 		string picUrl;
+		CAlbum(rapidjson::Value& json);
+	};
+	class CMusic : public CBase163Object {
+	public:
+		std::vector<std::shared_ptr<CArtist>> ar;
+		std::shared_ptr <CAlbum> al;
+		CMusic(rapidjson::Value& json);
+	};
+	//Login
+	class CLocalUser {
+	public:
+		string GetCookie() {
+			return m_szCookie;
+		}
+		bool IsLogin() {
+			return m_bLogined;
+		}
+		//Captcha
+		void SendCaptcha(neteaseid_t phone, int country);
+		neteasecode_t CellPhone(neteaseid_t phone, int captcha, int country);
+		neteasecode_t CellPhone(neteaseid_t phone, string& passwd, int country);
+		//EMail
+		neteasecode_t EMail(string& mail, string& passwd);
+		//QRKey
+		enum class QRStatue {
+			INVALID = 800,
+			WAITINGSCAN = 801,
+			AUTHORIZING = 802,
+			OK = 803
+		};
+		struct QRCode {
+			size_t size;
+			std::vector<bool> data;
+		};
+		string RequestQRKey();
+		QRStatue QRCheck(string& qrKey);
+		QRCode GetQRCode(string& qrKey);
+	private:
+		neteasecode_t GetCookiePost(Action& action, int successcode = 200);
+		string m_szCookie;
+		bool m_bLogined;
 	};
 
-	struct song_t {
-		string name;
-		int id;
-		std::vector<std::shared_ptr<singer_t>> ar;
-		album_t al;
+	class CNeteaseMusicAPI {
+	public:
+		std::shared_ptr<CArtist> GetArtist(neteaseid_t id);
+		std::vector<std::shared_ptr<CMusic>> GetAlbumSongs(neteaseid_t id);
+		std::vector<std::shared_ptr<CMusic>> SearchSongs(const string& keyword, int limit = 30, int offset = 0);
+		std::shared_ptr<CMusic> GetSongDetail(neteaseid_t id);
+
+		CLocalUser* GetUser();
+	private:
+		CLocalUser m_pUser;
 	};
-
-	/*Action album(long long id);
-	Action artist(long long id);
-	Action artist_albums(long long id, int limit = 30, int offset = 0);
-	Action artist_introduction(long long id);
-	Action login_cellphone(long long phone, const string& pswd);
-	Action music_url(long long id, int bitrate = 999000);
-	Action personal_fm();
-	Action playlist_detail(long long id, int recent_collect = 8);
-	Action dailytask(DailyTaskType type = DTT_WEB);*/
-	std::vector<std::shared_ptr<song_t>> search(const string& keyword, SearchType type, int limit = 30, int offset = 0);
-	std::shared_ptr<song_t> song_detail(long long id);
-	/*Action user_detail(long long id);
-	Action user_playlist(long long id, int limit = 30, int offset = 0);*/
-
 }
 
 #endif
