@@ -87,6 +87,9 @@
     <Filter Include="VGUI2\gameui">
       <UniqueIdentifier>{42740f0e-8fa8-480d-984a-fc1be9d4e576}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Fmod">
+      <UniqueIdentifier>{c5d8daf0-4fe0-4687-8d97-a6511c5c0de5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp">
@@ -1611,6 +1614,39 @@
     </ClInclude>
     <ClInclude Include="src\Header\Utility\qrcodegen.h">
       <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmod.h">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmod.hpp">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmod_codec.h">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmod_dsp.h">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmod_errors.h">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmod_memoryinfo.h">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmod_output.h">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmodiphone.h">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmodlinux.h">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmodwindowsphone.h">
+      <Filter>Public\Fmod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Fmod\fmodwindowsstoreapp.h">
+      <Filter>Public\Fmod</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

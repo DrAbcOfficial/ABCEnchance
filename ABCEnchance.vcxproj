@@ -450,6 +450,17 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="SourceSDK\vstdlib\strtools.h" />
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
+    <ClInclude Include="src\Fmod\fmod.h" />
+    <ClInclude Include="src\Fmod\fmod.hpp" />
+    <ClInclude Include="src\Fmod\fmodiphone.h" />
+    <ClInclude Include="src\Fmod\fmodlinux.h" />
+    <ClInclude Include="src\Fmod\fmodwindowsphone.h" />
+    <ClInclude Include="src\Fmod\fmodwindowsstoreapp.h" />
+    <ClInclude Include="src\Fmod\fmod_codec.h" />
+    <ClInclude Include="src\Fmod\fmod_dsp.h" />
+    <ClInclude Include="src\Fmod\fmod_errors.h" />
+    <ClInclude Include="src\Fmod\fmod_memoryinfo.h" />
+    <ClInclude Include="src\Fmod\fmod_output.h" />
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
     <ClInclude Include="src\Header\HUD\ammo.h" />
