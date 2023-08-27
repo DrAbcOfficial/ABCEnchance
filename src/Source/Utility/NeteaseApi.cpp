@@ -54,7 +54,7 @@ namespace netease {
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postStr.c_str());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, postStr.length());
 		if (cookie.length() > 0)
-			curl_easy_setopt(curl, CURLOPT_COOKIELIST, cookie.data());
+			curl_easy_setopt(curl, CURLOPT_COOKIELIST, cookie.c_str());
 		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 		auto result = curl_easy_perform(curl);
 		curl_slist_free_all(header);
@@ -83,6 +83,48 @@ namespace netease {
 				this->ar.push_back(std::make_shared<CArtist>(*iter2));
 			}
 			this->al = std::make_shared<CAlbum>(json["al"]);
+		}
+	}
+	CLyricItem::CLyricItem(string& raw) {
+		size_t pos = raw.find_first_of(']');
+		string time = raw.substr(1, pos - 1);
+		this->text = raw.substr(pos + 1);
+
+		pos = time.find_first_of(':');
+		auto minutes = std::chrono::minutes(std::stoi(time.substr(0, pos)));
+		time.erase(0, pos + 1);
+		pos = time.find_first_of('.');
+		auto seconds = std::chrono::seconds(std::stoi(time.substr(0, pos)));
+		time.erase(0, pos + 1);
+		auto miliseconds = std::chrono::milliseconds(std::stoi(time));
+		this->time = minutes + seconds + miliseconds;
+	}
+	CLyric::CLyric(rapidjson::Document& json) {
+		if (json.HasMember("code") && json["code"].GetInt() == 200) {
+			string pending = "";
+			if (json.HasMember("lrc")) {
+				string lrc = json["lrc"]["lyric"].GetString();
+				for (auto iter = lrc.begin(); iter != lrc.end(); iter++) {
+					if ((*iter) == '\n') {
+						lyric.push_back(std::make_shared<CLyricItem>(pending));
+						pending.clear();
+						continue;
+					}
+					pending += *iter;
+				}
+			}
+			if (json.HasMember("tlyric")) {
+				pending.clear();
+				string lrc = json["tlyric"]["lyric"].GetString();
+				for (auto iter = lrc.begin(); iter != lrc.end(); iter++) {
+					if ((*iter) == '\n') {
+						tlyric.push_back(std::make_shared<CLyricItem>(pending));
+						pending.clear();
+						continue;
+					}
+					pending += *iter;
+				}
+			}
 		}
 	}
 
@@ -144,6 +186,17 @@ namespace netease {
 		if (data.HasMember("code") && data["code"].GetInt() == 200)
 			song = std::make_shared<CMusic>(*(data["songs"].GetArray().Begin()));
 		return song;
+	}
+	std::shared_ptr<CLyric> CNeteaseMusicAPI::GetLyric(neteaseid_t songid){
+		std::map<string, string> p = {
+			{"id", std::to_string(songid)},
+			{"lv", "0"},
+			{"tv", "0"}
+		};
+		string json = post(Action("/song/lyric", p), m_pUser.GetCookie());
+		rapidjson::Document data;
+		data.Parse(json.c_str());
+		return std::make_shared<CLyric>(data);
 	}
 	CLocalUser* CNeteaseMusicAPI::GetUser() {
 		return &m_pUser;

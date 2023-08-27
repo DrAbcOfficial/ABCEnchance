@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <chrono>
 
 #include <rapidjson/document.h>
 
@@ -56,6 +57,18 @@ namespace netease {
 		std::shared_ptr <CAlbum> al;
 		CMusic(rapidjson::Value& json);
 	};
+	class CLyricItem {
+	public:
+		std::chrono::milliseconds time;
+		string text;
+		CLyricItem(string& raw);
+	};
+	class CLyric {
+	public:
+		std::vector<std::shared_ptr<CLyricItem>> lyric;
+		std::vector<std::shared_ptr<CLyricItem>> tlyric;
+		CLyric(rapidjson::Document& json);
+	};
 	//Login
 	class CLocalUser {
 	public:
@@ -97,6 +110,7 @@ namespace netease {
 		std::vector<std::shared_ptr<CMusic>> GetAlbumSongs(neteaseid_t id);
 		std::vector<std::shared_ptr<CMusic>> SearchSongs(const string& keyword, int limit = 30, int offset = 0);
 		std::shared_ptr<CMusic> GetSongDetail(neteaseid_t id);
+		std::shared_ptr<CLyric> GetLyric(neteaseid_t songid);
 
 		CLocalUser* GetUser();
 	private:
