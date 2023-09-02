@@ -72,9 +72,6 @@ namespace netease {
 	//Login
 	class CLocalUser {
 	public:
-		string GetCookie() {
-			return m_szCookie;
-		}
 		bool IsLogin() {
 			return m_bLogined;
 		}
@@ -100,7 +97,6 @@ namespace netease {
 		QRCode GetQRCode(string& qrKey);
 	private:
 		neteasecode_t GetCookiePost(Action& action, int successcode = 200);
-		string m_szCookie;
 		bool m_bLogined;
 	};
 

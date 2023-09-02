@@ -16,7 +16,7 @@ namespace netease {
 		{"Host", "music.163.com"},
 		{"User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36"}
 	};
-
+	const char cookiepath[] = "./netease_cookie";
 	size_t appendData(void* ptr, size_t size, size_t nmemb, void* user) {
 		std::vector<char>* p = (std::vector<char>*)user;
 		auto cs = p->size();
@@ -41,7 +41,7 @@ namespace netease {
 		}
 		return header;
 	}
-	string post(const Action& action, string cookie = "") {
+	string post(const Action& action) {
 		string postStr = buildparam(action.post);
 		std::vector<char> retdata;
 		void* curl = curl_easy_init();
@@ -53,9 +53,8 @@ namespace netease {
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retdata);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postStr.c_str());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, postStr.length());
-		if (cookie.length() > 0)
-			curl_easy_setopt(curl, CURLOPT_COOKIELIST, cookie.c_str());
-		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, cookiepath);
+		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookiepath);
 		auto result = curl_easy_perform(curl);
 		curl_slist_free_all(header);
 		curl_easy_cleanup(curl);
@@ -130,7 +129,7 @@ namespace netease {
 
 	std::vector<std::shared_ptr<CMusic>> CNeteaseMusicAPI::GetAlbumSongs(neteaseid_t id) {
 		std::map<string, string> p = {};
-		string json = post(Action("/v1/album/" + std::to_string(id), p), m_pUser.GetCookie());
+		string json = post(Action("/v1/album/" + std::to_string(id), p));
 		rapidjson::Document data;
 		data.Parse(json.c_str());
 		std::vector<std::shared_ptr<CMusic>> songs;
@@ -147,7 +146,7 @@ namespace netease {
 		std::map<string, string> p = {
 			{"id", std::to_string(id)}
 		};
-		string json = post(Action("/artist/head/info/get", p), m_pUser.GetCookie());
+		string json = post(Action("/artist/head/info/get", p));
 		rapidjson::Document data;
 		data.Parse(json.c_str());
 		std::shared_ptr<CArtist> artist = nullptr;
@@ -163,7 +162,7 @@ namespace netease {
 			{"offset", std::to_string(offset)},
 			{"s", "\"" + keyword + "\""}
 		};
-		string json = post(Action("/cloudsearch/pc", p), m_pUser.GetCookie());
+		string json = post(Action("/cloudsearch/pc", p));
 		rapidjson::Document data;
 		data.Parse(json.c_str());
 		std::vector<std::shared_ptr<CMusic>> songs;
@@ -179,7 +178,7 @@ namespace netease {
 		std::map<string, string> p = {
 			{"c", "[{\"id\": " + std::to_string(id) + "}]"}
 		};
-		string json = post(Action("/v3/song/detail", p), m_pUser.GetCookie());
+		string json = post(Action("/v3/song/detail", p));
 		rapidjson::Document data;
 		data.Parse(json.c_str());
 		std::shared_ptr<CMusic> song = nullptr;
@@ -193,7 +192,7 @@ namespace netease {
 			{"lv", "0"},
 			{"tv", "0"}
 		};
-		string json = post(Action("/song/lyric", p), m_pUser.GetCookie());
+		string json = post(Action("/song/lyric", p));
 		rapidjson::Document data;
 		data.Parse(json.c_str());
 		return std::make_shared<CLyric>(data);
@@ -264,45 +263,14 @@ namespace netease {
 		return out;
 	}
 	neteasecode_t CLocalUser::GetCookiePost(Action& action, int successcode){
-		string postStr = buildparam(action.post);
-		std::vector<char> retdata;
-		void* curl = curl_easy_init();
-		curl_slist* header = buildheader();
-		curl_easy_setopt(curl, CURLOPT_POST, 1);
-		curl_easy_setopt(curl, CURLOPT_URL, action.url.c_str());
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, appendData);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retdata);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postStr.c_str());
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, postStr.length());
-		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
-		curl_easy_perform(curl);
-		curl_slist* cookies;
-		CURLcode code = curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &cookies);
-		if (code == CURLE_OK) {
-			m_szCookie.clear();
-			curl_slist* each = cookies;
-			while (each){
-				if (m_szCookie.length() > 0)
-					m_szCookie += "\r\n";
-				m_szCookie += each->data;
-				each = each->next;
-			}
-			m_bLogined = true;
-		}
-		curl_slist_free_all(cookies);
-		curl_slist_free_all(header);
-		curl_easy_cleanup(curl);
-		retdata.push_back(0);
+		string str = post(action);
 		rapidjson::Document data;
-		data.Parse(retdata.data());
+		data.Parse(str.c_str());
 		neteasecode_t neteasecode = 0;
 		if (data.HasMember("code"))
 			neteasecode = data["code"].GetInt();
-		if (neteasecode != successcode) {
-			m_szCookie.clear();
+		if (neteasecode != successcode)
 			m_bLogined = false;
-		}
 		return neteasecode;
 	}
 }
