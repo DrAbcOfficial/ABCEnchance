@@ -1,10 +1,7 @@
 #include <metahook.h>
-
-#include <fmod.hpp>
-#include <fmod_errors.h>
 #include "soundengine.h"
 
-namespace FMOD {
+namespace FModEngine {
 	static HMODULE g_hFmod = nullptr;
 	static FMOD_SYSTEM* g_pFMODSystem = nullptr;
 
@@ -32,11 +29,11 @@ namespace FMOD {
 			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLength);
 			FMOD_DLSYM_CLIEN(FMOD_Sound_Release);
 		}
-		FMOD_System_Create(&g_pFMODSystem);
+		g_pfnFMOD_System_Create(&g_pFMODSystem);
 	}
 	void FreeFModLibrary() {
 		FreeLibrary(g_hFmod);
-		FMOD_System_Close(g_pFMODSystem);
+		g_pfnFMOD_System_Close(g_pFMODSystem);
 	}
 	FMOD_SYSTEM* GetSysTem() {
 		return g_pFMODSystem;
