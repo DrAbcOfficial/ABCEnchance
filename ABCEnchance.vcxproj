@@ -213,6 +213,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\HUD\vgui\gindicator.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\neteasemusic.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\notice.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\playerboard.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\popnum.cpp" />
@@ -483,6 +484,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\HUD\vgui\gindicator.h" />
     <ClInclude Include="src\Header\HUD\vgui\health.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
+    <ClInclude Include="src\Header\HUD\vgui\neteasemusic.h" />
     <ClInclude Include="src\Header\HUD\vgui\notice.h" />
     <ClInclude Include="src\Header\HUD\vgui\playerboard.h" />
     <ClInclude Include="src\Header\HUD\vgui\popnum.h" />

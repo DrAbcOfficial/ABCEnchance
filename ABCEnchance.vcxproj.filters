@@ -713,6 +713,9 @@
     <ClCompile Include="src\Source\soundengine.cpp">
       <Filter>Public\Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\neteasemusic.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1653,6 +1656,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\soundengine.h">
       <Filter>Public\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\neteasemusic.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
