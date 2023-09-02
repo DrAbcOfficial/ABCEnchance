@@ -116,6 +116,9 @@ public:
 	bool TextMsg(const char* pszName, int iSize, void* pbuf);
 	void ShowDeathMsg(bool state);
 
+	void ShowMusic(bool state);
+	CNeteasePanel* GetMusicPanel();
+
 	WEAPON* GetCurWeapon();
 	void SetCurWeapon(WEAPON* weapon);
 

@@ -335,6 +335,12 @@ bool CViewport::TextMsg(const char* pszName, int iSize, void* pbuf){
 void CViewport::ShowDeathMsg(bool state){
 	m_pDeahMsg->ShowPanel(state);
 }
+void CViewport::ShowMusic(bool state){
+	m_pNeteaseMusic->ShowPanel(state);
+}
+CNeteasePanel* CViewport::GetMusicPanel(){
+	return m_pNeteaseMusic;
+}
 WEAPON* CViewport::GetCurWeapon(){
 	return gCustomHud.GetCurWeapon();
 }

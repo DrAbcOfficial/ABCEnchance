@@ -136,6 +136,8 @@ namespace FModEngine {
         FMOD_RESULT GetMemoryInfo(unsigned int memorybits, unsigned int event_memorybits, unsigned int* memoryused, FMOD_MEMORY_USAGE_DETAILS* memoryused_details);
 
         FMOD_RESULT StopSound(FMOD_CHANNEL* channel);
+        FMOD_RESULT FreeSound(FMOD_SOUND* sound);
+        FMOD_RESULT GetLength(FMOD_SOUND* sound, unsigned int* length, FMOD_TIMEUNIT lengthtype);
     private:
         FMOD_SYSTEM* m_pFModSystem;
     };

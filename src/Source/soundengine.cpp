@@ -152,7 +152,9 @@ namespace FModEngine {
 		FMOD_FUNCTION_DEFINE(FMOD_System_GetUserData);
 		FMOD_FUNCTION_DEFINE(FMOD_System_GetMemoryInfo);
 #endif
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Stop);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Stop); 
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_Release);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLength);
 	void InitFModLibrary() {
 		g_hFmod = GetModuleHandle("svencoop/fmodex.dll");
 		if (!g_hFmod)
@@ -305,6 +307,8 @@ namespace FModEngine {
 			FMOD_DLSYM_CLIEN(FMOD_System_GetMemoryInfo);
 #endif // FMOD_SYSTEM
 			FMOD_DLSYM_CLIEN(FMOD_Channel_Stop);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Release);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLength);
 		}
 
 		g_pFModSystem = new CFModSystem();
@@ -631,6 +635,12 @@ namespace FModEngine {
 	}
 	FMOD_RESULT CFModSystem::StopSound(FMOD_CHANNEL* channel){
 		return g_pfnFMOD_Channel_Stop(channel);
+	}
+	FMOD_RESULT CFModSystem::FreeSound(FMOD_SOUND* sound){
+		return g_pfnFMOD_Sound_Release(sound);
+	}
+	FMOD_RESULT CFModSystem::GetLength(FMOD_SOUND* sound, unsigned int* length, FMOD_TIMEUNIT lengthtype){
+		return g_pfnFMOD_Sound_GetLength(sound, length, lengthtype);
 	}
 #endif
 }
