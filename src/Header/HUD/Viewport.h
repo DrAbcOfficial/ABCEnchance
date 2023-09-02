@@ -32,6 +32,7 @@ class CAmmoPanel;
 class CDmgTilesPanel;
 class CGenadeIndicatorPanel;
 class CDeathMsgPanel;
+class CNeteasePanel;
 
 class ISchemel;
 
@@ -150,6 +151,7 @@ private:
 	CDmgTilesPanel* m_pDmgTiles = nullptr;
 	CGenadeIndicatorPanel* m_pGIndicator = nullptr;
 	CDeathMsgPanel* m_pDeahMsg = nullptr;
+	CNeteasePanel* m_pNeteaseMusic = nullptr;
 
 	int m_iInterMission;
 

@@ -35,6 +35,7 @@
 #include "dmgtiles.h"
 #include "gindicator.h"
 #include "deadmsg.h"
+#include "neteasemusic.h"
 
 #include "CCustomHud.h"
 
@@ -94,6 +95,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
 	AddNewPanel(m_pTextMenu = new CTextMenu()); 
 	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
+	AddNewPanel(m_pNeteaseMusic = new CNeteasePanel());
 	AddNewPanel(m_pVotePanel = new CVotePanel());
 	AddNewPanel(m_pScorePanel = new CScorePanel());
 	SetVisible(false);
@@ -116,6 +118,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pDmgTiles->SetParent(GetVPanel());
 	m_pGIndicator->SetParent(GetVPanel());
 	m_pDeahMsg->SetParent(GetVPanel());
+	m_pNeteaseMusic->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
