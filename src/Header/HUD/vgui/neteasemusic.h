@@ -1,5 +1,10 @@
 #ifndef CNETEASEMUSIC_H
 #define CNETEASEMUSIC_H
+
+#include <string>
+#include <atomic>
+#include "NeteaseApi.h"
+#include "soundengine.h"
 #include <vgui_controls/Frame.h>
 #include "IViewportPanel.h"
 
@@ -9,10 +14,10 @@ namespace vgui {
 	class ImageClipPanel;
 }
 
-class CNeteasePanel : public vgui::Frame, public IViewportPanel
+class CNeteasePanel : public vgui::EditablePanel, public IViewportPanel
 {
 public:
-	DECLARE_CLASS_SIMPLE(CNeteasePanel, vgui::Frame);
+	DECLARE_CLASS_SIMPLE(CNeteasePanel, vgui::EditablePanel);
 
 	CNeteasePanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
@@ -24,7 +29,11 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
+	virtual void OnThink() override;
+	void PlayMusic(int id);
 private:
+	void PlayMusicFromBuffer();
+
 	vgui::Label* m_pMusicNameLable = nullptr;
 	vgui::Label* m_pArtistNameLable = nullptr;
 	vgui::Label* m_pLyricLable = nullptr;
@@ -36,5 +45,10 @@ private:
 	vgui::ImagePanel* m_pProgressBackgroundPanel = nullptr;
 
 	vgui::ImagePanel* m_pAlbumPanel = nullptr;
+	FMOD_SOUND* m_pSound = nullptr;
+
+	size_t m_uiMusicLen = 0;
+	size_t m_flStartMusicTime = 0;
+	bool m_bPlaying = false;
 };
 #endif
