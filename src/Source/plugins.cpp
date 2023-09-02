@@ -95,7 +95,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	ClientVGUI_InstallHook();
 	InitCreateParticleMan();
 	LoadLibcurl();
-	InitFModLibrary();
+	FModEngine::InitFModLibrary();
 
 	EnumWindows([](HWND hwnd, LPARAM lParam
 		)
@@ -125,7 +125,7 @@ void IPluginsV4::ExitGame(int iResult){
 	UninstallEngineHook();
 	FreeParticleMan();
 	CloseLibcurl();
-	FreeFModLibrary();
+	FModEngine::FreeFModLibrary();
 }
 
 #define STR1(R) #R
