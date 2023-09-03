@@ -148,6 +148,8 @@ CNeteasePanel::CNeteasePanel()
 	LoadControlSettings(VGUI2_ROOT_DIR "NeteasePanel.res");
 	SetVisible(false);
 
+	GetMyInfo();
+
 	ADD_COMMAND("cloudmusic", CloudMusic);
 }
 const char* CNeteasePanel::GetName(){
@@ -195,10 +197,27 @@ struct musicthread_obj{
 };
 std::future<musicthread_obj*> g_pMusicAsync;
 
+struct loginshare_obj {
+	byte* qrimagebyte;
+	size_t size;
+	std::string qrkey;
+};
+std::future<loginshare_obj*> g_pLoginAsync;
+
+std::future<netease::CMy*> g_pUserAsync;
+
 void CNeteasePanel::OnThink() {
+	if (g_pUserAsync.valid() && g_pUserAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+		m_pLogined = g_pUserAsync.get();
+		char buffer[512];
+		if (m_pLogined != nullptr) 
+			V_snprintf(buffer, "User %d Logined.", m_pLogined->id);
+		else
+			V_snprintf(buffer, "User not login.");
+		PrintF(buffer);
+	}
 	if (g_pMusicAsync.valid() && g_pMusicAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
 		PlayMusicFromBuffer(g_pMusicAsync.get());
-
 	if (m_bPlaying) {
 		float gap = gEngfuncs.GetClientTime() - m_flStartMusicTime;
 		if (gap <= m_uiMusicLen) {
@@ -262,8 +281,10 @@ musicthread_obj* DonwloadMusic(int id) {
 	static netease::CNeteaseMusicAPI s_Api;
 	//Load Music
 	std::shared_ptr <netease::CMusic> music = s_Api.GetSongDetail(id);
+	if (music == nullptr)
+		return nullptr;
 	std::shared_ptr<netease::CLyric> lyric = s_Api.GetLyric(id);
-	obj.musicData = DownLoad("https://music.163.com/song/media/outer/url?id=" + std::to_string(id) + ".mp3");
+	obj.musicData = DownLoad(music->GetPlayUrl("standard", "flac"));
 	//Load Album
 	std::vector<byte> imageData = DownLoad(music->al->picUrl + "?param=130y130");
 	FIMEMORY* mem = FreeImage_OpenMemory(imageData.data(), imageData.size());
@@ -311,57 +332,65 @@ void CNeteasePanel::PlayMusic(int id){
 	g_pMusicAsync = std::async(DonwloadMusic, id);
 	ShowPanel(true);
 }
+void CNeteasePanel::PrintF(char* str){
+	char buffer[2048];
+	V_snprintf(buffer, "[NeteaseApi] %s\n", str);
+	gEngfuncs.Con_DPrintf(buffer);
+}
 void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 	FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
 	if (m_pSound) {
 		soundSystem->FreeSound(m_pSound);
 		m_pSound = nullptr;
 	}
-	//Music
-	FMOD_CREATESOUNDEXINFO extrainfo = {};
-	extrainfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
-	extrainfo.length = obj->musicData.size();
-	soundSystem->CreateSound(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &m_pSound);
-	FMOD_CHANNEL* channel;
-	soundSystem->PlaySound(FMOD_CHANNEL_FREE, m_pSound, 0, &channel);
-	//Album
-	s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
-	m_pAlbumPanel->SetImage(s_pAlbumImage);
-	//Set Lyric
-	m_pLyric = obj->lyric.get();
-	//Text
-	m_pMusicNameLable->SetText(obj->music->name.c_str());
-	std::string buf = obj->music->ar[0]->name.c_str();
-	buf += " - ";
-	buf += obj->music->al->name;
-	m_pArtistNameLable->SetText(buf.c_str());
+	if (obj->music->copyright < 2 || (m_pLogined != nullptr && m_pLogined->vip > 0)) {
+		//Music
+		FMOD_CREATESOUNDEXINFO extrainfo = {};
+		extrainfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+		extrainfo.length = obj->musicData.size();
+		soundSystem->CreateSound(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &m_pSound);
+		FMOD_CHANNEL* channel;
+		soundSystem->PlaySound(FMOD_CHANNEL_FREE, m_pSound, 0, &channel);
+		//Album
+		s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
+		m_pAlbumPanel->SetImage(s_pAlbumImage);
+		//Set Lyric
+		m_pLyric = obj->lyric.get();
+		//Text
+		m_pMusicNameLable->SetText(obj->music->name.c_str());
+		std::string buf = obj->music->ar[0]->name.c_str();
+		buf += " - ";
+		buf += obj->music->al->name;
+		m_pArtistNameLable->SetText(buf.c_str());
 
-	soundSystem->GetLength(m_pSound, &m_uiMusicLen, FMOD_TIMEUNIT_MS);
-	m_uiMusicLen /= 1000;
-	static char buffer[256];
-	V_snprintf(buffer, "%d:%d", m_uiMusicLen / 60, m_uiMusicLen % 60);
-	m_pMaxTimeLable->SetText(buffer);
+		soundSystem->GetLength(m_pSound, &m_uiMusicLen, FMOD_TIMEUNIT_MS);
+		m_uiMusicLen /= 1000;
+		static char buffer[256];
+		V_snprintf(buffer, "%d:%d", m_uiMusicLen / 60, m_uiMusicLen % 60);
+		m_pMaxTimeLable->SetText(buffer);
 
-	m_flStartMusicTime = gEngfuncs.GetClientTime();
-	m_bPlaying = true;
+		m_flStartMusicTime = gEngfuncs.GetClientTime();
+		m_bPlaying = true;
+	}
+	else
+		PrintF("VIP song, skipped.");
 }
-
-struct loginshare_obj {
-	byte* qrimagebyte;
-	size_t size;
-	std::string qrkey;
-};
-std::future<loginshare_obj*> g_pLoginAsync;
 void CNeteasePanel::QRLogin() {
 	m_pLoginPanel->ResetText();
 	m_pLoginPanel->Login();
+}
+void CNeteasePanel::GetMyInfo(){
+	g_pUserAsync = std::async([]() {
+		static netease::CNeteaseMusicAPI s_Api;
+		return s_Api.GetMyself().get();
+	});
 }
 
 /*
 	QRLogin Panel
 */
 
-#define CHECK_LOGIN_INVERTV 1.0f
+#define CHECK_LOGIN_INVERTV 2.0f
 static CAlbumImage* s_pQRCodeImage;
 CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name) 
 	: BaseClass(parent, name) {
@@ -406,6 +435,7 @@ void CQRLoginPanel::OnThink(){
 			case netease::CLocalUser::QRStatue::OK: {
 				m_pLoginObj = nullptr;
 				SetVisible(false);
+				m_pMusicPanel->GetMyInfo();
 				break;
 			}
 		}

@@ -13,6 +13,7 @@ namespace vgui {
 	class ImageClipPanel;
 	class Button;
 }
+class CNeteasePanel;
 
 class CQRLoginPanel : public vgui::Frame {
 public:
@@ -30,6 +31,7 @@ private:
 
 	float m_flNextCheckTime;
 	struct loginshare_obj* m_pLoginObj = nullptr;
+	CNeteasePanel* m_pMusicPanel = nullptr;
 };
 
 class CNeteasePanel : public vgui::EditablePanel, public IViewportPanel{
@@ -49,7 +51,9 @@ public:
 	virtual void OnThink() override;
 	void PlayMusic(int id);
 	void QRLogin();
+	void GetMyInfo();
 private:
+	void PrintF(char* str);
 	void PlayMusicFromBuffer(struct musicthread_obj* obj);
 
 	vgui::Label* m_pMusicNameLable = nullptr;
@@ -73,5 +77,6 @@ private:
 	bool m_bPlaying = false;
 
 	netease::CLyric* m_pLyric;
+	netease::CMy* m_pLogined;
 };
 #endif
