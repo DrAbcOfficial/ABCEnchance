@@ -60,7 +60,7 @@ namespace netease {
 		int copyright = 0;
 		CMusic(rapidjson::Value& json);
 
-		string GetPlayUrl(char* quality, char* encode);
+		string GetPlayUrl(const char* quality, char* encode);
 	};
 	class CLyricItem {
 	public:

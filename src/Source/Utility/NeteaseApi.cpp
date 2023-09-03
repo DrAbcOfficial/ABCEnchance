@@ -84,7 +84,7 @@ namespace netease {
 		if (json.HasMember("copyright"))
 			this->copyright = json["copyright"].GetInt();
 	}
-	string CMusic::GetPlayUrl(char* quality, char* encode) {
+	string CMusic::GetPlayUrl(const char* quality, char* encode) {
 		std::map<string, string> p = {
 			{"ids", "[" + std::to_string(this->id) + "]"},
 			{"level", quality},
