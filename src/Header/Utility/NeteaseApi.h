@@ -33,7 +33,7 @@ namespace netease {
 		DTT_WEB = 1
 	};
 
-	typedef long long neteaseid_t;
+	typedef unsigned long long neteaseid_t;
 	typedef int neteasecode_t;
 
 	class CBase163Object {

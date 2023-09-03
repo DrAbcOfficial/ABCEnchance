@@ -63,7 +63,7 @@ namespace netease {
 	CBase163Object::CBase163Object(rapidjson::Value& json) {
 		if (json.HasMember("name") && json.HasMember("id")) {
 			this->name = json["name"].GetString();
-			this->id = json["id"].GetInt64();
+			this->id = json["id"].GetUint64();
 		}
 	}
 	CArtist::CArtist(rapidjson::Value& json) : CBase163Object(json) {
