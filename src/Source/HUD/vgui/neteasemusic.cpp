@@ -211,7 +211,7 @@ void CNeteasePanel::OnThink() {
 		m_pLogined = g_pUserAsync.get();
 		char buffer[512];
 		if (m_pLogined != nullptr) 
-			V_snprintf(buffer, "User %d Logined.", m_pLogined->id);
+			V_snprintf(buffer, "User %lu Logined.", m_pLogined->id);
 		else
 			V_snprintf(buffer, "User not login.");
 		PrintF(buffer);
@@ -338,6 +338,10 @@ void CNeteasePanel::PrintF(char* str){
 	gEngfuncs.Con_DPrintf(buffer);
 }
 void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
+	if (obj == nullptr) {
+		PrintF("Can not play this song!");
+		return;
+	}
 	FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
 	if (m_pSound) {
 		soundSystem->FreeSound(m_pSound);
