@@ -394,8 +394,7 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 		buf += obj->music->al->name;
 		m_pArtistNameLable->SetText(buf.c_str());
 
-		soundSystem->GetLength(m_pSound, &m_uiMusicLen, FMOD_TIMEUNIT_MS);
-		m_uiMusicLen /= 1000;
+		m_uiMusicLen = obj->music->duration / 1000;
 		static char buffer[256];
 		V_snprintf(buffer, "%02d:%02d", m_uiMusicLen / 60, m_uiMusicLen % 60);
 		m_pMaxTimeLable->SetText(buffer);

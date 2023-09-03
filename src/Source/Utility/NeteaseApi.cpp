@@ -74,15 +74,35 @@ namespace netease {
 			this->picUrl = json["picUrl"].GetString();
 	}
 	CMusic::CMusic(rapidjson::Value& json) : CBase163Object(json) {
-		if (json.HasMember("ar") && json.HasMember("al")) {
-			auto ars = json["ar"].GetArray();
-			for (auto iter2 = ars.Begin(); iter2 != ars.End(); iter2++) {
-				this->ar.push_back(std::make_shared<CArtist>(*iter2));
-			}
-			this->al = std::make_shared<CAlbum>(json["al"]);
-		}
 		if (json.HasMember("copyright"))
 			this->copyright = json["copyright"].GetInt();
+		rapidjson::Value alias;
+		if (json.HasMember("alia"))
+			alias = json["alia"].GetArray();
+		else 
+			alias = json["alias"].GetArray();
+		if (alias.Size() > 0)
+			aliasName = alias.Begin()->GetString();
+		else
+			aliasName = "";
+
+		rapidjson::Value ars;
+		if (json.HasMember("ar"))
+			ars = json["ar"].GetArray();
+		else
+			ars = json["artists"].GetArray();
+		for (auto iter2 = ars.Begin(); iter2 != ars.End(); iter2++) {
+			this->ar.push_back(std::make_shared<CArtist>(*iter2));
+		}
+		if (json.HasMember("al"))
+			al = std::make_shared<CAlbum>(json["al"]);
+		else
+			al = std::make_shared<CAlbum>(json["album"]);
+
+		if (json.HasMember("dt"))
+			duration = json["dt"].GetUint64();
+		else
+			duration = json["duration"].GetUint64();
 	}
 	string CMusic::GetPlayUrl(const char* quality, char* encode) {
 		std::map<string, string> p = {

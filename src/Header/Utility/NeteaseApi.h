@@ -55,9 +55,12 @@ namespace netease {
 	public:
 		std::vector<std::shared_ptr<CArtist>> ar;
 		std::shared_ptr <CAlbum> al;
+
+		string aliasName;
 		// 0 1 = free
 		// 2 = need money
 		int copyright = 0;
+		unsigned long duration = 0;
 		CMusic(rapidjson::Value& json);
 
 		string GetPlayUrl(const char* quality, char* encode);
