@@ -55,12 +55,14 @@ public:
 	void GetMyInfo();
 
 	void SetVolume(float vol);
+	void Search(const char* keyword, netease::SearchType type);
 private:
 	void PrintF(char* str);
 	void PlayMusicFromBuffer(struct musicthread_obj* obj);
 
 	cvar_t* m_pQuality = nullptr;
 	cvar_t* m_pVolume = nullptr;
+	cvar_t* m_pSearchCount = nullptr;
 
 	vgui::Label* m_pMusicNameLable = nullptr;
 	vgui::Label* m_pArtistNameLable = nullptr;

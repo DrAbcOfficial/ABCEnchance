@@ -105,23 +105,52 @@ private:
 static CAlbumImage* s_pAlbumImage;
 static std::atomic<netease::CNeteaseMusicAPI*> s_pNeteaseApi;
 
+const static netease::SearchType s_arySearchTypeTable[] = {
+	netease::ST_SONG,
+	netease::ST_ALBUM,
+	netease::ST_ARTIST,
+	netease::ST_PLAYLIST,
+	netease::ST_USER,
+};
 void CloudMusic() {
 	int argcount = gEngfuncs.Cmd_Argc();
 	switch (argcount)
 	{
-	case 0:
-	case 1: {
+	case 0: 
+	case 1:{
+		//TODO: Help Info here
 		break;
 	}
-	default:
+	case 2: {
+		char* subcmd = gEngfuncs.Cmd_Argv(1);
+		if (!V_strcmp(subcmd, "login")) {
+			g_pViewPort->GetMusicPanel()->QRLogin();
+			return;
+		}
+		else if (!V_strcmp(subcmd, "stop")) {
+			g_pViewPort->GetMusicPanel()->StopMusic();
+			return;
+		}
+		break;
+	}
+	case 3: {
 		char* subcmd = gEngfuncs.Cmd_Argv(1);
 		if (!V_strcmp(subcmd, "music")) {
 			int id = std::atoi(gEngfuncs.Cmd_Argv(2));
 			g_pViewPort->GetMusicPanel()->PlayMusic(id);
+			return;
 		}
-		else if (!V_strcmp(subcmd, "login"))
-			g_pViewPort->GetMusicPanel()->QRLogin();
 		break;
+	}
+	case 4: {
+		char* subcmd = gEngfuncs.Cmd_Argv(1);
+		if (!V_strcmp(subcmd, "search")) {
+			char* type = gEngfuncs.Cmd_Argv(2);
+			char* keyword = gEngfuncs.Cmd_Argv(3);
+			g_pViewPort->GetMusicPanel()->Search(keyword, s_arySearchTypeTable[std::clamp(std::stoi(type), 0, 4)]);
+			return;
+		}
+	}
 	}
 }
 CNeteasePanel::CNeteasePanel()
@@ -152,6 +181,9 @@ CNeteasePanel::CNeteasePanel()
 	m_pVolume = CREATE_CVAR("cl_netease_volume", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = std::clamp<float>(cvar->value, 0.0f, 1.0f);
 		g_pViewPort->GetMusicPanel()->SetVolume(cvar->value);
+	});
+	m_pSearchCount = CREATE_CVAR("cl_netease_searchcount", "5", FCVAR_VALUE, [](cvar_t* cvar) {
+		cvar->value = std::max<int>(cvar->value, 1);
 	});
 
 	s_pNeteaseApi = new netease::CNeteaseMusicAPI();
@@ -430,11 +462,36 @@ void CNeteasePanel::SetVolume(float vol){
 	}
 }
 
+void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
+	switch (type)
+	{
+	case netease::ST_SONG: {
+		std::vector arys = s_pNeteaseApi.load()->SearchSongs(keyword, m_pSearchCount->value, 0);
+		char buffer[256];
+		for (auto iter = arys.begin(); iter != arys.end(); iter++) {
+			netease::CMusic* music = (*iter).get();
+			V_snprintf(buffer, "#[%llu] %s | %s - %s \n", music->id, music->name.c_str(), (*(music->ar.begin()))->name.c_str(), music->al->name.c_str());
+			ConsoleWriteline(buffer);
+		}
+		break;
+	}
+	case netease::ST_ALBUM:
+		break;
+	case netease::ST_ARTIST:
+		break;
+	case netease::ST_PLAYLIST:
+		break;
+	case netease::ST_USER:
+		break;
+	default:
+		break;
+	}
+}
+
 /*
 	QRLogin Panel
 */
-
-#define CHECK_LOGIN_INVERTV 2.0f
+#define CHECK_LOGIN_INVERTV 1.33f
 static CAlbumImage* s_pQRCodeImage;
 CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name) 
 	: BaseClass(parent, name) {
@@ -494,7 +551,7 @@ void CQRLoginPanel::Login(){
 		std::vector<qrcodegen::QrSegment> segs =
 			qrcodegen::QrSegment::makeSegments(url.c_str());
 		qrcodegen::QrCode qrcode = qrcodegen::QrCode::encodeSegments(
-			segs, qrcodegen::QrCode::Ecc::HIGH, 10, 15, 2, true);
+			segs, qrcodegen::QrCode::Ecc::HIGH, 20, 40, 2, true);
 		static byte* s_qrbyte;
 		static int s_size;
 
