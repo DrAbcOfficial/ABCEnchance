@@ -117,9 +117,8 @@ void CloudMusic() {
 			int id = std::atoi(gEngfuncs.Cmd_Argv(2));
 			g_pViewPort->GetMusicPanel()->PlayMusic(id);
 		}
-		else if (!V_strcmp(subcmd, "login")) {
+		else if (!V_strcmp(subcmd, "login"))
 			g_pViewPort->GetMusicPanel()->QRLogin();
-		}
 		break;
 	}
 }
@@ -133,7 +132,7 @@ CNeteasePanel::CNeteasePanel()
 
 	m_pMusicNameLable = new vgui::Label(this, "MusicName", "");
 	m_pArtistNameLable = new vgui::Label(this, "ArtistName", "");
-	m_pLyricLable = new vgui::Label(this, "Lyric", "Lyric");
+	m_pLyricLable = new vgui::Label(this, "Lyric", "");
 	m_pTranslatedLyricLable = new vgui::Label(this, "TransLyric", "");
 
 	m_pTimeLable = new vgui::Label(this, "Timer", "0:00");
@@ -144,6 +143,10 @@ CNeteasePanel::CNeteasePanel()
 	m_pAlbumPanel = new vgui::ImagePanel(this, "Album");
 	m_pLoginPanel = new CQRLoginPanel(this->GetParent(), VIEWPORT_NETEASEMUSICQR_NAME);
 	s_pAlbumImage = new CAlbumImage();
+
+	m_pQuality = CREATE_CVAR("cl_netease_quality", "0", FCVAR_VALUE, [](cvar_t* cvar) {
+		cvar->value = std::clamp<int>(cvar->value, 0, 4);
+	});
 
 	LoadControlSettings(VGUI2_ROOT_DIR "NeteasePanel.res");
 	SetVisible(false);
@@ -222,7 +225,7 @@ void CNeteasePanel::OnThink() {
 		float gap = gEngfuncs.GetClientTime() - m_flStartMusicTime;
 		if (gap <= m_uiMusicLen) {
 			char buffer[MAX_PATH];
-			V_snprintf(buffer, "%d:%d", static_cast<size_t>(gap) / 60, static_cast<size_t>(gap) % 60);
+			V_snprintf(buffer, "%02d:%02d", static_cast<size_t>(gap) / 60, static_cast<size_t>(gap) % 60);
 			m_pTimeLable->SetText(buffer);
 			float flRatio = gap / static_cast<float>(m_uiMusicLen);
 			m_pProgressLable->SetWide(static_cast<float>(m_pProgressBackgroundPanel->GetWide()) * flRatio);
@@ -280,14 +283,22 @@ std::vector<byte> DownLoad(const std::string& url) {
 	curl_easy_cleanup(curl);
 	return retdata;
 }
-musicthread_obj* DonwloadMusic(int id) {
+
+const char* g_aryMusicQuality[] = {
+	"standard",
+	"higher",
+	"exhigh",
+	"lossless",
+	"hires"
+};
+musicthread_obj* DonwloadMusic(int id, size_t quality) {
 	static musicthread_obj obj;
 	static netease::CNeteaseMusicAPI s_Api;
 	//Load Music
 	std::shared_ptr <netease::CMusic> music = s_Api.GetSongDetail(id);
 	if (music == nullptr)
 		return nullptr;
-	obj.musicData = DownLoad(music->GetPlayUrl("standard", "flac"));
+	obj.musicData = DownLoad(music->GetPlayUrl(g_aryMusicQuality[quality], "flac"));
 	//Load Album
 	std::vector<byte> imageData = DownLoad(music->al->picUrl + "?param=130y130");
 	FIMEMORY* mem = FreeImage_OpenMemory(imageData.data(), imageData.size());
@@ -332,8 +343,26 @@ musicthread_obj* DonwloadMusic(int id) {
 	return &obj;
 }
 void CNeteasePanel::PlayMusic(int id){
-	g_pMusicAsync = std::async(DonwloadMusic, id);
+	if (m_bPlaying)
+		StopMusic();
+	g_pMusicAsync = std::async(DonwloadMusic, id, static_cast<size_t>(m_pQuality->value));
 	ShowPanel(true);
+}
+void CNeteasePanel::StopMusic(){
+	FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
+	if (m_pSound) {
+		soundSystem->StopSound(m_pChannel);
+		soundSystem->FreeSound(m_pSound);
+		m_pSound = nullptr;
+		m_pChannel = nullptr;
+		m_bPlaying = false;
+
+		m_pMusicNameLable->SetText("");
+		m_pArtistNameLable->SetText("");
+		m_pLyricLable->SetText("");
+		m_pTranslatedLyricLable->SetText("");
+		m_pAlbumPanel->SetImage("");
+	}
 }
 void CNeteasePanel::PrintF(char* str){
 	char buffer[2048];
@@ -345,19 +374,14 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 		PrintF("Can not play this song!");
 		return;
 	}
-	FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
-	if (m_pSound) {
-		soundSystem->FreeSound(m_pSound);
-		m_pSound = nullptr;
-	}
 	if (obj->music->copyright < 2 || (m_pLogined != nullptr && m_pLogined->vip > 0)) {
 		//Music
+		FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
 		FMOD_CREATESOUNDEXINFO extrainfo = {};
 		extrainfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
 		extrainfo.length = obj->musicData.size();
-		soundSystem->CreateSound(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &m_pSound);
-		FMOD_CHANNEL* channel;
-		soundSystem->PlaySound(FMOD_CHANNEL_FREE, m_pSound, 0, &channel);
+		soundSystem->CreateStream(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &m_pSound);
+		soundSystem->PlaySound(FMOD_CHANNEL_FREE, m_pSound, 0, &m_pChannel);
 		//Album
 		s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
 		m_pAlbumPanel->SetImage(s_pAlbumImage);
@@ -373,7 +397,7 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 		soundSystem->GetLength(m_pSound, &m_uiMusicLen, FMOD_TIMEUNIT_MS);
 		m_uiMusicLen /= 1000;
 		static char buffer[256];
-		V_snprintf(buffer, "%d:%d", m_uiMusicLen / 60, m_uiMusicLen % 60);
+		V_snprintf(buffer, "%02d:%02d", m_uiMusicLen / 60, m_uiMusicLen % 60);
 		m_pMaxTimeLable->SetText(buffer);
 
 		m_flStartMusicTime = gEngfuncs.GetClientTime();

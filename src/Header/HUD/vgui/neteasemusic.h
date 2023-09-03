@@ -50,11 +50,14 @@ public:
 
 	virtual void OnThink() override;
 	void PlayMusic(int id);
+	void StopMusic();
 	void QRLogin();
 	void GetMyInfo();
 private:
 	void PrintF(char* str);
 	void PlayMusicFromBuffer(struct musicthread_obj* obj);
+
+	cvar_t* m_pQuality = nullptr;
 
 	vgui::Label* m_pMusicNameLable = nullptr;
 	vgui::Label* m_pArtistNameLable = nullptr;
@@ -71,6 +74,7 @@ private:
 	CQRLoginPanel* m_pLoginPanel = nullptr;
 
 	FMOD_SOUND* m_pSound = nullptr;
+	FMOD_CHANNEL* m_pChannel;
 
 	size_t m_uiMusicLen = 0;
 	size_t m_flStartMusicTime = 0;
