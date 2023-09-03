@@ -3,6 +3,7 @@
 
 #include <future>
 #include <chrono>
+#include <atomic>
 
 #include <vgui/IImage.h>
 #include <vgui/ISurface.h>
@@ -102,6 +103,7 @@ private:
 	int m_offX = 0, m_offY = 0;
 };
 static CAlbumImage* s_pAlbumImage;
+static std::atomic<netease::CNeteaseMusicAPI*> s_pNeteaseApi;
 
 void CloudMusic() {
 	int argcount = gEngfuncs.Cmd_Argc();
@@ -147,6 +149,12 @@ CNeteasePanel::CNeteasePanel()
 	m_pQuality = CREATE_CVAR("cl_netease_quality", "0", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = std::clamp<int>(cvar->value, 0, 4);
 	});
+	m_pVolume = CREATE_CVAR("cl_netease_volume", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+		cvar->value = std::clamp<float>(cvar->value, 0.0f, 1.0f);
+		g_pViewPort->GetMusicPanel()->SetVolume(cvar->value);
+	});
+
+	s_pNeteaseApi = new netease::CNeteaseMusicAPI();
 
 	LoadControlSettings(VGUI2_ROOT_DIR "NeteasePanel.res");
 	SetVisible(false);
@@ -221,13 +229,13 @@ void CNeteasePanel::OnThink() {
 	}
 	if (g_pMusicAsync.valid() && g_pMusicAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
 		PlayMusicFromBuffer(g_pMusicAsync.get());
-	if (m_bPlaying) {
+	if (m_pPlaying != nullptr) {
 		float gap = gEngfuncs.GetClientTime() - m_flStartMusicTime;
-		if (gap <= m_uiMusicLen) {
+		if (gap <= m_pPlaying->duration / 1000) {
 			char buffer[MAX_PATH];
 			V_snprintf(buffer, "%02d:%02d", static_cast<size_t>(gap) / 60, static_cast<size_t>(gap) % 60);
 			m_pTimeLable->SetText(buffer);
-			float flRatio = gap / static_cast<float>(m_uiMusicLen);
+			float flRatio = gap * 1000 / static_cast<float>(m_pPlaying->duration);
 			m_pProgressLable->SetWide(static_cast<float>(m_pProgressBackgroundPanel->GetWide()) * flRatio);
 			//lyric
 			if (m_pLyric->lyric.size() > 0) {
@@ -251,9 +259,8 @@ void CNeteasePanel::OnThink() {
 			else
 				m_pTranslatedLyricLable->SetText("");
 		}
-		else {
-			m_bPlaying = false;
-		}
+		else
+			StopMusic();
 	}
 }
 size_t append(void* ptr, size_t size, size_t nmemb, void* user) {
@@ -293,9 +300,9 @@ const char* g_aryMusicQuality[] = {
 };
 musicthread_obj* DonwloadMusic(int id, size_t quality) {
 	static musicthread_obj obj;
-	static netease::CNeteaseMusicAPI s_Api;
+	netease::CNeteaseMusicAPI* s_Api = s_pNeteaseApi.load();
 	//Load Music
-	std::shared_ptr <netease::CMusic> music = s_Api.GetSongDetail(id);
+	std::shared_ptr <netease::CMusic> music = s_Api->GetSongDetail(id);
 	if (music == nullptr)
 		return nullptr;
 	obj.musicData = DownLoad(music->GetPlayUrl(g_aryMusicQuality[quality], "flac"));
@@ -336,14 +343,14 @@ musicthread_obj* DonwloadMusic(int id, size_t quality) {
 	FreeImage_CloseMemory(mem);
 
 	obj.music = music;
-	obj.lyric = s_Api.GetLyric(id);
+	obj.lyric = s_Api->GetLyric(id);
 	obj.album = s_pBuf;
 	obj.album_h = height;
 	obj.album_w = width;
 	return &obj;
 }
 void CNeteasePanel::PlayMusic(int id){
-	if (m_bPlaying)
+	if (m_pPlaying != nullptr)
 		StopMusic();
 	g_pMusicAsync = std::async(DonwloadMusic, id, static_cast<size_t>(m_pQuality->value));
 	ShowPanel(true);
@@ -355,7 +362,7 @@ void CNeteasePanel::StopMusic(){
 		soundSystem->FreeSound(m_pSound);
 		m_pSound = nullptr;
 		m_pChannel = nullptr;
-		m_bPlaying = false;
+		m_pPlaying = nullptr;
 
 		m_pMusicNameLable->SetText("");
 		m_pArtistNameLable->SetText("");
@@ -382,6 +389,7 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 		extrainfo.length = obj->musicData.size();
 		soundSystem->CreateStream(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &m_pSound);
 		soundSystem->PlaySound(FMOD_CHANNEL_FREE, m_pSound, 0, &m_pChannel);
+		soundSystem->SetVolume(m_pChannel, m_pVolume->value);
 		//Album
 		s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
 		m_pAlbumPanel->SetImage(s_pAlbumImage);
@@ -394,13 +402,13 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 		buf += obj->music->al->name;
 		m_pArtistNameLable->SetText(buf.c_str());
 
-		m_uiMusicLen = obj->music->duration / 1000;
+		size_t len = obj->music->duration / 1000;
 		static char buffer[256];
-		V_snprintf(buffer, "%02d:%02d", m_uiMusicLen / 60, m_uiMusicLen % 60);
+		V_snprintf(buffer, "%02d:%02d", len / 60, len % 60);
 		m_pMaxTimeLable->SetText(buffer);
 
 		m_flStartMusicTime = gEngfuncs.GetClientTime();
-		m_bPlaying = true;
+		m_pPlaying = obj->music.get();
 	}
 	else
 		PrintF("VIP song, skipped.");
@@ -411,9 +419,15 @@ void CNeteasePanel::QRLogin() {
 }
 void CNeteasePanel::GetMyInfo(){
 	g_pUserAsync = std::async([]() {
-		static netease::CNeteaseMusicAPI s_Api;
-		return s_Api.GetMyself().get();
+		return s_pNeteaseApi.load()->GetMyself().get();
 	});
+}
+
+void CNeteasePanel::SetVolume(float vol){
+	if (m_pChannel) {
+		FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
+		soundSystem->SetVolume(m_pChannel, vol);
+	}
 }
 
 /*
@@ -475,10 +489,8 @@ void CQRLoginPanel::OnThink(){
 void CQRLoginPanel::Login(){
 	g_pLoginAsync = std::async([]() -> loginshare_obj* {
 		static loginshare_obj obj;
-		static netease::CNeteaseMusicAPI s_Api;
-		obj.qrkey = s_Api.GetUser()->RequestQRKey();
+		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
 		std::string url = "https://music.163.com/login?codekey=" + obj.qrkey;
-
 		std::vector<qrcodegen::QrSegment> segs =
 			qrcodegen::QrSegment::makeSegments(url.c_str());
 		qrcodegen::QrCode qrcode = qrcodegen::QrCode::encodeSegments(
@@ -516,7 +528,6 @@ void CQRLoginPanel::ResetText(){
 
 void CQRLoginPanel::CheckLogin(){
 	g_pGetCookieAsync = std::async([](std::string unikey)->netease::CLocalUser::QRStatue {
-		static netease::CNeteaseMusicAPI s_Api;
-		return s_Api.GetUser()->QRCheck(unikey);
+		return s_pNeteaseApi.load()->GetUser()->QRCheck(unikey);
 		}, m_pLoginObj->qrkey);
 }

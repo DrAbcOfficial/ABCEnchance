@@ -53,11 +53,14 @@ public:
 	void StopMusic();
 	void QRLogin();
 	void GetMyInfo();
+
+	void SetVolume(float vol);
 private:
 	void PrintF(char* str);
 	void PlayMusicFromBuffer(struct musicthread_obj* obj);
 
 	cvar_t* m_pQuality = nullptr;
+	cvar_t* m_pVolume = nullptr;
 
 	vgui::Label* m_pMusicNameLable = nullptr;
 	vgui::Label* m_pArtistNameLable = nullptr;
@@ -74,13 +77,12 @@ private:
 	CQRLoginPanel* m_pLoginPanel = nullptr;
 
 	FMOD_SOUND* m_pSound = nullptr;
-	FMOD_CHANNEL* m_pChannel;
+	FMOD_CHANNEL* m_pChannel = nullptr;
 
-	size_t m_uiMusicLen = 0;
 	size_t m_flStartMusicTime = 0;
-	bool m_bPlaying = false;
 
-	netease::CLyric* m_pLyric;
-	netease::CMy* m_pLogined;
+	netease::CMusic* m_pPlaying = nullptr;
+	netease::CLyric* m_pLyric = nullptr;
+	netease::CMy* m_pLogined = nullptr;
 };
 #endif
