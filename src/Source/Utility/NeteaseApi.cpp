@@ -102,7 +102,7 @@ namespace netease {
 		}
 		return "";
 	}
-	CLyricItem::CLyricItem(string& raw) {
+	CLyricItem::CLyricItem(string raw) {
 		size_t pos = raw.find_first_of(']');
 		string time = raw.substr(1, pos - 1);
 		this->text = raw.substr(pos + 1);
@@ -123,7 +123,8 @@ namespace netease {
 				string lrc = json["lrc"]["lyric"].GetString();
 				for (auto iter = lrc.begin(); iter != lrc.end(); iter++) {
 					if ((*iter) == '\n') {
-						lyric.push_back(std::make_shared<CLyricItem>(pending));
+						if (strncmp(pending.c_str(), "[by:", 4))
+							lyric.push_back(new CLyricItem(pending));
 						pending.clear();
 						continue;
 					}
@@ -132,16 +133,25 @@ namespace netease {
 			}
 			if (json.HasMember("tlyric")) {
 				pending.clear();
-				string lrc = json["tlyric"]["lyric"].GetString();
-				for (auto iter = lrc.begin(); iter != lrc.end(); iter++) {
-					if ((*iter) == '\n') {
-						tlyric.push_back(std::make_shared<CLyricItem>(pending));
+				string tlrc = json["tlyric"]["lyric"].GetString();
+				for (auto iter2 = tlrc.begin(); iter2 != tlrc.end(); iter2++) {
+					if ((*iter2) == '\n') {
+						if(strncmp(pending.c_str(), "[by:", 4))
+							tlyric.push_back(new CLyricItem(pending));
 						pending.clear();
 						continue;
 					}
-					pending += *iter;
+					pending += *iter2;
 				}
 			}
+		}
+	}
+	CLyric::~CLyric() {
+		for (auto iter = lyric.begin(); iter != lyric.end(); iter++) {
+			delete (*iter);
+		}
+		for (auto iter = tlyric.begin(); iter != tlyric.end(); iter++) {
+			delete (*iter);
 		}
 	}
 	CUser::CUser(rapidjson::Value& json) : CBase163Object(json) {

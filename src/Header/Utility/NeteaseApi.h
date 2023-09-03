@@ -66,13 +66,14 @@ namespace netease {
 	public:
 		std::chrono::milliseconds time;
 		string text;
-		CLyricItem(string& raw);
+		CLyricItem(string raw);
 	};
 	class CLyric {
 	public:
-		std::vector<std::shared_ptr<CLyricItem>> lyric;
-		std::vector<std::shared_ptr<CLyricItem>> tlyric;
+		std::vector<CLyricItem*> lyric;
+		std::vector<CLyricItem*> tlyric;
 		CLyric(rapidjson::Document& json);
+		~CLyric();
 	};
 	class CUser : public CBase163Object {
 	public:
