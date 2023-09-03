@@ -81,6 +81,26 @@ namespace netease {
 			}
 			this->al = std::make_shared<CAlbum>(json["al"]);
 		}
+		if (json.HasMember("copyright"))
+			this->copyright = json["copyright"].GetInt();
+	}
+	string CMusic::GetPlayUrl(char* quality, char* encode) {
+		std::map<string, string> p = {
+			{"ids", "[" + std::to_string(this->id) + "]"},
+			{"level", quality},
+			{"encodeType", encode}
+		};
+		Action act = Action("", p);
+		act.url = "https://interface3.music.163.com/api/song/enhance/player/url/v1";
+		string json = post(act);
+		rapidjson::Document data;
+		data.Parse(json.c_str());
+		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+			auto arr = data["data"].GetArray();
+			if(arr.Size() > 0)
+				return arr[0]["url"].GetString();
+		}
+		return "";
 	}
 	CLyricItem::CLyricItem(string& raw) {
 		size_t pos = raw.find_first_of(']');
@@ -123,6 +143,32 @@ namespace netease {
 				}
 			}
 		}
+	}
+	CUser::CUser(rapidjson::Value& json) : CBase163Object(json) {
+		if (json.HasMember("profile")) {
+			rapidjson::Value profile = json["profile"].GetObject();
+			if (profile.HasMember("userId"))
+				this->id = profile["userId"].GetUint64();
+			if (profile.HasMember("nickname"))
+				this->name = profile["nickname"].GetString();
+			if (profile.HasMember("nickname"))
+				this->signature = profile["signature"].GetString();
+			if (profile.HasMember("vipType"))
+				this->vip = profile["vipType"].GetUint();
+			if (profile.HasMember("playlistCount"))
+				this->playlistCount = profile["playlistCount"].GetUint();
+		}
+		if (json.HasMember("listenSongs"))
+			this->listenSongs = json["listenSongs"].GetUint64();
+		if (json.HasMember("level"))
+			this->level = json["level"].GetUint();
+		if (json.HasMember("createTime"))
+			this->createTime = json["createTime"].GetUint64();
+		if (json.HasMember("createDays"))
+			this->createDay = json["createDays"].GetUint64();
+	}
+	CMy::CMy(rapidjson::Value& json) : CUser(json) {
+
 	}
 
 	std::vector<std::shared_ptr<CMusic>> CNeteaseMusicAPI::GetAlbumSongs(neteaseid_t id) {
@@ -199,11 +245,30 @@ namespace netease {
 		data.Parse(json.c_str());
 		return std::make_shared<CLyric>(data);
 	}
+	std::shared_ptr<CMy> CNeteaseMusicAPI::GetMyself() {
+		std::map<string, string> p = {};
+		string json = post(Action("/w/nuser/account/get/", p));
+		rapidjson::Document data;
+		data.Parse(json.c_str());
+		if (data.HasMember("profile") && !data["profile"].IsNull()) {
+			json = post(Action("/v1/user/detail/" + std::to_string(data["profile"]["userId"].GetInt()), p));
+			data.Parse(json.c_str());
+			return std::make_shared<CMy>(data);
+		}
+		return std::shared_ptr<CMy>(nullptr);
+	}
+	std::shared_ptr<CUser> CNeteaseMusicAPI::GetUser(neteaseid_t userid) {
+		std::map<string, string> p = {};
+		string json = post(Action("/v1/user/detail/" + std::to_string(userid), p));
+		rapidjson::Document data;
+		data.Parse(json.c_str());
+		return std::make_shared<CUser>(data);
+	}
 	const std::string CNeteaseMusicAPI::CookieOutPath(){
-		return "/tmp/neteaseapicookie";
+		return "./neteaseapicookie";
 	}
 	const std::string CNeteaseMusicAPI::CokkieInPath(){
-		return "/tmp/neteaseapicookie";
+		return "./neteaseapicookie";
 	}
 	CLocalUser* CNeteaseMusicAPI::GetUser() {
 		return &m_pUser;
@@ -277,8 +342,6 @@ namespace netease {
 		neteasecode_t neteasecode = 0;
 		if (data.HasMember("code"))
 			neteasecode = data["code"].GetInt();
-		if (neteasecode != successcode)
-			m_bLogined = false;
 		return neteasecode;
 	}
 }

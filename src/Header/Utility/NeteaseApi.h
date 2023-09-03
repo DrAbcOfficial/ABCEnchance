@@ -55,7 +55,12 @@ namespace netease {
 	public:
 		std::vector<std::shared_ptr<CArtist>> ar;
 		std::shared_ptr <CAlbum> al;
+		// 0 1 = free
+		// 2 = need money
+		int copyright = 0;
 		CMusic(rapidjson::Value& json);
+
+		string GetPlayUrl(char* quality, char* encode);
 	};
 	class CLyricItem {
 	public:
@@ -69,12 +74,25 @@ namespace netease {
 		std::vector<std::shared_ptr<CLyricItem>> tlyric;
 		CLyric(rapidjson::Document& json);
 	};
+	class CUser : public CBase163Object {
+	public:
+		CUser(rapidjson::Value& json);
+		string signature;
+		unsigned int level = 0;
+		unsigned int vip = 0;
+		unsigned long listenSongs = 0;
+		unsigned int playlistCount = 0;
+		unsigned long createTime = 0;
+		unsigned long createDay = 0;
+		neteaseid_t likePlayListId = 0;
+	};
+	class CMy : public CUser {
+	public:
+		CMy(rapidjson::Value& json);
+	};
 	//Login
 	class CLocalUser {
 	public:
-		bool IsLogin() {
-			return m_bLogined;
-		}
 		//Captcha
 		void SendCaptcha(neteaseid_t phone, int country);
 		neteasecode_t CellPhone(neteaseid_t phone, int captcha, int country);
@@ -97,7 +115,6 @@ namespace netease {
 		QRCode GetQRCode(string& qrKey);
 	private:
 		neteasecode_t GetCookiePost(Action& action, int successcode = 200);
-		bool m_bLogined;
 	};
 
 	class CNeteaseMusicAPI {
@@ -107,6 +124,8 @@ namespace netease {
 		std::vector<std::shared_ptr<CMusic>> SearchSongs(const string& keyword, int limit = 30, int offset = 0);
 		std::shared_ptr<CMusic> GetSongDetail(neteaseid_t id);
 		std::shared_ptr<CLyric> GetLyric(neteaseid_t songid);
+		std::shared_ptr<CUser> GetUser(neteaseid_t userid);
+		std::shared_ptr<CMy> GetMyself();
 
 		static const std::string CookieOutPath();
 		static const std::string CokkieInPath();
