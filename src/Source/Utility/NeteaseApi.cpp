@@ -16,7 +16,6 @@ namespace netease {
 		{"Host", "music.163.com"},
 		{"User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36"}
 	};
-	string icookie = "/tmp/neteaseapicookie", ocookie = "/tmp/neteaseapicookie";
 	string buildparam(const std::map<string, string>& map) {
 		string paramStr;
 		for (auto iter = map.begin(); iter != map.end(); iter++) {
@@ -53,8 +52,8 @@ namespace netease {
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retdata);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postStr.c_str());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, postStr.length());
-		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, icookie.c_str());
-		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, ocookie.c_str());
+		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, CNeteaseMusicAPI::CokkieInPath().c_str());
+		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, CNeteaseMusicAPI::CookieOutPath().c_str());
 		auto result = curl_easy_perform(curl);
 		curl_slist_free_all(header);
 		curl_easy_cleanup(curl);
@@ -199,6 +198,12 @@ namespace netease {
 		rapidjson::Document data;
 		data.Parse(json.c_str());
 		return std::make_shared<CLyric>(data);
+	}
+	const std::string CNeteaseMusicAPI::CookieOutPath(){
+		return "/tmp/neteaseapicookie";
+	}
+	const std::string CNeteaseMusicAPI::CokkieInPath(){
+		return "/tmp/neteaseapicookie";
 	}
 	CLocalUser* CNeteaseMusicAPI::GetUser() {
 		return &m_pUser;

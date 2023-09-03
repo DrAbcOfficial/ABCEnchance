@@ -39,7 +39,7 @@ namespace netease {
 	class CBase163Object {
 	public:
 		string name;
-		neteaseid_t id;
+		neteaseid_t id = 0;
 		CBase163Object(rapidjson::Value& json);
 	};
 	class CArtist : public CBase163Object {
@@ -108,9 +108,14 @@ namespace netease {
 		std::shared_ptr<CMusic> GetSongDetail(neteaseid_t id);
 		std::shared_ptr<CLyric> GetLyric(neteaseid_t songid);
 
+		static const std::string CookieOutPath();
+		static const std::string CokkieInPath();
+
 		CLocalUser* GetUser();
 	private:
 		CLocalUser m_pUser;
+		string m_szIcookie = "/tmp/neteaseapicookie";
+		string m_szOcookie = "/tmp/neteaseapicookie";
 	};
 }
 
