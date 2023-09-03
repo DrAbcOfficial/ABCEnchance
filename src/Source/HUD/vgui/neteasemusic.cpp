@@ -131,13 +131,13 @@ CNeteasePanel::CNeteasePanel()
 	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "NeteaseScheme.res", "NeteaseScheme");
 	SetScheme("NeteaseScheme");
 
-	m_pMusicNameLable = new vgui::Label(this, "MusicName", "Music");
-	m_pArtistNameLable = new vgui::Label(this, "ArtistName", "Artist");
+	m_pMusicNameLable = new vgui::Label(this, "MusicName", "");
+	m_pArtistNameLable = new vgui::Label(this, "ArtistName", "");
 	m_pLyricLable = new vgui::Label(this, "Lyric", "Lyric");
-	m_pTranslatedLyricLable = new vgui::Label(this, "TransLyric", "TransLyric");
+	m_pTranslatedLyricLable = new vgui::Label(this, "TransLyric", "");
 
 	m_pTimeLable = new vgui::Label(this, "Timer", "0:00");
-	m_pMaxTimeLable = new vgui::Label(this, "MaxTime", "99:99");
+	m_pMaxTimeLable = new vgui::Label(this, "MaxTime", "0:00");
 	m_pProgressBackgroundPanel = new vgui::ImagePanel(this, "ProgressBackground");
 	m_pProgressLable = new vgui::ImageClipPanel(this, "Progress");
 
@@ -235,6 +235,8 @@ void CNeteasePanel::OnThink() {
 					}
 				}
 			}
+			else
+				m_pLyricLable->SetText("");
 			if (m_pLyric->tlyric.size() > 0) {
 				for (auto iter = m_pLyric->tlyric.rbegin(); iter != m_pLyric->tlyric.rend(); iter++) {
 					if (gap * 1000 >= (*iter)->time.count()) {
@@ -243,6 +245,8 @@ void CNeteasePanel::OnThink() {
 					}
 				}
 			}
+			else
+				m_pTranslatedLyricLable->SetText("");
 		}
 		else {
 			m_bPlaying = false;
@@ -283,7 +287,6 @@ musicthread_obj* DonwloadMusic(int id) {
 	std::shared_ptr <netease::CMusic> music = s_Api.GetSongDetail(id);
 	if (music == nullptr)
 		return nullptr;
-	std::shared_ptr<netease::CLyric> lyric = s_Api.GetLyric(id);
 	obj.musicData = DownLoad(music->GetPlayUrl("standard", "flac"));
 	//Load Album
 	std::vector<byte> imageData = DownLoad(music->al->picUrl + "?param=130y130");
@@ -322,7 +325,7 @@ musicthread_obj* DonwloadMusic(int id) {
 	FreeImage_CloseMemory(mem);
 
 	obj.music = music;
-	obj.lyric = lyric;
+	obj.lyric = s_Api.GetLyric(id);
 	obj.album = s_pBuf;
 	obj.album_h = height;
 	obj.album_w = width;
