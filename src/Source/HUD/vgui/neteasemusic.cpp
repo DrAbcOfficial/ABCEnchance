@@ -357,6 +357,7 @@ musicthread_obj* DonwloadMusic(netease::neteaseid_t id, size_t quality) {
 	int width = FreeImage_GetWidth(bitmap);
 	int height = FreeImage_GetHeight(bitmap);
 	int pitch = FreeImage_GetPitch(bitmap);
+	int bpp = FreeImage_GetBPP(bitmap);
 	static size_t s_iArea;
 	static byte* s_pBuf;
 	if (s_iArea < width * height) {
@@ -372,11 +373,19 @@ musicthread_obj* DonwloadMusic(netease::neteaseid_t id, size_t quality) {
 			BYTE r = pixel[FI_RGBA_RED];
 			BYTE g = pixel[FI_RGBA_GREEN];
 			BYTE b = pixel[FI_RGBA_BLUE];
-			pixel += 3;
 			s_pBuf[c * 4 + 0] = r;
 			s_pBuf[c * 4 + 1] = g;
 			s_pBuf[c * 4 + 2] = b;
-			s_pBuf[c * 4 + 3] = 255;
+			//Jpeg with alpha? weird
+			if (bpp == 32) {
+				BYTE a = pixel[FI_RGBA_ALPHA];
+				s_pBuf[c * 4 + 3] = a;
+				pixel += 4;
+			}
+			else {
+				s_pBuf[c * 4 + 3] = 255;
+				pixel += 3;
+			}
 			c++;
 		}
 		pixels -= pitch;
