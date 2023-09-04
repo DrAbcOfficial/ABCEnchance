@@ -86,7 +86,7 @@ public:
 	bool IsValid() { return m_bValid; }
 	int GetWide() { return m_wide; }
 	int GetTall() { return m_tall; }
-	void InitFromRGBA(const byte* rgba, int width, int height) {
+	virtual void InitFromRGBA(const byte* rgba, int width, int height) {
 		if(m_iTextureID <= 0)
 			m_iTextureID = vgui::surface()->CreateNewTextureID(true);
 		vgui::surface()->DrawSetTextureRGBA(m_iTextureID, rgba, width, height, true, false);
@@ -94,7 +94,7 @@ public:
 		m_tall = height;
 		m_bValid = true;
 	}
-private:
+protected:
 	Color m_Color;
 	int m_iTextureID;
 	int m_wide, m_tall;
@@ -534,7 +534,18 @@ void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
 	QRLogin Panel
 */
 #define CHECK_LOGIN_INVERTV 1.33f
-static CAlbumImage* s_pQRCodeImage;
+class CQRImage : public CAlbumImage {
+public:
+	virtual void InitFromRGBA(const byte* rgba, int width, int height) override {
+		if (m_iTextureID <= 0)
+			m_iTextureID = vgui::surface()->CreateNewTextureID(true);
+		vgui::surface()->DrawSetTextureRGBA(m_iTextureID, rgba, width, height, false, false);
+		m_wide = width;
+		m_tall = height;
+		m_bValid = true;
+	}
+};
+static CQRImage* s_pQRCodeImage;
 CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name) 
 	: BaseClass(parent, name) {
 	SetProportional(true);
@@ -550,7 +561,7 @@ CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name)
 	m_pNotice->SetMouseInputEnabled(true);
 	m_pQRImagePanel = new vgui::ImagePanel(this, "QRImage");
 	m_pQRImagePanel->SetMouseInputEnabled(true);
-	s_pQRCodeImage = new CAlbumImage();
+	s_pQRCodeImage = new CQRImage();
 
 	LoadControlSettings(VGUI2_ROOT_DIR "NeteaseQRPanel.res");
 }
@@ -595,29 +606,28 @@ void CQRLoginPanel::Login(){
 		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
 		std::string url = "https://music.163.com/login?codekey=" + obj.qrkey;
 		qrcodegen::QrCode qrcode = qrcodegen::QrCode::encodeText(url.c_str(), qrcodegen::QrCode::Ecc::HIGH);
+		static byte* s_qrbyte;
+		static int s_size;
 
 		int qrsize = qrcode.getSize();
-		FIBITMAP* dib = FreeImage_AllocateT(FIT_BITMAP, qrsize, qrsize, 32);
-		byte* bits = FreeImage_GetBits(dib);
-		for (int y = 0; y < qrsize; y++) {
-			for (int x = 0; x < qrsize; x++) {
-				int index = (y * qrsize + x) * 4;
+		if (qrsize > s_size) {
+			s_size = qrsize;
+			delete[] s_qrbyte;
+			s_qrbyte = new byte[s_size * s_size * 4];
+		}
+		size_t c = 0;
+		for (int x = 0; x < qrsize; x++) {
+			for (int y = 0; y < qrsize; y++) {
 				bool p = qrcode.getModule(x, y);
-				bits[index + 0] = p ? 0 : 255;
-				bits[index + 1] = p ? 0 : 255;
-				bits[index + 2] = p ? 0 : 255;
-				bits[index + 3] = 255;
+				s_qrbyte[c * 4 + 0] = p ? 0 : 255;
+				s_qrbyte[c * 4 + 1] = p ? 0 : 255;
+				s_qrbyte[c * 4 + 2] = p ? 0 : 255;
+				s_qrbyte[c * 4 + 3] = 255;
+				c++;
 			}
 		}
-		constexpr size_t NEWQRIMAGE_SIZE = 512;
-		FIBITMAP* scaled_dib = FreeImage_Rescale(dib, NEWQRIMAGE_SIZE, NEWQRIMAGE_SIZE, FILTER_BOX);
-		byte* scaled_bits = FreeImage_GetBits(scaled_dib);
-		byte s_qrbyte[NEWQRIMAGE_SIZE * NEWQRIMAGE_SIZE];
-		V_memcpy(s_qrbyte, scaled_bits, NEWQRIMAGE_SIZE * NEWQRIMAGE_SIZE);
 		obj.qrimagebyte = s_qrbyte;
 		obj.size = qrsize;
-		FreeImage_Unload(dib);
-		FreeImage_Unload(scaled_dib);
 		return &obj;
 		});
 	m_flNextCheckTime = gEngfuncs.GetClientTime() + CHECK_LOGIN_INVERTV;
