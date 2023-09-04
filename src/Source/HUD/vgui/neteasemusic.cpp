@@ -260,7 +260,7 @@ std::future<loginshare_obj*> g_pLoginAsync;
 
 std::future<netease::CMy*> g_pUserAsync;
 
-void CNeteasePanel::OnThink() {
+void CNeteasePanel::Think() {
 	if (g_pUserAsync.valid() && g_pUserAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
 		m_pLogined = g_pUserAsync.get();
 		char buffer[512];
@@ -273,17 +273,19 @@ void CNeteasePanel::OnThink() {
 	if (g_pMusicAsync.valid() && g_pMusicAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
 		PlayMusicFromBuffer(g_pMusicAsync.get());
 	if (m_pPlaying != nullptr) {
-		float gap = gEngfuncs.GetClientTime() - m_flStartMusicTime;
-		if (gap <= m_pPlaying->duration / 1000) {
+		ShowPanel(true);
+		size_t pos;
+		FModEngine::GetSystem()->GetPosition(m_pChannel, &pos, FMOD_TIMEUNIT_MS);
+		if (pos < m_pPlaying->duration) {
 			char buffer[MAX_PATH];
-			V_snprintf(buffer, "%02d:%02d", static_cast<size_t>(gap) / 60, static_cast<size_t>(gap) % 60);
+			V_snprintf(buffer, "%02d:%02d", pos / 60000, pos % 60000 / 1000);
 			m_pTimeLable->SetText(buffer);
-			float flRatio = gap * 1000 / static_cast<float>(m_pPlaying->duration);
+			float flRatio = static_cast<float>(pos) / static_cast<float>(m_pPlaying->duration);
 			m_pProgressLable->SetWide(static_cast<float>(m_pProgressBackgroundPanel->GetWide()) * flRatio);
 			//lyric
 			if (m_pLyric->lyric.size() > 0) {
 				for (auto iter = m_pLyric->lyric.rbegin(); iter != m_pLyric->lyric.rend(); iter++) {
-					if (gap * 1000 >= (*iter)->time.count()) {
+					if (pos >= (*iter)->time.count()) {
 						m_pLyricLable->SetText((*iter)->text.c_str());
 						break;
 					}
@@ -293,7 +295,7 @@ void CNeteasePanel::OnThink() {
 				m_pLyricLable->SetText("");
 			if (m_pLyric->tlyric.size() > 0) {
 				for (auto iter = m_pLyric->tlyric.rbegin(); iter != m_pLyric->tlyric.rend(); iter++) {
-					if (gap * 1000 >= (*iter)->time.count()) {
+					if (pos >= (*iter)->time.count()) {
 						m_pTranslatedLyricLable->SetText((*iter)->text.c_str());
 						break;
 					}
@@ -421,12 +423,6 @@ void CNeteasePanel::StopMusic(){
 		m_pSound = nullptr;
 		m_pChannel = nullptr;
 		m_pPlaying = nullptr;
-
-		m_pMusicNameLable->SetText("");
-		m_pArtistNameLable->SetText("");
-		m_pLyricLable->SetText("");
-		m_pTranslatedLyricLable->SetText("");
-		m_pAlbumPanel->SetImage("");
 	}
 }
 void CNeteasePanel::NextMusic(){
@@ -467,8 +463,6 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 		static char buffer[256];
 		V_snprintf(buffer, "%02d:%02d", len / 60, len % 60);
 		m_pMaxTimeLable->SetText(buffer);
-
-		m_flStartMusicTime = gEngfuncs.GetClientTime();
 		m_pPlaying = obj->music.get();
 	}
 	else
