@@ -198,6 +198,10 @@ CNeteasePanel::CNeteasePanel()
 	});
 
 	s_pNeteaseApi = new netease::CNeteaseMusicAPI();
+	char buf[MAX_PATH];
+	vgui::filesystem()->GetLocalPath("abcenchance/", buf, MAX_PATH);
+	V_snprintf(buf, "%sneteasecookie", buf);
+	netease::CNeteaseMusicAPI::SetCookie(buf);
 
 	LoadControlSettings(VGUI2_ROOT_DIR "NeteasePanel.res");
 	SetVisible(false);
