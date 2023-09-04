@@ -177,8 +177,8 @@ CNeteasePanel::CNeteasePanel()
 	m_pLyricLable = new vgui::Label(this, "Lyric", "");
 	m_pTranslatedLyricLable = new vgui::Label(this, "TransLyric", "");
 
-	m_pTimeLable = new vgui::Label(this, "Timer", "0:00");
-	m_pMaxTimeLable = new vgui::Label(this, "MaxTime", "0:00");
+	m_pTimeLable = new vgui::Label(this, "Timer", "");
+	m_pMaxTimeLable = new vgui::Label(this, "MaxTime", "");
 	m_pProgressBackgroundPanel = new vgui::ImagePanel(this, "ProgressBackground");
 	m_pProgressLable = new vgui::ImageClipPanel(this, "Progress");
 
@@ -269,7 +269,7 @@ void CNeteasePanel::Think() {
 		m_pLogined = g_pUserAsync.get();
 		char buffer[512];
 		if (m_pLogined != nullptr) 
-			V_snprintf(buffer, "User %lu Logined.", m_pLogined->id);
+			V_snprintf(buffer, "User %llu Logined.", m_pLogined->id);
 		else
 			V_snprintf(buffer, "User not login.");
 		PrintF(buffer);
