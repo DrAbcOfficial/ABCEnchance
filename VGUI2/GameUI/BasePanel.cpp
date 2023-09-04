@@ -83,8 +83,14 @@ void OpenVideo() {
 	g_pReader = &pReader;
 }
 void CloseVideo() {
-	vpx_codec_destroy(g_pCodec.load());
-	g_pReader.load()->Close();
+	if (g_pCodec != nullptr) {
+		vpx_codec_destroy(g_pCodec.load());
+		g_pCodec = nullptr;
+	}
+	if (g_pReader != nullptr) {
+		g_pReader.load()->Close();
+		g_pReader = nullptr;
+	}
 }
 void PlayMp3() {
 	char soundcmd[MAX_PATH + 8];
