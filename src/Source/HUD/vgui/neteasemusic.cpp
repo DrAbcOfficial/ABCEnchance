@@ -524,7 +524,10 @@ void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
 	}
 	for (auto iter = result.begin(); iter != result.end(); iter++) {
 		netease::CSearchResult* ret = (*iter).get();
-		V_snprintf(buffer, "#[%llu] %s - %s\n", ret->id, ret->name.c_str(), ret->extra.c_str());
+		if(ret->extra.size() > 0)
+			V_snprintf(buffer, "#[%llu] %s - %s\n", ret->id, ret->name.c_str(), ret->extra.c_str());
+		else
+			V_snprintf(buffer, "#[%llu] %s\n", ret->id, ret->name.c_str());
 		ConsoleWriteline(buffer);
 	}
 }
