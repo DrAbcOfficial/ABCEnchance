@@ -565,7 +565,11 @@ void CQRLoginPanel::OnThink(){
 		gEngfuncs.GetClientTime() > m_flNextCheckTime) {
 		netease::CLocalUser::QRStatue result = g_pGetCookieAsync.get();
 		switch (result){
-			case netease::CLocalUser::QRStatue::INVALID:
+			case netease::CLocalUser::QRStatue::INVALID: {
+				m_pMusicPanel->PrintF("Login Failed!");
+				SetVisible(false);
+				break;
+			}
 			case netease::CLocalUser::QRStatue::WAITINGSCAN:
 			case netease::CLocalUser::QRStatue::AUTHORIZING: {
 				CheckLogin();
