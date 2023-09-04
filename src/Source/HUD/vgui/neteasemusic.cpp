@@ -594,32 +594,30 @@ void CQRLoginPanel::Login(){
 		static loginshare_obj obj;
 		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
 		std::string url = "https://music.163.com/login?codekey=" + obj.qrkey;
-		std::vector<qrcodegen::QrSegment> segs =
-			qrcodegen::QrSegment::makeSegments(url.c_str());
-		qrcodegen::QrCode qrcode = qrcodegen::QrCode::encodeSegments(
-			segs, qrcodegen::QrCode::Ecc::HIGH, 20, 40, 2, true);
-		static byte* s_qrbyte;
-		static int s_size;
+		qrcodegen::QrCode qrcode = qrcodegen::QrCode::encodeText(url.c_str(), qrcodegen::QrCode::Ecc::HIGH);
 
 		int qrsize = qrcode.getSize();
-		if (qrsize > s_size) {
-			s_size = qrsize;
-			delete[] s_qrbyte;
-			s_qrbyte = new byte[s_size * s_size * 4];
-		}
-		size_t c = 0;
-		for (int x = 0; x < qrsize; x++) {
-			for (int y = 0; y < qrsize; y++) {
+		FIBITMAP* dib = FreeImage_AllocateT(FIT_BITMAP, qrsize, qrsize, 32);
+		byte* bits = FreeImage_GetBits(dib);
+		for (int y = 0; y < qrsize; y++) {
+			for (int x = 0; x < qrsize; x++) {
+				int index = (y * qrsize + x) * 4;
 				bool p = qrcode.getModule(x, y);
-				s_qrbyte[c * 4 + 0] = p ? 0 : 255;
-				s_qrbyte[c * 4 + 1] = p ? 0 : 255;
-				s_qrbyte[c * 4 + 2] = p ? 0 : 255;
-				s_qrbyte[c * 4 + 3] = 255;
-				c++;
+				bits[index + 0] = p ? 0 : 255;
+				bits[index + 1] = p ? 0 : 255;
+				bits[index + 2] = p ? 0 : 255;
+				bits[index + 3] = 255;
 			}
 		}
+		constexpr size_t NEWQRIMAGE_SIZE = 512;
+		FIBITMAP* scaled_dib = FreeImage_Rescale(dib, NEWQRIMAGE_SIZE, NEWQRIMAGE_SIZE, FILTER_BOX);
+		byte* scaled_bits = FreeImage_GetBits(scaled_dib);
+		byte s_qrbyte[NEWQRIMAGE_SIZE * NEWQRIMAGE_SIZE];
+		V_memcpy(s_qrbyte, scaled_bits, NEWQRIMAGE_SIZE * NEWQRIMAGE_SIZE);
 		obj.qrimagebyte = s_qrbyte;
 		obj.size = qrsize;
+		FreeImage_Unload(dib);
+		FreeImage_Unload(scaled_dib);
 		return &obj;
 		});
 	m_flNextCheckTime = gEngfuncs.GetClientTime() + CHECK_LOGIN_INVERTV;
