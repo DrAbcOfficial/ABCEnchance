@@ -74,8 +74,8 @@ namespace netease {
 			this->picUrl = json["picUrl"].GetString();
 	}
 	CMusic::CMusic(rapidjson::Value& json) : CBase163Object(json) {
-		if (json.HasMember("copyright"))
-			this->copyright = json["copyright"].GetInt();
+		if (json.HasMember("noCopyrightRcmd"))
+			this->copyright = !json["noCopyrightRcmd"].IsNull();
 		rapidjson::Value alias;
 		if (json.HasMember("alia"))
 			alias = json["alia"].GetArray();
@@ -138,12 +138,22 @@ namespace netease {
 	}
 	CLyric::CLyric(rapidjson::Document& json) {
 		if (json.HasMember("code") && json["code"].GetInt() == 200) {
+			const static auto shouldSkip = [](string& raw) -> bool {
+				//fuck trim
+				raw.erase(raw.begin(), std::find_if(raw.begin(), raw.end(), [](unsigned char ch) {
+					return ch != '\n' && !std::isspace(ch);
+				}));
+				raw.erase(std::find_if(raw.rbegin(), raw.rend(), [](unsigned char ch) {
+					return ch != '\n' && !std::isspace(ch);
+				}).base(), raw.end());
+				return std::isdigit(raw[1]) == 0;
+			};
 			string pending = "";
 			if (json.HasMember("lrc")) {
 				string lrc = json["lrc"]["lyric"].GetString();
 				for (auto iter = lrc.begin(); iter != lrc.end(); iter++) {
-					if ((*iter) == '\n') {
-						if (strncmp(pending.c_str(), "[by:", 4))
+					if ((*iter) == '\n' && pending.size() > 0) {
+						if (!shouldSkip(pending))
 							lyric.push_back(new CLyricItem(pending));
 						pending.clear();
 						continue;
@@ -155,8 +165,8 @@ namespace netease {
 				pending.clear();
 				string tlrc = json["tlyric"]["lyric"].GetString();
 				for (auto iter2 = tlrc.begin(); iter2 != tlrc.end(); iter2++) {
-					if ((*iter2) == '\n') {
-						if(strncmp(pending.c_str(), "[by:", 4))
+					if ((*iter2) == '\n' && pending.size() > 0) {
+						if(!shouldSkip(pending))
 							tlyric.push_back(new CLyricItem(pending));
 						pending.clear();
 						continue;
@@ -199,6 +209,44 @@ namespace netease {
 	}
 	CMy::CMy(rapidjson::Value& json) : CUser(json) {
 
+	}
+	std::vector<neteaseid_t> CMy::GetDailyRecommend() {
+		std::map<string, string> p = {};
+		string json = post(Action("/v3/discovery/recommend/songs", p));
+		rapidjson::Document data;
+		data.Parse(json.c_str());
+		std::vector<neteaseid_t> ret;
+		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+			auto arr = data["data"]["dailySongs"].GetArray();
+			for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
+				ret.push_back((*iter)["id"].GetUint64());
+			}
+		}
+		return ret;
+	}
+	CPlayList::CPlayList(rapidjson::Value& json) : CBase163Object(json) {
+		rapidjson::Value playlist;
+		if (json.HasMember("playlist"))
+			playlist = json["playlist"];
+		else
+			playlist = json;
+
+		coverUrl = playlist["coverImgUrl"].GetString();
+		count = playlist["trackCount"].GetUint();
+		playCount = playlist["playCount"].GetUint();
+		creator = playlist["creator"]["nickname"].GetString();
+
+		if (!playlist["description"].IsNull())
+			description = playlist["description"].GetString();
+		else
+			description = "";
+		if (!playlist["trackIds"].IsNull()) {
+			auto arr = playlist["trackIds"].GetArray();
+			for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
+				auto id = (*iter)["id"].GetUint64();
+				mucics.push_back(id);
+			}
+		}
 	}
 
 	std::vector<std::shared_ptr<CMusic>> CNeteaseMusicAPI::GetAlbumSongs(neteaseid_t id) {
@@ -302,6 +350,16 @@ namespace netease {
 	}
 	CLocalUser* CNeteaseMusicAPI::GetUser() {
 		return &m_pUser;
+	}
+	std::shared_ptr<CPlayList> CNeteaseMusicAPI::GetPlayList(neteaseid_t listid) {
+		std::map<string, string> p = {
+			{"id", std::to_string(listid)},
+			{"n", "100000"}
+		};
+		string json = post(Action("/v6/playlist/detail", p));
+		rapidjson::Document data;
+		data.Parse(json.c_str());
+		return std::make_shared<CPlayList>(data);
 	}
 
 	void CLocalUser::SendCaptcha(neteaseid_t phone, int country){

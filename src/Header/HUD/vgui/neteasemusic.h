@@ -2,6 +2,7 @@
 #define CNETEASEMUSIC_H
 
 #include <string>
+#include <list>
 #include "NeteaseApi.h"
 #include "soundengine.h"
 #include <vgui_controls/Frame.h>
@@ -49,8 +50,10 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 
 	virtual void OnThink() override;
-	void PlayMusic(int id);
+	void PlayMusic(netease::neteaseid_t id);
+	void PlayList(netease::neteaseid_t id);
 	void StopMusic();
+	void NextMusic();
 	void QRLogin();
 	void GetMyInfo();
 
@@ -59,6 +62,9 @@ public:
 private:
 	void PrintF(char* str);
 	void PlayMusicFromBuffer(struct musicthread_obj* obj);
+	void PlayListMusic();
+	void AddToList(netease::neteaseid_t id);
+	void ChangeMusic();
 
 	cvar_t* m_pQuality = nullptr;
 	cvar_t* m_pVolume = nullptr;
@@ -86,5 +92,7 @@ private:
 	netease::CMusic* m_pPlaying = nullptr;
 	netease::CLyric* m_pLyric = nullptr;
 	netease::CMy* m_pLogined = nullptr;
+
+	std::list<netease::neteaseid_t> m_aryPlayList;
 };
 #endif

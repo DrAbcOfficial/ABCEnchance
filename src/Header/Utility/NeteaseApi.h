@@ -57,9 +57,9 @@ namespace netease {
 		std::shared_ptr <CAlbum> al;
 
 		string aliasName;
-		// 0 1 = free
-		// 2 = need money
-		int copyright = 0;
+		// 0 = free
+		// 1 = need money
+		bool copyright = false;
 		unsigned long duration = 0;
 		CMusic(rapidjson::Value& json);
 
@@ -93,6 +93,17 @@ namespace netease {
 	class CMy : public CUser {
 	public:
 		CMy(rapidjson::Value& json);
+		std::vector<neteaseid_t> GetDailyRecommend();
+	};
+	class CPlayList : public CBase163Object {
+	public:
+		CPlayList(rapidjson::Value& json);
+		std::vector<neteaseid_t> mucics;
+		string coverUrl;
+		unsigned int count = 0;
+		unsigned long playCount = 0;
+		std::string creator;
+		std::string description;
 	};
 	//Login
 	class CLocalUser {
@@ -130,6 +141,7 @@ namespace netease {
 		std::shared_ptr<CLyric> GetLyric(neteaseid_t songid);
 		std::shared_ptr<CUser> GetUser(neteaseid_t userid);
 		std::shared_ptr<CMy> GetMyself();
+		std::shared_ptr<CPlayList> GetPlayList(neteaseid_t listid);
 
 		static const std::string CookieOutPath();
 		static const std::string CokkieInPath();
