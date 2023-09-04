@@ -49,7 +49,8 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
-	virtual void OnThink() override;
+	//force think
+	void Think();
 	void PlayMusic(netease::neteaseid_t id);
 	void PlayList(netease::neteaseid_t id);
 	void StopMusic();
@@ -86,8 +87,6 @@ private:
 
 	FMOD_SOUND* m_pSound = nullptr;
 	FMOD_CHANNEL* m_pChannel = nullptr;
-
-	size_t m_flStartMusicTime = 0;
 
 	netease::CMusic* m_pPlaying = nullptr;
 	netease::CLyric* m_pLyric = nullptr;

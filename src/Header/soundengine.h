@@ -137,6 +137,7 @@ namespace FModEngine {
 
         FMOD_RESULT StopSound(FMOD_CHANNEL* channel);
         FMOD_RESULT SetVolume(FMOD_CHANNEL* channel, float volume);
+        FMOD_RESULT GetPosition(FMOD_CHANNEL* channel, unsigned int* position, FMOD_TIMEUNIT postype);
         FMOD_RESULT FreeSound(FMOD_SOUND* sound);
         FMOD_RESULT GetLength(FMOD_SOUND* sound, unsigned int* length, FMOD_TIMEUNIT lengthtype);
     private:

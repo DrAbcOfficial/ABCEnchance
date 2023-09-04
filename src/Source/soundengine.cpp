@@ -154,6 +154,7 @@ namespace FModEngine {
 #endif
 		FMOD_FUNCTION_DEFINE(FMOD_Channel_Stop); 
 		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetVolume);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPosition);
 		FMOD_FUNCTION_DEFINE(FMOD_Sound_Release);
 		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLength);
 	void InitFModLibrary() {
@@ -309,6 +310,7 @@ namespace FModEngine {
 #endif // FMOD_SYSTEM
 			FMOD_DLSYM_CLIEN(FMOD_Channel_Stop);
 			FMOD_DLSYM_CLIEN(FMOD_Channel_SetVolume);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetPosition);
 			FMOD_DLSYM_CLIEN(FMOD_Sound_Release);
 			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLength);
 		}
@@ -640,6 +642,9 @@ namespace FModEngine {
 	}
 	FMOD_RESULT CFModSystem::SetVolume(FMOD_CHANNEL* channel, float volume) {
 		return g_pfnFMOD_Channel_SetVolume(channel, volume);
+	}
+	FMOD_RESULT CFModSystem::GetPosition(FMOD_CHANNEL* channel, unsigned int* position, FMOD_TIMEUNIT postype){
+		return g_pfnFMOD_Channel_GetPosition(channel, position, postype);
 	}
 	FMOD_RESULT CFModSystem::FreeSound(FMOD_SOUND* sound){
 		return g_pfnFMOD_Sound_Release(sound);

@@ -132,6 +132,7 @@ void CViewport::AddNewPanel(IViewportPanel* panel){
 
 void CViewport::Think(void){
 	vgui::GetAnimationController()->UpdateAnimations(gEngfuncs.GetClientTime());
+	m_pNeteaseMusic->Think();
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->Think();
 	}
