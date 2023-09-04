@@ -131,13 +131,24 @@ void CloudMusic() {
 			g_pViewPort->GetMusicPanel()->StopMusic();
 			return;
 		}
+		else if (!V_strcmp(subcmd, "next")) {
+			g_pViewPort->GetMusicPanel()->NextMusic();
+			return;
+		}
 		break;
 	}
 	case 3: {
 		char* subcmd = gEngfuncs.Cmd_Argv(1);
 		if (!V_strcmp(subcmd, "music")) {
-			int id = std::atoi(gEngfuncs.Cmd_Argv(2));
+			char* end;
+			netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
 			g_pViewPort->GetMusicPanel()->PlayMusic(id);
+			return;
+		}
+		else if (!V_strcmp(subcmd, "playlist")) {
+			char* end;
+			netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
+			g_pViewPort->GetMusicPanel()->PlayList(id);
 			return;
 		}
 		break;
@@ -292,7 +303,7 @@ void CNeteasePanel::OnThink() {
 				m_pTranslatedLyricLable->SetText("");
 		}
 		else
-			StopMusic();
+			ChangeMusic();
 	}
 }
 size_t append(void* ptr, size_t size, size_t nmemb, void* user) {
@@ -330,11 +341,10 @@ const char* g_aryMusicQuality[] = {
 	"lossless",
 	"hires"
 };
-musicthread_obj* DonwloadMusic(int id, size_t quality) {
+musicthread_obj* DonwloadMusic(netease::neteaseid_t id, size_t quality) {
 	static musicthread_obj obj;
-	netease::CNeteaseMusicAPI* s_Api = s_pNeteaseApi.load();
 	//Load Music
-	std::shared_ptr <netease::CMusic> music = s_Api->GetSongDetail(id);
+	std::shared_ptr <netease::CMusic> music = s_pNeteaseApi.load()->GetSongDetail(id);
 	if (music == nullptr)
 		return nullptr;
 	obj.musicData = DownLoad(music->GetPlayUrl(g_aryMusicQuality[quality], "flac"));
@@ -375,17 +385,24 @@ musicthread_obj* DonwloadMusic(int id, size_t quality) {
 	FreeImage_CloseMemory(mem);
 
 	obj.music = music;
-	obj.lyric = s_Api->GetLyric(id);
+	obj.lyric = s_pNeteaseApi.load()->GetLyric(id);
 	obj.album = s_pBuf;
 	obj.album_h = height;
 	obj.album_w = width;
 	return &obj;
 }
-void CNeteasePanel::PlayMusic(int id){
-	if (m_pPlaying != nullptr)
-		StopMusic();
-	g_pMusicAsync = std::async(DonwloadMusic, id, static_cast<size_t>(m_pQuality->value));
-	ShowPanel(true);
+void CNeteasePanel::PlayMusic(netease::neteaseid_t  id){
+	m_aryPlayList.clear();
+	AddToList(id);
+	PlayListMusic();
+}
+void CNeteasePanel::PlayList(netease::neteaseid_t id){
+	m_aryPlayList.clear();
+	std::shared_ptr<netease::CPlayList> list = s_pNeteaseApi.load()->GetPlayList(id);
+	for (auto iter = list->mucics.begin(); iter != list->mucics.end(); iter++) {
+		AddToList(*iter);
+	}
+	PlayListMusic();
 }
 void CNeteasePanel::StopMusic(){
 	FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
@@ -402,6 +419,9 @@ void CNeteasePanel::StopMusic(){
 		m_pTranslatedLyricLable->SetText("");
 		m_pAlbumPanel->SetImage("");
 	}
+}
+void CNeteasePanel::NextMusic(){
+	ChangeMusic();
 }
 void CNeteasePanel::PrintF(char* str){
 	char buffer[2048];
@@ -444,6 +464,27 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 	}
 	else
 		PrintF("VIP song, skipped.");
+}
+void CNeteasePanel::PlayListMusic(){
+	if (m_aryPlayList.size() == 0)
+		return;
+	if (m_pPlaying != nullptr)
+		StopMusic();
+	netease::neteaseid_t id = *m_aryPlayList.begin();
+	m_aryPlayList.pop_front();
+	g_pMusicAsync = std::async(DonwloadMusic, id, static_cast<size_t>(m_pQuality->value));
+	ShowPanel(true);
+}
+void CNeteasePanel::AddToList(netease::neteaseid_t id){
+	m_aryPlayList.push_back(id);
+}
+void CNeteasePanel::ChangeMusic(){
+	if (m_aryPlayList.size() == 0) {
+		StopMusic();
+		ShowPanel(false);
+	}
+	else
+		PlayListMusic();
 }
 void CNeteasePanel::QRLogin() {
 	m_pLoginPanel->ResetText();
