@@ -513,28 +513,19 @@ void CNeteasePanel::SetVolume(float vol){
 }
 
 void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
-	switch (type)
-	{
-	case netease::ST_SONG: {
-		std::vector arys = s_pNeteaseApi.load()->SearchSongs(keyword, m_pSearchCount->value, 0);
-		char buffer[256];
-		for (auto iter = arys.begin(); iter != arys.end(); iter++) {
-			netease::CMusic* music = (*iter).get();
-			V_snprintf(buffer, "#[%llu] %s | %s - %s \n", music->id, music->name.c_str(), (*(music->ar.begin()))->name.c_str(), music->al->name.c_str());
-			ConsoleWriteline(buffer);
-		}
-		break;
+	auto result = s_pNeteaseApi.load()->Search(keyword, type, m_pSearchCount->value, 0);
+	char buffer[256];
+	switch (type){
+	case netease::ST_SONG: ConsoleWriteline("Song Result: \n");break;
+	case netease::ST_ALBUM: ConsoleWriteline("Album Result: \n"); break;
+	case netease::ST_ARTIST: ConsoleWriteline("Artist Result: \n"); break;
+	case netease::ST_PLAYLIST: ConsoleWriteline("Playlist Result: \n"); break;
+	case netease::ST_USER: ConsoleWriteline("User Result: \n"); break;
 	}
-	case netease::ST_ALBUM:
-		break;
-	case netease::ST_ARTIST:
-		break;
-	case netease::ST_PLAYLIST:
-		break;
-	case netease::ST_USER:
-		break;
-	default:
-		break;
+	for (auto iter = result.begin(); iter != result.end(); iter++) {
+		netease::CSearchResult* ret = (*iter).get();
+		V_snprintf(buffer, "#[%llu] %s - %s\n", ret->id, ret->name.c_str(), ret->extra.c_str());
+		ConsoleWriteline(buffer);
 	}
 }
 
