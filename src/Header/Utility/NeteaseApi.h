@@ -94,6 +94,7 @@ namespace netease {
 	public:
 		CMy(rapidjson::Value& json);
 		std::vector<neteaseid_t> GetDailyRecommend();
+		std::vector<neteaseid_t> GetFM();
 	};
 	class CPlayList : public CBase163Object {
 	public:

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <memory>
 #include "NeteaseApi.h"
 #include "soundengine.h"
 #include <vgui_controls/Frame.h>
@@ -53,6 +54,9 @@ public:
 	void Think();
 	void PlayMusic(netease::neteaseid_t id);
 	void PlayList(netease::neteaseid_t id);
+	void PlayRecommendMusic();
+	void PlayFM();
+
 	void StopMusic();
 	void NextMusic();
 	void QRLogin();
@@ -61,10 +65,18 @@ public:
 	void SetVolume(float vol);
 	void Search(const char* keyword, netease::SearchType type);
 
-	void PrintF(char* str);
+	void PrintF(const char* str);
 private:
+	enum class PLAYSTATE {
+		NORMAL,
+		FM,
+		DJ
+	};
+	void SetPlayerState(PLAYSTATE state);
 	void PlayMusicFromBuffer(struct musicthread_obj* obj);
 	void PlayListMusic();
+	void RenewFM();
+
 	void AddToList(netease::neteaseid_t id);
 	void ChangeMusic();
 
@@ -89,10 +101,11 @@ private:
 	FMOD_SOUND* m_pSound = nullptr;
 	FMOD_CHANNEL* m_pChannel = nullptr;
 
-	netease::CMusic* m_pPlaying = nullptr;
-	netease::CLyric* m_pLyric = nullptr;
-	netease::CMy* m_pLogined = nullptr;
+	std::shared_ptr<netease::CMusic> m_pPlaying = nullptr;
+	std::shared_ptr<netease::CLyric> m_pLyric = nullptr;
+	std::shared_ptr<netease::CMy> m_pLogined = nullptr;
 
+	PLAYSTATE m_pNowState;
 	std::list<netease::neteaseid_t> m_aryPlayList;
 };
 #endif

@@ -224,6 +224,20 @@ namespace netease {
 		}
 		return ret;
 	}
+	std::vector<neteaseid_t> CMy::GetFM(){
+		std::map<string, string> p = {};
+		string json = post(Action("/v1/radio/get", p));
+		rapidjson::Document data;
+		data.Parse(json.c_str());
+		std::vector<neteaseid_t> ret;
+		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+			auto arr = data["data"].GetArray();
+			for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
+				ret.push_back((*iter)["id"].GetUint64());
+			}
+		}
+		return ret;
+	}
 	CPlayList::CPlayList(rapidjson::Value& json) : CBase163Object(json) {
 		rapidjson::Value playlist;
 		if (json.HasMember("playlist"))
