@@ -393,11 +393,16 @@ namespace netease {
 		data.Parse(json.c_str());
 		return std::make_shared<CUser>(data);
 	}
+
+	static string s_szCookie = "./neteaseapicookie";
 	const std::string CNeteaseMusicAPI::CookieOutPath(){
-		return "./neteaseapicookie";
+		return s_szCookie;
 	}
 	const std::string CNeteaseMusicAPI::CokkieInPath(){
-		return "./neteaseapicookie";
+		return s_szCookie;
+	}
+	void CNeteaseMusicAPI::SetCookie(const char* cookie) {
+		s_szCookie = cookie;
 	}
 	CLocalUser* CNeteaseMusicAPI::GetUser() {
 		return &m_pUser;

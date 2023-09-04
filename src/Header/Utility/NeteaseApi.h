@@ -152,12 +152,11 @@ namespace netease {
 
 		static const std::string CookieOutPath();
 		static const std::string CokkieInPath();
+		static void SetCookie(const char* cookie);
 
 		CLocalUser* GetUser();
 	private:
 		CLocalUser m_pUser;
-		string m_szIcookie = "/tmp/neteaseapicookie";
-		string m_szOcookie = "/tmp/neteaseapicookie";
 	};
 }
 
