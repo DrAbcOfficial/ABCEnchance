@@ -152,7 +152,7 @@ namespace netease {
 			if (json.HasMember("lrc")) {
 				string lrc = json["lrc"]["lyric"].GetString();
 				for (auto iter = lrc.begin(); iter != lrc.end(); iter++) {
-					if ((*iter) == '\n' && pending.size() > 0) {
+					if ((*iter) == '\n' && pending.size() > 1) {
 						if (!shouldSkip(pending))
 							lyric.push_back(new CLyricItem(pending));
 						pending.clear();
@@ -165,7 +165,7 @@ namespace netease {
 				pending.clear();
 				string tlrc = json["tlyric"]["lyric"].GetString();
 				for (auto iter2 = tlrc.begin(); iter2 != tlrc.end(); iter2++) {
-					if ((*iter2) == '\n' && pending.size() > 0) {
+					if ((*iter2) == '\n' && pending.size() > 1) {
 						if(!shouldSkip(pending))
 							tlyric.push_back(new CLyricItem(pending));
 						pending.clear();
