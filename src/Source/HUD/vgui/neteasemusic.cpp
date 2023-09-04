@@ -129,6 +129,7 @@ void CloudMusic() {
 		}
 		else if (!V_strcmp(subcmd, "stop")) {
 			g_pViewPort->GetMusicPanel()->StopMusic();
+			g_pViewPort->GetMusicPanel()->ShowPanel(false);
 			return;
 		}
 		else if (!V_strcmp(subcmd, "next")) {
@@ -150,6 +151,17 @@ void CloudMusic() {
 			netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
 			g_pViewPort->GetMusicPanel()->PlayList(id);
 			return;
+		}
+		else if (!V_strcmp(subcmd, "my")) {
+			char* controlcmd = gEngfuncs.Cmd_Argv(2);
+			if (!V_strcmp(controlcmd, "recommend")) {
+				g_pViewPort->GetMusicPanel()->PlayRecommendMusic();
+				return;
+			}
+			else if (!V_strcmp(controlcmd, "fm")) {
+				g_pViewPort->GetMusicPanel()->PlayFM();
+				return;
+			}
 		}
 		break;
 	}
@@ -262,7 +274,9 @@ struct loginshare_obj {
 };
 std::future<loginshare_obj*> g_pLoginAsync;
 
-std::future<netease::CMy*> g_pUserAsync;
+std::future<std::shared_ptr<netease::CMy>> g_pUserAsync;
+
+std::future<std::vector<netease::neteaseid_t>> g_pFMListAsync;
 
 void CNeteasePanel::Think() {
 	if (g_pUserAsync.valid() && g_pUserAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
@@ -276,6 +290,13 @@ void CNeteasePanel::Think() {
 	}
 	if (g_pMusicAsync.valid() && g_pMusicAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
 		PlayMusicFromBuffer(g_pMusicAsync.get());
+	if (g_pFMListAsync.valid() && g_pFMListAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+		std::vector<netease::neteaseid_t> list = g_pFMListAsync.get();
+		for (auto iter = list.begin(); iter != list.end(); iter++) {
+			AddToList(*iter);
+		}
+		PlayListMusic();
+	}
 	if (m_pPlaying != nullptr) {
 		ShowPanel(true);
 		size_t pos;
@@ -339,7 +360,6 @@ std::vector<byte> DownLoad(const std::string& url) {
 	curl_easy_cleanup(curl);
 	return retdata;
 }
-
 const char* g_aryMusicQuality[] = {
 	"standard",
 	"higher",
@@ -407,17 +427,54 @@ musicthread_obj* DonwloadMusic(netease::neteaseid_t id, size_t quality) {
 	return &obj;
 }
 void CNeteasePanel::PlayMusic(netease::neteaseid_t  id){
+	SetPlayerState(PLAYSTATE::NORMAL);
 	m_aryPlayList.clear();
 	AddToList(id);
 	PlayListMusic();
 }
 void CNeteasePanel::PlayList(netease::neteaseid_t id){
+	SetPlayerState(PLAYSTATE::NORMAL);
 	m_aryPlayList.clear();
 	std::shared_ptr<netease::CPlayList> list = s_pNeteaseApi.load()->GetPlayList(id);
 	for (auto iter = list->mucics.begin(); iter != list->mucics.end(); iter++) {
 		AddToList(*iter);
 	}
 	PlayListMusic();
+}
+void CNeteasePanel::PlayRecommendMusic(){
+	if (m_pLogined == nullptr) {
+		PrintF("User not login!");
+		return;
+	}
+	SetPlayerState(PLAYSTATE::NORMAL);
+	StopMusic();
+	m_aryPlayList.clear();
+	std::vector<netease::neteaseid_t> list = m_pLogined->GetDailyRecommend();
+	for (auto iter = list.begin(); iter != list.end(); iter++) {
+		AddToList(*iter);
+	}
+	PlayListMusic();
+	std::string buffer = "Playing ";
+	buffer += m_pLogined->name + " daily recommend.";
+	PrintF(buffer.c_str());
+}
+void CNeteasePanel::PlayFM(){
+	if (m_pLogined == nullptr) {
+		PrintF("User not login!");
+		return;
+	}
+	SetPlayerState(PLAYSTATE::FM);
+	StopMusic();
+	m_aryPlayList.clear();
+	RenewFM();
+	std::string buffer = "Playing ";
+	buffer += m_pLogined->name + " FM.";
+	PrintF(buffer.c_str());
+}
+void CNeteasePanel::RenewFM(){
+	g_pFMListAsync = std::async([](std::shared_ptr<netease::CMy> my) {
+		return my->GetFM();
+	}, m_pLogined);
 }
 void CNeteasePanel::StopMusic(){
 	FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
@@ -432,10 +489,13 @@ void CNeteasePanel::StopMusic(){
 void CNeteasePanel::NextMusic(){
 	ChangeMusic();
 }
-void CNeteasePanel::PrintF(char* str){
+void CNeteasePanel::PrintF(const char* str){
 	char buffer[2048];
 	V_snprintf(buffer, "[NeteaseApi] %s\n", str);
 	gEngfuncs.Con_DPrintf(buffer);
+}
+void CNeteasePanel::SetPlayerState(PLAYSTATE state){
+	m_pNowState = state;
 }
 void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 	if (obj == nullptr) {
@@ -455,7 +515,7 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 		s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
 		m_pAlbumPanel->SetImage(s_pAlbumImage);
 		//Set Lyric
-		m_pLyric = obj->lyric.get();
+		m_pLyric = obj->lyric;
 		//Text
 		m_pMusicNameLable->SetText(obj->music->name.c_str());
 		std::string buf = obj->music->ar[0]->name.c_str();
@@ -467,7 +527,7 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 		static char buffer[256];
 		V_snprintf(buffer, "%02d:%02d", len / 60, len % 60);
 		m_pMaxTimeLable->SetText(buffer);
-		m_pPlaying = obj->music.get();
+		m_pPlaying = obj->music;
 	}
 	else
 		PrintF("VIP song, skipped.");
@@ -486,12 +546,30 @@ void CNeteasePanel::AddToList(netease::neteaseid_t id){
 	m_aryPlayList.push_back(id);
 }
 void CNeteasePanel::ChangeMusic(){
-	if (m_aryPlayList.size() == 0) {
-		StopMusic();
-		ShowPanel(false);
-	}
-	else
+	switch (m_pNowState) {
+	case PLAYSTATE::FM: {
+		//too fast!
+		if (m_aryPlayList.size() == 0 && g_pFMListAsync.valid()) {
+			StopMusic();
+			return;
+		}
+		if (m_aryPlayList.size() == 1)
+			RenewFM();
 		PlayListMusic();
+		break;
+	}
+	case PLAYSTATE::NORMAL:
+	default: {
+		if (m_aryPlayList.size() == 0) {
+			StopMusic();
+			ShowPanel(false);
+		}
+		else
+			PlayListMusic();
+		break;
+	}
+	}
+	
 }
 void CNeteasePanel::QRLogin() {
 	m_pLoginPanel->ResetText();
@@ -499,17 +577,15 @@ void CNeteasePanel::QRLogin() {
 }
 void CNeteasePanel::GetMyInfo(){
 	g_pUserAsync = std::async([]() {
-		return s_pNeteaseApi.load()->GetMyself().get();
+		return s_pNeteaseApi.load()->GetMyself();
 	});
 }
-
 void CNeteasePanel::SetVolume(float vol){
 	if (m_pChannel) {
 		FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
 		soundSystem->SetVolume(m_pChannel, vol);
 	}
 }
-
 void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
 	auto result = s_pNeteaseApi.load()->Search(keyword, type, m_pSearchCount->value, 0);
 	char buffer[256];
