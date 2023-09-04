@@ -60,8 +60,9 @@ public:
 
 	void SetVolume(float vol);
 	void Search(const char* keyword, netease::SearchType type);
-private:
+
 	void PrintF(char* str);
+private:
 	void PlayMusicFromBuffer(struct musicthread_obj* obj);
 	void PlayListMusic();
 	void AddToList(netease::neteaseid_t id);
