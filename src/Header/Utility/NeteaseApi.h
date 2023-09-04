@@ -105,6 +105,13 @@ namespace netease {
 		std::string creator;
 		std::string description;
 	};
+
+	class CSearchResult {
+	public:
+		string name;
+		neteaseid_t id;
+		string extra;
+	};
 	//Login
 	class CLocalUser {
 	public:
@@ -136,7 +143,7 @@ namespace netease {
 	public:
 		std::shared_ptr<CArtist> GetArtist(neteaseid_t id);
 		std::vector<std::shared_ptr<CMusic>> GetAlbumSongs(neteaseid_t id);
-		std::vector<std::shared_ptr<CMusic>> SearchSongs(const string& keyword, int limit = 30, int offset = 0);
+		std::vector<std::shared_ptr<CSearchResult>> Search(const string& keyword, SearchType type, int limit = 30, int offset = 0);
 		std::shared_ptr<CMusic> GetSongDetail(neteaseid_t id);
 		std::shared_ptr<CLyric> GetLyric(neteaseid_t songid);
 		std::shared_ptr<CUser> GetUser(neteaseid_t userid);

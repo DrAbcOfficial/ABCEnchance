@@ -277,9 +277,10 @@ namespace netease {
 		}
 		return artist;
 	}
-	std::vector<std::shared_ptr<CMusic>> CNeteaseMusicAPI::SearchSongs(const string& keyword, int limit, int offset) {
+
+	std::vector<std::shared_ptr<CSearchResult>> CNeteaseMusicAPI::Search(const string& keyword, SearchType type ,int limit, int offset) {
 		std::map<string, string> p = {
-			{"type", std::to_string(ST_SONG)},
+			{"type", std::to_string(type)},
 			{"limit", std::to_string(limit)},
 			{"offset", std::to_string(offset)},
 			{"s", "\"" + keyword + "\""}
@@ -287,14 +288,64 @@ namespace netease {
 		string json = post(Action("/cloudsearch/pc", p));
 		rapidjson::Document data;
 		data.Parse(json.c_str());
-		std::vector<std::shared_ptr<CMusic>> songs;
+		std::vector<std::shared_ptr<CSearchResult>> ret;
 		if (data.HasMember("code") && data["code"].GetInt() == 200) {
-			auto arr = data["result"]["songs"].GetArray();
-			for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
-				songs.push_back(std::make_shared<CMusic>(*iter));
+			size_t count = 0;
+			switch (type){
+			case netease::ST_SONG: count = data["result"]["songCount"].GetUint(); break;
+			case netease::ST_ALBUM: count = data["result"]["albumCount"].GetUint(); break;
+			case netease::ST_ARTIST: count = data["result"]["artistCount"].GetUint(); break;
+			case netease::ST_PLAYLIST: count = data["result"]["playlistCount"].GetUint(); break;
+			case netease::ST_USER: count = data["result"]["userprofileCount"].GetUint(); break;
+			}
+			if (count == 0)
+				return ret;
+			rapidjson::Value arr;
+			switch (type){
+				case netease::ST_SONG: arr = data["result"]["songs"].GetArray(); break;
+				case netease::ST_ALBUM: arr = data["result"]["albums"].GetArray(); break;
+				case netease::ST_ARTIST: arr = data["result"]["artists"].GetArray(); break;
+				case netease::ST_PLAYLIST: arr = data["result"]["playlists"].GetArray(); break;
+				case netease::ST_USER: arr = data["result"]["userprofiles"].GetArray(); break;
+			}
+			if (!arr.IsNull()) {
+				for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
+					auto p = std::make_shared<CSearchResult>();
+					if (type != ST_USER) {
+						p->id = (*iter)["id"].GetUint64();
+						p->name = (*iter)["name"].GetString();
+					}
+					else {
+						p->id = (*iter)["userId"].GetUint64();
+						p->name = (*iter)["nickname"].GetString();
+					}
+					switch (type) {
+					case netease::ST_SONG: {
+						p->extra = (*(*iter)["ar"].GetArray().Begin())["name"].GetString();
+						p->extra += " ";
+						p->extra += (*iter)["al"]["name"].GetString();
+						break;
+					}
+					case netease::ST_ALBUM: {
+						p->extra = (*iter)["artist"]["name"].GetString();
+						break;
+					}
+					case netease::ST_PLAYLIST: {
+						p->extra = (*iter)["creator"]["nickname"].GetString();
+						break;
+					}
+					case netease::ST_ARTIST:
+					case netease::ST_USER:
+					default:
+						break;
+					}
+
+
+					ret.push_back(p);
+				}
 			}
 		}
-		return songs;
+		return ret;
 	}
 	std::shared_ptr<CMusic> CNeteaseMusicAPI::GetSongDetail(neteaseid_t id) {
 		std::map<string, string> p = {
