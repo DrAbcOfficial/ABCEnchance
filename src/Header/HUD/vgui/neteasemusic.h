@@ -65,8 +65,8 @@ public:
 	void SetVolume(float vol);
 	void Search(const char* keyword, netease::SearchType type);
 
-	template<class... T>
-	static void PrintF(const char* str, bool dev, const T& ...args);
+	template<typename... Args>
+	static void PrintF(const char* str, bool dev, const Args&& ...args);
 
 	//NEVER KEEP THEM IN A VARLUE!
 	netease::CMusic* GetNowPlaying();

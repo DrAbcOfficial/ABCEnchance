@@ -5,6 +5,8 @@
 #include <chrono>
 #include <atomic>
 
+#include "formatter.h"
+
 #include <vgui/IImage.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
@@ -122,7 +124,8 @@ public:
 		return terminal;
 	}
 	void Excute(CNeteasePanel* panel) {
-		func(panel);
+		if(func)
+			func(panel);
 	}
 	CCloudMusicCmdItem* GetChild(const char* name) {
 		for (auto iter = children.begin(); iter != children.end(); iter++) {
@@ -190,7 +193,7 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 		}, [](CNeteasePanel* panel) {
 				netease::CMy* my = panel->GetNowUser();
 				if (my)
-					CNeteasePanel::PrintF("#Netease_MyInfo", false, my->name.c_str(), my->signature.c_str(), my->vip ? "¡Ì" : "¡Á");
+					CNeteasePanel::PrintF("#Netease_MyInfo", false, my->name.c_str(), my->signature.c_str(), my->vip ? "Yes" : "No");
 				else
 					CNeteasePanel::PrintF("#Netease_NotLogin", false);
 		}),
@@ -216,8 +219,9 @@ void CloudMusic() {
 		if (!pCmd)
 			break;
 	}
-	if (pCmd && pCmd->IsTerminal())
+	if (pCmd)
 		pCmd->Excute(g_pViewPort->GetMusicPanel());
+		
 }
 
 CNeteasePanel::CNeteasePanel()
@@ -327,7 +331,7 @@ void CNeteasePanel::Think() {
 		m_pLogined = g_pUserAsync.get();
 		char buffer[512];
 		if (m_pLogined != nullptr)
-			PrintF("#Netease_MyInfo", false, m_pLogined->name, m_pLogined->signature, m_pLogined->vip ? "¡Ì" : "¡Á");
+			PrintF("#Netease_MyInfo", false, m_pLogined->name.c_str(), m_pLogined->signature.c_str(), m_pLogined->vip ? "Yes" : "No");
 		else
 			PrintF("#Netease_NotLogin", false);
 	}
@@ -528,8 +532,8 @@ void CNeteasePanel::StopMusic(){
 void CNeteasePanel::NextMusic(){
 	ChangeMusic();
 }
-template<class... T>
-void CNeteasePanel::PrintF(const char* str, bool dev, const T& ...args){
+template<typename... Args>
+void CNeteasePanel::PrintF(const char* str, bool dev, const Args&& ...args){
 	const static auto wchartoutf = [](const std::wstring& in_wStr) {
 		int nNeedChars = WideCharToMultiByte(CP_UTF8, 0, in_wStr.c_str(), -1, 0, 0, 0, 0);
 		if (nNeedChars > 0) {
@@ -539,22 +543,18 @@ void CNeteasePanel::PrintF(const char* str, bool dev, const T& ...args){
 		}
 		return std::string();
 	};
-	wchar_t buffer[2048] = {0};
-	wchar_t* fommat;
+	std::string format;
 	if (str[0] == '#')
-		fommat = vgui::localize()->Find(str);
-	else {
-		vgui::localize()->ConvertANSIToUnicode(str, buffer, 2048);
-		fommat = buffer;
-	}
-	_snwprintf_s(buffer, 2048, fommat, args...);
-	std::wstring buf = L"[NeteaseApi] ";
-	buf += buffer;
-	buf += L"\n";
-	if(dev)
-		gEngfuncs.Con_DPrintf(const_cast<char*>(wchartoutf(buf).c_str()));
+		format = wchartoutf(vgui::localize()->Find(str)).c_str();
 	else
-		gEngfuncs.Con_Printf(const_cast<char*>(wchartoutf(buf).c_str()));
+		format = str;
+	
+	format = formatter::format(format, args...);
+	format = "[NeteaseApi] " + format + "\n";
+	if(dev)
+		gEngfuncs.Con_DPrintf(const_cast<char*>(format.c_str()));
+	else
+		gEngfuncs.Con_Printf(const_cast<char*>(format.c_str()));
 }
 netease::CMusic* CNeteasePanel::GetNowPlaying(){
 	return m_pPlaying.get();
