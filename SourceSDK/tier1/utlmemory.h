@@ -167,7 +167,7 @@ public:
 
 	void Grow( int nCount = 1 )
 	{
-		if ( IsExternallyAllocated() )
+		if ( IsExternallyAllocated< T, I >() )
 		{
 			ConvertToGrowableMemory( m_nMallocGrowSize );
 		}

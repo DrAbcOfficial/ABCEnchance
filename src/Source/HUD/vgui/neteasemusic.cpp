@@ -112,70 +112,114 @@ const static netease::SearchType s_arySearchTypeTable[] = {
 	netease::ST_PLAYLIST,
 	netease::ST_USER,
 };
+class CCloudMusicCmdItem {
+	std::string name;
+	std::vector<CCloudMusicCmdItem> children;
+	bool terminal;
+	void (*func)(CNeteasePanel* panel);
+public:
+	bool IsTerminal() {
+		return terminal;
+	}
+	void Excute(CNeteasePanel* panel) {
+		func(panel);
+	}
+	CCloudMusicCmdItem* GetChild(const char* name) {
+		for (auto iter = children.begin(); iter != children.end(); iter++) {
+			if (!V_strcmp(iter->name.c_str(), name))
+				return &(*iter);
+		}
+		return nullptr;
+	}
+	CCloudMusicCmdItem* GetChildOrExcute(const char* name, CNeteasePanel* panel) {
+		for (auto iter = children.begin(); iter != children.end(); iter++) {
+			if (!V_strcmp(iter->name.c_str(), name))
+				return &(*iter);
+		}
+		if (func)
+			func(panel);
+		return nullptr;
+	}
+	CCloudMusicCmdItem(const char* n, void(*f)(CNeteasePanel* panel)) {
+		name = n;
+		func = f;
+		terminal = true;
+	}
+	CCloudMusicCmdItem(const char* n, std::vector<CCloudMusicCmdItem>c) {
+		name = n;
+		children = c;
+		terminal = false;
+		func = nullptr;
+	}
+	//if nothing match, default method
+	CCloudMusicCmdItem(const char* n, std::vector<CCloudMusicCmdItem>c, void(*f)(CNeteasePanel* panel)) {
+		name = n;
+		children = c;
+		terminal = false;
+		func = f;
+	}
+};
+static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
+	"root", {
+		CCloudMusicCmdItem("login",[](CNeteasePanel* panel) {panel->QRLogin(); }),
+		CCloudMusicCmdItem("stop",[](CNeteasePanel* panel) {
+			panel->StopMusic();
+			panel->ShowPanel(false); }),
+		CCloudMusicCmdItem("next",[](CNeteasePanel* panel) {panel->NextMusic(); }),
+		CCloudMusicCmdItem("music",[](CNeteasePanel* panel) {
+			if (gEngfuncs.Cmd_Argc() < 3)
+				CNeteasePanel::PrintF("#Netease_InvalidId", false);
+			else {
+				char* end;
+				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
+				panel->PlayMusic(id);
+			}
+		}),
+		CCloudMusicCmdItem("playlist",[](CNeteasePanel* panel) {
+			if (gEngfuncs.Cmd_Argc() < 3)
+				CNeteasePanel::PrintF("#Netease_InvalidId", false);
+			else {
+				char* end;
+				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
+				panel->PlayList(id);
+			}
+		}),
+		CCloudMusicCmdItem("my",{
+			CCloudMusicCmdItem("recommend", [](CNeteasePanel* panel) {panel->PlayRecommendMusic(); }),
+			CCloudMusicCmdItem("fm", [](CNeteasePanel* panel) {panel->PlayFM(); })
+		}, [](CNeteasePanel* panel) {
+				netease::CMy* my = panel->GetNowUser();
+				if (my)
+					CNeteasePanel::PrintF("#Netease_MyInfo", false, my->name.c_str(), my->signature.c_str(), my->vip ? "¡Ì" : "¡Á");
+				else
+					CNeteasePanel::PrintF("#Netease_NotLogin", false);
+		}),
+		CCloudMusicCmdItem("search",[](CNeteasePanel* panel) {
+			if (gEngfuncs.Cmd_Argc() >= 4) {
+				char* type = gEngfuncs.Cmd_Argv(2);
+				char* keyword = gEngfuncs.Cmd_Argv(3);
+				panel->Search(keyword, s_arySearchTypeTable[std::clamp(std::stoi(type), 0, 4)]);
+			}
+			else
+				CNeteasePanel::PrintF("#Netease_SearchHelper", false);
+		}),
+	}
+);
+
 void CloudMusic() {
-	int argcount = gEngfuncs.Cmd_Argc();
-	switch (argcount)
-	{
-	case 0: 
-	case 1:{
-		//TODO: Help Info here
-		break;
+	CCloudMusicCmdItem* pCmd = &s_CloudMusicRoot;
+	int argc = gEngfuncs.Cmd_Argc();
+	for (int index = 1; index < argc; index++) {
+		char* arg = gEngfuncs.Cmd_Argv(index);
+		if (pCmd)
+			pCmd = pCmd->GetChildOrExcute(arg, g_pViewPort->GetMusicPanel());
+		if (!pCmd)
+			break;
 	}
-	case 2: {
-		char* subcmd = gEngfuncs.Cmd_Argv(1);
-		if (!V_strcmp(subcmd, "login")) {
-			g_pViewPort->GetMusicPanel()->QRLogin();
-			return;
-		}
-		else if (!V_strcmp(subcmd, "stop")) {
-			g_pViewPort->GetMusicPanel()->StopMusic();
-			g_pViewPort->GetMusicPanel()->ShowPanel(false);
-			return;
-		}
-		else if (!V_strcmp(subcmd, "next")) {
-			g_pViewPort->GetMusicPanel()->NextMusic();
-			return;
-		}
-		break;
-	}
-	case 3: {
-		char* subcmd = gEngfuncs.Cmd_Argv(1);
-		if (!V_strcmp(subcmd, "music")) {
-			char* end;
-			netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
-			g_pViewPort->GetMusicPanel()->PlayMusic(id);
-			return;
-		}
-		else if (!V_strcmp(subcmd, "playlist")) {
-			char* end;
-			netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
-			g_pViewPort->GetMusicPanel()->PlayList(id);
-			return;
-		}
-		else if (!V_strcmp(subcmd, "my")) {
-			char* controlcmd = gEngfuncs.Cmd_Argv(2);
-			if (!V_strcmp(controlcmd, "recommend")) {
-				g_pViewPort->GetMusicPanel()->PlayRecommendMusic();
-				return;
-			}
-			else if (!V_strcmp(controlcmd, "fm")) {
-				g_pViewPort->GetMusicPanel()->PlayFM();
-				return;
-			}
-		}
-		break;
-	}
-	case 4: {
-		char* subcmd = gEngfuncs.Cmd_Argv(1);
-		if (!V_strcmp(subcmd, "search")) {
-			char* type = gEngfuncs.Cmd_Argv(2);
-			char* keyword = gEngfuncs.Cmd_Argv(3);
-			g_pViewPort->GetMusicPanel()->Search(keyword, s_arySearchTypeTable[std::clamp(std::stoi(type), 0, 4)]);
-			return;
-		}
-	}
-	}
+	if (pCmd && pCmd->IsTerminal())
+		pCmd->Excute(g_pViewPort->GetMusicPanel());
 }
+
 CNeteasePanel::CNeteasePanel()
 	: BaseClass(nullptr, VIEWPORT_NETEASEMUSIC_NAME) {
 	SetProportional(true);
@@ -282,11 +326,10 @@ void CNeteasePanel::Think() {
 	if (g_pUserAsync.valid() && g_pUserAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
 		m_pLogined = g_pUserAsync.get();
 		char buffer[512];
-		if (m_pLogined != nullptr) 
-			V_snprintf(buffer, "User %llu Logined.", m_pLogined->id);
+		if (m_pLogined != nullptr)
+			PrintF("#Netease_MyInfo", false, m_pLogined->name, m_pLogined->signature, m_pLogined->vip ? "¡Ì" : "¡Á");
 		else
-			V_snprintf(buffer, "User not login.");
-		PrintF(buffer);
+			PrintF("#Netease_NotLogin", false);
 	}
 	if (g_pMusicAsync.valid() && g_pMusicAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
 		PlayMusicFromBuffer(g_pMusicAsync.get());
@@ -443,7 +486,7 @@ void CNeteasePanel::PlayList(netease::neteaseid_t id){
 }
 void CNeteasePanel::PlayRecommendMusic(){
 	if (m_pLogined == nullptr) {
-		PrintF("User not login!");
+		PrintF("#Netease_NotLogin", false);
 		return;
 	}
 	SetPlayerState(PLAYSTATE::NORMAL);
@@ -454,22 +497,18 @@ void CNeteasePanel::PlayRecommendMusic(){
 		AddToList(*iter);
 	}
 	PlayListMusic();
-	std::string buffer = "Playing ";
-	buffer += m_pLogined->name + " daily recommend.";
-	PrintF(buffer.c_str());
+	PrintF("#Netease_PlayingRecommend", false, m_pLogined->name.c_str());
 }
 void CNeteasePanel::PlayFM(){
 	if (m_pLogined == nullptr) {
-		PrintF("User not login!");
+		PrintF("#Netease_NotLogin", false);
 		return;
 	}
 	SetPlayerState(PLAYSTATE::FM);
 	StopMusic();
 	m_aryPlayList.clear();
 	RenewFM();
-	std::string buffer = "Playing ";
-	buffer += m_pLogined->name + " FM.";
-	PrintF(buffer.c_str());
+	PrintF("#Netease_PlayingFM", false, m_pLogined->name.c_str());
 }
 void CNeteasePanel::RenewFM(){
 	g_pFMListAsync = std::async([](std::shared_ptr<netease::CMy> my) {
@@ -489,17 +528,49 @@ void CNeteasePanel::StopMusic(){
 void CNeteasePanel::NextMusic(){
 	ChangeMusic();
 }
-void CNeteasePanel::PrintF(const char* str){
-	char buffer[2048];
-	V_snprintf(buffer, "[NeteaseApi] %s\n", str);
-	gEngfuncs.Con_DPrintf(buffer);
+template<class... T>
+void CNeteasePanel::PrintF(const char* str, bool dev, const T& ...args){
+	const static auto wchartoutf = [](const std::wstring& in_wStr) {
+		int nNeedChars = WideCharToMultiByte(CP_UTF8, 0, in_wStr.c_str(), -1, 0, 0, 0, 0);
+		if (nNeedChars > 0) {
+			std::vector<char> temp(nNeedChars);
+			::WideCharToMultiByte(CP_UTF8, 0, in_wStr.c_str(), -1, &temp[0], nNeedChars, 0, 0);
+			return std::string(&temp[0]);
+		}
+		return std::string();
+	};
+	wchar_t buffer[2048] = {0};
+	wchar_t* fommat;
+	if (str[0] == '#')
+		fommat = vgui::localize()->Find(str);
+	else {
+		vgui::localize()->ConvertANSIToUnicode(str, buffer, 2048);
+		fommat = buffer;
+	}
+	_snwprintf_s(buffer, 2048, fommat, args...);
+	std::wstring buf = L"[NeteaseApi] ";
+	buf += buffer;
+	buf += L"\n";
+	if(dev)
+		gEngfuncs.Con_DPrintf(const_cast<char*>(wchartoutf(buf).c_str()));
+	else
+		gEngfuncs.Con_Printf(const_cast<char*>(wchartoutf(buf).c_str()));
+}
+netease::CMusic* CNeteasePanel::GetNowPlaying(){
+	return m_pPlaying.get();
+}
+netease::CLyric* CNeteasePanel::GetNowLyric(){
+	return m_pLyric.get();
+}
+netease::CMy* CNeteasePanel::GetNowUser(){
+	return m_pLogined.get();
 }
 void CNeteasePanel::SetPlayerState(PLAYSTATE state){
 	m_pNowState = state;
 }
 void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 	if (obj == nullptr) {
-		PrintF("Can not play this song!");
+		PrintF("#Netease_CannotPlay", false);
 		return;
 	}
 	if (obj->music->copyright < 2 || (m_pLogined != nullptr && m_pLogined->vip > 0)) {
@@ -530,7 +601,7 @@ void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
 		m_pPlaying = obj->music;
 	}
 	else
-		PrintF("VIP song, skipped.");
+		PrintF("#Netease_VIPCannotPlay", false);
 }
 void CNeteasePanel::PlayListMusic(){
 	if (m_aryPlayList.size() == 0)
@@ -588,22 +659,17 @@ void CNeteasePanel::SetVolume(float vol){
 }
 void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
 	auto result = s_pNeteaseApi.load()->Search(keyword, type, m_pSearchCount->value, 0);
-	char buffer[256];
-	switch (type){
-	case netease::ST_SONG: ConsoleWriteline("Song Result: \n");break;
-	case netease::ST_ALBUM: ConsoleWriteline("Album Result: \n"); break;
-	case netease::ST_ARTIST: ConsoleWriteline("Artist Result: \n"); break;
-	case netease::ST_PLAYLIST: ConsoleWriteline("Playlist Result: \n"); break;
-	case netease::ST_USER: ConsoleWriteline("User Result: \n"); break;
-	}
+	char buffer[512];
+	std::string buf;
 	for (auto iter = result.begin(); iter != result.end(); iter++) {
 		netease::CSearchResult* ret = (*iter).get();
 		if(ret->extra.size() > 0)
 			V_snprintf(buffer, "#[%llu] %s - %s\n", ret->id, ret->name.c_str(), ret->extra.c_str());
 		else
 			V_snprintf(buffer, "#[%llu] %s\n", ret->id, ret->name.c_str());
-		ConsoleWriteline(buffer);
+		buf += buffer;
 	}
+	PrintF("#Netease_SearchResult", false, buf.c_str());
 }
 
 /*
@@ -657,7 +723,7 @@ void CQRLoginPanel::OnThink(){
 		netease::CLocalUser::QRStatue result = g_pGetCookieAsync.get();
 		switch (result){
 			case netease::CLocalUser::QRStatue::INVALID: {
-				m_pMusicPanel->PrintF("Login Failed!");
+				CNeteasePanel::PrintF("#Netease_CannotLogin", false);
 				SetVisible(false);
 				break;
 			}
