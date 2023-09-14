@@ -1666,5 +1666,8 @@
     <ClInclude Include="FreeImage\FreeImage.h">
       <Filter>FreeImage</Filter>
     </ClInclude>
+    <ClInclude Include="src\Header\Utility\formatter.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
