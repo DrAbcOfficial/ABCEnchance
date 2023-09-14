@@ -307,14 +307,14 @@ template <class T = int>
 class CThreadLocalInt : public CThreadLocal<T>
 {
 public:
-	operator const T() const { return Get<T>(); }
+	operator const T() const { return Get(); }
 	int	operator=( T i ) { Set( i ); return i; }
 
-	T operator++()					{ T i = Get<T>(); Set( ++i ); return i; }
-	T operator++(int)				{ T i = Get<T>(); Set( i + 1 ); return i; }
+	T operator++()					{ T i = Get(); Set( ++i ); return i; }
+	T operator++(int)				{ T i = Get(); Set( i + 1 ); return i; }
 
-	T operator--()					{ T i = Get<T>(); Set( --i ); return i; }
-	T operator--(int)				{ T i = Get<T>(); Set( i - 1 ); return i; }
+	T operator--()					{ T i = Get(); Set( --i ); return i; }
+	T operator--(int)				{ T i = Get(); Set( i - 1 ); return i; }
 };
 
 //---------------------------------------------------------
