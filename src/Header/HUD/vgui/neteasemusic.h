@@ -65,7 +65,13 @@ public:
 	void SetVolume(float vol);
 	void Search(const char* keyword, netease::SearchType type);
 
-	void PrintF(const char* str);
+	template<class... T>
+	static void PrintF(const char* str, bool dev, const T& ...args);
+
+	//NEVER KEEP THEM IN A VARLUE!
+	netease::CMusic* GetNowPlaying();
+	netease::CLyric* GetNowLyric();
+	netease::CMy* GetNowUser();
 private:
 	enum class PLAYSTATE {
 		NORMAL,

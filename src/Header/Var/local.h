@@ -12,8 +12,8 @@
 #define CVAR_GET_POINTER(x) gEngfuncs.pfnGetCvarPointer(x)
 #define CVAR_GET_FLOAT(x) gEngfuncs.pfnGetCvarFloat(x)
 #define CVAR_GET_STRING(x) gEngfuncs.pfnGetCvarString(x)
-inline cvar_t* CREATE_CVAR(char* name, char* val, int flag, cvar_callback_t callback) {
-	cvar_t* cvar = gEngfuncs.pfnRegisterVariable(name, val, flag); 
+inline cvar_t* CREATE_CVAR(const char* name, const char* val, int flag, cvar_callback_t callback) {
+	cvar_t* cvar = gEngfuncs.pfnRegisterVariable(const_cast<char*>(name), const_cast<char*>(val), flag);
 	if (callback)
 		g_pMetaHookAPI->RegisterCvarCallback(name, callback, nullptr); 
 	return cvar;
