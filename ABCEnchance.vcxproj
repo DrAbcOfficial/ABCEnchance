@@ -240,6 +240,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\Utility\regquery.cpp" />
     <ClCompile Include="src\Source\Utility\steamid.cpp" />
     <ClCompile Include="src\Source\Utility\svc_hook.cpp" />
+    <ClCompile Include="src\Source\Utility\Task.cpp" />
     <ClCompile Include="src\Source\Var\extraprecache.cpp" />
     <ClCompile Include="src\Source\Var\local.cpp" />
     <ClCompile Include="src\Source\Var\vguilocal.cpp" />
@@ -515,6 +516,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\Utility\qrcodegen.h" />
     <ClInclude Include="src\Header\Utility\regquery.h" />
     <ClInclude Include="src\Header\Utility\svc_hook.h" />
+    <ClInclude Include="src\Header\Utility\Task.h" />
     <ClInclude Include="src\Header\Var\bitvec.h" />
     <ClInclude Include="src\Header\Var\enginedef.h" />
     <ClInclude Include="src\Header\Var\extraprecache.h" />

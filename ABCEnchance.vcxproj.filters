@@ -719,6 +719,9 @@
     <ClCompile Include="src\Source\HUD\vgui\neteasemusic.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\Utility\Task.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1667,6 +1670,9 @@
       <Filter>FreeImage</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\formatter.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\Task.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>
