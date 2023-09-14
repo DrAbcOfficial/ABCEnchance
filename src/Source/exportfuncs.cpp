@@ -12,6 +12,7 @@
 #include "cvardef.h"
 #include <capstone.h>
 #include "CVector.h"
+#include "Task.h"
 //Def
 #include "hud.h"
 #include "vguilocal.h"
@@ -658,6 +659,8 @@ void HUD_VoiceStatus(int entindex, qboolean talking) {
 void HUD_Frame(double frametime) {
 	GetClientVoiceMgr()->Frame(frametime);
 	gExportfuncs.HUD_Frame(frametime);
+	//task
+	GetTaskManager()->CheckAll();
 }
 int HUD_Redraw(float time, int intermission){
 	gCustomHud.HUD_Draw(time);

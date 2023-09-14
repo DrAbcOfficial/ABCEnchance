@@ -6,6 +6,7 @@
 #include <atomic>
 
 #include "formatter.h"
+#include "Task.h"
 
 #include <vgui/IImage.h>
 #include <vgui/ISurface.h>
@@ -314,13 +315,6 @@ struct musicthread_obj{
 	size_t album_w;
 };
 std::future<musicthread_obj*> g_pMusicAsync;
-
-struct loginshare_obj {
-	byte* qrimagebyte;
-	size_t size;
-	std::string qrkey;
-};
-std::future<loginshare_obj*> g_pLoginAsync;
 
 std::future<std::shared_ptr<netease::CMy>> g_pUserAsync;
 
@@ -658,18 +652,24 @@ void CNeteasePanel::SetVolume(float vol){
 	}
 }
 void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
-	auto result = s_pNeteaseApi.load()->Search(keyword, type, m_pSearchCount->value, 0);
-	char buffer[512];
-	std::string buf;
-	for (auto iter = result.begin(); iter != result.end(); iter++) {
-		netease::CSearchResult* ret = (*iter).get();
-		if(ret->extra.size() > 0)
-			V_snprintf(buffer, "#[%llu] %s - %s\n", ret->id, ret->name.c_str(), ret->extra.c_str());
-		else
-			V_snprintf(buffer, "#[%llu] %s\n", ret->id, ret->name.c_str());
-		buf += buffer;
-	}
-	PrintF("#Netease_SearchResult", false, buf.c_str());
+	GetTaskManager()->Start(&std::async([](const char* keyword, netease::SearchType type, int limit) -> std::any {
+		return s_pNeteaseApi.load()->Search(keyword, type, limit, 0);
+		}, keyword, type, m_pSearchCount->value))->ContinueWith([](std::any anyresult) {
+			if (anyresult.type() == typeid(std::vector<std::shared_ptr<netease::CSearchResult>>)) {
+				auto result = std::any_cast<std::vector<std::shared_ptr<netease::CSearchResult>>>(anyresult);
+				char buffer[512];
+				std::string buf;
+				for (auto iter = result.begin(); iter != result.end(); iter++) {
+					netease::CSearchResult* ret = (*iter).get();
+					if (ret->extra.size() > 0)
+						V_snprintf(buffer, "#[%llu] %s - %s\n", ret->id, ret->name.c_str(), ret->extra.c_str());
+					else
+						V_snprintf(buffer, "#[%llu] %s\n", ret->id, ret->name.c_str());
+					buf += buffer;
+				}
+				PrintF("#Netease_SearchResult", false, buf.c_str());
+			}
+		});
 }
 
 /*
@@ -710,14 +710,6 @@ CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name)
 
 std::future<netease::CLocalUser::QRStatue> g_pGetCookieAsync;
 void CQRLoginPanel::OnThink(){
-	if (g_pLoginAsync.valid() && g_pLoginAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-		loginshare_obj* obj = g_pLoginAsync.get();
-		s_pQRCodeImage->InitFromRGBA(obj->qrimagebyte, obj->size, obj->size);
-		m_pQRImagePanel->SetImage(s_pQRCodeImage);
-		m_pLoginObj = obj;
-		CheckLogin();
-		SetMouseInputEnabled(true);
-	}
 	if (g_pGetCookieAsync.valid() && g_pGetCookieAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready && 
 		gEngfuncs.GetClientTime() > m_flNextCheckTime) {
 		netease::CLocalUser::QRStatue result = g_pGetCookieAsync.get();
@@ -742,8 +734,13 @@ void CQRLoginPanel::OnThink(){
 		m_flNextCheckTime = gEngfuncs.GetClientTime() + CHECK_LOGIN_INVERTV;
 	}
 }
+struct loginshare_obj {
+	byte* qrimagebyte;
+	size_t size;
+	std::string qrkey;
+};
 void CQRLoginPanel::Login(){
-	g_pLoginAsync = std::async([]() -> loginshare_obj* {
+	GetTaskManager()->Start(&std::async([]() -> std::any {
 		static loginshare_obj obj;
 		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
 		std::string url = "https://music.163.com/login?codekey=" + obj.qrkey;
@@ -771,6 +768,15 @@ void CQRLoginPanel::Login(){
 		obj.qrimagebyte = s_qrbyte;
 		obj.size = qrsize;
 		return &obj;
+		}))->ContinueWith([this](std::any anyobj) {
+			if (anyobj.type() == typeid(loginshare_obj*)) {
+				loginshare_obj* obj = std::any_cast<loginshare_obj*>(anyobj);
+				s_pQRCodeImage->InitFromRGBA(obj->qrimagebyte, obj->size, obj->size);
+				m_pQRImagePanel->SetImage(s_pQRCodeImage);
+				m_pLoginObj = obj;
+				CheckLogin();
+				SetMouseInputEnabled(true);
+			}
 		});
 	m_flNextCheckTime = gEngfuncs.GetClientTime() + CHECK_LOGIN_INVERTV;
 	SetVisible(true);
