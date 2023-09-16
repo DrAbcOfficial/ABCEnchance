@@ -3,7 +3,9 @@
 #include <future>
 
 #include "formatter.h"
+
 #include "Task.h"
+
 #include <vgui/IImage.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
@@ -313,24 +315,13 @@ void CNeteasePanel::Think() {
 			float flRatio = static_cast<float>(pos) / static_cast<float>(m_pPlaying->duration);
 			m_pProgressLable->SetWide(static_cast<float>(m_pProgressBackgroundPanel->GetWide()) * flRatio);
 			//lyric
-			if (m_pLyric->lyric.size() > 0) {
-				for (auto iter = m_pLyric->lyric.rbegin(); iter != m_pLyric->lyric.rend(); iter++) {
-					if (pos >= (*iter)->time.count()) {
-						m_pLyricLable->SetText((*iter)->text.c_str());
-						break;
-					}
-				}
-			}
+			if (m_pLyric->Size() > 0)
+				m_pLyricLable->SetText(m_pLyric->LyricAt(pos).lyric.c_str());
 			else
 				m_pLyricLable->SetText("");
-			if (m_pLyric->tlyric.size() > 0) {
-				for (auto iter = m_pLyric->tlyric.rbegin(); iter != m_pLyric->tlyric.rend(); iter++) {
-					if (pos >= (*iter)->time.count()) {
-						m_pTranslatedLyricLable->SetText((*iter)->text.c_str());
-						break;
-					}
-				}
-			}
+
+			if (m_pTransLyric->Size() > 0)
+				m_pTranslatedLyricLable->SetText(m_pTransLyric->LyricAt(pos).lyric.c_str());
 			else
 				m_pTranslatedLyricLable->SetText("");
 		}
@@ -466,9 +457,6 @@ void CNeteasePanel::PrintF(const char* str, bool dev, const Args&& ...args){
 netease::CMusic* CNeteasePanel::GetNowPlaying(){
 	return m_pPlaying.get();
 }
-netease::CLyric* CNeteasePanel::GetNowLyric(){
-	return m_pLyric.get();
-}
 netease::CMy* CNeteasePanel::GetNowUser(){
 	return m_pLogined.get();
 }
@@ -570,7 +558,9 @@ void CNeteasePanel::PlayListMusic(){
 					s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
 					m_pAlbumPanel->SetImage(s_pAlbumImage);
 					//Set Lyric
-					m_pLyric = obj->lyric;
+					lrc::LrcParser parser;
+					m_pLyric = parser.ParseString(obj->lyric->lyric);
+					m_pTransLyric = parser.ParseString(obj->lyric->tlyric);
 					//Text
 					m_pMusicNameLable->SetText(obj->music->name.c_str());
 					std::string buf = obj->music->ar[0]->name.c_str();

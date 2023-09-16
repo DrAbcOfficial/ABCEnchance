@@ -4,8 +4,11 @@
 #include <string>
 #include <list>
 #include <memory>
+
 #include "NeteaseApi.h"
 #include "soundengine.h"
+#include "liblrc/lrc_parser.h"
+
 #include <vgui_controls/Frame.h>
 #include "IViewportPanel.h"
 
@@ -64,7 +67,6 @@ public:
 
 	//NEVER KEEP THEM IN A VARLUE!
 	netease::CMusic* GetNowPlaying();
-	netease::CLyric* GetNowLyric();
 	netease::CMy* GetNowUser();
 private:
 	enum class PLAYSTATE {
@@ -101,7 +103,8 @@ private:
 	FMOD_CHANNEL* m_pChannel = nullptr;
 
 	std::shared_ptr<netease::CMusic> m_pPlaying = nullptr;
-	std::shared_ptr<netease::CLyric> m_pLyric = nullptr;
+	std::unique_ptr<lrc::Lyrics> m_pLyric = nullptr;
+	std::unique_ptr<lrc::Lyrics> m_pTransLyric = nullptr;
 	std::shared_ptr<netease::CMy> m_pLogined = nullptr;
 
 	PLAYSTATE m_pNowState;
