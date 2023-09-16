@@ -49,8 +49,11 @@ public:
 
 	//force think
 	void Think();
+
 	void PlayMusic(netease::neteaseid_t id);
 	void PlayList(netease::neteaseid_t id);
+	void PlayDj(netease::neteaseid_t id);
+	void PlayRadio(netease::neteaseid_t id);
 	void PlayRecommendMusic();
 	void PlayFM();
 
@@ -68,6 +71,11 @@ public:
 	//NEVER KEEP THEM IN A VARLUE!
 	netease::CMusic* GetNowPlaying();
 	netease::CMy* GetNowUser();
+
+	enum PLAYTYPE {
+		MUSIC,
+		DJ
+	};
 private:
 	enum class PLAYSTATE {
 		NORMAL,
@@ -78,7 +86,7 @@ private:
 	void PlayListMusic();
 	void RenewFM(bool play);
 
-	void AddToList(netease::neteaseid_t id);
+	void AddToList(netease::neteaseid_t id, CNeteasePanel::PLAYTYPE type = CNeteasePanel::PLAYTYPE::MUSIC);
 
 	cvar_t* m_pQuality = nullptr;
 	cvar_t* m_pVolume = nullptr;
@@ -112,6 +120,10 @@ private:
 	std::shared_ptr<netease::CMy> m_pLogined = nullptr;
 
 	PLAYSTATE m_pNowState;
-	std::list<netease::neteaseid_t> m_aryPlayList;
+	struct PlayItem {
+		netease::neteaseid_t id;
+		PLAYTYPE type;
+	};
+	std::list<std::shared_ptr<PlayItem>> m_aryPlayList;
 };
 #endif
