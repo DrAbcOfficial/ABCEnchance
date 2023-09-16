@@ -35,7 +35,7 @@
 
     手动:
 
-    1. 从release或者action下载压缩包，解压到 `svencoop`文件夹里, 再把`ABCEnchance.dll`文件移动到`svencoop/metahook/plugins`，把`vpx.dll`移动到安装目录，最终看起来像是这样👇
+    1. 从release或者action下载压缩包，解压到 `svencoop`文件夹里, 再把`ABCEnchance.dll`文件移动到`svencoop/metahook/plugins`，把`vpx.dll`和`FreeImage.dll`移动到安装目录，最终看起来像是这样👇
    
     ```
         Sven Coop
@@ -53,6 +53,7 @@
         │        └─ABCEnchance.dll       
         svencoop.exe
         vpx.dll
+        FreeImage.dll
 
     ```
 
