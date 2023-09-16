@@ -652,9 +652,10 @@ void CNeteasePanel::SetVolume(float vol){
 	}
 }
 void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
-	GetTaskManager()->Start(&std::async([](const char* keyword, netease::SearchType type, int limit) -> std::any {
-		return s_pNeteaseApi.load()->Search(keyword, type, limit, 0);
-		}, keyword, type, m_pSearchCount->value))->ContinueWith([](std::any anyresult) {
+	GetTaskManager()->Add(std::async(std::launch::async, [](const char* keyword, netease::SearchType type, int limit) -> std::any {
+		auto res = s_pNeteaseApi.load()->Search(keyword, type, limit, 0);
+		return std::any(res);
+		}, keyword, type, m_pSearchCount->value))->ContinueWith([](const std::any& anyresult) {
 			if (anyresult.type() == typeid(std::vector<std::shared_ptr<netease::CSearchResult>>)) {
 				auto result = std::any_cast<std::vector<std::shared_ptr<netease::CSearchResult>>>(anyresult);
 				char buffer[512];
@@ -669,7 +670,7 @@ void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
 				}
 				PrintF("#Netease_SearchResult", false, buf.c_str());
 			}
-		});
+		})->Start();
 }
 
 /*
@@ -740,7 +741,7 @@ struct loginshare_obj {
 	std::string qrkey;
 };
 void CQRLoginPanel::Login(){
-	GetTaskManager()->Start(&std::async([]() -> std::any {
+	/*GetTaskManager()->Start(&std::async([]() -> std::any {
 		static loginshare_obj obj;
 		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
 		std::string url = "https://music.163.com/login?codekey=" + obj.qrkey;
@@ -777,7 +778,7 @@ void CQRLoginPanel::Login(){
 				CheckLogin();
 				SetMouseInputEnabled(true);
 			}
-		});
+		});*/
 	m_flNextCheckTime = gEngfuncs.GetClientTime() + CHECK_LOGIN_INVERTV;
 	SetVisible(true);
 }
