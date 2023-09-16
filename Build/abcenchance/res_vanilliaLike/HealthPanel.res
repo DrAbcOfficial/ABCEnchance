@@ -67,7 +67,7 @@
 		"labelText"		"0"
 		"proportionalToParent" "1"
 		"textAlignment"		"center"
-		"font"		"HealthBar"
+		"font"		"ClassicHealthBar"
 		"wrap"		"0"
 	}
 
@@ -99,7 +99,7 @@
 		"labelText"		"0"
 		"proportionalToParent" "1"
 		"textAlignment"		"center"
-		"font"		"HealthBar"
+		"font"		"ClassicHealthBar"
 		"wrap"		"0"
 	}
 	
