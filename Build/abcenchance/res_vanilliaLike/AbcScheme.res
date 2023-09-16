@@ -214,7 +214,7 @@ Scheme
 				"antialias"	"1"
 			}
 		}
-		"ClassicHealthBar"
+		"HealthBar"
 		{
 			"1"
 			{
@@ -262,20 +262,20 @@ Scheme
 	{
 		"AmmoBar.BgColor"			"Blank"
 		//主要弹药数值颜色
-		"AmmoBar.Ammo1FgColor"		"SvenCoop"
+		"AmmoBar.Ammo1FgColor"		"0 255 0 255"
 		//次要子弹数值颜色
-		"AmmoBar.Ammo2FgColor"		"SvenCoop"
+		"AmmoBar.Ammo2FgColor"		"0 255 0 255"
 		//主次弹药分划线颜色
-		"AmmoBar.SlashFgColor"		"SvenCoop"
+		"AmmoBar.SlashFgColor"		"255 0 0 255"
 		//主要弹药图标颜色
-		"AmmoBar.Ammo1IconColor"	"SvenCoop"
+		"AmmoBar.Ammo1IconColor"	"0 255 0 255"
 		//次要弹药图标颜色
-		"AmmoBar.Ammo2IconColor"	"SvenCoop"
+		"AmmoBar.Ammo2IconColor"	"0 255 0 255"
 		
-		Console.TextColor			"SvenCoop"
+		Console.TextColor			"255 255 255 200"
 		Console.ErrorTextColor			"255 0 0 200"
 		Console.WarnColor			"255 255 0 200"
-		Console.DevTextColor		"SvenCoopDark"
+		Console.DevTextColor		"180 180 180 200"
 		Console.BgColor			"125 125 125 125"
 		Console.FgColor		"0 0 0 125"
 		Console.TextAreaColor		"0 0 0 60"
@@ -301,9 +301,9 @@ Scheme
 		"FlashLight.BgColor"		"Blank"
 		"FlashLight.TextBgColor"		"Blank"
 		//手电筒百分比颜色
-		"FlashLight.TextFgColor"		"SvenCoop"
+		"FlashLight.TextFgColor"		"0 255 0 255"
 		//手电筒电量图标颜色
-		"FlashLight.IconFgColor"	"SvenCoop"
+		"FlashLight.IconFgColor"	"0 255 0 120"
 		
 		"GIndicator.BgColor"			"Blank"
 		//手雷指示器图标颜色
@@ -311,15 +311,15 @@ Scheme
 		
 		"DMGTiles.BgColor"		"Blank"
 		//伤害类型图标颜色
-		"DMGTiles.IconColor"		"SvenCoop"
+		"DMGTiles.IconColor"		"0 255 0 255"
 		//伤害类型文本颜色
-		"DMGTiles.TextColor"		"SvenCoop"
+		"DMGTiles.TextColor"		"0 255 0 255"
 		"DMGTiles.ListViewBgColor"		"Blank"
 		"HealthBar.BgColor"		"Blank"
 		//生命值数值颜色
-		"HealthBar.HealthFgColor"		"SvenCoop"
+		"HealthBar.HealthFgColor"		"0 255 0 255"
 		//护甲数值颜色
-		"HealthBar.ArmorFgColor"		"SvenCoop"
+		"HealthBar.ArmorFgColor"		"0 255 0 255"
 		//低生命值数值颜色
 		"HealthBar.HealthDangerColor"		"255 0 0 255"
 		//低护甲数值颜色
@@ -342,7 +342,7 @@ Scheme
 		//TransLyric文字
 		"Music.TransLyricFgColor"		"200 200 200 255"
 		//Lyric播放文字
-		"Music.LyricHighLightFgColor"		"SvenCoop"
+		"Music.LyricHighLightFgColor"		"0 255 0 255"
 		//TransLyric播放文字
 		"Music.TransLyricHighLightFgColor"		"0 200 0 255"
 		//投票菜单背景颜色
@@ -351,7 +351,7 @@ Scheme
 		"Notice.BgColor"		"Blank"
 		"Notice.TextBgColor"		"Blank"
 		//HUD文字信息颜色
-		"Notice.TextFgColor"		"SvenCoop"
+		"Notice.TextFgColor"		"0 255 0 255"
 		
 		"PlayerBoardPanel.BgColor"	"Blank"
 		"PlayerBoardName.BgColor"		"Blank"
@@ -362,7 +362,7 @@ Scheme
 		"SideText.BgColor"		"Blank"
 		"SideText.TextBgColor"		"Blank"
 		//左侧数值颜色
-		"SideText.TextFgColor"		"SvenCoop"
+		"SideText.TextFgColor"		"0 255 0 255"
 		
 		"TextMenu.BgColor"		"0 0 0 64"
 		//左侧菜单栏文字颜色
@@ -386,6 +386,5 @@ Scheme
 	{
 		"1"		"abcenchance/font/CompactaBold.ttf"
 		"2"		"abcenchance/font/LiquidCrystal-Bold.ttf"
-	
 	}
 }
