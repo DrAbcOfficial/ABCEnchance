@@ -342,7 +342,7 @@ void CNeteasePanel::Think() {
 			}
 		}
 		else
-			ChangeMusic();
+			NextMusic();
 	}
 }
 size_t append(void* ptr, size_t size, size_t nmemb, void* user) {
@@ -417,19 +417,22 @@ void CNeteasePanel::PlayFM(){
 	SetPlayerState(PLAYSTATE::FM);
 	StopMusic();
 	m_aryPlayList.clear();
-	RenewFM();
+	RenewFM(true);
 	PrintF("#Netease_PlayingFM", false, m_pLogined->name.c_str());
 }
-void CNeteasePanel::RenewFM(){
+void CNeteasePanel::RenewFM(bool play){
+	m_bRenewingFM = true;
 	GetTaskManager()->Add(std::async([](std::shared_ptr<netease::CMy> my) -> std::any{
 		return my->GetFM();
-	}, m_pLogined))->ContinueWith([this](std::any anyIds) {
+	}, m_pLogined))->ContinueWith([this, play](std::any anyIds) {
 		if (anyIds.type() == typeid(std::vector<netease::neteaseid_t>)) {
 			auto list = std::any_cast<std::vector<netease::neteaseid_t>>(anyIds);
 			for (auto iter = list.begin(); iter != list.end(); iter++) {
 				AddToList(*iter);
 			}
-			PlayListMusic();
+			if(play)
+				PlayListMusic();
+			m_bRenewingFM = false;
 		}
 	})->Start();
 }
@@ -442,9 +445,6 @@ void CNeteasePanel::StopMusic(){
 		m_pChannel = nullptr;
 		m_pPlaying = nullptr;
 	}
-}
-void CNeteasePanel::NextMusic(){
-	ChangeMusic();
 }
 template<typename... Args>
 void CNeteasePanel::PrintF(const char* str, bool dev, const Args&& ...args){
@@ -490,6 +490,9 @@ struct music_obj {
 	size_t album_w;
 };
 void CNeteasePanel::PlayListMusic(){
+	if (m_bPendingMusic)
+		return;
+	m_bPendingMusic = true;
 	//Clear lyric
 	m_pLyricLable->SetText("");
 	m_pLyricLableHighlight->SetText("");
@@ -599,17 +602,20 @@ void CNeteasePanel::PlayListMusic(){
 				}
 			else
 				PrintF("#Netease_VIPCannotPlay", false);
+			m_bPendingMusic = false;
 		}
 	})->Start();
 }
 void CNeteasePanel::AddToList(netease::neteaseid_t id){
 	m_aryPlayList.push_back(id);
 }
-void CNeteasePanel::ChangeMusic(){
+void CNeteasePanel::NextMusic(){
 	switch (m_pNowState) {
 	case PLAYSTATE::FM: {
-		if (m_aryPlayList.size() == 1)
-			RenewFM();
+		if (m_bRenewingFM)
+			return;
+		if (m_aryPlayList.size() == 2)
+			RenewFM(false);
 		PlayListMusic();
 		break;
 	}
