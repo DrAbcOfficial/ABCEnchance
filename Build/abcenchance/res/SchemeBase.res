@@ -2,6 +2,9 @@ Scheme
 {
 	Colors
 	{
+		"Default"			"0 255 0 255"
+		"DefaultDark"		"0 120 0 255"
+		"DefaultTransparent"	"0 255 0 125"
 		// base colors
 		"White"				"255 255 255 255"
 		"OffWhite"			"216 216 216 255"
