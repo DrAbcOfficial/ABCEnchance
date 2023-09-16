@@ -203,7 +203,45 @@ inline void SearchCaller(CNeteasePanel* panel, CCloudMusicCmdItem* caller, netea
 }
 static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 	"cloudmusic", {
-		CCloudMusicCmdItem("login", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {panel->QRLogin(); }),
+		CCloudMusicCmdItem("login", {
+			CCloudMusicCmdItem("qr", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {panel->QRLogin(); }),
+			CCloudMusicCmdItem("email", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+				if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 3)
+					panel->EmailLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1));
+				else
+					CNeteasePanel::PrintF("#Netease_InvalidId", false);
+			 }),
+			CCloudMusicCmdItem("send_sms", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+				if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 2) {
+					if(gEngfuncs.Cmd_Argc() >= caller->Sub() + 3)
+						panel->SendSMS(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), std::atoi(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1)));
+					else
+						panel->SendSMS(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), 86);
+				}
+				else
+					CNeteasePanel::PrintF("#Netease_InvalidId", false);
+			 }),
+			CCloudMusicCmdItem("phone_passwd", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+				if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 3) {
+					if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 4)
+						panel->PhoneLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 3), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), std::atoi(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1)));
+					else
+						panel->PhoneLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), 86);
+				}
+				else
+					CNeteasePanel::PrintF("#Netease_InvalidId", false);
+			 }),
+			CCloudMusicCmdItem("phone_sms", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+				if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 3) {
+					if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 4)
+						panel->SMSLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 3), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), std::atoi(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1)));
+					else
+						panel->SMSLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), 86);
+				}
+				else
+					CNeteasePanel::PrintF("#Netease_InvalidId", false);
+			 })
+		}),
 		CCloudMusicCmdItem("control", {
 			CCloudMusicCmdItem("stop", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
 				panel->StopMusic();
@@ -436,6 +474,26 @@ const char* g_aryMusicQuality[] = {
 	"lossless",
 	"hires"
 };
+void CNeteasePanel::Search(const char* keyword, netease::SearchType type) {
+	GetTaskManager()->Add(std::async([](const char* keyword, netease::SearchType type, int limit) -> std::any {
+		return s_pNeteaseApi.load()->Search(keyword, type, limit, 0);
+		}, keyword, type, m_pSearchCount->value))->ContinueWith([](const std::any& anyresult) {
+			if (anyresult.type() == typeid(std::vector<std::shared_ptr<netease::CSearchResult>>)) {
+				auto result = std::any_cast<std::vector<std::shared_ptr<netease::CSearchResult>>>(anyresult);
+				char buffer[512];
+				std::string buf;
+				for (auto iter = result.begin(); iter != result.end(); iter++) {
+					netease::CSearchResult* ret = (*iter).get();
+					if (ret->extra.size() > 0)
+						V_snprintf(buffer, "#[%llu] %s - %s\n", ret->id, ret->name.c_str(), ret->extra.c_str());
+					else
+						V_snprintf(buffer, "#[%llu] %s\n", ret->id, ret->name.c_str());
+					buf += buffer;
+				}
+				PrintF("#Netease_SearchResult", false, buf.c_str());
+			}
+			})->Start();
+}
 void CNeteasePanel::PlayMusic(netease::neteaseid_t  id){
 	SetPlayerState(PLAYSTATE::NORMAL);
 	m_aryPlayList.clear();
@@ -520,6 +578,7 @@ void CNeteasePanel::RenewFM(bool play){
 		}
 	})->Start();
 }
+
 void CNeteasePanel::StopMusic(){
 	FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
 	if (m_pSound) {
@@ -530,6 +589,13 @@ void CNeteasePanel::StopMusic(){
 		m_pPlaying = nullptr;
 	}
 }
+void CNeteasePanel::SetVolume(float vol) {
+	if (m_pChannel) {
+		FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
+		soundSystem->SetVolume(m_pChannel, vol);
+	}
+}
+
 template<typename... Args>
 void CNeteasePanel::PrintF(const char* str, bool dev, const Args&& ...args){
 	const static auto wchartoutf = [](const std::wstring& in_wStr) {
@@ -738,47 +804,70 @@ void CNeteasePanel::QRLogin() {
 	m_pLoginPanel->ResetText();
 	m_pLoginPanel->Login();
 }
-void CNeteasePanel::GetMyInfo(){
-	auto& refInfo = m_pLogined;
+void CNeteasePanel::EmailLogin(const char* mail, const char* passwd){
+	GetTaskManager()->Add(std::async([](std::string& mail, std::string& passwd)-> std::any {
+		return s_pNeteaseApi.load()->GetUser()->EMail(mail, passwd);
+	}, std::string(mail), std::string(passwd)))->ContinueWith([this](std::any anyCode) {
+		if (anyCode.type() == typeid(netease::neteasecode_t)) {
+			netease::neteasecode_t code = std::any_cast<netease::neteasecode_t>(anyCode);
+			if (code == 200)
+				GetMyInfo(false);
+			else
+				PrintF("#Netease_NotLogin", false);
+		}
+	})->Start();
+}
+void CNeteasePanel::SendSMS(const char* phone, int country){
+	char* end;
+	GetTaskManager()->Add(std::async([](netease::neteaseid_t phone, int country)-> std::any {
+		s_pNeteaseApi.load()->GetUser()->SendCaptcha(phone, country);
+		return 0;
+	}, std::strtoull(phone, &end, 10), country))->ContinueWith([](std::any anyCode) {
+		PrintF("#Netease_SentSMS", false);
+	})->Start();
+}
+void CNeteasePanel::SMSLogin(const char* phone, const char* captcha, int country){
+	char* end;
+	GetTaskManager()->Add(std::async([](netease::neteaseid_t phone, int captcha, int country)-> std::any {
+		return s_pNeteaseApi.load()->GetUser()->CellPhone(phone, captcha, country);
+	}, std::strtoull(phone, &end, 10), std::strtoull(captcha, &end, 10), country))->ContinueWith([this](std::any anyCode) {
+		if (anyCode.type() == typeid(netease::neteasecode_t)) {
+			netease::neteasecode_t code = std::any_cast<netease::neteasecode_t>(anyCode);
+			if (code == 200)
+				GetMyInfo(false);
+			else
+				PrintF("#Netease_NotLogin", false);
+		}
+	})->Start();
+}
+void CNeteasePanel::PhoneLogin(const char* phone, const char* passwd, int country){
+	char* end;
+	GetTaskManager()->Add(std::async([](netease::neteaseid_t phone, std::string& captcha, int country)-> std::any {
+		return s_pNeteaseApi.load()->GetUser()->CellPhone(phone, captcha, country);
+	}, std::strtoull(phone, &end, 10), std::string(passwd), country))->ContinueWith([this](std::any anyCode) {
+		if (anyCode.type() == typeid(netease::neteasecode_t)) {
+			netease::neteasecode_t code = std::any_cast<netease::neteasecode_t>(anyCode);
+			if (code == 200)
+				GetMyInfo(false);
+			else
+				PrintF("#Netease_NotLogin", false);
+		}
+	})->Start();
+}
+void CNeteasePanel::GetMyInfo(bool silence){
 	GetTaskManager()->Add(std::async([]() -> std::any {
 		return s_pNeteaseApi.load()->GetMyself();
-		}))->ContinueWith([&refInfo](std::any& anyMy) {
-			if (anyMy.type() == typeid(refInfo)) {
+		}))->ContinueWith([this, silence](std::any& anyMy) {
+			if (anyMy.type() == typeid(m_pLogined)) {
 				auto info = std::any_cast<std::shared_ptr<netease::CMy>>(anyMy);
 				char buffer[512];
 				if (info != nullptr)
-					PrintF("#Netease_MyInfo", true, info->name.c_str(), info->signature.c_str(), info->vip ? "Yes" : "No");
+					PrintF("#Netease_MyInfo", silence, info->name.c_str(), info->signature.c_str(), info->vip ? "Yes" : "No");
 				else
-					PrintF("#Netease_NotLogin", true);
-				refInfo = info;
+					PrintF("#Netease_NotLogin", silence);
+				m_pLogined = std::move(info);
 			}
 		})->Start();
-}
-void CNeteasePanel::SetVolume(float vol){
-	if (m_pChannel) {
-		FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
-		soundSystem->SetVolume(m_pChannel, vol);
-	}
-}
-void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
-	GetTaskManager()->Add(std::async([](const char* keyword, netease::SearchType type, int limit) -> std::any {
-		return s_pNeteaseApi.load()->Search(keyword, type, limit, 0);
-	}, keyword, type, m_pSearchCount->value))->ContinueWith([](const std::any& anyresult) {
-			if (anyresult.type() == typeid(std::vector<std::shared_ptr<netease::CSearchResult>>)) {
-				auto result = std::any_cast<std::vector<std::shared_ptr<netease::CSearchResult>>>(anyresult);
-				char buffer[512];
-				std::string buf;
-				for (auto iter = result.begin(); iter != result.end(); iter++) {
-					netease::CSearchResult* ret = (*iter).get();
-					if (ret->extra.size() > 0)
-						V_snprintf(buffer, "#[%llu] %s - %s\n", ret->id, ret->name.c_str(), ret->extra.c_str());
-					else
-						V_snprintf(buffer, "#[%llu] %s\n", ret->id, ret->name.c_str());
-					buf += buffer;
-				}
-				PrintF("#Netease_SearchResult", false, buf.c_str());
-			}
-	})->Start();
 }
 
 /*
@@ -823,7 +912,7 @@ struct loginshare_obj {
 void QRCheck(CQRLoginPanel* panel, std::string& qrkey) {
 	GetTaskManager()->Add(std::async([](std::string unikey) -> std::any {
 		return s_pNeteaseApi.load()->GetUser()->QRCheck(unikey);
-	}, qrkey))->ContinueWith([&panel, &qrkey](std::any anyRes) {
+	}, qrkey))->ContinueWith([panel, &qrkey](std::any anyRes) {
 		if (anyRes.type() == typeid(netease::CLocalUser::QRStatue)) {
 			auto result = std::any_cast<netease::CLocalUser::QRStatue>(anyRes);
 			switch (result) {

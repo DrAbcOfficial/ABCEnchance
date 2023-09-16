@@ -50,20 +50,27 @@ public:
 	//force think
 	void Think();
 
+	//Play Method
+	void Search(const char* keyword, netease::SearchType type);
 	void PlayMusic(netease::neteaseid_t id);
 	void PlayList(netease::neteaseid_t id);
 	void PlayDj(netease::neteaseid_t id);
 	void PlayRadio(netease::neteaseid_t id);
 	void PlayRecommendMusic();
 	void PlayFM();
-
+	
+	//Music control
 	void StopMusic();
 	void NextMusic();
-	void QRLogin();
-	void GetMyInfo();
-
 	void SetVolume(float vol);
-	void Search(const char* keyword, netease::SearchType type);
+
+	//User info
+	void QRLogin();
+	void EmailLogin(const char* mail, const char* passwd);
+	void SendSMS(const char* phone, int country);
+	void SMSLogin(const char* phone, const char* captcha, int country);
+	void PhoneLogin(const char* phone, const char* passwd, int country);
+	void GetMyInfo(bool silence = true);
 
 	template<typename... Args>
 	static void PrintF(const char* str, bool dev, const Args&& ...args);
