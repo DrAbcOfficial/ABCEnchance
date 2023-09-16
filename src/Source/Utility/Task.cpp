@@ -6,53 +6,54 @@ CTaskManager* GetTaskManager() {
 	return &s_TaskManager;
 }
 
-CTaskItem::CTaskItem(std::future<std::any>* futrue){
-	m_pFutrue = futrue;
+CTaskItem::CTaskItem(std::future<std::any>& futrue){
+	auto& refB = m_bReady;
+	auto& refV = m_pValue;
+	m_pThread = std::thread(
+		[&refB, &refV, futrue = std::move(futrue)]() mutable{
+			refV = futrue.get();
+			refB = true;
+		}
+	);
 }
 
-void CTaskItem::ContinueWith(std::function<void(std::any&)> func){
-	this->m_pContinue = func;
+CTaskItem::~CTaskItem(){
+	if (m_pThread.joinable())
+		m_pThread.join();
 }
 
-bool CTaskItem::Ready(){
-	return m_pFutrue.load()->wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+CTaskItem* CTaskItem::ContinueWith(std::function<void(std::any&)> func){
+	m_pContinue = std::move(func);
+	return this;
 }
 
-bool CTaskItem::Vaild(){
-	return m_pFutrue.load()->valid();
+bool CTaskItem::IsReady(){
+	return m_bReady;
 }
 
-bool CTaskItem::Excute(){
-	if (m_pContinue != nullptr) {
-		m_pContinue(m_pFutrue.load()->get());
-		return true;
-	}
-	return false;
+void CTaskItem::Excute(){
+	if (m_pContinue != nullptr)
+		m_pContinue(m_pValue);
+}
+
+void CTaskItem::Start(){
+	m_pThread.detach();
+}
+
+
+CTaskItem* CTaskManager::Add(std::future<std::any>& func){
+	CTaskItem* item = new CTaskItem(func);
+	m_aryList.push_back(item);
+	return item;
 }
 
 void CTaskManager::CheckAll(){
 	for (auto iter = m_aryList.begin(); iter != m_aryList.end();) {
-		auto obj = *iter;
-		if (obj->Vaild()) {
-			if (obj->Ready()) {
-				obj->Excute();
-				delete obj;
-				iter = m_aryList.erase(iter);
-				continue;
-			}
-			iter++;
-		}
-		else {
-			delete obj;
+		if ((*iter)->IsReady()) {
+			(*iter)->Excute();
 			iter = m_aryList.erase(iter);
-			continue;
 		}
-		iter++;
+		else
+			iter++;
 	}
-}
-
-CTaskItem* CTaskManager::Start(std::future<std::any>* func){
-	CTaskItem* item = new CTaskItem(func);
-	m_aryList.push_back(item);
-	return item;
 }
