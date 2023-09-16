@@ -1,6 +1,8 @@
 #pragma once
 #include <metahook.h>
 #include <future>
+#include <codecvt>
+#include <locale>
 
 #include "formatter.h"
 
@@ -208,21 +210,6 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 	}
 );
 
-void CloudMusic() {
-	CCloudMusicCmdItem* pCmd = &s_CloudMusicRoot;
-	int argc = gEngfuncs.Cmd_Argc();
-	for (int index = 1; index < argc; index++) {
-		char* arg = gEngfuncs.Cmd_Argv(index);
-		if (pCmd)
-			pCmd = pCmd->GetChildOrExcute(arg, g_pViewPort->GetMusicPanel());
-		if (!pCmd)
-			break;
-	}
-	if (pCmd)
-		pCmd->Excute(g_pViewPort->GetMusicPanel());
-		
-}
-
 CNeteasePanel::CNeteasePanel()
 	: BaseClass(nullptr, VIEWPORT_NETEASEMUSIC_NAME) {
 	SetProportional(true);
@@ -235,6 +222,8 @@ CNeteasePanel::CNeteasePanel()
 	m_pArtistNameLable = new vgui::Label(this, "ArtistName", "");
 	m_pLyricLable = new vgui::Label(this, "Lyric", "");
 	m_pTranslatedLyricLable = new vgui::Label(this, "TransLyric", "");
+	m_pLyricLableHighlight = new vgui::Label(this, "LyricHighlight", "");
+	m_pTranslatedLyricLableHighlight = new vgui::Label(this, "TransLyricHighlight", "");
 
 	m_pTimeLable = new vgui::Label(this, "Timer", "");
 	m_pMaxTimeLable = new vgui::Label(this, "MaxTime", "");
@@ -267,7 +256,19 @@ CNeteasePanel::CNeteasePanel()
 
 	GetMyInfo();
 
-	ADD_COMMAND("cloudmusic", CloudMusic);
+	ADD_COMMAND("cloudmusic", []() {
+		CCloudMusicCmdItem* pCmd = &s_CloudMusicRoot;
+		int argc = gEngfuncs.Cmd_Argc();
+		for (int index = 1; index < argc; index++) {
+			char* arg = gEngfuncs.Cmd_Argv(index);
+			if (pCmd)
+				pCmd = pCmd->GetChildOrExcute(arg, g_pViewPort->GetMusicPanel());
+			if (!pCmd)
+				break;
+		}
+		if (pCmd)
+			pCmd->Excute(g_pViewPort->GetMusicPanel()); 
+	});
 }
 const char* CNeteasePanel::GetName(){
 	return VIEWPORT_NETEASEMUSIC_NAME;
@@ -285,6 +286,8 @@ void CNeteasePanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	m_pMaxTimeLable->SetFgColor(GetSchemeColor("Music.NumberFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
 	m_pLyricLable->SetFgColor(GetSchemeColor("Music.LyricFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
 	m_pTranslatedLyricLable->SetFgColor(GetSchemeColor("Music.TransLyricFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
+	m_pLyricLableHighlight->SetFgColor(GetSchemeColor("Music.LyricHighLightFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
+	m_pTranslatedLyricLableHighlight->SetFgColor(GetSchemeColor("Music.TransLyricHighLightFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
 	m_pLoginPanel->SetBgColor(GetSchemeColor("Music.BackGoundColor", GetSchemeColor("Frame.BgColor", pScheme), pScheme));
 }
 void CNeteasePanel::ShowPanel(bool state){
@@ -315,15 +318,28 @@ void CNeteasePanel::Think() {
 			float flRatio = static_cast<float>(pos) / static_cast<float>(m_pPlaying->duration);
 			m_pProgressLable->SetWide(static_cast<float>(m_pProgressBackgroundPanel->GetWide()) * flRatio);
 			//lyric
-			if (m_pLyric->Size() > 0)
-				m_pLyricLable->SetText(m_pLyric->LyricAt(pos).lyric.c_str());
-			else
+			if (m_pLyric->Size() > 0) {
+				auto lrc = m_pLyric->LyricAt(pos);
+				std::wstring szLrc = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(lrc.lyric);
+				m_pLyricLable->SetText(szLrc.c_str());
+				szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc.end_time - pos) / (lrc.end_time - lrc.start_time)), 0.0f, 1.0f));
+				m_pLyricLableHighlight->SetText(szLrc.c_str());
+			}
+			else {
 				m_pLyricLable->SetText("");
-
-			if (m_pTransLyric->Size() > 0)
-				m_pTranslatedLyricLable->SetText(m_pTransLyric->LyricAt(pos).lyric.c_str());
-			else
+				m_pLyricLableHighlight->SetText("");
+			}
+			if (m_pTransLyric->Size() > 0) {
+				auto lrc = m_pTransLyric->LyricAt(pos);
+				std::wstring szLrc = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(lrc.lyric);
+				m_pTranslatedLyricLable->SetText(szLrc.c_str());
+				szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc.end_time - pos) / (lrc.end_time - lrc.start_time)), 0.0f, 1.0f));
+				m_pTranslatedLyricLableHighlight->SetText(szLrc.c_str());
+			}
+			else {
 				m_pTranslatedLyricLable->SetText("");
+				m_pTranslatedLyricLableHighlight->SetText("");
+			}
 		}
 		else
 			ChangeMusic();
@@ -407,7 +423,7 @@ void CNeteasePanel::PlayFM(){
 void CNeteasePanel::RenewFM(){
 	GetTaskManager()->Add(std::async([](std::shared_ptr<netease::CMy> my) -> std::any{
 		return my->GetFM();
-	}, m_pLogined))->ContinueWith([=](std::any anyIds) {
+	}, m_pLogined))->ContinueWith([this](std::any anyIds) {
 		if (anyIds.type() == typeid(std::vector<netease::neteaseid_t>)) {
 			auto list = std::any_cast<std::vector<netease::neteaseid_t>>(anyIds);
 			for (auto iter = list.begin(); iter != list.end(); iter++) {
@@ -474,6 +490,12 @@ struct music_obj {
 	size_t album_w;
 };
 void CNeteasePanel::PlayListMusic(){
+	//Clear lyric
+	m_pLyricLable->SetText("");
+	m_pLyricLableHighlight->SetText("");
+	m_pTranslatedLyricLable->SetText("");
+	m_pTranslatedLyricLableHighlight->SetText("");
+
 	if (m_aryPlayList.size() == 0)
 		return;
 	if (m_pPlaying != nullptr)
@@ -538,7 +560,7 @@ void CNeteasePanel::PlayListMusic(){
 		obj.album_h = height;
 		obj.album_w = width;
 		return &obj;
-		}, id, static_cast<size_t>(m_pQuality->value)))->ContinueWith([=](std::any& anyMusic) {
+		}, id, static_cast<size_t>(m_pQuality->value)))->ContinueWith([this](std::any& anyMusic) {
 		if (anyMusic.type() == typeid(music_obj*)) {
 			auto obj = std::any_cast<music_obj*>(anyMusic);
 			if (obj == nullptr) {

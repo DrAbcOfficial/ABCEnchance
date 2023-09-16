@@ -89,6 +89,8 @@ private:
 	vgui::Label* m_pArtistNameLable = nullptr;
 	vgui::Label* m_pLyricLable = nullptr;
 	vgui::Label* m_pTranslatedLyricLable = nullptr;
+	vgui::Label* m_pLyricLableHighlight = nullptr;
+	vgui::Label* m_pTranslatedLyricLableHighlight = nullptr;
 
 	vgui::Label* m_pTimeLable = nullptr;
 	vgui::Label* m_pMaxTimeLable = nullptr;
