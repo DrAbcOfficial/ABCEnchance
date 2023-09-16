@@ -122,20 +122,6 @@ namespace netease {
 		}
 		return "";
 	}
-	CLyricItem::CLyricItem(string raw) {
-		size_t pos = raw.find_first_of(']');
-		string time = raw.substr(1, pos - 1);
-		this->text = raw.substr(pos + 1);
-
-		pos = time.find_first_of(':');
-		auto minutes = std::chrono::minutes(std::stoi(time.substr(0, pos)));
-		time.erase(0, pos + 1);
-		pos = time.find_first_of('.');
-		auto seconds = std::chrono::seconds(std::stoi(time.substr(0, pos)));
-		time.erase(0, pos + 1);
-		auto miliseconds = std::chrono::milliseconds(std::stoi(time));
-		this->time = minutes + seconds + miliseconds;
-	}
 	CLyric::CLyric(rapidjson::Document& json) {
 		if (json.HasMember("code") && json["code"].GetInt() == 200) {
 			const static auto shouldSkip = [](string& raw) -> bool {
@@ -148,40 +134,10 @@ namespace netease {
 				}).base(), raw.end());
 				return std::isdigit(raw[1]) == 0;
 			};
-			string pending = "";
-			if (json.HasMember("lrc")) {
-				string lrc = json["lrc"]["lyric"].GetString();
-				for (auto iter = lrc.begin(); iter != lrc.end(); iter++) {
-					if ((*iter) == '\n' && pending.size() > 1) {
-						if (!shouldSkip(pending))
-							lyric.push_back(new CLyricItem(pending));
-						pending.clear();
-						continue;
-					}
-					pending += *iter;
-				}
-			}
-			if (json.HasMember("tlyric")) {
-				pending.clear();
-				string tlrc = json["tlyric"]["lyric"].GetString();
-				for (auto iter2 = tlrc.begin(); iter2 != tlrc.end(); iter2++) {
-					if ((*iter2) == '\n' && pending.size() > 1) {
-						if(!shouldSkip(pending))
-							tlyric.push_back(new CLyricItem(pending));
-						pending.clear();
-						continue;
-					}
-					pending += *iter2;
-				}
-			}
-		}
-	}
-	CLyric::~CLyric() {
-		for (auto iter = lyric.begin(); iter != lyric.end(); iter++) {
-			delete (*iter);
-		}
-		for (auto iter = tlyric.begin(); iter != tlyric.end(); iter++) {
-			delete (*iter);
+			if (json.HasMember("lrc"))
+				lyric = json["lrc"]["lyric"].GetString();
+			if (json.HasMember("tlyric"))
+				tlyric = json["tlyric"]["lyric"].GetString();
 		}
 	}
 	CUser::CUser(rapidjson::Value& json) : CBase163Object(json) {

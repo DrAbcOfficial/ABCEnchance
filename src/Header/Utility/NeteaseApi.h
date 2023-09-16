@@ -65,18 +65,11 @@ namespace netease {
 
 		string GetPlayUrl(const char* quality, char* encode);
 	};
-	class CLyricItem {
-	public:
-		std::chrono::milliseconds time;
-		string text;
-		CLyricItem(string raw);
-	};
 	class CLyric {
 	public:
-		std::vector<CLyricItem*> lyric;
-		std::vector<CLyricItem*> tlyric;
+		std::string lyric;
+		std::string tlyric;
 		CLyric(rapidjson::Document& json);
-		~CLyric();
 	};
 	class CUser : public CBase163Object {
 	public:
