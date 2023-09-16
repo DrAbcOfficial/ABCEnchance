@@ -30,9 +30,7 @@ CAmmoPanel::CAmmoPanel()
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "AmmoScheme.res", "AmmoScheme");
-	SetScheme("AmmoScheme");
-
+	SetScheme(g_pViewPort->GetBaseScheme());
 	m_pBackground = new ImagePanel(this, "Background");
 
 	m_Ammo1Icon = new ImageSprPanel(this, "Ammo1Icon");

@@ -73,6 +73,8 @@ public:
 	void HudHideCallBack(int token);
 	void LongjumpCallBack(bool state);
 
+	vgui::HScheme GetBaseScheme();
+
 	bool IsScoreBoardVisible();
 	void ShowScoreBoard();
 	void HideScoreBoard();
@@ -156,7 +158,8 @@ private:
 	CDeathMsgPanel* m_pDeahMsg = nullptr;
 	CNeteasePanel* m_pNeteaseMusic = nullptr;
 
-	int m_iInterMission;
+	vgui::HScheme m_hBaseScheme = 0;
+	int m_iInterMission = 0;
 
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";

@@ -71,8 +71,7 @@ CDeathMsgPanel::CDeathMsgPanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "DeathMsgScheme.res", "DeathMsgScheme");
-	SetScheme("DeathMsgScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 
 	LoadControlSettings(VGUI2_ROOT_DIR "DeathMsgPanel.res");
 	SetVisible(false);

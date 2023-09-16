@@ -27,8 +27,7 @@ CEffectPanel::CEffectPanel()
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "EffectPanelScheme.res", "EffectPanelScheme");
-	SetScheme("EffectPanelScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 	// Header labels
 	m_pRightWater = new vgui::ImageSprPanel(this, "RightWater");
 	m_pLeftWater = new vgui::ImageSprPanel(this, "LeftWater");

@@ -28,8 +28,7 @@ CHealthPanel::CHealthPanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "HealthScheme.res", "HealthScheme");
-	SetScheme("HealthScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 
 	m_Backround = new ImagePanel(this, "Background");
 

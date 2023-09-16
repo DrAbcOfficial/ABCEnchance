@@ -1199,15 +1199,15 @@ CConsoleDialog::CConsoleDialog(Panel* pParent, const char* pName, bool bStatusVe
 	BaseClass(pParent, pName)
 {
 	// initialize dialog
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "ConsoleScheme.res", "ConsoleScheme");
+	auto scheme = vgui::scheme()->GetScheme("AbcScheme");
 	m_pConsolePanel = new CConsolePanel(this, "ConsolePage", bStatusVersion);
 	m_pConsolePanel->AddActionSignalTarget(this);
-	m_pConsolePanel->SetScheme("ConsoleScheme");
+	m_pConsolePanel->SetScheme(scheme);
 
 	LoadControlSettings(VGUI2_ROOT_DIR "ConsoleDialog.res");
 	SetMenuButtonVisible(false);
 
-	((Button*)_closeButton)->SetScheme("ConsoleScheme");
+	((Button*)_closeButton)->SetScheme(scheme);
 	SetVisible(false);
 }
 

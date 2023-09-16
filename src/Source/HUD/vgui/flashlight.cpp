@@ -20,8 +20,7 @@ CFlashLightPanel::CFlashLightPanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "FlashLightScheme.res", "FlashLightScheme");
-	SetScheme("FlashLightScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 	// Header labels
 	m_pMessage = new vgui::Label(this, "Message", "");
 	m_pOffImage = new vgui::ImagePanel(this, "OffImage");

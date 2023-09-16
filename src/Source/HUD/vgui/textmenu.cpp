@@ -23,8 +23,7 @@ CTextMenu::CTextMenu()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "TextMenuScheme.res", "TextMenuScheme");
-	SetScheme("TextMenuScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 	// Header labels
 	m_pMenu = new vgui::LabelEx(this, "Menu", "");
 
