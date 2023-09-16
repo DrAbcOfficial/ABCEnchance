@@ -56,7 +56,7 @@
 		"proportionalToParent" "1"
 		"textAlignment"		"center"
 		"brighttext"		"1"
-		"font"		"AmmoBar"
+		"font"		"ClassicAmmoBar"
 		"wrap"		"0"
 	}
 

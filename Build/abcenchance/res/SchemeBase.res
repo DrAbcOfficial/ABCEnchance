@@ -25,6 +25,9 @@ Scheme
 		"ColorCode6"		"255 0 255 255"
 		"ColorCode7"		"136 136 136 255"
 		"ColorCode8"		"255 255 255 255"
+
+		"SvenCoop"			"100 130 200 255"
+		"SvenCoopDark"			"60 90 160 255"
 		
 		// Killfeed (deathnotice) colors
 		"KF_Background"			"0 0 0 64"
