@@ -416,7 +416,7 @@ void CNeteasePanel::PlayFM(){
 void CNeteasePanel::RenewFM(){
 	GetTaskManager()->Add(std::async([](std::shared_ptr<netease::CMy> my) -> std::any{
 		return my->GetFM();
-	}, m_pLogined))->ContinueWith([&](std::any anyIds) {
+	}, m_pLogined))->ContinueWith([=](std::any anyIds) {
 		if (anyIds.type() == typeid(std::vector<netease::neteaseid_t>)) {
 			auto list = std::any_cast<std::vector<netease::neteaseid_t>>(anyIds);
 			for (auto iter = list.begin(); iter != list.end(); iter++) {
@@ -550,7 +550,7 @@ void CNeteasePanel::PlayListMusic(){
 		obj.album_h = height;
 		obj.album_w = width;
 		return &obj;
-		}, id, static_cast<size_t>(m_pQuality->value)))->ContinueWith([&](std::any& anyMusic) {
+		}, id, static_cast<size_t>(m_pQuality->value)))->ContinueWith([=](std::any& anyMusic) {
 		if (anyMusic.type() == typeid(music_obj*)) {
 			auto obj = std::any_cast<music_obj*>(anyMusic);
 			if (obj == nullptr) {
