@@ -262,15 +262,15 @@ Scheme
 	{
 		"AmmoBar.BgColor"			"Blank"
 		//主要弹药数值颜色
-		"AmmoBar.Ammo1FgColor"		"0 255 0 255"
+		"AmmoBar.Ammo1FgColor"		"Default"
 		//次要子弹数值颜色
-		"AmmoBar.Ammo2FgColor"		"0 255 0 255"
+		"AmmoBar.Ammo2FgColor"		"Default"
 		//主次弹药分划线颜色
 		"AmmoBar.SlashFgColor"		"255 0 0 255"
 		//主要弹药图标颜色
-		"AmmoBar.Ammo1IconColor"	"0 255 0 255"
+		"AmmoBar.Ammo1IconColor"	"Default"
 		//次要弹药图标颜色
-		"AmmoBar.Ammo2IconColor"	"0 255 0 255"
+		"AmmoBar.Ammo2IconColor"	"Default"
 		
 		Console.TextColor			"255 255 255 200"
 		Console.ErrorTextColor			"255 0 0 200"
@@ -301,25 +301,25 @@ Scheme
 		"FlashLight.BgColor"		"Blank"
 		"FlashLight.TextBgColor"		"Blank"
 		//手电筒百分比颜色
-		"FlashLight.TextFgColor"		"0 255 0 255"
+		"FlashLight.TextFgColor"		"Default"
 		//手电筒电量图标颜色
-		"FlashLight.IconFgColor"	"0 255 0 120"
+		"FlashLight.IconFgColor"	"DefaultTransparent"
 		
 		"GIndicator.BgColor"			"Blank"
 		//手雷指示器图标颜色
-		"GIndicator.DrawColor"		"0 255 0 125"
+		"GIndicator.DrawColor"		"DefaultTransparent"
 		
 		"DMGTiles.BgColor"		"Blank"
 		//伤害类型图标颜色
-		"DMGTiles.IconColor"		"0 255 0 255"
+		"DMGTiles.IconColor"		"Default"
 		//伤害类型文本颜色
-		"DMGTiles.TextColor"		"0 255 0 255"
+		"DMGTiles.TextColor"		"Default"
 		"DMGTiles.ListViewBgColor"		"Blank"
 		"HealthBar.BgColor"		"Blank"
 		//生命值数值颜色
-		"HealthBar.HealthFgColor"		"0 255 0 255"
+		"HealthBar.HealthFgColor"		"Default"
 		//护甲数值颜色
-		"HealthBar.ArmorFgColor"		"0 255 0 255"
+		"HealthBar.ArmorFgColor"		"Default"
 		//低生命值数值颜色
 		"HealthBar.HealthDangerColor"		"255 0 0 255"
 		//低护甲数值颜色
@@ -342,16 +342,16 @@ Scheme
 		//TransLyric文字
 		"Music.TransLyricFgColor"		"200 200 200 255"
 		//Lyric播放文字
-		"Music.LyricHighLightFgColor"		"0 255 0 255"
+		"Music.LyricHighLightFgColor"		"Default"
 		//TransLyric播放文字
-		"Music.TransLyricHighLightFgColor"		"0 200 0 255"
+		"Music.TransLyricHighLightFgColor"		"DefaultDark"
 		//投票菜单背景颜色
 		"Music.BackGoundColor"		"80 80 80 60"
 		
 		"Notice.BgColor"		"Blank"
 		"Notice.TextBgColor"		"Blank"
 		//HUD文字信息颜色
-		"Notice.TextFgColor"		"0 255 0 255"
+		"Notice.TextFgColor"		"Default"
 		
 		"PlayerBoardPanel.BgColor"	"Blank"
 		"PlayerBoardName.BgColor"		"Blank"
@@ -362,7 +362,7 @@ Scheme
 		"SideText.BgColor"		"Blank"
 		"SideText.TextBgColor"		"Blank"
 		//左侧数值颜色
-		"SideText.TextFgColor"		"0 255 0 255"
+		"SideText.TextFgColor"		"Default"
 		
 		"TextMenu.BgColor"		"0 0 0 64"
 		//左侧菜单栏文字颜色

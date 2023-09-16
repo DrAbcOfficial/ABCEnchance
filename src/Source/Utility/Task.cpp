@@ -65,7 +65,7 @@ void CTaskManager::CheckAll(){
 			//转移所有权，防止栈被干烂
 			auto callback = std::move(item->GetContinue());
 			auto val = std::move(item->GetValue());
-			delete (*iter);
+			delete item;
 			iter = m_aryList.erase(iter);
 			std::invoke(callback, val);
 		}
