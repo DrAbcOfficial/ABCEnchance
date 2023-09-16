@@ -14,7 +14,9 @@ public:
 	CTaskItem* Start();
 	//is ready
 	bool IsReady();
-	void Excute();
+
+	std::function<void(std::any&)> GetContinue();
+	std::any GetValue();
 private:
 	std::thread m_pThread;
 	std::atomic_bool m_bReady = false;

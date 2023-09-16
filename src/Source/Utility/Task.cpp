@@ -31,9 +31,12 @@ bool CTaskItem::IsReady(){
 	return m_bReady;
 }
 
-void CTaskItem::Excute(){
-	if (m_pContinue != nullptr)
-		m_pContinue(m_pValue);
+std::function<void(std::any&)> CTaskItem::GetContinue(){
+	return m_pContinue;
+}
+
+std::any CTaskItem::GetValue(){
+	return m_pValue;
 }
 
 CTaskItem* CTaskItem::Start(){
@@ -57,10 +60,14 @@ bool CTaskManager::Has(CTaskItem* check){
 
 void CTaskManager::CheckAll(){
 	for (auto iter = m_aryList.begin(); iter != m_aryList.end();) {
-		if ((*iter)->IsReady()) {
-			(*iter)->Excute();
+		auto item = *iter;
+		if (item->IsReady()) {
+			//转移所有权，防止栈被干烂
+			auto callback = std::move(item->GetContinue());
+			auto val = std::move(item->GetValue());
 			delete (*iter);
 			iter = m_aryList.erase(iter);
+			std::invoke(callback, val);
 		}
 		else
 			iter++;
