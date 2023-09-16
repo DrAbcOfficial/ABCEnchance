@@ -76,10 +76,9 @@ private:
 	};
 	void SetPlayerState(PLAYSTATE state);
 	void PlayListMusic();
-	void RenewFM();
+	void RenewFM(bool play);
 
 	void AddToList(netease::neteaseid_t id);
-	void ChangeMusic();
 
 	cvar_t* m_pQuality = nullptr;
 	cvar_t* m_pVolume = nullptr;
@@ -103,6 +102,9 @@ private:
 
 	FMOD_SOUND* m_pSound = nullptr;
 	FMOD_CHANNEL* m_pChannel = nullptr;
+
+	bool m_bRenewingFM = false;
+	bool m_bPendingMusic = false;
 
 	std::shared_ptr<netease::CMusic> m_pPlaying = nullptr;
 	std::unique_ptr<lrc::Lyrics> m_pLyric = nullptr;
