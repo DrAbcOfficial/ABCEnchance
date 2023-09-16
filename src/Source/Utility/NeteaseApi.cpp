@@ -502,8 +502,10 @@ namespace netease {
 	}
 	neteasecode_t CLocalUser::CellPhone(neteaseid_t phone, int captcha, int country){
 		std::map<string, string> p = {
-			{"ctcode", std::to_string(country)},
-			{"cellphone", std::to_string(phone)}
+			{"countrycode", std::to_string(country)},
+			{"captcha", std::to_string(captcha)},
+			{"rememberLogin", "1"},
+			{"phone", std::to_string(phone)}
 		};
 		return GetCookiePost(Action("/login/cellphone", p));
 	}
@@ -519,7 +521,6 @@ namespace netease {
 	neteasecode_t CLocalUser::EMail(string& mail, string& passwd){
 		std::map<string, string> p = {
 			{"username",mail},
-			{"username", "email"},
 			{"rememberLogin", "1"},
 			{"password", Md5Encode(passwd)}
 		};
