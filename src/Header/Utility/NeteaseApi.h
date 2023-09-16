@@ -25,7 +25,11 @@ namespace netease {
 		ST_ALBUM = 10,
 		ST_ARTIST = 100,
 		ST_PLAYLIST = 1000,
-		ST_USER = 1002
+		ST_USER = 1002,
+		ST_MV = 1004,
+		ST_LYRIC = 1006,
+		ST_RADIO = 1009,
+		ST_VIDEO = 1014
 	};
 
 	enum DailyTaskType {
@@ -55,15 +59,23 @@ namespace netease {
 	public:
 		std::vector<std::shared_ptr<CArtist>> ar;
 		std::shared_ptr <CAlbum> al;
-
 		string aliasName;
 		// 0 = free
 		// 1 = need money
 		bool copyright = false;
 		unsigned long duration = 0;
 		CMusic(rapidjson::Value& json);
-
-		string GetPlayUrl(const char* quality, char* encode);
+		virtual string GetPlayUrl(const char* quality, char* encode);
+	};
+	class CDjMusic : public CMusic {
+	public:
+		neteaseid_t mainTrackId;
+		string coverUrl;
+		unsigned long listenerCount;
+		unsigned long likedCount;
+		string description;
+		CDjMusic(rapidjson::Value& json);
+		string GetPlayUrl(const char* quality, char* encode) override;
 	};
 	class CLyric {
 	public:
@@ -137,8 +149,10 @@ namespace netease {
 	public:
 		std::shared_ptr<CArtist> GetArtist(neteaseid_t id);
 		std::vector<std::shared_ptr<CMusic>> GetAlbumSongs(neteaseid_t id);
+		std::vector<std::shared_ptr<CDjMusic>> GetRadioSongs(neteaseid_t id);
 		std::vector<std::shared_ptr<CSearchResult>> Search(const string& keyword, SearchType type, int limit = 30, int offset = 0);
 		std::shared_ptr<CMusic> GetSongDetail(neteaseid_t id);
+		std::shared_ptr<CDjMusic> GetDjSongDetail(neteaseid_t id);
 		std::shared_ptr<CLyric> GetLyric(neteaseid_t songid);
 		std::shared_ptr<CUser> GetUser(neteaseid_t userid);
 		std::shared_ptr<CMy> GetMyself();

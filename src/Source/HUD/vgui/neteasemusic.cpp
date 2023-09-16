@@ -108,25 +108,23 @@ protected:
 static CAlbumImage* s_pAlbumImage;
 static std::atomic<netease::CNeteaseMusicAPI*> s_pNeteaseApi;
 
-const static netease::SearchType s_arySearchTypeTable[] = {
-	netease::ST_SONG,
-	netease::ST_ALBUM,
-	netease::ST_ARTIST,
-	netease::ST_PLAYLIST,
-	netease::ST_USER,
-};
 class CCloudMusicCmdItem {
+private:
 	std::string name;
 	std::list<CCloudMusicCmdItem> children;
 	CCloudMusicCmdItem* parent = nullptr;
 	bool terminal = false;
-	void (*func)(CNeteasePanel* panel) = nullptr;
+	void (*func)(CNeteasePanel* panel, CCloudMusicCmdItem* caller) = nullptr;
+	size_t sub = 0;
 public:
 	std::string GetName() {
 		return name;
 	}
 	CCloudMusicCmdItem* GetParent() {
 		return parent;
+	}
+	size_t Sub() {
+		return sub;
 	}
 	size_t Size() {
 		return children.size();
@@ -136,7 +134,7 @@ public:
 	}
 	void Excute(CNeteasePanel* panel) {
 		if(func)
-			func(panel);
+			func(panel, this);
 		if (children.size() > 0) {
 			for (auto iter = children.begin(); iter != children.end(); iter++) {
 				std::string buf;
@@ -152,6 +150,7 @@ public:
 	}
 	void SetParent(CCloudMusicCmdItem* cmd) {
 		parent = cmd;
+		sub = cmd->Sub() + 1;
 	}
 	void SetupParent() {
 		for (auto iter = children.begin(); iter != children.end(); iter++) {
@@ -175,7 +174,7 @@ public:
 		Excute(panel);
 		return nullptr;
 	}
-	CCloudMusicCmdItem(const char* n, void(*f)(CNeteasePanel* panel)) {
+	CCloudMusicCmdItem(const char* n, void(*f)(CNeteasePanel* panel, CCloudMusicCmdItem* caller)) {
 		name = n;
 		func = f;
 		terminal = true;
@@ -187,48 +186,69 @@ public:
 		func = nullptr;
 	}
 	//if nothing match, default method
-	CCloudMusicCmdItem(const char* n, std::list<CCloudMusicCmdItem>c, void(*f)(CNeteasePanel* panel)) {
+	CCloudMusicCmdItem(const char* n, std::list<CCloudMusicCmdItem>c, void(*f)(CNeteasePanel* panel, CCloudMusicCmdItem* caller)) {
 		name = n;
 		children = c;
 		terminal = false;
 		func = f;
 	}
 };
+inline void SearchCaller(CNeteasePanel* panel, CCloudMusicCmdItem* caller, netease::SearchType type) {
+	if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 2) {
+		char* keyword = gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1);
+		panel->Search(keyword, type);
+	}
+	else
+		CNeteasePanel::PrintF("#Netease_InvalidId", false);
+}
 static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 	"cloudmusic", {
-		CCloudMusicCmdItem("login", [](CNeteasePanel* panel) {panel->QRLogin(); }),
+		CCloudMusicCmdItem("login", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {panel->QRLogin(); }),
 		CCloudMusicCmdItem("control", {
-			CCloudMusicCmdItem("stop", [](CNeteasePanel* panel) {
+			CCloudMusicCmdItem("stop", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
 				panel->StopMusic();
-				panel->ShowPanel(false); 
+				panel->ShowPanel(false);
 			}),
-			CCloudMusicCmdItem("next", [](CNeteasePanel* panel) { panel->NextMusic(); }),
+			CCloudMusicCmdItem("next", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) { panel->NextMusic(); }),
 		}),
 		CCloudMusicCmdItem("play", {
-			CCloudMusicCmdItem("music", [](CNeteasePanel* panel) {
-			if (gEngfuncs.Cmd_Argc() < 3)
-				CNeteasePanel::PrintF("#Netease_InvalidId", false);
-			else {
+			CCloudMusicCmdItem("music", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
 				char* end;
-				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
-				panel->PlayMusic(id);
-			}
-		}),
-			CCloudMusicCmdItem("playlist", [](CNeteasePanel* panel) {
-				if (gEngfuncs.Cmd_Argc() < 3)
+				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), &end, 10);
+				if (id == 0)
 					CNeteasePanel::PrintF("#Netease_InvalidId", false);
-				else {
-					char* end;
-					netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
+				else
+					panel->PlayMusic(id);
+			}),
+			CCloudMusicCmdItem("playlist", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+				char* end;
+				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), &end, 10);
+				if (id == 0)
+					CNeteasePanel::PrintF("#Netease_InvalidId", false);
+				else
 					panel->PlayList(id);
-				}
+			}),
+			CCloudMusicCmdItem("dj", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+				char* end;
+				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), &end, 10);
+				if (id == 0)
+					CNeteasePanel::PrintF("#Netease_InvalidId", false);
+				else
+					panel->PlayDj(id);
+			}),
+			CCloudMusicCmdItem("radio", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+				char* end;
+				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), &end, 10);
+				if (id == 0)
+					CNeteasePanel::PrintF("#Netease_InvalidId", false);
+				else
+					panel->PlayRadio(id);
 			})
 		}),
 		CCloudMusicCmdItem("my", {
-			CCloudMusicCmdItem("recommend", [](CNeteasePanel* panel) {panel->PlayRecommendMusic(); }),
-			CCloudMusicCmdItem("fm", [](CNeteasePanel* panel) {panel->PlayFM(); })
-		}, 
-			[](CNeteasePanel* panel) {
+			CCloudMusicCmdItem("recommend", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {panel->PlayRecommendMusic(); }),
+			CCloudMusicCmdItem("fm", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {panel->PlayFM(); })
+		},[](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
 				netease::CMy* my = panel->GetNowUser();
 				if (my)
 					CNeteasePanel::PrintF("#Netease_MyInfo", false, my->name.c_str(), my->signature.c_str(), my->vip ? "Yes" : "No");
@@ -236,14 +256,13 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 					CNeteasePanel::PrintF("#Netease_NotLogin", false);
 		}
 		),
-		CCloudMusicCmdItem("search", [](CNeteasePanel* panel) {
-			if (gEngfuncs.Cmd_Argc() >= 4) {
-				char* type = gEngfuncs.Cmd_Argv(2);
-				char* keyword = gEngfuncs.Cmd_Argv(3);
-				panel->Search(keyword, s_arySearchTypeTable[std::clamp(std::stoi(type), 0, 4)]);
-			}
-			else
-				CNeteasePanel::PrintF("#Netease_SearchHelper", false);
+		CCloudMusicCmdItem("search", {
+			CCloudMusicCmdItem("song", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {SearchCaller(panel, caller, netease::ST_SONG);}),
+			CCloudMusicCmdItem("album", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {SearchCaller(panel, caller, netease::ST_ALBUM);}),
+			CCloudMusicCmdItem("artist", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {SearchCaller(panel, caller, netease::ST_ARTIST);}),
+			CCloudMusicCmdItem("list", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {SearchCaller(panel, caller, netease::ST_PLAYLIST);}),
+			CCloudMusicCmdItem("user", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {SearchCaller(panel, caller, netease::ST_USER);}),
+			CCloudMusicCmdItem("radio", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {SearchCaller(panel, caller, netease::ST_RADIO);}),
 		}),
 	}
 );
@@ -356,7 +375,7 @@ void CNeteasePanel::Think() {
 			float flRatio = static_cast<float>(pos) / static_cast<float>(m_pPlaying->duration);
 			m_pProgressLable->SetWide(static_cast<float>(m_pProgressBackgroundPanel->GetWide()) * flRatio);
 			//lyric
-			if (m_pLyric->Size() > 0) {
+			if (m_pLyric != nullptr && m_pLyric->Size() > 0) {
 				auto lrc = m_pLyric->LyricAt(pos);
 				std::wstring szLrc = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(lrc.lyric);
 				m_pLyricLable->SetText(szLrc.c_str());
@@ -367,7 +386,7 @@ void CNeteasePanel::Think() {
 				m_pLyricLable->SetText("");
 				m_pLyricLableHighlight->SetText("");
 			}
-			if (m_pTransLyric->Size() > 0) {
+			if (m_pTransLyric != nullptr && m_pTransLyric->Size() > 0) {
 				auto lrc = m_pTransLyric->LyricAt(pos);
 				std::wstring szLrc = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(lrc.lyric);
 				m_pTranslatedLyricLable->SetText(szLrc.c_str());
@@ -423,14 +442,41 @@ void CNeteasePanel::PlayMusic(netease::neteaseid_t  id){
 	AddToList(id);
 	PlayListMusic();
 }
+void CNeteasePanel::PlayDj(netease::neteaseid_t  id) {
+	SetPlayerState(PLAYSTATE::NORMAL);
+	m_aryPlayList.clear();
+	AddToList(id, CNeteasePanel::DJ);
+	PlayListMusic();
+}
+void CNeteasePanel::PlayRadio(netease::neteaseid_t id){
+	SetPlayerState(PLAYSTATE::NORMAL);
+	m_aryPlayList.clear();
+	GetTaskManager()->Add(std::async([](netease::neteaseid_t id)->std::any {
+		return s_pNeteaseApi.load()->GetRadioSongs(id);
+	}, id))->ContinueWith([this](std::any anyList) {
+			if (anyList.type() == typeid(std::vector<std::shared_ptr<netease::CDjMusic>>)) {
+				auto list = std::any_cast<std::vector<std::shared_ptr<netease::CDjMusic>>>(anyList);
+				for (auto iter = list.begin(); iter != list.end(); iter++) {
+					AddToList((*iter)->id, CNeteasePanel::DJ);
+				}
+				PlayListMusic();
+			}
+	})->Start();
+}
 void CNeteasePanel::PlayList(netease::neteaseid_t id){
 	SetPlayerState(PLAYSTATE::NORMAL);
 	m_aryPlayList.clear();
-	std::shared_ptr<netease::CPlayList> list = s_pNeteaseApi.load()->GetPlayList(id);
-	for (auto iter = list->mucics.begin(); iter != list->mucics.end(); iter++) {
-		AddToList(*iter);
-	}
-	PlayListMusic();
+	GetTaskManager()->Add(std::async([](netease::neteaseid_t id)->std::any{
+		return s_pNeteaseApi.load()->GetPlayList(id);
+	}, id))->ContinueWith([this](std::any anyList) {
+		if (anyList.type() == typeid(std::shared_ptr<netease::CPlayList>)) {
+			auto list = std::any_cast<std::shared_ptr<netease::CPlayList>>(anyList);
+			for (auto iter = list->mucics.begin(); iter != list->mucics.end(); iter++) {
+				AddToList(*iter);
+			}
+			PlayListMusic();
+		}
+	})->Start();
 }
 void CNeteasePanel::PlayRecommendMusic(){
 	if (m_pLogined == nullptr) {
@@ -541,12 +587,23 @@ void CNeteasePanel::PlayListMusic(){
 		return;
 	if (m_pPlaying != nullptr)
 		StopMusic();
-	netease::neteaseid_t id = *m_aryPlayList.begin();
+	auto item = *m_aryPlayList.begin();
 	m_aryPlayList.pop_front();
-	GetTaskManager()->Add(std::async([](netease::neteaseid_t id, size_t quality)->std::any {
+	GetTaskManager()->Add(std::async([](std::shared_ptr<PlayItem> playitem, size_t quality)->std::any {
 		static music_obj obj;
 		//Load Music
-		std::shared_ptr <netease::CMusic> music = s_pNeteaseApi.load()->GetSongDetail(id);
+		std::shared_ptr <netease::CMusic> music;
+		switch (playitem->type){
+			case CNeteasePanel::PLAYTYPE::DJ: {
+				music = s_pNeteaseApi.load()->GetDjSongDetail(playitem->id); 
+				break;
+			}
+			case CNeteasePanel::PLAYTYPE::MUSIC:
+			default: {
+				music = s_pNeteaseApi.load()->GetSongDetail(playitem->id);
+				break;
+			}
+		}
 		if (music == nullptr)
 			return nullptr;
 		obj.musicData = DownLoad(music->GetPlayUrl(g_aryMusicQuality[quality], "flac"));
@@ -594,14 +651,16 @@ void CNeteasePanel::PlayListMusic(){
 		}
 		FreeImage_Unload(bitmap);
 		FreeImage_CloseMemory(mem);
-
+		if (playitem->type == CNeteasePanel::PLAYTYPE::MUSIC)
+			obj.lyric = s_pNeteaseApi.load()->GetLyric(playitem->id);
+		else
+			obj.lyric = nullptr;
 		obj.music = music;
-		obj.lyric = s_pNeteaseApi.load()->GetLyric(id);
 		obj.album = s_pBuf;
 		obj.album_h = height;
 		obj.album_w = width;
 		return &obj;
-		}, id, static_cast<size_t>(m_pQuality->value)))->ContinueWith([this](std::any& anyMusic) {
+		}, item, static_cast<size_t>(m_pQuality->value)))->ContinueWith([this](std::any& anyMusic) {
 		if (anyMusic.type() == typeid(music_obj*)) {
 			auto obj = std::any_cast<music_obj*>(anyMusic);
 			if (obj == nullptr) {
@@ -621,9 +680,11 @@ void CNeteasePanel::PlayListMusic(){
 					s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
 					m_pAlbumPanel->SetImage(s_pAlbumImage);
 					//Set Lyric
-					lrc::LrcParser parser;
-					m_pLyric = parser.ParseString(obj->lyric->lyric);
-					m_pTransLyric = parser.ParseString(obj->lyric->tlyric);
+					if (obj->lyric != nullptr) {
+						lrc::LrcParser parser;
+						m_pLyric = parser.ParseString(obj->lyric->lyric);
+						m_pTransLyric = parser.ParseString(obj->lyric->tlyric);
+					}
 					//Text
 					m_pMusicNameLable->SetText(obj->music->name.c_str());
 					std::string buf = obj->music->ar[0]->name.c_str();
@@ -640,12 +701,15 @@ void CNeteasePanel::PlayListMusic(){
 				}
 			else
 				PrintF("#Netease_VIPCannotPlay", false);
-			m_bPendingMusic = false;
 		}
+		m_bPendingMusic = false;
 	})->Start();
 }
-void CNeteasePanel::AddToList(netease::neteaseid_t id){
-	m_aryPlayList.push_back(id);
+void CNeteasePanel::AddToList(netease::neteaseid_t id, CNeteasePanel::PLAYTYPE type){
+	auto playitem = std::make_shared<CNeteasePanel::PlayItem>();
+	playitem->id = id;
+	playitem->type = type;
+	m_aryPlayList.push_back(playitem);
 }
 void CNeteasePanel::NextMusic(){
 	switch (m_pNowState) {
@@ -683,9 +747,9 @@ void CNeteasePanel::GetMyInfo(){
 				auto info = std::any_cast<std::shared_ptr<netease::CMy>>(anyMy);
 				char buffer[512];
 				if (info != nullptr)
-					PrintF("#Netease_MyInfo", false, info->name.c_str(), info->signature.c_str(), info->vip ? "Yes" : "No");
+					PrintF("#Netease_MyInfo", true, info->name.c_str(), info->signature.c_str(), info->vip ? "Yes" : "No");
 				else
-					PrintF("#Netease_NotLogin", false);
+					PrintF("#Netease_NotLogin", true);
 				refInfo = info;
 			}
 		})->Start();
