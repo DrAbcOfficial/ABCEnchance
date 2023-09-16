@@ -117,16 +117,48 @@ const static netease::SearchType s_arySearchTypeTable[] = {
 };
 class CCloudMusicCmdItem {
 	std::string name;
-	std::vector<CCloudMusicCmdItem> children;
-	bool terminal;
-	void (*func)(CNeteasePanel* panel);
+	std::list<CCloudMusicCmdItem> children;
+	CCloudMusicCmdItem* parent = nullptr;
+	bool terminal = false;
+	void (*func)(CNeteasePanel* panel) = nullptr;
 public:
+	std::string GetName() {
+		return name;
+	}
+	CCloudMusicCmdItem* GetParent() {
+		return parent;
+	}
+	size_t Size() {
+		return children.size();
+	}
 	bool IsTerminal() {
 		return terminal;
 	}
 	void Excute(CNeteasePanel* panel) {
 		if(func)
 			func(panel);
+		if (children.size() > 0) {
+			for (auto iter = children.begin(); iter != children.end(); iter++) {
+				std::string buf;
+				CCloudMusicCmdItem* parent = (*iter).GetParent();
+				while (parent != nullptr) {
+					buf = " " + parent->GetName() + buf;
+					parent = parent->GetParent();
+				}
+				buf += " " + (*iter).GetName() + "\n";
+				ConsoleWriteline(const_cast<char*>(buf.c_str()));
+			}
+		}
+	}
+	void SetParent(CCloudMusicCmdItem* cmd) {
+		parent = cmd;
+	}
+	void SetupParent() {
+		for (auto iter = children.begin(); iter != children.end(); iter++) {
+			(*iter).SetParent(this);
+			if ((*iter).Size() > 0)
+				(*iter).SetupParent();
+		}
 	}
 	CCloudMusicCmdItem* GetChild(const char* name) {
 		for (auto iter = children.begin(); iter != children.end(); iter++) {
@@ -140,8 +172,7 @@ public:
 			if (!V_strcmp(iter->name.c_str(), name))
 				return &(*iter);
 		}
-		if (func)
-			func(panel);
+		Excute(panel);
 		return nullptr;
 	}
 	CCloudMusicCmdItem(const char* n, void(*f)(CNeteasePanel* panel)) {
@@ -149,14 +180,14 @@ public:
 		func = f;
 		terminal = true;
 	}
-	CCloudMusicCmdItem(const char* n, std::vector<CCloudMusicCmdItem>c) {
+	CCloudMusicCmdItem(const char* n, std::list<CCloudMusicCmdItem>c) {
 		name = n;
 		children = c;
 		terminal = false;
 		func = nullptr;
 	}
 	//if nothing match, default method
-	CCloudMusicCmdItem(const char* n, std::vector<CCloudMusicCmdItem>c, void(*f)(CNeteasePanel* panel)) {
+	CCloudMusicCmdItem(const char* n, std::list<CCloudMusicCmdItem>c, void(*f)(CNeteasePanel* panel)) {
 		name = n;
 		children = c;
 		terminal = false;
@@ -164,13 +195,17 @@ public:
 	}
 };
 static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
-	"root", {
-		CCloudMusicCmdItem("login",[](CNeteasePanel* panel) {panel->QRLogin(); }),
-		CCloudMusicCmdItem("stop",[](CNeteasePanel* panel) {
-			panel->StopMusic();
-			panel->ShowPanel(false); }),
-		CCloudMusicCmdItem("next",[](CNeteasePanel* panel) {panel->NextMusic(); }),
-		CCloudMusicCmdItem("music",[](CNeteasePanel* panel) {
+	"cloudmusic", {
+		CCloudMusicCmdItem("login", [](CNeteasePanel* panel) {panel->QRLogin(); }),
+		CCloudMusicCmdItem("control", {
+			CCloudMusicCmdItem("stop", [](CNeteasePanel* panel) {
+				panel->StopMusic();
+				panel->ShowPanel(false); 
+			}),
+			CCloudMusicCmdItem("next", [](CNeteasePanel* panel) { panel->NextMusic(); }),
+		}),
+		CCloudMusicCmdItem("play", {
+			CCloudMusicCmdItem("music", [](CNeteasePanel* panel) {
 			if (gEngfuncs.Cmd_Argc() < 3)
 				CNeteasePanel::PrintF("#Netease_InvalidId", false);
 			else {
@@ -179,26 +214,29 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 				panel->PlayMusic(id);
 			}
 		}),
-		CCloudMusicCmdItem("playlist",[](CNeteasePanel* panel) {
-			if (gEngfuncs.Cmd_Argc() < 3)
-				CNeteasePanel::PrintF("#Netease_InvalidId", false);
-			else {
-				char* end;
-				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
-				panel->PlayList(id);
-			}
+			CCloudMusicCmdItem("playlist", [](CNeteasePanel* panel) {
+				if (gEngfuncs.Cmd_Argc() < 3)
+					CNeteasePanel::PrintF("#Netease_InvalidId", false);
+				else {
+					char* end;
+					netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(2), &end, 10);
+					panel->PlayList(id);
+				}
+			})
 		}),
-		CCloudMusicCmdItem("my",{
+		CCloudMusicCmdItem("my", {
 			CCloudMusicCmdItem("recommend", [](CNeteasePanel* panel) {panel->PlayRecommendMusic(); }),
 			CCloudMusicCmdItem("fm", [](CNeteasePanel* panel) {panel->PlayFM(); })
-		}, [](CNeteasePanel* panel) {
+		}, 
+			[](CNeteasePanel* panel) {
 				netease::CMy* my = panel->GetNowUser();
 				if (my)
 					CNeteasePanel::PrintF("#Netease_MyInfo", false, my->name.c_str(), my->signature.c_str(), my->vip ? "Yes" : "No");
 				else
 					CNeteasePanel::PrintF("#Netease_NotLogin", false);
-		}),
-		CCloudMusicCmdItem("search",[](CNeteasePanel* panel) {
+		}
+		),
+		CCloudMusicCmdItem("search", [](CNeteasePanel* panel) {
 			if (gEngfuncs.Cmd_Argc() >= 4) {
 				char* type = gEngfuncs.Cmd_Argv(2);
 				char* keyword = gEngfuncs.Cmd_Argv(3);
@@ -255,6 +293,7 @@ CNeteasePanel::CNeteasePanel()
 
 	GetMyInfo();
 
+	s_CloudMusicRoot.SetupParent();
 	ADD_COMMAND("cloudmusic", []() {
 		CCloudMusicCmdItem* pCmd = &s_CloudMusicRoot;
 		int argc = gEngfuncs.Cmd_Argc();
