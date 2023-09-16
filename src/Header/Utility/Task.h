@@ -8,11 +8,13 @@ class CTaskItem {
 public:
 	CTaskItem(std::future<std::any>& futrue);
 	~CTaskItem();
+	//continue with in main thread
 	CTaskItem* ContinueWith(std::function<void(std::any&)> func);
+	//start task
+	CTaskItem* Start();
+	//is ready
 	bool IsReady();
 	void Excute();
-	void Start();
-
 private:
 	std::thread m_pThread;
 	std::atomic_bool m_bReady = false;
@@ -22,7 +24,11 @@ private:
 
 class CTaskManager {
 public:
+	//add a new async task
 	CTaskItem* Add(std::future<std::any>& func);
+	//has this task?
+	bool Has(CTaskItem* check);
+	//check per frame
 	void CheckAll();
 private:
 	std::vector<CTaskItem*> m_aryList;
