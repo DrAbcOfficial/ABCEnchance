@@ -1,13 +1,9 @@
 #pragma once
 #include <metahook.h>
-
 #include <future>
-#include <chrono>
-#include <atomic>
 
 #include "formatter.h"
 #include "Task.h"
-
 #include <vgui/IImage.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
@@ -305,39 +301,7 @@ void CNeteasePanel::SetParent(vgui::VPANEL parent){
 	BaseClass::SetParent(parent);
 }
 
-struct musicthread_obj{
-	std::shared_ptr <netease::CMusic> music;
-	std::shared_ptr<netease::CLyric> lyric;
-	int id;
-	std::vector<byte> musicData;
-	byte* album;
-	size_t album_h;
-	size_t album_w;
-};
-std::future<musicthread_obj*> g_pMusicAsync;
-
-std::future<std::shared_ptr<netease::CMy>> g_pUserAsync;
-
-std::future<std::vector<netease::neteaseid_t>> g_pFMListAsync;
-
 void CNeteasePanel::Think() {
-	if (g_pUserAsync.valid() && g_pUserAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-		m_pLogined = g_pUserAsync.get();
-		char buffer[512];
-		if (m_pLogined != nullptr)
-			PrintF("#Netease_MyInfo", false, m_pLogined->name.c_str(), m_pLogined->signature.c_str(), m_pLogined->vip ? "Yes" : "No");
-		else
-			PrintF("#Netease_NotLogin", false);
-	}
-	if (g_pMusicAsync.valid() && g_pMusicAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
-		PlayMusicFromBuffer(g_pMusicAsync.get());
-	if (g_pFMListAsync.valid() && g_pFMListAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-		std::vector<netease::neteaseid_t> list = g_pFMListAsync.get();
-		for (auto iter = list.begin(); iter != list.end(); iter++) {
-			AddToList(*iter);
-		}
-		PlayListMusic();
-	}
 	if (m_pPlaying != nullptr) {
 		ShowPanel(true);
 		size_t pos;
@@ -408,65 +372,6 @@ const char* g_aryMusicQuality[] = {
 	"lossless",
 	"hires"
 };
-musicthread_obj* DonwloadMusic(netease::neteaseid_t id, size_t quality) {
-	static musicthread_obj obj;
-	//Load Music
-	std::shared_ptr <netease::CMusic> music = s_pNeteaseApi.load()->GetSongDetail(id);
-	if (music == nullptr)
-		return nullptr;
-	obj.musicData = DownLoad(music->GetPlayUrl(g_aryMusicQuality[quality], "flac"));
-	//Load Album
-	std::vector<byte> imageData = DownLoad(music->al->picUrl + "?param=130y130");
-	FIMEMORY* mem = FreeImage_OpenMemory(imageData.data(), imageData.size());
-	FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
-	FIBITMAP* bitmap = FreeImage_LoadFromMemory(format, mem);
-	byte* pixels = (byte*)FreeImage_GetBits(bitmap);
-	int width = FreeImage_GetWidth(bitmap);
-	int height = FreeImage_GetHeight(bitmap);
-	int pitch = FreeImage_GetPitch(bitmap);
-	int bpp = FreeImage_GetBPP(bitmap);
-	static size_t s_iArea;
-	static byte* s_pBuf;
-	if (s_iArea < width * height) {
-		s_iArea = width * height;
-		delete[] s_pBuf;
-		s_pBuf = new byte[s_iArea * 4];
-	}
-	size_t c = 0;
-	pixels += pitch * (height - 1);
-	for (int y = 0; y < height; y++) {
-		BYTE* pixel = (BYTE*)pixels;
-		for (int x = 0; x < width; x++) {
-			BYTE r = pixel[FI_RGBA_RED];
-			BYTE g = pixel[FI_RGBA_GREEN];
-			BYTE b = pixel[FI_RGBA_BLUE];
-			s_pBuf[c * 4 + 0] = r;
-			s_pBuf[c * 4 + 1] = g;
-			s_pBuf[c * 4 + 2] = b;
-			//Jpeg with alpha? weird
-			if (bpp == 32) {
-				BYTE a = pixel[FI_RGBA_ALPHA];
-				s_pBuf[c * 4 + 3] = a;
-				pixel += 4;
-			}
-			else {
-				s_pBuf[c * 4 + 3] = 255;
-				pixel += 3;
-			}
-			c++;
-		}
-		pixels -= pitch;
-	}
-	FreeImage_Unload(bitmap);
-	FreeImage_CloseMemory(mem);
-
-	obj.music = music;
-	obj.lyric = s_pNeteaseApi.load()->GetLyric(id);
-	obj.album = s_pBuf;
-	obj.album_h = height;
-	obj.album_w = width;
-	return &obj;
-}
 void CNeteasePanel::PlayMusic(netease::neteaseid_t  id){
 	SetPlayerState(PLAYSTATE::NORMAL);
 	m_aryPlayList.clear();
@@ -509,9 +414,17 @@ void CNeteasePanel::PlayFM(){
 	PrintF("#Netease_PlayingFM", false, m_pLogined->name.c_str());
 }
 void CNeteasePanel::RenewFM(){
-	g_pFMListAsync = std::async([](std::shared_ptr<netease::CMy> my) {
+	GetTaskManager()->Add(std::async([](std::shared_ptr<netease::CMy> my) -> std::any{
 		return my->GetFM();
-	}, m_pLogined);
+	}, m_pLogined))->ContinueWith([&](std::any anyIds) {
+		if (anyIds.type() == typeid(std::vector<netease::neteaseid_t>)) {
+			auto list = std::any_cast<std::vector<netease::neteaseid_t>>(anyIds);
+			for (auto iter = list.begin(); iter != list.end(); iter++) {
+				AddToList(*iter);
+			}
+			PlayListMusic();
+		}
+	})->Start();
 }
 void CNeteasePanel::StopMusic(){
 	FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
@@ -562,41 +475,16 @@ netease::CMy* CNeteasePanel::GetNowUser(){
 void CNeteasePanel::SetPlayerState(PLAYSTATE state){
 	m_pNowState = state;
 }
-void CNeteasePanel::PlayMusicFromBuffer(musicthread_obj* obj){
-	if (obj == nullptr) {
-		PrintF("#Netease_CannotPlay", false);
-		return;
-	}
-	if (obj->music->copyright < 2 || (m_pLogined != nullptr && m_pLogined->vip > 0)) {
-		//Music
-		FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
-		FMOD_CREATESOUNDEXINFO extrainfo = {};
-		extrainfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
-		extrainfo.length = obj->musicData.size();
-		soundSystem->CreateStream(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &m_pSound);
-		soundSystem->PlaySound(FMOD_CHANNEL_FREE, m_pSound, 0, &m_pChannel);
-		soundSystem->SetVolume(m_pChannel, m_pVolume->value);
-		//Album
-		s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
-		m_pAlbumPanel->SetImage(s_pAlbumImage);
-		//Set Lyric
-		m_pLyric = obj->lyric;
-		//Text
-		m_pMusicNameLable->SetText(obj->music->name.c_str());
-		std::string buf = obj->music->ar[0]->name.c_str();
-		buf += " - ";
-		buf += obj->music->al->name;
-		m_pArtistNameLable->SetText(buf.c_str());
 
-		size_t len = obj->music->duration / 1000;
-		static char buffer[256];
-		V_snprintf(buffer, "%02d:%02d", len / 60, len % 60);
-		m_pMaxTimeLable->SetText(buffer);
-		m_pPlaying = obj->music;
-	}
-	else
-		PrintF("#Netease_VIPCannotPlay", false);
-}
+struct music_obj {
+	std::shared_ptr <netease::CMusic> music;
+	std::shared_ptr<netease::CLyric> lyric;
+	int id;
+	std::vector<byte> musicData;
+	byte* album;
+	size_t album_h;
+	size_t album_w;
+};
 void CNeteasePanel::PlayListMusic(){
 	if (m_aryPlayList.size() == 0)
 		return;
@@ -604,8 +492,103 @@ void CNeteasePanel::PlayListMusic(){
 		StopMusic();
 	netease::neteaseid_t id = *m_aryPlayList.begin();
 	m_aryPlayList.pop_front();
-	g_pMusicAsync = std::async(DonwloadMusic, id, static_cast<size_t>(m_pQuality->value));
-	ShowPanel(true);
+	GetTaskManager()->Add(std::async([](netease::neteaseid_t id, size_t quality)->std::any {
+		static music_obj obj;
+		//Load Music
+		std::shared_ptr <netease::CMusic> music = s_pNeteaseApi.load()->GetSongDetail(id);
+		if (music == nullptr)
+			return nullptr;
+		obj.musicData = DownLoad(music->GetPlayUrl(g_aryMusicQuality[quality], "flac"));
+		//Load Album
+		std::vector<byte> imageData = DownLoad(music->al->picUrl + "?param=130y130");
+		FIMEMORY* mem = FreeImage_OpenMemory(imageData.data(), imageData.size());
+		FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
+		FIBITMAP* bitmap = FreeImage_LoadFromMemory(format, mem);
+		byte* pixels = (byte*)FreeImage_GetBits(bitmap);
+		int width = FreeImage_GetWidth(bitmap);
+		int height = FreeImage_GetHeight(bitmap);
+		int pitch = FreeImage_GetPitch(bitmap);
+		int bpp = FreeImage_GetBPP(bitmap);
+		static size_t s_iArea;
+		static byte* s_pBuf;
+		if (s_iArea < width * height) {
+			s_iArea = width * height;
+			delete[] s_pBuf;
+			s_pBuf = new byte[s_iArea * 4];
+		}
+		size_t c = 0;
+		pixels += pitch * (height - 1);
+		for (int y = 0; y < height; y++) {
+			BYTE* pixel = (BYTE*)pixels;
+			for (int x = 0; x < width; x++) {
+				BYTE r = pixel[FI_RGBA_RED];
+				BYTE g = pixel[FI_RGBA_GREEN];
+				BYTE b = pixel[FI_RGBA_BLUE];
+				s_pBuf[c * 4 + 0] = r;
+				s_pBuf[c * 4 + 1] = g;
+				s_pBuf[c * 4 + 2] = b;
+				//Jpeg with alpha? weird
+				if (bpp == 32) {
+					BYTE a = pixel[FI_RGBA_ALPHA];
+					s_pBuf[c * 4 + 3] = a;
+					pixel += 4;
+				}
+				else {
+					s_pBuf[c * 4 + 3] = 255;
+					pixel += 3;
+				}
+				c++;
+			}
+			pixels -= pitch;
+		}
+		FreeImage_Unload(bitmap);
+		FreeImage_CloseMemory(mem);
+
+		obj.music = music;
+		obj.lyric = s_pNeteaseApi.load()->GetLyric(id);
+		obj.album = s_pBuf;
+		obj.album_h = height;
+		obj.album_w = width;
+		return &obj;
+		}, id, static_cast<size_t>(m_pQuality->value)))->ContinueWith([&](std::any& anyMusic) {
+		if (anyMusic.type() == typeid(music_obj*)) {
+			auto obj = std::any_cast<music_obj*>(anyMusic);
+			if (obj == nullptr) {
+				PrintF("#Netease_CannotPlay", false);
+				return;
+			}
+			if (obj->music->copyright < 2 || (m_pLogined != nullptr && m_pLogined->vip > 0)) {
+					//Music
+					FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
+					FMOD_CREATESOUNDEXINFO extrainfo = {};
+					extrainfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+					extrainfo.length = obj->musicData.size();
+					soundSystem->CreateStream(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &m_pSound);
+					soundSystem->PlaySound(FMOD_CHANNEL_FREE, m_pSound, 0, &m_pChannel);
+					soundSystem->SetVolume(m_pChannel, m_pVolume->value);
+					//Album
+					s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
+					m_pAlbumPanel->SetImage(s_pAlbumImage);
+					//Set Lyric
+					m_pLyric = obj->lyric;
+					//Text
+					m_pMusicNameLable->SetText(obj->music->name.c_str());
+					std::string buf = obj->music->ar[0]->name.c_str();
+					buf += " - ";
+					buf += obj->music->al->name;
+					m_pArtistNameLable->SetText(buf.c_str());
+
+					size_t len = obj->music->duration / 1000;
+					static char buffer[256];
+					V_snprintf(buffer, "%02d:%02d", len / 60, len % 60);
+					m_pMaxTimeLable->SetText(buffer);
+					m_pPlaying = obj->music;
+					ShowPanel(true);
+				}
+			else
+				PrintF("#Netease_VIPCannotPlay", false);
+		}
+	})->Start();
 }
 void CNeteasePanel::AddToList(netease::neteaseid_t id){
 	m_aryPlayList.push_back(id);
@@ -613,11 +596,6 @@ void CNeteasePanel::AddToList(netease::neteaseid_t id){
 void CNeteasePanel::ChangeMusic(){
 	switch (m_pNowState) {
 	case PLAYSTATE::FM: {
-		//too fast!
-		if (m_aryPlayList.size() == 0 && g_pFMListAsync.valid()) {
-			StopMusic();
-			return;
-		}
 		if (m_aryPlayList.size() == 1)
 			RenewFM();
 		PlayListMusic();
@@ -641,9 +619,20 @@ void CNeteasePanel::QRLogin() {
 	m_pLoginPanel->Login();
 }
 void CNeteasePanel::GetMyInfo(){
-	g_pUserAsync = std::async([]() {
+	auto& refInfo = m_pLogined;
+	GetTaskManager()->Add(std::async([]() -> std::any {
 		return s_pNeteaseApi.load()->GetMyself();
-	});
+		}))->ContinueWith([&refInfo](std::any& anyMy) {
+			if (anyMy.type() == typeid(refInfo)) {
+				auto info = std::any_cast<std::shared_ptr<netease::CMy>>(anyMy);
+				char buffer[512];
+				if (info != nullptr)
+					PrintF("#Netease_MyInfo", false, info->name.c_str(), info->signature.c_str(), info->vip ? "Yes" : "No");
+				else
+					PrintF("#Netease_NotLogin", false);
+				refInfo = info;
+			}
+		})->Start();
 }
 void CNeteasePanel::SetVolume(float vol){
 	if (m_pChannel) {
@@ -652,10 +641,9 @@ void CNeteasePanel::SetVolume(float vol){
 	}
 }
 void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
-	GetTaskManager()->Add(std::async(std::launch::async, [](const char* keyword, netease::SearchType type, int limit) -> std::any {
-		auto res = s_pNeteaseApi.load()->Search(keyword, type, limit, 0);
-		return std::any(res);
-		}, keyword, type, m_pSearchCount->value))->ContinueWith([](const std::any& anyresult) {
+	GetTaskManager()->Add(std::async([](const char* keyword, netease::SearchType type, int limit) -> std::any {
+		return s_pNeteaseApi.load()->Search(keyword, type, limit, 0);
+	}, keyword, type, m_pSearchCount->value))->ContinueWith([](const std::any& anyresult) {
 			if (anyresult.type() == typeid(std::vector<std::shared_ptr<netease::CSearchResult>>)) {
 				auto result = std::any_cast<std::vector<std::shared_ptr<netease::CSearchResult>>>(anyresult);
 				char buffer[512];
@@ -670,13 +658,12 @@ void CNeteasePanel::Search(const char* keyword, netease::SearchType type){
 				}
 				PrintF("#Netease_SearchResult", false, buf.c_str());
 			}
-		})->Start();
+	})->Start();
 }
 
 /*
 	QRLogin Panel
 */
-#define CHECK_LOGIN_INVERTV 1.33f
 class CQRImage : public CAlbumImage {
 public:
 	virtual void InitFromRGBA(const byte* rgba, int width, int height) override {
@@ -708,40 +695,39 @@ CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name)
 
 	LoadControlSettings(VGUI2_ROOT_DIR "NeteaseQRPanel.res");
 }
-
-std::future<netease::CLocalUser::QRStatue> g_pGetCookieAsync;
-void CQRLoginPanel::OnThink(){
-	if (g_pGetCookieAsync.valid() && g_pGetCookieAsync.wait_for(std::chrono::seconds(0)) == std::future_status::ready && 
-		gEngfuncs.GetClientTime() > m_flNextCheckTime) {
-		netease::CLocalUser::QRStatue result = g_pGetCookieAsync.get();
-		switch (result){
-			case netease::CLocalUser::QRStatue::INVALID: {
-				CNeteasePanel::PrintF("#Netease_CannotLogin", false);
-				SetVisible(false);
-				break;
-			}
-			case netease::CLocalUser::QRStatue::WAITINGSCAN:
-			case netease::CLocalUser::QRStatue::AUTHORIZING: {
-				CheckLogin();
-				break;
-			}
-			case netease::CLocalUser::QRStatue::OK: {
-				m_pLoginObj = nullptr;
-				SetVisible(false);
-				m_pMusicPanel->GetMyInfo();
-				break;
-			}
-		}
-		m_flNextCheckTime = gEngfuncs.GetClientTime() + CHECK_LOGIN_INVERTV;
-	}
-}
 struct loginshare_obj {
 	byte* qrimagebyte;
 	size_t size;
 	std::string qrkey;
 };
+void QRCheck(CQRLoginPanel* panel, std::string& qrkey) {
+	GetTaskManager()->Add(std::async([](std::string unikey) -> std::any {
+		return s_pNeteaseApi.load()->GetUser()->QRCheck(unikey);
+	}, qrkey))->ContinueWith([&panel, &qrkey](std::any anyRes) {
+		if (anyRes.type() == typeid(netease::CLocalUser::QRStatue)) {
+			auto result = std::any_cast<netease::CLocalUser::QRStatue>(anyRes);
+			switch (result) {
+			case netease::CLocalUser::QRStatue::INVALID: {
+				CNeteasePanel::PrintF("#Netease_CannotLogin", false);
+				panel->SetVisible(false);
+				break;
+			}
+			case netease::CLocalUser::QRStatue::WAITINGSCAN:
+			case netease::CLocalUser::QRStatue::AUTHORIZING: {
+				QRCheck(panel, qrkey);
+				break;
+			}
+			case netease::CLocalUser::QRStatue::OK: {
+				panel->SetVisible(false);
+				panel->SendMyInfo();
+				break;
+			}
+			}
+		}
+	})->Start();
+}
 void CQRLoginPanel::Login(){
-	/*GetTaskManager()->Start(&std::async([]() -> std::any {
+	GetTaskManager()->Add(std::async([]() -> std::any {
 		static loginshare_obj obj;
 		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
 		std::string url = "https://music.163.com/login?codekey=" + obj.qrkey;
@@ -770,24 +756,18 @@ void CQRLoginPanel::Login(){
 		obj.size = qrsize;
 		return &obj;
 		}))->ContinueWith([this](std::any anyobj) {
-			if (anyobj.type() == typeid(loginshare_obj*)) {
-				loginshare_obj* obj = std::any_cast<loginshare_obj*>(anyobj);
-				s_pQRCodeImage->InitFromRGBA(obj->qrimagebyte, obj->size, obj->size);
-				m_pQRImagePanel->SetImage(s_pQRCodeImage);
-				m_pLoginObj = obj;
-				CheckLogin();
-				SetMouseInputEnabled(true);
-			}
-		});*/
-	m_flNextCheckTime = gEngfuncs.GetClientTime() + CHECK_LOGIN_INVERTV;
+		if (anyobj.type() == typeid(loginshare_obj*)) {
+			loginshare_obj* obj = std::any_cast<loginshare_obj*>(anyobj);
+			s_pQRCodeImage->InitFromRGBA(obj->qrimagebyte, obj->size, obj->size);
+			m_pQRImagePanel->SetImage(s_pQRCodeImage);
+			QRCheck(this, obj->qrkey);
+		}
+	})->Start();
 	SetVisible(true);
 }
 void CQRLoginPanel::ResetText(){
 	m_pNotice->SetText("#Netease_QRNoticeText");
 }
-
-void CQRLoginPanel::CheckLogin(){
-	g_pGetCookieAsync = std::async([](std::string unikey)->netease::CLocalUser::QRStatue {
-		return s_pNeteaseApi.load()->GetUser()->QRCheck(unikey);
-		}, m_pLoginObj->qrkey);
+void CQRLoginPanel::SendMyInfo(){
+	m_pMusicPanel->GetMyInfo();
 }

@@ -36,10 +36,10 @@ void CTaskItem::Excute(){
 		m_pContinue(m_pValue);
 }
 
-void CTaskItem::Start(){
+CTaskItem* CTaskItem::Start(){
 	m_pThread.detach();
+	return this;
 }
-
 
 CTaskItem* CTaskManager::Add(std::future<std::any>& func){
 	CTaskItem* item = new CTaskItem(func);
@@ -47,10 +47,19 @@ CTaskItem* CTaskManager::Add(std::future<std::any>& func){
 	return item;
 }
 
+bool CTaskManager::Has(CTaskItem* check){
+	for (auto iter = m_aryList.begin(); iter != m_aryList.end(); iter++) {
+		if ((*iter) == check)
+			return true;
+	}
+	return false;
+}
+
 void CTaskManager::CheckAll(){
 	for (auto iter = m_aryList.begin(); iter != m_aryList.end();) {
 		if ((*iter)->IsReady()) {
 			(*iter)->Excute();
+			delete (*iter);
 			iter = m_aryList.erase(iter);
 		}
 		else

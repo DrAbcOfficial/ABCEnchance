@@ -21,18 +21,12 @@ class CQRLoginPanel : public vgui::Frame {
 public:
 	DECLARE_CLASS_SIMPLE(CQRLoginPanel, vgui::Frame);
 	CQRLoginPanel(vgui::Panel* parent, char* name);
-
-	virtual void OnThink() override;
-
 	void Login();
 	void ResetText();
-	void CheckLogin();
+	void SendMyInfo();
 private:
 	vgui::ImagePanel* m_pQRImagePanel = nullptr;
 	vgui::Label* m_pNotice = nullptr;
-
-	float m_flNextCheckTime;
-	struct loginshare_obj* m_pLoginObj = nullptr;
 	CNeteasePanel* m_pMusicPanel = nullptr;
 };
 
@@ -79,7 +73,6 @@ private:
 		DJ
 	};
 	void SetPlayerState(PLAYSTATE state);
-	void PlayMusicFromBuffer(struct musicthread_obj* obj);
 	void PlayListMusic();
 	void RenewFM();
 
