@@ -40,8 +40,7 @@ CGenadeIndicatorPanel::CGenadeIndicatorPanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "GIndicatorScheme.res", "GIndicatorScheme");
-	SetScheme("GIndicatorScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 
 	gCVars.pGrenadeIndicator = CREATE_CVAR("cl_grenadeindicator", "1", FCVAR_VALUE, nullptr);
 	gCVars.pGrenadeIndicatorRange = CREATE_CVAR("cl_grenadeindicator_range", "256", FCVAR_VALUE, nullptr);

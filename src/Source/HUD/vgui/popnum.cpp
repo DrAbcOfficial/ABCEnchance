@@ -35,7 +35,7 @@ CPopNumberPanel::CPopNumberPanel(vec3_t vecOrigin, Color& pColor, int value)
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme("PopNumerScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 	// Header labels
 	m_pNumberLable = new vgui::Label(this, "PopNumber", "");
 	m_hColor = pColor;

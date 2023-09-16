@@ -215,8 +215,7 @@ CNeteasePanel::CNeteasePanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "NeteaseScheme.res", "NeteaseScheme");
-	SetScheme("NeteaseScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 
 	m_pMusicNameLable = new vgui::Label(this, "MusicName", "");
 	m_pArtistNameLable = new vgui::Label(this, "ArtistName", "");
@@ -703,7 +702,7 @@ CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name)
 	SetCloseButtonVisible(false);
 	SetSizeable(false);
 	SetMoveable(false);
-	SetScheme("NeteaseScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 
 	m_pNotice = new vgui::Label(this, "QRNotice", "#Netease_QRNoticeText");
 	m_pNotice->SetMouseInputEnabled(true);

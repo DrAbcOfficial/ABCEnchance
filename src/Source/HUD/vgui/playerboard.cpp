@@ -29,8 +29,7 @@ CPlayerInfoPanel::CPlayerInfoPanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "PlayerInfoScheme.res", "PlayerInfoScheme");
-	SetScheme("PlayerInfoScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 
 	// Header labels
 	m_pNameLable = new vgui::Label(this, "PlayerName", "(Anon)");

@@ -35,7 +35,6 @@ COptionsDialog::COptionsDialog(vgui::Panel *parent) : PropertyDialog(parent, "Op
 	SetTitle("#GameUI_Options", true);
 	SetSize(gScreenInfo.iWidth / 3 * 2, gScreenInfo.iHeight);
 
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "OptionDialogScheme.res", "OptionDialogScheme");
 	SetScheme("OptionDialogScheme");
 
 	if ((ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()) || (!ModInfo().IsMultiplayerOnly() && !ModInfo().IsSinglePlayerOnly()))

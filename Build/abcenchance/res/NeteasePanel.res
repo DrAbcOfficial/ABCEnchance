@@ -61,7 +61,22 @@
 		"textAlignment"		"west"
 		"brighttext"		"1"
 		"font"		"DefaultSmall"
-		"wrap"		"1"
+		"wrap"		"0"
+	}
+	"LyricHighlight"
+	{
+		"ControlName"		"Label"
+		"fieldName"		"LyricHighlight"
+		"xpos"		"3"
+		"ypos"		"45"
+		"wide"		"156"
+		"tall"		"14"
+		"visible"		"1"
+		"enabled"		"1"
+		"textAlignment"		"west"
+		"brighttext"		"1"
+		"font"		"DefaultSmall"
+		"wrap"		"0"
 	}
 	"TransLyric"
 	{
@@ -76,7 +91,22 @@
 		"textAlignment"		"west"
 		"brighttext"		"1"
 		"font"		"DefaultSmall"
-		"wrap"		"1"
+		"wrap"		"0"
+	}
+	"TransLyricHighlight"
+	{
+		"ControlName"		"Label"
+		"fieldName"		"TransLyricHighlight"
+		"xpos"		"3"
+		"ypos"		"60"
+		"wide"		"156"
+		"tall"		"14"
+		"visible"		"1"
+		"enabled"		"1"
+		"textAlignment"		"west"
+		"brighttext"		"1"
+		"font"		"DefaultSmall"
+		"wrap"		"0"
 	}
 	"Timer"
 	{

@@ -90,7 +90,7 @@ CDmgTilesPanel::CDmgTilesPanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme("HealthScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 	m_aryDmg = {
 		new CTileIconItem(this, "#DMGTiles_Poison", "icon_poison", DMG_POISON),
 		new CTileIconItem(this, "#DMGTiles_Acid", "icon_acid", DMG_ACID),

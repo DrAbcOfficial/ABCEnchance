@@ -34,8 +34,7 @@ CVotePanel::CVotePanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "VoteScheme.res", "VoteScheme");
-	SetScheme("VoteScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 
 	// Header labels
 	m_pContentPanel = new vgui::Panel(this, "VoteContentPanel");

@@ -18,8 +18,7 @@ CNoticePanel::CNoticePanel(const char* szControlName)
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "NoticeScheme.res", "NoticeScheme");
-	SetScheme("NoticeScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 
 	m_pMessage = new vgui::Label(this, "Message", "");
 

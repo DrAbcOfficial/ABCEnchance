@@ -230,8 +230,7 @@ CScorePanel::CScorePanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "ScoreBoardScheme.res", "ScoreBoardScheme");
-	SetScheme("ScoreBoardScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 
 	hud_scoreboard_showavatars = CREATE_CVAR("hud_scoreboard_showavatars", "1", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_showloss = CREATE_CVAR("hud_scoreboard_showloss", "1", FCVAR_ARCHIVE, nullptr);

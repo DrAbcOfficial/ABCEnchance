@@ -28,8 +28,7 @@ CSidePanel::CSidePanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "SideTextScheme.res", "SideTextScheme");
-	SetScheme("SideTextScheme");
+	SetScheme(g_pViewPort->GetBaseScheme());
 	// Header labels
 	m_pImage = new vgui::ImagePanel(this, "Image");
 	m_pMessage = new vgui::Label(this, "Message", "");

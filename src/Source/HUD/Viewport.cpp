@@ -63,9 +63,8 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	SetKeyBoardInputEnabled(false);
 	SetProportional(true);
 
+	m_hBaseScheme = vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "AbcScheme.res", "AbcScheme");
 	//for popnumber
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "PopNumerScheme.res", "PopNumerScheme");
-
 	m_pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, nullptr);
 	m_pPlayerTitleDanger = CREATE_CVAR("cl_playertitle_danger", "30", FCVAR_VALUE, nullptr);
 	m_pPopNumber = CREATE_CVAR("cl_popnumber", "1", FCVAR_VALUE, nullptr);
@@ -213,6 +212,9 @@ void CViewport::ShowScoreBoard(){
 }
 void CViewport::LongjumpCallBack(bool state){
 	m_pHealthPanel->SetLongJump(state);
+}
+vgui::HScheme CViewport::GetBaseScheme(){
+	return m_hBaseScheme;
 }
 void CViewport::HideScoreBoard(){
 	m_pScorePanel->ShowPanel(false);
