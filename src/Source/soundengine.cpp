@@ -1,8 +1,6 @@
 #include <metahook.h>
 #include "soundengine.h"
 
-
-
 namespace FModEngine {
 	static HMODULE g_hFmod = nullptr;
 	static CFModSystem* g_pFModSystem;

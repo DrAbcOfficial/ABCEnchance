@@ -248,6 +248,7 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 				panel->ShowPanel(false);
 			}),
 			CCloudMusicCmdItem("next", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) { panel->NextMusic(); }),
+			CCloudMusicCmdItem("pause", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) { panel->PauseMusic(); }),
 		}),
 		CCloudMusicCmdItem("play", {
 			CCloudMusicCmdItem("music", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
@@ -404,6 +405,8 @@ void CNeteasePanel::SetParent(vgui::VPANEL parent){
 void CNeteasePanel::Think() {
 	if (m_pPlaying != nullptr) {
 		ShowPanel(true);
+		if (m_bPaused)
+			return;
 		size_t pos;
 		FModEngine::GetSystem()->GetPosition(m_pChannel, &pos, FMOD_TIMEUNIT_MS);
 		if (pos < m_pPlaying->duration) {
@@ -799,6 +802,17 @@ void CNeteasePanel::NextMusic(){
 	}
 	}
 	
+}
+void CNeteasePanel::PauseMusic(){
+	if (m_pChannel == nullptr) {
+		m_bPaused = false;
+		return;
+	}
+	m_bPaused = !m_bPaused;
+	FModEngine::GetSystem()->SetPause(m_pChannel, m_bPaused);
+}
+bool CNeteasePanel::IsPaused(){
+	return m_bPaused;
 }
 void CNeteasePanel::QRLogin() {
 	m_pLoginPanel->ResetText();
