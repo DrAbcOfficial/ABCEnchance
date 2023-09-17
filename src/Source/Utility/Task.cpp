@@ -46,7 +46,7 @@ CTaskItem* CTaskItem::Start(){
 
 CTaskItem* CTaskManager::Add(std::future<std::any>& func){
 	CTaskItem* item = new CTaskItem(func);
-	m_aryList.push_back(item);
+	m_aryPending.push_back(item);
 	return item;
 }
 
@@ -71,5 +71,9 @@ void CTaskManager::CheckAll(){
 		}
 		else
 			iter++;
+	}
+	if (m_aryPending.size() > 0) {
+		m_aryList.splice(m_aryList.end(), m_aryPending);
+		m_aryPending.clear();
 	}
 }
