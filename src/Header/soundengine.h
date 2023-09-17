@@ -136,6 +136,7 @@ namespace FModEngine {
         FMOD_RESULT GetMemoryInfo(unsigned int memorybits, unsigned int event_memorybits, unsigned int* memoryused, FMOD_MEMORY_USAGE_DETAILS* memoryused_details);
 
         FMOD_RESULT StopSound(FMOD_CHANNEL* channel);
+        FMOD_RESULT SetPause(FMOD_CHANNEL* channel, FMOD_BOOL state);
         FMOD_RESULT SetVolume(FMOD_CHANNEL* channel, float volume);
         FMOD_RESULT GetPosition(FMOD_CHANNEL* channel, unsigned int* position, FMOD_TIMEUNIT postype);
         FMOD_RESULT FreeSound(FMOD_SOUND* sound);
