@@ -1,7 +1,7 @@
 #pragma once
 
 #include <future>
-#include <vector>
+#include <list>
 #include <any>
 
 class CTaskItem {
