@@ -71,6 +71,7 @@ public:
 	void SMSLogin(const char* phone, const char* captcha, int country);
 	void PhoneLogin(const char* phone, const char* passwd, int country);
 	void GetMyInfo(bool silence = true);
+	void SetMyInfo(std::shared_ptr<netease::CMy> info);
 
 	template<typename... Args>
 	static void PrintF(const char* str, bool dev, const Args&& ...args);
