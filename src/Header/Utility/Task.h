@@ -9,6 +9,7 @@ public:
 	CTaskItem(std::future<std::any>& futrue);
 	~CTaskItem();
 	//continue with in main thread
+	//if you wanna capture some ref with recursion, PLEASE NOT TRUST lambda capture
 	CTaskItem* ContinueWith(std::function<void(std::any&)> func);
 	//start task
 	CTaskItem* Start();
