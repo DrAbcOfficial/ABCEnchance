@@ -62,6 +62,8 @@ public:
 	//Music control
 	void StopMusic();
 	void NextMusic();
+	void PauseMusic();
+	bool IsPaused();
 	void SetVolume(float vol);
 
 	//User info
@@ -121,6 +123,7 @@ private:
 
 	bool m_bRenewingFM = false;
 	bool m_bPendingMusic = false;
+	bool m_bPaused = false;
 
 	std::shared_ptr<netease::CMusic> m_pPlaying = nullptr;
 	std::unique_ptr<lrc::Lyrics> m_pLyric = nullptr;
