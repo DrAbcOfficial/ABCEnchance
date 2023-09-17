@@ -33,6 +33,7 @@ public:
 	//check per frame
 	void CheckAll();
 private:
-	std::vector<CTaskItem*> m_aryList;
+	std::list<CTaskItem*> m_aryList;
+	std::list<CTaskItem*> m_aryPending;
 };
 CTaskManager* GetTaskManager();

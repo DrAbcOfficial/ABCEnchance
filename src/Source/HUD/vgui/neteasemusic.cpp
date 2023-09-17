@@ -937,7 +937,7 @@ void QRCheck(CQRLoginPanel* panel, std::string& qrkey) {
 }
 void CQRLoginPanel::Login(){
 	GetTaskManager()->Add(std::async([]() -> std::any {
-		static loginshare_obj obj;
+		loginshare_obj obj;
 		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
 		std::string url = "https://music.163.com/login?codekey=" + obj.qrkey;
 		qrcodegen::QrCode qrcode = qrcodegen::QrCode::encodeText(url.c_str(), qrcodegen::QrCode::Ecc::HIGH);
@@ -964,15 +964,15 @@ void CQRLoginPanel::Login(){
 		obj.qrimagebyte = s_qrbyte;
 		obj.size = qrsize;
 		return &obj;
-		}))->ContinueWith([this](std::any anyobj) {
+	}))->ContinueWith([this](std::any anyobj) {
 		if (anyobj.type() == typeid(loginshare_obj*)) {
 			loginshare_obj* obj = std::any_cast<loginshare_obj*>(anyobj);
 			s_pQRCodeImage->InitFromRGBA(obj->qrimagebyte, obj->size, obj->size);
 			m_pQRImagePanel->SetImage(s_pQRCodeImage);
+			SetVisible(true);
 			QRCheck(this, obj->qrkey);
 		}
 	})->Start();
-	SetVisible(true);
 }
 void CQRLoginPanel::ResetText(){
 	m_pNotice->SetText("#Netease_QRNoticeText");
