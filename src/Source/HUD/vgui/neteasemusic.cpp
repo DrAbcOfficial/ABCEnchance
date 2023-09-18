@@ -249,9 +249,18 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 			}),
 			CCloudMusicCmdItem("next", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) { panel->NextMusic(); }),
 			CCloudMusicCmdItem("pause", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) { panel->PauseMusic(); }),
+			CCloudMusicCmdItem("info", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+				auto music = panel->GetNowPlaying();
+				if (music)
+					panel->PrintF("#Netease_NowPlaying", false, std::to_string(music->id).c_str(), 
+						music->name.c_str(), music->GetArtists().c_str(), music->al->name.c_str(), 
+						music->copyright ? "Yes" : "No");
+				else
+					panel->PrintF("#Netease_NotPlaying", false);
+			})
 		}),
 		CCloudMusicCmdItem("play", {
-			CCloudMusicCmdItem("music", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+			CCloudMusicCmdItem("song", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
 				char* end;
 				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), &end, 10);
 				if (id == 0)
@@ -403,7 +412,7 @@ void CNeteasePanel::SetParent(vgui::VPANEL parent){
 }
 
 void CNeteasePanel::Think() {
-	if (m_pPlaying != nullptr) {
+	if (m_pPlaying != nullptr && m_pChannel.Valid()) {
 		ShowPanel(true);
 		if (m_bPaused)
 			return;
@@ -737,12 +746,8 @@ void CNeteasePanel::PlayListMusic(){
 					FMOD_CREATESOUNDEXINFO extrainfo = {};
 					extrainfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
 					extrainfo.length = obj->musicData.size();
-					FMOD_SOUND* snd;
-					FMOD_CHANNEL* cnl;
-					soundSystem->CreateStream(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &snd);
-					soundSystem->PlaySound(FMOD_CHANNEL_FREE, snd, 0, &cnl);
-					panel->m_pChannel.Set(cnl);
-					panel->m_pSound.Set(snd);
+					soundSystem->CreateStream(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, panel->m_pSound);
+					soundSystem->PlaySound(FMOD_CHANNEL_FREE, panel->m_pSound, 0, panel->m_pChannel);
 					panel->m_pChannel.SetVolume(panel->m_pVolume->value);
 					//Album
 					s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
