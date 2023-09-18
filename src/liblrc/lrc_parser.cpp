@@ -17,28 +17,28 @@ namespace lrc {
 namespace {
 
 // G1: metadata key, G2: metadata value
-static const std::regex kMetadataExp(R"exp(\[([a-zA-Z]+):([^\]]+)\])exp");
+static const std::wregex kMetadataExp(LR"exp(\[([a-zA-Z]+):([^\]]+)\])exp");
 
 // G1: lyric
-static const std::regex kLyricExp(R"exp(\]([^\]]*)\r?$)exp");
+static const std::wregex kLyricExp(LR"exp(\]([^\]]*)\r?$)exp");
 
 // G1: mm, G2: ss
-static const std::regex kTimestampExp(R"exp(\[(\d\d:\d\d\.\d\d)\])exp");
+static const std::wregex kTimestampExp(LR"exp(\[(\d\d:\d\d\.\d\d)\])exp");
 
 void SetMetadata(Lyrics::Metadata* metadata,
-                 const std::string& key,
-                 const std::string& val) {
-  if (key == "ar")
+                 const std::wstring& key,
+                 const std::wstring& val) {
+  if (key == L"ar")
     metadata->artist = val;
-  else if (key == "al")
+  else if (key == L"al")
     metadata->album = val;
-  else if (key == "ti")
+  else if (key == L"ti")
     metadata->title = val;
-  else if (key == "au")
+  else if (key == L"au")
     metadata->lyricsWriter = val;
-  else if (key == "by")
+  else if (key == L"by")
     metadata->fileCreator = val;
-  else if (key == "offset") {
+  else if (key == L"offset") {
     metadata->adjustment = std::stoi(val);
   } else {
     // Unknown key. Do nothing.
@@ -51,30 +51,30 @@ LrcParser::LrcParser() {}
 LrcParser::~LrcParser() {}
 
 std::unique_ptr<Lyrics> LrcParser::ParseStream(
-    std::istream* stream) const {
-  Lyrics::Metadata metadata {"", "", "", "", "", 0};
+    std::wistream* stream) const {
+  Lyrics::Metadata metadata {L"", L"", L"", L"", L"", 0};
   std::vector<Lyrics::LyricLine> lyric_lines;
 
-  for (std::string line; std::getline(*stream, line); ) {
-    std::smatch metadata_match;
+  for (std::wstring line; std::getline(*stream, line); ) {
+    std::wsmatch metadata_match;
     // Assume one metadata tag per line.
     if (std::regex_search(line, metadata_match, kMetadataExp)) {
-      std::string key = metadata_match[1];
-      std::string val = metadata_match[2];
+      std::wstring key = metadata_match[1];
+      std::wstring val = metadata_match[2];
       SetMetadata(&metadata, key, val);
       continue;
     }
 
-    std::smatch lyric_match;
+    std::wsmatch lyric_match;
     if (!std::regex_search(line, lyric_match, kLyricExp)) {
       // No lyric. The line is malformed.
       continue;
     }
-    std::string lyric = lyric_match[1];
+    std::wstring lyric = lyric_match[1];
 
     // Load timestamps and push lyric lines.
-    std::string::const_iterator search_start(line.cbegin());
-    std::smatch timestamp_match;
+    std::wstring::const_iterator search_start(line.cbegin());
+    std::wsmatch timestamp_match;
     while (regex_search(
         search_start, line.cend(), timestamp_match, kTimestampExp)) {
       int32_t time_ms = LrcParser::TimeStringToMilliseconds(timestamp_match[1]);
@@ -89,9 +89,9 @@ std::unique_ptr<Lyrics> LrcParser::ParseStream(
   return std::unique_ptr<Lyrics>(new Lyrics(metadata, std::move(lyric_lines)));
 }
 
-int32_t LrcParser::TimeStringToMilliseconds(const std::string& time_str) {
-    static const std::regex s_kTimeRegex(R"exp(^(\d+):(\d\d(\.?\d+)?)$)exp");
-    std::smatch match;
+int32_t LrcParser::TimeStringToMilliseconds(const std::wstring& time_str) {
+    static const std::wregex s_kTimeRegex(LR"exp(^(\d+):(\d\d(\.?\d+)?)$)exp");
+    std::wsmatch match;
     if (!std::regex_search(time_str, match, s_kTimeRegex)) {
         return -1;
     }
@@ -104,14 +104,14 @@ int32_t LrcParser::TimeStringToMilliseconds(const std::string& time_str) {
 }
 
 std::unique_ptr<Lyrics> LrcParser::ParseString(
-    const std::string& lrc_string) const {
-  std::stringstream stream(lrc_string);
+    const std::wstring& lrc_string) const {
+  std::wstringstream stream(lrc_string);
   return ParseStream(&stream);
 }
 
 std::unique_ptr<Lyrics> LrcParser::ParseFile(
-    const std::string& filename) const {
-  std::ifstream stream(filename);
+    const std::wstring& filename) const {
+  std::wifstream stream(filename);
   if (!stream.is_open()) {
     return nullptr;
   }

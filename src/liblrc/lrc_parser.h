@@ -19,17 +19,17 @@ class LrcParser {
   LrcParser();
   ~LrcParser();
 
-  std::unique_ptr<Lyrics> ParseStream(std::istream* stream) const;
+  std::unique_ptr<Lyrics> ParseStream(std::wistream* stream) const;
 
-  std::unique_ptr<Lyrics> ParseString(const std::string& lrc_string) const;
+  std::unique_ptr<Lyrics> ParseString(const std::wstring& lrc_string) const;
 
   // Returns nullptr if there is trouble loading the file.
-  std::unique_ptr<Lyrics> ParseFile(const std::string& filename) const;
+  std::unique_ptr<Lyrics> ParseFile(const std::wstring& filename) const;
  private:
   LrcParser(const LrcParser&) = delete;
   LrcParser(LrcParser&&) = delete;
 
-  static int32_t TimeStringToMilliseconds(const std::string& time_str);
+  static int32_t TimeStringToMilliseconds(const std::wstring& time_str);
 };
 
 }  // namespace lrc

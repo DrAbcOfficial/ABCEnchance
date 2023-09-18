@@ -16,11 +16,11 @@ namespace lrc {
 class Lyrics {
  public:
   struct Metadata {
-    std::string artist;
-    std::string album;
-    std::string title;
-    std::string lyricsWriter;
-    std::string fileCreator;
+    std::wstring artist;
+    std::wstring album;
+    std::wstring title;
+    std::wstring lyricsWriter;
+    std::wstring fileCreator;
     int32_t adjustment;  // in milliseconds, + shifts time up, - shifts down.
   };
 
@@ -32,7 +32,7 @@ class Lyrics {
     // kEndTimeNever if it is at the end of the song.
     int32_t end_time;
 
-    std::string lyric;
+    std::wstring lyric;
   };
 
   using ConstLyricIterator = std::vector<LyricLine>::const_iterator;
