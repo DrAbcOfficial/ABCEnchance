@@ -427,7 +427,7 @@ void CNeteasePanel::Think() {
 			//lyric
 			if (m_pLyric != nullptr && m_pLyric->Size() > 0) {
 				auto lrc = m_pLyric->LyricAt(pos);
-				std::wstring szLrc = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(lrc.lyric);
+				std::wstring szLrc = lrc.lyric;
 				m_pLyricLable->SetText(szLrc.c_str());
 				szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc.end_time - pos) / (lrc.end_time - lrc.start_time)), 0.0f, 1.0f));
 				m_pLyricLableHighlight->SetText(szLrc.c_str());
@@ -438,7 +438,7 @@ void CNeteasePanel::Think() {
 			}
 			if (m_pTransLyric != nullptr && m_pTransLyric->Size() > 0) {
 				auto lrc = m_pTransLyric->LyricAt(pos);
-				std::wstring szLrc = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(lrc.lyric);
+				std::wstring szLrc = lrc.lyric;
 				m_pTranslatedLyricLable->SetText(szLrc.c_str());
 				szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc.end_time - pos) / (lrc.end_time - lrc.start_time)), 0.0f, 1.0f));
 				m_pTranslatedLyricLableHighlight->SetText(szLrc.c_str());
@@ -755,8 +755,8 @@ void CNeteasePanel::PlayListMusic(){
 					//Set Lyric
 					if (obj->lyric != nullptr) {
 						lrc::LrcParser parser;
-						panel->m_pLyric = parser.ParseString(obj->lyric->lyric);
-						panel->m_pTransLyric = parser.ParseString(obj->lyric->tlyric);
+						panel->m_pLyric = parser.ParseString(std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(obj->lyric->lyric));
+						panel->m_pTransLyric = parser.ParseString(std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(obj->lyric->tlyric));
 					}
 					//Text
 					panel->m_pMusicNameLable->SetText(obj->music->name.c_str());
