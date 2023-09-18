@@ -884,8 +884,9 @@ namespace FModEngine {
 	Sound' API
 	 */
 	FMOD_RESULT CFModSound::Release() {
+		auto ret = g_pfnFMOD_Sound_Release(m_pFModSound);
 		m_pFModSound = nullptr;
-		return g_pfnFMOD_Sound_Release(m_pFModSound);
+		return ret;
 	}
 	FMOD_RESULT CFModSound::GetSystemObject(FMOD_SYSTEM** system) {
 		return g_pfnFMOD_Sound_GetSystemObject(m_pFModSound, system);
@@ -1037,6 +1038,9 @@ namespace FModEngine {
 	CFModSound::operator FMOD_SOUND* (){
 		return m_pFModSound;
 	}
+	CFModSound::operator FMOD_SOUND** () {
+		return &m_pFModSound;
+	}
 #endif
 #ifdef __USE_FMOD_CHANNEL_H_
 	CFModChannel::CFModChannel(){}
@@ -1050,8 +1054,9 @@ namespace FModEngine {
 		return g_pfnFMOD_Channel_GetSystemObject(m_pFModChennel, system);
 	}
 	FMOD_RESULT  CFModChannel::Stop() {
+		auto ret = g_pfnFMOD_Channel_Stop(m_pFModChennel);
 		m_pFModChennel = nullptr;
-		return g_pfnFMOD_Channel_Stop(m_pFModChennel);
+		return ret;
 	}
 	FMOD_RESULT  CFModChannel::SetPaused(FMOD_BOOL paused) {
 		return g_pfnFMOD_Channel_SetPaused(m_pFModChennel, paused);
@@ -1262,6 +1267,9 @@ namespace FModEngine {
 	}
 	CFModChannel::operator FMOD_CHANNEL* (){
 		return m_pFModChennel;
+	}
+	CFModChannel::operator FMOD_CHANNEL** () {
+		return &m_pFModChennel;
 	}
 #endif // __USE_FMOD_CHANNEL_H_
 

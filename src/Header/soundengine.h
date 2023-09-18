@@ -234,6 +234,7 @@ namespace FModEngine {
         FMOD_BOOL Valid();
         void Set(FMOD_SOUND* sound);
         operator FMOD_SOUND* ();
+        operator FMOD_SOUND** ();
     private:
         FMOD_SOUND* m_pFModSound = nullptr;
     };
@@ -348,6 +349,7 @@ namespace FModEngine {
         FMOD_BOOL Valid();
         void Set(FMOD_CHANNEL* channel);
         operator FMOD_CHANNEL*();
+        operator FMOD_CHANNEL**();
 private:
         FMOD_CHANNEL* m_pFModChennel = nullptr;
     };

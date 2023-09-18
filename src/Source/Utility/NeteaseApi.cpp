@@ -122,6 +122,15 @@ namespace netease {
 		}
 		return "";
 	}
+	string CMusic::GetArtists() {
+		string str = "";
+		for(auto iter = ar.begin(); iter != ar.end();iter++){
+			str += (*iter)->name;
+			if (iter != ar.end() - 1)
+				str += ", ";
+		}
+		return str;
+	}
 	CDjMusic::CDjMusic(rapidjson::Value& json) : CMusic(json["mainSong"]) {
 		//override
 		if (json.HasMember("name") && json.HasMember("id")) {

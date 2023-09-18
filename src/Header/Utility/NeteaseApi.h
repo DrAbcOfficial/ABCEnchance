@@ -66,6 +66,7 @@ namespace netease {
 		unsigned long duration = 0;
 		CMusic(rapidjson::Value& json);
 		virtual string GetPlayUrl(const char* quality, char* encode);
+		string GetArtists();
 	};
 	class CDjMusic : public CMusic {
 	public:
