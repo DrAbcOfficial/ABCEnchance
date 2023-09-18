@@ -118,8 +118,8 @@ private:
 
 	CQRLoginPanel* m_pLoginPanel = nullptr;
 
-	FMOD_SOUND* m_pSound = nullptr;
-	FMOD_CHANNEL* m_pChannel = nullptr;
+	FModEngine::CFModSound m_pSound;
+	FModEngine::CFModChannel m_pChannel;
 
 	bool m_bRenewingFM = false;
 	bool m_bPendingMusic = false;
