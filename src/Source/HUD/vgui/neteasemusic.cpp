@@ -408,7 +408,7 @@ void CNeteasePanel::Think() {
 		if (m_bPaused)
 			return;
 		size_t pos;
-		FModEngine::GetSystem()->GetPosition(m_pChannel, &pos, FMOD_TIMEUNIT_MS);
+		m_pChannel.GetPosition(&pos, FMOD_TIMEUNIT_MS);
 		if (pos < m_pPlaying->duration) {
 			char buffer[MAX_PATH];
 			V_snprintf(buffer, "%02d:%02d", pos / 60000, pos % 60000 / 1000);
@@ -488,9 +488,9 @@ void CNeteasePanel::Search(const char* keyword, netease::SearchType type) {
 				for (auto iter = result.begin(); iter != result.end(); iter++) {
 					netease::CSearchResult* ret = (*iter).get();
 					if (ret->extra.size() > 0)
-						V_snprintf(buffer, "#[%llu] %s - %s\n", ret->id, ret->name.c_str(), ret->extra.c_str());
+						V_snprintf(buffer, "#[%llu] %s - %s : %s\n", ret->id, ret->name.c_str(), ret->extra.c_str(), ret->copyright ? "[VIP]" : "[Free]");
 					else
-						V_snprintf(buffer, "#[%llu] %s\n", ret->id, ret->name.c_str());
+						V_snprintf(buffer, "#[%llu] %s : %s\n", ret->id, ret->name.c_str(), ret->copyright ? "[VIP]" : "[Free]");
 					buf += buffer;
 				}
 				PrintF("#Netease_SearchResult", false, buf.c_str());
@@ -583,20 +583,15 @@ void CNeteasePanel::RenewFM(bool play){
 }
 
 void CNeteasePanel::StopMusic(){
-	FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
-	if (m_pSound) {
-		soundSystem->StopSound(m_pChannel);
-		soundSystem->FreeSound(m_pSound);
-		m_pSound = nullptr;
-		m_pChannel = nullptr;
-		m_pPlaying = nullptr;
-	}
+	if (m_pChannel.Valid())
+		m_pChannel.Stop();
+	if (m_pSound.Valid())
+		m_pSound.Release();
+	m_pPlaying = nullptr;
 }
 void CNeteasePanel::SetVolume(float vol) {
-	if (m_pChannel) {
-		FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
-		soundSystem->SetVolume(m_pChannel, vol);
-	}
+	if (m_pChannel.Valid())
+		m_pChannel.SetVolume(vol);
 }
 
 template<typename... Args>
@@ -742,9 +737,13 @@ void CNeteasePanel::PlayListMusic(){
 					FMOD_CREATESOUNDEXINFO extrainfo = {};
 					extrainfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
 					extrainfo.length = obj->musicData.size();
-					soundSystem->CreateStream(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &panel->m_pSound);
-					soundSystem->PlaySound(FMOD_CHANNEL_FREE, panel->m_pSound, 0, &panel->m_pChannel);
-					soundSystem->SetVolume(panel->m_pChannel, panel->m_pVolume->value);
+					FMOD_SOUND* snd;
+					FMOD_CHANNEL* cnl;
+					soundSystem->CreateStream(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, &snd);
+					soundSystem->PlaySound(FMOD_CHANNEL_FREE, snd, 0, &cnl);
+					panel->m_pChannel.Set(cnl);
+					panel->m_pSound.Set(snd);
+					panel->m_pChannel.SetVolume(panel->m_pVolume->value);
 					//Album
 					s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
 					panel->m_pAlbumPanel->SetImage(s_pAlbumImage);
@@ -804,12 +803,12 @@ void CNeteasePanel::NextMusic(){
 	
 }
 void CNeteasePanel::PauseMusic(){
-	if (m_pChannel == nullptr) {
+	if (!m_pChannel.Valid()) {
 		m_bPaused = false;
 		return;
 	}
 	m_bPaused = !m_bPaused;
-	FModEngine::GetSystem()->SetPause(m_pChannel, m_bPaused);
+	m_pChannel.SetPaused(m_bPaused);
 }
 bool CNeteasePanel::IsPaused(){
 	return m_bPaused;

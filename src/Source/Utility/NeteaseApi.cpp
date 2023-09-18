@@ -62,8 +62,8 @@ namespace netease {
 	}
 	CBase163Object::CBase163Object(rapidjson::Value& json) {
 		if (json.HasMember("name") && json.HasMember("id")) {
-			this->name = json["name"].GetString();
-			this->id = json["id"].GetUint64();
+			name = json["name"].GetString();
+			id = json["id"].GetUint64();
 		}
 	}
 	CArtist::CArtist(rapidjson::Value& json) : CBase163Object(json) {
@@ -71,11 +71,11 @@ namespace netease {
 	}
 	CAlbum::CAlbum(rapidjson::Value& json) : CBase163Object(json) {
 		if (json.HasMember("picUrl"))
-			this->picUrl = json["picUrl"].GetString();
+			picUrl = json["picUrl"].GetString();
 	}
 	CMusic::CMusic(rapidjson::Value& json) : CBase163Object(json) {
 		if (json.HasMember("noCopyrightRcmd"))
-			this->copyright = !json["noCopyrightRcmd"].IsNull();
+			copyright = !json["noCopyrightRcmd"].IsNull();
 		rapidjson::Value alias;
 		if (json.HasMember("alia"))
 			alias = json["alia"].GetArray();
@@ -92,7 +92,7 @@ namespace netease {
 		else
 			ars = json["artists"].GetArray();
 		for (auto iter2 = ars.Begin(); iter2 != ars.End(); iter2++) {
-			this->ar.push_back(std::make_shared<CArtist>(*iter2));
+			ar.push_back(std::make_shared<CArtist>(*iter2));
 		}
 		if (json.HasMember("al"))
 			al = std::make_shared<CAlbum>(json["al"]);
@@ -106,7 +106,7 @@ namespace netease {
 	}
 	string CMusic::GetPlayUrl(const char* quality, char* encode) {
 		std::map<string, string> p = {
-			{"ids", "[" + std::to_string(this->id) + "]"},
+			{"ids", "[" + std::to_string(id) + "]"},
 			{"level", quality},
 			{"encodeType", encode}
 		};
@@ -141,7 +141,7 @@ namespace netease {
 	}
 	string CDjMusic::GetPlayUrl(const char* quality, char* encode) {
 		std::map<string, string> p = {
-			{"ids", "[" + std::to_string(this->mainTrackId) + "]"},
+			{"ids", "[" + std::to_string(mainTrackId) + "]"},
 			{"level", quality},
 			{"encodeType", encode}
 		};
@@ -178,24 +178,24 @@ namespace netease {
 		if (json.HasMember("profile")) {
 			rapidjson::Value profile = json["profile"].GetObject();
 			if (profile.HasMember("userId"))
-				this->id = profile["userId"].GetUint64();
+				id = profile["userId"].GetUint64();
 			if (profile.HasMember("nickname"))
-				this->name = profile["nickname"].GetString();
+				name = profile["nickname"].GetString();
 			if (profile.HasMember("nickname"))
-				this->signature = profile["signature"].GetString();
+				signature = profile["signature"].GetString();
 			if (profile.HasMember("vipType"))
-				this->vip = profile["vipType"].GetUint();
+				vip = profile["vipType"].GetUint();
 			if (profile.HasMember("playlistCount"))
-				this->playlistCount = profile["playlistCount"].GetUint();
+				playlistCount = profile["playlistCount"].GetUint();
 		}
 		if (json.HasMember("listenSongs"))
-			this->listenSongs = json["listenSongs"].GetUint64();
+			listenSongs = json["listenSongs"].GetUint64();
 		if (json.HasMember("level"))
-			this->level = json["level"].GetUint();
+			level = json["level"].GetUint();
 		if (json.HasMember("createTime"))
-			this->createTime = json["createTime"].GetUint64();
+			createTime = json["createTime"].GetUint64();
 		if (json.HasMember("createDays"))
-			this->createDay = json["createDays"].GetUint64();
+			createDay = json["createDays"].GetUint64();
 	}
 	CMy::CMy(rapidjson::Value& json) : CUser(json) {
 
@@ -401,6 +401,8 @@ namespace netease {
 					case netease::ST_ARTIST:
 					case netease::ST_USER:
 					default:
+						if ((*iter).HasMember("noCopyrightRcmd"))
+							p->copyright = (*iter).IsNull();
 						break;
 					}
 					ret.push_back(p);

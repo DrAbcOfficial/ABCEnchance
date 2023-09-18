@@ -150,12 +150,128 @@ namespace FModEngine {
 		FMOD_FUNCTION_DEFINE(FMOD_System_GetUserData);
 		FMOD_FUNCTION_DEFINE(FMOD_System_GetMemoryInfo);
 #endif
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Stop); 
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPaused);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetVolume);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPosition);
+#ifdef  __USE_FMOD_SOUND_H_
 		FMOD_FUNCTION_DEFINE(FMOD_Sound_Release);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSystemObject);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_Lock);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_Unlock);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetDefaults);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetDefaults);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetVariations);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetVariations);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_Set3DMinMaxDistance);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_Get3DMinMaxDistance);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_Set3DConeSettings);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_Get3DConeSettings);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_Set3DCustomRolloff);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_Get3DCustomRolloff);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetSubSound);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSubSound);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSubSoundParent);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetSubSoundSentence);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetName);
 		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLength);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetFormat);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetNumSubSounds);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetNumTags);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetTag);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetOpenState);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_ReadData);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SeekData);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetSoundGroup);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSoundGroup);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetNumSyncPoints);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSyncPoint);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSyncPointInfo);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_AddSyncPoint);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_DeleteSyncPoint);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetMode);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMode);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetLoopCount);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLoopCount);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetLoopPoints);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLoopPoints);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMusicNumChannels);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetMusicChannelVolume);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMusicChannelVolume);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetMusicSpeed);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMusicSpeed);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetUserData);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetUserData);
+		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMemoryInfo);
+#endif //  __USE_FMOD_SOUND_H_
+#ifdef __USE_FMOD_CHANNEL_H_
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSystemObject);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Stop);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPaused);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPaused);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetVolume);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetVolume);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetFrequency);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetFrequency);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPan);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPan);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetDelay);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetDelay);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetSpeakerMix);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSpeakerMix);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetSpeakerLevels);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSpeakerLevels);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetInputChannelMix);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetInputChannelMix);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetMute);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMute);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPriority);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPriority);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPosition);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPosition);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetReverbProperties);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetReverbProperties);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetLowPassGain);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetLowPassGain);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetChannelGroup);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetChannelGroup);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetCallback);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DAttributes);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DAttributes);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DMinMaxDistance);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DMinMaxDistance);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DConeSettings);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DConeSettings);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DConeOrientation);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DConeOrientation);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DCustomRolloff);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DCustomRolloff);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DOcclusion);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DOcclusion);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DSpread);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DSpread);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DPanLevel);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DPanLevel);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DDopplerLevel);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DDopplerLevel);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DDistanceFilter);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DDistanceFilter);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetDSPHead);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_AddDSP);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_IsPlaying);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_IsVirtual);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetAudibility);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetCurrentSound);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSpectrum);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetWaveData);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetIndex);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetMode);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMode);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetLoopCount);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetLoopCount);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetLoopPoints);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetLoopPoints);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetUserData);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetUserData);
+		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMemoryInfo);
+#endif // __USE_FMOD_CHANNEL_H_
+
 	void InitFModLibrary() {
 		g_hFmod = GetModuleHandle("svencoop/fmodex.dll");
 		if (!g_hFmod)
@@ -307,14 +423,129 @@ namespace FModEngine {
 			FMOD_DLSYM_CLIEN(FMOD_System_GetUserData);
 			FMOD_DLSYM_CLIEN(FMOD_System_GetMemoryInfo);
 #endif // FMOD_SYSTEM
+#ifdef __USE_FMOD_SOUND_H_
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Release);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSystemObject);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Lock);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Unlock);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetDefaults);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetDefaults);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetVariations);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetVariations);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Set3DMinMaxDistance);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Get3DMinMaxDistance);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Set3DConeSettings);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Get3DConeSettings);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Set3DCustomRolloff);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_Get3DCustomRolloff);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetSubSound);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSubSound);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSubSoundParent);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetSubSoundSentence);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetName);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLength);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetFormat);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetNumSubSounds);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetNumTags);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetTag);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetOpenState);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_ReadData);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SeekData);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetSoundGroup);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSoundGroup);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetNumSyncPoints);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSyncPoint);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSyncPointInfo);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_AddSyncPoint);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_DeleteSyncPoint);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetMode);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMode);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetLoopCount);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLoopCount);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetLoopPoints);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLoopPoints);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMusicNumChannels);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetMusicChannelVolume);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMusicChannelVolume);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetMusicSpeed);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMusicSpeed);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_SetUserData);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetUserData);
+			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMemoryInfo);
+#endif // __USE_FMOD_SOUND_H_
+#ifdef __USE_FMOD_CHANNEL_H_
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetSystemObject);
 			FMOD_DLSYM_CLIEN(FMOD_Channel_Stop);
 			FMOD_DLSYM_CLIEN(FMOD_Channel_SetPaused);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetPaused);
 			FMOD_DLSYM_CLIEN(FMOD_Channel_SetVolume);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetVolume);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetFrequency);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetFrequency);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetPan);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetPan);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetDelay);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetDelay);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetSpeakerMix);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetSpeakerMix);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetSpeakerLevels);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetSpeakerLevels);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetInputChannelMix);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetInputChannelMix);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetMute);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetMute);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetPriority);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetPriority);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetPosition);
 			FMOD_DLSYM_CLIEN(FMOD_Channel_GetPosition);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Release);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLength);
-		}
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetReverbProperties);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetReverbProperties);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetLowPassGain);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetLowPassGain);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetChannelGroup);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetChannelGroup);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetCallback);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DAttributes);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DAttributes);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DMinMaxDistance);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DMinMaxDistance);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DConeSettings);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DConeSettings);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DConeOrientation);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DConeOrientation);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DCustomRolloff);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DCustomRolloff);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DOcclusion);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DOcclusion);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DSpread);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DSpread);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DPanLevel);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DPanLevel);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DDopplerLevel);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DDopplerLevel);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DDistanceFilter);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DDistanceFilter);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetDSPHead);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_AddDSP);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_IsPlaying);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_IsVirtual);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetAudibility);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetCurrentSound);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetSpectrum);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetWaveData);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetIndex);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetMode);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetMode);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetLoopCount);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetLoopCount);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetLoopPoints);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetLoopPoints);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_SetUserData);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetUserData);
+			FMOD_DLSYM_CLIEN(FMOD_Channel_GetMemoryInfo);
+#endif // __USE_FMOD_CHANNEL_H_
 
+		}
 		g_pFModSystem = new CFModSystem();
 		g_pFModSystem->Init(SYSTEM_MAXCHANNEL, FMOD_INIT_NORMAL, 0);
 	}
@@ -637,23 +868,401 @@ namespace FModEngine {
 	FMOD_RESULT CFModSystem::GetMemoryInfo(unsigned int memorybits, unsigned int event_memorybits, unsigned int* memoryused, FMOD_MEMORY_USAGE_DETAILS* memoryused_details) {
 		return g_pfnFMOD_System_GetMemoryInfo(m_pFModSystem, memorybits, event_memorybits, memoryused, memoryused_details);
 	}
-	FMOD_RESULT CFModSystem::StopSound(FMOD_CHANNEL* channel){
-		return g_pfnFMOD_Channel_Stop(channel);
-	}
-	FMOD_RESULT CFModSystem::SetPause(FMOD_CHANNEL* channel, FMOD_BOOL state){
-		return g_pfnFMOD_Channel_SetPaused(channel, state);
-	}
-	FMOD_RESULT CFModSystem::SetVolume(FMOD_CHANNEL* channel, float volume) {
-		return g_pfnFMOD_Channel_SetVolume(channel, volume);
-	}
-	FMOD_RESULT CFModSystem::GetPosition(FMOD_CHANNEL* channel, unsigned int* position, FMOD_TIMEUNIT postype){
-		return g_pfnFMOD_Channel_GetPosition(channel, position, postype);
-	}
-	FMOD_RESULT CFModSystem::FreeSound(FMOD_SOUND* sound){
-		return g_pfnFMOD_Sound_Release(sound);
-	}
-	FMOD_RESULT CFModSystem::GetLength(FMOD_SOUND* sound, unsigned int* length, FMOD_TIMEUNIT lengthtype){
-		return g_pfnFMOD_Sound_GetLength(sound, length, lengthtype);
+	CFModSystem::operator FMOD_SYSTEM* (){
+		return m_pFModSystem;
 	}
 #endif
+#ifdef __USE_FMOD_SOUND_H_
+	CFModSound::CFModSound(){}
+	CFModSound::CFModSound(FMOD_SOUND* sound){
+		Set(sound);
+	}
+	CFModSound::~CFModSound(){
+		Release();
+	}
+	/*
+	Sound' API
+	 */
+	FMOD_RESULT CFModSound::Release() {
+		m_pFModSound = nullptr;
+		return g_pfnFMOD_Sound_Release(m_pFModSound);
+	}
+	FMOD_RESULT CFModSound::GetSystemObject(FMOD_SYSTEM** system) {
+		return g_pfnFMOD_Sound_GetSystemObject(m_pFModSound, system);
+	}
+	FMOD_RESULT CFModSound::Lock(unsigned int offset, unsigned int length, void** ptr1, void** ptr2, unsigned int* len1, unsigned int* len2) {
+		return g_pfnFMOD_Sound_Lock(m_pFModSound, offset, length, ptr1, ptr2, len1, len2);
+	}
+	FMOD_RESULT CFModSound::Unlock(void* ptr1, void* ptr2, unsigned int len1, unsigned int len2) {
+		return g_pfnFMOD_Sound_Unlock(m_pFModSound, ptr1, ptr2, len1, len2);
+	}
+	FMOD_RESULT  CFModSound::SetDefaults(float frequency, float volume, float pan, int priority) {
+		return g_pfnFMOD_Sound_SetDefaults(m_pFModSound, frequency, volume, pan, priority);
+	}
+	FMOD_RESULT  CFModSound::GetDefaults(float* frequency, float* volume, float* pan, int* priority) {
+		return g_pfnFMOD_Sound_GetDefaults(m_pFModSound, frequency, volume, pan, priority);
+	}
+	FMOD_RESULT  CFModSound::SetVariations(float frequencyvar, float volumevar, float panvar) {
+		return g_pfnFMOD_Sound_SetVariations(m_pFModSound, frequencyvar, volumevar, panvar);
+	}
+	FMOD_RESULT  CFModSound::GetVariations(float* frequencyvar, float* volumevar, float* panvar) {
+		return g_pfnFMOD_Sound_GetVariations(m_pFModSound, frequencyvar, volumevar, panvar);
+	}
+	FMOD_RESULT  CFModSound::Set3DMinMaxDistance(float min, float max) {
+		return g_pfnFMOD_Sound_Set3DMinMaxDistance(m_pFModSound, min, max);
+	}
+	FMOD_RESULT  CFModSound::Get3DMinMaxDistance(float* min, float* max) {
+		return g_pfnFMOD_Sound_Get3DMinMaxDistance(m_pFModSound, min, max);
+	}
+	FMOD_RESULT  CFModSound::Set3DConeSettings(float insideconeangle, float outsideconeangle, float outsidevolume) {
+		return g_pfnFMOD_Sound_Set3DConeSettings(m_pFModSound, insideconeangle, outsideconeangle, outsidevolume);
+	}
+	FMOD_RESULT  CFModSound::Get3DConeSettings(float* insideconeangle, float* outsideconeangle, float* outsidevolume) {
+		return g_pfnFMOD_Sound_Get3DConeSettings(m_pFModSound, insideconeangle, outsideconeangle, outsidevolume);
+	}
+	FMOD_RESULT  CFModSound::Set3DCustomRolloff(FMOD_VECTOR* points, int numpoints) {
+		return g_pfnFMOD_Sound_Set3DCustomRolloff(m_pFModSound, points, numpoints);
+	}
+	FMOD_RESULT  CFModSound::Get3DCustomRolloff(FMOD_VECTOR** points, int* numpoints) {
+		return g_pfnFMOD_Sound_Get3DCustomRolloff(m_pFModSound, points, numpoints);
+	}
+	FMOD_RESULT  CFModSound::SetSubSound(int index, FMOD_SOUND* subsound) {
+		return g_pfnFMOD_Sound_SetSubSound(m_pFModSound, index, subsound);
+	}
+	FMOD_RESULT  CFModSound::GetSubSound(int index, FMOD_SOUND** subsound) {
+		return g_pfnFMOD_Sound_GetSubSound(m_pFModSound, index, subsound);
+	}
+	FMOD_RESULT  CFModSound::GetSubSoundParent(FMOD_SOUND** parentsound) {
+		return g_pfnFMOD_Sound_GetSubSoundParent(m_pFModSound, parentsound);
+	}
+	FMOD_RESULT  CFModSound::SetSubSoundSentence(int* subsoundlist, int numsubsounds) {
+		return g_pfnFMOD_Sound_SetSubSoundSentence(m_pFModSound, subsoundlist, numsubsounds);
+	}
+	FMOD_RESULT  CFModSound::GetName(char* name, int namelen) {
+		return g_pfnFMOD_Sound_GetName(m_pFModSound, name, namelen);
+	}
+	FMOD_RESULT  CFModSound::GetLength(unsigned int* length, FMOD_TIMEUNIT lengthtype) {
+		return g_pfnFMOD_Sound_GetLength(m_pFModSound, length, lengthtype);
+	}
+	FMOD_RESULT  CFModSound::GetFormat(int* type, int* format, int* channels, int* bits) {
+		return g_pfnFMOD_Sound_GetFormat(m_pFModSound, (FMOD_SOUND_TYPE*)type, (FMOD_SOUND_FORMAT*)format, channels, bits);
+	}
+	FMOD_RESULT  CFModSound::GetNumSubSounds(int* numsubsounds) {
+		return g_pfnFMOD_Sound_GetNumSubSounds(m_pFModSound, numsubsounds);
+	}
+	FMOD_RESULT  CFModSound::GetNumTags(int* numtags, int* numtagsupdated) {
+		return g_pfnFMOD_Sound_GetNumTags(m_pFModSound, numtags, numtagsupdated);
+	}
+	FMOD_RESULT  CFModSound::GetTag(const char* name, int index, FMOD_TAG* tag) {
+		return g_pfnFMOD_Sound_GetTag(m_pFModSound, name, index, tag);
+	}
+	FMOD_RESULT  CFModSound::GetOpenState(FMOD_OPENSTATE* openstate, unsigned int* percentbuffered, FMOD_BOOL* starving, FMOD_BOOL* diskbusy) {
+		return g_pfnFMOD_Sound_GetOpenState(m_pFModSound, openstate, percentbuffered, starving, diskbusy);
+	}
+	FMOD_RESULT  CFModSound::ReadData(void* buffer, unsigned int lenbytes, unsigned int* read) {
+		return g_pfnFMOD_Sound_ReadData(m_pFModSound, buffer, lenbytes, read);
+	}
+	FMOD_RESULT  CFModSound::SeekData(unsigned int pcm) {
+		return g_pfnFMOD_Sound_SeekData(m_pFModSound, pcm);
+	}
+	FMOD_RESULT  CFModSound::SetSoundGroup(FMOD_SOUNDGROUP* soundgroup) {
+		return g_pfnFMOD_Sound_SetSoundGroup(m_pFModSound, soundgroup);
+	}
+	FMOD_RESULT  CFModSound::GetSoundGroup(FMOD_SOUNDGROUP** soundgroup) {
+		return g_pfnFMOD_Sound_GetSoundGroup(m_pFModSound, soundgroup);
+	}
+	FMOD_RESULT  CFModSound::GetNumSyncPoints(int* numsyncpoints) {
+		return g_pfnFMOD_Sound_GetNumSyncPoints(m_pFModSound, numsyncpoints);
+	}
+	FMOD_RESULT  CFModSound::GetSyncPoint(int index, FMOD_SYNCPOINT** point) {
+		return g_pfnFMOD_Sound_GetSyncPoint(m_pFModSound, index, point);
+	}
+	FMOD_RESULT  CFModSound::GetSyncPointInfo(FMOD_SYNCPOINT* point, char* name, int namelen, unsigned int* offset, FMOD_TIMEUNIT offsettype) {
+		return g_pfnFMOD_Sound_GetSyncPointInfo(m_pFModSound, point, name, namelen, offset, offsettype);
+	}
+	FMOD_RESULT  CFModSound::AddSyncPoint(unsigned int offset, FMOD_TIMEUNIT offsettype, const char* name, FMOD_SYNCPOINT** point) {
+		return g_pfnFMOD_Sound_AddSyncPoint(m_pFModSound, offset, offsettype, name, point);
+	}
+	FMOD_RESULT  CFModSound::DeleteSyncPoint(FMOD_SYNCPOINT* point) {
+		return g_pfnFMOD_Sound_DeleteSyncPoint(m_pFModSound, point);
+	}
+	FMOD_RESULT  CFModSound::SetMode(FMOD_MODE mode) {
+		return g_pfnFMOD_Sound_SetMode(m_pFModSound, mode);
+	}
+	FMOD_RESULT  CFModSound::GetMode(FMOD_MODE* mode) {
+		return g_pfnFMOD_Sound_GetMode(m_pFModSound, mode);
+	}
+	FMOD_RESULT  CFModSound::SetLoopCount(int loopcount) {
+		return g_pfnFMOD_Sound_SetLoopCount(m_pFModSound, loopcount);
+	}
+	FMOD_RESULT  CFModSound::GetLoopCount(int* loopcount) {
+		return g_pfnFMOD_Sound_GetLoopCount(m_pFModSound, loopcount);
+	}
+	FMOD_RESULT  CFModSound::SetLoopPoints(unsigned int loopstart, FMOD_TIMEUNIT loopstarttype, unsigned int loopend, FMOD_TIMEUNIT loopendtype) {
+		return g_pfnFMOD_Sound_SetLoopPoints(m_pFModSound, loopstart, loopstarttype, loopend, loopendtype);
+	}
+	FMOD_RESULT  CFModSound::GetLoopPoints(unsigned int* loopstart, FMOD_TIMEUNIT loopstarttype, unsigned int* loopend, FMOD_TIMEUNIT loopendtype) {
+		return g_pfnFMOD_Sound_GetLoopPoints(m_pFModSound, loopstart, loopstarttype, loopend, loopendtype);
+	}
+	FMOD_RESULT  CFModSound::GetMusicNumChannels(int* numchannels) {
+		return g_pfnFMOD_Sound_GetMusicNumChannels(m_pFModSound, numchannels);
+	}
+	FMOD_RESULT  CFModSound::SetMusicChannelVolume(int channel, float volume) {
+		return g_pfnFMOD_Sound_SetMusicChannelVolume(m_pFModSound, channel, volume);
+	}
+	FMOD_RESULT  CFModSound::GetMusicChannelVolume(int channel, float* volume) {
+		return g_pfnFMOD_Sound_GetMusicChannelVolume(m_pFModSound, channel, volume);
+	}
+	FMOD_RESULT  CFModSound::SetMusicSpeed(float speed) {
+		return g_pfnFMOD_Sound_SetMusicSpeed(m_pFModSound, speed);
+	}
+	FMOD_RESULT  CFModSound::GetMusicSpeed(float* speed) {
+		return g_pfnFMOD_Sound_GetMusicSpeed(m_pFModSound, speed);
+	}
+	FMOD_RESULT  CFModSound::SetUserData(void* userdata) {
+		return g_pfnFMOD_Sound_SetUserData(m_pFModSound, userdata);
+	}
+	FMOD_RESULT  CFModSound::GetUserData(void** userdata) {
+		return g_pfnFMOD_Sound_GetUserData(m_pFModSound, userdata);
+	}
+	FMOD_RESULT  CFModSound::GetMemoryInfo(unsigned int memorybits, unsigned int event_memorybits, unsigned int* memoryused, FMOD_MEMORY_USAGE_DETAILS* memoryused_details) {
+		return g_pfnFMOD_Sound_GetMemoryInfo(m_pFModSound, memorybits, event_memorybits, memoryused, memoryused_details);
+	}
+	FMOD_BOOL CFModSound::Valid(){
+		return m_pFModSound != nullptr;
+	}
+	void CFModSound::Set(FMOD_SOUND* sound){
+		m_pFModSound = sound;
+	}
+	CFModSound::operator FMOD_SOUND* (){
+		return m_pFModSound;
+	}
+#endif
+#ifdef __USE_FMOD_CHANNEL_H_
+	CFModChannel::CFModChannel(){}
+	CFModChannel::CFModChannel(FMOD_CHANNEL* channel){
+		Set(channel);
+	}
+	CFModChannel::~CFModChannel(){
+		Stop();
+	}
+	FMOD_RESULT CFModChannel::GetSystemObject(FMOD_SYSTEM** system) {
+		return g_pfnFMOD_Channel_GetSystemObject(m_pFModChennel, system);
+	}
+	FMOD_RESULT  CFModChannel::Stop() {
+		m_pFModChennel = nullptr;
+		return g_pfnFMOD_Channel_Stop(m_pFModChennel);
+	}
+	FMOD_RESULT  CFModChannel::SetPaused(FMOD_BOOL paused) {
+		return g_pfnFMOD_Channel_SetPaused(m_pFModChennel, paused);
+	}
+	FMOD_RESULT  CFModChannel::GetPaused(FMOD_BOOL* paused) {
+		return g_pfnFMOD_Channel_GetPaused(m_pFModChennel, paused);
+	}
+	FMOD_RESULT  CFModChannel::SetVolume(float volume) {
+		return g_pfnFMOD_Channel_SetVolume(m_pFModChennel, volume);
+	}
+	FMOD_RESULT  CFModChannel::GetVolume(float* volume) {
+		return g_pfnFMOD_Channel_GetVolume(m_pFModChennel, volume);
+	}
+	FMOD_RESULT  CFModChannel::SetFrequency(float frequency) {
+		return g_pfnFMOD_Channel_SetFrequency(m_pFModChennel, frequency);
+	}
+	FMOD_RESULT  CFModChannel::GetFrequency(float* frequency) {
+		return g_pfnFMOD_Channel_GetFrequency(m_pFModChennel, frequency);
+	}
+	FMOD_RESULT  CFModChannel::SetPan(float pan) {
+		return g_pfnFMOD_Channel_SetPan(m_pFModChennel, pan);
+	}
+	FMOD_RESULT  CFModChannel::GetPan(float* pan) {
+		return g_pfnFMOD_Channel_GetPan(m_pFModChennel, pan);
+	}
+	FMOD_RESULT  CFModChannel::SetDelay(FMOD_DELAYTYPE delaytype, unsigned int delayhi, unsigned int delaylo) {
+		return g_pfnFMOD_Channel_SetDelay(m_pFModChennel, delaytype, delayhi, delaylo);
+	}
+	FMOD_RESULT  CFModChannel::GetDelay(FMOD_DELAYTYPE delaytype, unsigned int* delayhi, unsigned int* delaylo) {
+		return g_pfnFMOD_Channel_GetDelay(m_pFModChennel, delaytype, delayhi, delaylo);
+	}
+	FMOD_RESULT  CFModChannel::SetSpeakerMix(float frontleft, float frontright, float center, float lfe, float backleft, float backright, float sideleft, float sideright) {
+		return g_pfnFMOD_Channel_SetSpeakerMix(m_pFModChennel, frontleft, frontright, center, lfe, backleft, backright, sideleft, sideright);
+	}
+	FMOD_RESULT  CFModChannel::GetSpeakerMix(float* frontleft, float* frontright, float* center, float* lfe, float* backleft, float* backright, float* sideleft, float* sideright) {
+		return g_pfnFMOD_Channel_GetSpeakerMix(m_pFModChennel, frontleft, frontright, center, lfe, backleft, backright, sideleft, sideright);
+	}
+	FMOD_RESULT  CFModChannel::SetSpeakerLevels(FMOD_SPEAKER speaker, float* levels, int numlevels) {
+		return g_pfnFMOD_Channel_SetSpeakerLevels(m_pFModChennel, speaker, levels, numlevels);
+	}
+	FMOD_RESULT  CFModChannel::GetSpeakerLevels(FMOD_SPEAKER speaker, float* levels, int numlevels) {
+		return g_pfnFMOD_Channel_GetSpeakerLevels(m_pFModChennel, speaker, levels, numlevels);
+	}
+	FMOD_RESULT  CFModChannel::SetInputChannelMix(float* levels, int numlevels) {
+		return g_pfnFMOD_Channel_SetInputChannelMix(m_pFModChennel, levels, numlevels);
+	}
+	FMOD_RESULT  CFModChannel::GetInputChannelMix(float* levels, int numlevels) {
+		return g_pfnFMOD_Channel_GetInputChannelMix(m_pFModChennel, levels, numlevels);
+	}
+	FMOD_RESULT  CFModChannel::SetMute(FMOD_BOOL mute) {
+		return g_pfnFMOD_Channel_SetMute(m_pFModChennel, mute);
+	}
+	FMOD_RESULT  CFModChannel::GetMute(FMOD_BOOL* mute) {
+		return g_pfnFMOD_Channel_GetMute(m_pFModChennel, mute);
+	}
+	FMOD_RESULT  CFModChannel::SetPriority(int priority) {
+		return g_pfnFMOD_Channel_SetPriority(m_pFModChennel, priority);
+	}
+	FMOD_RESULT  CFModChannel::GetPriority(int* priority) {
+		return g_pfnFMOD_Channel_GetPriority(m_pFModChennel, priority);
+	}
+	FMOD_RESULT  CFModChannel::SetPosition(unsigned int position, FMOD_TIMEUNIT postype) {
+		return g_pfnFMOD_Channel_SetPosition(m_pFModChennel, position, postype);
+	}
+	FMOD_RESULT  CFModChannel::GetPosition(unsigned int* position, FMOD_TIMEUNIT postype) {
+		return g_pfnFMOD_Channel_GetPosition(m_pFModChennel, position, postype);
+	}
+	FMOD_RESULT  CFModChannel::SetReverbProperties(const FMOD_REVERB_CHANNELPROPERTIES* prop) {
+		return g_pfnFMOD_Channel_SetReverbProperties(m_pFModChennel, prop);
+	}
+	FMOD_RESULT  CFModChannel::GetReverbProperties(FMOD_REVERB_CHANNELPROPERTIES* prop) {
+		return g_pfnFMOD_Channel_GetReverbProperties(m_pFModChennel, prop);
+	}
+	FMOD_RESULT  CFModChannel::SetLowPassGain(float gain) {
+		return g_pfnFMOD_Channel_SetLowPassGain(m_pFModChennel, gain);
+	}
+	FMOD_RESULT  CFModChannel::GetLowPassGain(float* gain) {
+		return g_pfnFMOD_Channel_GetLowPassGain(m_pFModChennel, gain);
+	}
+	FMOD_RESULT  CFModChannel::SetChannelGroup(FMOD_CHANNELGROUP* channelgroup) {
+		return g_pfnFMOD_Channel_SetChannelGroup(m_pFModChennel, channelgroup);
+	}
+	FMOD_RESULT  CFModChannel::GetChannelGroup(FMOD_CHANNELGROUP** channelgroup) {
+		return g_pfnFMOD_Channel_GetChannelGroup(m_pFModChennel, channelgroup);
+	}
+	FMOD_RESULT  CFModChannel::SetCallback(FMOD_CHANNEL_CALLBACK callback) {
+		return g_pfnFMOD_Channel_SetCallback(m_pFModChennel, callback);
+	}
+	FMOD_RESULT  CFModChannel::Set3DAttributes(const FMOD_VECTOR* pos, const FMOD_VECTOR* vel) {
+		return g_pfnFMOD_Channel_Set3DAttributes(m_pFModChennel, pos, vel);
+	}
+	FMOD_RESULT  CFModChannel::Get3DAttributes(FMOD_VECTOR* pos, FMOD_VECTOR* vel) {
+		return g_pfnFMOD_Channel_Get3DAttributes(m_pFModChennel, pos, vel);
+	}
+	FMOD_RESULT  CFModChannel::Set3DMinMaxDistance(float mindistance, float maxdistance) {
+		return g_pfnFMOD_Channel_Set3DMinMaxDistance(m_pFModChennel, mindistance, maxdistance);
+	}
+	FMOD_RESULT  CFModChannel::Get3DMinMaxDistance(float* mindistance, float* maxdistance) {
+		return g_pfnFMOD_Channel_Get3DMinMaxDistance(m_pFModChennel, mindistance, maxdistance);
+	}
+	FMOD_RESULT  CFModChannel::Set3DConeSettings(float insideconeangle, float outsideconeangle, float outsidevolume) {
+		return g_pfnFMOD_Channel_Set3DConeSettings(m_pFModChennel, insideconeangle, outsideconeangle, outsidevolume);
+	}
+	FMOD_RESULT  CFModChannel::Get3DConeSettings(float* insideconeangle, float* outsideconeangle, float* outsidevolume) {
+		return g_pfnFMOD_Channel_Get3DConeSettings(m_pFModChennel, insideconeangle, outsideconeangle, outsidevolume);
+	}
+	FMOD_RESULT  CFModChannel::Set3DConeOrientation(FMOD_VECTOR* orientation) {
+		return g_pfnFMOD_Channel_Set3DConeOrientation(m_pFModChennel, orientation);
+	}
+	FMOD_RESULT  CFModChannel::Get3DConeOrientation(FMOD_VECTOR* orientation) {
+		return g_pfnFMOD_Channel_Get3DConeOrientation(m_pFModChennel, orientation);
+	}
+	FMOD_RESULT CFModChannel::Set3DCustomRolloff(FMOD_VECTOR* points, int numpoints) {
+		return g_pfnFMOD_Channel_Set3DCustomRolloff(m_pFModChennel, points, numpoints);
+	}
+	FMOD_RESULT  CFModChannel::Get3DCustomRolloff(FMOD_VECTOR** points, int* numpoints) {
+		return g_pfnFMOD_Channel_Get3DCustomRolloff(m_pFModChennel, points, numpoints);
+	}
+	FMOD_RESULT  CFModChannel::Set3DOcclusion(float directocclusion, float reverbocclusion) {
+		return g_pfnFMOD_Channel_Set3DOcclusion(m_pFModChennel, directocclusion, reverbocclusion);
+	}
+	FMOD_RESULT  CFModChannel::Get3DOcclusion(float* directocclusion, float* reverbocclusion) {
+		return g_pfnFMOD_Channel_Get3DOcclusion(m_pFModChennel, directocclusion, reverbocclusion);
+	}
+	FMOD_RESULT  CFModChannel::Set3DSpread(float angle) {
+		return g_pfnFMOD_Channel_Set3DSpread(m_pFModChennel, angle);
+	}
+	FMOD_RESULT  CFModChannel::Get3DSpread(float* angle) {
+		return g_pfnFMOD_Channel_Get3DSpread(m_pFModChennel, angle);
+	}
+	FMOD_RESULT  CFModChannel::Set3DPanLevel(float level) {
+		return g_pfnFMOD_Channel_Set3DPanLevel(m_pFModChennel, level);
+	}
+	FMOD_RESULT  CFModChannel::Get3DPanLevel(float* level) {
+		return g_pfnFMOD_Channel_Get3DPanLevel(m_pFModChennel, level);
+	}
+	FMOD_RESULT  CFModChannel::Set3DDopplerLevel(float level) {
+		return g_pfnFMOD_Channel_Set3DDopplerLevel(m_pFModChennel, level);
+	}
+	FMOD_RESULT  CFModChannel::Get3DDopplerLevel(float* level) {
+		return g_pfnFMOD_Channel_Get3DDopplerLevel(m_pFModChennel, level);
+	}
+	FMOD_RESULT  CFModChannel::Set3DDistanceFilter(FMOD_BOOL custom, float customLevel, float centerFreq) {
+		return g_pfnFMOD_Channel_Set3DDistanceFilter(m_pFModChennel, custom, customLevel, centerFreq);
+	}
+	FMOD_RESULT  CFModChannel::Get3DDistanceFilter(FMOD_BOOL* custom, float* customLevel, float* centerFreq) {
+		return g_pfnFMOD_Channel_Get3DDistanceFilter(m_pFModChennel, custom, customLevel, centerFreq);
+	}
+	FMOD_RESULT  CFModChannel::GetDSPHead(FMOD_DSP** dsp) {
+		return g_pfnFMOD_Channel_GetDSPHead(m_pFModChennel, dsp);
+	}
+	FMOD_RESULT  CFModChannel::AddDSP(FMOD_DSP* dsp, FMOD_DSPCONNECTION** connection) {
+		return g_pfnFMOD_Channel_AddDSP(m_pFModChennel, dsp, connection);
+	}
+	FMOD_RESULT  CFModChannel::IsPlaying(FMOD_BOOL* isplaying) {
+		return g_pfnFMOD_Channel_IsPlaying(m_pFModChennel, isplaying);
+	}
+	FMOD_RESULT  CFModChannel::IsVirtual(FMOD_BOOL* isvirtual) {
+		return g_pfnFMOD_Channel_IsVirtual(m_pFModChennel, isvirtual);
+	}
+	FMOD_RESULT  CFModChannel::GetAudibility(float* audibility) {
+		return g_pfnFMOD_Channel_GetAudibility(m_pFModChennel, audibility);
+	}
+	FMOD_RESULT  CFModChannel::GetCurrentSound(FMOD_SOUND** sound) {
+		return g_pfnFMOD_Channel_GetCurrentSound(m_pFModChennel, sound);
+	}
+	FMOD_RESULT  CFModChannel::GetSpectrum(float* spectrumarray, int numvalues, int channeloffset, FMOD_DSP_FFT_WINDOW windowtype) {
+		return g_pfnFMOD_Channel_GetSpectrum(m_pFModChennel, spectrumarray, numvalues, channeloffset, windowtype);
+	}
+	FMOD_RESULT  CFModChannel::GetWaveData(float* wavearray, int numvalues, int channeloffset) {
+		return g_pfnFMOD_Channel_GetWaveData(m_pFModChennel, wavearray, numvalues, channeloffset);
+	}
+	FMOD_RESULT  CFModChannel::GetIndex(int* index) {
+		return g_pfnFMOD_Channel_GetIndex(m_pFModChennel, index);
+	}
+	FMOD_RESULT  CFModChannel::SetMode(FMOD_MODE mode) {
+		return g_pfnFMOD_Channel_SetMode(m_pFModChennel, mode);
+	}
+	FMOD_RESULT  CFModChannel::GetMode(FMOD_MODE* mode) {
+		return g_pfnFMOD_Channel_GetMode(m_pFModChennel, mode);
+	}
+	FMOD_RESULT  CFModChannel::SetLoopCount(int loopcount) {
+		return g_pfnFMOD_Channel_SetLoopCount(m_pFModChennel, loopcount);
+	}
+	FMOD_RESULT  CFModChannel::GetLoopCount(int* loopcount) {
+		return g_pfnFMOD_Channel_GetLoopCount(m_pFModChennel, loopcount);
+	}
+	FMOD_RESULT  CFModChannel::SetLoopPoints(unsigned int loopstart, FMOD_TIMEUNIT loopstarttype, unsigned int loopend, FMOD_TIMEUNIT loopendtype) {
+		return g_pfnFMOD_Channel_SetLoopPoints(m_pFModChennel, loopstart, loopstarttype, loopend, loopendtype);
+	}
+	FMOD_RESULT  CFModChannel::GetLoopPoints(unsigned int* loopstart, FMOD_TIMEUNIT loopstarttype, unsigned int* loopend, FMOD_TIMEUNIT loopendtype) {
+		return g_pfnFMOD_Channel_GetLoopPoints(m_pFModChennel, loopstart, loopstarttype, loopend, loopendtype);
+	}
+	FMOD_RESULT  CFModChannel::SetUserData(void* userdata) {
+		return g_pfnFMOD_Channel_SetUserData(m_pFModChennel, userdata);
+	}
+	FMOD_RESULT  CFModChannel::GetUserData(void** userdata) {
+		return g_pfnFMOD_Channel_GetUserData(m_pFModChennel, userdata);
+	}
+	FMOD_RESULT  CFModChannel::GetMemoryInfo(unsigned int memorybits, unsigned int event_memorybits, unsigned int* memoryused, FMOD_MEMORY_USAGE_DETAILS* memoryused_details) {
+		return g_pfnFMOD_Channel_GetMemoryInfo(m_pFModChennel, memorybits, event_memorybits, memoryused, memoryused_details);
+	}
+	FMOD_BOOL CFModChannel::Valid(){
+		return m_pFModChennel != nullptr;
+	}
+	void CFModChannel::Set(FMOD_CHANNEL* channel){
+		m_pFModChennel = channel;
+	}
+	CFModChannel::operator FMOD_CHANNEL* (){
+		return m_pFModChennel;
+	}
+#endif // __USE_FMOD_CHANNEL_H_
+
 }

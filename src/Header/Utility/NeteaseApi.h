@@ -115,8 +115,9 @@ namespace netease {
 	class CSearchResult {
 	public:
 		string name;
-		neteaseid_t id;
+		neteaseid_t id = 0;
 		string extra;
+		bool copyright = false;
 	};
 	//Login
 	class CLocalUser {
