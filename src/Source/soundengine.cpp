@@ -565,8 +565,8 @@ namespace FModEngine {
 		Create();
 	}
 	CFModSystem::~CFModSystem() {
-		Close();
-		Release();
+		//Close();
+		//Release();
 	}
 	FMOD_RESULT CFModSystem::Create() {
 		return g_pfnFMOD_System_Create(&m_pFModSystem);
