@@ -187,7 +187,7 @@ void DecodeVideo() {
 	CloseVideo();
 }
 void BackGroundVideoInit() {
-	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "0", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (cvar->value > 0){
 			OpenVideo();
 			PlayMp3();
