@@ -22,6 +22,7 @@
 #include "exportfuncs.h"
 #include "plugins.h"
 
+bool g_bInitialized = false;
 int g_iTextureID;
 
 IVanilliaPanel* g_pBasePanel;
@@ -91,6 +92,7 @@ void CloseVideo() {
 		g_pReader.load()->Close();
 		g_pReader = nullptr;
 	}
+	g_pVideoResult = nullptr;
 }
 void PlayMp3() {
 	char soundcmd[MAX_PATH + 8];
@@ -130,7 +132,7 @@ void DecodeVideo() {
 			size_t enumW = img->stride[VPX_PLANE_Y];
 			size_t enumH = img->h;
 			asyncResult returnVal;
-			const static constexpr auto YUV2RGB = [](int Y, int U, int V, int* R, int* G, int* B) {
+			const static auto YUV2RGB = [](int Y, int U, int V, int* R, int* G, int* B) {
 				int iTmpR = 0;
 				int iTmpG = 0;
 				int iTmpB = 0;
@@ -183,26 +185,28 @@ void DecodeVideo() {
 		auto tbr = std::chrono::microseconds(static_cast<int>(static_cast<float>(g_pInfo.load()->time_base.numerator) / static_cast<float >(g_pInfo.load()->time_base.denominator) * 1000));
 		std::this_thread::sleep_for(std::chrono::microseconds(duration > tbr ? std::chrono::microseconds(0) : tbr - duration));
 	} while (!g_pThreadStop);
-
 	CloseVideo();
 }
 void BackGroundVideoInit() {
 	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "0", FCVAR_VALUE, [](cvar_t* cvar) {
-		if (cvar->value > 0){
-			OpenVideo();
-			PlayMp3();
-			g_pThreadStop = false;
-			g_pDecodeThread = std::thread(DecodeVideo);
-			g_pDecodeThread.detach();
-		}
-		else {
-			g_pThreadStop = true;
-			CloseVideo();
-			EngineClientCmd("mp3 stop;mp3 loop media/gamestartup.mp3 ui");
-		}
+		if (g_bInitialized)
+			ConsoleWriteline("Background will changed in next lauch.\n");
 	});
 	ReadBackGroundList();
 	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size()-1)];
+}
+void BackGroundVideoPostInit(){
+	if (gCVars.pDynamicBackground->value > 0) {
+		OpenVideo();
+		PlayMp3();
+		g_pThreadStop = false;
+		g_pDecodeThread = std::thread(DecodeVideo);
+		g_pDecodeThread.detach();
+	}
+	else {
+		g_pThreadStop = true;
+		EngineClientCmd("mp3 stop;mp3 loop media/gamestartup.mp3 ui");
+	}
 }
 void BackGroundVideoClose() {
 	g_pThreadStop = true;
@@ -212,6 +216,8 @@ void BackGroundVideoClose() {
 	g_aryBackGrounds.clear();
 }
 void BackGroundSetDecodeState(bool state) {
+	if (g_pThreadStop)
+		return;
 	if (state) {
 		g_pReader.load()->ResetToBegine();
 		PlayMp3();
@@ -221,7 +227,7 @@ void BackGroundSetDecodeState(bool state) {
 	g_bPauseDecode = !state;
 }
 void BackGroundInitMusic() {
-	if (gCVars.pDynamicBackground->value > 0)
+	if (!g_pThreadStop)
 		PlayMp3();
 }
 IVanilliaPanel* BasePanel(){
@@ -255,7 +261,11 @@ void* __fastcall CLoadingDialog_dtor(void* pthis, int dummy, byte idoncare) {
 	return gHookFuncs.CLoadingDialog_dtor(pthis, dummy, idoncare);
 }
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
-	if (gCVars.pDynamicBackground->value <= 0) {
+	if (!g_bInitialized) {
+		BackGroundVideoPostInit();
+		g_bInitialized = true;
+	}
+	if (g_pThreadStop) {
 		gHookFuncs.CBasePanel_PaintBackground(pthis, dummy);
 		return;
 	}
