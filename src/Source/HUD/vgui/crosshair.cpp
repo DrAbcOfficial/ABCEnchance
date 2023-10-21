@@ -10,6 +10,7 @@
 #include <vgui/ILocalize.h>
 #include <vgui2/spr_image.h>
 #include <vgui_controls/ImagePanel.h>
+#include <vgui_controls/AnimationController.h>
 #include "ammobar.h"
 
 #include "hud.h"
@@ -56,6 +57,13 @@ CCrosshairPanel::CCrosshairPanel()
 
 	SetSize(ScreenWidth, ScreenHeight);
 
+	m_pCrosshair = {
+		new vgui::Panel(this, "center"),
+		new vgui::Panel(this, "top"),
+		new vgui::Panel(this, "bottom"),
+		new vgui::Panel(this, "left"),
+		new vgui::Panel(this, "right")
+	};
 	m_pSprImage = new vgui::CSPRImage();
 	m_pSprImage->SetRenderMode(kRenderTransTexture);
 	m_pSprImage->SetColor(Color(255, 255, 255, 255));
@@ -120,91 +128,97 @@ void CCrosshairPanel::PaintBackground() {
 	int iOutLineWidth = pDynamicCrossHairOTDW->value;
 	int iWidthOffset = iWidth / 2;
 	int iFinalOffset = iDrift + iOffset + iWidthOffset;
-	//描边
-	if (pDynamicCrossHairOTD->value) {
-		vgui::IntRect outlinerects[4];
-		//左
-		vgui::surface()->DrawSetColor(otr, otg, otb, ota);
-		outlinerects[0] = {
-			iCenterX - iFinalOffset - iLength - iOutLineWidth,
-			iCenterY - iWidthOffset - iOutLineWidth,
-			iCenterX - iFinalOffset + iOutLineWidth,
-			iCenterY - iWidthOffset + iWidth + iOutLineWidth
-		};
-		//右
-		outlinerects[1] = {
-			iCenterX + iFinalOffset - iOutLineWidth,
-			iCenterY - iWidthOffset - iOutLineWidth,
-			iCenterX + iFinalOffset + iOutLineWidth + iLength,
-			iCenterY - iWidthOffset + iOutLineWidth + iWidth
-		};
-		//下
-		outlinerects[2] = {
-			iCenterX - iWidthOffset - iOutLineWidth,
-			iCenterY + iFinalOffset - iOutLineWidth,
-			iCenterX - iWidthOffset + iOutLineWidth + iWidth,
-			iCenterY + iFinalOffset + iOutLineWidth + iLength
-		};
-		//上
-		if (!pDynamicCrossHairT->value) {
-			outlinerects[3] = {
-				iCenterX - iWidthOffset - iOutLineWidth,
-				iCenterY - iFinalOffset - iLength - iOutLineWidth,
-				iCenterX - iWidthOffset + iOutLineWidth + iWidth,
-				iCenterY - iFinalOffset + iOutLineWidth
-			};
-		}
-		vgui::surface()->DrawFilledRectArray(outlinerects, !pDynamicCrossHairT->value ? 4 : 3);
+	//上色
+	for (auto iter = m_pCrosshair.begin(); iter != m_pCrosshair.end(); iter++)
+	{
+		(*iter)->SetBgColor(Color(r, g, b, a));
 	}
-	//中心
-	if (pDynamicCrossHairD->value) {
-		vgui::surface()->DrawSetColor(otr, otg, otb, ota);
-		vgui::surface()->DrawFilledRect(
-			iCenterX - iWidthOffset - iOutLineWidth,
-			iCenterY - iWidthOffset - iOutLineWidth,
-			iCenterX - iWidthOffset + iWidth + iOutLineWidth,
-			iCenterY - iWidthOffset + iWidth + iOutLineWidth);
-		vgui::surface()->DrawSetColor(r, g, b, a);
-		vgui::surface()->DrawFilledRect(
-			iCenterX - iWidthOffset,
-			iCenterY - iWidthOffset,
-			iCenterX - iWidthOffset + iWidth,
-			iCenterY - iWidthOffset + iWidth);
-	}
-	//左
-	vgui::surface()->DrawSetColor(r, g, b, a);
-	vgui::IntRect rects[4];
-	rects[0] = {
-		iCenterX - iFinalOffset - iLength,
-		iCenterY - iWidthOffset,
-		iCenterX - iFinalOffset,
-		iCenterY - iWidthOffset + iWidth
-	};
+	if (pDynamicCrossHairD)
+		m_pCrosshair[0]->SetAlpha(0);
+	else
+		m_pCrosshair[0]->SetBgColor(Color(r, g, b, a));
+	if (pDynamicCrossHairT)
+		m_pCrosshair[1]->SetAlpha(0);
+	else
+		m_pCrosshair[1]->SetBgColor(Color(r, g, b, a));
 
-	//右
-	rects[1] = {
-		iCenterX + iFinalOffset,
-		iCenterY - iWidthOffset,
-		iCenterX + iFinalOffset + iLength,
-		iCenterY - iWidthOffset + iWidth
-	};
-	//下
-	rects[2] = {
+	//位置
+	//顺序上下左右
+	m_pCrosshair[1]->SetPos(iCenterX - iWidthOffset, iCenterY - iFinalOffset - iLength);
+	m_pCrosshair[2]->SetPos(iCenterX - iWidthOffset, iCenterY + iFinalOffset);
+	m_pCrosshair[3]->SetPos(iCenterX - iFinalOffset - iLength, iCenterY - iWidthOffset);
+	m_pCrosshair[4]->SetPos(iCenterX + iFinalOffset, iCenterY - iWidthOffset);
+	//中心
+	m_pCrosshair[0]->SetBounds(
 		iCenterX - iWidthOffset,
-		iCenterY + iFinalOffset,
-		iCenterX - iWidthOffset + iWidth,
-		iCenterY + iFinalOffset + iLength
-	};
-	//上
-	if (!pDynamicCrossHairT->value) {
-		rects[3] = {
-			iCenterX - iWidthOffset,
-			iCenterY - iFinalOffset - iLength,
-			iCenterX - iWidthOffset + iWidth,
-			iCenterY - iFinalOffset
-		};
-	}
-	vgui::surface()->DrawFilledRectArray(rects, !pDynamicCrossHairT->value ? 4 : 3);
+		iCenterY - iWidthOffset,
+		iWidth,
+		iWidth
+	);
+	//大小
+	//顺序上下左右
+	m_pCrosshair[1]->SetSize(iWidth, iLength);
+	m_pCrosshair[2]->SetSize(iWidth, iLength);
+	m_pCrosshair[3]->SetSize(iLength, iWidth);
+	m_pCrosshair[4]->SetSize(iLength, iWidth);
+	//动画
+	vgui::GetAnimationController()->RunAnimationCommand(m_pCrosshair[1], "ypos", iCenterY - iOffset + iWidthOffset - iLength + 5 * pDynamicCrossHairM->value, 0, 0.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	vgui::GetAnimationController()->RunAnimationCommand(m_pCrosshair[2], "ypos", iCenterY + iOffset + iWidthOffset + 5 * pDynamicCrossHairM->value, 0, 0.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	vgui::GetAnimationController()->RunAnimationCommand(m_pCrosshair[3], "xpos", iCenterX - iOffset + iWidthOffset - iLength + 5 * pDynamicCrossHairM->value, 0, 0.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	vgui::GetAnimationController()->RunAnimationCommand(m_pCrosshair[4], "xpos", iCenterX + iOffset + iWidthOffset + 5 * pDynamicCrossHairM->value, 0, 0.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+
+
+	////描边
+	//if (pDynamicCrossHairOTD->value) {
+	//	vgui::IntRect outlinerects[4];
+	//	//左
+	//	vgui::surface()->DrawSetColor(otr, otg, otb, ota);
+	//	outlinerects[0] = {
+	//		iCenterX - iFinalOffset - iLength - iOutLineWidth,
+	//		iCenterY - iWidthOffset - iOutLineWidth,
+	//		iCenterX - iFinalOffset + iOutLineWidth,
+	//		iCenterY - iWidthOffset + iWidth + iOutLineWidth
+	//	};
+	//	//右
+	//	outlinerects[1] = {
+	//		iCenterX + iFinalOffset - iOutLineWidth,
+	//		iCenterY - iWidthOffset - iOutLineWidth,
+	//		iCenterX + iFinalOffset + iOutLineWidth + iLength,
+	//		iCenterY - iWidthOffset + iOutLineWidth + iWidth
+	//	};
+	//	//下
+	//	outlinerects[2] = {
+	//		iCenterX - iWidthOffset - iOutLineWidth,
+	//		iCenterY + iFinalOffset - iOutLineWidth,
+	//		iCenterX - iWidthOffset + iOutLineWidth + iWidth,
+	//		iCenterY + iFinalOffset + iOutLineWidth + iLength
+	//	};
+	//	//上
+	//	if (!pDynamicCrossHairT->value) {
+	//		outlinerects[3] = {
+	//			iCenterX - iWidthOffset - iOutLineWidth,
+	//			iCenterY - iFinalOffset - iLength - iOutLineWidth,
+	//			iCenterX - iWidthOffset + iOutLineWidth + iWidth,
+	//			iCenterY - iFinalOffset + iOutLineWidth
+	//		};
+	//	}
+	//	vgui::surface()->DrawFilledRectArray(outlinerects, !pDynamicCrossHairT->value ? 4 : 3);
+	//}
+	////中心
+	//if (pDynamicCrossHairD->value) {
+	//	vgui::surface()->DrawSetColor(otr, otg, otb, ota);
+	//	vgui::surface()->DrawFilledRect(
+	//		iCenterX - iWidthOffset - iOutLineWidth,
+	//		iCenterY - iWidthOffset - iOutLineWidth,
+	//		iCenterX - iWidthOffset + iWidth + iOutLineWidth,
+	//		iCenterY - iWidthOffset + iWidth + iOutLineWidth);
+	//	vgui::surface()->DrawSetColor(r, g, b, a);
+	//	vgui::surface()->DrawFilledRect(
+	//		iCenterX - iWidthOffset,
+	//		iCenterY - iWidthOffset,
+	//		iCenterX - iWidthOffset + iWidth,
+	//		iCenterY - iWidthOffset + iWidth);
+	//}
 }
 const char* CCrosshairPanel::GetName() {
 	return VIEWPORT_CROSSHAIR_NAME;
