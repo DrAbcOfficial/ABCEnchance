@@ -203,7 +203,7 @@ void CViewport::HudHideCallBack(int code){
 		SetVisible(true);
 	m_pHealthPanel->SetArmorVisible((code & HUD_HIDEBATTERY) == 0);
 	m_pHealthPanel->SetHealthVisible((code & HUD_HIDEHEALTH) == 0);
-	m_pHealthPanel->ShowPanel((code & HUD_HIDEBATTERY) == 0 || (code & HUD_HIDEHEALTH) == 0);
+	m_pHealthPanel->ShowPanel((code & HUD_HIDEBATTERY) == 0 && (code & HUD_HIDEHEALTH) == 0);
 	m_pFlashLight->ShowPanel((code & HUD_HIDEFLASHLIGHT) == 0);
 	m_pAmmoPanel->ShowPanel((code & HUD_HIDEWEAPONS) == 0);
 }
