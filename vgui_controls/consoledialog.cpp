@@ -80,25 +80,38 @@ private:
 class TabCatchingTextEntry : public TextEntry
 {
 public:
-	TabCatchingTextEntry(Panel* parent, const char* name, VPANEL comp) : TextEntry(parent, name), m_pCompletionList(comp)
-	{
+	TabCatchingTextEntry(Panel* parent, const char* name, VPANEL comp) : TextEntry(parent, name), m_pCompletionList(comp) {
 		SetAllowNonAsciiCharacters(true);
 		SetDragEnabled(true);
 	}
 
-	virtual void OnKeyCodeTyped(KeyCode code)
-	{
-		if (code == KEY_TAB)
-		{
+	virtual void OnKeyCodeTyped(KeyCode code) override {
+		switch (code) {
+		case KEY_TAB: {
 			GetParent()->OnKeyCodeTyped(code);
+			break;
 		}
-		else if (code == KEY_ENTER)
-		{
+		case KEY_ENTER: {
 			// submit is the default button whose click event will have been called already
+			break;
 		}
-		else
-		{
+		default: {
 			TextEntry::OnKeyCodeTyped(code);
+			break;
+		}
+		}
+	}
+
+	virtual void OnKeyCodePressed(KeyCode code) override {
+		switch (code) {
+		case KEY_PAD_ENTER: {
+			GetParent()->OnKeyCodePressed(code);
+			break;
+		}
+		default: {
+			TextEntry::OnKeyCodePressed(code);
+			break;
+		}
 		}
 	}
 
@@ -849,11 +862,10 @@ void CConsolePanel::OnKeyCodePressed(KeyCode code)
 		
 	BaseClass::OnKeyCodePressed(code);
 	// check for processing
-	if (TextEntryHasFocus())
-	{
-		switch (code)
-		{
-			case vgui::KEY_ENTER: {
+	if (TextEntryHasFocus()){
+		switch (code){
+			case KEY_PAD_ENTER:
+			case KEY_ENTER: {
 				OnCommand(SUBMIT_BUTTON_COMMAND_CODE);
 				break;
 			}
