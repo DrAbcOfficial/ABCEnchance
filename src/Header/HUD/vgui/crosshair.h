@@ -2,7 +2,7 @@
 #ifndef CCROSSHAIRPANEL_H
 #define CCROSSHAIRPANEL_H
 #include <string>
-#include <vector>
+#include <array>
 
 #include <vgui2/Border.h>
 #include <vgui_controls/Panel.h>
@@ -22,6 +22,7 @@ public:
 
 	CCrosshairPanel();
 	virtual void PaintBackground() override;
+	virtual void OnThink() override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	virtual void Reset() override;
@@ -54,7 +55,11 @@ private:
 
 	vgui::CSPRImage* m_pSprImage;
 	WEAPON* m_pHandledWeapon = nullptr;
-	std::vector<vgui::Panel*> m_pCrosshair;
+	std::array<vgui::Panel*, 5> m_aryCrosshair;
+	std::array<vgui::Panel*, 5> m_aryCrosshairBorder;
+
+	int m_iCenterX;
+	int m_iCenterY;
 
 	void SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc);
 	void DrawDefaultCrosshair(int x, int y);
