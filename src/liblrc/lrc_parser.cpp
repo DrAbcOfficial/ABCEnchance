@@ -20,7 +20,7 @@ namespace {
 static const std::wregex kMetadataExp(LR"exp(\[([a-zA-Z]+):([^\]]+)\])exp");
 
 // G1: lyric
-static const std::wregex kLyricExp(LR"exp(\]([^\]]*)\r?$)exp");
+static const std::wregex kLyricExp(LR"exp((?<=\]).*\r?$)exp");
 
 // G1: mm, G2: ss
 static const std::wregex kTimestampExp(LR"exp(\[(\d\d:\d\d\.\d\d)\])exp");
