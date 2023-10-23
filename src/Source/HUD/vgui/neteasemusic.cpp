@@ -268,7 +268,7 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 				else
 					panel->PlayMusic(id);
 			}),
-			CCloudMusicCmdItem("playlist", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+			CCloudMusicCmdItem("list", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
 				char* end;
 				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), &end, 10);
 				if (id == 0)
@@ -690,6 +690,7 @@ void CNeteasePanel::PlayListMusic(){
 		int height = FreeImage_GetHeight(bitmap);
 		int pitch = FreeImage_GetPitch(bitmap);
 		int bpp = FreeImage_GetBPP(bitmap);
+		int bitnum = bpp / 8;
 		static size_t s_iArea;
 		static byte* s_pBuf;
 		if (s_iArea < width * height) {
@@ -702,22 +703,45 @@ void CNeteasePanel::PlayListMusic(){
 		for (int y = 0; y < height; y++) {
 			BYTE* pixel = (BYTE*)pixels;
 			for (int x = 0; x < width; x++) {
-				BYTE r = pixel[FI_RGBA_RED];
-				BYTE g = pixel[FI_RGBA_GREEN];
-				BYTE b = pixel[FI_RGBA_BLUE];
-				s_pBuf[c * 4 + 0] = r;
-				s_pBuf[c * 4 + 1] = g;
-				s_pBuf[c * 4 + 2] = b;
-				//Jpeg with alpha? weird
-				if (bpp == 32) {
-					BYTE a = pixel[FI_RGBA_ALPHA];
-					s_pBuf[c * 4 + 3] = a;
-					pixel += 4;
+				switch (bitnum) {
+					//8bpp
+					case 1: {
+						BYTE grey = pixel[0];
+						s_pBuf[c * 4 + 0] = grey;
+						s_pBuf[c * 4 + 1] = grey;
+						s_pBuf[c * 4 + 2] = grey;
+						s_pBuf[c * 4 + 3] = 255;
+						break;
+					}
+					//16bpp
+					case 2: {
+						int code = (pixel[1] << 8) + pixel[0];
+						s_pBuf[c * 4 + 0] = code & 0x1F;
+						s_pBuf[c * 4 + 1] = (code & 0x7E0) >> 5;
+						s_pBuf[c * 4 + 2] = (code & 0xF800) >> 11;
+						s_pBuf[c * 4 + 3] = 255;
+						break;
+					}
+					//24bpp
+					case 3: {
+						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
+						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+						s_pBuf[c * 4 + 3] = 255;
+						break;
+					}
+					//32bpp
+					case 4: {
+						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
+						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+						s_pBuf[c * 4 + 3] = pixel[FI_RGBA_ALPHA];
+						break;
+					}
+					//cnmdwy
+					default: break;
 				}
-				else {
-					s_pBuf[c * 4 + 3] = 255;
-					pixel += 3;
-				}
+				pixel += bitnum;
 				c++;
 			}
 			pixels -= pitch;
