@@ -20,7 +20,7 @@ namespace {
 static const std::wregex kMetadataExp(LR"exp(\[([a-zA-Z]+):([^\]]+)\])exp");
 
 // G1: mm, G2: ss
-static const std::wregex kTimestampExp(LR"exp(\[(\d\d:\d\d\.\d\d)\])exp");
+static const std::wregex kTimestampExp(LR"exp(\[(\d\d:\d\d\.\d\d(-?(\d+)?))\])exp");
 
 void SetMetadata(Lyrics::Metadata* metadata,
                  const std::wstring& key,
@@ -80,7 +80,7 @@ std::unique_ptr<Lyrics> LrcParser::ParseStream(
 }
 
 int32_t LrcParser::TimeStringToMilliseconds(const std::wstring& time_str) {
-    static const std::wregex s_kTimeRegex(LR"exp(^(\d+):(\d\d(\.?\d+)?)$)exp");
+    static const std::wregex s_kTimeRegex(LR"exp(^(\d+):(\d\d(\.?\d+)?))exp");
     std::wsmatch match;
     if (!std::regex_search(time_str, match, s_kTimeRegex)) {
         return -1;
