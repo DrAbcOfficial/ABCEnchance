@@ -19,9 +19,6 @@ namespace {
 // G1: metadata key, G2: metadata value
 static const std::wregex kMetadataExp(LR"exp(\[([a-zA-Z]+):([^\]]+)\])exp");
 
-// G1: lyric
-static const std::wregex kLyricExp(LR"exp((?<=\]).*\r?$)exp");
-
 // G1: mm, G2: ss
 static const std::wregex kTimestampExp(LR"exp(\[(\d\d:\d\d\.\d\d)\])exp");
 
@@ -65,13 +62,6 @@ std::unique_ptr<Lyrics> LrcParser::ParseStream(
       continue;
     }
 
-    std::wsmatch lyric_match;
-    if (!std::regex_search(line, lyric_match, kLyricExp)) {
-      // No lyric. The line is malformed.
-      continue;
-    }
-    std::wstring lyric = lyric_match[1];
-
     // Load timestamps and push lyric lines.
     std::wstring::const_iterator search_start(line.cbegin());
     std::wsmatch timestamp_match;
@@ -80,7 +70,7 @@ std::unique_ptr<Lyrics> LrcParser::ParseStream(
       int32_t time_ms = LrcParser::TimeStringToMilliseconds(timestamp_match[1]);
       Lyrics::LyricLine lyric_line;
       lyric_line.start_time = time_ms;
-      lyric_line.lyric = lyric;
+      lyric_line.lyric = timestamp_match.suffix();
       lyric_lines.push_back(lyric_line);
 
       search_start += timestamp_match.position() + timestamp_match.length();
