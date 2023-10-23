@@ -94,6 +94,8 @@ void CCrosshairPanel::PaintBackground() {
 
 }
 void CCrosshairPanel::OnThink() {
+	if (!gClientData)
+		return;
 	if (gExportfuncs.CL_IsThirdPerson()) {
 		pmtrace_t tr;
 		CVector vViewAngleForward;
@@ -137,11 +139,11 @@ void CCrosshairPanel::OnThink() {
 	int iFinalOffset = iDrift + iOffset + iWidthOffset;
 	//上色
 	Color c = Color(r, g, b, a);
-	for (auto iter = m_aryCrosshair.begin(); iter != m_aryCrosshair.end(); iter++){
+	for (auto iter = m_aryCrosshair.begin() + 2; iter != m_aryCrosshair.end(); iter++){
 		(*iter)->SetBgColor(c);
 	}
-	m_aryCrosshair[0]->SetAlpha(pDynamicCrossHairD->value > 0 ? a : 0);
-	m_aryCrosshair[1]->SetAlpha(pDynamicCrossHairT->value <= 0 ? a : 0);
+	m_aryCrosshair[0]->SetBgColor(pDynamicCrossHairD->value > 0 ? c : Color(0, 0, 0, 0));
+	m_aryCrosshair[1]->SetBgColor(pDynamicCrossHairT->value <= 0 ? c : Color(0, 0, 0, 0));
 	//位置大小
 	//顺序中心上下左右
 	m_aryCrosshair[0]->SetBounds(m_iCenterX - iWidthOffset, m_iCenterY - iWidthOffset, iWidth, iWidth);
