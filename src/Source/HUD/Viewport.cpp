@@ -44,6 +44,7 @@
 #include "keydefs.h"
 #include <parsemsg.h>
 #include <regex>
+#include <bitset>
 
 using namespace vgui;
 
@@ -196,16 +197,27 @@ bool CViewport::LoacalPlayerAvilable(){
 bool CViewport::IsScoreBoardVisible(){
 	return m_pScorePanel->IsVisible();
 }
+const enum class HUDHIDE_BIT {
+	HIDEWEAPONS = 0,
+	HIDEFLASHLIGHT = 1,
+	HIDEALL = 2,
+	HIDEHEALTH = 3,
+	HIDESELECTION = 4,
+	HIDEBATTERY = 5,
+	HIDECUSTOM1 = 6,
+	HIDECUSTOM2 = 7
+};
 void CViewport::HudHideCallBack(int code){
-	if (code & HUD_HIDEALL)
+	auto bitSet = std::bitset<32>(code);
+	if (bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEALL)))
 		SetVisible(false);
 	else
 		SetVisible(true);
-	m_pHealthPanel->SetArmorVisible((code & HUD_HIDEBATTERY) == 0);
-	m_pHealthPanel->SetHealthVisible((code & HUD_HIDEHEALTH) == 0);
-	m_pHealthPanel->ShowPanel((code & HUD_HIDEBATTERY) == 0 && (code & HUD_HIDEHEALTH) == 0);
-	m_pFlashLight->ShowPanel((code & HUD_HIDEFLASHLIGHT) == 0);
-	m_pAmmoPanel->ShowPanel((code & HUD_HIDEWEAPONS) == 0);
+	m_pHealthPanel->SetArmorVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)));
+	m_pHealthPanel->SetHealthVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
+	m_pHealthPanel->ShowPanel(bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)) || bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
+	m_pFlashLight->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEFLASHLIGHT)));
+	m_pAmmoPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEWEAPONS)));
 }
 void CViewport::ShowScoreBoard(){
 	m_pScorePanel->ShowPanel(true);
