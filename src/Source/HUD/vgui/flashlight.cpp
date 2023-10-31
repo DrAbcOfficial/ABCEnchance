@@ -34,7 +34,6 @@ const char* CFlashLightPanel::GetName() {
 }
 void CFlashLightPanel::Reset() {
 	m_iBattery = 100;
-	ShowPanel(true);
 }
 void CFlashLightPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -91,5 +90,4 @@ void CFlashLightPanel::SetFlashBattery(int battery){
 	char temp[32];
 	Q_snprintf(temp, sizeof(temp), "%d%%", m_iBattery);
 	m_pMessage->SetText(temp);
-	ShowPanel(true);
 }
