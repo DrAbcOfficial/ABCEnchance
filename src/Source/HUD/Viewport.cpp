@@ -215,7 +215,7 @@ void CViewport::HudHideCallBack(int code){
 		SetVisible(true);
 	m_pHealthPanel->SetArmorVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)));
 	m_pHealthPanel->SetHealthVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
-	m_pHealthPanel->ShowPanel(bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)) || bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
+	m_pHealthPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)) || !bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
 	m_pFlashLight->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEFLASHLIGHT)));
 	m_pAmmoPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEWEAPONS)));
 }
