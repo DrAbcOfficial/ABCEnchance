@@ -32,6 +32,10 @@ namespace netease {
 		ST_VIDEO = 1014
 	};
 
+	enum FeeType {
+		FEE_VIP = 1
+	};
+
 	enum DailyTaskType {
 		DTT_ANDROID = 0,
 		DTT_WEB = 1

@@ -74,8 +74,8 @@ namespace netease {
 			picUrl = json["picUrl"].GetString();
 	}
 	CMusic::CMusic(rapidjson::Value& json) : CBase163Object(json) {
-		if (json.HasMember("noCopyrightRcmd"))
-			copyright = !json["noCopyrightRcmd"].IsNull();
+		if (json.HasMember("fee"))
+			copyright = (json["fee"].GetInt() & FeeType::FEE_VIP) != 0;
 		rapidjson::Value alias;
 		if (json.HasMember("alia"))
 			alias = json["alia"].GetArray();
@@ -409,11 +409,10 @@ namespace netease {
 					case netease::ST_VIDEO:
 					case netease::ST_ARTIST:
 					case netease::ST_USER:
-					default:
-						if ((*iter).HasMember("noCopyrightRcmd"))
-							p->copyright = (*iter).IsNull();
-						break;
+					default: break;
 					}
+					if ((*iter).HasMember("fee"))
+						p->copyright = ((*iter)["fee"].GetInt() & FeeType::FEE_VIP) != 0;
 					ret.push_back(p);
 				}
 			}
