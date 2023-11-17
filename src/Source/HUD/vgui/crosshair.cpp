@@ -82,8 +82,6 @@ void CCrosshairPanel::PaintBackground() {
 		return;
 	if (!g_pViewPort->HasSuit())
 		return;
-	if (!gCVars.pDynamicCrossHair->value)
-		return;
 	//默认准心
 	if (pCvarDefaultCrosshair->value > 0)
 		DrawDefaultCrosshair(m_iCenterX, m_iCenterY);
@@ -234,7 +232,8 @@ void CCrosshairPanel::SetWeapon(WEAPON* weapon) {
 	}
 	else if (!(m_pHandledWeapon->iState & CAmmoPanel::WEAPONSTATE::VALID))
 		return;
-	ShowPanel(true);
+	if (gCVars.pDynamicCrossHair->value)
+		ShowPanel(true);
 }
 void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
 	if (!m_pHandledWeapon)
