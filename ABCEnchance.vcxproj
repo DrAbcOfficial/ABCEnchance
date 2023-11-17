@@ -1,0 +1,703 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_AVX2|Win32">
+      <Configuration>Release_AVX2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}</ProjectGuid>
+    <RootNamespace>StudioEvents</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>ABCEnchance</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\global.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\global.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\global.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>15.0.28127.55</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4311;4312;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;libglew32d.lib;Bcrypt.lib;../../SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <PostBuildEvent>
+      <Command>if exist "$(MetaHookGameDirectory)" copy "$(OutDir)$(TargetName)$(TargetExt)" "$(MetaHookGameDirectory)$(MetaHookModName)\metahook\plugins\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4311;4312;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <Optimization>MinSpace</Optimization>
+      <ExceptionHandling>false</ExceptionHandling>
+      <MinimalRebuild>false</MinimalRebuild>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;libglew32.lib;Bcrypt.lib;../../SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "$(ProjectDir)..\..\Build\svencoop\metahook\plugins\"
+copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4311;4312;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <Optimization>MinSpace</Optimization>
+      <ExceptionHandling>false</ExceptionHandling>
+      <MinimalRebuild>false</MinimalRebuild>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\SteamSDK;..\..\HLSDK\cl_dll;..\..\HLSDK\common;..\..\HLSDK\engine;..\..\glew\include\GL;..\..\HLSDK\pm_shared;..\..\HLSDK\public;..\..\rapidjson\include;..\..\Interface;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;..\..\SteamSDK\;..\..\capstone\include\capstone\;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>..\..\glew\build\lib\Release\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;libglew32.lib;Bcrypt.lib;../../SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "$(ProjectDir)..\..\Build\svencoop\metahook\plugins\$(TargetName)_AVX2$(TargetExt)"
+copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$(TargetExt)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\HLSDK\common\interface.cpp" />
+    <ClCompile Include="SourceSDK\filesystem.cpp" />
+    <ClCompile Include="SourceSDK\filesystem_helpers.cpp" />
+    <ClCompile Include="SourceSDK\InputWin32.cpp" />
+    <ClCompile Include="SourceSDK\mathlib\3dnow.cpp" />
+    <ClCompile Include="SourceSDK\mathlib\mathlib_base.cpp" />
+    <ClCompile Include="SourceSDK\mathlib\sse.cpp" />
+    <ClCompile Include="SourceSDK\tier0\assert_dialog.cpp" />
+    <ClCompile Include="SourceSDK\tier0\cpu.cpp" />
+    <ClCompile Include="SourceSDK\tier0\dbg.cpp" />
+    <ClCompile Include="SourceSDK\tier0\fasttimer.cpp" />
+    <ClCompile Include="SourceSDK\tier0\mem.cpp" />
+    <ClCompile Include="SourceSDK\tier0\memdbg.cpp" />
+    <ClCompile Include="SourceSDK\tier0\memstd.cpp" />
+    <ClCompile Include="SourceSDK\tier0\mem_helpers.cpp" />
+    <ClCompile Include="SourceSDK\tier0\minidump.cpp" />
+    <ClCompile Include="SourceSDK\tier0\platform.cpp" />
+    <ClCompile Include="SourceSDK\tier0\threadtools.cpp" />
+    <ClCompile Include="SourceSDK\tier0\vcrmode.cpp" />
+    <ClCompile Include="SourceSDK\tier1\characterset.cpp" />
+    <ClCompile Include="SourceSDK\tier1\generichash.cpp" />
+    <ClCompile Include="SourceSDK\tier1\KeyValues.cpp" />
+    <ClCompile Include="SourceSDK\tier1\mempool.cpp" />
+    <ClCompile Include="SourceSDK\tier1\memstack.cpp" />
+    <ClCompile Include="SourceSDK\tier1\stringpool.cpp" />
+    <ClCompile Include="SourceSDK\tier1\strtools.cpp" />
+    <ClCompile Include="SourceSDK\tier1\utlbuffer.cpp" />
+    <ClCompile Include="SourceSDK\tier1\utlstring.cpp" />
+    <ClCompile Include="SourceSDK\tier1\utlsymbol.cpp" />
+    <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
+    <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
+    <ClCompile Include="src\liblrc\lrc_parser.cpp" />
+    <ClCompile Include="src\liblrc\lyrics.cpp" />
+    <ClCompile Include="src\Particleman\ClientParticleMan.cpp" />
+    <ClCompile Include="src\Source\crypto.cpp" />
+    <ClCompile Include="src\Source\efxenchance.cpp" />
+    <ClCompile Include="src\Source\exportfuncs.cpp" />
+    <ClCompile Include="src\Source\HUD\ammo.cpp" />
+    <ClCompile Include="src\Source\HUD\cctv.cpp" />
+    <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
+    <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
+    <ClCompile Include="src\Source\HUD\indicator.cpp" />
+    <ClCompile Include="src\Source\HUD\historyresource.cpp" />
+    <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
+    <ClCompile Include="src\Source\HUD\radar.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\ammobar.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\crosshair.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\deadmsg.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\dmgtiles.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\effect.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\gindicator.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\neteasemusic.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\notice.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\playerboard.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\popnum.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\scoreboard.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\sidetext.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\textmenu.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\vote.cpp" />
+    <ClCompile Include="src\Source\HUD\Viewport.cpp" />
+    <ClCompile Include="src\Source\HUD\weaponbank.cpp" />
+    <ClCompile Include="src\Source\HUD\weaponselect.cpp" />
+    <ClCompile Include="src\Source\plugins.cpp" />
+    <ClCompile Include="src\Source\soundengine.cpp" />
+    <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
+    <ClCompile Include="src\Source\Utility\curl.cpp" />
+    <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
+    <ClCompile Include="src\Source\Utility\NeteaseApi.cpp" />
+    <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
+    <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp" />
+    <ClCompile Include="src\Source\Utility\opengl\gl_shader.cpp" />
+    <ClCompile Include="src\Source\Utility\opengl\gl_utility.cpp" />
+    <ClCompile Include="src\Source\Utility\parsemsg.cpp" />
+    <ClCompile Include="src\Source\Utility\player_info.cpp" />
+    <ClCompile Include="src\Source\Utility\qrcodegen.cpp" />
+    <ClCompile Include="src\Source\Utility\regquery.cpp" />
+    <ClCompile Include="src\Source\Utility\steamid.cpp" />
+    <ClCompile Include="src\Source\Utility\svc_hook.cpp" />
+    <ClCompile Include="src\Source\Utility\Task.cpp" />
+    <ClCompile Include="src\Source\Var\extraprecache.cpp" />
+    <ClCompile Include="src\Source\Var\local.cpp" />
+    <ClCompile Include="src\Source\Var\vguilocal.cpp" />
+    <ClCompile Include="src\Source\Var\voice_banmgr.cpp" />
+    <ClCompile Include="src\Source\Var\voice_status.cpp" />
+    <ClCompile Include="src\Source\viewmodellag.cpp" />
+    <ClCompile Include="VGUI2\avatar_image.cpp" />
+    <ClCompile Include="VGUI2\BaseUI.cpp" />
+    <ClCompile Include="VGUI2\Bitmap.cpp" />
+    <ClCompile Include="VGUI2\Border.cpp" />
+    <ClCompile Include="VGUI2\ClientVGUI.cpp" />
+    <ClCompile Include="VGUI2\FontAmalgam.cpp" />
+    <ClCompile Include="VGUI2\FontManager.cpp" />
+    <ClCompile Include="VGUI2\FontTextureCache.cpp" />
+    <ClCompile Include="VGUI2\GameUI\BasePanel.cpp" />
+    <ClCompile Include="VGUI2\GameUI\CGameLoading.cpp" />
+    <ClCompile Include="VGUI2\GameUI\CvarNegateCheckButton.cpp" />
+    <ClCompile Include="VGUI2\GameUI\CvarSlider.cpp" />
+    <ClCompile Include="VGUI2\GameUI\CvarTextEntry.cpp" />
+    <ClCompile Include="VGUI2\GameUI\CvarToggleCheckButton.cpp" />
+    <ClCompile Include="VGUI2\GameUI\GameConsole.cpp" />
+    <ClCompile Include="VGUI2\GameUI\GameUI.cpp" />
+    <ClCompile Include="VGUI2\GameUI\KeyToggleCheckButton.cpp" />
+    <ClCompile Include="VGUI2\GameUI\LabeledCommandComboBox.cpp" />
+    <ClCompile Include="VGUI2\GameUI\LoadingDialog.cpp" />
+    <ClCompile Include="VGUI2\GameUI\LogoFile.cpp" />
+    <ClCompile Include="VGUI2\GameUI\ModInfo.cpp" />
+    <ClCompile Include="VGUI2\GameUI\MultiplayerAdvancedDialog.cpp" />
+    <ClCompile Include="VGUI2\GameUI\OptionsDialog.cpp" />
+    <ClCompile Include="VGUI2\GameUI\OptionsSubAdvanced.cpp" />
+    <ClCompile Include="VGUI2\GameUI\OptionsSubAudio.cpp" />
+    <ClCompile Include="VGUI2\GameUI\OptionsSubButtonSettings.cpp" />
+    <ClCompile Include="VGUI2\GameUI\OptionsSubKeyboard.cpp" />
+    <ClCompile Include="VGUI2\GameUI\OptionsSubMouse.cpp" />
+    <ClCompile Include="VGUI2\GameUI\OptionsSubMultiplayer.cpp" />
+    <ClCompile Include="VGUI2\GameUI\OptionsSubVideo.cpp" />
+    <ClCompile Include="VGUI2\GameUI\OptionsSubVoice.cpp" />
+    <ClCompile Include="VGUI2\GameUI\ScriptObject.cpp" />
+    <ClCompile Include="VGUI2\GameUI\VControlsListPanel.cpp" />
+    <ClCompile Include="VGUI2\KeyValuesSystemHook.cpp" />
+    <ClCompile Include="VGUI2\Scheme.cpp" />
+    <ClCompile Include="VGUI2\SchemeHook.cpp" />
+    <ClCompile Include="VGUI2\spr_image.cpp" />
+    <ClCompile Include="VGUI2\Surface.cpp" />
+    <ClCompile Include="VGUI2\SurfaceHook.cpp" />
+    <ClCompile Include="VGUI2\tga_image.cpp" />
+    <ClCompile Include="VGUI2\VPanel.cpp" />
+    <ClCompile Include="VGUI2\VPanelWrapper.cpp" />
+    <ClCompile Include="VGUI2\Win32Font.cpp" />
+    <ClCompile Include="vgui_controls\AnalogBar.cpp" />
+    <ClCompile Include="vgui_controls\AnimatingImagePanel.cpp" />
+    <ClCompile Include="vgui_controls\AnimationController.cpp" />
+    <ClCompile Include="vgui_controls\BitmapImagePanel.cpp" />
+    <ClCompile Include="vgui_controls\BuildFactoryHelper.cpp" />
+    <ClCompile Include="vgui_controls\BuildGroup.cpp" />
+    <ClCompile Include="vgui_controls\BuildModeDialog.cpp" />
+    <ClCompile Include="vgui_controls\Button.cpp" />
+    <ClCompile Include="vgui_controls\CheckButton.cpp" />
+    <ClCompile Include="vgui_controls\CheckButtonList.cpp" />
+    <ClCompile Include="vgui_controls\CircularProgressBar.cpp" />
+    <ClCompile Include="vgui_controls\ComboBox.cpp" />
+    <ClCompile Include="vgui_controls\consoledialog.cpp" />
+    <ClCompile Include="vgui_controls\ControllerMap.cpp" />
+    <ClCompile Include="vgui_controls\Controls.cpp" />
+    <ClCompile Include="vgui_controls\DirectorySelectDialog.cpp" />
+    <ClCompile Include="vgui_controls\Divider.cpp" />
+    <ClCompile Include="vgui_controls\EditablePanel.cpp" />
+    <ClCompile Include="vgui_controls\ExpandButton.cpp" />
+    <ClCompile Include="vgui_controls\FileOpenDialog.cpp" />
+    <ClCompile Include="vgui_controls\FocusNavGroup.cpp" />
+    <ClCompile Include="vgui_controls\Frame.cpp" />
+    <ClCompile Include="vgui_controls\GraphPanel.cpp" />
+    <ClCompile Include="vgui_controls\HTML.cpp" />
+    <ClCompile Include="vgui_controls\Image.cpp" />
+    <ClCompile Include="vgui_controls\ImageClipPanel.cpp" />
+    <ClCompile Include="vgui_controls\ImageList.cpp" />
+    <ClCompile Include="vgui_controls\ImagePanel.cpp" />
+    <ClCompile Include="vgui_controls\ImageSprPanel.cpp" />
+    <ClCompile Include="vgui_controls\InputDialog.cpp" />
+    <ClCompile Include="vgui_controls\KeyBindingHelpDialog.cpp" />
+    <ClCompile Include="vgui_controls\KeyBoardEditorDialog.cpp" />
+    <ClCompile Include="vgui_controls\KeyRepeat.cpp" />
+    <ClCompile Include="vgui_controls\Label.cpp" />
+    <ClCompile Include="vgui_controls\LabelEx.cpp" />
+    <ClCompile Include="vgui_controls\ListPanel.cpp" />
+    <ClCompile Include="vgui_controls\ListViewPanel.cpp" />
+    <ClCompile Include="vgui_controls\Menu.cpp" />
+    <ClCompile Include="vgui_controls\MenuBar.cpp" />
+    <ClCompile Include="vgui_controls\MenuButton.cpp" />
+    <ClCompile Include="vgui_controls\MenuItem.cpp" />
+    <ClCompile Include="vgui_controls\MessageBox.cpp" />
+    <ClCompile Include="vgui_controls\MessageDialog.cpp" />
+    <ClCompile Include="vgui_controls\Panel.cpp" />
+    <ClCompile Include="vgui_controls\PanelListPanel.cpp" />
+    <ClCompile Include="vgui_controls\ProgressBar.cpp" />
+    <ClCompile Include="vgui_controls\ProgressBox.cpp" />
+    <ClCompile Include="vgui_controls\PropertyDialog.cpp" />
+    <ClCompile Include="vgui_controls\PropertyPage.cpp" />
+    <ClCompile Include="vgui_controls\PropertySheet.cpp" />
+    <ClCompile Include="vgui_controls\QueryBox.cpp" />
+    <ClCompile Include="vgui_controls\RadioButton.cpp" />
+    <ClCompile Include="vgui_controls\RichText.cpp" />
+    <ClCompile Include="vgui_controls\RotatingProgressBar.cpp" />
+    <ClCompile Include="vgui_controls\savedocumentquery.cpp" />
+    <ClCompile Include="vgui_controls\ScalableImagePanel.cpp" />
+    <ClCompile Include="vgui_controls\ScrollableEditablePanel.cpp" />
+    <ClCompile Include="vgui_controls\ScrollBar.cpp" />
+    <ClCompile Include="vgui_controls\ScrollBarSlider.cpp" />
+    <ClCompile Include="vgui_controls\SectionedListPanel.cpp" />
+    <ClCompile Include="vgui_controls\Slider.cpp" />
+    <ClCompile Include="vgui_controls\Splitter.cpp" />
+    <ClCompile Include="vgui_controls\subrectimage.cpp" />
+    <ClCompile Include="vgui_controls\TextEntry.cpp" />
+    <ClCompile Include="vgui_controls\TextImage.cpp" />
+    <ClCompile Include="vgui_controls\TextImageEx.cpp" />
+    <ClCompile Include="vgui_controls\ToggleButton.cpp" />
+    <ClCompile Include="vgui_controls\Tooltip.cpp" />
+    <ClCompile Include="vgui_controls\ToolWindow.cpp" />
+    <ClCompile Include="vgui_controls\TreeView.cpp" />
+    <ClCompile Include="vgui_controls\TreeViewListControl.cpp" />
+    <ClCompile Include="vgui_controls\URLLabel.cpp" />
+    <ClCompile Include="vgui_controls\vgui_controls.cpp" />
+    <ClCompile Include="vgui_controls\WizardPanel.cpp" />
+    <ClCompile Include="vgui_controls\WizardSubPanel.cpp" />
+    <ClCompile Include="vpx\tools_common.cpp" />
+    <ClCompile Include="vpx\video_reader.cpp" />
+    <ClCompile Include="vpx\vpx_codec.cpp" />
+    <ClCompile Include="vpx\vpx_decoder.cpp" />
+    <ClCompile Include="vpx\vpx_image.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\HLSDK\common\interface.h" />
+    <ClInclude Include="..\..\metahook.h" />
+    <ClInclude Include="FreeImage\FreeImage.h" />
+    <ClInclude Include="SourceSDK\appframework\IAppSystem.h" />
+    <ClInclude Include="SourceSDK\Color.h" />
+    <ClInclude Include="SourceSDK\common\xbox\xbox_console.h" />
+    <ClInclude Include="SourceSDK\filesystem.h" />
+    <ClInclude Include="SourceSDK\filesystem_helpers.h" />
+    <ClInclude Include="SourceSDK\inputsystem\ButtonCode.h" />
+    <ClInclude Include="SourceSDK\inputsystem\InputEnums.h" />
+    <ClInclude Include="SourceSDK\mathlib\3dnow.h" />
+    <ClInclude Include="SourceSDK\mathlib\amd3dx.h" />
+    <ClInclude Include="SourceSDK\mathlib\mathlib.h" />
+    <ClInclude Include="SourceSDK\mathlib\math_pfns.h" />
+    <ClInclude Include="SourceSDK\mathlib\sse.h" />
+    <ClInclude Include="SourceSDK\mathlib\ssemath.h" />
+    <ClInclude Include="SourceSDK\mathlib\ssequaternion.h" />
+    <ClInclude Include="SourceSDK\mathlib\vector2d.h" />
+    <ClInclude Include="SourceSDK\OfflineMode.h" />
+    <ClInclude Include="SourceSDK\tier0\basetypes.h" />
+    <ClInclude Include="SourceSDK\tier0\commonmacros.h" />
+    <ClInclude Include="SourceSDK\tier0\dbg.h" />
+    <ClInclude Include="SourceSDK\tier0\dbgflag.h" />
+    <ClInclude Include="SourceSDK\tier0\fasttimer.h" />
+    <ClInclude Include="SourceSDK\tier0\l2cache.h" />
+    <ClInclude Include="SourceSDK\tier0\mem.h" />
+    <ClInclude Include="SourceSDK\tier0\memalloc.h" />
+    <ClInclude Include="SourceSDK\tier0\memdbgoff.h" />
+    <ClInclude Include="SourceSDK\tier0\memdbgon.h" />
+    <ClInclude Include="SourceSDK\tier0\memstd.h" />
+    <ClInclude Include="SourceSDK\tier0\mem_helpers.h" />
+    <ClInclude Include="SourceSDK\tier0\minidump.h" />
+    <ClInclude Include="SourceSDK\tier0\pch_tier0.h" />
+    <ClInclude Include="SourceSDK\tier0\platform.h" />
+    <ClInclude Include="SourceSDK\tier0\protected_things.h" />
+    <ClInclude Include="SourceSDK\tier0\resource.h" />
+    <ClInclude Include="SourceSDK\tier0\threadtools.h" />
+    <ClInclude Include="SourceSDK\tier0\tslist.h" />
+    <ClInclude Include="SourceSDK\tier0\validator.h" />
+    <ClInclude Include="SourceSDK\tier0\valobject.h" />
+    <ClInclude Include="SourceSDK\tier0\valve_off.h" />
+    <ClInclude Include="SourceSDK\tier0\valve_on.h" />
+    <ClInclude Include="SourceSDK\tier0\vcrmode.h" />
+    <ClInclude Include="SourceSDK\tier0\vcr_shared.h" />
+    <ClInclude Include="SourceSDK\tier0\vprof.h" />
+    <ClInclude Include="SourceSDK\tier0\wchartypes.h" />
+    <ClInclude Include="SourceSDK\tier0\xbox_codeline_defines.h" />
+    <ClInclude Include="SourceSDK\tier1\byteswap.h" />
+    <ClInclude Include="SourceSDK\tier1\characterset.h" />
+    <ClInclude Include="SourceSDK\tier1\convar.h" />
+    <ClInclude Include="SourceSDK\tier1\generichash.h" />
+    <ClInclude Include="SourceSDK\tier1\iconvar.h" />
+    <ClInclude Include="SourceSDK\tier1\interface.h" />
+    <ClInclude Include="SourceSDK\tier1\KeyValues.h" />
+    <ClInclude Include="SourceSDK\tier1\mempool.h" />
+    <ClInclude Include="SourceSDK\tier1\memstack.h" />
+    <ClInclude Include="SourceSDK\tier1\stringpool.h" />
+    <ClInclude Include="SourceSDK\tier1\strtools.h" />
+    <ClInclude Include="SourceSDK\tier1\tier1.h" />
+    <ClInclude Include="SourceSDK\tier1\utlblockmemory.h" />
+    <ClInclude Include="SourceSDK\tier1\utlbuffer.h" />
+    <ClInclude Include="SourceSDK\tier1\utldelegate.h" />
+    <ClInclude Include="SourceSDK\tier1\utldelegateimpl.h" />
+    <ClInclude Include="SourceSDK\tier1\utldict.h" />
+    <ClInclude Include="SourceSDK\tier1\utlfixedmemory.h" />
+    <ClInclude Include="SourceSDK\tier1\utlflags.h" />
+    <ClInclude Include="SourceSDK\tier1\utlhandletable.h" />
+    <ClInclude Include="SourceSDK\tier1\utllinkedlist.h" />
+    <ClInclude Include="SourceSDK\tier1\utlmap.h" />
+    <ClInclude Include="SourceSDK\tier1\utlmemory.h" />
+    <ClInclude Include="SourceSDK\tier1\utlqueue.h" />
+    <ClInclude Include="SourceSDK\tier1\utlrbtree.h" />
+    <ClInclude Include="SourceSDK\tier1\UtlSortVector.h" />
+    <ClInclude Include="SourceSDK\tier1\utlstring.h" />
+    <ClInclude Include="SourceSDK\tier1\UtlStringMap.h" />
+    <ClInclude Include="SourceSDK\tier1\utlsymbol.h" />
+    <ClInclude Include="SourceSDK\tier1\utlvector.h" />
+    <ClInclude Include="SourceSDK\vstdlib\IKeyValuesSystem.h" />
+    <ClInclude Include="SourceSDK\vstdlib\random.h" />
+    <ClInclude Include="SourceSDK\vstdlib\strtools.h" />
+    <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
+    <ClInclude Include="SourceSDK\winlite.h" />
+    <ClInclude Include="src\Fmod\fmod.h" />
+    <ClInclude Include="src\Fmod\fmod.hpp" />
+    <ClInclude Include="src\Fmod\fmodiphone.h" />
+    <ClInclude Include="src\Fmod\fmodlinux.h" />
+    <ClInclude Include="src\Fmod\fmodwindowsphone.h" />
+    <ClInclude Include="src\Fmod\fmodwindowsstoreapp.h" />
+    <ClInclude Include="src\Fmod\fmod_codec.h" />
+    <ClInclude Include="src\Fmod\fmod_dsp.h" />
+    <ClInclude Include="src\Fmod\fmod_errors.h" />
+    <ClInclude Include="src\Fmod\fmod_memoryinfo.h" />
+    <ClInclude Include="src\Fmod\fmod_output.h" />
+    <ClInclude Include="src\Header\efxenchance.h" />
+    <ClInclude Include="src\Header\exportfuncs.h" />
+    <ClInclude Include="src\Header\HUD\ammo.h" />
+    <ClInclude Include="src\Header\HUD\basehud.h" />
+    <ClInclude Include="src\Header\HUD\cctv.h" />
+    <ClInclude Include="src\Header\HUD\CCustomHud.h" />
+    <ClInclude Include="src\Header\HUD\eccobuymenu.h" />
+    <ClInclude Include="src\Header\HUD\indicator.h" />
+    <ClInclude Include="src\Header\HUD\historyresource.h" />
+    <ClInclude Include="src\Header\HUD\itemhighlight.h" />
+    <ClInclude Include="src\Header\HUD\numdisplay.h" />
+    <ClInclude Include="src\Header\HUD\radar.h" />
+    <ClInclude Include="src\Header\HUD\vgui\ammobar.h" />
+    <ClInclude Include="src\Header\HUD\vgui\crosshair.h" />
+    <ClInclude Include="src\Header\HUD\vgui\deadmsg.h" />
+    <ClInclude Include="src\Header\HUD\vgui\dmgtiles.h" />
+    <ClInclude Include="src\Header\HUD\vgui\effect.h" />
+    <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
+    <ClInclude Include="src\Header\HUD\vgui\gindicator.h" />
+    <ClInclude Include="src\Header\HUD\vgui\health.h" />
+    <ClInclude Include="src\Header\HUD\vgui\motd.h" />
+    <ClInclude Include="src\Header\HUD\vgui\neteasemusic.h" />
+    <ClInclude Include="src\Header\HUD\vgui\notice.h" />
+    <ClInclude Include="src\Header\HUD\vgui\playerboard.h" />
+    <ClInclude Include="src\Header\HUD\vgui\popnum.h" />
+    <ClInclude Include="src\Header\HUD\vgui\scoreboard.h" />
+    <ClInclude Include="src\Header\HUD\vgui\sidetext.h" />
+    <ClInclude Include="src\Header\HUD\vgui\textmenu.h" />
+    <ClInclude Include="src\Header\HUD\vgui\vote.h" />
+    <ClInclude Include="src\Header\HUD\Viewport.h" />
+    <ClInclude Include="src\Header\HUD\weaponbank.h" />
+    <ClInclude Include="src\Header\HUD\weaponselect.h" />
+    <ClInclude Include="src\Header\IEngineSurface.h" />
+    <ClInclude Include="src\Header\plugins.h" />
+    <ClInclude Include="src\Header\soundengine.h" />
+    <ClInclude Include="src\Header\Utility\client_steam_context.h" />
+    <ClInclude Include="src\Header\Utility\crypto.h" />
+    <ClInclude Include="src\Header\Utility\curl.h" />
+    <ClInclude Include="src\Header\Utility\CVector.h" />
+    <ClInclude Include="src\Header\Utility\formatter.h" />
+    <ClInclude Include="src\Header\Utility\mymathlib.h" />
+    <ClInclude Include="src\Header\Utility\NeteaseApi.h" />
+    <ClInclude Include="src\Header\Utility\opengl\gl_def.h" />
+    <ClInclude Include="src\Header\Utility\opengl\gl_draw.h" />
+    <ClInclude Include="src\Header\Utility\opengl\gl_shader.h" />
+    <ClInclude Include="src\Header\Utility\opengl\gl_utility.h" />
+    <ClInclude Include="src\Header\Utility\parsemsg.h" />
+    <ClInclude Include="src\Header\Utility\player_info.h" />
+    <ClInclude Include="src\Header\Utility\qrcodegen.h" />
+    <ClInclude Include="src\Header\Utility\regquery.h" />
+    <ClInclude Include="src\Header\Utility\svc_hook.h" />
+    <ClInclude Include="src\Header\Utility\Task.h" />
+    <ClInclude Include="src\Header\Var\bitvec.h" />
+    <ClInclude Include="src\Header\Var\enginedef.h" />
+    <ClInclude Include="src\Header\Var\extraprecache.h" />
+    <ClInclude Include="src\Header\Var\local.h" />
+    <ClInclude Include="src\Header\Var\palette.h" />
+    <ClInclude Include="src\Header\Var\player_infosc.h" />
+    <ClInclude Include="src\Header\Var\StudioModelRenderer.h" />
+    <ClInclude Include="src\Header\Var\vguilocal.h" />
+    <ClInclude Include="src\Header\Var\voice_banmgr.h" />
+    <ClInclude Include="src\Header\Var\voice_common.h" />
+    <ClInclude Include="src\Header\Var\voice_status.h" />
+    <ClInclude Include="src\Header\Var\weapon.h" />
+    <ClInclude Include="src\Header\Var\weaponinfo_sven.h" />
+    <ClInclude Include="src\Header\vgui_internal.h" />
+    <ClInclude Include="src\Header\viewmodellag.h" />
+    <ClInclude Include="src\liblrc\lrc_parser.h" />
+    <ClInclude Include="src\liblrc\lyrics.h" />
+    <ClInclude Include="src\Particleman\ClientParticleMan.h" />
+    <ClInclude Include="src\Particleman\IParticleMan.h" />
+    <ClInclude Include="src\Particleman\pman_particlemem.h" />
+    <ClInclude Include="src\Particleman\pman_triangleffect.h" />
+    <ClInclude Include="VGUI2\avatar_image.h" />
+    <ClInclude Include="VGUI2\BaseUI.h" />
+    <ClInclude Include="VGUI2\Bitmap.h" />
+    <ClInclude Include="VGUI2\Border.h" />
+    <ClInclude Include="VGUI2\FontAmalgam.h" />
+    <ClInclude Include="VGUI2\FontManager.h" />
+    <ClInclude Include="VGUI2\FontTextureCache.h" />
+    <ClInclude Include="VGUI2\GameUI\BasePanel.h" />
+    <ClInclude Include="VGUI2\GameUI\BMPUtils.h" />
+    <ClInclude Include="VGUI2\GameUI\CGameLoading.h" />
+    <ClInclude Include="VGUI2\GameUI\CvarNegateCheckButton.h" />
+    <ClInclude Include="VGUI2\GameUI\CvarSlider.h" />
+    <ClInclude Include="VGUI2\GameUI\CvarTextEntry.h" />
+    <ClInclude Include="VGUI2\GameUI\CvarToggleCheckButton.h" />
+    <ClInclude Include="VGUI2\GameUI\GameConsole.h" />
+    <ClInclude Include="VGUI2\GameUI\GameUI.h" />
+    <ClInclude Include="VGUI2\GameUI\KeyToggleCheckButton.h" />
+    <ClInclude Include="VGUI2\GameUI\LabeledCommandComboBox.h" />
+    <ClInclude Include="VGUI2\GameUI\LoadingDialog.h" />
+    <ClInclude Include="VGUI2\GameUI\LogoFile.h" />
+    <ClInclude Include="VGUI2\GameUI\ModInfo.h" />
+    <ClInclude Include="VGUI2\GameUI\MultiplayerAdvancedDialog.h" />
+    <ClInclude Include="VGUI2\GameUI\OptionsDialog.h" />
+    <ClInclude Include="VGUI2\GameUI\OptionsSubAdvanced.h" />
+    <ClInclude Include="VGUI2\GameUI\OptionsSubAudio.h" />
+    <ClInclude Include="VGUI2\GameUI\OptionsSubButtonSettings.h" />
+    <ClInclude Include="VGUI2\GameUI\OptionsSubKeyboard.h" />
+    <ClInclude Include="VGUI2\GameUI\OptionsSubMouse.h" />
+    <ClInclude Include="VGUI2\GameUI\OptionsSubMultiplayer.h" />
+    <ClInclude Include="VGUI2\GameUI\OptionsSubVideo.h" />
+    <ClInclude Include="VGUI2\GameUI\OptionsSubVoice.h" />
+    <ClInclude Include="VGUI2\GameUI\ScriptObject.h" />
+    <ClInclude Include="VGUI2\GameUI\VControlsListPanel.h" />
+    <ClInclude Include="VGUI2\interface\IClientVGUI.h" />
+    <ClInclude Include="VGUI2\interface\IGameConsole.h" />
+    <ClInclude Include="VGUI2\interface\IGameUI.h" />
+    <ClInclude Include="VGUI2\interface\IGameUIFuncs.h" />
+    <ClInclude Include="VGUI2\interface\IVanilliaPanel.h" />
+    <ClInclude Include="VGUI2\interface\IViewportPanel.h" />
+    <ClInclude Include="VGUI2\spr_image.h" />
+    <ClInclude Include="VGUI2\SurfaceHook.h" />
+    <ClInclude Include="VGUI2\tga_image.h" />
+    <ClInclude Include="VGUI2\viewport_panel_names.h" />
+    <ClInclude Include="VGUI2\VPanel.h" />
+    <ClInclude Include="VGUI2\Win32Font.h" />
+    <ClInclude Include="VGUI\Cursor.h" />
+    <ClInclude Include="VGUI\Dar.h" />
+    <ClInclude Include="VGUI\IBorder.h" />
+    <ClInclude Include="VGUI\IClientPanel.h" />
+    <ClInclude Include="VGUI\IEngineVGui.h" />
+    <ClInclude Include="VGUI\IHTML.h" />
+    <ClInclude Include="VGUI\IImage.h" />
+    <ClInclude Include="VGUI\IInput.h" />
+    <ClInclude Include="VGUI\IInputInternal.h" />
+    <ClInclude Include="VGUI\ILocalize.h" />
+    <ClInclude Include="VGUI\IPanel.h" />
+    <ClInclude Include="VGUI\IScheme.h" />
+    <ClInclude Include="VGUI\ISurface.h" />
+    <ClInclude Include="VGUI\ISurface2.h" />
+    <ClInclude Include="VGUI\ISystem.h" />
+    <ClInclude Include="VGUI\IVGUI.h" />
+    <ClInclude Include="VGUI\KeyCode.h" />
+    <ClInclude Include="VGUI\MouseCode.h" />
+    <ClInclude Include="VGUI\OLDDar.h" />
+    <ClInclude Include="VGUI\VGUI.h" />
+    <ClInclude Include="vgui_controls\AnalogBar.h" />
+    <ClInclude Include="vgui_controls\AnimatingImagePanel.h" />
+    <ClInclude Include="vgui_controls\AnimationController.h" />
+    <ClInclude Include="vgui_controls\BitmapImagePanel.h" />
+    <ClInclude Include="vgui_controls\BuildGroup.h" />
+    <ClInclude Include="vgui_controls\BuildModeDialog.h" />
+    <ClInclude Include="vgui_controls\Button.h" />
+    <ClInclude Include="vgui_controls\CheckButton.h" />
+    <ClInclude Include="vgui_controls\CheckButtonList.h" />
+    <ClInclude Include="vgui_controls\CircularProgressBar.h" />
+    <ClInclude Include="vgui_controls\ComboBox.h" />
+    <ClInclude Include="vgui_controls\consoledialog.h" />
+    <ClInclude Include="vgui_controls\ControllerMap.h" />
+    <ClInclude Include="vgui_controls\Controls.h" />
+    <ClInclude Include="vgui_controls\DialogManager.h" />
+    <ClInclude Include="vgui_controls\DirectorySelectDialog.h" />
+    <ClInclude Include="vgui_controls\Divider.h" />
+    <ClInclude Include="vgui_controls\EditablePanel.h" />
+    <ClInclude Include="vgui_controls\ExpandButton.h" />
+    <ClInclude Include="vgui_controls\FileOpenDialog.h" />
+    <ClInclude Include="vgui_controls\FocusNavGroup.h" />
+    <ClInclude Include="vgui_controls\Frame.h" />
+    <ClInclude Include="vgui_controls\GraphPanel.h" />
+    <ClInclude Include="vgui_controls\HTML.h" />
+    <ClInclude Include="vgui_controls\Image.h" />
+    <ClInclude Include="vgui_controls\ImageClipPanel.h" />
+    <ClInclude Include="vgui_controls\ImageList.h" />
+    <ClInclude Include="vgui_controls\ImagePanel.h" />
+    <ClInclude Include="vgui_controls\ImageSprPanel.h" />
+    <ClInclude Include="vgui_controls\InputDialog.h" />
+    <ClInclude Include="vgui_controls\KeyBindingHelpDialog.h" />
+    <ClInclude Include="vgui_controls\KeyBindingMap.h" />
+    <ClInclude Include="vgui_controls\KeyBoardEditorDialog.h" />
+    <ClInclude Include="vgui_controls\KeyRepeat.h" />
+    <ClInclude Include="vgui_controls\Label.h" />
+    <ClInclude Include="vgui_controls\LabelEx.h" />
+    <ClInclude Include="vgui_controls\ListPanel.h" />
+    <ClInclude Include="vgui_controls\ListViewPanel.h" />
+    <ClInclude Include="vgui_controls\Menu.h" />
+    <ClInclude Include="vgui_controls\MenuBar.h" />
+    <ClInclude Include="vgui_controls\MenuButton.h" />
+    <ClInclude Include="vgui_controls\MenuItem.h" />
+    <ClInclude Include="vgui_controls\MessageBox.h" />
+    <ClInclude Include="vgui_controls\MessageDialog.h" />
+    <ClInclude Include="vgui_controls\MessageMap.h" />
+    <ClInclude Include="vgui_controls\Panel.h" />
+    <ClInclude Include="vgui_controls\PanelAnimationVar.h" />
+    <ClInclude Include="vgui_controls\PanelListPanel.h" />
+    <ClInclude Include="vgui_controls\pch_vgui_controls.h" />
+    <ClInclude Include="vgui_controls\PHandle.h" />
+    <ClInclude Include="vgui_controls\ProgressBar.h" />
+    <ClInclude Include="vgui_controls\ProgressBox.h" />
+    <ClInclude Include="vgui_controls\PropertyDialog.h" />
+    <ClInclude Include="vgui_controls\PropertyPage.h" />
+    <ClInclude Include="vgui_controls\PropertySheet.h" />
+    <ClInclude Include="vgui_controls\QueryBox.h" />
+    <ClInclude Include="vgui_controls\RadioButton.h" />
+    <ClInclude Include="vgui_controls\RichText.h" />
+    <ClInclude Include="vgui_controls\RotatingProgressBar.h" />
+    <ClInclude Include="vgui_controls\savedocumentquery.h" />
+    <ClInclude Include="vgui_controls\ScalableImagePanel.h" />
+    <ClInclude Include="vgui_controls\ScrollableEditablePanel.h" />
+    <ClInclude Include="vgui_controls\ScrollBar.h" />
+    <ClInclude Include="vgui_controls\ScrollBarSlider.h" />
+    <ClInclude Include="vgui_controls\SectionedListPanel.h" />
+    <ClInclude Include="vgui_controls\Slider.h" />
+    <ClInclude Include="vgui_controls\Splitter.h" />
+    <ClInclude Include="vgui_controls\subrectimage.h" />
+    <ClInclude Include="vgui_controls\TextEntry.h" />
+    <ClInclude Include="vgui_controls\TextImage.h" />
+    <ClInclude Include="vgui_controls\TextImageEx.h" />
+    <ClInclude Include="vgui_controls\ToggleButton.h" />
+    <ClInclude Include="vgui_controls\Tooltip.h" />
+    <ClInclude Include="vgui_controls\ToolWindow.h" />
+    <ClInclude Include="vgui_controls\TreeView.h" />
+    <ClInclude Include="vgui_controls\TreeViewListControl.h" />
+    <ClInclude Include="vgui_controls\URLLabel.h" />
+    <ClInclude Include="vgui_controls\WizardPanel.h" />
+    <ClInclude Include="vgui_controls\WizardSubPanel.h" />
+    <ClInclude Include="vpx\memle.h" />
+    <ClInclude Include="vpx\tools_common.h" />
+    <ClInclude Include="vpx\video_common.h" />
+    <ClInclude Include="vpx\video_reader.h" />
+    <ClInclude Include="vpx\vpx_codec.h" />
+    <ClInclude Include="vpx\vpx_decoder.h" />
+    <ClInclude Include="vpx\vpx_frame_buffer.h" />
+    <ClInclude Include="vpx\vpx_image.h" />
+    <ClInclude Include="vpx\vpx_integer.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

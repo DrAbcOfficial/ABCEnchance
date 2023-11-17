@@ -1,0 +1,70 @@
+name: Build
+
+on:
+  push:
+    tags:
+    - 'v*'
+    
+env:
+  SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance
+  BUILD_CONFIGURATION: Release
+  BUILD_CONFIGURATION_AVX: Release_AVX2
+
+permissions:
+  contents: write
+
+jobs:
+  build-win32:
+    runs-on: windows-latest
+
+    steps:    
+    - name: Git Clone Metahook
+      uses: sudosubin/git-clone-action@v1.0.1
+      with:
+        repository: hzqst/MetaHookSv
+        path: MetaHookSv
+    
+    - name: Git Clone This
+      uses: sudosubin/git-clone-action@v1.0.1
+      with:
+        repository: DrAbcOfficial/ABCEnchance
+        path: MetaHookSv/Plugins/ABCEnchance
+
+    - name: Setup build env
+      working-directory: MetaHookSv
+      run: ./build-initdeps.bat
+    
+    - name: Setup glew
+      working-directory: MetaHookSv
+      run: ./build-glew.bat
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      
+    - name: Build AVX
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION_AVX}} ${{env.SOLUTION_FILE_PATH}}
+    
+    - name: Copy to build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+          Copy-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Release/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/ABCEnchance.dll"
+          Copy-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Release_AVX2/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/ABCEnchance_AVX2.dll"
+
+    - name: Zipping All
+      uses: vimtor/action-zip@v1
+      with:
+          files: MetaHookSv/Plugins/ABCEnchance/build/
+          dest: ABCEnchance-windows-x86.zip
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+          name: ABCEnchance-${{ github.ref }}
+          files: |
+            ABCEnchance-windows-x86.zip

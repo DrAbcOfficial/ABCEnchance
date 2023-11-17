@@ -1,0 +1,1 @@
+Stolen from https://github.com/ywh233/LRC-Tools/
