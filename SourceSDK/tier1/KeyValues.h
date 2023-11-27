@@ -17,7 +17,7 @@
 #include <filesystem.h>
 #include <Color.h>
 
-class IFileSystem;
+class IFileSystemEx;
 class CUtlBuffer;
 class Color;
 typedef void *FileHandle_t;

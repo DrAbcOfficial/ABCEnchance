@@ -32,7 +32,7 @@
 #include <vgui/MouseCode.h>
 #include <vgui/KeyCode.h>
 
-extern IFileSystem *g_pFullFileSystem;
+extern IFileSystemEx *g_pFullFileSystem;
 
 extern vgui::IInput *g_pVGuiInput;
 extern vgui::ISchemeManager *g_pVGuiSchemeManager;
@@ -111,7 +111,7 @@ inline vgui::ILocalize *localize()
 {
 	return g_pVGuiLocalize;
 }
-inline IFileSystem* filesystem() {
+inline IFileSystemEx* filesystem() {
 	return g_pFullFileSystem;
 }
 

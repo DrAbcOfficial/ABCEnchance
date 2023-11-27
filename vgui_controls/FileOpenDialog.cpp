@@ -629,7 +629,7 @@ void FileOpenDialog::Init( const char *title, KeyValues *pContextKeyValues )
 
 	// Set our starting path to the current directory
 	char pLocalPath[255];
-	g_pFullFileSystem->GetCurrentDirectory( pLocalPath , 255 );
+	vgui::filesystem()->GetCurrentDirectory(pLocalPath, 255);
 	SetStartDirectory( pLocalPath );
 
 	// Because these call through virtual functions, we can't issue them in the constructor, so we post a message to ourselves instead!!
@@ -865,7 +865,7 @@ void FileOpenDialog::SetStartDirectoryContext( const char *pStartDirContext, con
 	{
 		// Set our starting path to the current directory
 		char pLocalPath[255];
-		g_pFullFileSystem->GetCurrentDirectory( pLocalPath, 255 );
+		vgui::filesystem()->GetCurrentDirectory( pLocalPath, 255 );
 		SetStartDirectory( pLocalPath );
 	}
 }
@@ -953,10 +953,10 @@ void FileOpenDialog::NewFolder( char const *folderName )
 	do
 	{
 		Q_MakeAbsolutePath( pFullPath, sizeof(pFullPath), pNewFolderName, pCurrentDirectory );
-		if ( !g_pFullFileSystem->FileExists( pFullPath, NULL ) &&
-			 !g_pFullFileSystem->IsDirectory( pFullPath, NULL ) )
+		if ( !vgui::filesystem()->FileExists( pFullPath, NULL ) &&
+			 !vgui::filesystem()->IsDirectory( pFullPath, NULL ) )
 		{
-			g_pFullFileSystem->CreateDirHierarchy( pFullPath, NULL );
+			vgui::filesystem()->CreateDirHierarchy( pFullPath, NULL );
 			m_pFileNameEdit->SetText( pNewFolderName );
 			return;
 		}
@@ -1197,7 +1197,7 @@ void FileOpenDialog::PopulateFileList()
 					kv->SetString( "filesize", Q_pretifymem( findData.nFileSizeLow, 0, true ) );
 					Q_FixSlashes( fullpath );
 					wchar_t fileType[ 80 ];
-					g_pFullFileSystem->GetFileTypeForFullPath( fullpath, fileType, sizeof( fileType ) );
+					vgui::filesystem()->GetFileTypeForFullPath( fullpath, fileType, sizeof( fileType ) );
 					kv->SetWString( "type", fileType );
 					kv->SetString( "attributes", GetAttributesAsString( findData.dwFileAttributes ) );
 					kv->SetString( "modified", GetFileTimetamp( findData.ftLastWriteTime ) );
@@ -1434,7 +1434,7 @@ void FileOpenDialog::OnSelectFolder()
 		Q_strncpy( pFullPath, pFileName, sizeof(pFullPath) );
 	}
 
-	if ( g_pFullFileSystem->FileExists( pFullPath ) )
+	if ( vgui::filesystem()->FileExists( pFullPath ) )
 	{
 		// open the file!
 		SaveFileToStartDirContext( pFullPath );
@@ -1497,7 +1497,7 @@ void FileOpenDialog::OnOpen()
 	}
 
 	// If the name specified is a directory, then change directory
-	if ( g_pFullFileSystem->IsDirectory( pFullPath, NULL ) )
+	if ( vgui::filesystem()->IsDirectory( pFullPath, NULL ) )
 	{
 		// it's a directory; change to the specified directory
 		if ( !bSpecifiedDirectory )
@@ -1532,7 +1532,7 @@ void FileOpenDialog::OnOpen()
 		Q_SetExtension( pFullPath, extension, sizeof(pFullPath) );
 	}
 
-	if ( g_pFullFileSystem->FileExists( pFullPath ) )
+	if ( vgui::filesystem()->FileExists( pFullPath ) )
 	{
 		// open the file!
 		SaveFileToStartDirContext( pFullPath );
