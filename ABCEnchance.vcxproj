@@ -454,6 +454,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="SourceSDK\tier1\UtlStringMap.h" />
     <ClInclude Include="SourceSDK\tier1\utlsymbol.h" />
     <ClInclude Include="SourceSDK\tier1\utlvector.h" />
+    <ClInclude Include="SourceSDK\tier2\tier2.h" />
     <ClInclude Include="SourceSDK\vstdlib\IKeyValuesSystem.h" />
     <ClInclude Include="SourceSDK\vstdlib\random.h" />
     <ClInclude Include="SourceSDK\vstdlib\strtools.h" />

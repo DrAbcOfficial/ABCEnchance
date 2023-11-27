@@ -96,6 +96,9 @@
     <Filter Include="Public\liblrc">
       <UniqueIdentifier>{26e8c825-2ed9-494b-804d-bf2859a5d597}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SourceSDK\tier2">
+      <UniqueIdentifier>{f2925c2a-76db-4a76-90b0-7b9474710fa8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\HLSDK\common\interface.cpp">
@@ -1689,6 +1692,9 @@
     </ClInclude>
     <ClInclude Include="src\liblrc\lyrics.h">
       <Filter>Public\liblrc</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceSDK\tier2\tier2.h">
+      <Filter>SourceSDK\tier2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

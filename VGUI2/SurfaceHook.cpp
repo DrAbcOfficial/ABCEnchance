@@ -4,6 +4,7 @@
 #include <IEngineSurface.h>
 #include "Color.h"
 #include "vgui_internal.h"
+#include "filesystem.h"
 #include "plugins.h"
 #include "tier1/utlrbtree.h"
 #include "tier1/UtlDict.h"
