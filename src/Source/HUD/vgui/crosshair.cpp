@@ -82,18 +82,38 @@ void CCrosshairPanel::PaintBackground() {
 		return;
 	if (!g_pViewPort->HasSuit())
 		return;
+	if (gClientData->health <= 0)
+		return;
 	//默认准心
 	if (pCvarDefaultCrosshair->value > 0)
 		DrawDefaultCrosshair(m_iCenterX, m_iCenterY);
-	if (gClientData->health <= 0)
-		return;
-	if (pDynamicCrossHairAH->value > 0 && gCVars.pCvarDefaultFOV->value != m_hfov)
-		return;
-
 }
 void CCrosshairPanel::OnThink() {
 	if (!gClientData)
 		return;
+	if (g_pViewPort->IsInSpectate()) {
+		HideDynamicCrossHair();
+		return;
+	}
+	if (g_pViewPort->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS)) {
+		HideDynamicCrossHair();
+		return;
+	}
+	if (!g_pViewPort->HasSuit()) {
+		HideDynamicCrossHair();
+		return;
+	}
+	if (gClientData->health <= 0) {
+		HideDynamicCrossHair();
+		return;
+	}
+	//防止关闭默认准星后开镜没准星
+	if (pCvarDefaultCrosshair->value != 0 && pDynamicCrossHairAH->value > 0 
+		&& gCVars.pCvarDefaultFOV->value != m_hfov) {
+		HideDynamicCrossHair();
+		return;
+	}
+
 	if (gExportfuncs.CL_IsThirdPerson()) {
 		pmtrace_t tr;
 		CVector vViewAngleForward;
@@ -211,7 +231,17 @@ vgui::VPANEL CCrosshairPanel::GetVPanel() {
 void CCrosshairPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
-
+inline void CCrosshairPanel::HideDynamicCrossHair()
+{
+	for (auto iter = m_aryCrosshair.begin(); iter != m_aryCrosshair.end(); iter++) {
+		if ((*iter)->GetBgColor().a() != 0)
+			(*iter)->SetBgColor(Color(0, 0, 0, 0));
+	}
+	for (auto iter = m_aryCrosshairBorder.begin(); iter != m_aryCrosshairBorder.end(); iter++) {
+		if ((*iter)->GetBgColor().a() != 0)
+			(*iter)->SetBgColor(Color(0, 0, 0, 0));
+	}
+}
 void CCrosshairPanel::SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc) {
 	if (hPic <= 0) {
 		m_pSprImage->SetTextureID(-1);
