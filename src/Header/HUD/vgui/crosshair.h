@@ -61,6 +61,7 @@ private:
 	int m_iCenterX;
 	int m_iCenterY;
 
+	void HideDynamicCrossHair();
 	void SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc);
 	void DrawDefaultCrosshair(int x, int y);
 };
