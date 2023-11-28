@@ -37,6 +37,7 @@ void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_engin
 
 void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	g_pFileSystem = g_pInterface->FileSystem;
+	g_pFullFileSystem = static_cast<IFileSystemEx*>(g_pFileSystem);
 	g_iEngineType = g_pMetaHookAPI->GetEngineType();
 	g_dwEngineBuildnum = g_pMetaHookAPI->GetEngineBuildnum();
 	g_hEngineModule = g_pMetaHookAPI->GetEngineModule();
