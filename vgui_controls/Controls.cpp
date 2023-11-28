@@ -41,7 +41,8 @@ bool VGui_InitInterfacesList(const char *moduleName, CreateInterfaceFn *factoryL
 	setlocale(LC_COLLATE, "");
 	setlocale(LC_MONETARY, "");
 
-	g_pFullFileSystem = static_cast<IFileSystemEx*>(factoryList[2](FILESYSTEM_INTERFACE_VERSION, NULL));
+	//no need to do it again, its suck
+	//g_pFullFileSystem = static_cast<IFileSystemEx*>(factoryList[2](FILESYSTEM_INTERFACE_VERSION, NULL));
 
 	g_pVGuiInput = (IInput *)factoryList[1](VGUI_INPUT_INTERFACE_VERSION, NULL);
 	g_pVGuiSystem = (ISystem *)factoryList[1](VGUI_SYSTEM_INTERFACE_VERSION, NULL);
