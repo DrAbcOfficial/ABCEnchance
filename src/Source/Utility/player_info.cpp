@@ -6,7 +6,6 @@
 #include "player_info.h"
 #include "scoreboard.h"
 #include <Viewport.h>
-#include <exportfuncs.h>
 
 typedef int GLint;
 #include "hud.h"
