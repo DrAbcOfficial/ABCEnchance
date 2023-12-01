@@ -62,7 +62,7 @@ int CPlayerInfo::GetPacketLoss(){
 }
 bool CPlayerInfo::IsThisPlayer(){
 	Assert(m_bIsConnected);
-	return m_iIndex == gEngfuncs.GetLocalPlayer()->index;
+	return GetIndex() == gEngfuncs.GetLocalPlayer()->index;
 }
 const char *CPlayerInfo::GetModel(){
 	Assert(m_bIsConnected);
@@ -124,15 +124,15 @@ const char *CPlayerInfo::GetTeamName(){
 	return m_ExtraInfo.teamname;
 }
 bool CPlayerInfo::IsSpectator(){
-	return gCustomHud.IsSpectator(m_iIndex);
+	return gCustomHud.IsSpectator(GetIndex());
 }
 void CPlayerInfo::UpdatePing() {
-	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(m_iIndex);
+	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(GetIndex());
 	iPing = info->ping;
 	iLoss = info->packet_loss;
 }
 CPlayerInfo *CPlayerInfo::Update(){
-	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(m_iIndex);
+	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(GetIndex());
 	bool bWasConnected = m_bIsConnected;
 	bool bIsConnected = info != nullptr;
 	m_bIsConnected = bIsConnected;
@@ -148,7 +148,7 @@ CPlayerInfo *CPlayerInfo::Update(){
 	if (bIsConnected){
 		if (!m_pSteamId.IsValid() || info->m_nSteamID != GetSteamID64()) {
 			// Player has no SteamID or not the past guy, update it
-			if (m_iIndex == gEngfuncs.GetLocalPlayer()->index)
+			if (GetIndex() == gEngfuncs.GetLocalPlayer()->index)
 				m_pSteamId = SteamUser()->GetSteamID();
 			else
 				m_pSteamId = CSteamID(info->m_nSteamID);
@@ -161,7 +161,7 @@ CPlayerInfo *CPlayerInfo::Update(){
 		iPing = info->ping;
 		iLoss = info->packet_loss;
 		Q_strcpy(szName, info->name);
-		hud_playerinfo_t* extraInfo = gCustomHud.GetPlayerHUDInfo(m_iIndex);
+		hud_playerinfo_t* extraInfo = gCustomHud.GetPlayerHUDInfo(GetIndex());
 		m_ExtraInfo.armor = extraInfo->armor;
 		m_ExtraInfo.frags = extraInfo->frags;
 		m_ExtraInfo.deaths = extraInfo->death;
