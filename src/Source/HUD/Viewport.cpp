@@ -145,13 +145,13 @@ void CViewport::VidInit(void){
 void CViewport::Reset() {
 	for (IViewportPanel* pPanel : m_Panels)
 		pPanel->Reset();
-	GetThisPlayerInfo()->ResetAll();
+	CPlayerInfo::GetThisPlayerInfo()->ResetAll();
 	m_iInterMission = 0;
 }
 
 void CViewport::Init(void){
-	GetThisPlayerInfo()->InitPlayerInfos();
-	GetTeamInfo(0)->InitTeamInfos();
+	CPlayerInfo::GetThisPlayerInfo()->InitPlayerInfos();
+	CTeamInfo::InitTeamInfos();
 }
 
 void CViewport::ActivateClientUI(void){

@@ -838,8 +838,6 @@ void IN_Accumulate(void){
 		gExportfuncs.IN_Accumulate();
 }
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
-	if (ent->player)
-		GetPlayerInfo(ent->index);
 	if (!gCustomHud.HUD_AddEntity(type, ent, modelname))
 		return 0;
 	return gExportfuncs.HUD_AddEntity(type, ent, modelname);

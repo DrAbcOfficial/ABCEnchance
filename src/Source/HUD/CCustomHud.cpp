@@ -108,7 +108,7 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 		info->donors = READ_SHORT();
 		info->admin = READ_SHORT();
 	}
-	GetPlayerInfo(clientIndex)->Update();
+	CPlayerInfo::GetPlayerInfo(clientIndex)->Update();
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
 }
 int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {

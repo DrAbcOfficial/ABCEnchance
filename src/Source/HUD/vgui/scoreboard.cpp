@@ -338,7 +338,7 @@ void CScorePanel::UpdateOnPlayerInfo(int client)
 
 void CScorePanel::DeathMsg(int killer, int victim)
 {
-	if (victim == GetThisPlayerInfo()->GetIndex())
+	if (victim == CPlayerInfo::GetThisPlayerInfo()->GetIndex())
 	{
 		// if we were the one killed, set the scoreboard to indicate killer
 		m_flKillerHighlightStart = gEngfuncs.GetClientTime();
@@ -472,7 +472,7 @@ void CScorePanel::RefreshItems()
 	// Assign player teams, calculate team scores
 	for (int i = 1; i <= SC_MAX_PLAYERS; i++)
 	{
-		CPlayerInfo* pi = GetPlayerInfo(i)->Update();
+		CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(i)->Update();
 		if (!pi)
 			continue;
 		PlayerData& pd = m_PlayerData[i];
@@ -500,7 +500,7 @@ void CScorePanel::RefreshItems()
 		if (td.iPlayerCount == 0)
 			continue;
 
-		CTeamInfo* ti = GetTeamInfo(i);
+		CTeamInfo* ti = CTeamInfo::GetTeamInfo(i);
 
 		if (ti->IsScoreOverriden())
 		{
@@ -642,7 +642,7 @@ void CScorePanel::UpdateAllClients()
 
 void CScorePanel::UpdateClientInfo(int client)
 {
-	CPlayerInfo* pi = GetPlayerInfo(client);
+	CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(client);
 	PlayerData& pd = m_PlayerData[client];
 	if (pi->IsConnected() && !pd.bIsConnected){
 		// Player just connected
@@ -811,7 +811,7 @@ void CScorePanel::UpdateScoresAndCounts(){
 	int iPlayerCount = 0;
 
 	for (int i = 1; i <= SC_MAX_PLAYERS; i++){
-		CPlayerInfo* pi = GetPlayerInfo(i);
+		CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(i);
 
 		if (!pi->IsValid())
 			continue;
@@ -863,7 +863,7 @@ void CScorePanel::UpdateScoresAndCounts(){
 		if (td.iPlayerCount == 0)
 			continue;
 
-		CTeamInfo* ti = GetTeamInfo(i);
+		CTeamInfo* ti = CTeamInfo::GetTeamInfo(i);
 
 		if (ti->IsScoreOverriden()){
 			td.iFrags = ti->GetFrags();
@@ -941,7 +941,7 @@ void CScorePanel::OpenPlayerMenu(int itemID){
 		return;
 
 	// SteamID64
-	m_MenuData.nSteamID64 = GetPlayerInfo(m_MenuData.nClient)->GetSteamID64();
+	m_MenuData.nSteamID64 = CPlayerInfo::GetPlayerInfo(m_MenuData.nClient)->GetSteamID64();
 	if (m_MenuData.nSteamID64 != 0){
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nProfilePageItemID, true);
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nProfileUrlItemID, true);
@@ -974,7 +974,7 @@ void CScorePanel::OnItemContextMenu(int itemID) {
 
 void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 {
-	CPlayerInfo* pi = GetPlayerInfo(m_MenuData.nClient);
+	CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(m_MenuData.nClient);
 
 	if (!pi->IsConnected())
 		return;
