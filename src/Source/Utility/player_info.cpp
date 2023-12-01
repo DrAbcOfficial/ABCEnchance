@@ -134,9 +134,8 @@ void CPlayerInfo::UpdatePing() {
 CPlayerInfo *CPlayerInfo::Update(){
 	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(m_iIndex);
 	bool bWasConnected = m_bIsConnected;
-	bool bIsConnected = info != nullptr && info->m_nSteamID != 0;
+	bool bIsConnected = info != nullptr;
 	m_bIsConnected = bIsConnected;
-
 	if (bIsConnected != bWasConnected){
 		// Player connected or disconnected
 		memset(szName, 0, sizeof(szName));
@@ -147,8 +146,8 @@ CPlayerInfo *CPlayerInfo::Update(){
 			g_pViewPort->GetScoreBoard()->UpdateOnPlayerInfo(GetIndex());
 	}
 	if (bIsConnected){
-		if (!m_pSteamId.IsValid()) {
-			// Player has no SteamID, update it
+		if (!m_pSteamId.IsValid() || info->m_nSteamID != GetSteamID64()) {
+			// Player has no SteamID or not the last guy, update it
 			if (m_iIndex == gEngfuncs.GetLocalPlayer()->index)
 				m_pSteamId = SteamUser()->GetSteamID();
 			else
