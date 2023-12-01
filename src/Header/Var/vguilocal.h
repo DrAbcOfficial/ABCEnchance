@@ -15,15 +15,13 @@ extern Color gDefaultColor;
 #define VGUI2_ROOT_DIR "abcenchance/res/"
 enum {
 	SC_MAX_PLAYERS = 32,
-	SC_MAX_PLAYER_NAME = 32,
 	SC_MAX_TEAMS = 19,//No barnacle
-	SC_MAX_TEAM_NAME = 32,
 	SC_MAX_STEAMID = 32 // 0:0:4294967295, STEAM_ID_PENDING
 };
 enum {
 	MAX_SERVERNAME_LENGTH = 64,
 	MAX_PLAYERNAME_LENGTH = 32,
-	MAX_TEAMNAME_SIZE = 32
+	MAX_TEAMNAME_LENGTH = 32
 };
 //VGUI COLOR CODE
 extern Color g_aryVGUIColorCode[];

@@ -1015,14 +1015,14 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	}
 	case MenuAction::CopyName:
 	{
-		wchar_t name[SC_MAX_PLAYER_NAME + 1];
+		wchar_t name[MAX_PLAYERNAME_LENGTH + 1];
 		vgui::localize()->ConvertANSIToUnicode(pi->GetRealName(), name, sizeof(name));
 		vgui::system()->SetClipboardText(name, wcslen(name));
 		break;
 	}
 	case MenuAction::CopyNameRaw:
 	{
-		wchar_t name[SC_MAX_PLAYER_NAME + 1];
+		wchar_t name[MAX_PLAYERNAME_LENGTH + 1];
 		vgui::localize()->ConvertANSIToUnicode(pi->GetName(), name, sizeof(name));
 		vgui::system()->SetClipboardText(name, wcslen(name));
 		break;
