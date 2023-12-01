@@ -14,13 +14,13 @@
 ****/
 #ifndef PLAYER_INFO_H
 #define PLAYER_INFO_H
-#include <tier0/dbg.h>
+#include <array>
 #include <string>
+#include <tier0/dbg.h>
 
 typedef struct player_info_s player_info_t;
 
-struct extra_player_info_t
-{
+struct extra_player_info_t{
 	int frags;
 	int deaths;
 	int armor;
@@ -126,7 +126,8 @@ private:
 	bool m_bIsConnected;
 	char m_szRealName[SC_MAX_PLAYER_NAME + 1];
 
-	static CPlayerInfo m_sPlayerInfo[SC_MAX_PLAYERS + 1];
+	static std::array<CPlayerInfo, SC_MAX_PLAYERS + 1> m_sPlayerInfo;
+
 	friend CPlayerInfo *GetPlayerInfo(int idx);
 	friend class CSvcMessages;
 };
