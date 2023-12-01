@@ -147,7 +147,7 @@ CPlayerInfo *CPlayerInfo::Update(){
 	}
 	if (bIsConnected){
 		if (!m_pSteamId.IsValid() || info->m_nSteamID != GetSteamID64()) {
-			// Player has no SteamID or not the last guy, update it
+			// Player has no SteamID or not the past guy, update it
 			if (m_iIndex == gEngfuncs.GetLocalPlayer()->index)
 				m_pSteamId = SteamUser()->GetSteamID();
 			else
