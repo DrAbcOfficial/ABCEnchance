@@ -16,7 +16,6 @@
 #define PLAYER_INFO_H
 #include <array>
 #include <string>
-#include <tier0/dbg.h>
 
 typedef struct player_info_s player_info_t;
 
@@ -27,7 +26,7 @@ struct extra_player_info_t{
 	int health;
 	bool dead;
 	short teamnumber = -1;
-	char teamname[SC_MAX_TEAM_NAME];
+	char teamname[MAX_TEAMNAME_LENGTH];
 	short donor;
 	short admin;
 };
@@ -101,17 +100,16 @@ private:
 	static constexpr float STATUS_BUGGED_PERIOD = 10.f;
 
 	int m_iIndex = -1;
-	char szName[SC_MAX_PLAYER_NAME];
-	int iPing;
-	int iLoss;
-	char szModel[SC_MAX_PLAYER_NAME];
-	int iTopColor;
-	int iBottomColor;
+	int m_iPing;
+	int m_iLoss;
+	std::string m_szModel;
+	std::string m_szName;
+	std::string m_szRealName;
+	int m_iTopColor;
+	int m_iBottomColor;
 	extra_player_info_t m_ExtraInfo;
 	bool m_bIsConnected;
-	char m_szRealName[SC_MAX_PLAYER_NAME + 1];
 	CSteamID m_pSteamId;
-	friend class CSvcMessages;
 };
 
 //-----------------------------------------------------
@@ -177,7 +175,7 @@ public:
 	};
 private:
 	int m_iNumber = -1;
-	char m_Name[SC_MAX_TEAM_NAME];
+	std::string m_Name;
 	bool m_bScoreOverriden = false;
 	int m_iFrags = 0;
 	int m_iDeaths = 0;

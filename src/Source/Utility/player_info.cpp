@@ -43,22 +43,22 @@ bool CPlayerInfo::IsConnected(){
 	return m_bIsConnected;
 }
 bool CPlayerInfo::IsValid() {
-	return m_bIsConnected && szName[0] != '\0';
+	return m_bIsConnected && m_szName.size() > 0;
 }
 const char *CPlayerInfo::GetName(){
 	Assert(m_bIsConnected);
-	return szName;
+	return m_szName.c_str();
 }
 const char* CPlayerInfo::GetRealName() {
-	return m_szRealName;
+	return m_szRealName.c_str();
 }
 int CPlayerInfo::GetPing(){
 	Assert(m_bIsConnected);
-	return iPing;
+	return m_iPing;
 }
 int CPlayerInfo::GetPacketLoss(){
 	Assert(m_bIsConnected);
-	return iLoss;
+	return m_iLoss;
 }
 bool CPlayerInfo::IsThisPlayer(){
 	Assert(m_bIsConnected);
@@ -66,15 +66,15 @@ bool CPlayerInfo::IsThisPlayer(){
 }
 const char *CPlayerInfo::GetModel(){
 	Assert(m_bIsConnected);
-	return szModel;
+	return m_szModel.c_str();
 }
 int CPlayerInfo::GetTopColor(){
 	Assert(m_bIsConnected);
-	return iTopColor;
+	return m_iTopColor;
 }
 int CPlayerInfo::GetBottomColor(){
 	Assert(m_bIsConnected);
-	return iBottomColor;
+	return m_iBottomColor;
 }
 uint64 CPlayerInfo::GetSteamID64(){
 	Assert(m_bIsConnected);
@@ -128,8 +128,8 @@ bool CPlayerInfo::IsSpectator(){
 }
 void CPlayerInfo::UpdatePing() {
 	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(GetIndex());
-	iPing = info->ping;
-	iLoss = info->packet_loss;
+	m_iPing = info->ping;
+	m_iLoss = info->packet_loss;
 }
 CPlayerInfo *CPlayerInfo::Update(){
 	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(GetIndex());
@@ -138,8 +138,9 @@ CPlayerInfo *CPlayerInfo::Update(){
 	m_bIsConnected = bIsConnected;
 	if (bIsConnected != bWasConnected){
 		// Player connected or disconnected
-		memset(szName, 0, sizeof(szName));
-		memset(m_szRealName, 0, sizeof(m_szRealName));
+		m_szName.clear();
+		m_szRealName.clear();
+		m_szModel.clear();
 		memset(&m_ExtraInfo, 0, sizeof(m_ExtraInfo));
 		m_pSteamId.Clear();
 		if(g_pViewPort)
@@ -154,13 +155,14 @@ CPlayerInfo *CPlayerInfo::Update(){
 				m_pSteamId = CSteamID(info->m_nSteamID);
 			//RealNameGet
 			if (m_pSteamId.IsValid())
-				Q_strcpy(m_szRealName, SteamFriends()->GetFriendPersonaName(m_pSteamId));
+				m_szRealName = SteamFriends()->GetFriendPersonaName(m_pSteamId);
 		}
-		iTopColor = info->topcolor;
-		iBottomColor = info->bottomcolor;
-		iPing = info->ping;
-		iLoss = info->packet_loss;
-		Q_strcpy(szName, info->name);
+		m_iTopColor = info->topcolor;
+		m_iBottomColor = info->bottomcolor;
+		m_iPing = info->ping;
+		m_iLoss = info->packet_loss;
+		m_szName = info->name;
+		m_szModel = info->model;
 		hud_playerinfo_t* extraInfo = gCustomHud.GetPlayerHUDInfo(GetIndex());
 		m_ExtraInfo.armor = extraInfo->armor;
 		m_ExtraInfo.frags = extraInfo->frags;
@@ -181,8 +183,9 @@ bool CPlayerInfo::HasRealName(){
 	return m_szRealName[0] != '\0';
 }
 void CPlayerInfo::Reset(){
-	memset(szName, 0, sizeof(szName));
-	memset(m_szRealName, 0, sizeof(m_szRealName));
+	m_szName.clear();
+	m_szRealName.clear();
+	m_szModel.clear();
 	memset(&m_ExtraInfo, 0, sizeof(m_ExtraInfo));
 	m_bIsConnected = false;
 	m_pSteamId.Clear();
@@ -258,7 +261,7 @@ int CTeamInfo::GetNumber(){
 	return m_iNumber;
 }
 const char *CTeamInfo::GetName(){
-	return m_Name;
+	return m_Name.c_str();
 }
 bool CTeamInfo::IsScoreOverriden(){
 	return m_bScoreOverriden;
@@ -273,7 +276,7 @@ int CTeamInfo::GetDeaths(){
 }
 void CTeamInfo::InitTeamInfos() {
 	for(size_t i = 0; i < SC_MAX_TEAMS;i++){
-		strcpy_s(CTeamInfo::GetTeamInfos()[i].m_Name, CTeamInfo::GetNameByIndex(i));
+		CTeamInfo::GetTeamInfos()[i].m_Name = CTeamInfo::GetNameByIndex(i);
 	}
 }
 void CTeamInfo::Reset(){
