@@ -18,14 +18,12 @@ typedef int GLint;
 #include "weapon.h"
 #include <CCustomHud.h>
 
-CPlayerInfo CPlayerInfo::m_sPlayerInfo[SC_MAX_PLAYERS + 1];
-
 #define UNDEFINEDTEAM_LOCALIZE_TOKEN "Scores_UndifinedTeam"
 CPlayerInfo *GetThisPlayerInfo(){
 	cl_entity_t* ent = gEngfuncs.GetLocalPlayer();
 	if(ent)
 		return GetPlayerInfo(ent->index);
-	return GetPlayerInfo(0);
+	return nullptr;
 }
 void CPlayerInfo::InitPlayerInfos() {
 	// Set player info IDs
@@ -130,7 +128,7 @@ void CPlayerInfo::UpdatePing() {
 CPlayerInfo *CPlayerInfo::Update(){
 	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(m_iIndex);
 	bool bWasConnected = m_bIsConnected;
-	bool bIsConnected = info != nullptr;
+	bool bIsConnected = info != nullptr && info->m_nSteamID != 0;
 	m_bIsConnected = bIsConnected;
 
 	if (bIsConnected != bWasConnected){
