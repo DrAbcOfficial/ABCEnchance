@@ -137,9 +137,9 @@ void CPlayerInfoPanel::SetParent(vgui::VPANEL parent)
 }
 
 void CPlayerInfoPanel::UpdateClientInfo(){
-	CPlayerInfo* pi = GetPlayerInfo(m_iPlayerIndex);
+	CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(m_iPlayerIndex);
 	if (pi->IsValid()) {
-		if (pi->IsSpectator() || pi->GetTeamNumber() != GetThisPlayerInfo()->GetTeamNumber()) {
+		if (pi->IsSpectator() || pi->GetTeamNumber() != CPlayerInfo::GetThisPlayerInfo()->GetTeamNumber()) {
 			ShowPanel(false);
 			return;
 		}	

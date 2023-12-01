@@ -33,22 +33,15 @@ struct extra_player_info_t{
 };
 
 //-----------------------------------------------------
-
-class CPlayerInfo;
-CPlayerInfo *GetPlayerInfo(int idx);
-CPlayerInfo *GetThisPlayerInfo();
-
 extern bool g_bInPing;
 extern std::wstring g_szPingBuffer;
 
 class CPlayerInfo
 {
 public:
-	void InitPlayerInfos();
 	int GetIndex();
 	bool IsConnected();
 	bool IsValid();
-
 	// Engine info
 	const char *GetName();
 	int GetPing();
@@ -58,7 +51,6 @@ public:
 	int GetTopColor();
 	int GetBottomColor();
 	uint64 GetSteamID64();
-
 	// Extra info (from HUD messages)
 	int GetFrags();
 	int GetDonor();
@@ -69,42 +61,35 @@ public:
 	int GetTeamNumber();
 	const char *GetTeamName();
 	bool IsSpectator();
-
 	/**
 	 * Returns display name. It should be used in text displayed on HUD.
 	 * @param	bNoColorCodes	If true and ColorCodeAction != Ignore, color codes will be removed.
 	 * @return	Display name stored in internal buffer. It can handle up to 8 calls before overwriting.
 	 */
 	const char *GetRealName();
-
 	/**
 	 * Returns SteamID string. Requires SVC hook.
 	 */
 	CSteamID* GetSteamID();
 	const char* GetSteamIDString();
 	const char* GetSteamIDString64();
-
 	void UpdatePing();
 	// Should be called before reading engine info.
 	// Returns this
 	CPlayerInfo *Update();
-
 	void UpdateAll();
-
 	/**
 	 * Returns whether the player has a real name.
 	 */
 	bool HasRealName();
-
-	/**
-	 * Clears saved realname. Should be called when realnames are unloaded.
-	 */
-	void ClearRealName();
 	void Reset();
 	void ResetAll();
 
-	CSteamID m_pSteamId;
-
+	//static shit
+	static std::array<CPlayerInfo, SC_MAX_PLAYERS + 1>& CPlayerInfo::GetPlayerInfos();
+	static void InitPlayerInfos();
+	static CPlayerInfo* GetPlayerInfo(int idx);
+	static CPlayerInfo* GetThisPlayerInfo();
 private:
 	/**
 	 * Sometimes players get stuck in connecting state and won't be visible in status output.
@@ -125,28 +110,14 @@ private:
 	extra_player_info_t m_ExtraInfo;
 	bool m_bIsConnected;
 	char m_szRealName[SC_MAX_PLAYER_NAME + 1];
-
-	static std::array<CPlayerInfo, SC_MAX_PLAYERS + 1> m_sPlayerInfo;
-
-	friend CPlayerInfo *GetPlayerInfo(int idx);
+	CSteamID m_pSteamId;
 	friend class CSvcMessages;
 };
 
-inline CPlayerInfo *GetPlayerInfo(int idx)
-{
-	Assert(idx >= 1 && idx <= SC_MAX_PLAYERS);
-	return &CPlayerInfo::m_sPlayerInfo[idx];
-}
-
 //-----------------------------------------------------
-
-class CTeamInfo;
-CTeamInfo *GetTeamInfo(int number);
-
 class CTeamInfo
 {
 public:
-	const char* GetNameByIndex(uint index);
 	/**
 	 * Returns team number.
 	 */
@@ -174,8 +145,36 @@ public:
 	 */
 	int GetDeaths();
 	void ResetAll();
-	void InitTeamInfos();
+	//static shit
+	static std::array<CTeamInfo, SC_MAX_TEAMS + 1>& GetTeamInfos();
+	static const char* GetNameByIndex(uint index);
+	static void InitTeamInfos();
+	static CTeamInfo* GetTeamInfo(int number);
 
+	enum class TEAM_INDEX{
+		CLASS_FORCE_NONE = -1,
+		CLASS_NONE,
+		CLASS_MACHINE,
+		CLASS_PLAYER,
+		CLASS_HUMAN_PASSIVE,
+		CLASS_HUMAN_MILITARY,
+		CLASS_ALIEN_MILITARY,
+		CLASS_ALIEN_PASSIVE,
+		CLASS_ALIEN_MONSTER,
+		CLASS_ALIEN_PREY,
+		CLASS_ALIEN_PREDATOR,
+		CLASS_INSECT,
+		CLASS_PLAYER_ALLY,
+		CLASS_PLAYER_BIOWEAPON,
+		CLASS_ALIEN_BIOWEAPON,
+		CLASS_XRACE_PITDRONE,
+		CLASS_XRACE_SHOCK,
+		CLASS_TEAM1,
+		CLASS_TEAM2,
+		CLASS_TEAM3,
+		CLASS_TEAM4,
+		CLASS_BARNACLE = 99
+	};
 private:
 	int m_iNumber = -1;
 	char m_Name[SC_MAX_TEAM_NAME];
@@ -193,15 +192,5 @@ private:
 	 * Updates state of all teams.
 	 */
 	static void UpdateAllTeams();
-
-	static CTeamInfo m_sTeamInfo[SC_MAX_TEAMS + 1];
-	friend CTeamInfo *GetTeamInfo(int number);
 };
-
-inline CTeamInfo *GetTeamInfo(int number)
-{
-	Assert(number >= 0 && number <= SC_MAX_TEAMS);
-	return &CTeamInfo::m_sTeamInfo[number];
-}
-
 #endif
