@@ -731,7 +731,7 @@ bool CCustomHud::IsInScore() {
 	return m_bInScore;
 }
 player_infosc_t* CCustomHud::GetPlayerInfoEx(int index) {
-	return (player_infosc_t*)IEngineStudio.PlayerInfo(index - 1);
+	return reinterpret_cast<player_infosc_t*>(IEngineStudio.PlayerInfo(index - 1));
 }
 CCustomHud :: ~CCustomHud(){
 	m_arySprites.clear();
