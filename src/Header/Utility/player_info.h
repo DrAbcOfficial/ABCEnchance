@@ -19,24 +19,8 @@
 
 typedef struct player_info_s player_info_t;
 
-struct extra_player_info_t{
-	int frags;
-	int deaths;
-	int armor;
-	int health;
-	bool dead;
-	short teamnumber = -1;
-	char teamname[MAX_TEAMNAME_LENGTH];
-	short donor;
-	short admin;
-};
-
 //-----------------------------------------------------
-extern bool g_bInPing;
-extern std::wstring g_szPingBuffer;
-
-class CPlayerInfo
-{
+class CPlayerInfo{
 public:
 	int GetIndex();
 	bool IsConnected();
@@ -89,6 +73,18 @@ public:
 	static void InitPlayerInfos();
 	static CPlayerInfo* GetPlayerInfo(int idx);
 	static CPlayerInfo* GetThisPlayerInfo();
+
+	struct extra_player_info {
+		int frags;
+		int deaths;
+		int armor;
+		int health;
+		bool dead;
+		short teamnumber = -1;
+		char teamname[MAX_TEAMNAME_LENGTH];
+		short donor;
+		short admin;
+	};
 private:
 	/**
 	 * Sometimes players get stuck in connecting state and won't be visible in status output.
@@ -107,14 +103,13 @@ private:
 	std::string m_szRealName;
 	int m_iTopColor;
 	int m_iBottomColor;
-	extra_player_info_t m_ExtraInfo;
+	extra_player_info m_ExtraInfo;
 	bool m_bIsConnected;
 	CSteamID m_pSteamId;
 };
 
 //-----------------------------------------------------
-class CTeamInfo
-{
+class CTeamInfo{
 public:
 	/**
 	 * Returns team number.
