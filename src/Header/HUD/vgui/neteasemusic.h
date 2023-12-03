@@ -65,6 +65,7 @@ public:
 	void PauseMusic();
 	bool IsPaused();
 	void SetVolume(float vol);
+	bool SetPlayPos(unsigned long offset);
 
 	//User info
 	void QRLogin();

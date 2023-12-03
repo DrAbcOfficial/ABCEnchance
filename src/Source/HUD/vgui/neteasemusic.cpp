@@ -257,6 +257,10 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 						music->copyright ? "Yes" : "No");
 				else
 					panel->PrintF("#Netease_NotPlaying", false);
+			}),
+			CCloudMusicCmdItem("pos", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) { 
+				int pos = std::strtoul(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1));
+				panel->SetPlayPos(pos);
 			})
 		}),
 		CCloudMusicCmdItem("play", {
@@ -601,6 +605,15 @@ void CNeteasePanel::StopMusic(){
 void CNeteasePanel::SetVolume(float vol) {
 	if (m_pChannel.Valid())
 		m_pChannel.SetVolume(vol);
+}
+
+bool CNeteasePanel::SetPlayPos(unsigned long offset){
+	if (m_pPlaying == nullptr)
+		return false;
+	if (offset < 0 || offset > m_pPlaying->duration)
+		return false;
+	m_pChannel.SetPosition(offset, FMOD_TIMEUNIT_MS);
+	return true;
 }
 
 template<typename... Args>
