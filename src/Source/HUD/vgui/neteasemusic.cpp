@@ -259,8 +259,9 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 					panel->PrintF("#Netease_NotPlaying", false);
 			}),
 			CCloudMusicCmdItem("pos", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) { 
-				int pos = std::strtoul(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1));
-				panel->SetPlayPos(pos);
+				char* end;
+				if(!panel->SetPlayPos(std::strtoul(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), &end, 10)))
+					panel->PrintF("#Netease_NotPlaying", false);
 			})
 		}),
 		CCloudMusicCmdItem("play", {
@@ -608,10 +609,12 @@ void CNeteasePanel::SetVolume(float vol) {
 }
 
 bool CNeteasePanel::SetPlayPos(unsigned long offset){
-	if (m_pPlaying == nullptr)
-		return false;
-	if (offset < 0 || offset > m_pPlaying->duration)
-		return false;
+	if (m_pPlaying == nullptr) {
+		m_uiStartPlayOffset = offset;
+		return true;
+	}
+	if (offset > m_pPlaying->duration)
+		offset = m_pPlaying->duration;
 	m_pChannel.SetPosition(offset, FMOD_TIMEUNIT_MS);
 	return true;
 }
@@ -789,6 +792,8 @@ void CNeteasePanel::PlayListMusic(){
 					soundSystem->CreateStream(reinterpret_cast<const char*>(obj->musicData.data()), FMOD_HARDWARE | FMOD_OPENMEMORY, &extrainfo, panel->m_pSound);
 					soundSystem->PlaySound(FMOD_CHANNEL_FREE, panel->m_pSound, 0, panel->m_pChannel);
 					panel->m_pChannel.SetVolume(panel->m_pVolume->value);
+					panel->m_pChannel.SetPosition(panel->m_uiStartPlayOffset, FMOD_TIMEUNIT_MS);
+					panel->m_uiStartPlayOffset = 0;
 					//Album
 					s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
 					panel->m_pAlbumPanel->SetImage(s_pAlbumImage);
