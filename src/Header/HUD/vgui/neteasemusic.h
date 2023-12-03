@@ -126,6 +126,8 @@ private:
 	bool m_bPendingMusic = false;
 	bool m_bPaused = false;
 
+	unsigned long m_uiStartPlayOffset = 0;
+
 	std::shared_ptr<netease::CMusic> m_pPlaying = nullptr;
 	std::unique_ptr<lrc::Lyrics> m_pLyric = nullptr;
 	std::unique_ptr<lrc::Lyrics> m_pTransLyric = nullptr;
