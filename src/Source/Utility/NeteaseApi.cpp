@@ -104,7 +104,7 @@ namespace netease {
 		else
 			duration = json["duration"].GetUint64();
 	}
-	string CMusic::GetPlayUrl(const char* quality, char* encode) {
+	std::optional<string> CMusic::GetPlayUrl(const char* quality, char* encode) {
 		std::map<string, string> p = {
 			{"ids", "[" + std::to_string(id) + "]"},
 			{"level", quality},
@@ -117,10 +117,13 @@ namespace netease {
 		data.Parse(json.c_str());
 		if (data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto arr = data["data"].GetArray();
-			if(arr.Size() > 0)
-				return arr[0]["url"].GetString();
+			if (arr.Size() > 0) {
+				if(!arr[0]["url"].IsNull())
+					return arr[0]["url"].GetString();
+				return std::nullopt;
+			}
 		}
-		return "";
+		return std::nullopt;
 	}
 	string CMusic::GetArtists() {
 		string str = "";
@@ -148,7 +151,7 @@ namespace netease {
 		if (json.HasMember("description"))
 			description = json["description"].GetString();
 	}
-	string CDjMusic::GetPlayUrl(const char* quality, char* encode) {
+	std::optional<string> CDjMusic::GetPlayUrl(const char* quality, char* encode) {
 		std::map<string, string> p = {
 			{"ids", "[" + std::to_string(mainTrackId) + "]"},
 			{"level", quality},
@@ -161,9 +164,9 @@ namespace netease {
 		data.Parse(json.c_str());
 		if (data.HasMember("data") && data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto music = data["data"].GetArray().Begin();
-			return (*music)["url"].GetString();
+			return (!(*music)["url"].IsNull()) ? std::make_optional<std::string>((*music)["url"].GetString()) : std::nullopt;
 		}
-		return "";
+		return std::nullopt;
 	}
 	CLyric::CLyric(rapidjson::Document& json) {
 		if (json.HasMember("code") && json["code"].GetInt() == 200) {

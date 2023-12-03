@@ -6,6 +6,7 @@
 #include <memory>
 #include <map>
 #include <chrono>
+#include <optional>
 
 #include <rapidjson/document.h>
 
@@ -69,7 +70,7 @@ namespace netease {
 		bool copyright = false;
 		unsigned long duration = 0;
 		CMusic(rapidjson::Value& json);
-		virtual string GetPlayUrl(const char* quality, char* encode);
+		virtual std::optional<string> GetPlayUrl(const char* quality, char* encode);
 		string GetArtists();
 	};
 	class CDjMusic : public CMusic {
@@ -80,7 +81,7 @@ namespace netease {
 		unsigned long likedCount;
 		string description;
 		CDjMusic(rapidjson::Value& json);
-		string GetPlayUrl(const char* quality, char* encode) override;
+		std::optional<string> GetPlayUrl(const char* quality, char* encode) override;
 	};
 	class CLyric {
 	public:
