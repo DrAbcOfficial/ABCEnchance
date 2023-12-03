@@ -679,7 +679,10 @@ void CNeteasePanel::PlayListMusic(){
 		}
 		if (music == nullptr)
 			return nullptr;
-		obj.musicData = DownLoad(music->GetPlayUrl(g_aryMusicQuality[quality], "flac"));
+		auto result = music->GetPlayUrl(g_aryMusicQuality[quality], "flac");
+		if (result == std::nullopt)
+			return nullptr;
+		obj.musicData = DownLoad(*result);
 		//Load Album
 		std::vector<byte> imageData = DownLoad(music->al->picUrl + "?param=130y130");
 		FIMEMORY* mem = FreeImage_OpenMemory(imageData.data(), imageData.size());
