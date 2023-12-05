@@ -118,7 +118,7 @@ bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
 
 			//Remove all \n from begin and end
 			//someone will send a bunch of \n\n\n\n\n\n\n\n\n\n\n\n\n\n in the beginning, wtf?????
-			auto searchFunc = [](char ch) {return ch != '\n';};
+			const static auto searchFunc = [](char ch) {return ch != '\n';};
 			m_szMenuString.erase(m_szMenuString.begin(), std::find_if(m_szMenuString.begin(), m_szMenuString.end(), searchFunc));
 			m_szMenuString.erase(m_szMenuString.rbegin().base(), std::find_if(m_szMenuString.rbegin(), m_szMenuString.rend(), searchFunc).base());
 			SetContent(m_szMenuString.c_str());
