@@ -37,6 +37,7 @@ private:
 
 	int m_bitsValidSlots;
 	bool m_bIsASMenu;
+	int m_fWaitingForMore;
 
 	std::string m_szMenuString;
 
