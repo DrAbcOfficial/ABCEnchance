@@ -100,7 +100,8 @@ void CTextMenu::SelectMenuItem(int slot){
 }
 
 bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
-	m_szMenuString.clear();
+	if (!m_fWaitingForMore)
+		m_szMenuString.clear();
 
 	BEGIN_READ(pbuf, iSize);
 	m_bitsValidSlots = READ_SHORT();
@@ -124,5 +125,6 @@ bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
 	}
 	else
 		StartFade(false);
+	m_fWaitingForMore = iNeedMore;
 	return true;
 }
