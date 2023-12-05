@@ -36,8 +36,8 @@ private:
 	vgui::LabelEx* m_pMenu = nullptr;
 
 	int m_bitsValidSlots;
-	bool m_bIsASMenu;
-	int m_fWaitingForMore;
+	bool m_bIsASMenu = false;
+	bool m_bWaitingForMore = false;
 
 	std::string m_szMenuString;
 

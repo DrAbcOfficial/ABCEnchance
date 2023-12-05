@@ -36,6 +36,8 @@ void CTextMenu::Reset() {
 	m_pMenu->SetText("");
 	m_szMenuString.clear();
 	m_flShutoffTime = -1;
+	m_bWaitingForMore = false;
+	m_bIsASMenu = false;
 	SetAlpha(255);
 	SetVisible(false);
 }
@@ -100,7 +102,7 @@ void CTextMenu::SelectMenuItem(int slot){
 }
 
 bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
-	if (!m_fWaitingForMore)
+	if (!m_bWaitingForMore)
 		m_szMenuString.clear();
 
 	BEGIN_READ(pbuf, iSize);
@@ -125,6 +127,6 @@ bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
 	}
 	else
 		StartFade(false);
-	m_fWaitingForMore = iNeedMore;
+	m_bWaitingForMore = iNeedMore;
 	return true;
 }
