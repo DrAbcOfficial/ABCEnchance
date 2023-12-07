@@ -142,7 +142,7 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |abc_bloodsprite_num|Efx new bloodsprite number|32|0-9999|
 |abc_gaussefx|Enable gauss efx|1|0/1|
 |---|---|---|---|
-|cl_sideenable|Enable side text panel|1|0/1|
+|cl_sideenable|Enable side text panel for speed, score, etc.|1|0/1|
 |cl_eccomenu|Enable Ecco buymenu enhance|1|0/1|
 |---|---|---|---|
 |cl_modellag|View model lag|1|0/1|
