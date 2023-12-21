@@ -96,7 +96,7 @@ namespace netease {
 		}
 		if (json.HasMember("al"))
 			al = std::make_shared<CAlbum>(json["al"]);
-		else
+		else if (json.HasMember("album"))
 			al = std::make_shared<CAlbum>(json["album"]);
 
 		if (json.HasMember("dt"))
