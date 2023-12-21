@@ -33,6 +33,7 @@ class CDmgTilesPanel;
 class CGenadeIndicatorPanel;
 class CDeathMsgPanel;
 class CNeteasePanel;
+class CRadarPanel;
 
 class ISchemel;
 
@@ -130,6 +131,8 @@ public:
 	};
 	void ShowNotice(HUDNOTICE type, const char* message);
 
+	CRadarPanel* GetRadarPanel();
+
 	long m_iTimeEnd = 0;
 
 	cvar_t* m_pPlayerTitle = nullptr;
@@ -157,6 +160,7 @@ private:
 	CGenadeIndicatorPanel* m_pGIndicator = nullptr;
 	CDeathMsgPanel* m_pDeahMsg = nullptr;
 	CNeteasePanel* m_pNeteaseMusic = nullptr;
+	CRadarPanel* m_pRadar = nullptr;
 
 	vgui::HScheme m_hBaseScheme = 0;
 	int m_iInterMission = 0;

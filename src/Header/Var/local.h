@@ -111,14 +111,6 @@ typedef struct cl_cvars_s{
 	cvar_t* pCamIdealHeight = nullptr;
 	cvar_t* pCamIdealRight = nullptr;
 
-	cvar_t* pRadar = nullptr;
-	cvar_t* pRadarZoom = nullptr;
-	cvar_t* pRadarSize = nullptr;
-	cvar_t* pRadarSizeTime = nullptr;
-	cvar_t* pRadarGap = nullptr;
-	cvar_t* pRadarUpdateInterval = nullptr;
-	cvar_t* pRadarRoundRadius = nullptr;
-
 	cvar_t* pDeathNotice = nullptr;
 	cvar_t* pDeathNoticeTime = nullptr;
 
@@ -137,6 +129,8 @@ typedef struct cl_cvars_s{
 	cvar_t* pGrenadeInicatorTime = nullptr;
 
 	cvar_t* pMotd = nullptr;
+	cvar_t* pRadar = nullptr;
+	cvar_t* pRadarZoom = nullptr;
 
 	cvar_t* pCVarDevOverview = nullptr;
 	cvar_t* pCVarDrawEntities = nullptr;

@@ -36,6 +36,7 @@
 #include "gindicator.h"
 #include "deadmsg.h"
 #include "neteasemusic.h"
+#include "radar.h"
 
 #include "CCustomHud.h"
 
@@ -78,6 +79,7 @@ CViewport::~CViewport(void){
 }
 
 void CViewport::Start(void){
+	AddNewPanel(m_pRadar = new CRadarPanel());
 	AddNewPanel(m_pEffectPanel = new CEffectPanel());
 	AddNewPanel(m_pSidePanel = new CSidePanel());
 	AddNewPanel(m_pGIndicator = new CGenadeIndicatorPanel());
@@ -119,6 +121,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pGIndicator->SetParent(GetVPanel());
 	m_pDeahMsg->SetParent(GetVPanel());
 	m_pNeteaseMusic->SetParent(GetVPanel());
+	m_pRadar->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -373,6 +376,9 @@ void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	default:
 		break;
 	}
+}
+CRadarPanel* CViewport::GetRadarPanel(){
+	return m_pRadar;
 }
 void CViewport::Paint(void){
 	BaseClass::Paint();

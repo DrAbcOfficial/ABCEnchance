@@ -33,11 +33,19 @@ jobs:
 
     - name: Setup build env
       working-directory: MetaHookSv
-      run: ./build-initdeps.bat
-    
+      run: git submodule --init --recursive
+
     - name: Setup glew
       working-directory: MetaHookSv
-      run: ./build-glew.bat
+      run: ./scripts/build-glew-x86-Release.bat
+    
+    - name: Setup glew AVX
+      working-directory: MetaHookSv
+      run: ./scripts/build-glew-x86-Release_AVX2.bat
+
+    - name: Setup Capstone
+      working-directory: MetaHookSv
+      run: ./scripts/build-capstone-x86-Release.bat
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
