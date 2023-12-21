@@ -30,9 +30,9 @@
 
 #include "ammo.h"
 #include "indicator.h"
-#include "radar.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
+#include "radar.h"
 
 #include "vgui_controls/Controls.h"
 
@@ -396,7 +396,6 @@ void __UserCmd_Attack1(void) {
 }
 
 void CCustomHud::GL_Init(void){
-	m_HudRadar.GLInit();
 	m_HudIndicator.GLInit();
 	m_HudEccoBuyMenu.GLInit();
 #ifdef _DEBUG
@@ -451,7 +450,6 @@ void CCustomHud::HUD_Init(void){
 
 	m_HudIndicator.Init();
 	m_HudCustomAmmo.Init();
-	m_HudRadar.Init();
 	g_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
 #ifdef _DEBUG
@@ -494,7 +492,6 @@ void CCustomHud::HUD_VidInit(void){
 	}
 	m_HudIndicator.VidInit();
 	m_HudCustomAmmo.VidInit();
-	m_HudRadar.VidInit();
 	m_HudEccoBuyMenu.VidInit();
 
 	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
@@ -502,8 +499,6 @@ void CCustomHud::HUD_VidInit(void){
 void CCustomHud::HUD_Draw(float flTime){
 	SetBaseHudActivity();
 	CheckSpectator();
-
-	m_HudRadar.Draw(flTime);
 	m_HudEccoBuyMenu.Draw(flTime);
 
 #ifdef _DEBUG
@@ -520,7 +515,6 @@ void CCustomHud::HUD_Reset(void){
 	m_flOverViewScale = 0;
 	m_HudIndicator.Reset();
 	m_HudCustomAmmo.Reset();
-	m_HudRadar.Reset();
 	g_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
 #ifdef _DEBUG
@@ -548,13 +542,12 @@ void CCustomHud::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 		return;
 }
 void CCustomHud::HUD_Clear(void){
-	m_HudRadar.Clear();
 	m_HudEccoBuyMenu.Clear();
 	m_HudIndicator.Clear();
 }
 void CCustomHud::HUD_BlitRadarFramebuffer()
 {
-	m_HudRadar.BlitFramebuffer();
+	g_pViewPort->GetRadarPanel()->BlitFramebuffer();
 }
 void CCustomHud::IN_MouseEvent(int mstate){
 	if (!IsHudEnable())
