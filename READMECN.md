@@ -139,7 +139,7 @@
 |abc_bloodsprite_num|Efx新生成血迹数量|32|0-9999|
 |abc_gaussefx|启用bms高斯特效|1|0/1|
 |---|---|---|---|
-|cl_sideenable|开启侧边文字栏|1|0/1|
+|cl_sideenable|开启分数速度等的侧边文字栏|1|0/1|
 |cl_eccomenu|启用增强Ecco菜单|1|0/1|
 |---|---|---|---|
 |cl_modellag|启用V模型延迟|1|0/1|
