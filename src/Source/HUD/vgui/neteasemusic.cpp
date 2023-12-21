@@ -783,7 +783,7 @@ void CNeteasePanel::PlayListMusic(){
 				PrintF("#Netease_CannotPlay", false);
 				return;
 			}
-			if (obj->music->copyright < 2 || (panel->m_pLogined != nullptr && panel->m_pLogined->vip > 0)) {
+			if ((obj->music->copyright < 2) || (panel->m_pLogined != nullptr && panel->m_pLogined->vip > 0)) {
 					//Music
 					FModEngine::CFModSystem* soundSystem = FModEngine::GetSystem();
 					FMOD_CREATESOUNDEXINFO extrainfo = {};
@@ -923,7 +923,6 @@ void CNeteasePanel::GetMyInfo(bool silence){
 		}))->ContinueWith([silence](std::any& anyMy){
 			if (anyMy.type() == typeid(m_pLogined)) {
 				auto info = std::any_cast<std::shared_ptr<netease::CMy>>(anyMy);
-				char buffer[512];
 				if (info != nullptr)
 					PrintF("#Netease_MyInfo", silence, info->name.c_str(), info->signature.c_str(), info->vip ? "Yes" : "No");
 				else

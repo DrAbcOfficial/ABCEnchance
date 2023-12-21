@@ -28,7 +28,7 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 
 	void SetWeapon(WEAPON* weapon);
-	static enum WEAPONSTATE {
+	enum WEAPONSTATE {
 		NOTVALID = 0,
 		VALID = 1 << 0,
 		ONTARGET = 1 << 1,
