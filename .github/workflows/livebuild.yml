@@ -33,7 +33,9 @@ jobs:
 
     - name: Setup build env
       working-directory: MetaHookSv
-      run: git submodule update --init --recursive
+      run: |
+          git submodule update --init --recursive
+          Copy-Item -Force -Path "./tools/global_template.props" -Destination "./tools/global.props"
 
     - name: Setup glew
       working-directory: MetaHookSv
