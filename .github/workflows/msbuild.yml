@@ -32,7 +32,7 @@ jobs:
 
     - name: Setup build env
       working-directory: MetaHookSv
-      run: git submodule --init --recursive
+      run: git submodule update --init --recursive
     
     - name: Setup glew
       working-directory: MetaHookSv
