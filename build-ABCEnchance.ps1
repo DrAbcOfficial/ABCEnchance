@@ -12,23 +12,41 @@ switch ($Chosen) {
         Exit
     }
 }
-if(!(Test-Path("../../global.props"))){
+if(!(Test-Path("../../tools/global.props"))){
     Write-Warning "Init build enviroment..."
-    &"../../build-initdeps.bat"
+    &Rename-Item -Path "../../tools/global_template.props" -NewName "global.props"
 }
 if($BuildTarget -eq "Debug"){
-    if(!(Test-Path("../../glew/build/lib/Debug/libglew32d.lib"))){
+    if(!(Test-Path("../../install/glew/x86/Debug/lib/glewd.lib"))){
         Write-Warning "Can not find glew, building..."
-        &"../../build-glew-debug.bat"
+        &"../../scripts/build-glew-x86-Debug.bat"
+    }
+    if(!(Test-Path("../../thirdparty/install/capstone/x86/Debug/lib/capstone.lib"))){
+        Write-Warning "Can not find capstone, building..."
+        &"../../scripts/build-capstone-x86-Debug.bat"
     }
 }
-else{
-    if(!(Test-Path("../../glew/build/lib/Release/libglew32.lib"))){
+if($BuildTarget -eq "Release"){
+    if(!(Test-Path("../../thirdparty/install/glew/x86/Release/lib/glew.lib"))){
         Write-Warning "Can not find glew, building..."
-        &"../../build-glew.bat"
+        &"../../scripts/build-glew-x86-Release.bat"
+    }
+    if(!(Test-Path("../../thirdparty/install/capstone/x86/Release/lib/capstone.lib"))){
+        Write-Warning "Can not find capstone, building..."
+        &"../../scripts/build-capstone-x86-Release.bat"
     }
 }
-$vsLocation=[string](../../vswhere.exe -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
+if($BuildTarget -eq "Release_AVX2"){
+    if(!(Test-Path("../../thirdparty/install/glew/x86/Release_AVX2/lib/glew.lib"))){
+        Write-Warning "Can not find glew, building..."
+        &"../../scripts/build-glew-x86-Release_AVX2.bat"
+    }
+    if(!(Test-Path("../../thirdparty/install/capstone/x86/Release/lib/capstone.lib"))){
+        Write-Warning "Can not find capstone, building..."
+        &"../../scripts/build-capstone-x86-Release.bat"
+    }
+}
+$vsLocation=[string](../../tools/vswhere.exe -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
 if(Test-Path("$($vsLocation)\Common7\Tools\vsdevcmd.bat")){
     &"$($vsLocation)\Common7\Tools\vsdevcmd.bat" "-arch=x86"
     &"$($vsLocation)\Msbuild\Current\Bin\MSBuild.exe" "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)/ABCEnchance.vcxproj" /p:Configuration=$($BuildTarget) /p:Platform="Win32"
