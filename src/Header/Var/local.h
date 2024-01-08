@@ -64,6 +64,9 @@ typedef struct{
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
 	void		(*R_ForceCVars)				(qboolean mp);
+	void(__fastcall* CClient_SoundEngine_PlayFMODSound)(void* pEngine, int dummy, int param_1, int channel, float* param_3, int param_4,
+		char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
+		float param_11);
 	void		(*SetPunchAngle)			(int y, float value);
 	void		(*VGuiWrap2_HideGameUI)		();
 	void(__fastcall* CBasePanel_PaintBackground)(void* pthis, int dummy);

@@ -12,7 +12,6 @@
 #include "cvardef.h"
 #include <capstone.h>
 #include "CVector.h"
-#include "Task.h"
 //Def
 #include "hud.h"
 #include "vguilocal.h"
@@ -41,6 +40,7 @@
 //HUD
 #include "ammo.h"
 #include "scoreboard.h"
+#include "neteasemusic.h"
 #include "Viewport.h"
 //efx
 #include "efxenchance.h"
@@ -280,6 +280,15 @@ model_t* CL_GetModelByIndex (int index){
 		return g_ExtraPreacheModel[index - EXTRPRECACHE_INDEX_BASE];
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
+void __fastcall CClient_SoundEngine_PlayFMODSound(void* pEngine, int dummy, int param_1, int param_2, float* param_3, int channel,
+	char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
+	float param_11) {
+	if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
+		if (g_pViewPort->GetMusicPanel()->GetPlayListSize() > 0)
+			return;
+	}
+	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pEngine, dummy, param_1, param_2, param_3, channel, param_5, param_6, param_7, param_8, param_9, param_10, param_11);
+}
 void* NewClientFactory(void){
 	return Sys_GetFactoryThis();
 }
@@ -338,6 +347,7 @@ void FillEngineAddress() {
 		Fill_Sig(R_FORCECVAR_SIG, g_dwEngineBase, g_dwEngineSize, R_ForceCVars);
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
+
 //#define VGuiWrap2_HideGameUI_SIG "\x8B\x0D\x2A\x2A\x2A\x2A\x85\xC9\x74\x05\x8B\x01\xFF\x60\x1C\xC3"
 		//Fill_Sig(VGuiWrap2_HideGameUI_SIG, g_dwEngineBase, g_dwEngineSize, VGuiWrap2_HideGameUI);
 
@@ -481,6 +491,8 @@ void FillAddress(){
 		Fill_Sig(TFV_SHOWVGUIMENU_SHIT_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowVGUIMenu);
 #define CStudioModelRenderer_Init_SIG "\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x24\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x38\xFF\x15\x2A\x2A\x2A\x2A\x89\x46\x3C\xFF\x15\x2A\x2A\x2A\x2A\x6A\x00"
 		Fill_Sig(CStudioModelRenderer_Init_SIG, g_dwClientBase, g_dwClientSize, CStudioModelRenderer_Init);
+		#define CClient_SoundEngine_PlayFMODSound_SIG "\x55\x8B\xEC\x83\xE4\xF0\x81\xEC\xB8\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\xB4\x00\x00\x00\x8b\x45\x18"
+		Fill_Sig(CClient_SoundEngine_PlayFMODSound_SIG, g_dwClientBase, g_dwClientSize, CClient_SoundEngine_PlayFMODSound);
 		DWORD addr;
 #define R_SETPUNCHANGLE_SIG "\x83\xC4\x04\xD9\x1C\x24\x6A\x00\xE8\x93\x56\x05\x00\x83\xC4\x08\xF3\x0F\x10\x74\x24\x34\xF3\x0F\x10\xAC\x24\x98\x00\x00\x00\xF3\x0F\x10\x25\x2A\x2A\x2A\x2A\xF3\x0F\x58\xEE\xF3\x0F\x10\x44\x24\x74"
 		{
@@ -529,6 +541,7 @@ void InstallClientHook(){
 	Install_InlineHook(TFV_ShowScoreBoard);
 	Install_InlineHook(TFV_ShowVGUIMenu);
 	Install_InlineHook(CStudioModelRenderer_Init);
+	Install_InlineHook(CClient_SoundEngine_PlayFMODSound);
 }
 void UninstallEngineHook() {
 	for (hook_t* h : aryEngineHook) {
