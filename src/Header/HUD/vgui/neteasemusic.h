@@ -47,6 +47,9 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
+	//suppress SOUND_CHANNEL CHAN_MUSIC
+	bool IsSuppressBackGroudMusic();
+	size_t GetPlayListSize();
 	//force think
 	void Think();
 
@@ -102,6 +105,7 @@ private:
 	cvar_t* m_pQuality = nullptr;
 	cvar_t* m_pVolume = nullptr;
 	cvar_t* m_pSearchCount = nullptr;
+	cvar_t* m_pSuppressMusic = nullptr;
 
 	vgui::Label* m_pMusicNameLable = nullptr;
 	vgui::Label* m_pArtistNameLable = nullptr;

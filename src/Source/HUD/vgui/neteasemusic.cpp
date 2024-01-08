@@ -353,6 +353,7 @@ CNeteasePanel::CNeteasePanel()
 	m_pSearchCount = CREATE_CVAR("cl_netease_searchcount", "5", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = std::max<int>(cvar->value, 1);
 	});
+	m_pSuppressMusic = CREATE_CVAR("cl_netease_suppressmusic", "1", FCVAR_VALUE, nullptr);
 
 	s_pNeteaseApi = new netease::CNeteaseMusicAPI();
 	char buf[MAX_PATH];
@@ -414,6 +415,14 @@ vgui::VPANEL CNeteasePanel::GetVPanel(){
 }
 void CNeteasePanel::SetParent(vgui::VPANEL parent){
 	BaseClass::SetParent(parent);
+}
+
+bool CNeteasePanel::IsSuppressBackGroudMusic(){
+	return m_pSuppressMusic->value > 0;
+}
+
+size_t CNeteasePanel::GetPlayListSize(){
+	return m_aryPlayList.size();
 }
 
 void CNeteasePanel::Think() {
