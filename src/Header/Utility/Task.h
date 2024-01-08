@@ -30,8 +30,9 @@ public:
 		if (m_pThread.joinable())
 			m_pThread.join();
 	}
-	//continue with in main thread
+	//continue in main thread
 	//if you wanna capture some ref with recursion, PLEASE NOT TRUST lambda capture
+	//First of function arg must same as Result
 	template <typename F, typename... Args>
 	CTaskItem* ContinueWith(F&& func, Args&&... args) {
 		m_pContinue = std::bind(std::forward<F>(func), std::placeholders::_1, std::forward<Args>(args)...);
