@@ -2,39 +2,74 @@
 
 #include <future>
 #include <list>
-#include <any>
 
-class CTaskItem {
+class ITaskItem {
 public:
-	CTaskItem(std::future<std::any>& futrue);
-	~CTaskItem();
-	//continue with in main thread
-	//if you wanna capture some ref with recursion, PLEASE NOT TRUST lambda capture
-	CTaskItem* ContinueWith(std::function<void(std::any&)> func);
-	//start task
-	CTaskItem* Start();
-	//is ready
-	bool IsReady();
-
-	std::function<void(std::any&)> GetContinue();
-	std::any GetValue();
-private:
+	virtual ITaskItem* Start() = 0;
+	virtual bool IsReady() = 0;
+	virtual std::function<void()> GetCaller() = 0;
+protected:
 	std::thread m_pThread;
 	std::atomic_bool m_bReady = false;
-	std::any m_pValue;
-	std::function<void(std::any&)> m_pContinue = nullptr;
+};
+
+template <typename Result>
+class CTaskItem : public ITaskItem {
+public:
+	CTaskItem(std::future<Result>& futrue) {
+		auto& refB = m_bReady;
+		auto& refV = m_pValue;
+		m_pThread = std::thread(
+			[&refB, &refV, futrue = std::move(futrue)]() mutable {
+				refV = futrue.get();
+				refB = true;
+			}
+		);
+	}
+	~CTaskItem() {
+		if (m_pThread.joinable())
+			m_pThread.join();
+	}
+	//continue with in main thread
+	//if you wanna capture some ref with recursion, PLEASE NOT TRUST lambda capture
+	template <typename F, typename... Args>
+	CTaskItem* ContinueWith(F&& func, Args&&... args) {
+		m_pContinue = std::bind(std::forward<F>(func), std::placeholders::_1, std::forward<Args>(args)...);
+		return this;
+	}
+	//start task
+	virtual CTaskItem* Start() override {
+		m_pThread.detach();
+		return this;
+	}
+	//is ready
+	virtual bool IsReady() override {
+		return m_bReady;
+	}
+	//get caller
+	virtual std::function<void()> GetCaller() override {
+		return std::bind(m_pContinue, m_pValue);
+	}
+private:
+	Result m_pValue;
+	std::function<void(Result&)> m_pContinue = nullptr;
 };
 
 class CTaskManager {
 public:
 	//add a new async task
-	CTaskItem* Add(std::future<std::any>& func);
+	template <typename Result>
+	CTaskItem<Result>* Add(std::future<Result>& func) {
+		CTaskItem<Result>* item = new CTaskItem<Result>(func);
+		m_aryPending.push_back(item);
+		return item;
+	}
 	//has this task?
-	bool Has(CTaskItem* check);
+	bool Has(ITaskItem* check);
 	//check per frame
 	void CheckAll();
 private:
-	std::list<CTaskItem*> m_aryList;
-	std::list<CTaskItem*> m_aryPending;
+	std::list<ITaskItem*> m_aryList;
+	std::list<ITaskItem*> m_aryPending;
 };
 CTaskManager* GetTaskManager();
