@@ -10,8 +10,9 @@
 #include "triangleapi.h"
 #include "pm_movevars.h"
 #include "cvardef.h"
-#include <capstone.h>
+#include "capstone.h"
 #include "CVector.h"
+#include "Task.h"
 //Def
 #include "hud.h"
 #include "vguilocal.h"
