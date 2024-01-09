@@ -216,6 +216,10 @@ void CRadarPanel::Paint(){
 		m_pNorthground->SetPos(stx, sty);
 
 		if (gCVars.pRadarAvatar->value > 0) {
+			float size = GetWide();
+			float Length = size / 2;
+			float ww = gCVars.pRadarAvatarSize->value;
+			float w = ww / 2;
 			for (size_t i = 0; i < 32; i++) {
 				auto iter = m_aryPlayerAvatars[i];
 				CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(i + 1);
@@ -232,28 +236,21 @@ void CRadarPanel::Paint(){
 				iter->SetPlayer(i + 1);
 				iter->SetVisible(true);
 				CVector vecLength;
-				float stx, sty;
-				float size = GetWide();
-				float Length = size / 2;
-				int iStartX, iStartY;
-				GetPos(iStartX, iStartY);
-				float w = gCVars.pRadarAvatarSize->value / 2;
-				float rotate = mathlib::Q_DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[Q_YAW]);
-				float rc = cos(rotate);
-				float rs = sin(rotate);
 				//与目标距离
 				mathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
+				CVector vecAngle;
+				mathlib::VectorAngles(vecLength, vecAngle);
 				//缩放比率暂定0.2，交换取反符合屏幕坐标系
 				swap(vecLength.x, vecLength.y);
 				vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
 				vecLength.z = 0;
 				float vlen = vecLength.Length();
-				int ale = GetWide() - gCVars.pRadarAvatarSize->value;
+				int ale = GetWide() - ww;
 				int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : mathlib::fsqrt(2 * pow(vlen, 2)) / 2;
-				int atx = mathlib::clamp(((size / 2) + ahh * cos(rotate)), 0.0f, static_cast<float>(ale));
-				int aty = mathlib::clamp(((size / 2) + ahh * sin(rotate)), 0.0f, static_cast<float>(ale));
+				int atx = mathlib::clamp((Length + ahh * cos(vecAngle[Q_YAW] - rotate)), 0.0f, static_cast<float>(ale));
+				int aty = mathlib::clamp((Length + ahh * sin(vecAngle[Q_YAW] - rotate)), 0.0f, static_cast<float>(ale));
 				iter->SetPos(atx, aty);
-				iter->SetSize(gCVars.pRadarAvatarSize->value, gCVars.pRadarAvatarSize->value);
+				iter->SetSize(ww, ww);
 			}
 		}
 	}
