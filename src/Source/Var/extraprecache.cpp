@@ -6,7 +6,7 @@
 
 model_t* g_ExtraPreacheModel[MAX_EXTRA_PRECACHENUM];
 size_t iExtraPrecaheSize = 0;
-int GetExtraModelIndex(char* path) {
+int GetExtraModelIndex(const char* path) {
 	for (size_t i = 0; i < iExtraPrecaheSize; i++) {
 		if (!g_ExtraPreacheModel[i])
 			continue;
@@ -15,7 +15,7 @@ int GetExtraModelIndex(char* path) {
 	}
 	return -1;
 }
-int PrecacheExtraModel(char* path) {
+int PrecacheExtraModel(const char* path) {
 	int index = GetExtraModelIndex(path);
 	if (index > -1)
 		return index;

@@ -4,6 +4,6 @@
 
 extern model_t* g_ExtraPreacheModel[MAX_EXTRA_PRECACHENUM];
 
-int GetExtraModelIndex(char* path);
-int PrecacheExtraModel(char* path);
+int GetExtraModelIndex(const char* path);
+int PrecacheExtraModel(const char* path);
 void ClearExtraPrecache();
