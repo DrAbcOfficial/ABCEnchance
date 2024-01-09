@@ -381,6 +381,12 @@ Scheme
 		"Vote.NoFgColor"		"255 255 255 255"
 		//投票菜单背景颜色
 		"Vote.BackGoundColor"		"Blank"
+		
+		"Radar.OutlineColor"		"255 255 255 255"
+		"Radar.MapColor"		"255 255 255 255"
+		"Radar.FgColor"			"255 255 255 255"
+		//雷达背景颜色
+		"Radar.BgColor"		"Blank"
 	}
 	CustomFontFiles
 	{
