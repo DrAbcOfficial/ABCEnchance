@@ -31,6 +31,7 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 
 	void SetScale(bool state);
+	void SetAvatarVisible(bool state);
 	void BlitFramebuffer();
 private:
 	vgui::ImagePanel* m_pBackground;
