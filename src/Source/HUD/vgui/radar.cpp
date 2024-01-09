@@ -19,19 +19,94 @@
 #include "gl_shader.h"
 #include "gl_draw.h"
 
+#include "vgui_controls/ImagePanel.h"
 #include <CCustomHud.h>
 #include "Viewport.h"
 #include "radar.h"
 
-
-void __UserCmd_StartSizeRadar(void){
-	if (g_pViewPort->GetRadarPanel()->flFinishScaleTime <= 0)
-		g_pViewPort->GetRadarPanel()->SetScaleTime(-1);
-}
-void __UserCmd_EndSizeRadar(void){
-	if (g_pViewPort->GetRadarPanel()->flFinishScaleTime > 0)
-		g_pViewPort->GetRadarPanel()->SetScaleTime(0);
-}
+class CRadarImage : public vgui::IImage {
+public:
+	virtual void Paint() override{
+		//计算屏幕绝对坐标
+		int x = m_iAbsX + m_iX;
+		int y = m_iAbsY + m_iY;
+		//shader
+		GL_UseProgram(pp_texround.program);
+		if (gCVars.pRadar->value > 1) {
+			GL_Uniform1f(pp_texround.rad, min(1.0f, m_flRoundRadius / m_iWide));
+			GL_Uniform3f(pp_texround.xys, x, y, m_iWide);
+		}
+		else
+			GL_Uniform1f(pp_texround.rad, 0.0f);
+		//计算纹理坐标
+		float h = static_cast<float>(m_iTall) / gScreenInfo.iHeight;
+		float w = static_cast<float>(m_iWide) / gScreenInfo.iWidth;
+		float stx = (1.0f - w) / 2.0f;
+		float sty = (1.0f - h) / 2.0f;
+		glEnable(GL_TEXTURE_2D);
+		glBind(m_hBufferTex);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glColor4ub(m_DrawColor.r(), m_DrawColor.g(), m_DrawColor.b(), m_DrawColor.a());
+		glBegin(GL_QUADS);
+		glTexCoord2f(stx, sty + h);
+		glVertex2f(x, y + m_iTall);
+		glTexCoord2f(stx + w, sty + h);
+		glVertex2f(x + m_iWide, y + m_iTall);
+		glTexCoord2f(stx + w, sty);
+		glVertex2f(x + m_iWide, y);
+		glTexCoord2f(stx, sty);
+		glVertex2f(x, y);
+		glEnd();
+		glDisable(GL_BLEND);
+		GL_UseProgram(0);
+	}
+	virtual void SetPos(int x, int y) override{
+		m_iX = x;
+		m_iY = y;
+	}
+	virtual void SetOffset(int x, int y){
+		m_iOffX = x;
+		m_iOffY = y;
+	}
+	virtual void GetContentSize(int& wide, int& tall) override{
+		wide = m_iWide;
+		tall = m_iTall;
+	}
+	virtual void GetSize(int& wide, int& tall) override{
+		GetContentSize(wide, tall);
+	}
+	virtual void SetSize(int wide, int tall) override{
+		m_iWide = wide;
+		m_iTall = tall;
+	}
+	virtual void SetColor(Color col) override{
+		m_DrawColor = col;
+	}
+	
+	void SetTex(uint tex) {
+		m_hBufferTex = tex;
+	}
+	void SetAbsPos(int x, int y) {
+		m_iAbsX = x;
+		m_iAbsY = y;
+	}
+	void SetRadius(float r) {
+		m_flRoundRadius = r;
+	}
+	~CRadarImage() {
+		if (m_hBufferTex)
+			glDeleteTextures(1, &m_hBufferTex);
+	}
+private:
+	float m_flRoundRadius = 0;
+	int m_iOffX = 0, m_iOffY = 0;
+	int m_iX = 0, m_iY = 0;
+	int m_iAbsX = 0, m_iAbsY;
+	int m_iWide = 0, m_iTall = 0;
+	uint m_hBufferTex;
+	Color m_DrawColor = Color(255, 255, 255, 255);
+};
 
 extern CViewport* g_pViewPort;
 #define VIEWPORT_RADAR_NAME "RadarPanel"
@@ -41,118 +116,88 @@ CRadarPanel::CRadarPanel()
 
 	glGenFramebuffers(1, &m_hRadarBufferFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
-	m_hRadarBufferTex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hRadarBufferTex, 0);
-
+	auto tex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
-
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 	SetScheme(g_pViewPort->GetBaseScheme());
 
-	ADD_COMMAND("+scaleradar", __UserCmd_StartSizeRadar);
-	ADD_COMMAND("-scaleradar", __UserCmd_EndSizeRadar);
+	ADD_COMMAND("+scaleradar", [](){g_pViewPort->GetRadarPanel()->SetScale(true); });
+	ADD_COMMAND("-scaleradar", []() {g_pViewPort->GetRadarPanel()->SetScale(false); });
 
 	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->ShowPanel(cvar->value);
 	});
 	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_VALUE, nullptr);
 
-	LoadControlSettings(VGUI2_ROOT_DIR "EffectPanel.res");
-
-	VGUI_CREATE_NEWTGA_TEXTURE(m_iBackground, m_szBackgroundImg);
-	VGUI_CREATE_NEWTGA_TEXTURE(m_iUpGround, m_szUpgroundImg);
-	VGUI_CREATE_NEWTGA_TEXTURE(m_iNorth, m_szNorthImg);
-	VGUI_CREATE_NEWTGA_TEXTURE(m_iViewAngle, m_szViewangleImg);
-	VGUI_CREATE_NEWTGA_TEXTURE(m_iRoundBackground, m_szBackgroundRoundImg);
+	m_pBackground = new vgui::ImagePanel(this, "Background");
+	m_pRoundBackground = new vgui::ImagePanel(this, "RoundBackground");
+	m_pMapground = new vgui::ImagePanel(this, "Mapground");
+	m_pUpground = new vgui::ImagePanel(this, "Upground");
+	m_pNorthground = new vgui::ImagePanel(this, "Northground");
+	m_pViewangleground = new vgui::ImagePanel(this, "Viewangleground");
+	LoadControlSettings(VGUI2_ROOT_DIR "RadarPanel.res");
+	auto radarimg = new CRadarImage();
+	radarimg->SetTex(tex);
+	int x, y;
+	m_pMapground->GetPos(x, y);
+	radarimg->SetAbsPos(x, y);
+	int w, h;
+	m_pMapground->GetSize(w, h);
+	radarimg->SetSize(w, h);
+	radarimg->SetRadius(m_flRoundRadius);
+	m_pMapground->SetImage(radarimg);
 }
 
 CRadarPanel::~CRadarPanel(){
 	if (m_hRadarBufferFBO)
 		glDeleteFramebuffers(1, &m_hRadarBufferFBO);
-	if (m_hRadarBufferTex)
-		glDeleteTextures(1, &m_hRadarBufferTex);
+	delete m_pMapground->GetImage();
+}
+
+void CRadarPanel::PerformLayout(){
+	BaseClass::PerformLayout();
+	int w, h;
+	GetSize(w, h);
+	m_pBackground->SetSize(w, h);
+	m_pRoundBackground->SetSize(w, h);
+	m_pMapground->SetSize(w - 4, h - 4);
+	m_pUpground->SetSize(w, h);
+	int vw, vh;
+	m_pViewangleground->GetSize(vw, vh);
+	m_pViewangleground->SetPos((w - vw) / 2, (h - vh) / 2);
 }
 
 void CRadarPanel::Paint(){
 	if (!g_pViewPort->HasSuit())
 		return;
-	float flTime = gEngfuncs.GetClientTime();
-	int size = GetWide();
-	int iStartX;
-	int iStartY;
-	GetPos(iStartX, iStartY);
-	if (flFinishScaleTime > 0) {
-		int iMaxSize = gScreenInfo.iHeight - 2 * iStartY;
-		size = flFinishScaleTime > flTime ?
-			(size + (iMaxSize - size) * (1 - (flFinishScaleTime - flTime) / m_flRadarSclaeTime)) :
-			iMaxSize;
-	}
-	float sizeMap = size * m_iGapSize;
-	float sizeGap = (size - sizeMap) / 2;
-	
-	//计算纹理坐标
-	float h, w, stx, sty;
-	h = size / gScreenInfo.iHeight;
-	w = size / gScreenInfo.iWidth;
-	stx = (1 - w) / 2;
-	sty = (1 - h) / 2;
-	//绘制背景
-	vgui::surface()->DrawSetTexture(-1);
-	vgui::surface()->DrawSetColor(m_cOutline);
-	vgui::surface()->DrawSetTexture(gCVars.pRadar->value > 1 ? m_iRoundBackground : m_iBackground);
-	vgui::surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
-	//shader
-	GL_UseProgram(pp_texround.program);
-	if (gCVars.pRadar->value > 1) {
-		GL_Uniform1f(pp_texround.rad, min(1.0f, m_flRoundRadius / sizeMap));
-		GL_Uniform3f(pp_texround.xys, iStartX, iStartY, sizeMap);
-	}
-	else
-		GL_Uniform1f(pp_texround.rad, 0);
+	auto local = gEngfuncs.GetLocalPlayer();
+	if (local) {
+		if (gCVars.pRadar->value > 0) {
+			if (gCVars.pRadar->value == 1) {
+				m_pRoundBackground->SetVisible(false);
+				m_pBackground->SetVisible(true);
+			}
+			else {
+				m_pRoundBackground->SetVisible(true);
+				m_pBackground->SetVisible(false);
+			}
+		}
 
-	glEnable(GL_TEXTURE_2D);
-	glBind(m_hRadarBufferTex);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4ub(m_cMap.r(), m_cMap.g(), m_cMap.b(), m_cMap.a());
-	glBegin(GL_QUADS);
-	glTexCoord2f(stx, sty + h);
-	glVertex2f(iStartX, iStartY);
-	glTexCoord2f(stx + w, sty + h);
-	glVertex2f(iStartX + sizeMap, iStartY);
-	glTexCoord2f(stx + w, sty);
-	glVertex2f(iStartX + sizeMap, iStartY + sizeMap);
-	glTexCoord2f(stx, sty);
-	glVertex2f(iStartX, iStartY + sizeMap);
-	glEnd();
-	glDisable(GL_BLEND);
-	GL_UseProgram(0);
-	//绘制前景
-	vgui::surface()->DrawSetTexture(-1);
-	if (gCVars.pRadar->value == 1) {
-		vgui::surface()->DrawSetColor(m_cOutline);
-		vgui::surface()->DrawSetTexture(m_iUpGround);
-		vgui::surface()->DrawTexturedRect(iStartX - sizeGap, iStartY - sizeGap, iStartX + size, iStartX + size);
+		int size = GetWide();
+		//指北针
+		int nw, nh;
+		m_pNorthground->GetSize(nw, nh);
+		int len = GetWide() - nw;
+		float rotate = mathlib::Q_DEG2RAD(local->curstate.angles[Q_YAW]);
+		int hh = gCVars.pRadar->value > 1 ? len / 2 : mathlib::fsqrt(2 * pow(len, 2)) / 2;
+		int stx = mathlib::clamp(((size / 2) + hh * cos(rotate)), 0.0f, (float)len);
+		int sty = mathlib::clamp(((size / 2) + hh * sin(rotate)), 0.0f, (float)len);
+		m_pNorthground->SetPos(stx, sty);
 	}
-	//绘制箭头
-	vgui::surface()->DrawSetColor(GetFgColor());
-	vgui::surface()->DrawSetTexture(m_iViewAngle);
-	vgui::surface()->DrawTexturedRect(
-		iStartX + (size - m_iAngleSize) / 2,
-		iStartY + (size - m_iAngleSize) / 2,
-		iStartX + (size + m_iAngleSize) / 2,
-		iStartY + (size + m_iAngleSize) / 2);
-	//绘制指北针
-	float rotate = mathlib::Q_DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[Q_YAW]);
-	h = gCVars.pRadar->value > 1 ? size / 2 : mathlib::fsqrt(2 * pow(size, 2)) / 2;
-	stx = mathlib::clamp(((iStartX + size / 2) + h * cos(rotate)), (float)iStartX, (float)iStartX + size);
-	sty = mathlib::clamp(((iStartY + size / 2) + h * sin(rotate)), (float)iStartY, (float)iStartY + size);
-	vgui::surface()->DrawSetColor(m_cOutline);
-	vgui::surface()->DrawSetTexture(m_iNorth);
-	w = m_iNorthSize / 2;
-	vgui::surface()->DrawTexturedRect(stx - w, sty - w, stx + w, sty + w);
+	BaseClass::Paint();
 }
 
 void CRadarPanel::OnThink(){
@@ -180,29 +225,23 @@ void CRadarPanel::OnThink(){
 	flNextUpdateTrTime = flTime + 1.0f;
 }
 void CRadarPanel::ApplySettings(KeyValues* inResourceData){
-	m_flRadarSclaeTime = inResourceData->GetFloat("radar_scaletime", 2.0f);
+	BaseClass::ApplySettings(inResourceData);
 	m_flRoundRadius = inResourceData->GetFloat("radar_roundradius", 344.0f);
-	m_iGapSize = inResourceData->GetInt("radar_gapsize", 2);
-	m_iAngleSize = inResourceData->GetInt("radar_anglesize", 2);
-	m_iNorthSize = inResourceData->GetInt("radar_northsize", 2);
-
-	strcpy(m_szBackgroundImg, inResourceData->GetString("radar_backgroundimg", "abcenchance/tga/radar_background"));
-	strcpy(m_szUpgroundImg, inResourceData->GetString("radar_upgroundimg", "abcenchance/tga/radar_upground"));
-	strcpy(m_szNorthImg, inResourceData->GetString("radar_northimg", "abcenchance/tga/radar_north"));
-	strcpy(m_szViewangleImg, inResourceData->GetString("radar_viewangleimg", "abcenchance/tga/radar_viewangle"));
-	strcpy(m_szBackgroundRoundImg, inResourceData->GetString("radar_roundbackgroundimg", "abcenchance/tga/radar_roundbackground"));
+	GetSize(m_iStartWidth, m_iStartTall);
 }
 void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
+	BaseClass::ApplySchemeSettings(pScheme);
 	m_cOutline = GetSchemeColor("Radar.OutlineColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
 	m_cMap = GetSchemeColor("Radar.MapColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme);
 	SetFgColor(GetSchemeColor("Radar.FgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
+	SetBgColor(Color(0, 0, 0, 0));
 }
 const char* CRadarPanel::GetName(){
 	return VIEWPORT_RADAR_NAME;
 }
 void CRadarPanel::Reset(){
 	flNextUpdateTrTime = 0;
-	flFinishScaleTime = 0;
+	SetScale(false);
 	cvar_t* pCvarDevC = CVAR_GET_POINTER("dev_overview_color");
 	if (pCvarDevC && g_metaplugins.renderer) {
 		sscanf_s(pCvarDevC->string, "%d %d %d", &iOverviewR, &iOverviewG, &iOverviewB);
@@ -225,11 +264,12 @@ vgui::VPANEL CRadarPanel::GetVPanel() {
 void CRadarPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
-void CRadarPanel::SetScaleTime(float time){
-	if (time < 0)
-		flFinishScaleTime = gEngfuncs.GetClientTime() + m_flRadarSclaeTime;
+void CRadarPanel::SetScale(bool state){
+	m_bInScale = state;
+	if (state)
+		SetSize(m_iStartWidth * gCVars.pRadarZoom->value, m_iStartTall * gCVars.pRadarZoom->value);
 	else
-		flFinishScaleTime = time;
+		SetSize(m_iStartWidth, m_iStartTall);
 }
 void CRadarPanel::BlitFramebuffer(){
 	//Blit color from current framebuffer into texture
