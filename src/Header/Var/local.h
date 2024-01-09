@@ -48,6 +48,7 @@ inline cvar_t* CREATE_CVAR(const char* name, const char* val, int flag, cvar_cal
 //Hooked Address
 typedef struct{
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
+	TEMPENTITY* (*R_TempModel)				(float* pos, float* dir, float* angles, float life, int modelIndex, int soundtype);
 
 	float*		(*GetClientColor)			(int clientIndex);
 	int(__fastcall* R_CrossHair_ReDraw)		(void* pthis, int dummy, int param_1);
@@ -86,6 +87,7 @@ typedef struct{
 typedef struct cl_cvars_s{
 	cvar_t* pDynamicBackground = nullptr;
 
+	cvar_t* pShellEfx = nullptr;
 	cvar_t* pBloodEfx = nullptr;
 	cvar_t* pBloodSpriteSpeed = nullptr;
 	cvar_t* pBloodSpriteNumber = nullptr;

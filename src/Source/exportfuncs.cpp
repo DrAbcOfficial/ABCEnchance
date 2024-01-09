@@ -492,8 +492,9 @@ void FillAddress(){
 		Fill_Sig(TFV_SHOWVGUIMENU_SHIT_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowVGUIMenu);
 #define CStudioModelRenderer_Init_SIG "\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x24\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x38\xFF\x15\x2A\x2A\x2A\x2A\x89\x46\x3C\xFF\x15\x2A\x2A\x2A\x2A\x6A\x00"
 		Fill_Sig(CStudioModelRenderer_Init_SIG, g_dwClientBase, g_dwClientSize, CStudioModelRenderer_Init);
-		#define CClient_SoundEngine_PlayFMODSound_SIG "\x55\x8B\xEC\x83\xE4\xF0\x81\xEC\xB8\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\xB4\x00\x00\x00\x8b\x45\x18"
+#define CClient_SoundEngine_PlayFMODSound_SIG "\x55\x8B\xEC\x83\xE4\xF0\x81\xEC\xB8\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\xB4\x00\x00\x00\x8b\x45\x18"
 		Fill_Sig(CClient_SoundEngine_PlayFMODSound_SIG, g_dwClientBase, g_dwClientSize, CClient_SoundEngine_PlayFMODSound);
+
 		DWORD addr;
 #define R_SETPUNCHANGLE_SIG "\x83\xC4\x04\xD9\x1C\x24\x6A\x00\xE8\x93\x56\x05\x00\x83\xC4\x08\xF3\x0F\x10\x74\x24\x34\xF3\x0F\x10\xAC\x24\x98\x00\x00\x00\xF3\x0F\x10\x25\x2A\x2A\x2A\x2A\xF3\x0F\x58\xEE\xF3\x0F\x10\x44\x24\x74"
 		{
@@ -526,10 +527,9 @@ void AddEngineHook(hook_t* h) {
 }
 void InstallEngineHook() {
 	Fill_InlineEfxHook(R_BloodSprite);
-
+	Fill_InlineEfxHook(R_TempModel);
 	Fill_EngFunc(pfnPlaybackEvent);
 	Install_InlineEngHook(pfnPlaybackEvent);
-
 	Install_InlineEngHook(R_NewMap);
 	Install_InlineEngHook(R_ForceCVars);
 	Install_InlineEngHook(CL_IsDevOverview);
@@ -538,11 +538,11 @@ void InstallEngineHook() {
 }
 void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);
+	Install_InlineHook(CClient_SoundEngine_PlayFMODSound);
 	Install_InlineHook(R_CrossHair_ReDraw);
 	Install_InlineHook(TFV_ShowScoreBoard);
 	Install_InlineHook(TFV_ShowVGUIMenu);
 	Install_InlineHook(CStudioModelRenderer_Init);
-	Install_InlineHook(CClient_SoundEngine_PlayFMODSound);
 }
 void UninstallEngineHook() {
 	for (hook_t* h : aryEngineHook) {
@@ -576,6 +576,7 @@ void GL_Init(void){
 }
 void HUD_Init(void){
 	//VGUI init
+	gCVars.pShellEfx = CREATE_CVAR("abc_shellefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodSpriteSpeed = CREATE_CVAR("abc_bloodsprite_speed", "128", FCVAR_VALUE, nullptr);
 	gCVars.pBloodSpriteNumber = CREATE_CVAR("abc_bloodsprite_num", "32", FCVAR_VALUE, nullptr);
@@ -822,7 +823,6 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 		}
 	}
 }
-
 void HUD_DrawTransparentTriangles(void){
 	gExportfuncs.HUD_DrawTransparentTriangles();
 }

@@ -10,13 +10,8 @@
 #include "extraprecache.h"
 #include "exportfuncs.h"
 #include "local.h"
+#include "efxenchance.h"
 
-#define GAUSS_LASER_SPR "sprites/laserbeam.spr"
-#define GAUSS_WAVE_SPR "abcenchance/spr/gauss_wave.spr"
-#define GAUSS_CHARGE_SPR "abcenchance/spr/gauss_spark.spr"
-#define GAUSS_LOOPHOLE_MDL "abcenchance/mdl/gauss_loophole.mdl"
-
-#define GAUSS_FIRE_SOUND "weapons/gauss2.wav"
 #define GAUSS_WAVE_LENGTH 48
 #define GAUSS_LASER_P_WIDTH 2
 #define GAUSS_LASER_S_WIDTH 4
@@ -27,14 +22,17 @@ struct EfxVarible{
 	int iGaussChargeSprite;
 	float flGaussStartChargeTime;
 	model_t* iGaussLoophole;
-	mstudioevent_t pGaussFireSoundEvent = { 0, 5004, 0, GAUSS_FIRE_SOUND };
+	mstudioevent_t pGaussFireSoundEvent = { 0, 5004, 0, "weapons/gauss2.wav" };
+
+	int iGunSmoke;
 };
 EfxVarible gEfxVarible;
 void EfxReset() {
-	gEfxVarible.iGaussBeam = PrecacheExtraModel(const_cast<char*>(GAUSS_LASER_SPR));
-	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel(const_cast<char*>(GAUSS_WAVE_SPR));
-	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel(const_cast<char*>(GAUSS_CHARGE_SPR));
-	gEfxVarible.iGaussLoophole = gEngfuncs.hudGetModelByIndex(PrecacheExtraModel(const_cast<char*>(GAUSS_LOOPHOLE_MDL)));
+	gEfxVarible.iGaussBeam = PrecacheExtraModel("sprites/laserbeam.spr");
+	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel("abcenchance/spr/gauss_wave.spr");
+	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel("abcenchance/spr/gauss_spark.spr");
+	gEfxVarible.iGaussLoophole = gEngfuncs.hudGetModelByIndex(PrecacheExtraModel("abcenchance/mdl/gauss_loophole.mdl"));
+	gEfxVarible.iGunSmoke = PrecacheExtraModel("sprites/smoke.spr");
 }
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size){
 	if(gCVars.pBloodEfx->value > 0){
@@ -89,9 +87,17 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 	}
 	gHookFuncs.R_BloodSprite(org, colorindex, modelIndex, modelIndex2, size);
 }
-void GaussLoopholeCallback(TEMPENTITY* ent, float frametime, float currenttime) {
-	ent->entity.curstate.scale = ent->die - currenttime;
+TEMPENTITY* R_TempModel(float* pos, float* dir, float* angles, float life, int modelIndex, int soundtype){
+	TEMPENTITY* tent = gHookFuncs.R_TempModel(pos, dir, angles, life, modelIndex, soundtype);
+	if (gCVars.pShellEfx->value > 0) {
+		tent->flags |= FTENT_COLLIDEALL;
+		tent->hitcallback = [](struct tempent_s* ent, struct pmtrace_s* ptr) {
+			gEngfuncs.pEfxAPI->R_RunParticleEffect(ptr->endpos, ptr->plane.normal, 10, 4);
+		};
+	}
+	return tent;
 }
+
 void CreateGaussLoophole(pmtrace_t* tr) {
 	TEMPENTITY* pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(tr->endpos, gEfxVarible.iGaussLoophole);
 	if (!pTemp)
@@ -101,7 +107,9 @@ void CreateGaussLoophole(pmtrace_t* tr) {
 	pTemp->entity.angles[2] += 180;
 	pTemp->die = gEngfuncs.GetClientTime() + 1.0f;
 	pTemp->flags = FTENT_CLIENTCUSTOM | FTENT_FADEOUT;
-	pTemp->callback = GaussLoopholeCallback;
+	pTemp->callback = [](TEMPENTITY* ent, float frametime, float currenttime) {
+		ent->entity.curstate.scale = ent->die - currenttime;
+	};
 }
 void DoGaussFire(float fparam1, int bparam1) {
 	pmtrace_t tr, beam_tr;
