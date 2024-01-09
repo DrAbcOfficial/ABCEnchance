@@ -134,6 +134,9 @@ typedef struct cl_cvars_s{
 	cvar_t* pMotd = nullptr;
 	cvar_t* pRadar = nullptr;
 	cvar_t* pRadarZoom = nullptr;
+	cvar_t* pRadarAvatar = nullptr;
+	cvar_t* pRadarAvatarSize = nullptr;
+	cvar_t* pRadarAvatarScale = nullptr;
 
 	cvar_t* pCVarDevOverview = nullptr;
 	cvar_t* pCVarDrawEntities = nullptr;
