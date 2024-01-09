@@ -28,9 +28,22 @@
 #include "Viewport.h"
 #include "radar.h"
 
-class CRadarAvatarPanel {
 
-};
+CRadarAvatarPanel::CRadarAvatarPanel(vgui::Panel* parent, int index) : BaseClass(parent, "") {
+	m_iIndex = index + 1;
+	m_pAvatar = new CAvatarImage();
+	SetImage(m_pAvatar);
+}
+void CRadarAvatarPanel::Paint(){
+	CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(m_iIndex);
+	if (pi->IsValid()) {
+		m_pAvatar->SetAvatarSteamID(*pi->GetSteamID());
+		m_pAvatar->SetDrawFriend(true);
+		m_pAvatar->SetPos(GetXPos(), GetYPos());
+		m_pAvatar->SetSize(GetWide(), GetTall());
+		m_pAvatar->Paint();
+	}
+}
 
 class CRadarMapImage : public vgui::IImage {
 public:
@@ -152,7 +165,7 @@ CRadarPanel::CRadarPanel()
 	m_pNorthground = new vgui::ImagePanel(this, "Northground");
 	m_pViewangleground = new vgui::ImagePanel(this, "Viewangleground");
 	for (size_t i = 0; i < 32; i++){
-		m_aryPlayerAvatars[i] = new CAvatarImagePanel(this, "");
+		m_aryPlayerAvatars[i] = new CRadarAvatarPanel(this, i);
 		m_aryPlayerAvatars[i]->SetVisible(true);
 		m_aryPlayerAvatars[i]->SetShouldScaleImage(true);
 	}
@@ -227,19 +240,24 @@ void CRadarPanel::Paint(){
 					iter->SetVisible(false);
 					continue;
 				}
+				CPlayerInfo* lpi = CPlayerInfo::GetThisPlayerInfo();
+				if (pi->GetTeamNumber() != lpi->GetTeamNumber()) {
+					iter->SetVisible(false);
+					continue;
+				}
 				//Avatar
 				cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i + 1);
 				if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->player || !entity->model || local == entity) {
 					iter->SetVisible(false);
 					continue;
 				}
-				iter->SetPlayer(i + 1);
 				iter->SetVisible(true);
 				CVector vecLength;
 				//与目标距离
 				mathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
 				CVector vecAngle;
 				mathlib::VectorAngles(vecLength, vecAngle);
+				float nyaw = mathlib::Q_DEG2RAD(vecAngle[Q_YAW] - local->curstate.angles[Q_YAW] + 90);
 				//缩放比率暂定0.2，交换取反符合屏幕坐标系
 				swap(vecLength.x, vecLength.y);
 				vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
@@ -247,8 +265,9 @@ void CRadarPanel::Paint(){
 				float vlen = vecLength.Length();
 				int ale = GetWide() - ww;
 				int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : mathlib::fsqrt(2 * pow(vlen, 2)) / 2;
-				int atx = mathlib::clamp((Length + ahh * cos(vecAngle[Q_YAW] - rotate)), 0.0f, static_cast<float>(ale));
-				int aty = mathlib::clamp((Length + ahh * sin(vecAngle[Q_YAW] - rotate)), 0.0f, static_cast<float>(ale));
+				int atx = mathlib::clamp((Length - w + ahh * cos(nyaw)), 0.0f, static_cast<float>(ale));
+				int aty = mathlib::clamp((Length - w + ahh * sin(nyaw)), 0.0f, static_cast<float>(ale));
+				aty = ale - aty;
 				iter->SetPos(atx, aty);
 				iter->SetSize(ww, ww);
 			}
