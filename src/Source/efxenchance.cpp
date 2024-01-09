@@ -32,7 +32,7 @@ void EfxReset() {
 	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel("abcenchance/spr/gauss_wave.spr");
 	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel("abcenchance/spr/gauss_spark.spr");
 	gEfxVarible.iGaussLoophole = gEngfuncs.hudGetModelByIndex(PrecacheExtraModel("abcenchance/mdl/gauss_loophole.mdl"));
-	gEfxVarible.iGunSmoke = PrecacheExtraModel("sprites/smoke.spr");
+	gEfxVarible.iGunSmoke = PrecacheExtraModel("sprites/Puff1.spr");
 }
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size){
 	if(gCVars.pBloodEfx->value > 0){
@@ -94,6 +94,13 @@ TEMPENTITY* R_TempModel(float* pos, float* dir, float* angles, float life, int m
 		tent->hitcallback = [](struct tempent_s* ent, struct pmtrace_s* ptr) {
 			gEngfuncs.pEfxAPI->R_RunParticleEffect(ptr->endpos, ptr->plane.normal, 10, 4);
 		};
+		vec3_t smokedir = { dir[0], dir[1],90 };
+		TEMPENTITY* smoke = gHookFuncs.R_TempModel(pos, smokedir, angles, life/2, gEfxVarible.iGunSmoke, 0);
+		smoke->flags = FTENT_SPRANIMATE | FTENT_FADEOUT;
+		smoke->entity.baseline.scale = 0.1f;
+		smoke->entity.curstate.renderamt = 18;
+		smoke->entity.curstate.rendermode = kRenderTransAlpha;
+		smoke->entity.curstate.framerate = 30.0f;
 	}
 	return tent;
 }
