@@ -139,7 +139,9 @@ CRadarPanel::CRadarPanel()
 		g_pViewPort->GetRadarPanel()->ShowPanel(cvar->value);
 	});
 	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_VALUE, nullptr);
-	gCVars.pRadarAvatar = CREATE_CVAR("cl_radar_avatar", "1", FCVAR_VALUE, NULL);
+	gCVars.pRadarAvatar = CREATE_CVAR("cl_radar_avatar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+		g_pViewPort->GetRadarPanel()->SetAvatarVisible(cvar->value);
+	});
 	gCVars.pRadarAvatarSize = CREATE_CVAR("cl_radar_avatarsize", "20", FCVAR_VALUE, NULL);
 	gCVars.pRadarAvatarScale = CREATE_CVAR("cl_radar_avatarscale", "0.2", FCVAR_VALUE, NULL);
 
@@ -329,6 +331,11 @@ void CRadarPanel::SetScale(bool state){
 	else
 		SetSize(m_iStartWidth, m_iStartTall);
 	PerformLayout();
+}
+void CRadarPanel::SetAvatarVisible(bool state){
+	for (auto iter = m_aryPlayerAvatars.begin(); iter != m_aryPlayerAvatars.end(); iter++) {
+		(*iter)->SetVisible(state);
+	}
 }
 void CRadarPanel::BlitFramebuffer(){
 	//Blit color from current framebuffer into texture
