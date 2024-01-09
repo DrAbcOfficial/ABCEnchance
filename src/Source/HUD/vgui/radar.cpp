@@ -7,6 +7,7 @@
 #include "local.h"
 #include "pm_defs.h"
 #include "event_api.h"
+#include "steamclientpublic.h"
 
 #include "exportfuncs.h"
 
@@ -20,11 +21,18 @@
 #include "gl_draw.h"
 
 #include "vgui_controls/ImagePanel.h"
+#include "avatar_image.h"
+
+#include "player_info.h"
 #include <CCustomHud.h>
 #include "Viewport.h"
 #include "radar.h"
 
-class CRadarImage : public vgui::IImage {
+class CRadarAvatarPanel {
+
+};
+
+class CRadarMapImage : public vgui::IImage {
 public:
 	virtual void Paint() override{
 		//计算屏幕绝对坐标
@@ -94,7 +102,7 @@ public:
 	void SetRadius(float r) {
 		m_flRoundRadius = r;
 	}
-	~CRadarImage() {
+	~CRadarMapImage() {
 		if (m_hBufferTex)
 			glDeleteTextures(1, &m_hBufferTex);
 	}
@@ -131,6 +139,9 @@ CRadarPanel::CRadarPanel()
 		g_pViewPort->GetRadarPanel()->ShowPanel(cvar->value);
 	});
 	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_VALUE, nullptr);
+	gCVars.pRadarAvatar = CREATE_CVAR("cl_radar_avatar", "1", FCVAR_VALUE, NULL);
+	gCVars.pRadarAvatarSize = CREATE_CVAR("cl_radar_avatarsize", "20", FCVAR_VALUE, NULL);
+	gCVars.pRadarAvatarScale = CREATE_CVAR("cl_radar_avatarscale", "0.2", FCVAR_VALUE, NULL);
 
 	m_pBackground = new vgui::ImagePanel(this, "Background");
 	m_pRoundBackground = new vgui::ImagePanel(this, "RoundBackground");
@@ -138,8 +149,13 @@ CRadarPanel::CRadarPanel()
 	m_pUpground = new vgui::ImagePanel(this, "Upground");
 	m_pNorthground = new vgui::ImagePanel(this, "Northground");
 	m_pViewangleground = new vgui::ImagePanel(this, "Viewangleground");
+	for (size_t i = 0; i < 32; i++){
+		m_aryPlayerAvatars[i] = new CAvatarImagePanel(this, "");
+		m_aryPlayerAvatars[i]->SetVisible(true);
+		m_aryPlayerAvatars[i]->SetShouldScaleImage(true);
+	}
 	LoadControlSettings(VGUI2_ROOT_DIR "RadarPanel.res");
-	auto radarimg = new CRadarImage();
+	auto radarimg = new CRadarMapImage();
 	radarimg->SetTex(tex);
 	int x, y;
 	m_pMapground->GetPos(x, y);
@@ -158,7 +174,6 @@ CRadarPanel::~CRadarPanel(){
 }
 
 void CRadarPanel::PerformLayout(){
-	BaseClass::PerformLayout();
 	int w, h;
 	GetSize(w, h);
 	m_pBackground->SetSize(w, h);
@@ -168,6 +183,7 @@ void CRadarPanel::PerformLayout(){
 	int vw, vh;
 	m_pViewangleground->GetSize(vw, vh);
 	m_pViewangleground->SetPos((w - vw) / 2, (h - vh) / 2);
+	BaseClass::PerformLayout();
 }
 
 void CRadarPanel::Paint(){
@@ -196,6 +212,48 @@ void CRadarPanel::Paint(){
 		int stx = mathlib::clamp(((size / 2) + hh * cos(rotate)), 0.0f, (float)len);
 		int sty = mathlib::clamp(((size / 2) + hh * sin(rotate)), 0.0f, (float)len);
 		m_pNorthground->SetPos(stx, sty);
+
+		if (gCVars.pRadarAvatar->value > 0) {
+			for (size_t i = 0; i < 32; i++) {
+				auto iter = m_aryPlayerAvatars[i];
+				CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(i + 1);
+				if (!pi->IsValid()) {
+					iter->SetVisible(false);
+					continue;
+				}
+				//Avatar
+				cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i + 1);
+				if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->player || !entity->model || local == entity) {
+					iter->SetVisible(false);
+					continue;
+				}
+				iter->SetPlayer(i + 1);
+				iter->SetVisible(true);
+				CVector vecLength;
+				float stx, sty;
+				float size = GetWide();
+				float Length = size / 2;
+				int iStartX, iStartY;
+				GetPos(iStartX, iStartY);
+				float w = gCVars.pRadarAvatarSize->value / 2;
+				float rotate = mathlib::Q_DEG2RAD(gEngfuncs.GetLocalPlayer()->curstate.angles[Q_YAW]);
+				float rc = cos(rotate);
+				float rs = sin(rotate);
+				//与目标距离
+				mathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
+				//缩放比率暂定0.2，交换取反符合屏幕坐标系
+				swap(vecLength.x, vecLength.y);
+				vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
+				vecLength.z = 0;
+				float vlen = vecLength.Length();
+				int ale = GetWide() - gCVars.pRadarAvatarSize->value;
+				int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : mathlib::fsqrt(2 * pow(vlen, 2)) / 2;
+				int atx = mathlib::clamp(((size / 2) + ahh * cos(rotate)), 0.0f, static_cast<float>(ale));
+				int aty = mathlib::clamp(((size / 2) + ahh * sin(rotate)), 0.0f, static_cast<float>(ale));
+				iter->SetPos(atx, aty);
+				iter->SetSize(gCVars.pRadarAvatarSize->value, gCVars.pRadarAvatarSize->value);
+			}
+		}
 	}
 	BaseClass::Paint();
 }
@@ -234,7 +292,7 @@ void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	m_cOutline = GetSchemeColor("Radar.OutlineColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
 	m_cMap = GetSchemeColor("Radar.MapColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme);
 	SetFgColor(GetSchemeColor("Radar.FgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
-	SetBgColor(Color(0, 0, 0, 0));
+	SetBgColor(GetSchemeColor("Radar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
 const char* CRadarPanel::GetName(){
 	return VIEWPORT_RADAR_NAME;
@@ -270,6 +328,7 @@ void CRadarPanel::SetScale(bool state){
 		SetSize(m_iStartWidth * gCVars.pRadarZoom->value, m_iStartTall * gCVars.pRadarZoom->value);
 	else
 		SetSize(m_iStartWidth, m_iStartTall);
+	PerformLayout();
 }
 void CRadarPanel::BlitFramebuffer(){
 	//Blit color from current framebuffer into texture

@@ -2,12 +2,14 @@
 #define CRADARPANEL_H
 #pragma once
 
+#include <array>
 #include <vgui_controls/EditablePanel.h>
 #include "IViewportPanel.h"
 
 namespace vgui {
 	class ImagePanel;
 }
+class CAvatarImagePanel;
 
 class CRadarPanel : public vgui::EditablePanel, public IViewportPanel {
 public:
@@ -37,6 +39,8 @@ private:
 	vgui::ImagePanel* m_pUpground;
 	vgui::ImagePanel* m_pNorthground;
 	vgui::ImagePanel* m_pViewangleground;
+
+	std::array<CAvatarImagePanel*, 32> m_aryPlayerAvatars;
 
 	float m_flRoundRadius;
 	Color m_cOutline;
