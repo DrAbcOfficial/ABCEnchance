@@ -99,12 +99,14 @@ TEMPENTITY* R_TempModel(float* pos, float* dir, float* angles, float life, int m
 		};
 		vec3_t smokedir = { dir[0], dir[1],RANDOM_FLOAT(70, 155)};
 		TEMPENTITY* smoke = gHookFuncs.R_TempModel(pos, smokedir, angles, life/2, gEfxVarible.iGunSmoke, 0);
-		smoke->flags = FTENT_SPRANIMATE | FTENT_FADEOUT;
-		smoke->entity.baseline.scale = RANDOM_FLOAT(0.07,0.15);
-		smoke->entity.curstate.renderamt = RANDOM_LONG(10,25);
-		smoke->entity.curstate.rendermode = kRenderTransAlpha;
-		smoke->entity.curstate.framerate = RANDOM_FLOAT(25,35);
-		smoke->fadeSpeed = 20.0f;
+		if (smoke) {
+			smoke->flags = FTENT_SPRANIMATE | FTENT_FADEOUT;
+			smoke->entity.baseline.scale = RANDOM_FLOAT(0.07, 0.15);
+			smoke->entity.curstate.renderamt = RANDOM_LONG(10, 25);
+			smoke->entity.curstate.rendermode = kRenderTransAlpha;
+			smoke->entity.curstate.framerate = RANDOM_FLOAT(25, 35);
+			smoke->fadeSpeed = 20.0f;
+		}
 	}
 	return tent;
 }
