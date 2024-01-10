@@ -89,18 +89,22 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 }
 TEMPENTITY* R_TempModel(float* pos, float* dir, float* angles, float life, int modelIndex, int soundtype){
 	TEMPENTITY* tent = gHookFuncs.R_TempModel(pos, dir, angles, life, modelIndex, soundtype);
-	if (gCVars.pShellEfx->value > 0) {
-		tent->flags |= FTENT_COLLIDEALL;
-		tent->hitcallback = [](struct tempent_s* ent, struct pmtrace_s* ptr) {
-			gEngfuncs.pEfxAPI->R_RunParticleEffect(ptr->endpos, ptr->plane.normal, 10, 4);
+	if (tent && gCVars.pShellEfx->value > 0 && soundtype > 0) {
+		tent->flags |= FTENT_COLLIDEALL | FTENT_SLOWGRAVITY | FTENT_CLIENTCUSTOM;
+		tent->entity.curstate.rendermode = kRenderTransTexture;
+		tent->entity.curstate.renderamt = 255;
+		tent->fadeSpeed = gEngfuncs.GetClientTime() + life;
+		tent->callback = [](struct tempent_s* ent, float frametime, float currenttime) {
+			ent->entity.curstate.renderamt = (ent->fadeSpeed - currenttime) * 255;
 		};
-		vec3_t smokedir = { dir[0], dir[1],90 };
+		vec3_t smokedir = { dir[0], dir[1],RANDOM_FLOAT(70, 155)};
 		TEMPENTITY* smoke = gHookFuncs.R_TempModel(pos, smokedir, angles, life/2, gEfxVarible.iGunSmoke, 0);
 		smoke->flags = FTENT_SPRANIMATE | FTENT_FADEOUT;
-		smoke->entity.baseline.scale = 0.1f;
-		smoke->entity.curstate.renderamt = 18;
+		smoke->entity.baseline.scale = RANDOM_FLOAT(0.07,0.15);
+		smoke->entity.curstate.renderamt = RANDOM_LONG(10,25);
 		smoke->entity.curstate.rendermode = kRenderTransAlpha;
-		smoke->entity.curstate.framerate = 30.0f;
+		smoke->entity.curstate.framerate = RANDOM_FLOAT(25,35);
+		smoke->fadeSpeed = 20.0f;
 	}
 	return tent;
 }
