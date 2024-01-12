@@ -919,22 +919,28 @@ DECLARE_BUILD_FACTORY(ModelViewPanel);
 //-----------------------------------------------------------------------------
 ModelViewPanel::ModelViewPanel(Panel *parent, const char *name) : BaseClass(parent, name){
 	m_Renderer = new StudioModel();
-
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-
-	glGenFramebuffers(1, &m_hBufferFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
-	int w, h;
-	GetSize(w, h);
-	m_hBufferTex = GL_GenTextureRGBA8(w, h);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hBufferTex, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+	SetModelPos(0, 0, 0);
+	SetModelRotate(0, 0, 0);
 }
 
 vgui::ModelViewPanel::~ModelViewPanel(){
 	if (m_hBufferFBO)
 		glDeleteFramebuffers(1, &m_hBufferFBO);
+	if (m_hBufferTex)
+		glDeleteTexturesEXT(1, &m_hBufferTex);
 	delete m_Renderer;
+}
+
+void vgui::ModelViewPanel::SetupTexBuffer(){
+	if (!m_hBufferFBO && !m_hBufferTex) {
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+
+		glGenFramebuffers(1, &m_hBufferFBO);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
+		m_hBufferTex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hBufferTex, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+	}
 }
 
 void vgui::ModelViewPanel::LoadModel(const char* model){
@@ -959,31 +965,33 @@ void vgui::ModelViewPanel::Render(){
 	m_Renderer->DrawModel();
 }
 
-void vgui::ModelViewPanel::Pan(int x, int y) {
-	m_aryOrigin[0] += (x - m_iOriginalxpos) / 500;
-	m_aryOrigin[1] -= (y - m_iOriginalypos) / 500;
-	m_iOriginalxpos = x;
-	m_iOriginalypos = y;
+//     ^Z
+//     |
+//     |   /Y
+//     |  /
+//     |/
+//     O---------->X
+void vgui::ModelViewPanel::SetModelPos(int x, int y, int z){
+	//swap y and z to fit game world
+	m_aryOrigin[0] = x;
+	m_aryOrigin[1] = -z;
+	m_aryOrigin[2] = -y;
 }
 
-void vgui::ModelViewPanel::Zoom(int x, int y){
-	m_aryOrigin[2] += (x - m_iOriginalxpos) / 20;
-	m_iOriginalypos = x;
+/// <summary>
+/// Rotate Model
+/// </summary>
+void vgui::ModelViewPanel::SetModelRotate(int pitch, int yaw, int roll){
+	//swap y and z to fit game world
+	m_aryRotate[0] = (pitch - 90) % 360;
+	m_aryRotate[1] = (roll-0) % 360;
+	m_aryRotate[2] = (-yaw-90) % 360;
 }
-
 
 //-----------------------------------------------------------------------------
 // Purpose: draws the graph
 //-----------------------------------------------------------------------------
 void ModelViewPanel::Paint(){
-	m_flFov = 90;
-	m_aryOrigin[0] = 0;
-	m_aryOrigin[1] = 0;
-	m_aryOrigin[2] = -40;
-	m_aryRotate[0] = -90;
-	m_aryRotate[1] = 0;
-	m_aryRotate[2] = 235;
-
 	glPushMatrix();
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -997,24 +1005,18 @@ void ModelViewPanel::Paint(){
 	float flFar = 1024.0f;
 	auto rlbt = tan(m_flFov * (M_PI / 360.0)) * flNear;
 	glFrustum(-rlbt, rlbt, -rlbt, rlbt, flNear, flFar);
+	glTranslatef(m_aryOrigin[0], m_aryOrigin[1], m_aryOrigin[2]);
 	glCullFace(GL_FRONT);
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
-	glTranslatef(m_aryOrigin[0], m_aryOrigin[1], m_aryOrigin[2]);
-
 	glRotatef(m_aryRotate[0], 1, 0, 0);
 	glRotatef(m_aryRotate[1], 0, 1, 0);
 	glRotatef(m_aryRotate[2], 0, 0, 1);
-
 	glEnable(GL_DEPTH_TEST);
-
 	Render();
-
 	glDisable(GL_DEPTH_TEST);
-
 	glPopMatrix();
+	//reset viewport size
 	glViewport(0, 0, gScreenInfo.iWidth, gScreenInfo.iHeight);
 
 	glBind(m_hBufferTex);
@@ -1037,7 +1039,6 @@ void ModelViewPanel::Paint(){
 //-----------------------------------------------------------------------------
 // Purpose: sets up colors
 //-----------------------------------------------------------------------------
-void ModelViewPanel::ApplySchemeSettings(IScheme *pScheme)
-{
+void ModelViewPanel::ApplySchemeSettings(IScheme *pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 }
