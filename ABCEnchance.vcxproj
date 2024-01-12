@@ -315,6 +315,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\MenuItem.cpp" />
     <ClCompile Include="vgui_controls\MessageBox.cpp" />
     <ClCompile Include="vgui_controls\MessageDialog.cpp" />
+    <ClCompile Include="vgui_controls\ModelViewPanel.cpp" />
     <ClCompile Include="vgui_controls\Panel.cpp" />
     <ClCompile Include="vgui_controls\PanelListPanel.cpp" />
     <ClCompile Include="vgui_controls\ProgressBar.cpp" />
@@ -606,6 +607,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\MessageBox.h" />
     <ClInclude Include="vgui_controls\MessageDialog.h" />
     <ClInclude Include="vgui_controls\MessageMap.h" />
+    <ClInclude Include="vgui_controls\ModelViewPanel.h" />
     <ClInclude Include="vgui_controls\Panel.h" />
     <ClInclude Include="vgui_controls\PanelAnimationVar.h" />
     <ClInclude Include="vgui_controls\PanelListPanel.h" />
