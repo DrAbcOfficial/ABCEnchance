@@ -2,11 +2,8 @@
 
 #include <VGUI/VGUI.h>
 #include <IVanilliaPanel.h>
-#include <GameUI/LoadingDialog.h>
-#include <GameUI/CGameLoading.h>
 #include <GameUI/GameConsole.h>
 #include <GameUI/BasePanel.h>
-#include <GameUI/ModInfo.h>
 
 #include "GameUI.h"
 
@@ -66,11 +63,7 @@ public:
 static CGameUI s_GameUI;
 IGameUI* gameui;
 
-vgui::DHANDLE<CLoadingDialog> g_hLoadingDialog;
-vgui::DHANDLE<CGameLoading>g_hGameLoading;
-
 void CGameUI::Initialize(CreateInterfaceFn* factories, int count) {
-	ModInfo().LoadCurrentGameInfo();
 	g_pfnInitialize(this, 0, factories, count);
 }
 void CGameUI::Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system) {
@@ -115,104 +108,24 @@ void CGameUI::LoadingStarted(const char* resourceType, const char* resourceName)
 	g_pfnLoadingStarted(this, 0, resourceType, resourceName);
 }
 void CGameUI::LoadingFinished(const char* resourceType, const char* resourceName) {
-	/*m_bLoadlingLevel = false;
-	if (g_hGameLoading.Get()){
-		g_hGameLoading->SetVisible(false);
-		g_hGameLoading->SetAutoDelete(true);
-	}
-	StopProgressBar(false, "");
-	HideGameUI();*/
 	g_pfnLoadingFinished(this, 0, resourceType, resourceName);
 }
 void CGameUI::StartProgressBar(const char* progressType, int progressSteps) {
-	/*if (g_hGameLoading.Get()){
-		if (g_hGameLoading->IsVisible()){
-			g_hGameLoading->SetProgressRange(0, progressSteps);
-			g_hGameLoading->SetProgressPoint(0);
-			if (!stricmp(progressType, "Server"))
-				g_hGameLoading->SetProgressVisible(false);
-			else if (!stricmp(progressType, "Connecting"))
-				g_hGameLoading->SetProgressVisible(true);
-			return;
-		}
-	}
-	if (!g_hLoadingDialog.Get())
-		g_hLoadingDialog = new CLoadingDialog((vgui::Panel*)(BasePanel()));
-	m_szPreviousStatusText[0] = 0;
-	g_hLoadingDialog->SetProgressRange(0, progressSteps);
-	g_hLoadingDialog->SetProgressPoint(0);
-	g_hLoadingDialog->Open();*/
 	g_pfnStartProgressBar(this, 0, progressType, progressSteps);
 }
 int  CGameUI::ContinueProgressBar(int progressPoint, float progressFraction) {
-	/*if (g_hGameLoading.Get()){
-		if (g_hGameLoading->IsVisible()) {
-			return g_hGameLoading->SetProgressPoint(progressPoint);
-		}
-	}
-	if (!g_hLoadingDialog.Get()){
-		g_hLoadingDialog = new CLoadingDialog((vgui::Panel*)(BasePanel()));
-		g_hLoadingDialog->SetProgressRange(0, 24);
-		g_hLoadingDialog->SetProgressPoint(0);
-		g_hLoadingDialog->Open();
-	}
-	g_hLoadingDialog->Activate();
-	return g_hLoadingDialog->SetProgressPoint(progressPoint);*/
 	return g_pfnContinueProgressBar(this, 0, progressPoint, progressFraction);
 }
 void CGameUI::StopProgressBar(bool bError, const char* failureReason, const char* extendedReason) {
-	//int* piVar3;
-	//if (!g_hLoadingDialog.Get() && bError)
-	//	g_hLoadingDialog = new CLoadingDialog((vgui::Panel*)(BasePanel()));
-	//if (g_hLoadingDialog.Get()) {
-	//	if (bError) 
-	//		g_hLoadingDialog->DisplayGenericError(failureReason, extendedReason);
-	//	else {
-	//		g_hLoadingDialog->Close();
-	//		g_hLoadingDialog = nullptr;
-	//	}
-	//	//CBasePanel::SetBackgroundRenderState((CBasePanel*)staticPanel, 2);
-	//}
 	g_pfnStopProgressBar(this, 0, bError, failureReason, extendedReason);
 }
 int  CGameUI::SetProgressBarStatusText(const char* statusText) {
-	/*
-	if (g_hGameLoading.Get()){
-		if (g_hGameLoading->IsVisible()){
-			g_hGameLoading->SetStatusText(statusText);
-			return false;
-		}
-	}
-	if (!g_hLoadingDialog.Get())
-		return false;
-	if (!statusText)
-		return false;
-	if (!stricmp(statusText, m_szPreviousStatusText))
-		return false;
-	g_hLoadingDialog->SetStatusText(statusText);
-	Q_strncpy(m_szPreviousStatusText, statusText, sizeof(m_szPreviousStatusText));
-	return true;
-	*/
 	return g_pfnSetProgressBarStatusText(this, 0, statusText);
 }
 void CGameUI::SetSecondaryProgressBar(float progress) {
-	/*if (g_hGameLoading.Get()){
-		if (g_hGameLoading->IsVisible())
-			return;
-	}
-	if (!g_hLoadingDialog.Get())
-		return;
-	g_hLoadingDialog->SetSecondaryProgress(progress);*/
 	g_pfnSetSecondaryProgressBar(this, 0, progress);
 }
 void CGameUI::SetSecondaryProgressBarText(const char* statusText) {
-	/*if (g_hLoadingDialog.Get()){
-		if (g_hLoadingDialog->IsVisible())
-			return;
-	}
-	if (!g_hLoadingDialog.Get())
-		return;
-	g_hLoadingDialog->SetSecondaryProgressText(statusText);*/
 	g_pfnSetSecondaryProgressBarText(this, 0, statusText);
 }
 void CGameUI::ValidateCDKey(bool force, bool inConnect) {

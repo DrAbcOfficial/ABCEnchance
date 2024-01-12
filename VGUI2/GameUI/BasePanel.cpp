@@ -16,7 +16,6 @@
 
 #include "Controls.h"
 
-#include "GameUI/OptionsDialog.h"
 #include "GameUI/BasePanel.h"
 
 #include "exportfuncs.h"

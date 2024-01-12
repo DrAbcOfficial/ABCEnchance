@@ -1,1 +1,0 @@
-void UpdateLogoWAD(void *phdib, int r, int g, int b);
