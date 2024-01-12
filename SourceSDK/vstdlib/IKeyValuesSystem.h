@@ -5,7 +5,7 @@
 #pragma once
 #endif
 
-#include "tier1/interface.h"
+#include "interface.h"
 #include "vstdlib/vstdlib.h"
 
 typedef int HKeySymbol;

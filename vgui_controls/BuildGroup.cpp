@@ -26,11 +26,13 @@
 #include <vgui/KeyCode.h>
 #include <vgui/Cursor.h>
 #include <vgui/MouseCode.h>
-#include <KeyValues.h>
 #include <vgui/IInput.h>
 #include <vgui/ISystem.h>
 #include <vgui/IVGui.h>
 #include <vgui/ISurface.h>
+
+#include <IFileSystem.h>
+#include <KeyValues.h>
 
 #include <vgui_controls/BuildGroup.h>
 #include <vgui_controls/Panel.h>
@@ -38,7 +40,6 @@
 #include <vgui_controls/Label.h>
 #include <vgui_controls/EditablePanel.h>
 #include <vgui_controls/MessageBox.h>
-#include "FileSystem.h"
 
 #if defined( _X360 )
 #include "xbox/xbox_win32stubs.h"

@@ -8,7 +8,6 @@
 #include <vgui/VGUI.h>
 
 class IFileSystem;
-class IFileSystemEx;
 class KeyValues;
 
 #ifndef _WCHAR_T_DEFINED

@@ -5,7 +5,7 @@
 #pragma once
 #endif
 
-#include "tier1/interface.h"
+#include "interface.h"
 
 class IClientVGUI : public IBaseInterface
 {

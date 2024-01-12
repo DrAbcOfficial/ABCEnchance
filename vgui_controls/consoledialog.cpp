@@ -18,7 +18,10 @@
 #include "vgui/IVGui.h"
 #include "vgui/ISurface.h"
 #include "vgui/ILocalize.h"
+
 #include "KeyValues.h"
+#include <IFileSystem.h>
+
 #include <vguilocal.h>
 #include <BaseUI.h>
 
@@ -28,7 +31,6 @@
 #include "vgui_controls/TextEntry.h"
 #include "vgui_controls/RichText.h"
 #include "vgui_controls/ScrollBar.h"
-#include "FileSystem.h"
 
 #include <stdlib.h>
 

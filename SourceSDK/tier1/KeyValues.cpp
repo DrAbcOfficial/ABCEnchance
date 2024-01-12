@@ -6,8 +6,8 @@
 #endif
 
 #include "KeyValues.h"
-#include <filesystem.h>
 #include <vstdlib/IKeyValuesSystem.h>
+#include <IFileSystem.h>
 
 #include <vgui/ISystem.h>
 

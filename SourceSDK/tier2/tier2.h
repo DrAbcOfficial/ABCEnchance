@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 // Forward declarations
 //-----------------------------------------------------------------------------
-class IFileSystemEx;
+class IFileSystem;
 class IMaterialSystem;
 class IColorCorrectionSystem;
 class IMaterialSystemHardwareConfig;
@@ -37,7 +37,7 @@ class IQueuedLoader;
 // It is hoped that setting this, and using this library will be the common mechanism for
 // allowing link libraries to access tier2 library interfaces
 //-----------------------------------------------------------------------------
-extern IFileSystemEx *g_pFullFileSystem;
+extern IFileSystem *g_pFullFileSystem;
 extern IMaterialSystem *materials;
 extern IMaterialSystem *g_pMaterialSystem;
 extern IInputSystem *g_pInputSystem;

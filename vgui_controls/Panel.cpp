@@ -24,8 +24,10 @@
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
 #include <vgui/IVGui.h>
-#include <KeyValues.h>
 #include <vgui/MouseCode.h>
+
+#include <IFileSystem.h>
+#include <KeyValues.h>
 
 #include <vgui_controls/Panel.h>
 #include <vgui_controls/BuildGroup.h>
@@ -40,7 +42,6 @@
 #include "tier1/utldict.h"
 #include "tier1/utlbuffer.h"
 #include "mempool.h"
-#include "FileSystem.h"
 #include "filesystem_helpers.h"
 
 #include "tier0/vprof.h"
@@ -504,8 +505,7 @@ void Panel::SaveKeyBindingsToFile(KeyBindingContextHandle_t handle, char const* 
 
 	BufPrint(buf, 0, "}\n");
 
-	if (g_pFullFileSystem->FileExists(filename, pathID) &&
-		!g_pFullFileSystem->IsFileWritable(filename, pathID))
+	if (g_pFullFileSystem->FileExists(filename))
 	{
 		Warning("Panel::SaveKeyBindings '%s' is read-only!!!\n", filename);
 	}

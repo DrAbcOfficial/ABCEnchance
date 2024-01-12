@@ -17,8 +17,6 @@
 #include <tier0/dbg.h>
 #include <tier1/strtools.h>
 
-#include <filesystem.h>
-
 #include <vgui/VGUI.h>
 #include <vgui/IInput.h>
 #include <vgui/IInputInternal.h>
@@ -32,7 +30,7 @@
 #include <vgui/MouseCode.h>
 #include <vgui/KeyCode.h>
 
-extern IFileSystemEx *g_pFullFileSystem;
+extern IFileSystem *g_pFullFileSystem;
 
 extern vgui::IInput *g_pVGuiInput;
 extern vgui::ISchemeManager *g_pVGuiSchemeManager;
@@ -111,7 +109,7 @@ inline vgui::ILocalize *localize()
 {
 	return g_pVGuiLocalize;
 }
-inline IFileSystemEx* filesystem() {
+inline IFileSystem* filesystem() {
 	return g_pFullFileSystem;
 }
 

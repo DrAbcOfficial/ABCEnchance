@@ -17,7 +17,7 @@
 #include <vgui/IVGUI.h>
 #include <vgui/IBorder.h>
 
-#include <filesystem.h>
+#include <IFileSystem.h>
 
 #include "HTML.h"
 #include "Controls.h"

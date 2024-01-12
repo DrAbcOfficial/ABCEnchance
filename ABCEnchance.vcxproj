@@ -165,7 +165,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\include\HLSDK\common\interface.cpp" />
-    <ClCompile Include="SourceSDK\filesystem.cpp" />
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp" />
     <ClCompile Include="SourceSDK\InputWin32.cpp" />
     <ClCompile Include="SourceSDK\mathlib\3dnow.cpp" />
@@ -361,7 +360,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="SourceSDK\appframework\IAppSystem.h" />
     <ClInclude Include="SourceSDK\Color.h" />
     <ClInclude Include="SourceSDK\common\xbox\xbox_console.h" />
-    <ClInclude Include="SourceSDK\filesystem.h" />
     <ClInclude Include="SourceSDK\filesystem_helpers.h" />
     <ClInclude Include="SourceSDK\inputsystem\ButtonCode.h" />
     <ClInclude Include="SourceSDK\inputsystem\InputEnums.h" />
@@ -407,7 +405,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="SourceSDK\tier1\convar.h" />
     <ClInclude Include="SourceSDK\tier1\generichash.h" />
     <ClInclude Include="SourceSDK\tier1\iconvar.h" />
-    <ClInclude Include="SourceSDK\tier1\interface.h" />
     <ClInclude Include="SourceSDK\tier1\KeyValues.h" />
     <ClInclude Include="SourceSDK\tier1\mempool.h" />
     <ClInclude Include="SourceSDK\tier1\memstack.h" />
