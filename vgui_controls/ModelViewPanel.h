@@ -30,11 +30,29 @@ public:
 	void Render();
 	void SetModelPos(int x, int y, int z);
 	void SetModelRotate(int pitch, int yaw, int roll);
+
+	float GetFOV();
+	void SetFOV(float fov);
+
+	bool GetAnimate();
+	void SetAnimate(bool state);
+
+	int GetFrame();
+	void SetFrame(int frame);
+
+	int GetSequence();
+	void SetSequnce(int seq);
+
+	int GetSkin();
+	void SetSkin(int skin);
+
+	int GetGroup();
+	int GetBody();
+	void SetBodygroup(int group, int body);
 protected:
 	virtual void Paint() override;
-	virtual void ApplySchemeSettings(IScheme *pScheme) override;
+	virtual void ApplySettings(KeyValues* inResourceData) override;
 private:
-	StudioModel* m_Renderer;
 	float m_aryOrigin[3] = {0,0,0};
 	float m_aryRotate[3] = {0,0,0};
 	float m_flFov;
@@ -42,7 +60,12 @@ private:
 	int m_iFrame;
 	int m_iSequence;
 	int m_iSkin;
-	int m_iBodyGroup;
+	int m_iGroup;
+	int m_iBody;
+
+	float m_flPrevAnimeTime;
+
+	StudioModel* m_Renderer;
 
 	uint m_hBufferTex;
 	uint m_hBufferFBO;

@@ -919,8 +919,9 @@ DECLARE_BUILD_FACTORY(ModelViewPanel);
 //-----------------------------------------------------------------------------
 ModelViewPanel::ModelViewPanel(Panel *parent, const char *name) : BaseClass(parent, name){
 	m_Renderer = new StudioModel();
-	SetModelPos(0, 0, 0);
+	SetModelPos(0, 20, 0);
 	SetModelRotate(0, 0, 0);
+	SetAnimate(true);
 }
 
 vgui::ModelViewPanel::~ModelViewPanel(){
@@ -945,7 +946,7 @@ void vgui::ModelViewPanel::SetupTexBuffer(){
 
 void vgui::ModelViewPanel::LoadModel(const char* model){
 	m_Renderer->Init(model);
-	m_Renderer->SetSequence(0);
+	SetSequnce(0);
 	m_Renderer->SetController(0, 0.0);
 	m_Renderer->SetController(1, 0.0);
 	m_Renderer->SetController(2, 0.0);
@@ -960,6 +961,11 @@ void vgui::ModelViewPanel::Render(){
 	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hBufferFBO, w, h, w, h);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 
+	if (GetAnimate()) {
+		float ticktime = gEngfuncs.GetClientTime();
+		m_Renderer->AdvanceFrame(ticktime - m_flPrevAnimeTime);
+		m_flPrevAnimeTime = ticktime;
+	}
 	m_Renderer->SetBlending(0, 0.0);
 	m_Renderer->SetBlending(1, 0.0);
 	m_Renderer->DrawModel();
@@ -986,6 +992,51 @@ void vgui::ModelViewPanel::SetModelRotate(int pitch, int yaw, int roll){
 	m_aryRotate[0] = (pitch - 90) % 360;
 	m_aryRotate[1] = (roll-0) % 360;
 	m_aryRotate[2] = (-yaw-90) % 360;
+}
+
+float vgui::ModelViewPanel::GetFOV(){
+	return m_flFov;
+}
+void vgui::ModelViewPanel::SetFOV(float fov){
+	m_flFov = fov;
+}
+bool vgui::ModelViewPanel::GetAnimate(){
+	return m_bAnimate;
+}
+void vgui::ModelViewPanel::SetAnimate(bool state){
+	m_bAnimate = state;
+}
+int vgui::ModelViewPanel::GetFrame(){
+	return m_iFrame;
+}
+void vgui::ModelViewPanel::SetFrame(int frame){
+	m_iFrame = frame;
+	m_Renderer->m_frame = m_iFrame;
+}
+int vgui::ModelViewPanel::GetSequence(){
+	return m_iSequence;
+}
+void vgui::ModelViewPanel::SetSequnce(int seq){
+	m_iSequence = seq;
+	m_Renderer->m_sequence = m_iSequence;
+}
+int vgui::ModelViewPanel::GetSkin(){
+	return m_iSkin;
+}
+void vgui::ModelViewPanel::SetSkin(int skin){
+	m_iSkin = skin;
+	m_Renderer->SetSkin(skin);
+}
+int vgui::ModelViewPanel::GetGroup(){
+	return m_iGroup;
+}
+int vgui::ModelViewPanel::GetBody(){
+	return m_iBody;
+}
+void vgui::ModelViewPanel::SetBodygroup(int group, int body){
+	m_iGroup = group;
+	m_iBody = body;
+	m_Renderer->SetBodygroup(group, body);
 }
 
 //-----------------------------------------------------------------------------
@@ -1036,9 +1087,12 @@ void ModelViewPanel::Paint(){
 	glDisable(GL_BLEND);
 }
 
-//-----------------------------------------------------------------------------
-// Purpose: sets up colors
-//-----------------------------------------------------------------------------
-void ModelViewPanel::ApplySchemeSettings(IScheme *pScheme){
-	BaseClass::ApplySchemeSettings(pScheme);
+void vgui::ModelViewPanel::ApplySettings(KeyValues* inResourceData){
+	BaseClass::ApplySettings(inResourceData);
+	SetFOV(inResourceData->GetFloat("fov", 90));
+	SetAnimate(inResourceData->GetBool("animate", false));
+	SetFrame(inResourceData->GetInt("frame", 0));
+	SetSequnce(inResourceData->GetInt("sequence", 0));
+	SetSkin(inResourceData->GetInt("skin", 0));
+	SetBodygroup(inResourceData->GetInt("group", 0), inResourceData->GetInt("body", 0));
 }
