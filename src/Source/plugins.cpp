@@ -89,7 +89,6 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	if(!g_metaplugins.captionmod)
 		pExportFunc->ClientFactory = NewClientFactory;
 
-	FillEfxAddress();
 	FillAddress();
 	InstallClientHook();
 	ClientVGUI_InstallHook();

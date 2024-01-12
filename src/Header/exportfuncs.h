@@ -30,11 +30,9 @@ extern WNDPROC g_MainWndProc;
 extern bool g_bIMEComposing;
 extern double g_flImeComposingTime;
 ICommandLine* CommandLine(void);
-double GetAbsoluteTime();
 LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 void CheckOtherPlugin();
-void FillEfxAddress();
 void FillEngineAddress();
 void FillAddress();
 void InstallEngineHook();

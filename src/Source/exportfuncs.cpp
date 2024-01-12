@@ -78,9 +78,6 @@ double g_flImeComposingTime = 0;
 ICommandLine* CommandLine(void){
 	return g_pInterface->CommandLine;
 }
-double GetAbsoluteTime(){
-	return gEngfuncs.GetAbsoluteTime();
-}
 LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 	/*
 	static HWND s_hLastHWnd;
@@ -313,9 +310,6 @@ void CheckOtherPlugin(){
 	if(!g_metaplugins.renderer)
 		g_metaplugins.renderer = g_pMetaHookAPI->GetPluginInfo("Renderer_AVX2.dll", &info);
 	g_metaplugins.captionmod = g_pMetaHookAPI->GetPluginInfo("CaptionMod.dll", &info);
-}
-void FillEfxAddress(){
-
 }
 IBaseInterface* NewCreateInterface(const char* pName, int* pReturnCode){
 	auto fnCreateInterface = (decltype(NewCreateInterface)*)Sys_GetFactoryThis();

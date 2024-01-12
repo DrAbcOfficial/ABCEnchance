@@ -83,7 +83,9 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 	GameConsole_InstallHook();
 	GameUI_InstallHook();
 	BasePanel_InstallHook();
-	Scheme_InstallHook();
+
+	if(!g_metaplugins.captionmod)
+		Scheme_InstallHook();
 
 	BackGroundVideoInit();
 }
