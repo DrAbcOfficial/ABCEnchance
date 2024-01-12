@@ -14,10 +14,9 @@
 #endif
 
 #include "utlvector.h"
-#include <filesystem.h>
 #include <Color.h>
 
-class IFileSystemEx;
+class IFileSystem;
 class CUtlBuffer;
 class Color;
 typedef void *FileHandle_t;

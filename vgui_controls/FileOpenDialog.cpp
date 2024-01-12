@@ -13,7 +13,6 @@
 #include <shellapi.h>
 #endif
 #undef GetCurrentDirectory
-#include <filesystem.h>
 
 #include <tier1/KeyValues.h>
 #include <tier1/utldict.h>
@@ -25,6 +24,8 @@
 #include <vgui/IVGUI.h>
 #include <vgui/ILocalize.h>
 #include <vgui/IInput.h>
+
+#include <IFileSystem.h>
 
 #include "FileOpenDialog.h"
 
@@ -953,8 +954,8 @@ void FileOpenDialog::NewFolder( char const *folderName )
 	do
 	{
 		Q_MakeAbsolutePath( pFullPath, sizeof(pFullPath), pNewFolderName, pCurrentDirectory );
-		if ( !vgui::filesystem()->FileExists( pFullPath, NULL ) &&
-			 !vgui::filesystem()->IsDirectory( pFullPath, NULL ) )
+		if ( !vgui::filesystem()->FileExists( pFullPath ) &&
+			 !vgui::filesystem()->IsDirectory( pFullPath ) )
 		{
 			vgui::filesystem()->CreateDirHierarchy( pFullPath, NULL );
 			m_pFileNameEdit->SetText( pNewFolderName );
@@ -1197,7 +1198,7 @@ void FileOpenDialog::PopulateFileList()
 					kv->SetString( "filesize", Q_pretifymem( findData.nFileSizeLow, 0, true ) );
 					Q_FixSlashes( fullpath );
 					wchar_t fileType[ 80 ];
-					vgui::filesystem()->GetFileTypeForFullPath( fullpath, fileType, sizeof( fileType ) );
+					//vgui::filesystem()->GetFileTypeForFullPath( fullpath, fileType, sizeof( fileType ) );
 					kv->SetWString( "type", fileType );
 					kv->SetString( "attributes", GetAttributesAsString( findData.dwFileAttributes ) );
 					kv->SetString( "modified", GetFileTimetamp( findData.ftLastWriteTime ) );
@@ -1497,7 +1498,7 @@ void FileOpenDialog::OnOpen()
 	}
 
 	// If the name specified is a directory, then change directory
-	if ( vgui::filesystem()->IsDirectory( pFullPath, NULL ) )
+	if ( vgui::filesystem()->IsDirectory( pFullPath ) )
 	{
 		// it's a directory; change to the specified directory
 		if ( !bSpecifiedDirectory )

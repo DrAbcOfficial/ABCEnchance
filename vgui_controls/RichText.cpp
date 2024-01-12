@@ -4,7 +4,8 @@
 //
 // $NoKeywords: $
 //=============================================================================//
-
+#include <interface.h>
+#include <IFileSystem.h>
 #include "vgui_controls/pch_vgui_controls.h"
 #include "vgui/ILocalize.h"
 

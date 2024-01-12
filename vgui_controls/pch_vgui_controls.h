@@ -23,8 +23,6 @@
 //#include <tier0/memdbgon.h>
 #include <tier0/validator.h>
 
-#include <filesystem.h>
-
 // vgui includes
 #include <vgui/IBorder.h>
 #include <vgui/IInput.h>

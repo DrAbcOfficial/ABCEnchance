@@ -9,6 +9,7 @@
 #include <vgui/ISurface2.h>
 #include <vgui/ISystem.h>
 #include <vgui/IVGui.h>
+#include <IFileSystem.h>
 
 #include <tier1/KeyValues.h>
 #include <tier1/mempool.h>
@@ -17,7 +18,6 @@
 
 #include "AnimationController.h"
 
-#include <filesystem.h>
 #include <filesystem_helpers.h>
 
 #include <stdio.h>
@@ -157,7 +157,7 @@ bool AnimationController::LoadScriptFile(const char* fileName)
 		nBufSize = AlignValue(nBufSize, 512);
 	}
 	char* pMem = (char*)malloc(nBufSize);
-	int bytesRead = g_pFullFileSystem->ReadEx(pMem, nBufSize, size, f);
+	int bytesRead = g_pFullFileSystem->Read(pMem, size, f);
 	Assert(bytesRead <= size);
 	pMem[bytesRead] = 0;
 	g_pFullFileSystem->Close(f);

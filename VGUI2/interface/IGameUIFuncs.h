@@ -5,7 +5,7 @@
 #pragma once
 #endif
 
-#include "tier1/interface.h"
+#include "interface.h"
 
 typedef struct vmode_s{
 	int width;
