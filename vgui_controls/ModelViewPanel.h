@@ -25,21 +25,24 @@ public:
 	ModelViewPanel(Panel *parent, const char *name);
 	~ModelViewPanel();
 
+	void SetupTexBuffer();
 	void LoadModel(const char* model);
 	void Render();
-	void Pan(int x, int y);
-	void Zoom(int x, int y);
+	void SetModelPos(int x, int y, int z);
+	void SetModelRotate(int pitch, int yaw, int roll);
 protected:
 	virtual void Paint() override;
 	virtual void ApplySchemeSettings(IScheme *pScheme) override;
 private:
-	int m_iOriginalxpos = -1;
-	int m_iOriginalypos = -1;
-
 	StudioModel* m_Renderer;
-	float m_aryOrigin[3];
-	float m_aryRotate[3];
+	float m_aryOrigin[3] = {0,0,0};
+	float m_aryRotate[3] = {0,0,0};
 	float m_flFov;
+	bool m_bAnimate;
+	int m_iFrame;
+	int m_iSequence;
+	int m_iSkin;
+	int m_iBodyGroup;
 
 	uint m_hBufferTex;
 	uint m_hBufferFBO;
