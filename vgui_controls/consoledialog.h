@@ -21,6 +21,7 @@ typedef struct cvar_s cvar_t;
 
 namespace vgui
 {
+	class GaussianBlurPanel;
 
 	// Things the user typed in and hit submit/return with
 	class CHistoryItem
@@ -122,6 +123,7 @@ namespace vgui
 		Label* m_pIME;
 		Button* m_pSubmit;
 		Menu* m_pCompletionList;
+		GaussianBlurPanel* m_pBlurBackend;
 		Color m_PrintColor;
 		Color m_ErrorPrintColor;
 		Color m_WarnPrintColor;
