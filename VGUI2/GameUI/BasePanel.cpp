@@ -23,6 +23,8 @@
 
 #include "exportfuncs.h"
 #include "plugins.h"
+#include <mymathlib.h>
+#include <Border.h>
 
 bool g_bInitialized = false;
 int g_iTextureID;
@@ -261,18 +263,36 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 
 static vgui::DHANDLE<vgui::ModelViewPanel>g_modelviewPanel;
 static vgui::DHANDLE<vgui::Slider> g_modelviewSlider;
+static vgui::DHANDLE<vgui::Panel> g_color1Slider;
+static vgui::DHANDLE<vgui::Panel> g_color2Slider;
+
 void* __fastcall COptionsSubMultiplayer_ctor(vgui::Panel* pthis, int dummy, void* parent) {
 	auto res = gHookFuncs.COptionsSubMultiplayer_ctor(pthis, dummy, parent);
+	IVanilliaPanel* slider1 = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0x108);
+	IVanilliaPanel* slider2 = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0x10c);
+	int x, y;
+	int w2, h2;
+	vgui::ipanel()->GetSize(slider2->GetVPanel(), w2, h2);
+	vgui::ipanel()->SetSize(slider1->GetVPanel(), w2 - h2, h2);
+	vgui::ipanel()->SetSize(slider2->GetVPanel(), w2 - h2, h2);
+
+	vgui::Panel* color1 = new vgui::Panel(pthis, "Color1");
+	vgui::ipanel()->GetPos(slider1->GetVPanel(), x, y);
+	color1->SetPos(x + w2 - h2 + 1, y);
+	color1->SetSize(h2 * 0.75, h2 * 0.75);
+	g_color1Slider = color1;
+
+	vgui::Panel* color2 = new vgui::Panel(pthis, "Color2");
+	vgui::ipanel()->GetPos(slider2->GetVPanel(), x, y);
+	color2->SetPos(x + w2 - h2 + 1, y);
+	color2->SetSize(h2 * 0.75, h2 * 0.75);
+	g_color2Slider = color2;
+
 	IVanilliaPanel* modelbitmap = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0xb8);
 	modelbitmap->SetVisible(false);
-	int x, y, w, h;
+	int w, h;
 	vgui::ipanel()->GetPos(modelbitmap->GetVPanel(), x, y);
 	vgui::ipanel()->GetSize(modelbitmap->GetVPanel(), w, h);
-
-	int w2, h2;
-	IVanilliaPanel* slider2 = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0x10c);
-	vgui::ipanel()->GetSize(slider2->GetVPanel(), w2, h2);
-
 	//TODO: fuck if u move silder and close/open console, its will crash game for no reason
 	vgui::ModelViewPanel* panel = new vgui::ModelViewPanel(pthis, "3DModelImage");
 	panel->SetBounds(x, y, w, h - h2);
@@ -297,6 +317,14 @@ void* __fastcall COptionsSubMultiplayer_dtor(vgui::Panel* pthis, int dummy, byte
 		delete g_modelviewSlider.Get();
 		g_modelviewSlider = nullptr;
 	}
+	if (g_color1Slider) {
+		delete g_color1Slider.Get();
+		g_color1Slider = nullptr;
+	}
+	if (g_color2Slider) {
+		delete g_color2Slider.Get();
+		g_color2Slider = nullptr;
+	}
 	return gHookFuncs.COptionsSubMultiplayer_dtor(pthis, dummy, unk);
 }
 void __fastcall RemapPalette(vgui::Panel* pthis, int dummy, char* modelname, int color1, int color2) {
@@ -307,6 +335,19 @@ void __fastcall RemapPalette(vgui::Panel* pthis, int dummy, char* modelname, int
 		if(g_modelviewSlider)
 			g_modelviewPanel->SetModelRotate(0, g_modelviewSlider->GetValue(), 0);
 	}
+	int r, g, b;
+	float h;
+	if (g_color1Slider) {
+		h = (float)color1 / 255.0f * 360.0f;
+		mathlib::HSVToRGB(h, 1.0f, 1.0f, r, g, b);
+		g_color1Slider->SetBgColor(Color(r, g, b, 255));
+	}
+	if (g_color2Slider) {
+		h = (float)color2 / 255.0f * 360.0f;
+		mathlib::HSVToRGB(h, 1.0f, 1.0f, r, g, b);
+		g_color2Slider->SetBgColor(Color(r, g, b, 255));
+	}
+	
 	gHookFuncs.RemapPalette(pthis, dummy, modelname, color1, color2);
 }
 void BasePanel_InstallHook(void){
