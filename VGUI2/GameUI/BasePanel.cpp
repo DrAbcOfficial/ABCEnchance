@@ -258,30 +258,30 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	vgui::surface()->DrawSetTexture(g_iTextureID);
 	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 }
-vgui::ModelViewPanel* g_modelviewPanel;
-vgui::Slider* g_modelviewSlider;
+
+static vgui::DHANDLE<vgui::ModelViewPanel>g_modelviewPanel;
+static vgui::DHANDLE<vgui::Slider> g_modelviewSlider;
 void* __fastcall COptionsSubMultiplayer_ctor(vgui::Panel* pthis, int dummy, void* parent) {
-	IVanilliaEditablePanel* res = reinterpret_cast<IVanilliaEditablePanel*>(gHookFuncs.COptionsSubMultiplayer_ctor(pthis, dummy, parent));
-	IVanilliaPanel* modelbitmap = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<int>(res) + 0xb8);
+	auto res = gHookFuncs.COptionsSubMultiplayer_ctor(pthis, dummy, parent);
+	IVanilliaPanel* modelbitmap = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0xb8);
 	modelbitmap->SetVisible(false);
-	vgui::ModelViewPanel* panel = new vgui::ModelViewPanel(pthis, "ModelImage");
 	int x, y, w, h;
 	vgui::ipanel()->GetPos(modelbitmap->GetVPanel(), x, y);
 	vgui::ipanel()->GetSize(modelbitmap->GetVPanel(), w, h);
 
 	int w2, h2;
-	IVanilliaPanel* slider2 = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<int>(res) + 0x10c);
+	IVanilliaPanel* slider2 = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0x10c);
 	vgui::ipanel()->GetSize(slider2->GetVPanel(), w2, h2);
 
+	vgui::ModelViewPanel* panel = new vgui::ModelViewPanel(pthis, "3DModelImage");
 	panel->SetBounds(x, y, w, h - h2);
 	panel->SetupTexBuffer();
 	panel->SetModelPos(0, 45, 0);
 	panel->SetAnimate(true);
-	panel->SetBgColor(modelbitmap->GetBgColor());
 	g_modelviewPanel = panel;
 
 	vgui::HScheme scheme = vgui::scheme()->LoadSchemeFromFile("resource/ClientScheme.res", nullptr);
-	vgui::Slider* slider = new vgui::Slider(pthis, "Rotate Slider");
+	vgui::Slider* slider = new vgui::Slider(pthis, "RotateSlider");
 	slider->SetRange(0, 360);
 	slider->SetBounds(x, y + h - h2, w, h2);
 	slider->SetScheme(scheme);
@@ -291,11 +291,11 @@ void* __fastcall COptionsSubMultiplayer_ctor(vgui::Panel* pthis, int dummy, void
 }
 void* __fastcall COptionsSubMultiplayer_dtor(vgui::Panel* pthis, int dummy, byte unk) {
 	if (g_modelviewPanel) {
-		delete g_modelviewPanel;
+		delete g_modelviewPanel.Get();
 		g_modelviewPanel = nullptr;
 	}
 	if (g_modelviewSlider) {
-		delete g_modelviewSlider;
+		delete g_modelviewSlider.Get();
 		g_modelviewSlider = nullptr;
 	}
 	return gHookFuncs.COptionsSubMultiplayer_dtor(pthis, dummy, unk);
@@ -327,7 +327,6 @@ void BasePanel_InstallHook(void){
 			Install_InlineHook(COptionsSubMultiplayer_ctor);
 #define SC_COPTIONSUBMULTIPLAYER_DTOR_SIG "\x55\x8B\xEC\x56\x8B\xF1\xC7\x06\x2A\x2A\x2A\x2A\xE8\xEF\x9B\x01\x00\xF6\x45\x08\x01\x74\x0E\x68\x30\x01\x00\x00\x56\xE8\xB0\x9A\x03\x00\x83\xC4\x08\x8B\xC6\x5E\x5D\xC2\x04\x00"
 			Fill_Sig(SC_COPTIONSUBMULTIPLAYER_DTOR_SIG, hGameUI, moduleSize, COptionsSubMultiplayer_dtor);
-			auto x = gHookFuncs.COptionsSubMultiplayer_dtor;
 			Install_InlineHook(COptionsSubMultiplayer_dtor);
 #define REMAPPALLET_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x81\xEC\x2C\x02\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xF0\x53\x56\x57\x50\x8D\x45\xF4\x64\xA3\x00\x00\x00\x00\x8B\x75\x08\x8D\x8D\xC8\xFD\xFF\xFF\x6A\x00\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x56\x56"
 			Fill_Sig(REMAPPALLET_SIG, hGameUI, moduleSize, RemapPalette);

@@ -78,7 +78,6 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 	g_pSurface = (vgui::ISurface *)factories[0](VGUI_SURFACE_INTERFACE_VERSION, NULL);
 	staticSurface = (IEngineSurface *)factories[0](ENGINE_SURFACE_VERSION, NULL);
 
-	KeyValuesSystem_InstallHook();
 	Surface_InstallHooks();
 	GameConsole_InstallHook();
 	GameUI_InstallHook();

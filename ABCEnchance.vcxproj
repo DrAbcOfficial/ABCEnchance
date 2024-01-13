@@ -262,7 +262,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp" />
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp" />
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp" />
-    <ClCompile Include="VGUI2\KeyValuesSystemHook.cpp" />
     <ClCompile Include="VGUI2\Scheme.cpp" />
     <ClCompile Include="VGUI2\SchemeHook.cpp" />
     <ClCompile Include="VGUI2\spr_image.cpp" />
