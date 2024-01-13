@@ -149,13 +149,14 @@ void CBaseUI::ShowConsole(void)
 	m_pfnCBaseUI_ShowConsole(this, 0);
 }
 
+extern void AddHook(hook_t* hook);
 void BaseUI_InstallHook(void)
 {
 	CreateInterfaceFn fnCreateInterface = g_pMetaHookAPI->GetEngineFactory();
 	baseuifuncs = (IBaseUI *)fnCreateInterface(BASEUI_INTERFACE_VERSION, NULL);
 	gameuifuncs = (IGameUIFuncs *)fnCreateInterface(VENGINE_GAMEUIFUNCS_VERSION, NULL);
 	DWORD *pVFTable = *(DWORD **)&s_BaseUI;
-	g_pMetaHookAPI->VFTHook(baseuifuncs, 0, 1, (void *)pVFTable[1], (void **)&m_pfnCBaseUI_Initialize);
-	g_pMetaHookAPI->VFTHook(baseuifuncs, 0, 2, (void*)pVFTable[2], (void**)&m_pfnCBaseUI_Start);
-	g_pMetaHookAPI->VFTHook(baseuifuncs, 0, 3, (void *)pVFTable[3], (void **)&m_pfnCBaseUI_Shutdown);
+	AddHook(g_pMetaHookAPI->VFTHook(baseuifuncs, 0, 1, (void*)pVFTable[1], (void**)&m_pfnCBaseUI_Initialize));
+	AddHook(g_pMetaHookAPI->VFTHook(baseuifuncs, 0, 2, (void*)pVFTable[2], (void**)&m_pfnCBaseUI_Start));
+	AddHook(g_pMetaHookAPI->VFTHook(baseuifuncs, 0, 3, (void*)pVFTable[3], (void**)&m_pfnCBaseUI_Shutdown));
 }

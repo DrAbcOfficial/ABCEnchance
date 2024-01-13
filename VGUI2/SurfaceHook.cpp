@@ -897,29 +897,25 @@ void CSurfaceProxy::SetVGUI2MouseControl(bool state)
 	m_pfnSetVGUI2MouseControl(this, 0, state);
 }
 
+extern void AddHook(hook_t* hook);
 void Surface_InstallHooks(void)
 {
 	DWORD *pVFTable = *(DWORD **)&g_SurfaceProxy;
 
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 1, (void *)pVFTable[1],   (void **)&m_pfnSurface_Shutdown);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 13, (void *)pVFTable[13], (void **)&m_pfnDrawSetTextFont);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 15, (void *)pVFTable[15], (void **)&m_pfnDrawSetTextColor);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 14, (void *)pVFTable[14], (void **)&m_pfnDrawSetTextColor2);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 19, (void *)pVFTable[19], (void **)&m_pfnDrawUnicodeChar);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 20, (void *)pVFTable[20], (void **)&m_pfnDrawUnicodeCharAdd);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 50, (void *)pVFTable[50], (void **)&m_pfnSupportsFeature);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 59, (void *)pVFTable[59], (void **)&m_pfnCreateFont);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 60, (void *)pVFTable[60], (void **)&m_pfnAddGlyphSetToFont);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 61, (void *)pVFTable[61], (void **)&m_pfnAddCustomFontFile);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 62, (void *)pVFTable[62], (void **)&m_pfnGetFontTall);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 63, (void *)pVFTable[63], (void **)&m_pfnGetCharABCwide);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 64, (void *)pVFTable[64], (void **)&m_pfnGetCharacterWidth);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 65, (void *)pVFTable[65], (void **)&m_pfnGetTextSize);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 89, (void *)pVFTable[89], (void **)&m_pfnGetFontAscent);
-	g_pMetaHookAPI->VFTHook(g_pSurface, 0, 91, (void *)pVFTable[91], (void **)&m_pfnSetLanguage);
-}
-
-void Surface_UninstallHooks(void)
-{
-
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 1, (void *)pVFTable[1],   (void **)&m_pfnSurface_Shutdown));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 13, (void *)pVFTable[13], (void **)&m_pfnDrawSetTextFont));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 15, (void *)pVFTable[15], (void **)&m_pfnDrawSetTextColor));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 14, (void *)pVFTable[14], (void **)&m_pfnDrawSetTextColor2));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 19, (void *)pVFTable[19], (void **)&m_pfnDrawUnicodeChar));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 20, (void *)pVFTable[20], (void **)&m_pfnDrawUnicodeCharAdd));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 50, (void *)pVFTable[50], (void **)&m_pfnSupportsFeature));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 59, (void *)pVFTable[59], (void **)&m_pfnCreateFont));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 60, (void *)pVFTable[60], (void **)&m_pfnAddGlyphSetToFont));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 61, (void *)pVFTable[61], (void **)&m_pfnAddCustomFontFile));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 62, (void *)pVFTable[62], (void **)&m_pfnGetFontTall));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 63, (void *)pVFTable[63], (void **)&m_pfnGetCharABCwide));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 64, (void *)pVFTable[64], (void **)&m_pfnGetCharacterWidth));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 65, (void *)pVFTable[65], (void **)&m_pfnGetTextSize));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 89, (void *)pVFTable[89], (void **)&m_pfnGetFontAscent));
+	AddHook(g_pMetaHookAPI->VFTHook(g_pSurface, 0, 91, (void *)pVFTable[91], (void **)&m_pfnSetLanguage));
 }
