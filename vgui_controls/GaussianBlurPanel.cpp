@@ -7,7 +7,9 @@
 
 #include "GaussianBlurPanel.h"
 #include <glew.h>
+#include <gl_draw.h>
 #include <gl_utility.h>
+
 
 using namespace vgui;
 //-----------------------------------------------------------------------------
@@ -35,6 +37,14 @@ void vgui::GaussianBlurPanel::SetupTexture(){
 	}
 }
 
+float vgui::GaussianBlurPanel::GetBlurRatio(){
+	return m_flRatio;
+}
+
+void vgui::GaussianBlurPanel::SetBlurRatio(float f){
+	m_flRatio = f;
+}
+
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -50,6 +60,15 @@ void GaussianBlurPanel::PaintBackground(){
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_hBufferFBO);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_oldFrameBuffer);
 	glBlitFramebuffer(x, y, x + w, x + h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	DrawGaussianBlur(m_hBufferTex, m_flRatio, w, h);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+
+	glEnable(GL_TEXTURE_2D);
+	glBind(m_hBufferTex);
+	Color bgcolor = GetBgColor();
+	glColor4ub(bgcolor.r(), bgcolor.g(), bgcolor.b(), bgcolor.a());
+	DrawQuadPos(0, 0, w, h);
+	glDisable(GL_TEXTURE_2D);
 }
 
 //-----------------------------------------------------------------------------
@@ -57,5 +76,5 @@ void GaussianBlurPanel::PaintBackground(){
 //-----------------------------------------------------------------------------
 void GaussianBlurPanel::ApplySettings(KeyValues *inResourceData){
 	BaseClass::ApplySettings(inResourceData);
-
+	m_flRatio = inResourceData->GetFloat("ratio", 1.0f);
 }
