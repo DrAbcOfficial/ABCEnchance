@@ -1,7 +1,8 @@
 #pragma once
 #include "Color.h" 
 #include <vgui/IScheme.h>
-#define VGUI_CREATE_NEWTGA_TEXTURE(tex, path) tex=vgui::surface()->CreateNewTextureID();vgui::surface()->DrawSetTextureFile(tex, path, true, false)
+void VGUI_CREATE_NEWTGA_TEXTURE(int tex, const char* path);
+size_t GET_SCREEN_PIXEL(bool h, const char* str);
 
 typedef struct ScreenInfo_s{
 	int iWidth;
@@ -10,6 +11,11 @@ typedef struct ScreenInfo_s{
 extern vgui::IScheme* pSchemeData;
 extern ScreenInfo_t gScreenInfo;
 extern Color gDefaultColor;
+
+// ScreenHeight returns the height of the screen, in pixels
+size_t ScreenHeight();
+// ScreenWidth returns the width of the screen, in pixels
+size_t ScreenWidth();
 
 //VGUI2
 #define VGUI2_ROOT_DIR "abcenchance/res/"

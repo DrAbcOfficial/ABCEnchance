@@ -15,6 +15,10 @@
 
 #include "gl_draw.h"
 
+void glBind(GLint tex){
+	gHookFuncs.GL_Bind(tex);
+}
+
 void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame) {
 	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), frame);
 	gEngfuncs.pTriAPI->RenderMode(mode);
@@ -194,7 +198,7 @@ void DrawQuad(int w, int h) {
 	DrawQuadPos(0, 0, w, h);
 }
 void DrawScreenQuad() {
-	DrawQuad(ScreenWidth, ScreenHeight);
+	DrawQuad(ScreenWidth(), ScreenHeight());
 }
 void DrawGaussianBlur(GLint tex, float ratio, int w, int h) {
 	glEnable(GL_TEXTURE_2D);

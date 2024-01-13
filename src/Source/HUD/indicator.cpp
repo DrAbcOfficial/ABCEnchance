@@ -23,7 +23,7 @@ CHudIndicator m_HudIndicator;
 
 void CHudIndicator::GLInit() {
 	glGenFramebuffersEXT(1, &m_hFilterFBO);
-	m_hFilterTex = GL_GenTextureRGBA8(ScreenWidth, ScreenHeight);
+	m_hFilterTex = GL_GenTextureRGBA8(ScreenWidth(), ScreenHeight());
 }
 void CHudIndicator::Init(void){
 	Reset();
@@ -125,10 +125,10 @@ void CHudIndicator::CalcDamageDirection(indicatorinfo_s &var){
 	mathlib::Vector2RotateCASA(var.vecHUDC, -sprWidth, y1, ca, sa);
 	mathlib::Vector2RotateCASA(var.vecHUDD, sprWidth, y1, ca, sa);
 	//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
-	mathlib::CenterPos2OpenGLPos(var.vecHUDA, ScreenWidth, ScreenHeight);
-	mathlib::CenterPos2OpenGLPos(var.vecHUDB, ScreenWidth, ScreenHeight);
-	mathlib::CenterPos2OpenGLPos(var.vecHUDC, ScreenWidth, ScreenHeight);
-	mathlib::CenterPos2OpenGLPos(var.vecHUDD, ScreenWidth, ScreenHeight);
+	mathlib::CenterPos2OpenGLPos(var.vecHUDA, ScreenWidth(), ScreenHeight());
+	mathlib::CenterPos2OpenGLPos(var.vecHUDB, ScreenWidth(), ScreenHeight());
+	mathlib::CenterPos2OpenGLPos(var.vecHUDC, ScreenWidth(), ScreenHeight());
+	mathlib::CenterPos2OpenGLPos(var.vecHUDD, ScreenWidth(), ScreenHeight());
 }
 int CHudIndicator::DrawPain(float flTime){
 	int r, g, b, a;
@@ -138,15 +138,15 @@ int CHudIndicator::DrawPain(float flTime){
 
 		float fa = (m_hScreenFilter.flKeepTime - flTime) / ShockIndicatorTime;
 		float damagefactor = gCVars.pDamageScreenFactor->value * (m_hScreenFilter.iDamage / max(gCVars.pDamageScreenBase->value, 1));
-		int SizedScreenW = ScreenWidth * (1 + damagefactor) * (damagefactor * fa + 1);
-		int SizedScreenH = ScreenHeight * (1 + damagefactor) * (damagefactor * fa + 1);
+		int SizedScreenW = ScreenWidth() * (1 + damagefactor) * (damagefactor * fa + 1);
+		int SizedScreenH = ScreenHeight() * (1 + damagefactor) * (damagefactor * fa + 1);
 		fa *= 0.7;
-		int wDiffer = SizedScreenW - ScreenWidth;
-		int hDiffer = SizedScreenH - ScreenHeight;
+		int wDiffer = SizedScreenW - ScreenWidth();
+		int hDiffer = SizedScreenH - ScreenHeight();
 		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hFilterFBO);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hFilterTex, 0);
-		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hFilterFBO, ScreenWidth, ScreenHeight, ScreenWidth, ScreenHeight);
+		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hFilterFBO, ScreenWidth(), ScreenHeight(), ScreenWidth(), ScreenHeight());
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
 		glEnable(GL_TEXTURE_2D);

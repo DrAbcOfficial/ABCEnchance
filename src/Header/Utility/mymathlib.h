@@ -15,9 +15,6 @@ typedef int fixed16_t;
 #define RANDOM_LONG(a, b) gEngfuncs.pfnRandomLong(a, b)
 #define RANDOM_FLOAT(a, b) gEngfuncs.pfnRandomFloat(a, b)
 
-#define GET_SCREEN_PIXEL(h, str) mathlib::GetScreenPixel(h ? ScreenHeight : ScreenWidth, atof(pSchemeData->GetResourceString(str)))
-
-
 enum
 {
 	Q_PITCH = 0,	// up / down

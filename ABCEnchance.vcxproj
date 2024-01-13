@@ -293,6 +293,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\FileOpenDialog.cpp" />
     <ClCompile Include="vgui_controls\FocusNavGroup.cpp" />
     <ClCompile Include="vgui_controls\Frame.cpp" />
+    <ClCompile Include="vgui_controls\GaussianBlurPanel.cpp" />
     <ClCompile Include="vgui_controls\GraphPanel.cpp" />
     <ClCompile Include="vgui_controls\HTML.cpp" />
     <ClCompile Include="vgui_controls\Image.cpp" />
@@ -583,6 +584,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\FileOpenDialog.h" />
     <ClInclude Include="vgui_controls\FocusNavGroup.h" />
     <ClInclude Include="vgui_controls\Frame.h" />
+    <ClInclude Include="vgui_controls\GaussianBlurPanel.h" />
     <ClInclude Include="vgui_controls\GraphPanel.h" />
     <ClInclude Include="vgui_controls\HTML.h" />
     <ClInclude Include="vgui_controls\Image.h" />

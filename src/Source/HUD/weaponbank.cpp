@@ -256,7 +256,7 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust) {
 			return;
 	}
 	auto fSetupSprInfo = [&](const char* szType, HSPRITE* spr, wrect_t* rc, HSPRITE* dspr = nullptr, wrect_t* drc = nullptr) {
-		int iRes = ScreenWidth < 640 ? 320 : 640;
+		int iRes = ScreenWidth() < 640 ? 320 : 640;
 		client_sprite_t* p = this->GetSpriteList(pList, szType, iRes, i);
 		if (p != nullptr) {
 			sprintf_s(sz, "sprites/%s.spr", p->szSprite);

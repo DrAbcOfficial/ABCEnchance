@@ -1,6 +1,5 @@
 #pragma once
 #include <metahook.h>
-#include "local.h"
 #include "vguilocal.h"
 #include "steam_api.h"
 #include "player_info.h"
