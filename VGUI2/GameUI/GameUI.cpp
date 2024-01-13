@@ -33,108 +33,84 @@ void (__fastcall *g_pfnOnExitToDesktop)(void* pThis, int);
 
 class CGameUI : public IGameUI{
 public:
-	virtual void Initialize(CreateInterfaceFn* factories, int count);
-	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system);
-	virtual void Shutdown();
-	virtual int ActivateGameUI();
-	virtual int ActivateDemoUI();
-	virtual int HasExclusiveInput();
-	virtual void RunFrame();
-	virtual void ConnectToServer(const char* game, int IP, int port);
-	virtual void DisconnectFromServer();
-	virtual void HideGameUI();
-	virtual bool IsGameUIActive();
-	virtual void LoadingStarted(const char* resourceType, const char* resourceName);
-	virtual void LoadingFinished(const char* resourceType, const char* resourceName);
-	virtual void StartProgressBar(const char* progressType, int progressSteps);
-	virtual int ContinueProgressBar(int progressPoint, float progressFraction);
-	virtual void StopProgressBar(bool bError, const char* failureReason, const char* extendedReason = nullptr);
-	virtual int SetProgressBarStatusText(const char* statusText);
-	virtual void SetSecondaryProgressBar(float progress);
-	virtual void SetSecondaryProgressBarText(const char* statusText);
-	virtual void ValidateCDKey(bool force, bool inConnect);
-	virtual void OnDisconnectFromServer(int maybeport, char* maybeip);
-	virtual void ShowPasswordPromptAndRetry(char* passwd, bool correct);
-	virtual void OnExitToDesktop();
+	virtual void Initialize(CreateInterfaceFn* factories, int count) {
+		g_pfnInitialize(this, 0, factories, count);
+	}
+	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system) {
+		g_pfnStart(this, 0, engineFuncs, interfaceVersion, system);
+		BackGroundInitMusic();
+	}
+	virtual void Shutdown() {
+		g_pfnShutdown(this, 0);
+	}
+	virtual int ActivateGameUI() {
+		return g_pfnActivateGameUI(this, 0);
+	}
+	virtual int ActivateDemoUI() {
+		return g_pfnActivateDemoUI(this, 0);
+	}
+	virtual int HasExclusiveInput() {
+		return g_pfnHasExclusiveInput(this, 0);
+	}
+	virtual void RunFrame() {
+		g_pfnRunFrame(this, 0);
+	}
+	virtual void ConnectToServer(const char* game, int IP, int port) {
+		BackGroundSetDecodeState(false);
+		g_pfnConnectToServer(this, 0, game, IP, port);
+	}
+	virtual void DisconnectFromServer() {
+		BackGroundSetDecodeState(true);
+		g_pfnDisconnectFromServer(this, 0);
+	}
+	virtual void HideGameUI() {
+		g_pfnHideGameUI(this, 0);
+	}
+	virtual bool IsGameUIActive() {
+		return g_pfnIsGameUIActive(this, 0);
+	}
+	virtual void LoadingStarted(const char* resourceType, const char* resourceName) {
+		g_pfnLoadingStarted(this, 0, resourceType, resourceName);
+	}
+	virtual void LoadingFinished(const char* resourceType, const char* resourceName) {
+		g_pfnLoadingFinished(this, 0, resourceType, resourceName);
+	}
+	virtual void StartProgressBar(const char* progressType, int progressSteps) {
+		g_pfnStartProgressBar(this, 0, progressType, progressSteps);
+	}
+	virtual int ContinueProgressBar(int progressPoint, float progressFraction) {
+		return g_pfnContinueProgressBar(this, 0, progressPoint, progressFraction);
+	}
+	virtual void StopProgressBar(bool bError, const char* failureReason, const char* extendedReason = nullptr) {
+		g_pfnStopProgressBar(this, 0, bError, failureReason, extendedReason);
+	}
+	virtual int SetProgressBarStatusText(const char* statusText) {
+		return g_pfnSetProgressBarStatusText(this, 0, statusText);
+	}
+	virtual void SetSecondaryProgressBar(float progress) {
+		g_pfnSetSecondaryProgressBar(this, 0, progress);
+	}
+	virtual void SetSecondaryProgressBarText(const char* statusText) {
+		g_pfnSetSecondaryProgressBarText(this, 0, statusText);
+	}
+	virtual void ValidateCDKey(bool force, bool inConnect) {
+		g_pfnValidateCDKey(this, 0, force, inConnect);
+	}
+	virtual void OnDisconnectFromServer(int maybeport, char* maybeip) {
+		g_pfnOnDisconnectFromServer(this, 0, maybeport, maybeip);
+	}
+	virtual void ShowPasswordPromptAndRetry(char* passwd, bool correct) {
+		g_pfnShowPasswordPromptAndRetry(this, 0, passwd, correct);
+	}
+	virtual void OnExitToDesktop() {
+		g_pfnOnExitToDesktop(this, 0);
+	}
 
 	bool m_bLoadlingLevel;
 	char m_szPreviousStatusText[128];
 };
 static CGameUI s_GameUI;
 IGameUI* gameui;
-
-void CGameUI::Initialize(CreateInterfaceFn* factories, int count) {
-	g_pfnInitialize(this, 0, factories, count);
-}
-void CGameUI::Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system) {
-	g_pfnStart(this, 0, engineFuncs, interfaceVersion, system);
-	BackGroundInitMusic();
-}
-void CGameUI::Shutdown(void) {
-	g_pfnShutdown(this, 0);
-}
-int  CGameUI::ActivateGameUI(void) {
-	return g_pfnActivateGameUI(this, 0);
-}
-int  CGameUI::ActivateDemoUI(void) {
-	return g_pfnActivateDemoUI(this, 0);
-}
-int  CGameUI::HasExclusiveInput(void) {
-	return g_pfnHasExclusiveInput(this, 0);
-}
-void CGameUI::RunFrame(void) {
-	g_pfnRunFrame(this, 0);
-}
-void CGameUI::ConnectToServer(const char* game, int IP, int port) {
-	BackGroundSetDecodeState(false);
-	g_pfnConnectToServer(this, 0, game, IP, port);
-}
-void CGameUI::DisconnectFromServer(void) {
-	BackGroundSetDecodeState(true);
-	g_pfnDisconnectFromServer(this, 0);
-}
-void CGameUI::HideGameUI(void) {
-	g_pfnHideGameUI(this, 0);
-}
-bool CGameUI::IsGameUIActive(void) {
-	return g_pfnIsGameUIActive(this, 0);
-}
-void CGameUI::LoadingStarted(const char* resourceType, const char* resourceName) {
-	g_pfnLoadingStarted(this, 0, resourceType, resourceName);
-}
-void CGameUI::LoadingFinished(const char* resourceType, const char* resourceName) {
-	g_pfnLoadingFinished(this, 0, resourceType, resourceName);
-}
-void CGameUI::StartProgressBar(const char* progressType, int progressSteps) {
-	g_pfnStartProgressBar(this, 0, progressType, progressSteps);
-}
-int  CGameUI::ContinueProgressBar(int progressPoint, float progressFraction) {
-	return g_pfnContinueProgressBar(this, 0, progressPoint, progressFraction);
-}
-void CGameUI::StopProgressBar(bool bError, const char* failureReason, const char* extendedReason) {
-	g_pfnStopProgressBar(this, 0, bError, failureReason, extendedReason);
-}
-int  CGameUI::SetProgressBarStatusText(const char* statusText) {
-	return g_pfnSetProgressBarStatusText(this, 0, statusText);
-}
-void CGameUI::SetSecondaryProgressBar(float progress) {
-	g_pfnSetSecondaryProgressBar(this, 0, progress);
-}
-void CGameUI::SetSecondaryProgressBarText(const char* statusText) {
-	g_pfnSetSecondaryProgressBarText(this, 0, statusText);
-}
-void CGameUI::ValidateCDKey(bool force, bool inConnect) {
-	g_pfnValidateCDKey(this, 0, force, inConnect);
-}
-void CGameUI::OnDisconnectFromServer(int maybeport, char* maybeip) {
-	g_pfnOnDisconnectFromServer(this, 0, maybeport, maybeip);
-}
-void CGameUI::ShowPasswordPromptAndRetry(char* passwd, bool correct) {
-	g_pfnShowPasswordPromptAndRetry(this, 0, passwd, correct);
-}
-void CGameUI::OnExitToDesktop() {
-	g_pfnOnExitToDesktop(this, 0);
-}
 
 void GameUI_InstallHook(){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
