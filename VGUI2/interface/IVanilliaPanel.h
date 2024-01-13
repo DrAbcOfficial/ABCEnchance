@@ -1,9 +1,11 @@
 #ifndef VGUI_IVanilliaPanel_H_
 #define VGUI_IVanilliaPanel_H_
 
+#include <VGUI.h>
+
 class IVanilliaPanel {
 public:
-	virtual void* GetVPanel() = 0;//1
+	virtual vgui::VPANEL GetVPanel() = 0;//1
 	virtual void* Think() = 0;//2
 	virtual void* PerformApplySchemeSettings() = 0;//3
 	virtual void* PaintTraverse(bool param_1, bool param_2) = 0;//4
@@ -23,7 +25,7 @@ public:
 	virtual void* GetTabPosition() = 0;//18
 	virtual void* GetName() = 0;//19
 	virtual void* GetClassName() = 0;//20
-	virtual void* GetScheme() = 0;//21
+	virtual vgui::HScheme GetScheme() = 0;//21
 	virtual void* IsProportional() = 0;//22
 	virtual void* IsAutoDeleteSet() = 0;//23
 	virtual void* OnDelete() = 0;//24
@@ -58,8 +60,8 @@ public:
 	virtual void* MoveToFront() = 0;//52
 	virtual void* SetBgColor(class Color* param_1) = 0;//53
 	virtual void* SetFgColor(class Color* param_1) = 0;//54
-	virtual void* GetBgColor() = 0;//55
-	virtual void* GetFgColor() = 0;//56
+	virtual class Color GetBgColor() = 0;//55
+	virtual class Color GetFgColor() = 0;//56
 	virtual void* SetCursor(ulong param_1) = 0;//57
 	virtual void* GetCursor() = 0;//58
 	virtual void* HasFocus() = 0;//59
@@ -139,5 +141,10 @@ public:
 	virtual void* InternalMouseFocusTicked() = 0;//133
 	virtual void* InternalInvalidateLayout() = 0;//134
 	virtual void* InternalMove() = 0;//135
+};
+
+class IVanilliaEditablePanel : public IVanilliaPanel {
+public:
+	virtual void LoadControlSettings(const char* resourceName, const char* pathID, KeyValues* pKeyValues) = 0;
 };
 #endif

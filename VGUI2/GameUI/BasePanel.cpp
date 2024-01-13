@@ -5,6 +5,9 @@
 #include "IFileSystem.h"
 #include "IVanilliaPanel.h"
 
+#include <vgui_controls/Slider.h>
+#include <ModelViewPanel.h>
+
 #include <vector>
 #include <string>
 #include <thread>
@@ -258,6 +261,43 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	vgui::surface()->DrawSetTexture(g_iTextureID);
 	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
 }
+vgui::ModelViewPanel* g_modelviewPanel;
+vgui::Slider* g_modelviewSlider;
+void* __fastcall COptionsSubMultiplayer_ctor(vgui::Panel* pthis, int dummy, void* parent) {
+	IVanilliaEditablePanel* res = reinterpret_cast<IVanilliaEditablePanel*>(gHookFuncs.COptionsSubMultiplayer_ctor(pthis, dummy, parent));
+	IVanilliaPanel* modelbitmap = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<int>(res) + 0xb8);
+	modelbitmap->SetVisible(false);
+	vgui::ModelViewPanel* panel = new vgui::ModelViewPanel(pthis, "ModelImage");
+	int x, y, w, h;
+	vgui::ipanel()->GetPos(modelbitmap->GetVPanel(), x, y);
+	vgui::ipanel()->GetSize(modelbitmap->GetVPanel(), w, h);
+
+	int w2, h2;
+	IVanilliaPanel* slider2 = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<int>(res) + 0x10c);
+	vgui::ipanel()->GetSize(slider2->GetVPanel(), w2, h2);
+
+	panel->SetBounds(x, y, w, h - h2);
+	panel->SetupTexBuffer();
+	panel->SetModelPos(0, 45, 0);
+	panel->SetAnimate(true);
+	panel->SetBgColor(modelbitmap->GetBgColor());
+	g_modelviewPanel = panel;
+
+	vgui::HScheme scheme = vgui::scheme()->LoadSchemeFromFile("resource/ClientScheme.res", nullptr);
+	vgui::Slider* slider = new vgui::Slider(pthis, "Rotate Slider");
+	slider->SetRange(0, 360);
+	slider->SetBounds(x, y + h - h2, w, h2);
+	slider->SetScheme(scheme);
+	slider->AddActionSignalTarget(pthis);
+	g_modelviewSlider = slider;
+	return res;
+}
+void __fastcall RemapPalette(vgui::Panel* pthis, int dummy, char* modelname, int color1, int color2) {
+	char temp[MAX_PATH];
+	std::snprintf(temp, MAX_PATH, "models/player/%s/%s.mdl", modelname, modelname);
+	g_modelviewPanel->LoadModel(temp);
+	g_modelviewPanel->SetModelRotate(0, g_modelviewSlider->GetValue(), 0);
+}
 void BasePanel_InstallHook(void){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
 	if (hGameUI) {
@@ -273,6 +313,13 @@ void BasePanel_InstallHook(void){
 #define SC_CBASEPANEL_RUNMENUCOMMAND_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x51\x53\x56\x57\xA1\x2A\x2A\x2A\x2A\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x2A\x2A\x2A\x2A\x8B\xD9\x8B\x75\x08\x68\x2A\x2A\x2A\x2A\x56"
 			Fill_Sig(SC_CBASEPANEL_RUNMENUCOMMAND_SIG, hGameUI, moduleSize, CBasePanel_RunMenuCommand);
 			Install_InlineHook(CBasePanel_RunMenuCommand);
+#define SC_COPTIONSUBMULTIPLAYER_CTOR_SIG "\x53\x8B\xDC\x83\xEC\x08\x83\xE4\xF0\x83\xC4\x04\x55\x8B\x6B\x04\x89\x6C\x24\x04\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x53\x81\xEC\x68\x01\x00\x00"
+			Fill_Sig(SC_COPTIONSUBMULTIPLAYER_CTOR_SIG, hGameUI, moduleSize, COptionsSubMultiplayer_ctor);
+			Install_InlineHook(COptionsSubMultiplayer_ctor);
+#define REMAPPALLET_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x81\xEC\x2C\x02\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xF0\x53\x56\x57\x50\x8D\x45\xF4\x64\xA3\x00\x00\x00\x00\x8B\x75\x08\x8D\x8D\xC8\xFD\xFF\xFF\x6A\x00\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x56\x56"
+			Fill_Sig(REMAPPALLET_SIG, hGameUI, moduleSize, RemapPalette);
+			auto x = gHookFuncs.RemapPalette;
+			Install_InlineHook(RemapPalette);
 		}
 	}
 	else
