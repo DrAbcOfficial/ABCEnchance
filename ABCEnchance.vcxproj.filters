@@ -101,9 +101,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\HLSDK\common\interface.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
     <ClCompile Include="vgui_controls\AnalogBar.cpp">
       <Filter>VGUI\control</Filter>
     </ClCompile>
@@ -314,9 +311,6 @@
     <ClCompile Include="vgui_controls\WizardSubPanel.cpp">
       <Filter>VGUI\control</Filter>
     </ClCompile>
-    <ClCompile Include="SourceSDK\filesystem.cpp">
-      <Filter>SourceSDK</Filter>
-    </ClCompile>
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
       <Filter>SourceSDK</Filter>
     </ClCompile>
@@ -417,9 +411,6 @@
       <Filter>VGUI2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\FontAmalgam.cpp">
-      <Filter>VGUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\KeyValuesSystemHook.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\SurfaceHook.cpp">
@@ -632,76 +623,10 @@
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp">
       <Filter>VGUI2\gameui</Filter>
     </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\CGameLoading.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\CvarNegateCheckButton.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\CvarSlider.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\CvarTextEntry.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\CvarToggleCheckButton.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp">
       <Filter>VGUI2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\KeyToggleCheckButton.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\LabeledCommandComboBox.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\LoadingDialog.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\LogoFile.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\ModInfo.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\MultiplayerAdvancedDialog.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\OptionsDialog.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\OptionsSubAdvanced.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\OptionsSubAudio.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\OptionsSubButtonSettings.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\OptionsSubKeyboard.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\OptionsSubMouse.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\OptionsSubMultiplayer.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\OptionsSubVideo.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\OptionsSubVoice.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\VControlsListPanel.cpp">
-      <Filter>VGUI2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\ScriptObject.cpp">
       <Filter>VGUI2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Utility\NeteaseApi.cpp">
@@ -733,6 +658,12 @@
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\radar.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\HLSDK\common\interface.cpp">
+      <Filter>Public\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_controls\ModelViewPanel.cpp">
+      <Filter>VGUI\control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1027,9 +958,6 @@
     <ClInclude Include="SourceSDK\Color.h">
       <Filter>SourceSDK</Filter>
     </ClInclude>
-    <ClInclude Include="SourceSDK\filesystem.h">
-      <Filter>SourceSDK</Filter>
-    </ClInclude>
     <ClInclude Include="SourceSDK\filesystem_helpers.h">
       <Filter>SourceSDK</Filter>
     </ClInclude>
@@ -1094,9 +1022,6 @@
       <Filter>SourceSDK\tier1</Filter>
     </ClInclude>
     <ClInclude Include="SourceSDK\tier1\iconvar.h">
-      <Filter>SourceSDK\tier1</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceSDK\tier1\interface.h">
       <Filter>SourceSDK\tier1</Filter>
     </ClInclude>
     <ClInclude Include="SourceSDK\tier1\KeyValues.h">
@@ -1549,79 +1474,10 @@
     <ClInclude Include="VGUI2\GameUI\BasePanel.h">
       <Filter>VGUI2\gameui</Filter>
     </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\BMPUtils.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\CGameLoading.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\CvarNegateCheckButton.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\CvarSlider.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\CvarTextEntry.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\CvarToggleCheckButton.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
     <ClInclude Include="VGUI2\GameUI\GameConsole.h">
       <Filter>VGUI2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\GameUI.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\LabeledCommandComboBox.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\LoadingDialog.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\LogoFile.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\KeyToggleCheckButton.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\ModInfo.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\MultiplayerAdvancedDialog.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\OptionsDialog.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\OptionsSubAdvanced.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\OptionsSubAudio.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\OptionsSubButtonSettings.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\OptionsSubKeyboard.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\OptionsSubMouse.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\OptionsSubMultiplayer.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\OptionsSubVideo.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\OptionsSubVoice.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\VControlsListPanel.h">
-      <Filter>VGUI2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\ScriptObject.h">
       <Filter>VGUI2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\NeteaseApi.h">
@@ -1695,6 +1551,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\radar.h">
       <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\ModelViewPanel.h">
+      <Filter>VGUI\control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
