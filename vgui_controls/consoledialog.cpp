@@ -1341,7 +1341,7 @@ void CConsoleDialog::OnKeyCodePressed(KeyCode code)
 	if (code == gameuifuncs->GetVGUI2KeyCodeForBind("toggleconsole"))
 		ClosedByHittingTilde();
 	else if (code == KEY_XBUTTON_B)
-		Hide();
+		Close();
 	else
 		BaseClass::OnKeyCodePressed(code);
 }
