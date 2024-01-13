@@ -4,7 +4,6 @@
 //
 //=====================================================================================//
 
-#include "filesystem.h"
 #include "filesystem_helpers.h"
 
 #include <tier1/characterset.h>

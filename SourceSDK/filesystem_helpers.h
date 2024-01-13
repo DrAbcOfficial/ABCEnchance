@@ -12,6 +12,7 @@
 #pragma once
 #endif
 
+#include "IFileSystem.h"
 
 // Call until it returns NULL. Each time you call it, it will parse out a token.
 struct characterset_t;
