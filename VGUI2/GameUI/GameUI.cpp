@@ -100,11 +100,6 @@ bool CGameUI::IsGameUIActive(void) {
 	return g_pfnIsGameUIActive(this, 0);
 }
 void CGameUI::LoadingStarted(const char* resourceType, const char* resourceName) {
-	/*m_bLoadlingLevel = true;
-	if (!g_hGameLoading.Get())
-		g_hGameLoading = new CGameLoading((vgui::Panel*)(BasePanel()), "GameLoading");
-	g_hGameLoading->Activate();
-	GameConsole()->Hide();*/
 	g_pfnLoadingStarted(this, 0, resourceType, resourceName);
 }
 void CGameUI::LoadingFinished(const char* resourceType, const char* resourceName) {
@@ -148,29 +143,29 @@ void GameUI_InstallHook(){
 		gameui = static_cast<IGameUI*>(fnCreateInterface(GAMEUI_INTERFACE_VERSION, nullptr));
 		DWORD* pVFTable = *(DWORD**)&s_GameUI;
 #define GAMEUI_VFTHOOK(index, name) g_pMetaHookAPI->VFTHook(gameui, 0, index, (void *)pVFTable[index], (void **)&g_pfn##name)
-		GAMEUI_VFTHOOK(1, Initialize);
+		//GAMEUI_VFTHOOK(1, Initialize);
 		GAMEUI_VFTHOOK(2, Start);
-		GAMEUI_VFTHOOK(3, Shutdown);
-		GAMEUI_VFTHOOK(4, ActivateGameUI);
-		GAMEUI_VFTHOOK(5, ActivateDemoUI);
-		GAMEUI_VFTHOOK(6, HasExclusiveInput);
-		GAMEUI_VFTHOOK(7, RunFrame);
+		//GAMEUI_VFTHOOK(3, Shutdown);
+		//GAMEUI_VFTHOOK(4, ActivateGameUI);
+		//GAMEUI_VFTHOOK(5, ActivateDemoUI);
+		//GAMEUI_VFTHOOK(6, HasExclusiveInput);
+		//GAMEUI_VFTHOOK(7, RunFrame);
 		GAMEUI_VFTHOOK(8, ConnectToServer);
 		GAMEUI_VFTHOOK(9, DisconnectFromServer);
-		GAMEUI_VFTHOOK(10, HideGameUI);
-		GAMEUI_VFTHOOK(11, IsGameUIActive);
-		GAMEUI_VFTHOOK(12, LoadingStarted);
-		GAMEUI_VFTHOOK(13, LoadingFinished);
-		GAMEUI_VFTHOOK(14, StartProgressBar);
-		GAMEUI_VFTHOOK(15, ContinueProgressBar);
-		GAMEUI_VFTHOOK(16, StopProgressBar);
-		GAMEUI_VFTHOOK(17, SetProgressBarStatusText);
-		GAMEUI_VFTHOOK(18, SetSecondaryProgressBar);
-		GAMEUI_VFTHOOK(19, SetSecondaryProgressBarText);
-		GAMEUI_VFTHOOK(20, ValidateCDKey);
-		GAMEUI_VFTHOOK(21, OnDisconnectFromServer);
-		GAMEUI_VFTHOOK(22, ShowPasswordPromptAndRetry);
-		GAMEUI_VFTHOOK(23, OnExitToDesktop);
+		//GAMEUI_VFTHOOK(10, HideGameUI);
+		//GAMEUI_VFTHOOK(11, IsGameUIActive);
+		//GAMEUI_VFTHOOK(12, LoadingStarted);
+		//GAMEUI_VFTHOOK(13, LoadingFinished);
+		//GAMEUI_VFTHOOK(14, StartProgressBar);
+		//GAMEUI_VFTHOOK(15, ContinueProgressBar);
+		//GAMEUI_VFTHOOK(16, StopProgressBar);
+		//GAMEUI_VFTHOOK(17, SetProgressBarStatusText);
+		//GAMEUI_VFTHOOK(18, SetSecondaryProgressBar);
+		//GAMEUI_VFTHOOK(19, SetSecondaryProgressBarText);
+		//GAMEUI_VFTHOOK(20, ValidateCDKey);
+		//GAMEUI_VFTHOOK(21, OnDisconnectFromServer);
+		//GAMEUI_VFTHOOK(22, ShowPasswordPromptAndRetry);
+		//GAMEUI_VFTHOOK(23, OnExitToDesktop);
 	}
 #undef GAMEUI_VFTHOOK
 }
