@@ -41,7 +41,7 @@ void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, in
 	gEngfuncs.pTriAPI->CullFace(TRI_FRONT);
 	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
 }
-void DrawSPRIconPos(int SprHandle, int mode, vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int r, int g, int b, int a) {
+void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], int r, int g, int b, int a) {
 	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), 0);
 	gEngfuncs.pTriAPI->RenderMode(mode);
 	gEngfuncs.pTriAPI->CullFace(TRI_NONE);

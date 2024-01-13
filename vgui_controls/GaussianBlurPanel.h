@@ -25,7 +25,6 @@ class GaussianBlurPanel : public Panel
 public:
 	GaussianBlurPanel(Panel *parent, const char *name);
 	~GaussianBlurPanel();
-	void SetupTexture();
 
 	float GetBlurRatio();
 	void SetBlurRatio(float f);

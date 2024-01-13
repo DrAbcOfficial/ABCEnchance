@@ -40,6 +40,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+#include <GaussianBlurPanel.h>
 
 using namespace vgui;
 
@@ -1204,6 +1205,7 @@ void CConsolePanel::DumpConsoleTextToFile()
 }
 
 
+GaussianBlurPanel* test;
 //-----------------------------------------------------------------------------
 //
 // Console dialog starts here
@@ -1220,6 +1222,9 @@ CConsoleDialog::CConsoleDialog(Panel* pParent, const char* pName, bool bStatusVe
 
 	LoadControlSettings(VGUI2_ROOT_DIR "ConsoleDialog.res");
 	SetMenuButtonVisible(false);
+
+	test = new GaussianBlurPanel(this, "");
+	test->SetBlurRatio(M_PI);
 
 	((Button*)_closeButton)->SetScheme(scheme);
 	SetVisible(false);
@@ -1262,6 +1267,7 @@ void CConsoleDialog::PerformLayout()
 	int xygap = 4;
 	GetClientArea(x, y, w, h);
 	m_pConsolePanel->SetBounds(x + xygap, y, w - 2 * xygap, h);
+	test->SetBounds(x + xygap, y, w - 2 * xygap, h);
 }
 
 //-----------------------------------------------------------------------------
