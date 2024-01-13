@@ -74,7 +74,6 @@ typedef struct{
 	void		(*pfnPlaybackEvent)			(int flags, const struct edict_s* pInvoker, unsigned short eventindex, float delay, float* origin, float* angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2);
 	//VGUI2
 	char* (*V_strncpy)(char* a1, const char* a2, size_t a3);
-	PVOID(*VGUIClient001_CreateInterface)(HINTERFACEMODULE hModule);
 }cl_refHookfunc_t;
 
 //CVars

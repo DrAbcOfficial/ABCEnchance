@@ -319,7 +319,7 @@ void CRadarPanel::Reset(){
 	flNextUpdateTrTime = 0;
 	SetScale(false);
 	cvar_t* pCvarDevC = CVAR_GET_POINTER("dev_overview_color");
-	if (pCvarDevC && g_metaplugins.renderer) {
+	if (pCvarDevC && g_metaplugins.renderer.has) {
 		sscanf_s(pCvarDevC->string, "%d %d %d", &iOverviewR, &iOverviewG, &iOverviewB);
 		iOverviewR /= 255;
 		iOverviewG /= 255;

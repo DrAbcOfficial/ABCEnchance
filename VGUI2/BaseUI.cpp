@@ -73,6 +73,7 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 		CreateInterfaceFn fnVGUI2CreateInterface = Sys_GetFactory(hVGUI2);
 		g_pScheme = (vgui::ISchemeManager *)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, NULL);
 		g_pKeyValuesSystem = (IKeyValuesSystem *)fnVGUI2CreateInterface(KEYVALUESSYSTEM_INTERFACE_VERSION, NULL);
+		g_pVGuiSchemeManager = g_pScheme;
 	}
 
 	g_pSurface = (vgui::ISurface *)factories[0](VGUI_SURFACE_INTERFACE_VERSION, NULL);
@@ -82,10 +83,6 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 	GameConsole_InstallHook();
 	GameUI_InstallHook();
 	BasePanel_InstallHook();
-
-	if(!g_metaplugins.captionmod)
-		Scheme_InstallHook();
-
 	BackGroundVideoInit();
 }
 
@@ -96,7 +93,7 @@ void CBaseUI::Start(struct cl_enginefuncs_s *engineFuncs, int interfaceVersion)
 
 void CBaseUI::Shutdown(void)
 {
-	ClientVGUI_Shutdown();
+	ClientVGUIShutdown();
 	BackGroundVideoClose();
 
 	//GameUI.dll and vgui2.dll will be unloaded by engine!CBaseUI::Shutdown
