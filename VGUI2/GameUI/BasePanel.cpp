@@ -281,11 +281,9 @@ void* __fastcall COptionsSubMultiplayer_ctor(vgui::Panel* pthis, int dummy, void
 	panel->SetAnimate(true);
 	g_modelviewPanel = panel;
 
-	vgui::HScheme scheme = vgui::scheme()->LoadSchemeFromFile("resource/ClientScheme.res", nullptr);
 	vgui::Slider* slider = new vgui::Slider(pthis, "RotateSlider");
 	slider->SetRange(0, 360);
 	slider->SetBounds(x, y + h - h2, w, h2);
-	slider->SetScheme(scheme);
 	slider->AddActionSignalTarget(pthis);
 	g_modelviewSlider = slider;
 	return res;
