@@ -72,7 +72,6 @@ typedef struct{
 	void		(*VGuiWrap2_HideGameUI)		();
 	void(__fastcall* CBasePanel_PaintBackground)(void* pthis, int dummy);
 	void* (__fastcall* CBasePanel_ctor)(void* pthis, int dummy);
-	void (__fastcall* CBasePanel_RunMenuCommand)(void* pthis, int dummy, const char* command);
 	void* (__fastcall* COptionsSubMultiplayer_ctor)(void* pthis, int dummy, void* parent);
 	void (*RemapPalette)(char* modelname, int color1, int color2);
 

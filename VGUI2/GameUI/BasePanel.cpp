@@ -240,9 +240,6 @@ void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
 	return g_pBasePanel;
 }
-void __fastcall CBasePanel_RunMenuCommand(void* pthis, int dummy, const char* command) {
-	gHookFuncs.CBasePanel_RunMenuCommand(pthis, dummy, command);
-}
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	if (!g_bInitialized) {
 		BackGroundVideoPostInit();
@@ -310,15 +307,11 @@ void BasePanel_InstallHook(void){
 #define SC_CBASEPANEL_CTOR_SIG "\x55\x8B\xEC\x51\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\x6A\x00\x89\x75\xFC\xE8\x2A\x2A\x2A\x2A\xC7"
 			Fill_Sig(SC_CBASEPANEL_CTOR_SIG, hGameUI, moduleSize, CBasePanel_ctor);
 			Install_InlineHook(CBasePanel_ctor);
-#define SC_CBASEPANEL_RUNMENUCOMMAND_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x51\x53\x56\x57\xA1\x2A\x2A\x2A\x2A\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x2A\x2A\x2A\x2A\x8B\xD9\x8B\x75\x08\x68\x2A\x2A\x2A\x2A\x56"
-			Fill_Sig(SC_CBASEPANEL_RUNMENUCOMMAND_SIG, hGameUI, moduleSize, CBasePanel_RunMenuCommand);
-			Install_InlineHook(CBasePanel_RunMenuCommand);
 #define SC_COPTIONSUBMULTIPLAYER_CTOR_SIG "\x53\x8B\xDC\x83\xEC\x08\x83\xE4\xF0\x83\xC4\x04\x55\x8B\x6B\x04\x89\x6C\x24\x04\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x53\x81\xEC\x68\x01\x00\x00"
 			Fill_Sig(SC_COPTIONSUBMULTIPLAYER_CTOR_SIG, hGameUI, moduleSize, COptionsSubMultiplayer_ctor);
 			Install_InlineHook(COptionsSubMultiplayer_ctor);
 #define REMAPPALLET_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x81\xEC\x2C\x02\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xF0\x53\x56\x57\x50\x8D\x45\xF4\x64\xA3\x00\x00\x00\x00\x8B\x75\x08\x8D\x8D\xC8\xFD\xFF\xFF\x6A\x00\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x56\x56"
 			Fill_Sig(REMAPPALLET_SIG, hGameUI, moduleSize, RemapPalette);
-			auto x = gHookFuncs.RemapPalette;
 			Install_InlineHook(RemapPalette);
 		}
 	}
