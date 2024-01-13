@@ -30,7 +30,7 @@ CHudEccoBuyMenu m_HudEccoBuyMenu;
 
 void CHudEccoBuyMenu::GLInit(){
 	glGenFramebuffersEXT(1, &m_hGaussianBufferFBO);
-	m_hGaussianBufferTex = GL_GenTextureRGBA8(ScreenWidth / 2, ScreenHeight);
+	m_hGaussianBufferTex = GL_GenTextureRGBA8(ScreenWidth() / 2, ScreenHeight());
 }
 int CHudEccoBuyMenu::Init(){
 	pCVarIdealYaw = CVAR_GET_POINTER("cam_idealyaw");
@@ -89,17 +89,17 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferFBO);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferTex, 0);
-	GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferFBO, ScreenWidth / 2, ScreenHeight, ScreenWidth / 2, ScreenHeight);
-	DrawGaussianBlur(m_hGaussianBufferTex, 2.0f * flAnimationRatio, ScreenWidth / 2, ScreenHeight);
+	GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferFBO, ScreenWidth() / 2, ScreenHeight(), ScreenWidth() / 2, ScreenHeight());
+	DrawGaussianBlur(m_hGaussianBufferTex, 2.0f * flAnimationRatio, ScreenWidth() / 2, ScreenHeight());
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
 	glEnable(GL_TEXTURE_2D);
 	glColor4ub(255, 255, 255, 255);
-	DrawQuad(ScreenWidth / 2, ScreenHeight);
+	DrawQuad(ScreenWidth() / 2, ScreenHeight());
 	//大背景
 	vgui::surface()->DrawSetTexture(-1);
 	vgui::surface()->DrawSetColor(255, 255, 255, 255 * flAnimationRatio);
 	vgui::surface()->DrawSetTexture(iBackgroundTga);
-	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth / 2, ScreenHeight);
+	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth() / 2, ScreenHeight());
 	int mousex, mousey;
 	//获取鼠标指针位置
 	gEngfuncs.GetMousePosition(&mousex, &mousey);
@@ -112,8 +112,8 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	float ac, as;
 	float flOffset = flAnimationRatio * BuyMenuOffset;
 	int iBackGroundHeight = BuyMenuHeight;
-	int iXDiffer = ScreenWidth / 2 - BuyMenuCenterX;
-	int iYDiffer = ScreenHeight / 2 - BuyMenuCenterY;
+	int iXDiffer = ScreenWidth() / 2 - BuyMenuCenterX;
+	int iYDiffer = ScreenHeight() / 2 - BuyMenuCenterY;
 	int iChosenSlot = -1;
 	int iChosenId = -1;
 	int iBackSlot = 10;
@@ -142,10 +142,10 @@ int CHudEccoBuyMenu::Draw(float flTime){
 		mathlib::Q_Vector2Copy(aryOut[i == 8 ? 0 : i + 1], vecC);
 		mathlib::Q_Vector2Copy(aryOut[i], vecD);
 		//变换为OpenGL屏幕坐标
-		mathlib::CenterPos2OpenGLPos(vecA, ScreenWidth, ScreenHeight);
-		mathlib::CenterPos2OpenGLPos(vecB, ScreenWidth, ScreenHeight);
-		mathlib::CenterPos2OpenGLPos(vecC, ScreenWidth, ScreenHeight);
-		mathlib::CenterPos2OpenGLPos(vecD, ScreenWidth, ScreenHeight);
+		mathlib::CenterPos2OpenGLPos(vecA, ScreenWidth(), ScreenHeight());
+		mathlib::CenterPos2OpenGLPos(vecB, ScreenWidth(), ScreenHeight());
+		mathlib::CenterPos2OpenGLPos(vecC, ScreenWidth(), ScreenHeight());
+		mathlib::CenterPos2OpenGLPos(vecD, ScreenWidth(), ScreenHeight());
 		bIsChosen = mathlib::PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
 		int realId = GetMenuId(i);
 		if (bIsChosen) {

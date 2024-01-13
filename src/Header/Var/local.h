@@ -2,22 +2,24 @@
 #include "cvardef.h"
 #include "com_model.h"
 
-#define FCVAR_VALUE (FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE)
+constexpr int FCVAR_VALUE = (FCVAR_PRINTABLEONLY | FCVAR_CLIENTDLL | FCVAR_ARCHIVE);
+
+xcommand_t Q_HOOK_COMMAND(const char* cmd, xcommand_t func);
+#define HOOK_COMMAND(x, y) Q_HOOK_COMMAND(x, __UserCmd_##y)
+void ADD_COMMAND(const char* cmd, void (*pfnEngSrc_function)(void));
+void ConsoleWriteline(const char* x);
+cvar_t* CVAR_GET_POINTER(const char* x);
+float CVAR_GET_FLOAT(const char* x);
+const char* CVAR_GET_STRING(const char* x);
+cvar_t* CREATE_CVAR(const char* name, const char* val, int flag, cvar_callback_t callback);
+void ServerCmd(const char* x);
+void EngineClientCmd(const char* x);
+void PlaySoundByName(const char* x, float volum);
+void VEC_WorldToScreen(vec3_t world, vec3_t screen);
+float ClientTime();
 
 //Lazy Dizzy Short Marco
 #define V_snprintf sprintf_s
-#define HOOK_COMMAND(x, y) g_pMetaHookAPI->HookCmd((char*)x, __UserCmd_##y)
-#define ADD_COMMAND(x, y) gEngfuncs.pfnAddCommand((char*)x, y)
-#define ConsoleWriteline(x) gEngfuncs.Con_Printf(x)
-#define CVAR_GET_POINTER(x) gEngfuncs.pfnGetCvarPointer(x)
-#define CVAR_GET_FLOAT(x) gEngfuncs.pfnGetCvarFloat(x)
-#define CVAR_GET_STRING(x) gEngfuncs.pfnGetCvarString(x)
-inline cvar_t* CREATE_CVAR(const char* name, const char* val, int flag, cvar_callback_t callback) {
-	cvar_t* cvar = gEngfuncs.pfnRegisterVariable(const_cast<char*>(name), const_cast<char*>(val), flag);
-	if (callback)
-		g_pMetaHookAPI->RegisterCvarCallback(name, callback, nullptr); 
-	return cvar;
-}
 #define SPR_Load (*gEngfuncs.pfnSPR_Load)
 #define SPR_Set (*gEngfuncs.pfnSPR_Set)
 #define SPR_Frames (*gEngfuncs.pfnSPR_Frames)
@@ -32,18 +34,9 @@ inline cvar_t* CREATE_CVAR(const char* name, const char* val, int flag, cvar_cal
 #define SPR_EnableScissor (*gEngfuncs.pfnSPR_EnableScissor)
 // SPR_DisableScissor  disables the clipping rect
 #define SPR_DisableScissor (*gEngfuncs.pfnSPR_DisableScissor)
-#define FillRGBA (*gEngfuncs.pfnFillRGBA)
-// ScreenHeight returns the height of the screen, in pixels
-#define ScreenHeight (gScreenInfo.iHeight)
-// ScreenWidth returns the width of the screen, in pixels
-#define ScreenWidth (gScreenInfo.iWidth)
-#define GetScreenInfo (*gEngfuncs.pfnGetScreenInfo)
-#define ServerCmd(x) (*gEngfuncs.pfnServerCmd)((char*)x)
-#define EngineClientCmd(x) (*gEngfuncs.pfnClientCmd)((char*)x)
 #define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
-#define PlaySoundByName(x, y) (*gEngfuncs.pfnPlaySoundByName)((char*)x, y)
-#define VEC_WorldToScreen(w, s) (*gEngfuncs.pTriAPI->WorldToScreen)(w, s);s[0]=(1.0f+s[0])*ScreenWidth/2;s[1]=(1.0f-s[1])*ScreenHeight/2
-#define ClientTime() (gEngfuncs.GetClientTime())
+#define FillRGBA (*gEngfuncs.pfnFillRGBA)
+#define GetScreenInfo (*gEngfuncs.pfnGetScreenInfo)
 
 //Hooked Address
 typedef struct{

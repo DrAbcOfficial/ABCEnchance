@@ -55,7 +55,7 @@ CCrosshairPanel::CCrosshairPanel()
 
 	pCvarDefaultCrosshair = CVAR_GET_POINTER("crosshair");
 
-	SetSize(ScreenWidth, ScreenHeight);
+	SetSize(ScreenWidth(), ScreenHeight());
 
 	m_aryCrosshairBorder = {
 		new vgui::Panel(this, "center"),
@@ -130,12 +130,12 @@ void CCrosshairPanel::OnThink() {
 		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_NORMAL, local->index, &tr);
 		CVector vecHUD;
 		gEngfuncs.pTriAPI->WorldToScreen(tr.endpos, vecHUD);
-		m_iCenterX = (1.0f + vecHUD[0]) * ScreenWidth / 2;
-		m_iCenterY = (1.0f - vecHUD[1]) * ScreenHeight / 2;
+		m_iCenterX = (1.0f + vecHUD[0]) * ScreenWidth() / 2;
+		m_iCenterY = (1.0f - vecHUD[1]) * ScreenHeight() / 2;
 	}
 	else {
-		m_iCenterX = ScreenWidth / 2;
-		m_iCenterY = ScreenHeight / 2;
+		m_iCenterX = ScreenWidth() / 2;
+		m_iCenterY = ScreenHeight() / 2;
 	}
 	int iOffset = pDynamicCrossHairO->value;
 	int iDrift = fabs(g_pViewPort->m_vecClientEVPunch[0]) + fabs(g_pViewPort->m_vecClientEVPunch[1]);

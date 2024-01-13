@@ -3,8 +3,7 @@
 #include <studio.h>
 #include <com_model.h>
 
-#include "local.h"
-#include "VGUI.h"
+#include <vguilocal.h>
 
 #include <glew.h>
 #include <gl_utility.h>
@@ -19,7 +18,6 @@
 #include "StudioModelRenderer.h"
 
 #include "ModelViewPanel.h"
-#include <vguilocal.h>
 
 using namespace vgui;
 

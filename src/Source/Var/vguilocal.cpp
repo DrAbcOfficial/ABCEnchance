@@ -1,6 +1,7 @@
 #include <metahook.h>
 #include "mymathlib.h"
 #include "vguilocal.h"
+#include <Controls.h>
 
 vgui::IScheme* pSchemeData;
 ScreenInfo_t gScreenInfo;
@@ -18,3 +19,19 @@ Color g_aryVGUIColorCode[] = {
 	Color(0,0,255,255),			//ю╤
 	Color(127,0,255,255)		//во
 };
+
+void VGUI_CREATE_NEWTGA_TEXTURE(int tex, const char* path){
+	tex = vgui::surface()->CreateNewTextureID(); 
+	vgui::surface()->DrawSetTextureFile(tex, path, true, false);
+}
+
+size_t GET_SCREEN_PIXEL(bool h, const char* str){
+	return  mathlib::GetScreenPixel(h ? ScreenHeight() : ScreenWidth(), atof(pSchemeData->GetResourceString(str)));
+}
+
+size_t ScreenHeight(){
+	return gScreenInfo.iHeight;
+}
+size_t ScreenWidth() {
+	return gScreenInfo.iWidth;
+}

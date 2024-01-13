@@ -1,4 +1,5 @@
 #pragma once
+#include <com_model.h>
 typedef struct player_infosc_s{
 	// User id on server
 	int		userid;

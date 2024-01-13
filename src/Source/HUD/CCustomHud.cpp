@@ -457,7 +457,7 @@ void CCustomHud::HUD_Init(void){
 #endif
 }
 void CCustomHud::HUD_VidInit(void){
-	int iRes = ScreenWidth < 640 ? 320 : 640;
+	int iRes = ScreenWidth() < 640 ? 320 : 640;
 	if (!m_pSpriteList){
 		m_pSpriteList = SPR_GetList("sprites/hud.txt", &m_iSpriteCountAllRes);
 

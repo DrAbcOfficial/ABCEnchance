@@ -11,6 +11,7 @@
 #include "Color.h"
 #include "vguilocal.h"
 #include "local.h"
+
 #include "gl_def.h"
 #include "gl_draw.h"
 
@@ -44,7 +45,7 @@ void CWeaponMenuSlot::VidInit() {
 		gCustomHud.GetSpriteRect(iBucket0Spr)->left;
 	SelectBucketHeight = gCustomHud.GetSpriteRect(iBucket0Spr)->bottom -
 		gCustomHud.GetSpriteRect(iBucket0Spr)->top;
-	if (ScreenWidth >= 640) {
+	if (ScreenWidth() >= 640) {
 		SelectABWidth = 20;
 		SelectABHeight = 4;
 	}

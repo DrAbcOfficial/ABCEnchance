@@ -256,7 +256,7 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	}
 	vgui::surface()->DrawSetColor(255, 255, 255, 255);
 	vgui::surface()->DrawSetTexture(g_iTextureID);
-	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth, ScreenHeight);
+	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth(), ScreenHeight());
 }
 
 static vgui::DHANDLE<vgui::ModelViewPanel>g_modelviewPanel;

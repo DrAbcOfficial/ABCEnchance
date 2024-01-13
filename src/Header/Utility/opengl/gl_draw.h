@@ -1,6 +1,5 @@
 #pragma once
-#define glBind(tx) gHookFuncs.GL_Bind(tx)
-
+void glBind(GLint tex);
 void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame = 0);
 void DrawSPRIconPos(int SprHandle, int mode, vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int r, int g, int b, int a);
 int GetHudFontHeight(vgui::HFont m_hFont);

@@ -33,7 +33,7 @@ void CNoticePanel::ShowMessage(const char* message){
 	if (m_bKeepCenter) {
 		int x, y;
 		GetPos(x, y);
-		SetPos((ScreenWidth - w) / 2, y);
+		SetPos((ScreenWidth() - w) / 2, y);
 	}
 	SetTall(h);
 	m_pMessage->SetTall(h);
