@@ -935,12 +935,20 @@ vgui::ModelViewPanel::~ModelViewPanel(){
 void vgui::ModelViewPanel::SetupTexBuffer(){
 	if (!m_hBufferFBO && !m_hBufferTex) {
 		glGenFramebuffers(1, &m_hBufferFBO);
+
 		int w, h;
 		GetSize(w, h);
 		m_hBufferTex = GL_GenTextureRGBA8(w, h);
+
+		glGenRenderbuffers(1, &m_hBufferRBO);
+		glBindRenderbuffer(GL_RENDERBUFFER, m_hBufferRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
 		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hBufferTex, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_hBufferRBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 		m_iFboWidth = w;
 		m_iFboHeight = h;

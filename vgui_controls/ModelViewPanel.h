@@ -67,29 +67,30 @@ protected:
 private:
 	float m_aryOrigin[3] = {0,0,0};
 	float m_aryRotate[3] = {0,0,0};
-	float m_flFov;
-	bool m_bAnimate;
-	float m_flFrameRate;
-	int m_iFrame;
-	int m_iSequence;
-	int m_iSkin;
-	int m_iGroup;
-	int m_iBody;
-	int m_iMouth;
-	char m_szModel[MAX_PATH];
+	float m_flFov = 90;
+	bool m_bAnimate = false;
+	float m_flFrameRate = 1;
+	int m_iFrame = 0;
+	int m_iSequence = 0;
+	int m_iSkin = 0;
+	int m_iGroup = 0;
+	int m_iBody = 0;
+	int m_iMouth = 0;
+	char m_szModel[MAX_PATH] = {};
 	typedef struct blendinfo_s{
-		int m_iIdx;
-		float m_flValue;
+		int m_iIdx = 0;
+		float m_flValue = 0;
 	}blendinto_t;
-	blendinto_t m_aryBlend[2];
-	blendinto_t m_aryController[4];
+	blendinto_t m_aryBlend[2] = {};
+	blendinto_t m_aryController[4] = {};
 
-	float m_flPrevAnimeTime;
+	float m_flPrevAnimeTime = 0;
 
-	StudioModel* m_Renderer;
+	StudioModel* m_Renderer = nullptr;
 
 	uint m_hBufferTex = 0;
 	uint m_hBufferFBO = 0;
+	uint m_hBufferRBO = 0;
 	uint m_iFboWidth = 0;
 	uint m_iFboHeight = 0;
 	int m_oldFrameBuffer = 0;
