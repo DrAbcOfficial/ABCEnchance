@@ -296,6 +296,14 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 					CNeteasePanel::PrintF("#Netease_InvalidId", false);
 				else
 					panel->PlayRadio(id);
+			}),
+			CCloudMusicCmdItem("album", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
+				char* end;
+				netease::neteaseid_t id = std::strtoull(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), &end, 10);
+				if (id == 0)
+					CNeteasePanel::PrintF("#Netease_InvalidId", false);
+				else
+					panel->PlayAlbum(id);
 			})
 		}),
 		CCloudMusicCmdItem("my", {
@@ -537,6 +545,18 @@ void CNeteasePanel::PlayRadio(netease::neteaseid_t id){
 	}, id))->ContinueWith([](std::vector<std::shared_ptr<netease::CDjMusic>> list, CNeteasePanel* panel) {
 		for (auto iter = list.begin(); iter != list.end(); iter++) {
 			panel->AddToList((*iter)->id, CNeteasePanel::DJ);
+		}
+		panel->PlayListMusic();
+	}, this)->Start();
+}
+void CNeteasePanel::PlayAlbum(netease::neteaseid_t id){
+	SetPlayerState(PLAYSTATE::NORMAL);
+	m_aryPlayList.clear();
+	GetTaskManager()->Add(std::async([](netease::neteaseid_t id) {
+		return s_pNeteaseApi.load()->GetAlbumSongs(id);
+	}, id))->ContinueWith([](std::vector<std::shared_ptr<netease::CMusic>> list, CNeteasePanel* panel) {
+		for (auto iter = list.begin(); iter != list.end(); iter++) {
+			panel->AddToList(iter->get()->id);
 		}
 		panel->PlayListMusic();
 	}, this)->Start();
