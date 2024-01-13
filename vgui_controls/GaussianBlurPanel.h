@@ -26,13 +26,17 @@ public:
 	GaussianBlurPanel(Panel *parent, const char *name);
 	~GaussianBlurPanel();
 	void SetupTexture();
+
+	float GetBlurRatio();
+	void SetBlurRatio(float f);
 protected:
 	virtual void PaintBackground();
 	virtual void ApplySettings(KeyValues *inResourceData);
 private:
 	uint m_hBufferTex = 0;
 	uint m_hBufferFBO = 0;
-	int m_oldFrameBuffer;
+	int m_oldFrameBuffer = 0;
+	float m_flRatio = 1.0f;
 };
 
 } // namespace vgui

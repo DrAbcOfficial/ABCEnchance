@@ -209,4 +209,5 @@ void DrawGaussianBlur(GLint tex, float ratio, int w, int h) {
 	glColor4ub(255, 255, 255, 255);
 	DrawQuad(w, h);
 	GL_UseProgram(0);
+	glDisable(GL_TEXTURE_2D);
 }
