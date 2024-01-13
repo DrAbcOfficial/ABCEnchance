@@ -928,7 +928,9 @@ vgui::ModelViewPanel::~ModelViewPanel(){
 	if (m_hBufferFBO)
 		glDeleteFramebuffers(1, &m_hBufferFBO);
 	if (m_hBufferTex)
-		glDeleteTexturesEXT(1, &m_hBufferTex);
+		glDeleteTextures(1, &m_hBufferTex);
+	if (m_hBufferRBO)
+		glDeleteRenderbuffers(1, &m_hBufferRBO);
 	delete m_Renderer;
 }
 
