@@ -27,6 +27,8 @@ class StudioModel {
 public:
 	void Init(const char* modelname) {
 		m_pstudiomdl = LoadModel(modelname);
+		if (!m_pstudiomdl)
+			return;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		// preload textures
 		if (hdr->numtextures == 0) {
@@ -54,6 +56,8 @@ public:
 		}
 	}
 	void DrawModel(void) {
+		if (!m_pstudiomdl)
+			return;
 		int i;
 
 		m_smodels_total++; // render data cache cookie
@@ -93,6 +97,8 @@ public:
 		glPopMatrix();
 	}
 	void AdvanceFrame(float dt) {
+		if (!m_pstudiomdl)
+			return;
 		mstudioseqdesc_t* pseqdesc;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		pseqdesc = (mstudioseqdesc_t*)((byte*)hdr + hdr->seqindex) + m_sequence;
@@ -113,6 +119,8 @@ public:
 	}
 
 	void ExtractBbox(float* mins, float* maxs) {
+		if (!m_pstudiomdl)
+			return;
 		mstudioseqdesc_t* pseqdesc;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		pseqdesc = (mstudioseqdesc_t*)((byte*)hdr + hdr->seqindex);
@@ -127,6 +135,8 @@ public:
 	}
 
 	int SetSequence(int iSequence) {
+		if (!m_pstudiomdl)
+			return 0;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		if (iSequence > hdr->numseq)
 			iSequence = 0;
@@ -142,6 +152,8 @@ public:
 		return m_sequence;
 	}
 	void GetSequenceInfo(float* pflFrameRate, float* pflGroundSpeed) {
+		if (!m_pstudiomdl)
+			return;
 		mstudioseqdesc_t* pseqdesc;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		pseqdesc = (mstudioseqdesc_t*)((byte*)hdr + hdr->seqindex) + (int)m_sequence;
@@ -160,6 +172,8 @@ public:
 	}
 
 	float SetController(int iController, float flValue) {
+		if (!m_pstudiomdl)
+			return 0;
 		int i;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		mstudiobonecontroller_t* pbonecontroller = (mstudiobonecontroller_t*)((byte*)hdr + hdr->bonecontrollerindex);
@@ -206,6 +220,8 @@ public:
 		return setting * (1.0 / 255.0) * (pbonecontroller->end - pbonecontroller->start) + pbonecontroller->start;
 	}
 	float SetMouth(float flValue) {
+		if (!m_pstudiomdl)
+			return 0;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		mstudiobonecontroller_t* pbonecontroller = (mstudiobonecontroller_t*)((byte*)hdr + hdr->bonecontrollerindex);
 
@@ -249,6 +265,8 @@ public:
 		return setting * (1.0 / 64.0) * (pbonecontroller->end - pbonecontroller->start) + pbonecontroller->start;
 	}
 	float SetBlending(int iBlender, float flValue) {
+		if (!m_pstudiomdl)
+			return 0;
 		mstudioseqdesc_t* pseqdesc;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		pseqdesc = (mstudioseqdesc_t*)((byte*)hdr + hdr->seqindex) + (int)m_sequence;
@@ -282,6 +300,8 @@ public:
 		return setting * (1.0 / 255.0) * (pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender]) + pseqdesc->blendstart[iBlender];
 	}
 	int SetBodygroup(int iGroup, int iValue) {
+		if (!m_pstudiomdl)
+			return 0;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		if (iGroup > hdr->numbodyparts)
 			return -1;
@@ -299,6 +319,8 @@ public:
 	}
 
 	int SetSkin(int iValue) {
+		if (!m_pstudiomdl)
+			return 0;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		if (iValue < hdr->numskinfamilies)
 		{
@@ -371,6 +393,8 @@ private:
 
 
 	void CalcBoneAdj(void) {
+		if (!m_pstudiomdl)
+			return;
 		int					i, j;
 		float				value;
 		mstudiobonecontroller_t* pbonecontroller;
@@ -419,6 +443,8 @@ private:
 		}
 	}
 	void CalcBoneQuaternion(int frame, float s, mstudiobone_t* pbone, mstudioanim_t* panim, float* q) {
+		if (!m_pstudiomdl)
+			return;
 		int					j, k;
 		vec4_t				q1, q2;
 		vec3_t				angle1, angle2;
@@ -491,6 +517,8 @@ private:
 		}
 	}
 	void CalcBonePosition(int frame, float s, mstudiobone_t* pbone, mstudioanim_t* panim, float* pos) {
+		if (!m_pstudiomdl)
+			return;
 		int					j, k;
 		mstudioanimvalue_t* panimvalue;
 
@@ -541,6 +569,8 @@ private:
 		}
 	}
 	void CalcRotations(vec3_t* pos, vec4_t* q, mstudioseqdesc_t* pseqdesc, mstudioanim_t* panim, float f) {
+		if (!m_pstudiomdl)
+			return;
 		int					i;
 		int					frame;
 		mstudiobone_t* pbone;
@@ -567,6 +597,8 @@ private:
 			pos[pseqdesc->motionbone][2] = 0.0;
 	}
 	mstudioanim_t* GetAnim(mstudioseqdesc_t* pseqdesc) {
+		if (!m_pstudiomdl)
+			return nullptr;
 		mstudioseqgroup_t* pseqgroup;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		pseqgroup = (mstudioseqgroup_t*)((byte*)hdr + hdr->seqgroupindex) + pseqdesc->seqgroup;
@@ -579,6 +611,8 @@ private:
 		return (mstudioanim_t*)((byte*)seqhdr + pseqdesc->animindex);
 	}
 	void SlerpBones(vec4_t q1[], vec3_t pos1[], vec4_t q2[], vec3_t pos2[], float s) {
+		if (!m_pstudiomdl)
+			return;
 		int			i;
 		vec4_t		q3;
 		float		s1;
@@ -600,8 +634,9 @@ private:
 			pos1[i][2] = pos1[i][2] * s1 + pos2[i][2] * s;
 		}
 	}
-
 	void SetUpBones(void) {
+		if (!m_pstudiomdl)
+			return;
 		int					i;
 
 		mstudiobone_t* pbones;
@@ -672,8 +707,9 @@ private:
 			}
 		}
 	}
-
 	void DrawPoints(void) {
+		if (!m_pstudiomdl)
+			return;
 		int					i, j;
 		mstudiomesh_t* pmesh;
 		byte* pvertbone;
@@ -803,7 +839,6 @@ private:
 			}
 		}
 	}
-
 	void Lighting(float* lv, int bone, int flags, vec3_t normal) {
 		float 	illum;
 		float	lightcos;
@@ -873,8 +908,9 @@ private:
 		n = mathlib::DotProduct(normal, m_chromeup[bone]);
 		pchrome[1] = (n + 1.0) * 32; // FIX: make this a float
 	}
-
 	void SetupLighting(void) {
+		if (!m_pstudiomdl)
+			return;
 		int i;
 		m_ambientlight = 32;
 		m_shadelight = 192;
@@ -893,8 +929,9 @@ private:
 			mathlib::VectorIRotate(m_lightvec, m_bonetransform[i], m_blightvec[i]);
 		}
 	}
-
 	void SetupModel(int bodypart) {
+		if (!m_pstudiomdl)
+			return;
 		int index;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		if (bodypart > hdr->numbodyparts)
@@ -958,6 +995,8 @@ void vgui::ModelViewPanel::SetupTexBuffer(){
 }
 
 void vgui::ModelViewPanel::LoadModel(const char* model){
+	if (!std::strcmp(m_szModel, model))
+		return;
 	std::strcpy(m_szModel, model);
 	m_Renderer->Init(model);
 	SetSequnce(0);
