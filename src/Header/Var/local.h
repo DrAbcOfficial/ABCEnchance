@@ -64,7 +64,7 @@ typedef struct{
 	model_t*	(*CL_GetModelByIndex)		(int index);
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
-	void		(*R_ForceCVars)				(qboolean mp);
+	void		(*R_ForceCVars)				(bool mp);
 	void(__fastcall* CClient_SoundEngine_PlayFMODSound)(void* pEngine, int dummy, int param_1, int channel, float* param_3, int param_4,
 		char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
 		float param_11);
@@ -73,7 +73,8 @@ typedef struct{
 	void(__fastcall* CBasePanel_PaintBackground)(void* pthis, int dummy);
 	void* (__fastcall* CBasePanel_ctor)(void* pthis, int dummy);
 	void* (__fastcall* COptionsSubMultiplayer_ctor)(void* pthis, int dummy, void* parent);
-	void (*RemapPalette)(char* modelname, int color1, int color2);
+	void* (__fastcall* COptionsSubMultiplayer_dtor)(void* pthis, int dummy, byte unk);
+	void (__fastcall*RemapPalette)(void* pthis, int dummy, char* modelname, int color1, int color2);
 
 	void(__fastcall* CGameUI_Start)(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem);
 
