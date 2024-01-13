@@ -26,7 +26,7 @@ public:
 		g_ConsoleDialog->ColorPrint(Color(0, 255, 0, 200), "[ABCEnchance] ABCEnchance has run successfully!\n");
 	}
 	virtual void Hide(void) {
-		g_ConsoleDialog->Hide();
+		g_ConsoleDialog->Close();
 	}
 	virtual void Clear(void) {
 		g_ConsoleDialog->Clear();
