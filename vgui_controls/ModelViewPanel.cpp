@@ -73,11 +73,10 @@ public:
 		glRotatef(m_angles[0], 0, 1, 0);
 		glRotatef(m_angles[2], 1, 0, 0);
 
-		// glShadeModel (GL_SMOOTH);
-
+		glShadeModel (GL_SMOOTH);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-		// glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
 		SetUpBones();
 
@@ -89,12 +88,8 @@ public:
 			DrawPoints();
 		}
 
+		glShadeModel(GL_FLAT);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-		// glShadeModel (GL_FLAT);
-
-		// glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
 		glPopMatrix();
 	}
 	void AdvanceFrame(float dt) {
@@ -315,16 +310,21 @@ public:
 		return iValue;
 	}
 
+	bool IsValid() {
+		return m_pstudiomdl != nullptr && m_ptexturemdl != nullptr;
+	}
+
+	int						m_sequence;			// sequence index
+	float					m_frame;			// frame
+	byte					m_mouth;			// mouth position
+private:
 	// entity settings
 	vec3_t					m_origin;
 	vec3_t					m_angles;
-	int						m_sequence;			// sequence index
-	float					m_frame;			// frame
 	int						m_bodynum;			// bodypart selection	
 	int						m_skinnum;			// skin group selection
 	byte					m_controller[4];	// bone controllers
 	byte					m_blending[2];		// animation blending
-	byte					m_mouth;			// mouth position
 
 	// internal data
 	model_t* m_pstudiomdl;
@@ -919,7 +919,7 @@ DECLARE_BUILD_FACTORY(ModelViewPanel);
 //-----------------------------------------------------------------------------
 ModelViewPanel::ModelViewPanel(Panel *parent, const char *name) : BaseClass(parent, name){
 	m_Renderer = new StudioModel();
-	SetModelPos(0, 20, 0);
+	SetModelPos(0, 0, 0);
 	SetModelRotate(0, 0, 0);
 	SetAnimate(true);
 }
@@ -934,41 +934,42 @@ vgui::ModelViewPanel::~ModelViewPanel(){
 
 void vgui::ModelViewPanel::SetupTexBuffer(){
 	if (!m_hBufferFBO && !m_hBufferTex) {
-		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-
 		glGenFramebuffers(1, &m_hBufferFBO);
+		int w, h;
+		GetSize(w, h);
+		m_hBufferTex = GL_GenTextureRGBA8(w, h);
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
-		m_hBufferTex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hBufferTex, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+		m_iFboWidth = w;
+		m_iFboHeight = h;
 	}
 }
 
 void vgui::ModelViewPanel::LoadModel(const char* model){
+	std::strcpy(m_szModel, model);
 	m_Renderer->Init(model);
 	SetSequnce(0);
-	m_Renderer->SetController(0, 0.0);
-	m_Renderer->SetController(1, 0.0);
-	m_Renderer->SetController(2, 0.0);
-	m_Renderer->SetController(3, 0.0);
-	m_Renderer->SetMouth(0);
+	SetController(0, 0.0);
+	SetController(1, 0.0);
+	SetController(2, 0.0);
+	SetController(3, 0.0);
+	SetMouth(0);
+	SetBlend(0, 0.0);
+	SetBlend(0, 0.0);
 }
 
 void vgui::ModelViewPanel::Render(){
-	int w, h;
-	GetSize(w, h);
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hBufferFBO, w, h, w, h);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
-
-	if (GetAnimate()) {
-		float ticktime = gEngfuncs.GetClientTime();
-		m_Renderer->AdvanceFrame(ticktime - m_flPrevAnimeTime);
-		m_flPrevAnimeTime = ticktime;
+	if (m_Renderer->IsValid()) {
+		if (GetAnimate()) {
+			float ticktime = gEngfuncs.GetClientTime();
+			float differ = ticktime - m_flPrevAnimeTime;
+			m_Renderer->AdvanceFrame(differ * m_flFrameRate);
+			m_flPrevAnimeTime = ticktime;
+		}
+		m_Renderer->DrawModel();
 	}
-	m_Renderer->SetBlending(0, 0.0);
-	m_Renderer->SetBlending(1, 0.0);
-	m_Renderer->DrawModel();
 }
 
 //     ^Z
@@ -977,7 +978,7 @@ void vgui::ModelViewPanel::Render(){
 //     |  /
 //     |/
 //     O---------->X
-void vgui::ModelViewPanel::SetModelPos(int x, int y, int z){
+void vgui::ModelViewPanel::SetModelPos(float x, float y, float z){
 	//swap y and z to fit game world
 	m_aryOrigin[0] = x;
 	m_aryOrigin[1] = -z;
@@ -987,11 +988,11 @@ void vgui::ModelViewPanel::SetModelPos(int x, int y, int z){
 /// <summary>
 /// Rotate Model
 /// </summary>
-void vgui::ModelViewPanel::SetModelRotate(int pitch, int yaw, int roll){
+void vgui::ModelViewPanel::SetModelRotate(float pitch, float yaw, float roll){
 	//swap y and z to fit game world
-	m_aryRotate[0] = (pitch - 90) % 360;
-	m_aryRotate[1] = (roll-0) % 360;
-	m_aryRotate[2] = (-yaw-90) % 360;
+	m_aryRotate[0] = fmodf(pitch - 90, 360);
+	m_aryRotate[1] = fmodf(roll - 0, 360);
+	m_aryRotate[2] = fmodf(-yaw - 90, 360);
 }
 
 float vgui::ModelViewPanel::GetFOV(){
@@ -1012,6 +1013,12 @@ int vgui::ModelViewPanel::GetFrame(){
 void vgui::ModelViewPanel::SetFrame(int frame){
 	m_iFrame = frame;
 	m_Renderer->m_frame = m_iFrame;
+}
+float vgui::ModelViewPanel::GetFrameRate(){
+	return m_flFrameRate;
+}
+void vgui::ModelViewPanel::SetFrameRate(float rate){
+	m_flFrameRate = rate;
 }
 int vgui::ModelViewPanel::GetSequence(){
 	return m_iSequence;
@@ -1038,50 +1045,97 @@ void vgui::ModelViewPanel::SetBodygroup(int group, int body){
 	m_iBody = body;
 	m_Renderer->SetBodygroup(group, body);
 }
+float vgui::ModelViewPanel::GetBlend(int blend){
+	int idx = mathlib::clamp(blend, 0, 1);
+	return m_aryBlend[idx].m_flValue;
+}
+void vgui::ModelViewPanel::SetBlend(int blend, float value){
+	int idx = mathlib::clamp(blend, 0, 1);
+	m_aryBlend[idx].m_iIdx = idx;
+	m_aryBlend[idx].m_flValue = value;
+	m_Renderer->SetBlending(idx, value);
+}
+float vgui::ModelViewPanel::GetController(int idx){
+	int i = mathlib::clamp(idx, 0, 3);
+	return m_aryController[i].m_flValue;
+}
+
+void vgui::ModelViewPanel::SetController(int idx, float value){
+	int i = mathlib::clamp(idx, 0, 3);
+	m_aryController[i].m_iIdx = idx;
+	m_aryController[i].m_flValue = value;
+	m_Renderer->SetController(i, value);
+}
+
+int vgui::ModelViewPanel::GetMouth(){
+	return m_iMouth;
+}
+
+void vgui::ModelViewPanel::SetMouth(int mouth){
+	m_iMouth = mouth;
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: draws the graph
 //-----------------------------------------------------------------------------
 void ModelViewPanel::Paint(){
+	GLfloat oldProjection[16], oldModelView[16];
+	glGetFloatv(GL_PROJECTION_MATRIX, oldProjection);
+	glGetFloatv(GL_MODELVIEW_MATRIX, oldModelView);
+
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glPushAttrib(GL_VIEWPORT_BIT);
+	glViewport(0, 0, m_iFboWidth, m_iFboHeight);
+
 	glPushMatrix();
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	int w, h;
-	GetSize(w, h);
-	int x, y;
-	vgui::ipanel()->GetAbsPos(this->GetVPanel(), x, y);
-	y = gScreenInfo.iHeight - (y + h);
-	glViewport(x, y, w, h);
+
 	float flNear = 4.0f;
 	float flFar = 1024.0f;
-	auto rlbt = tan(m_flFov * (M_PI / 360.0)) * flNear;
-	glFrustum(-rlbt, rlbt, -rlbt, rlbt, flNear, flFar);
+	gluPerspective(m_flFov, (float)m_iFboWidth /(float)m_iFboHeight, flNear, flFar);
 	glTranslatef(m_aryOrigin[0], m_aryOrigin[1], m_aryOrigin[2]);
-	glCullFace(GL_FRONT);
+
+	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glRotatef(m_aryRotate[0], 1, 0, 0);
 	glRotatef(m_aryRotate[1], 0, 1, 0);
 	glRotatef(m_aryRotate[2], 0, 0, 1);
+
+	glCullFace(GL_FRONT);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	Render();
+	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
+
 	glPopMatrix();
-	//reset viewport size
-	glViewport(0, 0, gScreenInfo.iWidth, gScreenInfo.iHeight);
+	glPopMatrix();
+	glPopAttrib();
+	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(oldProjection);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(oldModelView);
 
 	glBind(m_hBufferTex);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4ub(255, 255, 255, 255);
+	Color fgcolor = GetFgColor();
+	int w, h;
+	GetSize(w, h);
+	glColor4ub(fgcolor.r(), fgcolor.g(), fgcolor.b(), fgcolor.a());
 	glBegin(GL_QUADS);
-	glTexCoord2f(0, 1);
-	glVertex2f(0, h);
-	glTexCoord2f(1, 1);
-	glVertex2f(w, h);
-	glTexCoord2f(1, 0);
-	glVertex2f(w, 0);
 	glTexCoord2f(0, 0);
+	glVertex2f(0, h);
+	glTexCoord2f(1, 0);
+	glVertex2f(w, h);
+	glTexCoord2f(1, 1);
+	glVertex2f(w, 0);
+	glTexCoord2f(0, 1);
 	glVertex2f(0, 0);
 	glEnd();
 	glDisable(GL_BLEND);
@@ -1095,4 +1149,23 @@ void vgui::ModelViewPanel::ApplySettings(KeyValues* inResourceData){
 	SetSequnce(inResourceData->GetInt("sequence", 0));
 	SetSkin(inResourceData->GetInt("skin", 0));
 	SetBodygroup(inResourceData->GetInt("group", 0), inResourceData->GetInt("body", 0));
+	SetBlend(0, inResourceData->GetFloat("blend_0", 0));
+	SetBlend(1, inResourceData->GetFloat("blend_1", 0));
+	SetController(0, inResourceData->GetFloat("controller_0", 0));
+	SetController(1, inResourceData->GetFloat("controller_1", 0));
+	SetController(2, inResourceData->GetFloat("controller_2", 0));
+	SetController(3, inResourceData->GetFloat("controller_3", 0));
+	SetMouth(inResourceData->GetInt("mouth", 0));
+	const char* buf = inResourceData->GetString("origin", "0 0 0");
+	float a, b, c;
+	int result = std::sscanf(buf, "%f %f %f", &a, &b, &c);
+	if (result != EOF)
+		SetModelPos(a, b, c);
+	
+	buf = inResourceData->GetString("rotate", "0 0 0");
+	result = std::sscanf(buf, "%f %f %f", &a, &b, &c);
+	if (result != EOF)
+		SetModelRotate(a, b, c);
+
+	LoadModel(inResourceData->GetString("model", ""));
 }
