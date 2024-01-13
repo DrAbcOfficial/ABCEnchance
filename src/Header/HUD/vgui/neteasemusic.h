@@ -59,6 +59,7 @@ public:
 	void PlayList(netease::neteaseid_t id);
 	void PlayDj(netease::neteaseid_t id);
 	void PlayRadio(netease::neteaseid_t id);
+	void PlayAlbum(netease::neteaseid_t id);
 	void PlayRecommendMusic();
 	void PlayFM();
 	
