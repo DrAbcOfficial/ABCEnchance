@@ -47,6 +47,8 @@ void CHudIndicator::Reset(void){
 void CHudIndicator::Clear() {
 	if (m_hFilterTex)
 		glDeleteTextures(1, &m_hFilterTex);
+	if (m_hFilterFBO)
+		glDeleteFramebuffersEXT(1, &m_hFilterFBO);
 }
 void CHudIndicator::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDiffer){
 	vec3_t hsv,thsv;
