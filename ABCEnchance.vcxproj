@@ -93,7 +93,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;../../include/SteamSDK/steam_api.lib;../../thirdparty/install/glew/x86/Debug/lib/glewd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;../../include/SteamSDK/steam_api.lib;../../thirdparty/install/glew/x86/Debug/lib/glewd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
@@ -123,7 +123,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;../../include/SteamSDK/steam_api.lib;../../thirdparty/install/glew/x86/Release/lib/glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;../../include/SteamSDK/steam_api.lib;../../thirdparty/install/glew/x86/Release/lib/glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
@@ -155,7 +155,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\..\glew\build\lib\Release\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;../../include/SteamSDK/steam_api.lib;../../thirdparty/install/glew/x86/Release_AVX2/lib/glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;../../include/SteamSDK/steam_api.lib;../../thirdparty/install/glew/x86/Release_AVX2/lib/glew.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
