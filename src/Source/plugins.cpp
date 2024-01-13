@@ -86,12 +86,10 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_VoiceStatus = HUD_VoiceStatus;
 	pExportFunc->HUD_Frame = HUD_Frame;
 	pExportFunc->HUD_TxferPredictionData = HUD_TxferPredictionData;
-	if(!g_metaplugins.captionmod)
-		pExportFunc->ClientFactory = NewClientFactory;
 
 	FillAddress();
 	InstallClientHook();
-	ClientVGUI_InstallHook();
+	ClientVGUIInstallHook();
 	InitCreateParticleMan();
 	LoadLibcurl();
 	FModEngine::InitFModLibrary();

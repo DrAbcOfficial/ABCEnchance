@@ -64,14 +64,12 @@ void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_stat
 
 void R_NewMap(void);
 
-void* NewClientFactory(void);
 char* NewV_strncpy(char* a1, const char* a2, size_t a3);
 
 void BaseUI_InstallHook(void);
-void ClientVGUI_InstallHook(void);
-void ClientVGUI_Shutdown(void);
+void ClientVGUIInstallHook(void);
+void ClientVGUIShutdown(void);
 void Surface_InstallHooks(void);
-void Scheme_InstallHook(void);
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)

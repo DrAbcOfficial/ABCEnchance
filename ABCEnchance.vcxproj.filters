@@ -419,16 +419,10 @@
     <ClCompile Include="VGUI2\Surface.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
-    <ClCompile Include="VGUI2\Scheme.cpp">
-      <Filter>VGUI2</Filter>
-    </ClCompile>
     <ClCompile Include="VGUI2\Bitmap.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\Border.cpp">
-      <Filter>VGUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\SchemeHook.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\Win32Font.cpp">
@@ -667,6 +661,9 @@
     </ClCompile>
     <ClCompile Include="vgui_controls\GaussianBlurPanel.cpp">
       <Filter>VGUI\control</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\Scheme2.cpp">
+      <Filter>VGUI2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -46,56 +46,14 @@ void ClientVGUIInit(CreateInterfaceFn* factories, int count) {
 	if (!vgui::localize()->AddFile(g_pFileSystem, localizePath))
 		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMissing Localize file: %s\n", localizePath);
 }
-extern vgui::ISurface* g_pSurface;
-class NewClientVGUI : public IClientVGUI
-{
-public:
-	virtual void Initialize(CreateInterfaceFn* factories, int count) {
-		ClientVGUIInit(factories, count);
-	}
-	virtual void Start(void) {
-		g_pViewPort = new CViewport();
-		g_pViewPort->Start();
-		//Fix a bug that VGUI1 mouse disappear
-		auto pSurface4 = (DWORD)g_pSurface + 4;
-		*(PUCHAR)(pSurface4 + 0x4B) = 0;
-	}
-
-	virtual void SetParent(vgui::VPANEL parent) {
-		g_pViewPort->SetParent(parent);
-	}
-	virtual bool UseVGUI1(void) {
-		return true;
-	}
-	virtual void HideScoreBoard(void) {
-
-	}
-	virtual void HideAllVGUIMenu(void) {
-
-	}
-	virtual void ActivateClientUI(void) {
-		g_pViewPort->ActivateClientUI();
-	}
-	virtual void HideClientUI(void) {
-		g_pViewPort->HideClientUI();
-	}
-	virtual void unknown(void) {
-
-	}
-	virtual void Shutdown(void) {
-
-	}
-};
-EXPOSE_SINGLE_INTERFACE(NewClientVGUI, IClientVGUI, CLIENTVGUI_INTERFACE_VERSION);
-
-void ClientVGUI_Shutdown(void)
-{
-	if (g_pViewPort)
-	{
+void ClientVGUIShutdown(void) {
+	if (g_pViewPort) {
 		delete g_pViewPort;
-		g_pViewPort = NULL;
+		g_pViewPort = nullptr;
 	}
 }
+extern vgui::ISurface* g_pSurface;
+
 
 static void(__fastcall* m_pfnCClientVGUI_Initialize)(void* pthis, int, CreateInterfaceFn* factories, int count) = NULL;
 static void(__fastcall* m_pfnCClientVGUI_Start)(void* pthis, int) = NULL;
@@ -106,8 +64,7 @@ static void(__fastcall* m_pfnCClientVGUI_HideAllVGUIMenu)(void* pthis, int) = NU
 static void(__fastcall* m_pfnCClientVGUI_ActivateClientUI)(void* pthis, int) = NULL;
 static void(__fastcall* m_pfnCClientVGUI_HideClientUI)(void* pthis, int) = NULL;
 
-class CClientVGUI : public IClientVGUI
-{
+class CClientVGUI : public IClientVGUI{
 public:
 	virtual void Initialize(CreateInterfaceFn* factories, int count) {
 		m_pfnCClientVGUI_Initialize(this, 0, factories, count);
@@ -154,25 +111,18 @@ public:
 IClientVGUI* g_pClientVGUI = nullptr;
 static CClientVGUI s_ClientVGUI;
 extern void AddHook(hook_t* hook);
-void ClientVGUI_InstallHook(void){
-	if (!g_metaplugins.captionmod)
-		return;
-	CreateInterfaceFn ClientVGUICreateInterface = nullptr;
-	if (g_hClientDll)
-		ClientVGUICreateInterface = (CreateInterfaceFn)Sys_GetFactory((HINTERFACEMODULE)GetModuleHandle("CaptionMod.dll"));
-	if (!ClientVGUICreateInterface && gExportfuncs.ClientFactory)
-		ClientVGUICreateInterface = (CreateInterfaceFn)gExportfuncs.ClientFactory();
+
+void ClientVGUIInstallHook(void){
+	CreateInterfaceFn ClientVGUICreateInterface = (CreateInterfaceFn)Sys_GetFactory((HINTERFACEMODULE)g_metaplugins.captionmod.info.PluginModuleBase);
 	if (ClientVGUICreateInterface) {
 		g_pClientVGUI = (IClientVGUI*)ClientVGUICreateInterface(CLIENTVGUI_INTERFACE_VERSION, NULL);
 		if (g_pClientVGUI) {
 			DWORD* pVFTable = *(DWORD**)&s_ClientVGUI;
-
 			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 1, (void*)pVFTable[1], (void**)&m_pfnCClientVGUI_Initialize));
 			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 2, (void*)pVFTable[2], (void**)&m_pfnCClientVGUI_Start));
 			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 3, (void*)pVFTable[3], (void**)&m_pfnCClientVGUI_SetParent));
 			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 7, (void*)pVFTable[7], (void**)&m_pfnCClientVGUI_ActivateClientUI));
 			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 8, (void*)pVFTable[8], (void**)&m_pfnCClientVGUI_HideClientUI));
-
 			g_IsClientVGUI2 = true;
 		}
 	}

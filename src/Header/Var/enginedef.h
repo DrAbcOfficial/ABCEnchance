@@ -1,7 +1,11 @@
 #pragma once
+struct metaplugininfo {
+	bool has;
+	mh_plugininfo_t info;
+};
 typedef struct metaplugins_s{
-	bool renderer;
-	bool captionmod;
+	metaplugininfo renderer;
+	metaplugininfo captionmod;
 }metaplugins_t;
 typedef struct refdef_s{
 	vec3_t vieworg;
