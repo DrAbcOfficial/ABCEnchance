@@ -273,6 +273,7 @@ void* __fastcall COptionsSubMultiplayer_ctor(vgui::Panel* pthis, int dummy, void
 	IVanilliaPanel* slider2 = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0x10c);
 	vgui::ipanel()->GetSize(slider2->GetVPanel(), w2, h2);
 
+	//TODO: fuck if u move silder and close/open console, its will crash game for no reason
 	vgui::ModelViewPanel* panel = new vgui::ModelViewPanel(pthis, "3DModelImage");
 	panel->SetBounds(x, y, w, h - h2);
 	panel->SetupTexBuffer();
