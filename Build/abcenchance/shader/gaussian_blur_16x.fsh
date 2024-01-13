@@ -3,18 +3,22 @@ uniform vec2 res;
 uniform sampler2D tex;
 varying vec2 vet0;
 
+float gaussian(float x, float sigma) {
+    return exp(-0.5 * x * x / (sigma * sigma)) / (2.0 * 3.1415926 * sigma * sigma);
+}
+
 void main() {
-  vec4 color = vec4(0.0);
-  vec2 uv = vec2(gl_FragCoord.xy / res.xy);
-  vec2 off1 = vec2(1.411764705882353) * du;
-  vec2 off2 = vec2(3.2941176470588234) * du;
-  vec2 off3 = vec2(5.176470588235294) * du;
-  color += texture2D(tex, uv) * 0.1964825501511404;
-  color += texture2D(tex, uv + (off1 / res)) * 0.2969069646728344;
-  color += texture2D(tex, uv - (off1 / res)) * 0.2969069646728344;
-  color += texture2D(tex, uv + (off2 / res)) * 0.09447039785044732;
-  color += texture2D(tex, uv - (off2 / res)) * 0.09447039785044732;
-  color += texture2D(tex, uv + (off3 / res)) * 0.010381362401148057;
-  color += texture2D(tex, uv - (off3 / res)) * 0.010381362401148057;
-  gl_FragColor = color;
+    vec2 uv = gl_FragCoord.xy / res;
+    vec4 color = vec4(0.0);
+    float weightSum = 0.0;
+    for (int i = -2; i <= 2; i++) {
+        for (int j = -2; j <= 2; j++) {
+            vec2 offset = vec2(i, j) * du;
+            float weight = gaussian(length(offset), du);
+            color += texture2D(tex, uv + offset / res) * weight;
+            weightSum += weight;
+        }
+    }
+    color /= weightSum;
+    gl_FragColor = color;
 }
