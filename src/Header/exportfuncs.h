@@ -73,7 +73,6 @@ void ClientVGUI_Shutdown(void);
 void Surface_InstallHooks(void);
 void Surface_UninstallHooks(void);
 void Scheme_InstallHook(void);
-void KeyValuesSystem_InstallHook(void);
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
