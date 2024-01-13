@@ -71,7 +71,6 @@ void BaseUI_InstallHook(void);
 void ClientVGUI_InstallHook(void);
 void ClientVGUI_Shutdown(void);
 void Surface_InstallHooks(void);
-void Surface_UninstallHooks(void);
 void Scheme_InstallHook(void);
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}

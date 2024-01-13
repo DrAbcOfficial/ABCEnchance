@@ -112,13 +112,15 @@ public:
 static CGameUI s_GameUI;
 IGameUI* gameui;
 
+extern void AddHook(hook_t* hook);
+
 void GameUI_InstallHook(){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
 	if (hGameUI) {
 		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
 		gameui = static_cast<IGameUI*>(fnCreateInterface(GAMEUI_INTERFACE_VERSION, nullptr));
 		DWORD* pVFTable = *(DWORD**)&s_GameUI;
-#define GAMEUI_VFTHOOK(index, name) g_pMetaHookAPI->VFTHook(gameui, 0, index, (void *)pVFTable[index], (void **)&g_pfn##name)
+#define GAMEUI_VFTHOOK(index, name) AddHook(g_pMetaHookAPI->VFTHook(gameui, 0, index, (void *)pVFTable[index], (void **)&g_pfn##name))
 		//GAMEUI_VFTHOOK(1, Initialize);
 		GAMEUI_VFTHOOK(2, Start);
 		//GAMEUI_VFTHOOK(3, Shutdown);

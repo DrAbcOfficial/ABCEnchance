@@ -56,6 +56,7 @@ public:
 	}
 };
 
+extern void AddHook(hook_t* hook);
 static CGameConsole s_GameConsole;
 IGameConsole* gameconsolefuncs;
 void GameConsole_InstallHook(void){
@@ -64,14 +65,14 @@ void GameConsole_InstallHook(void){
 		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
 		gameconsolefuncs = (IGameConsole*)fnCreateInterface(GAMECONSOLE_INTERFACE_VERSION_GS, NULL);
 		DWORD* pVFTable = *(DWORD**)&s_GameConsole;
-		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 1, (void*)pVFTable[1], (void**)&m_pfnCGameConsole_Activate);
-		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 2, (void*)pVFTable[2], (void**)&m_pfnCGameConsole_Initialize);
-		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 3, (void*)pVFTable[3], (void**)&m_pfnCGameConsole_Hide);
-		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 4, (void*)pVFTable[4], (void**)&m_pfnCGameConsole_Clear);
-		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 5, (void*)pVFTable[5], (void**)&m_pfnCGameConsole_IsConsoleVisible);
-		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 6, (void*)pVFTable[6], (void**)&m_pfnCGameConsole_Printf);
-		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 7, (void*)pVFTable[7], (void**)&m_pfnCGameConsole_DPrintf);
-		g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 8, (void*)pVFTable[8], (void**)&m_pfnCGameConsole_SetParent);
+		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 1, (void*)pVFTable[1], (void**)&m_pfnCGameConsole_Activate));
+		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 2, (void*)pVFTable[2], (void**)&m_pfnCGameConsole_Initialize));
+		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 3, (void*)pVFTable[3], (void**)&m_pfnCGameConsole_Hide));
+		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 4, (void*)pVFTable[4], (void**)&m_pfnCGameConsole_Clear));
+		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 5, (void*)pVFTable[5], (void**)&m_pfnCGameConsole_IsConsoleVisible));
+		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 6, (void*)pVFTable[6], (void**)&m_pfnCGameConsole_Printf));
+		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 7, (void*)pVFTable[7], (void**)&m_pfnCGameConsole_DPrintf));
+		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 8, (void*)pVFTable[8], (void**)&m_pfnCGameConsole_SetParent));
 	}
 	else
 		g_pMetaHookAPI->SysError("[ABCEnchace] Can not create interface of gameconsole.");
