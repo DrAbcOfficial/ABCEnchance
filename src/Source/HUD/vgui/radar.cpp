@@ -70,13 +70,13 @@ public:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glColor4ub(m_DrawColor.r(), m_DrawColor.g(), m_DrawColor.b(), m_DrawColor.a());
 		glBegin(GL_QUADS);
-		glTexCoord2f(stx, sty + h);
-		glVertex2f(x, y + m_iTall);
-		glTexCoord2f(stx + w, sty + h);
-		glVertex2f(x + m_iWide, y + m_iTall);
-		glTexCoord2f(stx + w, sty);
-		glVertex2f(x + m_iWide, y);
 		glTexCoord2f(stx, sty);
+		glVertex2f(x, y + m_iTall);
+		glTexCoord2f(stx + w, sty);
+		glVertex2f(x + m_iWide, y + m_iTall);
+		glTexCoord2f(stx + w, sty + h);
+		glVertex2f(x + m_iWide, y);
+		glTexCoord2f(stx, sty + h);
 		glVertex2f(x, y);
 		glEnd();
 		glDisable(GL_BLEND);
@@ -140,6 +140,7 @@ CRadarPanel::CRadarPanel()
 	auto tex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
