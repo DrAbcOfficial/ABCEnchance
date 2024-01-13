@@ -52,7 +52,9 @@ void GaussianBlurPanel::PaintBackground(){
 	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hBufferFBO, ScreenWidth(), ScreenHeight(), ScreenWidth(), ScreenHeight());
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
 	
-	DrawGaussianBlur(m_hBufferTex, m_flRatio, ScreenWidth(), ScreenHeight());
+	for (size_t i = 0; i < m_iBlurness; i++) {
+		DrawGaussianBlur(m_hBufferTex, m_flRatio, ScreenWidth(), ScreenHeight());
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 
@@ -87,4 +89,5 @@ void GaussianBlurPanel::PaintBackground(){
 void GaussianBlurPanel::ApplySettings(KeyValues *inResourceData){
 	BaseClass::ApplySettings(inResourceData);
 	m_flRatio = inResourceData->GetFloat("ratio", 1.0f);
+	m_iBlurness = inResourceData->GetInt("blurness", 16);
 }

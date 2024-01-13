@@ -337,6 +337,7 @@ CConsolePanel::CConsolePanel(Panel* pParent, const char* pName, bool bStatusVers
 		SetMinimumSize(100, 100);
 	}
 
+	m_pBlurBackend = new GaussianBlurPanel(this, "Blur");
 	// create controls
 	m_pHistory = new RichText(this, "ConsoleHistory");
 	m_pHistory->SetAllowKeyBindingChainToParent(false);
@@ -909,6 +910,9 @@ void CConsolePanel::PerformLayout()
 		m_pHistory->SetPos(inset, inset + topHeight);
 		m_pHistory->SetSize(wide - (inset * 2), tall - (entryInset * 2 + inset * 2 + topHeight + entryHeight));
 		m_pHistory->InvalidateLayout();
+		m_pBlurBackend->SetPos(inset, inset + topHeight);
+		m_pBlurBackend->SetSize(wide - (inset * 2), tall - (entryInset * 2 + inset * 2 + topHeight + entryHeight));
+		m_pBlurBackend->InvalidateLayout();
 
 		int nSubmitXPos = wide - (inset + submitWide + submitInset);
 		int nYPos = tall - (entryInset * 2 + entryHeight);
@@ -1205,7 +1209,7 @@ void CConsolePanel::DumpConsoleTextToFile()
 }
 
 
-GaussianBlurPanel* test;
+
 //-----------------------------------------------------------------------------
 //
 // Console dialog starts here
@@ -1222,10 +1226,6 @@ CConsoleDialog::CConsoleDialog(Panel* pParent, const char* pName, bool bStatusVe
 
 	LoadControlSettings(VGUI2_ROOT_DIR "ConsoleDialog.res");
 	SetMenuButtonVisible(false);
-
-	test = new GaussianBlurPanel(this, "");
-	test->SetBlurRatio(M_PI);
-
 	((Button*)_closeButton)->SetScheme(scheme);
 	SetVisible(false);
 }
@@ -1267,7 +1267,6 @@ void CConsoleDialog::PerformLayout()
 	int xygap = 4;
 	GetClientArea(x, y, w, h);
 	m_pConsolePanel->SetBounds(x + xygap, y, w - 2 * xygap, h);
-	test->SetBounds(x + xygap, y, w - 2 * xygap, h);
 }
 
 //-----------------------------------------------------------------------------

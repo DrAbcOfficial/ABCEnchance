@@ -35,7 +35,8 @@ private:
 	uint m_hBufferTex = 0;
 	uint m_hBufferFBO = 0;
 	int m_oldFrameBuffer = 0;
-	float m_flRatio = 1.0f;
+	float m_flRatio = 2.0f;
+	size_t m_iBlurness = 4;
 };
 
 } // namespace vgui
