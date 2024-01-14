@@ -20,6 +20,7 @@ public:
 	COptionsAdvanceSubMultiPlay(vgui::Panel* parent);
 	void ResetModel();
 protected:
+	virtual void OnMessage(const KeyValues* params, vgui::VPANEL ifromPanel) override;
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 private:
 	vgui::ModelViewPanel* m_pModelViewer;

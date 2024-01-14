@@ -1045,6 +1045,18 @@ void vgui::ModelViewPanel::SetModelRotate(float pitch, float yaw, float roll){
 	m_aryRotate[2] = fmodf(-yaw - 90, 360);
 }
 
+void vgui::ModelViewPanel::GetModelPos(float& x, float& y, float& z){
+	x = m_aryOrigin[0];
+	z = m_aryOrigin[1];
+	y = -m_aryOrigin[2];
+}
+
+void vgui::ModelViewPanel::GetModelRotate(float& pitch, float& yaw, float& roll){
+	pitch = fmodf(m_aryRotate[0] + 90, 360);
+	roll = fmodf(m_aryRotate[1], 360);
+	roll = fmodf(-m_aryRotate[2] + 90, 360);
+}
+
 float vgui::ModelViewPanel::GetFOV(){
 	return m_flFov;
 }

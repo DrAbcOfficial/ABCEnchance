@@ -32,6 +32,9 @@ public:
 	void SetModelPos(float x, float y, float z);
 	void SetModelRotate(float pitch, float yaw, float roll);
 
+	void GetModelPos(float& x, float& y, float& z);
+	void GetModelRotate(float& pitch, float& yaw, float& roll);
+
 	float GetFOV();
 	void SetFOV(float fov);
 
