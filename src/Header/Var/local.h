@@ -62,9 +62,11 @@ typedef struct{
 		char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
 		float param_11);
 	void		(*SetPunchAngle)			(int y, float value);
-	void		(*VGuiWrap2_HideGameUI)		();
-	void(__fastcall* CBasePanel_PaintBackground)(void* pthis, int dummy);
+
 	void* (__fastcall* CBasePanel_ctor)(void* pthis, int dummy);
+	void(__fastcall* CBasePanel_PaintBackground)(void* pthis, int dummy);
+	void (__fastcall* CBasePanel_RunMenuCommand)(void* pthis, int dummy, const char* command);
+	
 	void* (__fastcall* COptionsSubMultiplayer_ctor)(void* pthis, int dummy, void* parent);
 	void* (__fastcall* COptionsSubMultiplayer_dtor)(void* pthis, int dummy, byte unk);
 	void (__fastcall*RemapPalette)(void* pthis, int dummy, char* modelname, int color1, int color2);
