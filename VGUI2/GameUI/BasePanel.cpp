@@ -274,58 +274,7 @@ void __fastcall CBasePanel_RunMenuCommand(vgui::Panel* pthis, int dummy, const c
 	else
 		gHookFuncs.CBasePanel_RunMenuCommand(pthis, dummy, command);
 }
-static vgui::DHANDLE<vgui::Panel> g_color1Slider;
-static vgui::DHANDLE<vgui::Panel> g_color2Slider;
 
-void* __fastcall COptionsSubMultiplayer_ctor(vgui::Panel* pthis, int dummy, void* parent) {
-	auto res = gHookFuncs.COptionsSubMultiplayer_ctor(pthis, dummy, parent);
-	IVanilliaPanel* slider1 = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0x108);
-	IVanilliaPanel* slider2 = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0x10c);
-	int x, y;
-	int w2, h2;
-	vgui::ipanel()->GetSize(slider2->GetVPanel(), w2, h2);
-	vgui::ipanel()->SetSize(slider1->GetVPanel(), w2 - h2, h2);
-	vgui::ipanel()->SetSize(slider2->GetVPanel(), w2 - h2, h2);
-
-	vgui::Panel* color1 = new vgui::Panel(pthis, "Color1");
-	vgui::ipanel()->GetPos(slider1->GetVPanel(), x, y);
-	color1->SetPos(x + w2 - h2 + 1, y);
-	color1->SetSize(h2 * 0.75, h2 * 0.75);
-	g_color1Slider = color1;
-
-	vgui::Panel* color2 = new vgui::Panel(pthis, "Color2");
-	vgui::ipanel()->GetPos(slider2->GetVPanel(), x, y);
-	color2->SetPos(x + w2 - h2 + 1, y);
-	color2->SetSize(h2 * 0.75, h2 * 0.75);
-	g_color2Slider = color2;
-	return res;
-}
-void* __fastcall COptionsSubMultiplayer_dtor(vgui::Panel* pthis, int dummy, byte unk) {
-	if (g_color1Slider) {
-		delete g_color1Slider.Get();
-		g_color1Slider = nullptr;
-	}
-	if (g_color2Slider) {
-		delete g_color2Slider.Get();
-		g_color2Slider = nullptr;
-	}
-	return gHookFuncs.COptionsSubMultiplayer_dtor(pthis, dummy, unk);
-}
-void __fastcall RemapPalette(vgui::Panel* pthis, int dummy, char* modelname, int color1, int color2) {
-	int r, g, b;
-	float h;
-	if (g_color1Slider) {
-		h = (float)color1 / 255.0f * 360.0f;
-		mathlib::HSVToRGB(h, 1.0f, 1.0f, r, g, b);
-		g_color1Slider->SetBgColor(Color(r, g, b, 255));
-	}
-	if (g_color2Slider) {
-		h = (float)color2 / 255.0f * 360.0f;
-		mathlib::HSVToRGB(h, 1.0f, 1.0f, r, g, b);
-		g_color2Slider->SetBgColor(Color(r, g, b, 255));
-	}
-	gHookFuncs.RemapPalette(pthis, dummy, modelname, color1, color2);
-}
 void BasePanel_InstallHook(void){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
 	if (hGameUI) {
@@ -341,16 +290,6 @@ void BasePanel_InstallHook(void){
 #define SC_CBASEPANEL_RUNMENUCOMMAND_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x51\x53\x56\x57\xA1\x2A\x2A\x2A\x2A\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x2A\x2A\x2A\x2A\x8B\xD9\x8B\x75\x08\x68\x2A\x2A\x2A\x2A\x56"
 			Fill_Sig(SC_CBASEPANEL_RUNMENUCOMMAND_SIG, hGameUI, moduleSize, CBasePanel_RunMenuCommand);
 			Install_InlineHook(CBasePanel_RunMenuCommand);
-
-#define SC_COPTIONSUBMULTIPLAYER_CTOR_SIG "\x53\x8B\xDC\x83\xEC\x08\x83\xE4\xF0\x83\xC4\x04\x55\x8B\x6B\x04\x89\x6C\x24\x04\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x53\x81\xEC\x68\x01\x00\x00"
-			Fill_Sig(SC_COPTIONSUBMULTIPLAYER_CTOR_SIG, hGameUI, moduleSize, COptionsSubMultiplayer_ctor);
-			Install_InlineHook(COptionsSubMultiplayer_ctor);
-#define SC_COPTIONSUBMULTIPLAYER_DTOR_SIG "\x55\x8B\xEC\x56\x8B\xF1\xC7\x06\x2A\x2A\x2A\x2A\xE8\xEF\x9B\x01\x00\xF6\x45\x08\x01\x74\x0E\x68\x30\x01\x00\x00\x56\xE8\xB0\x9A\x03\x00\x83\xC4\x08\x8B\xC6\x5E\x5D\xC2\x04\x00"
-			Fill_Sig(SC_COPTIONSUBMULTIPLAYER_DTOR_SIG, hGameUI, moduleSize, COptionsSubMultiplayer_dtor);
-			Install_InlineHook(COptionsSubMultiplayer_dtor);
-#define REMAPPALLET_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x81\xEC\x2C\x02\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC5\x89\x45\xF0\x53\x56\x57\x50\x8D\x45\xF4\x64\xA3\x00\x00\x00\x00\x8B\x75\x08\x8D\x8D\xC8\xFD\xFF\xFF\x6A\x00\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x2A\x56\x56"
-			Fill_Sig(REMAPPALLET_SIG, hGameUI, moduleSize, RemapPalette);
-			Install_InlineHook(RemapPalette);
 		}
 	}
 	else
