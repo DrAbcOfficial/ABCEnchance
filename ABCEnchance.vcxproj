@@ -286,6 +286,9 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\consoledialog.cpp" />
     <ClCompile Include="vgui_controls\ControllerMap.cpp" />
     <ClCompile Include="vgui_controls\Controls.cpp" />
+    <ClCompile Include="vgui_controls\CrossHairDisplay.cpp" />
+    <ClCompile Include="vgui_controls\CvarSlider.cpp" />
+    <ClCompile Include="vgui_controls\CvarToggleCheckButton.cpp" />
     <ClCompile Include="vgui_controls\DirectorySelectDialog.cpp" />
     <ClCompile Include="vgui_controls\Divider.cpp" />
     <ClCompile Include="vgui_controls\EditablePanel.cpp" />
@@ -578,6 +581,9 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\consoledialog.h" />
     <ClInclude Include="vgui_controls\ControllerMap.h" />
     <ClInclude Include="vgui_controls\Controls.h" />
+    <ClInclude Include="vgui_controls\CrossHairDisplay.h" />
+    <ClInclude Include="vgui_controls\CvarSlider.h" />
+    <ClInclude Include="vgui_controls\CvarToggleCheckButton.h" />
     <ClInclude Include="vgui_controls\DialogManager.h" />
     <ClInclude Include="vgui_controls\DirectorySelectDialog.h" />
     <ClInclude Include="vgui_controls\Divider.h" />

@@ -668,6 +668,15 @@
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp">
       <Filter>VGUI2\gameui</Filter>
     </ClCompile>
+    <ClCompile Include="vgui_controls\CrossHairDisplay.cpp">
+      <Filter>VGUI\control</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_controls\CvarToggleCheckButton.cpp">
+      <Filter>VGUI\control</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_controls\CvarSlider.cpp">
+      <Filter>VGUI\control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1566,6 +1575,15 @@
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\OptionAdvancedDlg.h">
       <Filter>VGUI2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\CrossHairDisplay.h">
+      <Filter>VGUI\control</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\CvarSlider.h">
+      <Filter>VGUI\control</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\CvarToggleCheckButton.h">
+      <Filter>VGUI\control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
