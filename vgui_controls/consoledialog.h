@@ -120,7 +120,6 @@ namespace vgui
 
 		RichText* m_pHistory;
 		TextEntry* m_pEntry;
-		Label* m_pIME;
 		Button* m_pSubmit;
 		Menu* m_pCompletionList;
 		GaussianBlurPanel* m_pBlurBackend;
