@@ -9,47 +9,72 @@
 #include "vgui_controls/PropertyDialog.h"
 
 namespace vgui {
+	class CrossHairDisplay;
 	class GaussianBlurPanel;
 	class ModelViewPanel;
 	class TextEntry;
 	class Slider;
 	class Label;
 	class ListPanel;
-}
+	class Button;
+	class CCvarSlider;
+	class CCvarToggleCheckButton;
 
-class COptionsAdvanceSubMultiPlay : public vgui::PropertyPage{
-	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubMultiPlay, vgui::PropertyPage);
+class COptionsAdvanceSubMultiPlay : public PropertyPage{
+	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubMultiPlay, PropertyPage);
 public:
-	COptionsAdvanceSubMultiPlay(vgui::Panel* parent);
+	COptionsAdvanceSubMultiPlay(Panel* parent);
 	void ResetModel();
 	void ChangeModel(const char* mdl);
 	void BuildModelList(const char* filter = nullptr);
 protected:
 	MESSAGE_FUNC(OnSliderMoved, "SliderMoved");
 	MESSAGE_FUNC(OnItemSelected, "ItemSelected");
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	MESSAGE_FUNC(OnButtonChanged, "ButtonChanged");
+	virtual void OnResetData() override;
+	virtual void OnCommand(const char* cmd) override;
+	virtual void ApplySchemeSettings(IScheme* pScheme) override;
 private:
 	std::set<std::string> m_aryModelList;
-	vgui::ModelViewPanel* m_pModelViewer;
-	vgui::Slider* m_pModelController;
-	vgui::Label* m_pPlayerName;
-	vgui::ListPanel* m_pModelList;
-	vgui::TextEntry* m_pModelFilter;
+	ModelViewPanel* m_pModelViewer;
+	Slider* m_pModelController;
+	Label* m_pPlayerName;
+	ListPanel* m_pModelList;
+	TextEntry* m_pModelFilter;
+	Button* m_pModelFilterButton;
+
+	CrossHairDisplay* m_pCrosshairDisplay;
+	CCvarSlider* m_pCrosshairr;
+	CCvarSlider* m_pCrosshairg;
+	CCvarSlider* m_pCrosshairb;
+	CCvarSlider* m_pCrosshaira;
+	CCvarSlider* m_pCrosshairOutliner;
+	CCvarSlider* m_pCrosshairOutlineg;
+	CCvarSlider* m_pCrosshairOutlineb;
+	CCvarSlider* m_pCrosshairOutlinea;
+	CCvarSlider* m_pCrosshairWidth;
+	CCvarSlider* m_pCrosshairLength;
+	CCvarSlider* m_pCrosshairOutlineWidth;
+	CCvarSlider* m_pCrosshairOffset;
+	CCvarToggleCheckButton* m_pCrosshairDot;
+	CCvarToggleCheckButton* m_pCrosshairT;
+	CCvarToggleCheckButton* m_pCrosshairOutline;
 };
 
-class COptionsAdvanceDialog : public vgui::PropertyDialog{
-	DECLARE_CLASS_SIMPLE(COptionsAdvanceDialog, vgui::PropertyDialog);
+class COptionsAdvanceDialog : public PropertyDialog{
+	DECLARE_CLASS_SIMPLE(COptionsAdvanceDialog, PropertyDialog);
 public:
-	COptionsAdvanceDialog(vgui::Panel* parent);
+	COptionsAdvanceDialog(Panel* parent);
 	virtual void Activate() override;
 protected:
-	virtual void OnCommand(const char* command) override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual void PaintBackground() override;
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	virtual void ApplySchemeSettings(IScheme* pScheme) override;
 private:
-	vgui::GaussianBlurPanel* m_pBlur;
+	GaussianBlurPanel* m_pBlur;
 	COptionsAdvanceSubMultiPlay* m_pMultiPlayPage;
 };
+
+}
 
 #endif // !OPTIONADVANCEDLG_H
