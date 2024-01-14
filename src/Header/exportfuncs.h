@@ -24,14 +24,6 @@ extern metaplugins_t g_metaplugins;
 void AddHook(hook_t* h);
 void AddEngineHook(hook_t* h);
 
-//VGUI2
-extern HWND g_MainWnd;
-extern WNDPROC g_MainWndProc;
-extern bool g_bIMEComposing;
-extern double g_flImeComposingTime;
-ICommandLine* CommandLine(void);
-LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
 void CheckOtherPlugin();
 void FillEngineAddress();
 void FillAddress();
@@ -63,8 +55,6 @@ void HUD_Frame(double frametime);
 void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
 
 void R_NewMap(void);
-
-char* NewV_strncpy(char* a1, const char* a2, size_t a3);
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
