@@ -523,6 +523,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\BaseUI.h" />
     <ClInclude Include="VGUI2\Bitmap.h" />
     <ClInclude Include="VGUI2\Border.h" />
+    <ClInclude Include="VGUI2\ClientVGUI.h" />
     <ClInclude Include="VGUI2\FontAmalgam.h" />
     <ClInclude Include="VGUI2\FontManager.h" />
     <ClInclude Include="VGUI2\FontTextureCache.h" />

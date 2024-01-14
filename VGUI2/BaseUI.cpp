@@ -14,8 +14,11 @@
 #include "vgui_internal.h"
 #include "IKeyValuesSystem.h"
 
+#include <VGUI2/ClientVGUI.h>
+
 #include "exportfuncs.h"
 #include <plugins.h>
+
 #include <GameUI/BasePanel.h>
 
 namespace vgui
