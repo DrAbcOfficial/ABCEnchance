@@ -27,6 +27,7 @@ public:
 
 	void SetupTexBuffer();
 	void LoadModel(const char* model);
+	void ChangeModel(const char* model);
 	void Render();
 	void SetModelPos(float x, float y, float z);
 	void SetModelRotate(float pitch, float yaw, float roll);
