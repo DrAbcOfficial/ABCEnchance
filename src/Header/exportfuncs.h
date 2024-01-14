@@ -66,11 +66,6 @@ void R_NewMap(void);
 
 char* NewV_strncpy(char* a1, const char* a2, size_t a3);
 
-void BaseUI_InstallHook(void);
-void ClientVGUIInstallHook(void);
-void ClientVGUIShutdown(void);
-void Surface_InstallHooks(void);
-
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
 #define Sig_NotFound(name) g_pMetaHookAPI->SysError("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);

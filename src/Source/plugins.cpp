@@ -4,7 +4,7 @@
 #include "curl.h"
 #include "soundengine.h"
 #include <vgui_controls/Controls.h>
-#include <svc_hook.h>
+#include <VGUI2/ClientVGUI.h>
 
 cl_enginefunc_t gEnginefuncs;
 mh_interface_t *g_pInterface;

@@ -127,3 +127,7 @@ void ClientVGUIInstallHook(void){
 		}
 	}
 }
+
+double GetAbsoluteTime() {
+	return gEngfuncs.GetAbsoluteTime();
+}

@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -9,7 +9,9 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <utlvector.h>
+
+#include <tier1/utlvector.h>
+#include <tier1/KeyValues.h>
 
 #include <vgui/Cursor.h>
 #include <vgui/IInput.h>
@@ -21,11 +23,12 @@
 #include <KeyValues.h>
 #include <vgui/MouseCode.h>
 
-#include <vgui_controls/Menu.h>
-#include <vgui_controls/ScrollBar.h>
-#include <vgui_controls/TextEntry.h>
-#include <vgui_controls/Controls.h>
-#include <vgui_controls/MenuItem.h>
+#include "Menu.h"
+#include "ScrollBar.h"
+#include "TextEntry.h"
+#include "Controls.h"
+#include "MenuItem.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>
 
@@ -35,11 +38,37 @@ enum
 	BUFFER_SIZE = 999999,
 };
 
+extern bool g_bIMEComposing;
+extern double g_flImeComposingTime;
+
+double GetAbsoluteTime();
+
 using namespace vgui;
 
 static const int DRAW_OFFSET_X = 3, DRAW_OFFSET_Y = 1;
 
 DECLARE_BUILD_FACTORY(TextEntry);
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+class IMECandidatesMenu : public Menu
+{
+	typedef Menu BaseClass;
+
+public:
+	IMECandidatesMenu(Panel* parent) : Menu(parent, "IMECandidatesMenu")
+	{
+	}
+
+public:
+	void OnThink(void)
+	{
+		BaseClass::OnThink();
+
+		MoveToFront();
+	}
+};
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
@@ -76,7 +105,7 @@ TextEntry::TextEntry(Panel* parent, const char* panelName) : BaseClass(parent, p
 	_drawWidth = 0;
 	m_bAutoProgressOnHittingCharLimit = false;
 	m_pIMECandidates = NULL;
-	m_hPreviousIME = 0; // GoldSrc: No IME support input()->GetEnglishIMEHandle();
+	m_hPreviousIME = input()->GetEnglishIMEHandle();
 	m_bDrawLanguageIDAtLeft = false;
 	m_nLangInset = 0;
 	m_bUseFallbackFont = false;
@@ -108,11 +137,6 @@ TextEntry::TextEntry(Panel* parent, const char* panelName) : BaseClass(parent, p
 	// If keyboard focus is in an edit control, don't chain keyboard mappings up to parents since it could mess with typing in text.
 	SetAllowKeyBindingChainToParent(false);
 
-	REGISTER_COLOR_AS_OVERRIDABLE(_disabledFgColor, "disabledFgColor_override");
-	REGISTER_COLOR_AS_OVERRIDABLE(_disabledBgColor, "disabledBgColor_override");
-	REGISTER_COLOR_AS_OVERRIDABLE(_selectionColor, "selectionColor_override");
-	REGISTER_COLOR_AS_OVERRIDABLE(_selectionTextColor, "selectionTextColor_override");
-	REGISTER_COLOR_AS_OVERRIDABLE(_defaultSelectionBG2Color, "defaultSelectionBG2Color_override");
 }
 
 
@@ -129,22 +153,22 @@ void TextEntry::ApplySchemeSettings(IScheme* pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
-	SetFgColor(GetSchemeColor("TextEntry.TextColor", pScheme));
-	SetBgColor(GetSchemeColor("TextEntry.BgColor", pScheme));
+	SetFgColor(GetSchemeColor("WindowFgColor", pScheme));
+	SetBgColor(GetSchemeColor("WindowBgColor", pScheme));
 
-	_cursorColor = GetSchemeColor("TextEntry.CursorColor", pScheme);
-	_disabledFgColor = GetSchemeColor("TextEntry.DisabledTextColor", pScheme);
-	_disabledBgColor = GetSchemeColor("TextEntry.DisabledBgColor", pScheme);
+	_cursorColor = GetSchemeColor("TextCursorColor", pScheme);
+	_disabledFgColor = GetSchemeColor("WindowDisabledFgColor", pScheme);
+	_disabledBgColor = GetSchemeColor("ControlBG", pScheme);
 
-	_selectionTextColor = GetSchemeColor("TextEntry.SelectedTextColor", GetFgColor(), pScheme);
-	_selectionColor = GetSchemeColor("TextEntry.SelectedBgColor", pScheme);
-	_defaultSelectionBG2Color = GetSchemeColor("TextEntry.OutOfFocusSelectedBgColor", pScheme);
-	_focusEdgeColor = GetSchemeColor("TextEntry.FocusEdgeColor", Color(0, 0, 0, 0), pScheme);
+	_selectionTextColor = GetSchemeColor("SelectionFgColor", GetFgColor(), pScheme);
+	_selectionColor = GetSchemeColor("SelectionBgColor", pScheme);
+	_defaultSelectionBG2Color = GetSchemeColor("SelectionBG2", pScheme);
+	_focusEdgeColor = GetSchemeColor("BorderSelection", Color(0, 0, 0, 0), pScheme);
 
 	SetBorder(pScheme->GetBorder("ButtonDepressedBorder"));
 
-	if (_font == INVALID_FONT) _font = pScheme->GetFont("Default", IsProportional());
-	if (_smallfont == INVALID_FONT) _smallfont = pScheme->GetFont("DefaultVerySmall", IsProportional());
+	_font = pScheme->GetFont("Default", IsProportional());
+	_smallfont = pScheme->GetFont("DefaultVerySmall", IsProportional());
 
 	SetFont(_font);
 }
@@ -478,7 +502,9 @@ int TextEntry::PixelToCursorSpace(int cx, int cy)
 		}
 
 		// if we are on the right line but off the end of if put the cursor at the end of the line
-		if (m_LineBreaks[lineBreakIndexIndex] == i)
+		if (m_LineBreaks.Count() &&
+			lineBreakIndexIndex < m_LineBreaks.Count() &&
+			m_LineBreaks[lineBreakIndexIndex] == i)
 		{
 			// add another line
 			AddAnotherLine(x, y);
@@ -634,8 +660,6 @@ bool TextEntry::NeedsEllipses(HFont font, int* pIndex)
 //-----------------------------------------------------------------------------
 void TextEntry::PaintBackground()
 {
-	BaseClass::PaintBackground();
-
 	// draw background
 	Color col;
 	if (IsEnabled())
@@ -648,13 +672,12 @@ void TextEntry::PaintBackground()
 	}
 	Color saveBgColor = col;
 
+	surface()->DrawSetColor(col);
 	int wide, tall;
 	GetSize(wide, tall);
+	surface()->DrawFilledRect(0, 0, wide, tall);
 
-	//	surface()->DrawSetColor(col);
-	//	surface()->DrawFilledRect(0, 0, wide, tall);
-
-		// where to Start drawing
+	// where to Start drawing
 	int x = DRAW_OFFSET_X + _pixelsIndent, y = GetYStart();
 
 	m_nLangInset = 0;
@@ -663,8 +686,6 @@ void TextEntry::PaintBackground()
 	wchar_t shortcode[5];
 	shortcode[0] = L'\0';
 
-	// GoldSrc: No IME support
-#if 0
 	if (m_bAllowNonAsciiCharacters)
 	{
 		input()->GetIMELanguageShortCode(shortcode, sizeof(shortcode));
@@ -689,7 +710,6 @@ void TextEntry::PaintBackground()
 			wide -= m_nLangInset;
 		}
 	}
-#endif
 
 	HFont useFont = _font;
 
@@ -716,7 +736,7 @@ void TextEntry::PaintBackground()
 
 	// FIXME: Should insert at cursor pos instead
 	bool composing = m_bAllowNonAsciiCharacters && wcslen(m_szComposition) > 0;
-	bool invertcomposition = false; // GoldSrc: Not supported input()->GetShouldInvertCompositionString();
+	bool invertcomposition = input()->GetShouldInvertCompositionString();
 
 	if (composing)
 	{
@@ -842,7 +862,9 @@ void TextEntry::PaintBackground()
 			}
 
 			// if we've passed a line break go to that
-			if (_multiline && m_LineBreaks[lineBreakIndexIndex] == i)
+			if (_multiline && m_LineBreaks.Count() &&
+				lineBreakIndexIndex < m_LineBreaks.Count() &&
+				m_LineBreaks[lineBreakIndexIndex] == i)
 			{
 				// add another line
 				AddAnotherLine(x, y);
@@ -896,10 +918,7 @@ void TextEntry::PaintBackground()
 		if (composing)
 		{
 			LocalToScreen(x, y);
-			// GoldSrc:
-#if 0
 			input()->SetCandidateWindowPos(x, y);
-#endif
 		}
 	}
 
@@ -1306,8 +1325,7 @@ void TextEntry::CreateEditMenu()
 		m_pEditMenu->AddMenuItem("#TextEntry_Paste", new KeyValues("DoPaste"), this);
 	}
 
-	// GoldSrc: Not IME support
-#if 0
+
 	if (m_bAllowNonAsciiCharacters)
 	{
 		IInput::LanguageItem* langs = NULL;
@@ -1393,7 +1411,6 @@ void TextEntry::CreateEditMenu()
 			delete[] sentencemodes;
 		}
 	}
-#endif
 
 
 	m_pEditMenu->SetVisible(false);
@@ -1607,56 +1624,6 @@ void TextEntry::OnMouseCaptureLost()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Only pass some keys upwards 
-// everything else we don't relay to the parent
-//-----------------------------------------------------------------------------
-void TextEntry::OnKeyCodePressed(KeyCode code)
-{
-	// Pass enter on only if _catchEnterKey isn't set
-	if (code == KEY_ENTER)
-	{
-		if (!_catchEnterKey)
-		{
-			Panel::OnKeyCodePressed(code);
-			return;
-		}
-	}
-
-	// Forward on just a few key codes, everything else can be handled by TextEntry itself
-	switch (code)
-	{
-	case KEY_F1:
-	case KEY_F2:
-	case KEY_F3:
-	case KEY_F4:
-	case KEY_F5:
-	case KEY_F6:
-	case KEY_F7:
-	case KEY_F8:
-	case KEY_F9:
-	case KEY_F10:
-	case KEY_F11:
-	case KEY_F12:
-	case KEY_ESCAPE:
-	case KEY_APP:
-		Panel::OnKeyCodePressed(code);
-		return;
-	}
-
-	// GoldSrc: No joystick support, mouse codes are separate from key codes
-#if 0
-	// Pass on the joystick and mouse codes
-	if (IsMouseCode(code) || IsNovintButtonCode(code) || IsJoystickCode(code) || IsJoystickButtonCode(code) ||
-		IsJoystickPOVCode(code) || IsJoystickAxisCode(code))
-	{
-		Panel::OnKeyCodePressed(code);
-		return;
-	}
-#endif
-}
-
-
-//-----------------------------------------------------------------------------
 // Purpose: Masks which keys get chained up
 //			Maps keyboard input to text window functions.
 //-----------------------------------------------------------------------------
@@ -1668,10 +1635,9 @@ void TextEntry::OnKeyCodeTyped(KeyCode code)
 	bool shift = (input()->IsKeyDown(KEY_LSHIFT) || input()->IsKeyDown(KEY_RSHIFT));
 	bool ctrl = (input()->IsKeyDown(KEY_LCONTROL) || input()->IsKeyDown(KEY_RCONTROL));
 	bool alt = (input()->IsKeyDown(KEY_LALT) || input()->IsKeyDown(KEY_RALT));
-	bool winkey = (input()->IsKeyDown(KEY_LWIN) || input()->IsKeyDown(KEY_RWIN));
 	bool fallThrough = false;
 
-	if ((ctrl || (winkey)) && !alt)
+	if (ctrl)
 	{
 		switch (code)
 		{
@@ -2124,7 +2090,7 @@ void TextEntry::OnCreateDragData(KeyValues* msg)
 {
 	BaseClass::OnCreateDragData(msg);
 
-	char txt[256];
+	wchar_t txt[256];
 	GetText(txt, sizeof(txt));
 
 	int r0, r1;
@@ -2133,10 +2099,10 @@ void TextEntry::OnCreateDragData(KeyValues* msg)
 		int len = r1 - r0;
 		if (len > 0 && r0 < 1024)
 		{
-			char selection[512];
-			Q_strncpy(selection, &txt[r0], len + 1);
+			wchar_t selection[512];
+			wcsncpy(selection, &txt[r0], len + 1);
 			selection[len] = 0;
-			msg->SetString("text", selection);
+			msg->SetWString("text", selection);
 		}
 	}
 }
@@ -2433,7 +2399,9 @@ void TextEntry::MoveCursor(int line, int pixelsAcross)
 		}
 
 		// if we've passed a line break go to that
-		if (m_LineBreaks[lineBreakIndexIndex] == i)
+		if (m_LineBreaks.Count() &&
+			lineBreakIndexIndex < m_LineBreaks.Count() &&
+			m_LineBreaks[lineBreakIndexIndex] == i)
 		{
 			if (lineBreakIndexIndex == line)
 			{
@@ -2876,14 +2844,14 @@ void TextEntry::InsertChar(wchar_t ch)
 					// we can get called before this has been run for the first time :)
 					RecalculateLineBreaks();
 				}
-				if (m_LineBreaks[0] > m_TextStream.Count())
+				if (m_LineBreaks.Count() > 0 && m_LineBreaks[0] > m_TextStream.Count())
 				{
 					// if the line break is the past the end of the buffer recalc
 					_recalculateBreaksIndex = -1;
 					RecalculateLineBreaks();
 				}
 
-				if (m_LineBreaks[0] + 1 < m_TextStream.Count())
+				if (m_LineBreaks.Count() > 0 && m_LineBreaks[0] + 1 < m_TextStream.Count())
 				{
 					// delete the line
 					m_TextStream.RemoveMultiple(0, m_LineBreaks[0]);
@@ -3061,6 +3029,12 @@ void TextEntry::InsertString(const char* text)
 void TextEntry::Backspace()
 {
 	if (!IsEditable())
+		return;
+
+	if (g_bIMEComposing)
+		return;
+
+	if ( GetAbsoluteTime() < g_flImeComposingTime + 0.1)
 		return;
 
 	//if you are at the first position don't do anything
@@ -3275,13 +3249,13 @@ void TextEntry::OpenEditMenu()
 	int x0, x1;
 	if (GetSelectedRange(x0, x1)) // there is something selected
 	{
-		m_pEditMenu->SetItemEnabled("&Cut", true);
-		m_pEditMenu->SetItemEnabled("C&opy", true);
+		m_pEditMenu->SetItemEnabled("#TextEntry_Cut", true);
+		m_pEditMenu->SetItemEnabled("#TextEntry_Copy", true);
 	}
 	else	// there is nothing selected, disable cut/copy options
 	{
-		m_pEditMenu->SetItemEnabled("&Cut", false);
-		m_pEditMenu->SetItemEnabled("C&opy", false);
+		m_pEditMenu->SetItemEnabled("#TextEntry_Cut", false);
+		m_pEditMenu->SetItemEnabled("#TextEntry_Copy", false);
 	}
 	m_pEditMenu->SetVisible(true);
 	m_pEditMenu->RequestFocus();
@@ -3383,6 +3357,9 @@ void TextEntry::CopySelected()
 //-----------------------------------------------------------------------------
 void TextEntry::Paste()
 {
+	if (_hideText)
+		return;
+
 	if (!IsEditable())
 		return;
 
@@ -3713,9 +3690,9 @@ bool TextEntry::RequestInfo(KeyValues* outputData)
 	}
 	else if (!stricmp(outputData->GetName(), "GetState"))
 	{
-		char buf[64];
-		GetText(buf, sizeof(buf));
-		outputData->SetInt("state", atoi(buf));
+		wchar_t wbuf[64];
+		GetText(wbuf, sizeof(wbuf));
+		outputData->SetInt("state", _wtoi(wbuf));
 		return true;
 	}
 	return BaseClass::RequestInfo(outputData);
@@ -3745,6 +3722,8 @@ void TextEntry::OnSetState(int state)
 void TextEntry::ApplySettings(KeyValues* inResourceData)
 {
 	BaseClass::ApplySettings(inResourceData);
+	//	_font = scheme()->GetFont(GetScheme(), "Default", IsProportional() );
+	//	SetFont( _font );
 
 	_font = scheme()->GetIScheme(GetScheme())->GetFont(inResourceData->GetString("font", "Default"), IsProportional());
 	SetFont(_font);
@@ -3899,6 +3878,12 @@ void TextEntry::OnSetFocus()
 		SelectNone();
 	}
 
+	if (m_bAllowNonAsciiCharacters)
+	{
+		input()->GetCompositionString(m_szComposition, sizeof(m_szComposition));
+		ShowIMECandidates();
+	}
+
 	BaseClass::OnSetFocus();
 }
 
@@ -3942,13 +3927,10 @@ void TextEntry::SetAllowNumericInputOnly(bool state)
 void TextEntry::OnChangeIME(bool forward)
 {
 	// Only change ime if Unicode aware
-	// GoldSrc: IME
-#if 0
 	if (m_bAllowNonAsciiCharacters)
 	{
 		input()->OnChangeIME(forward);
 	}
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -3957,10 +3939,7 @@ void TextEntry::OnChangeIME(bool forward)
 //-----------------------------------------------------------------------------
 void TextEntry::LanguageChanged(int handleValue)
 {
-	// GoldSrc: IME
-#if 0
 	input()->OnChangeIMEByHandle(handleValue);
-#endif
 }
 
 
@@ -3970,10 +3949,7 @@ void TextEntry::LanguageChanged(int handleValue)
 //-----------------------------------------------------------------------------
 void TextEntry::ConversionModeChanged(int handleValue)
 {
-	// GoldSrc: IME
-#if 0
 	input()->OnChangeIMEConversionModeByHandle(handleValue);
-#endif
 }
 
 
@@ -3983,10 +3959,7 @@ void TextEntry::ConversionModeChanged(int handleValue)
 //-----------------------------------------------------------------------------
 void TextEntry::SentenceModeChanged(int handleValue)
 {
-	// GoldSrc: IME
-#if 0
 	input()->OnChangeIMESentenceModeByHandle(handleValue);
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -4001,9 +3974,6 @@ void TextEntry::CompositionString(const wchar_t* compstr)
 
 void TextEntry::ShowIMECandidates()
 {
-
-	// GoldSrc: IME
-#if 0
 	HideIMECandidates();
 
 	int c = input()->GetCandidateListCount();
@@ -4012,7 +3982,8 @@ void TextEntry::ShowIMECandidates()
 		return;
 	}
 
-	m_pIMECandidates = new Menu(this, "IMECandidatesMenu");
+	m_pIMECandidates = new IMECandidatesMenu(this);
+	m_pIMECandidates->SetFont(_font);
 
 	int pageStart = input()->GetCandidateListPageStart();
 	int pageSize = input()->GetCandidateListPageSize();
@@ -4097,7 +4068,6 @@ void TextEntry::ShowIMECandidates()
 			m_pIMECandidates->SetPos(cx - menuWide, cy - menuTall - GetTall());
 		}
 	}
-#endif
 }
 
 void TextEntry::HideIMECandidates()
@@ -4105,15 +4075,13 @@ void TextEntry::HideIMECandidates()
 	if (m_pIMECandidates)
 	{
 		m_pIMECandidates->SetVisible(false);
+		delete m_pIMECandidates;
 	}
-	delete m_pIMECandidates;
 	m_pIMECandidates = NULL;
 }
 
 void TextEntry::UpdateIMECandidates()
 {
-	// GoldSrc: IME
-#if 0
 	if (!m_pIMECandidates)
 		return;
 
@@ -4173,12 +4141,22 @@ void TextEntry::UpdateIMECandidates()
 		_snwprintf(label, sizeof(label) / sizeof(wchar_t) - 1, L"%i %s", i - pageStart + startAtOne, unicode);
 		label[sizeof(label) / sizeof(wchar_t) - 1] = L'\0';
 		item->SetText(label);
+		item->SetCommand(new KeyValues("DoCandidateSelected", "num", i - pageStart + startAtOne));
 		if (isSelected)
 		{
 			m_pIMECandidates->SetCurrentlyHighlightedItem(id);
 		}
 	}
-#endif
+
+	m_pIMECandidates->InvalidateLayout();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void TextEntry::CandidateSelected(int num)
+{
+	input()->OnIMESelectCandidate(num);
 }
 
 //-----------------------------------------------------------------------------
@@ -4186,8 +4164,6 @@ void TextEntry::UpdateIMECandidates()
 //-----------------------------------------------------------------------------
 void TextEntry::FlipToLastIME()
 {
-	// GoldSrc: IME
-#if 0
 	int hCurrentIME = input()->GetCurrentIMEHandle();
 	int hEnglishIME = input()->GetEnglishIMEHandle();
 
@@ -4204,7 +4180,6 @@ void TextEntry::FlipToLastIME()
 		m_hPreviousIME = hCurrentIME;
 		input()->OnChangeIMEByHandle(hEnglishIME);
 	}
-#endif
 }
 
 void TextEntry::SetDrawLanguageIDAtLeft(bool state)

@@ -1558,5 +1558,8 @@
     <ClInclude Include="vgui_controls\GaussianBlurPanel.h">
       <Filter>VGUI\control</Filter>
     </ClInclude>
+    <ClInclude Include="VGUI2\ClientVGUI.h">
+      <Filter>VGUI2</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

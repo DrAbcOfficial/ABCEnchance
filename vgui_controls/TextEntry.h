@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: A Class to create a window that you can type and edit text in.
 //          Window can hold single line or multiline text. 
@@ -16,12 +16,14 @@
 #endif
 
 #include <vgui/VGUI.h>
-#include <Color.h>
-#include <vgui_controls/Panel.h>
-#include <vgui_controls/Label.h>
-#include <vgui_controls/ListPanel.h>
 
-#include <utlvector.h>
+#include <Color.h>
+
+#include "Panel.h"
+#include "Label.h"
+#include "ListPanel.h"
+
+#include <tier1/utlvector.h>
 
 namespace vgui
 {
@@ -129,6 +131,7 @@ namespace vgui
 		MESSAGE_FUNC(ShowIMECandidates, "DoShowIMECandidates");
 		MESSAGE_FUNC(HideIMECandidates, "DoHideIMECandidates");
 		MESSAGE_FUNC(UpdateIMECandidates, "DoUpdateIMECandidates");
+		MESSAGE_FUNC_INT(CandidateSelected, "DoCandidateSelected", num);
 
 		virtual void DeleteSelected();
 		virtual void Undo();
@@ -254,7 +257,6 @@ namespace vgui
 		MESSAGE_FUNC(OnSliderMoved, "ScrollBarSliderMoved"); // respond to scroll bar events
 		virtual void OnKillFocus();
 		virtual void OnMouseWheeled(int delta);	// respond to mouse wheel events
-		virtual void OnKeyCodePressed(KeyCode code); //respond to keyboard events
 		virtual void OnKeyCodeTyped(KeyCode code);	//respond to keyboard events
 		virtual	void OnKeyTyped(wchar_t unichar);	//respond to keyboard events
 
