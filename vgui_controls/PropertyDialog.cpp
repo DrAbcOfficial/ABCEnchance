@@ -176,25 +176,6 @@ void PropertyDialog::OnCancel()
 	// designed to be overridden
 }
 
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : code - 
-//-----------------------------------------------------------------------------
-void PropertyDialog::OnKeyCodeTyped(KeyCode code)
-{
-	// this has been removed, since it conflicts with how we use the escape key in the game
-//	if (code == KEY_ESCAPE)
-//	{
-//		OnCommand("Cancel");
-//	}
-//	else
-	{
-		BaseClass::OnKeyCodeTyped(code);
-	}
-}
-
-
 //-----------------------------------------------------------------------------
 // Purpose: Command handler
 //-----------------------------------------------------------------------------
