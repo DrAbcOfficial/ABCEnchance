@@ -1,3 +1,6 @@
+#include "vgui_controls/PropertySheet.h"
+#include "vgui_controls/TextEntry.h"
+
 #include <GaussianBlurPanel.h>
 #include <ModelViewPanel.h>
 
@@ -5,74 +8,74 @@
 
 extern const char* CVAR_GET_STRING(const char* x);
 
-COptionsAdvanceDlg::COptionsAdvanceDlg(vgui::Panel* parent) : BaseClass(parent, "OptionAdvancedDlg"){
-	SetDeleteSelfOnClose(true);
-	SetTitle("", true);
-	SetCloseButtonVisible(false);
-	SetMoveable(false);
-	SetSizeable(false);
+COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(vgui::Panel* parent) : BaseClass(parent, "OptionsAdvanceSubMultiPlay"){
 	SetProportional(true);
-	SetKeyBoardInputEnabled(false);
+	m_pModelViewer = new vgui::ModelViewPanel(this, "ModelViewer");
+	m_pPlayerName = new vgui::TextEntry(this, "PlayerName");
 
-	m_pBlur = new vgui::GaussianBlurPanel(this, "BlurPanel");
-	m_pModelViewer = new vgui::ModelViewPanel(this, "ModelViewr");
-	LoadControlSettings("abcenchance\\res\\gameui\\OptionAdvancedDlg.res");
+	LoadControlSettings("abcenchance\\res\\gameui\\OptionsAdvanceSubMultiPlay.res");
 	m_pModelViewer->SetupTexBuffer();
+	m_pPlayerName->SetText(CVAR_GET_STRING("name"));
 	ResetModel();
 }
-
-void COptionsAdvanceDlg::ResetModel(){
+void COptionsAdvanceSubMultiPlay::ResetModel(){
 	char path[MAX_PATH] = {};
 	const char* mdl = CVAR_GET_STRING("model");
 	std::snprintf(path, MAX_PATH, "models/player/%s/%s.mdl", mdl, mdl);
 	m_pModelViewer->ChangeModel(path);
 }
-
-void COptionsAdvanceDlg::PaintBackground(){
-	//nothing
-}
-
-void COptionsAdvanceDlg::PaintBorder(){
-
-}
-
-void COptionsAdvanceDlg::Activate(){
-	BaseClass::Activate();
-}
-
-void COptionsAdvanceDlg::ApplyChangesToConVar(const char* pConVarName, int value)
-{
-}
-
-void COptionsAdvanceDlg::ApplyChanges(void)
-{
-}
-
-void COptionsAdvanceDlg::OnResetData(void)
-{
-}
-
-void COptionsAdvanceDlg::OnCommand(const char* command)
-{
-}
-
-void COptionsAdvanceDlg::ApplySchemeSettings(vgui::IScheme* pScheme){
+void COptionsAdvanceSubMultiPlay::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 	Color empty = Color(0, 0, 0, 0);
-	SetBgColor(empty);
-	SetFgColor(empty);
 	m_pModelViewer->SetBgColor(empty);
+}
+
+COptionsAdvanceDialog::COptionsAdvanceDialog(vgui::Panel* parent) : BaseClass(parent, "OptionsAdvanceDialog") {
+	SetDeleteSelfOnClose(true);
+	SetMoveable(false);
+	SetSizeable(false);
+	SetProportional(true);
+
+	m_pBlur = new vgui::GaussianBlurPanel(this, "BlurPanel");
+	LoadControlSettings("abcenchance\\res\\gameui\\OptionsAdvanceDialog.res");
+
+	m_pMultiPlayPage = new COptionsAdvanceSubMultiPlay(this);
+	AddPage(m_pMultiPlayPage, "#GameUI_ABC_MultiPlayPage");
+
+	SetApplyButtonVisible(true);
+}
+void COptionsAdvanceDialog::OnGameUIHidden(void){
+}
+void COptionsAdvanceDialog::OK_Confirmed(void){
+}
+void COptionsAdvanceDialog::Activate(){
+	BaseClass::Activate();
+	vgui::input()->SetAppModalSurface(GetVPanel());
+}
+void COptionsAdvanceDialog::OnCommand(const char* command){
+	if (!stricmp(command, "OK")){
+		ApplyChanges();
+		Close();
+	}
+	else if (!stricmp(command, "Apply"))
+		ApplyChanges();
+	else
+		BaseClass::OnCommand(command);
+}
+void COptionsAdvanceDialog::ApplySettings(KeyValues* inResourceData){
+	BaseClass::ApplySettings(inResourceData);
+}
+void COptionsAdvanceDialog::PaintBackground(){
+}
+void COptionsAdvanceDialog::ApplySchemeSettings(vgui::IScheme* pScheme){
+	BaseClass::ApplySchemeSettings(pScheme);
+	auto sheet = GetPropertySheet();
+	Color empty = Color(0, 0, 0, 0);
+	SetBgColor(empty);
+	SetBorder(nullptr);
+	m_pMultiPlayPage->SetBgColor(empty);
+	m_pMultiPlayPage->SetBorder(nullptr);
+	sheet->SetBgColor(empty);
+	sheet->SetBorder(nullptr);
 	m_pBlur->SetBgColor(Color(255, 255, 255, 255));
-}
-
-void COptionsAdvanceDlg::OnTextChanged(vgui::Panel* panel)
-{
-}
-
-void COptionsAdvanceDlg::OnGameUIHidden(void)
-{
-}
-
-void COptionsAdvanceDlg::OK_Confirmed(void)
-{
 }

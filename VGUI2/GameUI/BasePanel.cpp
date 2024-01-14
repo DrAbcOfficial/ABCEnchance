@@ -239,7 +239,7 @@ IVanilliaPanel* BasePanel(){
 }
 
 
-static vgui::DHANDLE<COptionsAdvanceDlg>g_pAdvanceOptPanel;
+static vgui::DHANDLE<COptionsAdvanceDialog>g_pAdvanceOptPanel;
 
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_pBasePanel = static_cast<IVanilliaPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
@@ -267,7 +267,7 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 void __fastcall CBasePanel_RunMenuCommand(vgui::Panel* pthis, int dummy, const char* command) {
 	if (!std::strcmp(command, "OpenOptionsABCEnchanceDialog")) {
 		if (g_pAdvanceOptPanel == nullptr) {
-			g_pAdvanceOptPanel = new COptionsAdvanceDlg(pthis);
+			g_pAdvanceOptPanel = new COptionsAdvanceDialog(pthis);
 			g_pAdvanceOptPanel->Activate();
 		}
 	}
