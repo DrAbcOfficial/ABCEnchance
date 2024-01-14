@@ -1,5 +1,6 @@
 #include "vgui_controls/PropertySheet.h"
-#include "vgui_controls/TextEntry.h"
+#include "vgui_controls/Label.h"
+#include "vgui_controls/Slider.h"
 
 #include <GaussianBlurPanel.h>
 #include <ModelViewPanel.h>
@@ -9,13 +10,12 @@
 extern const char* CVAR_GET_STRING(const char* x);
 
 COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(vgui::Panel* parent) : BaseClass(parent, "OptionsAdvanceSubMultiPlay"){
-	SetProportional(true);
 	m_pModelViewer = new vgui::ModelViewPanel(this, "ModelViewer");
-	m_pPlayerName = new vgui::TextEntry(this, "PlayerName");
+	m_pModelController = new vgui::Slider(this, "ModelController");
+	m_pPlayerName = new vgui::Label(this, "PlayerName", CVAR_GET_STRING("name"));
 
 	LoadControlSettings("abcenchance\\res\\gameui\\OptionsAdvanceSubMultiPlay.res");
 	m_pModelViewer->SetupTexBuffer();
-	m_pPlayerName->SetText(CVAR_GET_STRING("name"));
 	ResetModel();
 }
 void COptionsAdvanceSubMultiPlay::ResetModel(){
@@ -32,21 +32,13 @@ void COptionsAdvanceSubMultiPlay::ApplySchemeSettings(vgui::IScheme* pScheme){
 
 COptionsAdvanceDialog::COptionsAdvanceDialog(vgui::Panel* parent) : BaseClass(parent, "OptionsAdvanceDialog") {
 	SetDeleteSelfOnClose(true);
-	SetMoveable(false);
-	SetSizeable(false);
-	SetProportional(true);
 
 	m_pBlur = new vgui::GaussianBlurPanel(this, "BlurPanel");
 	LoadControlSettings("abcenchance\\res\\gameui\\OptionsAdvanceDialog.res");
-
+	auto sheet = GetPropertySheet();
 	m_pMultiPlayPage = new COptionsAdvanceSubMultiPlay(this);
 	AddPage(m_pMultiPlayPage, "#GameUI_ABC_MultiPlayPage");
-
 	SetApplyButtonVisible(true);
-}
-void COptionsAdvanceDialog::OnGameUIHidden(void){
-}
-void COptionsAdvanceDialog::OK_Confirmed(void){
 }
 void COptionsAdvanceDialog::Activate(){
 	BaseClass::Activate();
