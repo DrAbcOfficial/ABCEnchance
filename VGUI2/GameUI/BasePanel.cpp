@@ -268,14 +268,12 @@ void __fastcall CBasePanel_RunMenuCommand(vgui::Panel* pthis, int dummy, const c
 	if (!std::strcmp(command, "OpenOptionsABCEnchanceDialog")) {
 		if (g_pAdvanceOptPanel == nullptr) {
 			g_pAdvanceOptPanel = new COptionsAdvanceDialog(pthis);
-			g_pAdvanceOptPanel->Activate();
 		}
+		g_pAdvanceOptPanel->Activate();
 	}
 	else
 		gHookFuncs.CBasePanel_RunMenuCommand(pthis, dummy, command);
 }
-static vgui::DHANDLE<vgui::ModelViewPanel>g_modelviewPanel;
-static vgui::DHANDLE<vgui::Slider> g_modelviewSlider;
 static vgui::DHANDLE<vgui::Panel> g_color1Slider;
 static vgui::DHANDLE<vgui::Panel> g_color2Slider;
 
@@ -300,36 +298,9 @@ void* __fastcall COptionsSubMultiplayer_ctor(vgui::Panel* pthis, int dummy, void
 	color2->SetPos(x + w2 - h2 + 1, y);
 	color2->SetSize(h2 * 0.75, h2 * 0.75);
 	g_color2Slider = color2;
-
-	IVanilliaPanel* modelbitmap = *reinterpret_cast<IVanilliaPanel**>(reinterpret_cast<DWORD>(res) + 0xb8);
-	modelbitmap->SetVisible(false);
-	int w, h;
-	vgui::ipanel()->GetPos(modelbitmap->GetVPanel(), x, y);
-	vgui::ipanel()->GetSize(modelbitmap->GetVPanel(), w, h);
-	//TODO: fuck if u move silder and close/open console, its will crash game for no reason
-	vgui::ModelViewPanel* panel = new vgui::ModelViewPanel(pthis, "3DModelImage");
-	panel->SetBounds(x, y, w, h - h2);
-	panel->SetupTexBuffer();
-	panel->SetModelPos(0, 45, 0);
-	panel->SetAnimate(true);
-	g_modelviewPanel = panel;
-
-	vgui::Slider* slider = new vgui::Slider(pthis, "RotateSlider");
-	slider->SetRange(0, 360);
-	slider->SetBounds(x, y + h - h2, w, h2);
-	slider->AddActionSignalTarget(pthis);
-	g_modelviewSlider = slider;
 	return res;
 }
 void* __fastcall COptionsSubMultiplayer_dtor(vgui::Panel* pthis, int dummy, byte unk) {
-	if (g_modelviewPanel) {
-		delete g_modelviewPanel.Get();
-		g_modelviewPanel = nullptr;
-	}
-	if (g_modelviewSlider) {
-		delete g_modelviewSlider.Get();
-		g_modelviewSlider = nullptr;
-	}
 	if (g_color1Slider) {
 		delete g_color1Slider.Get();
 		g_color1Slider = nullptr;
@@ -341,13 +312,6 @@ void* __fastcall COptionsSubMultiplayer_dtor(vgui::Panel* pthis, int dummy, byte
 	return gHookFuncs.COptionsSubMultiplayer_dtor(pthis, dummy, unk);
 }
 void __fastcall RemapPalette(vgui::Panel* pthis, int dummy, char* modelname, int color1, int color2) {
-	if (g_modelviewPanel) {
-		char temp[MAX_PATH];
-		std::snprintf(temp, MAX_PATH, "models/player/%s/%s.mdl", modelname, modelname);
-		g_modelviewPanel->LoadModel(temp);
-		if(g_modelviewSlider)
-			g_modelviewPanel->SetModelRotate(0, g_modelviewSlider->GetValue(), 0);
-	}
 	int r, g, b;
 	float h;
 	if (g_color1Slider) {
@@ -360,7 +324,6 @@ void __fastcall RemapPalette(vgui::Panel* pthis, int dummy, char* modelname, int
 		mathlib::HSVToRGB(h, 1.0f, 1.0f, r, g, b);
 		g_color2Slider->SetBgColor(Color(r, g, b, 255));
 	}
-	
 	gHookFuncs.RemapPalette(pthis, dummy, modelname, color1, color2);
 }
 void BasePanel_InstallHook(void){

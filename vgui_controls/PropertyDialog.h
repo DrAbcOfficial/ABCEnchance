@@ -64,7 +64,6 @@ namespace vgui
 		virtual void PerformLayout();
 		virtual void OnCommand(const char* command);
 		virtual void ActivateBuildMode();
-		virtual void OnKeyCodeTyped(KeyCode code);
 		virtual void RequestFocus(int direction = 0);
 
 		MESSAGE_FUNC(OnApplyButtonEnable, "ApplyButtonEnable");
