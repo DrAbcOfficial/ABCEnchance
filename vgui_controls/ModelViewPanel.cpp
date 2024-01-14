@@ -1028,7 +1028,7 @@ void vgui::ModelViewPanel::Render(){
 void vgui::ModelViewPanel::SetModelPos(float x, float y, float z){
 	//swap y and z to fit game world
 	m_aryOrigin[0] = x;
-	m_aryOrigin[1] = -z;
+	m_aryOrigin[1] = z;
 	m_aryOrigin[2] = -y;
 }
 

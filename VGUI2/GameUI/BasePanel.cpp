@@ -25,6 +25,7 @@
 #include "plugins.h"
 #include <mymathlib.h>
 #include <Border.h>
+#include "OptionAdvancedDlg.h"
 
 bool g_bInitialized = false;
 int g_iTextureID;
@@ -237,6 +238,9 @@ IVanilliaPanel* BasePanel(){
 	return g_pBasePanel;
 }
 
+
+static vgui::DHANDLE<COptionsAdvanceDlg>g_pAdvanceOptPanel;
+
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_pBasePanel = static_cast<IVanilliaPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
@@ -260,7 +264,16 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	vgui::surface()->DrawSetTexture(g_iTextureID);
 	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth(), ScreenHeight());
 }
-
+void __fastcall CBasePanel_RunMenuCommand(vgui::Panel* pthis, int dummy, const char* command) {
+	if (!std::strcmp(command, "OpenOptionsABCEnchanceDialog")) {
+		if (g_pAdvanceOptPanel == nullptr) {
+			g_pAdvanceOptPanel = new COptionsAdvanceDlg(pthis);
+			g_pAdvanceOptPanel->Activate();
+		}
+	}
+	else
+		gHookFuncs.CBasePanel_RunMenuCommand(pthis, dummy, command);
+}
 static vgui::DHANDLE<vgui::ModelViewPanel>g_modelviewPanel;
 static vgui::DHANDLE<vgui::Slider> g_modelviewSlider;
 static vgui::DHANDLE<vgui::Panel> g_color1Slider;
@@ -356,12 +369,16 @@ void BasePanel_InstallHook(void){
 		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
 		DWORD moduleSize = g_pMetaHookAPI->GetModuleSize(hGameUI);
 		if (fnCreateInterface) {
-#define SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG "\x55\x8B\xEC\x83\xEC\x38\x53\x8D\x45\xCC\x8B\xD9\x50\x8D\x45\xC8\x89\x5D\xD0\x50\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8D\x4D\xD4\x51"
-			Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, hGameUI, moduleSize, CBasePanel_PaintBackground);
-			Install_InlineHook(CBasePanel_PaintBackground);
 #define SC_CBASEPANEL_CTOR_SIG "\x55\x8B\xEC\x51\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\x6A\x00\x89\x75\xFC\xE8\x2A\x2A\x2A\x2A\xC7"
 			Fill_Sig(SC_CBASEPANEL_CTOR_SIG, hGameUI, moduleSize, CBasePanel_ctor);
 			Install_InlineHook(CBasePanel_ctor);
+#define SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG "\x55\x8B\xEC\x83\xEC\x38\x53\x8D\x45\xCC\x8B\xD9\x50\x8D\x45\xC8\x89\x5D\xD0\x50\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8D\x4D\xD4\x51"
+			Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, hGameUI, moduleSize, CBasePanel_PaintBackground);
+			Install_InlineHook(CBasePanel_PaintBackground);
+#define SC_CBASEPANEL_RUNMENUCOMMAND_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x51\x53\x56\x57\xA1\x2A\x2A\x2A\x2A\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x2A\x2A\x2A\x2A\x8B\xD9\x8B\x75\x08\x68\x2A\x2A\x2A\x2A\x56"
+			Fill_Sig(SC_CBASEPANEL_RUNMENUCOMMAND_SIG, hGameUI, moduleSize, CBasePanel_RunMenuCommand);
+			Install_InlineHook(CBasePanel_RunMenuCommand);
+
 #define SC_COPTIONSUBMULTIPLAYER_CTOR_SIG "\x53\x8B\xDC\x83\xEC\x08\x83\xE4\xF0\x83\xC4\x04\x55\x8B\x6B\x04\x89\x6C\x24\x04\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x53\x81\xEC\x68\x01\x00\x00"
 			Fill_Sig(SC_COPTIONSUBMULTIPLAYER_CTOR_SIG, hGameUI, moduleSize, COptionsSubMultiplayer_ctor);
 			Install_InlineHook(COptionsSubMultiplayer_ctor);

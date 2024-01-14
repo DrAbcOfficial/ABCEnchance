@@ -665,6 +665,9 @@
     <ClCompile Include="VGUI2\Scheme2.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
+    <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp">
+      <Filter>VGUI2\gameui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1560,6 +1563,9 @@
     </ClInclude>
     <ClInclude Include="VGUI2\ClientVGUI.h">
       <Filter>VGUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\GameUI\OptionAdvancedDlg.h">
+      <Filter>VGUI2\gameui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
