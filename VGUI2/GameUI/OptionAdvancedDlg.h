@@ -9,6 +9,8 @@ namespace vgui {
 	class GaussianBlurPanel;
 	class ModelViewPanel;
 	class TextEntry;
+	class Slider;
+	class Label;
 }
 
 class COptionsAdvanceSubMultiPlay : public vgui::PropertyPage
@@ -21,7 +23,8 @@ protected:
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 private:
 	vgui::ModelViewPanel* m_pModelViewer;
-	vgui::TextEntry* m_pPlayerName;
+	vgui::Slider* m_pModelController;
+	vgui::Label* m_pPlayerName;
 };
 
 class COptionsAdvanceDialog : public vgui::PropertyDialog
@@ -29,10 +32,6 @@ class COptionsAdvanceDialog : public vgui::PropertyDialog
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceDialog, vgui::PropertyDialog);
 public:
 	COptionsAdvanceDialog(vgui::Panel* parent);
-
-	MESSAGE_FUNC(OnGameUIHidden, "GameUIHidden");
-	MESSAGE_FUNC(OK_Confirmed, "OK_Confirmed");
-
 	virtual void Activate() override;
 protected:
 	virtual void OnCommand(const char* command) override;
