@@ -15,6 +15,7 @@
 #include <ModelViewPanel.h>
 
 #include "OptionAdvancedDlg.h"
+#include <algorithm>
 
 extern const char* CVAR_GET_STRING(const char* x);
 extern float CVAR_GET_FLOAT(const char* x);
@@ -88,11 +89,14 @@ void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter){
 
 	size_t counter = 0;
 	size_t plr = 0;
+	std::string flt = filter ? filter : "";
+	std::transform(flt.begin(), flt.end(), flt.begin(), ::tolower);
 	const char* playermdl = CVAR_GET_STRING("model");
 	for (auto iter = m_aryModelList.begin(); iter != m_aryModelList.end(); iter++) {
 		const char* mdl = iter->c_str();
 		std::string str = mdl;
-		if (!filter || str.find(filter) != std::string::npos) {
+		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+		if ((flt.size() == 0) || (str.find(flt) != std::string::npos)) {
 			if (!std::strcmp(mdl, playermdl))
 				plr = counter;
 			counter++;
