@@ -128,6 +128,15 @@ void ClientVGUIInstallHook(void){
 	}
 }
 
+//vgui2
+
+bool g_bIMEComposing = false;
+double g_flImeComposingTime = 0;
+
 double GetAbsoluteTime() {
 	return gEngfuncs.GetAbsoluteTime();
+}
+
+ICommandLine* CommandLine(void) {
+	return g_pInterface->CommandLine;
 }

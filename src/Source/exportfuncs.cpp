@@ -70,132 +70,6 @@ struct playerppmoveinfo {
 	bool walking;
 } g_playerppmove;
 
-//VGUI2
-HWND g_MainWnd = nullptr;
-WNDPROC g_MainWndProc = nullptr;
-bool g_bIMEComposing = false;
-double g_flImeComposingTime = 0;
-ICommandLine* CommandLine(void){
-	return g_pInterface->CommandLine;
-}
-LRESULT WINAPI VID_MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
-	/*
-	static HWND s_hLastHWnd;
-	if (hWnd != s_hLastHWnd)
-	{
-		s_hLastHWnd = hWnd;
-		vgui::input()->SetIMEWindow(hWnd);
-	}
-
-	switch (uMsg)
-	{
-	case WM_SYSCHAR:
-	case WM_CHAR:
-	{
-		if (g_bIMEComposing)
-			return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-
-		break;
-	}
-	case WM_KEYDOWN:
-	case WM_KEYUP:
-	{
-		if (wParam == VK_BACK)
-		{
-			if (g_bIMEComposing)
-				return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-		}
-
-		break;
-	}
-	case WM_INPUTLANGCHANGE:
-	{
-		vgui::input()->OnInputLanguageChanged();
-		//break;
-		return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-	}
-
-	case WM_IME_STARTCOMPOSITION:
-	{
-		g_bIMEComposing = true;
-		g_flImeComposingTime = GetAbsoluteTime();
-		vgui::input()->OnIMEStartComposition();
-		return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-	}
-
-	case WM_IME_COMPOSITION:
-	{
-		int flags = (int)lParam;
-		vgui::input()->OnIMEComposition(flags);
-		return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-	}
-
-	case WM_IME_ENDCOMPOSITION:
-	{
-		g_bIMEComposing = false;
-		g_flImeComposingTime = GetAbsoluteTime();
-		vgui::input()->OnIMEEndComposition();
-		return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-	}
-
-	case WM_IME_NOTIFY:
-	{
-		switch (wParam)
-		{
-		case IMN_OPENCANDIDATE:
-		{
-			vgui::input()->OnIMEShowCandidates();
-			return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-		}
-
-		case IMN_CHANGECANDIDATE:
-		{
-			vgui::input()->OnIMEChangeCandidates();
-			return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-		}
-
-		case IMN_CLOSECANDIDATE:
-		{
-			vgui::input()->OnIMECloseCandidates();
-			//break;
-			return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-		}
-
-		case IMN_SETCONVERSIONMODE:
-		case IMN_SETSENTENCEMODE:
-		case IMN_SETOPENSTATUS:
-		{
-			vgui::input()->OnIMERecomputeModes();
-			break;
-		}
-
-		case IMN_CLOSESTATUSWINDOW:
-		case IMN_GUIDELINE:
-		case IMN_OPENSTATUSWINDOW:
-		case IMN_SETCANDIDATEPOS:
-		case IMN_SETCOMPOSITIONFONT:
-		case IMN_SETCOMPOSITIONWINDOW:
-		case IMN_SETSTATUSWINDOWPOS:
-		{
-			break;
-		}
-		}
-
-		break;
-	}
-
-	case WM_IME_SETCONTEXT:
-	{
-		lParam &= ~ISC_SHOWUICOMPOSITIONWINDOW;
-		lParam &= ~ISC_SHOWUIGUIDELINE;
-		lParam &= ~ISC_SHOWUIALLCANDIDATEWINDOW;
-		break;
-	}
-	}
-	*/
-	return CallWindowProc(g_MainWndProc, hWnd, uMsg, wParam, lParam);
-}
-
 //FINAL SHIT
 void R_NewMap(void){
 	ClearExtraPrecache();
@@ -287,20 +161,6 @@ void __fastcall CClient_SoundEngine_PlayFMODSound(void* pEngine, int dummy, int 
 	}
 	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pEngine, dummy, param_1, param_2, param_3, channel, param_5, param_6, param_7, param_8, param_9, param_10, param_11);
 }
-char* NewV_strncpy(char* a1, const char* a2, size_t a3){
-	char language[128] = { 0 };
-	const char* lang = nullptr;
-	auto gamedir = gEngfuncs.pfnGetGameDirectory();
-	if (CommandLine()->CheckParm("-forcelang", &lang) && lang && lang[0])
-		a2 = lang;
-	else if ((gamedir && !strcmp(gamedir, "svencoop")) || CommandLine()->CheckParm("-steamlang")){
-		Sys_GetRegKeyValue("Software\\Valve\\Steam", "Language", language, sizeof(language), "");
-		if ((strlen(language) > 0) && (stricmp(language, "english")))
-			a2 = language;
-	}
-	strncpy_s(m_szCurrentLanguage, a2, sizeof(m_szCurrentLanguage));
-	return gHookFuncs.V_strncpy(a1, a2, a3);
-}
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 
@@ -320,17 +180,6 @@ void CheckOtherPlugin(){
 	else
 		g_pMetaHookAPI->SysError("[ABCEnchance]\nThis plugin relay on Captionmod to work, please add Captionmod.dll in your plugin.lst");
 }
-IBaseInterface* NewCreateInterface(const char* pName, int* pReturnCode){
-	auto fnCreateInterface = (decltype(NewCreateInterface)*)Sys_GetFactoryThis();
-	auto fn = fnCreateInterface(pName, pReturnCode);
-	if (fn)
-		return fn;
-	fnCreateInterface = (decltype(NewCreateInterface)*)GetProcAddress(g_hClientDll, CREATEINTERFACE_PROCNAME);
-	fn = fnCreateInterface(pName, pReturnCode);
-	if (fn)
-		return fn;
-	return nullptr;
-}
 void FillEngineAddress() {
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
 	if (engineFactory && engineFactory("EngineSurface007", nullptr)) {
@@ -346,10 +195,6 @@ void FillEngineAddress() {
 		Fill_Sig(R_FORCECVAR_SIG, g_dwEngineBase, g_dwEngineSize, R_ForceCVars);
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
-
-//#define VGuiWrap2_HideGameUI_SIG "\x8B\x0D\x2A\x2A\x2A\x2A\x85\xC9\x74\x05\x8B\x01\xFF\x60\x1C\xC3"
-		//Fill_Sig(VGuiWrap2_HideGameUI_SIG, g_dwEngineBase, g_dwEngineSize, VGuiWrap2_HideGameUI);
-
 		DWORD addr;
 #define R_VIEWREFDEF_SIG "\x68\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68"
 		{
@@ -371,82 +216,6 @@ void FillEngineAddress() {
 			addr = (DWORD)Search_Pattern(DEVOVERVIEW_SIG);
 			Sig_AddrNotFound(gDevOverview);
 			gDevOverview = (decltype(gDevOverview))(*(DWORD*)(addr + 9) - 0xC);
-		}
-		if (1)
-		{
-			PUCHAR SearchBegin = (PUCHAR)g_dwEngineTextBase;
-			PUCHAR SearchEnd = SearchBegin + g_dwEngineTextSize;
-			while (1)
-			{
-#define LANGUAGESTRNCPY_SIG "\x68\x80\x00\x00\x00\x50\x8D"
-				PUCHAR LanguageStrncpy = (PUCHAR)g_pMetaHookAPI->SearchPattern(SearchBegin, SearchEnd - SearchBegin, LANGUAGESTRNCPY_SIG, sizeof(LANGUAGESTRNCPY_SIG) - 1);
-				if (LanguageStrncpy)
-				{
-					typedef struct
-					{
-						bool bHasPushEax;
-					}LanguageStrncpy_ctx;
-
-					LanguageStrncpy_ctx ctx = { 0 };
-
-					g_pMetaHookAPI->DisasmRanges(LanguageStrncpy, 0x30, [](void* inst, PUCHAR address, size_t instLen, int instCount, int depth, PVOID context)
-						{
-							auto ctx = (LanguageStrncpy_ctx*)context;
-							auto pinst = (cs_insn*)inst;
-
-							if (pinst->id == X86_INS_PUSH &&
-								pinst->detail->x86.op_count == 1 &&
-								pinst->detail->x86.operands[0].type == X86_OP_REG &&
-								pinst->detail->x86.operands[0].reg == X86_REG_EAX)
-							{
-								ctx->bHasPushEax = true;
-							}
-
-							if (ctx->bHasPushEax)
-							{
-								if (address[0] == 0xE8)
-								{
-									gHookFuncs.V_strncpy = (decltype(gHookFuncs.V_strncpy))GetCallAddress(address);
-									PUCHAR pfnNewV_strncpy = (PUCHAR)NewV_strncpy;
-									int rva = pfnNewV_strncpy - (address + 5);
-									g_pMetaHookAPI->WriteMemory(address + 1, (BYTE*)&rva, 4);
-									return TRUE;
-								}
-								else if (address[0] == 0xEB)
-								{
-									char jmprva = *(char*)(address + 1);
-									PUCHAR jmptarget = address + 2 + jmprva;
-
-									if (jmptarget[0] == 0xE8)
-									{
-										gHookFuncs.V_strncpy = (decltype(gHookFuncs.V_strncpy))GetCallAddress(jmptarget);
-										PUCHAR pfnNewV_strncpy = (PUCHAR)NewV_strncpy;
-										int rva = pfnNewV_strncpy - (jmptarget + 5);
-										g_pMetaHookAPI->WriteMemory(jmptarget + 1, (BYTE*)&rva, 4);
-										return TRUE;
-									}
-								}
-							}
-
-							if (instCount > 5)
-								return TRUE;
-
-							if (address[0] == 0xCC)
-								return TRUE;
-
-							if (pinst->id == X86_INS_RET)
-								return TRUE;
-
-							return FALSE;
-						}, 0, &ctx);
-
-					SearchBegin = LanguageStrncpy + sizeof(LANGUAGESTRNCPY_SIG) - 1;
-				}
-				else
-				{
-					break;
-				}
-			}
 		}
 	}
 }
