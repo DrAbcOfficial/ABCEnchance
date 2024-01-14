@@ -17,7 +17,6 @@ COptionsAdvanceDlg::COptionsAdvanceDlg(vgui::Panel* parent) : BaseClass(parent, 
 	m_pBlur = new vgui::GaussianBlurPanel(this, "BlurPanel");
 	m_pModelViewer = new vgui::ModelViewPanel(this, "ModelViewr");
 	LoadControlSettings("abcenchance\\res\\gameui\\OptionAdvancedDlg.res");
-	
 	m_pModelViewer->SetupTexBuffer();
 	ResetModel();
 }
@@ -26,7 +25,7 @@ void COptionsAdvanceDlg::ResetModel(){
 	char path[MAX_PATH] = {};
 	const char* mdl = CVAR_GET_STRING("model");
 	std::snprintf(path, MAX_PATH, "models/player/%s/%s.mdl", mdl, mdl);
-	m_pModelViewer->LoadModel(path);
+	m_pModelViewer->ChangeModel(path);
 }
 
 void COptionsAdvanceDlg::PaintBackground(){

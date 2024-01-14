@@ -956,7 +956,6 @@ ModelViewPanel::ModelViewPanel(Panel *parent, const char *name) : BaseClass(pare
 	m_Renderer = new StudioModel();
 	SetModelPos(0, 0, 0);
 	SetModelRotate(0, 0, 0);
-	SetAnimate(true);
 }
 
 vgui::ModelViewPanel::~ModelViewPanel(){
@@ -993,10 +992,7 @@ void vgui::ModelViewPanel::SetupTexBuffer(){
 }
 
 void vgui::ModelViewPanel::LoadModel(const char* model){
-	if (!std::strcmp(m_szModel, model))
-		return;
-	std::strcpy(m_szModel, model);
-	m_Renderer->Init(model);
+	ChangeModel(model);
 	SetSequnce(0);
 	SetController(0, 0.0);
 	SetController(1, 0.0);
@@ -1005,6 +1001,13 @@ void vgui::ModelViewPanel::LoadModel(const char* model){
 	SetMouth(0);
 	SetBlend(0, 0.0);
 	SetBlend(0, 0.0);
+}
+
+void vgui::ModelViewPanel::ChangeModel(const char* model){
+	if (!std::strcmp(m_szModel, model))
+		return;
+	std::strcpy(m_szModel, model);
+	m_Renderer->Init(model);
 }
 
 void vgui::ModelViewPanel::Render(){
@@ -1072,7 +1075,7 @@ int vgui::ModelViewPanel::GetSequence(){
 }
 void vgui::ModelViewPanel::SetSequnce(int seq){
 	m_iSequence = seq;
-	m_Renderer->m_sequence = m_iSequence;
+	m_Renderer->SetSequence(m_iSequence);
 }
 int vgui::ModelViewPanel::GetSkin(){
 	return m_iSkin;
@@ -1190,6 +1193,8 @@ void ModelViewPanel::Paint(){
 
 void vgui::ModelViewPanel::ApplySettings(KeyValues* inResourceData){
 	BaseClass::ApplySettings(inResourceData);
+	LoadModel(inResourceData->GetString("model", ""));
+
 	SetFOV(inResourceData->GetFloat("fov", 90));
 	SetAnimate(inResourceData->GetBool("animate", false));
 	SetFrame(inResourceData->GetInt("frame", 0));
@@ -1213,6 +1218,4 @@ void vgui::ModelViewPanel::ApplySettings(KeyValues* inResourceData){
 	result = std::sscanf(buf, "%f %f %f", &a, &b, &c);
 	if (result != EOF)
 		SetModelRotate(a, b, c);
-
-	LoadModel(inResourceData->GetString("model", ""));
 }
