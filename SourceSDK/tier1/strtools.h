@@ -208,6 +208,7 @@ void V_binarytohex( const byte *in, int inputbytes, char *out, int outsize );
 void V_FileBase( const char *in, char *out,int maxlen );
 // Remove the final characters of ppath if it's '\' or '/'.
 void V_StripTrailingSlash( char *ppath );
+void V_StripTrailingSlash(wchar_t* ppath);
 // Remove any extension from in and return resulting string in out
 void V_StripExtension( const char *in, char *out, int outLen );
 // Make path end with extension if it doesn't already have an extension
@@ -234,6 +235,7 @@ const char *V_GetFileExtension( const char * path );
 // Returns false if it tries to ".." past the root directory in the drive (in which case 
 // it is an invalid path).
 bool V_RemoveDotSlashes( char *pFilename, char separator = CORRECT_PATH_SEPARATOR );
+bool V_RemoveDotSlashes(wchar_t* pFilename, wchar_t separator = CORRECT_PATH_SEPARATOR);
 
 // If pPath is a relative path, this function makes it into an absolute path
 // using the current working directory as the base, or pStartingDir if it's non-NULL.
@@ -248,6 +250,7 @@ bool V_MakeRelativePath( const char *pFullPath, const char *pDirectory, char *pR
 
 // Adds a path separator to the end of the string if there isn't one already. Returns false if it would run out of space.
 void V_AppendSlash( char *pStr, int strSize );
+void V_AppendSlash(wchar_t* pStr, wchar_t strSize);
 
 // Returns true if the path is an absolute path.
 bool V_IsAbsolutePath( const char *pPath );
@@ -286,6 +289,7 @@ char *V_AddBackSlashesToSpecialChars( char const *pSrc );
 
 // Force slashes of either type to be = separator character
 void V_FixSlashes( char *pname, char separator = CORRECT_PATH_SEPARATOR );
+void V_FixSlashes(wchar_t* pname, wchar_t separator = CORRECT_PATH_SEPARATOR);
 
 // This function fixes cases of filenames like materials\\blah.vmt or somepath\otherpath\\ and removes the extra double slash.
 void V_FixDoubleSlashes( char *pStr );
@@ -396,6 +400,7 @@ static wchar_t* StripWhitespaceWorker(int cchLength, wchar_t* pwch, bool* pbStri
 // Purpose: strips leading and trailing whitespace
 //-----------------------------------------------------------------------------
 bool Q_StripPrecedingAndTrailingWhitespace(char* pch);
+bool Q_StripPrecedingAndTrailingWhitespace(wchar_t* pch);
 
 
 

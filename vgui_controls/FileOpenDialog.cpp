@@ -21,8 +21,6 @@
 #endif
 
 #undef GetCurrentDirectory
-#include <sys/stat.h>
-
 #include <algorithm>
 #include <filesystem>
 #include <chrono>
@@ -59,6 +57,7 @@
 #include "xbox/xbox_win32stubs.h"
 #undef GetCurrentDirectory
 #endif
+#include <codecvt>
 
 #pragma comment(lib, "version")
 
@@ -207,6 +206,118 @@ static int ListFileAttributesSortFunc(ListPanel* pPanel, const ListPanelItem& it
 static int ListFileTypeSortFunc(ListPanel* pPanel, const ListPanelItem& item1, const ListPanelItem& item2)
 {
 	return ListBaseStringSortFunc(pPanel, item1, item2, "type");
+}
+
+std::wstring UTF8ToWString(const std::string& str){
+	std::wstring_convert< std::codecvt_utf8<wchar_t> > strCnv;
+	return strCnv.from_bytes(str);
+}
+template <typename TP>
+std::time_t ToTimeT(TP tp)
+{
+	using namespace std::chrono;
+	auto sctp = time_point_cast<system_clock::duration>(tp - TP::clock::now()
+		+ system_clock::now());
+	return system_clock::to_time_t(sctp);
+}
+bool QueryValue(const std::string& ValueName, const std::string& szModuleName, std::string& RetStr) {
+	bool bSuccess = FALSE;
+	BYTE* m_lpVersionData = NULL;
+	DWORD   m_dwLangCharset = 0;
+	CHAR* tmpstr = NULL;
+	do
+	{
+		if (!ValueName.size() || !szModuleName.size())
+			break;
+
+		DWORD dwHandle;
+		// 判断系统能否检索到指定文件的版本信息
+		DWORD dwDataSize = ::GetFileVersionInfoSizeA((LPCSTR)szModuleName.c_str(), &dwHandle);
+		if (dwDataSize == 0)
+			break;
+
+		m_lpVersionData = new (std::nothrow) BYTE[dwDataSize];// 分配缓冲区
+		if (NULL == m_lpVersionData)
+			break;
+
+		// 检索信息
+		if (!::GetFileVersionInfoA((LPCSTR)szModuleName.c_str(), dwHandle, dwDataSize,
+			(void*)m_lpVersionData))
+			break;
+
+		UINT nQuerySize;
+		DWORD* pTransTable;
+		// 设置语言
+		if (!::VerQueryValueA(m_lpVersionData, "\\VarFileInfo\\Translation", (void**)&pTransTable, &nQuerySize))
+			break;
+
+		m_dwLangCharset = MAKELONG(HIWORD(pTransTable[0]), LOWORD(pTransTable[0]));
+		if (m_lpVersionData == NULL)
+			break;
+
+		tmpstr = new (std::nothrow) CHAR[128];// 分配缓冲区
+		if (NULL == tmpstr)
+			break;
+		sprintf_s(tmpstr, 128, "\\StringFileInfo\\%08lx\\%s", m_dwLangCharset, ValueName.c_str());
+		LPVOID lpData;
+
+		// 调用此函数查询前需要先依次调用函数GetFileVersionInfoSize和GetFileVersionInfo
+		if (::VerQueryValueA((void*)m_lpVersionData, tmpstr, &lpData, &nQuerySize))
+			RetStr = (char*)lpData;
+
+		bSuccess = TRUE;
+	} while (FALSE);
+
+	// 销毁缓冲区
+	if (m_lpVersionData)
+	{
+		delete[] m_lpVersionData;
+		m_lpVersionData = NULL;
+	}
+	if (tmpstr)
+	{
+		delete[] tmpstr;
+		tmpstr = NULL;
+	}
+
+	return bSuccess;
+}
+bool WildMatch(const std::string& str, const std::string& pat) {
+	std::string::const_iterator str_it = str.begin();
+	for (std::string::const_iterator pat_it = pat.begin(); pat_it != pat.end();
+		++pat_it) {
+		switch (*pat_it) {
+		case '?':
+			if (str_it == str.end()) {
+				return false;
+			}
+
+			++str_it;
+			break;
+		case '*': {
+			if (pat_it + 1 == pat.end()) {
+				return true;
+			}
+
+			const size_t max = strlen(&*str_it);
+			for (size_t i = 0; i < max; ++i) {
+				if (WildMatch(&*(pat_it + 1), &*(str_it + i))) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+		default:
+			if (*str_it != *pat_it) {
+				return false;
+			}
+
+			++str_it;
+		}
+	}
+
+	return str_it == str.end();
 }
 
 
@@ -999,7 +1110,6 @@ void FileOpenDialog::GetSelectedFileName(char* buf, int bufSize)
 	m_pFileNameEdit->GetText(buf, bufSize);
 }
 
-
 //-----------------------------------------------------------------------------
 // Creates a new folder
 //-----------------------------------------------------------------------------
@@ -1015,10 +1125,10 @@ void FileOpenDialog::NewFolder(char const* folderName)
 	do
 	{
 		Q_MakeAbsolutePath(pFullPath, sizeof(pFullPath), pNewFolderName, pCurrentDirectory);
-		if (!fs::exists(pFullPath) &&
-			!fs::is_directory(pFullPath))
-		{
-			fs::create_directories(pFullPath);
+
+		std::wstring widePath = UTF8ToWString(pFullPath);
+		if (!fs::exists(widePath) && !fs::is_directory(widePath)){
+			fs::create_directories(widePath);
 			m_pFileNameEdit->SetText(pNewFolderName);
 			return;
 		}
@@ -1051,28 +1161,28 @@ void FileOpenDialog::MoveUpFolder()
 //-----------------------------------------------------------------------------
 void FileOpenDialog::ValidatePath()
 {
-	char fullpath[MAX_PATH * 4];
-	GetCurrentDirectory(fullpath, sizeof(fullpath) - MAX_PATH);
+	char thingfullpath[MAX_PATH * 4];
+	GetCurrentDirectory(thingfullpath, sizeof(thingfullpath) - MAX_PATH);
+	std::wstring w = UTF8ToWString(thingfullpath);
+	wchar_t fullpath[MAX_PATH * 4];
+	wcsncpy(fullpath, w.c_str(), MAX_PATH * 4);
 	Q_RemoveDotSlashes(fullpath);
 
 	// when statting a directory on Windows, you want to include
 	// the terminal slash exactly when you are statting a root
 	// directory. PKMN.
 #ifdef _WIN32
-	if (Q_strlen(fullpath) != 3)
+	if (wcslen(fullpath) != 3)
 	{
 		Q_StripTrailingSlash(fullpath);
 	}
 #endif
 	// cleanup the path, we format tabs into the list to make it pretty in the UI
 	Q_StripPrecedingAndTrailingWhitespace(fullpath);
-
-	struct _stat buf;
-	if ((0 == _stat(fullpath, &buf)) &&
-		(0 != (buf.st_mode & S_IFDIR)))
+	if (fs::is_directory(fullpath))
 	{
 		Q_AppendSlash(fullpath, sizeof(fullpath));
-		Q_strncpy(m_szLastPath, fullpath, sizeof(m_szLastPath));
+		Q_UnicodeToUTF8(fullpath, m_szLastPath, sizeof(m_szLastPath));
 	}
 	else
 	{
@@ -1152,113 +1262,6 @@ const char* GetFileTimetamp(FILETIME ft)
 }
 #endif
 
-template <typename TP>
-std::time_t to_time_t(TP tp)
-{
-	using namespace std::chrono;
-	auto sctp = time_point_cast<system_clock::duration>(tp - TP::clock::now()
-		+ system_clock::now());
-	return system_clock::to_time_t(sctp);
-}
-bool QueryValue(const std::string& ValueName, const std::string& szModuleName, std::string& RetStr){
-	bool bSuccess = FALSE;
-	BYTE* m_lpVersionData = NULL;
-	DWORD   m_dwLangCharset = 0;
-	CHAR* tmpstr = NULL;
-	do
-	{
-		if (!ValueName.size() || !szModuleName.size())
-			break;
-
-		DWORD dwHandle;
-		// 判断系统能否检索到指定文件的版本信息
-		DWORD dwDataSize = ::GetFileVersionInfoSizeA((LPCSTR)szModuleName.c_str(), &dwHandle);
-		if (dwDataSize == 0)
-			break;
-
-		m_lpVersionData = new (std::nothrow) BYTE[dwDataSize];// 分配缓冲区
-		if (NULL == m_lpVersionData)
-			break;
-
-		// 检索信息
-		if (!::GetFileVersionInfoA((LPCSTR)szModuleName.c_str(), dwHandle, dwDataSize,
-			(void*)m_lpVersionData))
-			break;
-
-		UINT nQuerySize;
-		DWORD* pTransTable;
-		// 设置语言
-		if (!::VerQueryValueA(m_lpVersionData, "\\VarFileInfo\\Translation", (void**)&pTransTable, &nQuerySize))
-			break;
-
-		m_dwLangCharset = MAKELONG(HIWORD(pTransTable[0]), LOWORD(pTransTable[0]));
-		if (m_lpVersionData == NULL)
-			break;
-
-		tmpstr = new (std::nothrow) CHAR[128];// 分配缓冲区
-		if (NULL == tmpstr)
-			break;
-		sprintf_s(tmpstr, 128, "\\StringFileInfo\\%08lx\\%s", m_dwLangCharset, ValueName.c_str());
-		LPVOID lpData;
-
-		// 调用此函数查询前需要先依次调用函数GetFileVersionInfoSize和GetFileVersionInfo
-		if (::VerQueryValueA((void*)m_lpVersionData, tmpstr, &lpData, &nQuerySize))
-			RetStr = (char*)lpData;
-
-		bSuccess = TRUE;
-	} while (FALSE);
-
-	// 销毁缓冲区
-	if (m_lpVersionData)
-	{
-		delete[] m_lpVersionData;
-		m_lpVersionData = NULL;
-	}
-	if (tmpstr)
-	{
-		delete[] tmpstr;
-		tmpstr = NULL;
-	}
-
-	return bSuccess;
-}
-bool wild_match(const std::string& str, const std::string& pat) {
-	std::string::const_iterator str_it = str.begin();
-	for (std::string::const_iterator pat_it = pat.begin(); pat_it != pat.end();
-		++pat_it) {
-		switch (*pat_it) {
-		case '?':
-			if (str_it == str.end()) {
-				return false;
-			}
-
-			++str_it;
-			break;
-		case '*': {
-			if (pat_it + 1 == pat.end()) {
-				return true;
-			}
-
-			const size_t max = strlen(&*str_it);
-			for (size_t i = 0; i < max; ++i) {
-				if (wild_match(&*(pat_it + 1), &*(str_it + i))) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-		default:
-			if (*str_it != *pat_it) {
-				return false;
-			}
-
-			++str_it;
-		}
-	}
-
-	return str_it == str.end();
-}
 //-----------------------------------------------------------------------------
 // Purpose: Fill the filelist with the names of all the files in the current directory
 //-----------------------------------------------------------------------------
@@ -1271,8 +1274,7 @@ void FileOpenDialog::PopulateFileList()
 	char currentDir[MAX_PATH * 4];
 	char filterList[MAX_FILTER_LENGTH + 1];
 	GetCurrentDirectory(currentDir, sizeof(currentDir));
-	auto dirIterator = fs::directory_iterator(currentDir);
-
+	auto dirIterator = fs::directory_iterator(UTF8ToWString(currentDir));
 	KeyValues* combokv = m_pFileTypeCombo->GetActiveItemUserData();
 	if (combokv)
 		Q_strncpy(filterList, combokv->GetString("filter", "*"), MAX_FILTER_LENGTH);
@@ -1309,7 +1311,7 @@ void FileOpenDialog::PopulateFileList()
 			if (aryFilters.size() > 0) {
 				std::string extension = iter.path().extension().u8string();
 				std::transform(extension.begin(), extension.end(), extension.begin(), static_cast<int(*)(int)>(std::tolower));
-				if (std::find_if(aryFilters.begin(), aryFilters.end(), [&extension](std::string& a) -> bool {return wild_match(extension, a); }) == aryFilters.end())
+				if (std::find_if(aryFilters.begin(), aryFilters.end(), [&extension](std::string& a) -> bool {return WildMatch(extension, a); }) == aryFilters.end())
 					continue;
 			}
 			kv->SetInt("image", 1);
@@ -1333,7 +1335,7 @@ void FileOpenDialog::PopulateFileList()
 		kv->SetString("text", dirname.c_str());
 		bool filewritable = (iter.status().permissions() & fs::perms::owner_write) == fs::perms::others_write;
 		kv->SetString("attributes", filewritable ? "WR" : "R");
-		std::time_t tt = to_time_t(iter.last_write_time());
+		std::time_t tt = ToTimeT(iter.last_write_time());
 		std::tm* gmt = std::gmtime(&tt);
 		std::stringstream buffer;
 		buffer << std::put_time(gmt, "%D %H:%M");
@@ -1341,7 +1343,6 @@ void FileOpenDialog::PopulateFileList()
 		kv->SetString("created", buffer.str().c_str());
 		m_pFileList->AddItem(kv, 0, false, false);
 	}
-
 	kv->deleteThis();
 	m_pFileList->SortList();
 }
@@ -1524,7 +1525,7 @@ void FileOpenDialog::OnSelectFolder()
 		Q_strncpy(pFullPath, pFileName, sizeof(pFullPath));
 	}
 
-	if (fs::exists(pFullPath))
+	if (fs::exists(UTF8ToWString(pFullPath)))
 	{
 		// open the file!
 		SaveFileToStartDirContext(pFullPath);
@@ -1599,10 +1600,8 @@ void FileOpenDialog::OnOpen()
 	}
 #endif
 
-
 	// If the name specified is a directory, then change directory
-	if (fs::is_directory(pFullPath) &&
-		(!IsOSX() || (IsOSX() && !Q_stristr(pFullPath, ".app"))))
+	if (fs::is_directory(UTF8ToWString(pFullPath)) && (!IsOSX() || (IsOSX() && !Q_stristr(pFullPath, ".app"))))
 	{
 		// it's a directory; change to the specified directory
 		if (!bSpecifiedDirectory)
@@ -1637,7 +1636,7 @@ void FileOpenDialog::OnOpen()
 		Q_SetExtension(pFullPath, extension, sizeof(pFullPath));
 	}
 
-	if (fs::exists(pFullPath))
+	if (fs::exists(UTF8ToWString(pFullPath)))
 	{
 		// open the file!
 		SaveFileToStartDirContext(pFullPath);
