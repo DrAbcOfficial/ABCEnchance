@@ -1111,6 +1111,19 @@ void V_StripTrailingSlash( char *ppath )
 		}
 	}
 }
+void V_StripTrailingSlash(wchar_t* ppath)
+{
+	Assert(ppath);
+
+	int len = wcslen(ppath);
+	if (len > 0)
+	{
+		if (PATHSEPARATOR(ppath[len - 1]))
+		{
+			ppath[len - 1] = 0;
+		}
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -1234,6 +1247,17 @@ void V_FixSlashes( char *pname, char separator /* = CORRECT_PATH_SEPARATOR */ )
 	while ( *pname )
 	{
 		if ( *pname == INCORRECT_PATH_SEPARATOR || *pname == CORRECT_PATH_SEPARATOR )
+		{
+			*pname = separator;
+		}
+		pname++;
+	}
+}
+void V_FixSlashes(wchar_t* pname, wchar_t separator /* = CORRECT_PATH_SEPARATOR */)
+{
+	while (*pname)
+	{
+		if (*pname == INCORRECT_PATH_SEPARATOR || *pname == CORRECT_PATH_SEPARATOR)
 		{
 			*pname = separator;
 		}
@@ -1417,6 +1441,94 @@ const char * V_GetFileExtension( const char * path )
 	return src;
 }
 
+
+bool V_RemoveDotSlashes(wchar_t* pFilename, wchar_t separator)
+{
+	// Remove '//' or '\\'
+	wchar_t* pIn = pFilename;
+	wchar_t* pOut = pFilename;
+	bool bPrevPathSep = false;
+	while (*pIn)
+	{
+		bool bIsPathSep = PATHSEPARATOR(*pIn);
+		if (!bIsPathSep || !bPrevPathSep)
+		{
+			*pOut++ = *pIn;
+		}
+		bPrevPathSep = bIsPathSep;
+		++pIn;
+	}
+	*pOut = 0;
+
+	// Get rid of "./"'s
+	pIn = pFilename;
+	pOut = pFilename;
+	while (*pIn)
+	{
+		// The logic on the second line is preventing it from screwing up "../"
+		if (pIn[0] == L'.' && PATHSEPARATOR(pIn[1]) &&
+			(pIn == pFilename || pIn[-1] != L'.'))
+		{
+			pIn += 2;
+		}
+		else
+		{
+			*pOut = *pIn;
+			++pIn;
+			++pOut;
+		}
+	}
+	*pOut = 0;
+
+	// Get rid of a trailing "/." (needless).
+	int len = wcslen(pFilename);
+	if (len > 2 && pFilename[len - 1] == L'.' && PATHSEPARATOR(pFilename[len - 2]))
+	{
+		pFilename[len - 2] = 0;
+	}
+
+	// Each time we encounter a "..", back up until we've read the previous directory name,
+	// then get rid of it.
+	pIn = pFilename;
+	while (*pIn)
+	{
+		if (pIn[0] == L'.' &&
+			pIn[1] == L'.' &&
+			(pIn == pFilename || PATHSEPARATOR(pIn[-1])) &&	// Preceding character must be a slash.
+			(pIn[2] == 0 || PATHSEPARATOR(pIn[2])))			// Following character must be a slash or the end of the string.
+		{
+			wchar_t* pEndOfDots = pIn + 2;
+			wchar_t* pStart = pIn - 2;
+
+			// Ok, now scan back for the path separator that starts the preceding directory.
+			while (1)
+			{
+				if (pStart < pFilename)
+					return false;
+
+				if (PATHSEPARATOR(*pStart))
+					break;
+
+				--pStart;
+			}
+
+			// Now slide the string down to get rid of the previous directory and the ".."
+			memmove(pStart, pEndOfDots, wcslen(pEndOfDots) + 1);
+
+			// Start over.
+			pIn = pFilename;
+		}
+		else
+		{
+			++pIn;
+		}
+	}
+
+	V_FixSlashes(pFilename, separator);
+	return true;
+}
+
+
 bool V_RemoveDotSlashes( char *pFilename, char separator )
 {
 	// Remove '//' or '\\'
@@ -1514,6 +1626,17 @@ void V_AppendSlash( char *pStr, int strSize )
 		
 		pStr[len] = CORRECT_PATH_SEPARATOR;
 		pStr[len+1] = 0;
+	}
+}
+void V_AppendSlash(wchar_t* pStr, wchar_t strSize)
+{
+	int len = wcslen(pStr);
+	if (len > 0 && !PATHSEPARATOR(pStr[len - 1]))
+	{
+		if (len + 1 >= strSize)
+			Error("V_AppendSlash: ran out of space on %s.", pStr);
+		pStr[len] = CORRECT_PATH_SEPARATOR;
+		pStr[len + 1] = 0;
 	}
 }
 
@@ -2060,3 +2183,15 @@ bool Q_StripPrecedingAndTrailingWhitespace(char* pch)
 
 	return bStrippedWhitespace;
 }
+
+bool Q_StripPrecedingAndTrailingWhitespace(wchar_t* pch)
+{
+	int cch = wcslen(pch);
+	// Early out and don't convert if we don't have any chars or leading/trailing ws.
+	if ((cch < 1) || (!isspace((unsigned char)pch[0]) && !isspace((unsigned char)pch[cch - 1])))
+		return false;
+	bool bStrippedWhitespace = false;
+	pch = StripWhitespaceWorker(cch - 1, pch, &bStrippedWhitespace, false /* not aggressive */);
+	return bStrippedWhitespace;
+}
+

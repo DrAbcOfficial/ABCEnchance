@@ -209,14 +209,10 @@ void vgui::COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
 			BuildModelList(nullptr);
 	}
 	else if (!std::strcmp(cmd, "OpenLoadSparyDialog")) {
-		if (!m_pFileDialog) {
-			if(m_pFileKeyvalues)
-				m_pFileKeyvalues->deleteThis();
-			m_pFileKeyvalues = new KeyValues("FileInfo");
-			m_pFileDialog = new FileOpenDialog(this, "#GameUI_ABC_LoadSpary", FileOpenDialogType_t::FOD_OPEN, m_pFileKeyvalues);
-			m_pFileDialog->SetProportional(false);
-			m_pFileDialog->AddFilter("*.tga;*.png;*.bmp;*.jpg;*.jpeg", "#GameUI_ABC_SparyFilter", true, "image");
-		}
+		m_pFileDialog = new FileOpenDialog(this, "#GameUI_ABC_LoadSpary", FileOpenDialogType_t::FOD_OPEN, new KeyValues("FileInfo"));
+		m_pFileDialog->SetDeleteSelfOnClose(true);
+		m_pFileDialog->SetProportional(false);
+		m_pFileDialog->AddFilter("*.tga;*.png;*.bmp;*.jpg;*.jpeg", "#GameUI_ABC_SparyFilter", true, "image");
 		m_pFileDialog->Activate();
 		m_pFileDialog->SetPos(ScreenWidth() / 2, ScreenHeight() / 2);
 	}
