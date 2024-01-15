@@ -252,8 +252,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\Var\voice_status.cpp" />
     <ClCompile Include="src\Source\viewmodellag.cpp" />
     <ClCompile Include="src\wadlib\texture.cpp" />
-    <ClCompile Include="src\wadlib\texturemanager.cpp" />
-    <ClCompile Include="src\wadlib\texturepackage.cpp" />
     <ClCompile Include="src\wadlib\wadfile.cpp" />
     <ClCompile Include="VGUI2\avatar_image.cpp" />
     <ClCompile Include="VGUI2\BaseUI.cpp" />
@@ -528,8 +526,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Particleman\pman_particlemem.h" />
     <ClInclude Include="src\Particleman\pman_triangleffect.h" />
     <ClInclude Include="src\wadlib\texture.h" />
-    <ClInclude Include="src\wadlib\texturemanager.h" />
-    <ClInclude Include="src\wadlib\texturepackage.h" />
     <ClInclude Include="src\wadlib\wadfile.h" />
     <ClInclude Include="VGUI2\avatar_image.h" />
     <ClInclude Include="VGUI2\BaseUI.h" />

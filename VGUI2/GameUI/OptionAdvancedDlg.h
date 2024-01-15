@@ -8,7 +8,7 @@
 #include "vgui_controls/PropertyPage.h"
 #include "vgui_controls/PropertyDialog.h"
 
-class TextureManager;
+class WadFile;
 namespace vgui {
 	class CrossHairDisplay;
 	class GaussianBlurPanel;
@@ -36,10 +36,13 @@ protected:
 	MESSAGE_FUNC(OnSliderMoved, "SliderMoved");
 	MESSAGE_FUNC(OnItemSelected, "ItemSelected");
 	MESSAGE_FUNC(OnButtonChanged, "ButtonChanged");
+	MESSAGE_FUNC_CHARPTR(OnFileSelected, "FileSelected", fullpath);
 	virtual void OnResetData() override;
 	virtual void OnCommand(const char* cmd) override;
 	virtual void ApplySchemeSettings(IScheme* pScheme) override;
 private:
+	void GetValidateSparySize(size_t& ow, size_t& oh);
+	void SetSparyPixel(unsigned char* pixels, size_t wide, size_t height);
 	std::set<std::string> m_aryModelList;
 	ModelViewPanel* m_pModelViewer = nullptr;
 	Slider* m_pModelController = nullptr;
@@ -78,7 +81,7 @@ private:
 	FileOpenDialog* m_pFileDialog = nullptr;
 
 	KeyValues* m_pFileKeyvalues = nullptr;
-	TextureManager* m_pWadManager = nullptr;
+	WadFile* m_pSparyWad = nullptr;
 };
 
 class COptionsAdvanceDialog : public PropertyDialog{

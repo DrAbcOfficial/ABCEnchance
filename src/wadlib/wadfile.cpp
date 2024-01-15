@@ -1,95 +1,70 @@
-#include "wadfile.h"
-#include "texturemanager.h"
-#include "texture.h"
 #include <fstream>
+#include <algorithm>
+
+#include "wadfile.h"
+#include "texture.h"
 
 #define HL1_WAD3_SIGNATURE "WAD3"
 
-/* WAD3 */
-typedef struct sWAD3Header
-{
-    char signature[4];
-    int lumpsCount;
-    int lumpsOffset;
 
-} tWAD3Header;
-
-typedef struct sWAD3Lump
-{
-    int offset;
-    int sizeOnDisk;
-    int size;
-    char type;
-    char compression;
-    char empty0;
-    char empty1;
-    char name[16];
-
-} tWAD3Lump;
-
-WadFile::WadFile()
-{
+WadFile::WadFile(){
 }
-
-bool WadFile::load(const std::string &filePath, TextureManager *textureManager)
-{
-    if (filePath == "")
-    {
-        return false;
-    }
-
-    if (textureManager == nullptr)
-    {
-        return false;
-    }
-
-    _filePath = filePath;
-
-    std::ifstream stream;
-
-    stream.open(filePath, std::ios::in | std::ios::binary);
-
-    if (!stream.is_open())
-    {
-        return false;
-    }
-
-    tWAD3Header header;
-
-    stream.read((char *)&header, sizeof(tWAD3Header));
-
-    if (std::string(header.signature, 4) != HL1_WAD3_SIGNATURE)
-    {
-        return false;
-    }
-
-    tWAD3Lump *lumps = new tWAD3Lump[header.lumpsCount];
-
-    stream.seekg(header.lumpsOffset, std::ios::beg);
-    stream.read((char *)lumps, header.lumpsCount * sizeof(tWAD3Lump));
-
-    for (int i = 0; i < header.lumpsCount; i++)
-    {
-        // We read the lump data
-        unsigned char *lumpData = new unsigned char[lumps[i].size];
-        stream.seekg(lumps[i].offset, std::ios::beg);
-        stream.read((char *)lumpData, lumps[i].size);
-
-        if (!stream)
-        {
-            continue;
+WadFile::~WadFile(){
+    Clear();
+    delete[] m_aryLumps;
+}
+std::string WadFile::FilePath(){
+    return m_szFilePath;
+}
+WadTexture* WadFile::Get(std::string name, bool ignoreCase){
+    for (auto iter = m_aryTextures.begin(); iter != m_aryTextures.end(); iter++) {
+        std::string tn = (*iter)->Name();
+        std::string nn = name;
+        if (ignoreCase) {
+            std::transform(tn.begin(), tn.end(), tn.begin(), std::tolower);
+            std::transform(nn.begin(), nn.end(), nn.begin(), std::tolower);
         }
-
-        // And pass the data to the texture class who now owns the data and should cleanup
-        auto texture = new Texture(lumps[i].name, this, lumpData);
-        textureManager->addTexture(texture);
-
+        if (tn == nn) {
+            return *iter;
+        }
+    }
+    return nullptr;
+}
+bool WadFile::Load(const std::string &filePath){
+    Clear();
+    if (filePath == "")
+        return false;
+    m_szFilePath = filePath;
+    std::ifstream stream;
+    stream.open(filePath, std::ios::in | std::ios::binary);
+    if (!stream.is_open())
+        return false;
+    WAD3Header_t header;
+    stream.read((char *)&header, sizeof(WAD3Header_t));
+    if (std::string(header.signature, 4) != HL1_WAD3_SIGNATURE)
+        return false;
+    m_aryLumps = new WAD3Lump_t[header.lumpsCount];
+    stream.seekg(header.lumpsOffset, std::ios::beg);
+    stream.read((char *)m_aryLumps, header.lumpsCount * sizeof(WAD3Lump_t));
+    for (int i = 0; i < header.lumpsCount; i++){
+        unsigned char *lumpData = new unsigned char[m_aryLumps[i].size];
+        stream.seekg(m_aryLumps[i].offset, std::ios::beg);
+        stream.read((char *)lumpData, m_aryLumps[i].size);
+        if (!stream)
+            continue;
+        m_aryTextures.push_back(new WadTexture(m_aryLumps[i].name, this, lumpData, m_aryLumps[i]));
         delete[] lumpData;
     }
-
     stream.close();
-
-    delete[] lumps;
-
+    m_pHeader = header;
     return true;
+}
+
+void WadFile::Clear(){
+    if (m_aryTextures.size() > 0) {
+        for (auto iter = m_aryTextures.begin(); iter != m_aryTextures.end(); iter++) {
+            delete* iter;
+        }
+        m_aryTextures.clear();
+    }
 }
