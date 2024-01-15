@@ -8,8 +8,8 @@
 /* WAD3 */
 typedef struct WAD3Header_s {
     char signature[4];
-    int lumpsCount;
-    int lumpsOffset;
+    unsigned int lumpsCount;
+    unsigned int lumpsOffset;
 } WAD3Header_t;
 
 class WadFile{
@@ -19,6 +19,7 @@ public:
     std::string FilePath();
     WadTexture* Get(std::string name, bool ignoreCase = true);
     bool Load(std::string const &filePath);
+    bool SaveToFile(std::string const& filePath);
 private:
     void Clear();
     std::string m_szFilePath;
