@@ -182,70 +182,73 @@ void vgui::COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		GetValidateSparySize(nw, nh);
 		FIBITMAP* nimg = FreeImage_Rescale(img, nw, nh);
 		FreeImage_Unload(img);
-		byte* pixels = (byte*)FreeImage_GetBits(nimg);
-		int pitch = FreeImage_GetPitch(nimg);
+		BYTE* bits = FreeImage_GetBits(nimg);
 		int bpp = FreeImage_GetBPP(nimg);
-		int bitnum = bpp / 8;
-		static size_t s_iArea;
-		static byte* s_pBuf;
-		if (s_iArea < nw * nh) {
-			s_iArea = nw * nh;
-			delete[] s_pBuf;
-			s_pBuf = new byte[s_iArea * 4];
-		}
-		size_t c = 0;
-		pixels += pitch * (nh - 1);
-		for (int y = 0; y < nh; y++) {
-			BYTE* pixel = (BYTE*)pixels;
-			for (int x = 0; x < nw; x++) {
-				switch (bitnum) {
-					//8bpp
-				case 1: {
-					BYTE grey = pixel[0];
-					s_pBuf[c * 4 + 0] = grey;
-					s_pBuf[c * 4 + 1] = grey;
-					s_pBuf[c * 4 + 2] = grey;
-					s_pBuf[c * 4 + 3] = 255;
-					break;
-				}
-					  //16bpp
-				case 2: {
-					int code = (pixel[1] << 8) + pixel[0];
-					s_pBuf[c * 4 + 0] = code & 0x1F;
-					s_pBuf[c * 4 + 1] = (code & 0x7E0) >> 5;
-					s_pBuf[c * 4 + 2] = (code & 0xF800) >> 11;
-					s_pBuf[c * 4 + 3] = 255;
-					break;
-				}
-					  //24bpp
-				case 3: {
-					s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
-					s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
-					s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
-					s_pBuf[c * 4 + 3] = 255;
-					break;
-				}
-					  //32bpp
-				case 4: {
-					s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
-					s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
-					s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
-					s_pBuf[c * 4 + 3] = pixel[FI_RGBA_ALPHA];
-					break;
-				}
-					  //cnmdwy
-				default: break;
-				}
-				pixel += bitnum;
-				c++;
+		int pitch = FreeImage_GetPitch(nimg);
+		auto bits_to_rgba = [](BYTE* bits, unsigned int width, unsigned int height, int bpp, int pitch) -> byte* {
+			int bitnum = bpp / 8;
+			static size_t s_iArea;
+			static byte* s_pBuf;
+			if (s_iArea < width * height) {
+				s_iArea = width * height;
+				delete[] s_pBuf;
+				s_pBuf = new byte[s_iArea * 4];
 			}
-			pixels -= pitch;
-		}
-		SetSparyPixel(s_pBuf, nw, nh);
-		img = FreeImage_ColorQuantizeEx(nimg);
-		FreeImage_Unload(nimg);
-
-
+			size_t c = 0;
+			bits += pitch * (height - 1);
+			for (int y = 0; y < height; y++) {
+				BYTE* pixel = (BYTE*)bits;
+				for (int x = 0; x < width; x++) {
+					switch (bitnum) {
+						//8bpp
+					case 1: {
+						BYTE grey = pixel[0];
+						s_pBuf[c * 4 + 0] = grey;
+						s_pBuf[c * 4 + 1] = grey;
+						s_pBuf[c * 4 + 2] = grey;
+						s_pBuf[c * 4 + 3] = 255;
+						break;
+					}
+						  //16bpp
+					case 2: {
+						int code = (pixel[1] << 8) + pixel[0];
+						s_pBuf[c * 4 + 0] = code & 0x1F;
+						s_pBuf[c * 4 + 1] = (code & 0x7E0) >> 5;
+						s_pBuf[c * 4 + 2] = (code & 0xF800) >> 11;
+						s_pBuf[c * 4 + 3] = 255;
+						break;
+					}
+						  //24bpp
+					case 3: {
+						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
+						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+						s_pBuf[c * 4 + 3] = 255;
+						break;
+					}
+						  //32bpp
+					case 4: {
+						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
+						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+						s_pBuf[c * 4 + 3] = pixel[FI_RGBA_ALPHA];
+						break;
+					}
+						  //cnmdwy
+					default: break;
+					}
+					pixel += bitnum;
+					c++;
+				}
+				bits -= pitch;
+			}
+			return s_pBuf;
+		};
+		auto rgba = bits_to_rgba(bits, nw, nh, bpp, pitch);
+		WadTexture* tex = m_pSparyWad->Get("{logo");
+		tex->SetPixels((unsigned char*)rgba, nw, nh, bpp, pitch);
+		SetSparyPixel(tex->GetPixels(), nw, nh);
+		m_pSparyWad->SaveToFile("C:\\Users\\64150\\Downloads\\1.wad");
 	}
 }
 

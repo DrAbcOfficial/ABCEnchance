@@ -8,22 +8,25 @@ typedef struct WAD3Lump_s {
     int sizeOnDisk;
     int size;
     char type;
-    char compression;
-    char empty0;
-    char empty1;
+    bool compression;
+    short dummy;
     char name[16];
-
 } WAD3Lump_t;
 
 class WadTexture
 {
 public:
     WadTexture(std::string const &name, class WadFile*package, unsigned char* miptexData, WAD3Lump_t& lump);
+    ~WadTexture();
+    void Clear();
     std::string const &Name() const;
     class WadFile *Package() const;
     int Width() const;
     int Height() const;
+    void SetPixels(unsigned char* ps, int w, int h, int bpp, int pitch);
     unsigned char* GetPixels();
+    unsigned char* GetRawData();
+    size_t GetRawDataSize();
 private:
     unsigned char* GetPixelsFromRaw(unsigned char* miptexData);
 
@@ -31,7 +34,9 @@ private:
     class WadFile* m_pPackage;
     int m_iWidth;
     int m_iHeight;
-    unsigned char* m_pPixels;
+    int m_iBpp;
+    int m_iPitch;
+    unsigned char* m_pPixels = nullptr;
     WAD3Lump_t m_pLump;
 };
 

@@ -60,6 +60,40 @@ bool WadFile::Load(const std::string &filePath){
     return true;
 }
 
+bool WadFile::SaveToFile(std::string const& filePath){
+    std::ofstream stream;
+    stream.open(filePath, std::ios::out | std::ios::binary);
+    if (!stream.is_open())
+        return false;
+    //header
+    stream.write(HL1_WAD3_SIGNATURE, 4);
+    unsigned int buf = m_aryTextures.size();
+    stream.write((char*)&buf, 4);
+    buf = sizeof(WAD3Header_t);
+    stream.write((char*)&buf, 4);
+    
+    size_t offset = 12;
+    size_t lastsize = 0;
+    //lump
+    for (auto iter = m_aryTextures.begin(); iter != m_aryTextures.end(); iter++) {
+        WAD3Lump_t lump;
+        lump.compression = 0;
+        lump.dummy = 0;
+        lump.type = 0x43; //miptex
+        std::strncpy(lump.name, (*iter)->Name().c_str(), 16);
+        lump.offset = m_aryTextures.size() * sizeof(WAD3Lump_t) + lastsize;
+        lump.size = lump.sizeOnDisk = (*iter)->GetRawDataSize();
+        lastsize += lump.size;
+        stream.write((char*)&lump, sizeof(WAD3Lump_t));
+    }
+    for (auto iter = m_aryTextures.begin(); iter != m_aryTextures.end(); iter++) {
+        unsigned char* rawdata = (*iter)->GetRawData();
+        stream.write((char*)rawdata, (*iter)->GetRawDataSize());
+        delete[] rawdata;
+    }
+    stream.close();
+}
+
 void WadFile::Clear(){
     if (m_aryTextures.size() > 0) {
         for (auto iter = m_aryTextures.begin(); iter != m_aryTextures.end(); iter++) {
