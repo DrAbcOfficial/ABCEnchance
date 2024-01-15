@@ -1,6 +1,7 @@
+#include <algorithm>
+
 #include "interface.h"
 #include "IFileSystem.h"
-#include "KeyValues.h"
 
 #include "vgui_controls/PropertySheet.h"
 #include "vgui_controls/Label.h"
@@ -14,15 +15,18 @@
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/FileOpenDialog.h"
 
-#include "vgui2/tga_image.h"
+#include "FreeImage/FreeImage.h"
+#include "wadlib/wadfile.h"
 
-#include "wadlib/texturemanager.h"
+#include "vgui2/tga_image.h"
 
 #include <GaussianBlurPanel.h>
 #include <ModelViewPanel.h>
 
 #include "OptionAdvancedDlg.h"
-#include <algorithm>
+#include <filesystem>
+
+#pragma comment(lib,"FreeImage/FreeImage.lib")
 
 extern const char* CVAR_GET_STRING(const char* x);
 extern float CVAR_GET_FLOAT(const char* x);
@@ -64,7 +68,7 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 
 	m_pSpliter = new Panel(this, "Spliter");
 
-	m_pWadManager = new TextureManager();
+	m_pSparyWad = new WadFile();
 
 	CTGAImage* bitmap = new CTGAImage();
 	m_pSpary = new ImagePanel(this, "SparyImage");
@@ -91,7 +95,7 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pCrosshairOutline->AddActionSignalTarget(this);
 }
 vgui::COptionsAdvanceSubMultiPlay::~COptionsAdvanceSubMultiPlay(){
-	delete m_pWadManager;
+	delete m_pSparyWad;
 }
 void COptionsAdvanceSubMultiPlay::ResetModel(){
 	ChangeModel(CVAR_GET_STRING("model"));
@@ -158,6 +162,92 @@ void vgui::COptionsAdvanceSubMultiPlay::OnButtonChanged(){
 	m_pCrosshairDisplay->SetOutline(m_pCrosshairOutline->IsSelected());
 	m_pCrosshairDisplay->InvalidateLayout();
 }
+void vgui::COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
+	FIBITMAP* img = nullptr;
+	char ext[4];
+	std::strcpy(ext, std::filesystem::path(fullpath).extension().u8string().c_str());
+	if (!std::strncmp(ext, ".tga", 4))
+		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_TARGA, fullpath, 0);
+	else if(!std::strncmp(ext, ".bmp", 4))
+		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_BMP, fullpath, 0);
+	else if (!std::strncmp(ext, ".jpg", 4))
+		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_JPEG, fullpath, 0);
+	else if (!std::strncmp(ext, ".png", 4))
+		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_PNG, fullpath, 0);
+	if (img) {
+		size_t w = FreeImage_GetWidth(img);
+		size_t h = FreeImage_GetHeight(img);
+		size_t nw = w;
+		size_t nh = h;
+		GetValidateSparySize(nw, nh);
+		FIBITMAP* nimg = FreeImage_Rescale(img, nw, nh);
+		FreeImage_Unload(img);
+		byte* pixels = (byte*)FreeImage_GetBits(nimg);
+		int pitch = FreeImage_GetPitch(nimg);
+		int bpp = FreeImage_GetBPP(nimg);
+		int bitnum = bpp / 8;
+		static size_t s_iArea;
+		static byte* s_pBuf;
+		if (s_iArea < nw * nh) {
+			s_iArea = nw * nh;
+			delete[] s_pBuf;
+			s_pBuf = new byte[s_iArea * 4];
+		}
+		size_t c = 0;
+		pixels += pitch * (nh - 1);
+		for (int y = 0; y < nh; y++) {
+			BYTE* pixel = (BYTE*)pixels;
+			for (int x = 0; x < nw; x++) {
+				switch (bitnum) {
+					//8bpp
+				case 1: {
+					BYTE grey = pixel[0];
+					s_pBuf[c * 4 + 0] = grey;
+					s_pBuf[c * 4 + 1] = grey;
+					s_pBuf[c * 4 + 2] = grey;
+					s_pBuf[c * 4 + 3] = 255;
+					break;
+				}
+					  //16bpp
+				case 2: {
+					int code = (pixel[1] << 8) + pixel[0];
+					s_pBuf[c * 4 + 0] = code & 0x1F;
+					s_pBuf[c * 4 + 1] = (code & 0x7E0) >> 5;
+					s_pBuf[c * 4 + 2] = (code & 0xF800) >> 11;
+					s_pBuf[c * 4 + 3] = 255;
+					break;
+				}
+					  //24bpp
+				case 3: {
+					s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
+					s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+					s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+					s_pBuf[c * 4 + 3] = 255;
+					break;
+				}
+					  //32bpp
+				case 4: {
+					s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
+					s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+					s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+					s_pBuf[c * 4 + 3] = pixel[FI_RGBA_ALPHA];
+					break;
+				}
+					  //cnmdwy
+				default: break;
+				}
+				pixel += bitnum;
+				c++;
+			}
+			pixels -= pitch;
+		}
+		SetSparyPixel(s_pBuf, nw, nh);
+		img = FreeImage_ColorQuantizeEx(nimg);
+		FreeImage_Unload(nimg);
+
+
+	}
+}
 
 void vgui::COptionsAdvanceSubMultiPlay::OnResetData(){
 	ResetModel();
@@ -176,24 +266,17 @@ void vgui::COptionsAdvanceSubMultiPlay::OnResetData(){
 	m_pCrosshairDisplay->SetT(CVAR_GET_FLOAT("cl_crosshair_t") > 0);
 	m_pCrosshairDisplay->InvalidateLayout();
 
-	FileFindHandle_t findHandle;
-	auto pszFileName = filesystem()->FindFirst("tempdecal.wad", &findHandle);
-	if (pszFileName) {
+	WadTexture* tex = m_pSparyWad->Get("{logo");
+	if (!tex) {
 		char fullpath[MAX_PATH];
-		filesystem()->GetLocalPath(pszFileName, fullpath, MAX_PATH);
-		if (m_pWadManager->addTexturesFromWadFile(fullpath)) {
-			auto list = m_pWadManager->findTextures("{logo");
-			if (list.size() > 0) {
-				Texture* tex = *list.begin()->second.begin();
-				CTGAImage* img = reinterpret_cast<CTGAImage*>(m_pSpary->GetImage());
-				vgui::surface()->DrawSetTextureRGBA(img->GetTextureId(), tex->GetPixels(), tex->Width(), tex->Height(), true, false);
-				img->SetSize(tex->Width(), tex->Height());
-			}
-		}
+		filesystem()->GetLocalPath("tempdecal.wad", fullpath, MAX_PATH);
+		m_pSparyWad->Load(fullpath);
+		tex = m_pSparyWad->Get("{logo");
+	}
 
-
-	};
-	filesystem()->FindClose(findHandle);
+	if(tex)
+		SetSparyPixel(tex->GetPixels(), tex->Width(), tex->Height());
+	
 }
 
 void vgui::COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
@@ -212,7 +295,7 @@ void vgui::COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
 		m_pFileDialog = new FileOpenDialog(this, "#GameUI_ABC_LoadSpary", FileOpenDialogType_t::FOD_OPEN, new KeyValues("FileInfo"));
 		m_pFileDialog->SetDeleteSelfOnClose(true);
 		m_pFileDialog->SetProportional(false);
-		m_pFileDialog->AddFilter("*.tga;*.png;*.bmp;*.jpg;*.jpeg", "#GameUI_ABC_SparyFilter", true, "image");
+		m_pFileDialog->AddFilter("*.tga;*.png;*.bmp;*.jpg", "#GameUI_ABC_SparyFilter", true, "image");
 		m_pFileDialog->Activate();
 		m_pFileDialog->SetPos(ScreenWidth() / 2, ScreenHeight() / 2);
 	}
@@ -222,6 +305,46 @@ void COptionsAdvanceSubMultiPlay::ApplySchemeSettings(IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 	Color empty = Color(0, 0, 0, 0);
 	m_pModelViewer->SetBgColor(empty);
+}
+
+void vgui::COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t& oh){
+	float w = static_cast<float>(ow);
+	float h = static_cast<float>(oh);
+	if (w * h > 14336.0f) {
+		if (w > h) {
+			h = h / w * 256.0f;
+			w = 256.0f;
+		}
+		else {
+			w = w / h * 256.0f;
+			h = 256.0f;
+		}
+		while (w * h > 14436.0f) {
+			w *= 0.95f;
+			h *= 0.95f;
+		}
+	}
+	w = static_cast<size_t>(w);
+	h = static_cast<size_t>(h);
+	float gap = 16.0f;
+	float dw = fmodf(w, gap);
+	if (dw > gap / 2.0f)
+		w = w + (gap - dw);
+	else
+		w = w - dw;
+	float dh = fmodf(h, gap);
+	if (dh > gap / 2)
+		h = h + (gap - dh);
+	else
+		h = h - dh;
+	ow = static_cast<size_t>(w);
+	oh = static_cast<size_t>(h);
+}
+
+void vgui::COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wide, size_t height){
+	CTGAImage* img = reinterpret_cast<CTGAImage*>(m_pSpary->GetImage());
+	vgui::surface()->DrawSetTextureRGBA(img->GetTextureId(), pixels, wide, height, true, false);
+	img->SetSize(wide, height);
 }
 
 COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, "OptionsAdvanceDialog") {
