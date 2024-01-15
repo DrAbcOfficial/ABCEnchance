@@ -44,17 +44,25 @@ private:
 	Button* m_pModelFilterButton;
 
 	CrossHairDisplay* m_pCrosshairDisplay;
+
+	Label* m_pColorLabel;
 	CCvarSlider* m_pCrosshairr;
 	CCvarSlider* m_pCrosshairg;
 	CCvarSlider* m_pCrosshairb;
 	CCvarSlider* m_pCrosshaira;
+
+	Label* m_OutlineLabel;
 	CCvarSlider* m_pCrosshairOutliner;
 	CCvarSlider* m_pCrosshairOutlineg;
 	CCvarSlider* m_pCrosshairOutlineb;
 	CCvarSlider* m_pCrosshairOutlinea;
+	Label* m_pWidthLabel;
 	CCvarSlider* m_pCrosshairWidth;
+	Label* m_pLengthLabel;
 	CCvarSlider* m_pCrosshairLength;
+	Label* m_pOutlineWidthLabel;
 	CCvarSlider* m_pCrosshairOutlineWidth;
+	Label* m_pOffsetLable;
 	CCvarSlider* m_pCrosshairOffset;
 	CCvarToggleCheckButton* m_pCrosshairDot;
 	CCvarToggleCheckButton* m_pCrosshairT;

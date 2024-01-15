@@ -30,21 +30,28 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pModelFilterButton = new Button(this, "ModelFilterButton", "#GameUI_ABC_SubmitModelFilter", this, "FilterModel");
 	m_pPlayerName = new Label(this, "PlayerName", CVAR_GET_STRING("name"));
 	m_pCrosshairDisplay = new CrossHairDisplay(this, "CrossHairDisplay");
-	m_pCrosshairr = new CCvarSlider(this, "CrosshairR", "#GameUI_ABC_CrosshairR", 0.0f, 255.0f, "cl_crosshaircolor_r");
-	m_pCrosshairg = new CCvarSlider(this, "CrosshairG", "#GameUI_ABC_CrosshairG", 0.0f, 255.0f, "cl_crosshaircolor_g");
-	m_pCrosshairb = new CCvarSlider(this, "CrosshairB", "#GameUI_ABC_CrosshairB", 0.0f, 255.0f, "cl_crosshaircolor_b");
-	m_pCrosshaira = new CCvarSlider(this, "CrosshairA", "#GameUI_ABC_CrosshairA", 0.0f, 255.0f, "cl_crosshairalpha");
-	m_pCrosshairOutliner = new CCvarSlider(this, "CrosshairOR", "#GameUI_ABC_CrosshairOR", 0.0f, 255.0f, "cl_crosshaircolor_outline_r");
-	m_pCrosshairOutlineg = new CCvarSlider(this, "CrosshairOG", "#GameUI_ABC_CrosshairOG", 0.0f, 255.0f, "cl_crosshaircolor_outline_g");
-	m_pCrosshairOutlineb = new CCvarSlider(this, "CrosshairOB", "#GameUI_ABC_CrosshairOB", 0.0f, 255.0f, "cl_crosshaircolor_outline_b");
-	m_pCrosshairOutlinea = new CCvarSlider(this, "CrosshairOA", "#GameUI_ABC_CrosshairOA", 0.0f, 255.0f, "cl_crosshair_outline_alpha");
-	m_pCrosshairWidth = new CCvarSlider(this, "CrosshairW", "#GameUI_ABC_CrosshairW", 0.0f, 100.0f, "cl_crosshairthickness");
-	m_pCrosshairLength = new CCvarSlider(this, "CrosshairL", "#GameUI_ABC_CrosshairL", 0.0f, 100.0f, "cl_crosshairsize");
-	m_pCrosshairOutlineWidth = new CCvarSlider(this, "CrosshairO", "#GameUI_ABC_CrosshairO", 0.0f, 100.0f, "cl_crosshair_outline");
-	m_pCrosshairOffset = new CCvarSlider(this, "CrosshairOF", "#GameUI_ABC_CrosshairOF", 0.0f, 100.0f, "cl_crosshairgap");
+
+	m_pColorLabel = new Label(this, "LabelC", "#GameUI_ABC_ColorLabel");
+	m_pCrosshairr = new CCvarSlider(this, "CrosshairR", "#GameUI_ABC_ColorLabel", 0.0f, 255.0f, "cl_crosshaircolor_r");
+	m_pCrosshairg = new CCvarSlider(this, "CrosshairG", "#GameUI_ABC_ColorLabel", 0.0f, 255.0f, "cl_crosshaircolor_g");
+	m_pCrosshairb = new CCvarSlider(this, "CrosshairB", "#GameUI_ABC_ColorLabel", 0.0f, 255.0f, "cl_crosshaircolor_b");
+	m_pCrosshaira = new CCvarSlider(this, "CrosshairA", "#GameUI_ABC_ColorLabel", 0.0f, 255.0f, "cl_crosshairalpha");
+	m_OutlineLabel = new Label(this, "LabelOC", "#GameUI_ABC_OutlineColorLabel");
+	m_pCrosshairOutliner = new CCvarSlider(this, "CrosshairOR", "#GameUI_ABC_OutlineColorLabel", 0.0f, 255.0f, "cl_crosshaircolor_outline_r");
+	m_pCrosshairOutlineg = new CCvarSlider(this, "CrosshairOG", "#GameUI_ABC_OutlineColorLabel", 0.0f, 255.0f, "cl_crosshaircolor_outline_g");
+	m_pCrosshairOutlineb = new CCvarSlider(this, "CrosshairOB", "#GameUI_ABC_OutlineColorLabel", 0.0f, 255.0f, "cl_crosshaircolor_outline_b");
+	m_pCrosshairOutlinea = new CCvarSlider(this, "CrosshairOA", "#GameUI_ABC_OutlineColorLabel", 0.0f, 255.0f, "cl_crosshair_outline_alpha");
+	m_pWidthLabel = new Label(this, "LabelW", "#GameUI_ABC_CrosshairWidth");
+	m_pCrosshairWidth = new CCvarSlider(this, "CrosshairW", "#GameUI_ABC_CrosshairWidth", 0.0f, 100.0f, "cl_crosshairthickness");
+	m_pLengthLabel = new Label(this, "LabelL", "#GameUI_ABC_CrosshairLength");
+	m_pCrosshairLength = new CCvarSlider(this, "CrosshairL", "#GameUI_ABC_CrosshairLength", 0.0f, 100.0f, "cl_crosshairsize");
+	m_pOutlineWidthLabel = new Label(this, "LabelOW", "#GameUI_ABC_CrosshairOutlineWidth");
+	m_pCrosshairOutlineWidth = new CCvarSlider(this, "CrosshairO", "#GameUI_ABC_CrosshairOutlineWidth", 0.0f, 100.0f, "cl_crosshair_outline");
+	m_pOffsetLable = new Label(this, "LabelOF", "#GameUI_ABC_CrosshairOffset");
+	m_pCrosshairOffset = new CCvarSlider(this, "CrosshairOF", "#GameUI_ABC_CrosshairOffset", 0.0f, 100.0f, "cl_crosshairgap");
 	m_pCrosshairDot = new CCvarToggleCheckButton(this, "CrosshairDot", "#GameUI_ABC_CrosshairD", "cl_crosshairdot");
 	m_pCrosshairT = new CCvarToggleCheckButton(this, "CrosshairT", "#GameUI_ABC_CrosshairT", "cl_crosshair_t");
-	m_pCrosshairOutline = new CCvarToggleCheckButton(this, "CrosshairOTL", "#GameUI_ABC_CrosshairT", "cl_crosshair_outline_draw");
+	m_pCrosshairOutline = new CCvarToggleCheckButton(this, "CrosshairOTL", "#GameUI_ABC_CrosshairOTL", "cl_crosshair_outline_draw");
 
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubMultiPlay.res");
 
