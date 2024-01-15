@@ -62,3 +62,8 @@ void CTGAImage::SetColor(Color col)
 {
 	m_Color = col;
 }
+
+int CTGAImage::GetTextureId()
+{
+	return m_iTextureID;
+}

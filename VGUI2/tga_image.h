@@ -32,6 +32,8 @@ public:
 	virtual void SetSize(int wide, int tall);
 	virtual void SetColor(Color col);
 
+	int GetTextureId();
+
 private:
 	Color m_Color;
 	int m_iTextureID = -1;

@@ -1,5 +1,6 @@
 #include "interface.h"
 #include "IFileSystem.h"
+#include "KeyValues.h"
 
 #include "vgui_controls/PropertySheet.h"
 #include "vgui_controls/Label.h"
@@ -10,6 +11,12 @@
 #include "vgui_controls/CrossHairDisplay.h"
 #include "vgui_controls/CvarSlider.h"
 #include "vgui_controls/CvarToggleCheckButton.h"
+#include "vgui_controls/ImagePanel.h"
+#include "vgui_controls/FileOpenDialog.h"
+
+#include "vgui2/tga_image.h"
+
+#include "wadlib/texturemanager.h"
 
 #include <GaussianBlurPanel.h>
 #include <ModelViewPanel.h>
@@ -19,6 +26,8 @@
 
 extern const char* CVAR_GET_STRING(const char* x);
 extern float CVAR_GET_FLOAT(const char* x);
+extern size_t ScreenWidth();
+extern size_t ScreenHeight();
 
 using namespace vgui;
 
@@ -53,6 +62,15 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pCrosshairT = new CCvarToggleCheckButton(this, "CrosshairT", "#GameUI_ABC_CrosshairT", "cl_crosshair_t");
 	m_pCrosshairOutline = new CCvarToggleCheckButton(this, "CrosshairOTL", "#GameUI_ABC_CrosshairOTL", "cl_crosshair_outline_draw");
 
+	m_pSpliter = new Panel(this, "Spliter");
+
+	m_pWadManager = new TextureManager();
+
+	CTGAImage* bitmap = new CTGAImage();
+	m_pSpary = new ImagePanel(this, "SparyImage");
+	m_pSpary->SetImage(bitmap);
+	m_pLoadSpary = new Button(this, "SparyLoadButton", "#GameUI_ABC_LoadSpary", this, "OpenLoadSparyDialog");
+
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubMultiPlay.res");
 
 	float y, r;
@@ -71,6 +89,9 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pCrosshairDot->AddActionSignalTarget(this);
 	m_pCrosshairT->AddActionSignalTarget(this);
 	m_pCrosshairOutline->AddActionSignalTarget(this);
+}
+vgui::COptionsAdvanceSubMultiPlay::~COptionsAdvanceSubMultiPlay(){
+	delete m_pWadManager;
 }
 void COptionsAdvanceSubMultiPlay::ResetModel(){
 	ChangeModel(CVAR_GET_STRING("model"));
@@ -154,6 +175,25 @@ void vgui::COptionsAdvanceSubMultiPlay::OnResetData(){
 	m_pCrosshairDisplay->SetDot(CVAR_GET_FLOAT("cl_crosshairdot") > 0);
 	m_pCrosshairDisplay->SetT(CVAR_GET_FLOAT("cl_crosshair_t") > 0);
 	m_pCrosshairDisplay->InvalidateLayout();
+
+	FileFindHandle_t findHandle;
+	auto pszFileName = filesystem()->FindFirst("tempdecal.wad", &findHandle);
+	if (pszFileName) {
+		char fullpath[MAX_PATH];
+		filesystem()->GetLocalPath(pszFileName, fullpath, MAX_PATH);
+		if (m_pWadManager->addTexturesFromWadFile(fullpath)) {
+			auto list = m_pWadManager->findTextures("{logo");
+			if (list.size() > 0) {
+				Texture* tex = *list.begin()->second.begin();
+				CTGAImage* img = reinterpret_cast<CTGAImage*>(m_pSpary->GetImage());
+				vgui::surface()->DrawSetTextureRGBA(img->GetTextureId(), tex->GetPixels(), tex->Width(), tex->Height(), true, false);
+				img->SetSize(tex->Width(), tex->Height());
+			}
+		}
+
+
+	};
+	filesystem()->FindClose(findHandle);
 }
 
 void vgui::COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
@@ -167,6 +207,18 @@ void vgui::COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
 		}
 		else
 			BuildModelList(nullptr);
+	}
+	else if (!std::strcmp(cmd, "OpenLoadSparyDialog")) {
+		if (!m_pFileDialog) {
+			if(m_pFileKeyvalues)
+				m_pFileKeyvalues->deleteThis();
+			m_pFileKeyvalues = new KeyValues("FileInfo");
+			m_pFileDialog = new FileOpenDialog(this, "#GameUI_ABC_LoadSpary", FileOpenDialogType_t::FOD_OPEN, m_pFileKeyvalues);
+			m_pFileDialog->SetProportional(false);
+			m_pFileDialog->AddFilter("*.tga;*.png;*.bmp;*.jpg;*.jpeg", "#GameUI_ABC_SparyFilter", true, "image");
+		}
+		m_pFileDialog->Activate();
+		m_pFileDialog->SetPos(ScreenWidth() / 2, ScreenHeight() / 2);
 	}
 }
 
@@ -193,8 +245,6 @@ void COptionsAdvanceDialog::Activate(){
 }
 void COptionsAdvanceDialog::ApplySettings(KeyValues* inResourceData){
 	BaseClass::ApplySettings(inResourceData);
-}
-void COptionsAdvanceDialog::PaintBackground(){
 }
 void COptionsAdvanceDialog::ApplySchemeSettings(IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);

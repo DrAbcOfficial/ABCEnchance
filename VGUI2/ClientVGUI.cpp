@@ -20,6 +20,7 @@
 #include "exportfuncs.h"
 
 #include <vgui.h>
+#include "ClientVGUI.h"
 
 namespace vgui{
 	bool VGui_InitInterfacesList(const char* moduleName, CreateInterfaceFn* factoryList, int numFactories);
@@ -132,6 +133,11 @@ void ClientVGUIInstallHook(void){
 
 bool g_bIMEComposing = false;
 double g_flImeComposingTime = 0;
+
+//fuck me
+bool IsOSX(){
+	return false;
+}
 
 double GetAbsoluteTime() {
 	return gEngfuncs.GetAbsoluteTime();

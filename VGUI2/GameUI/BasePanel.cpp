@@ -68,7 +68,7 @@ void ReadBackGroundList() {
 			break;
 		if (c >= 1) {
 			backgroundinfo_t* info = new backgroundinfo_t();
-			vgui::filesystem()->GetLocalPath(buffer1, info->video, MAX_PATH);
+			g_pFileSystem->GetLocalPath(buffer1, info->video, MAX_PATH);
 			strcpy(info->audio, buffer2);
 			g_aryBackGrounds.push_back(info);
 			c = 0;

@@ -1151,6 +1151,8 @@ void TextEntry::LayoutVerticalScrollBarSlider()
 
 		// calculate how many lines we can fully display
 		int displayLines = tall / (surface()->GetFontTall(_font) + DRAW_OFFSET_Y);
+		if (!displayLines)
+			displayLines = 1;
 		int numLines = m_LineBreaks.Count();
 
 		if (numLines <= displayLines)

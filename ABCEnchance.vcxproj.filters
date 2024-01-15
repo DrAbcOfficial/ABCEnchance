@@ -99,6 +99,9 @@
     <Filter Include="SourceSDK\tier2">
       <UniqueIdentifier>{f2925c2a-76db-4a76-90b0-7b9474710fa8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\wadlib">
+      <UniqueIdentifier>{52bb380f-22e4-4c21-bf2f-5a5631b74f09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vgui_controls\AnalogBar.cpp">
@@ -676,6 +679,18 @@
     </ClCompile>
     <ClCompile Include="vgui_controls\CvarSlider.cpp">
       <Filter>VGUI\control</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wadlib\texturepackage.cpp">
+      <Filter>Public\wadlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wadlib\wadfile.cpp">
+      <Filter>Public\wadlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wadlib\texture.cpp">
+      <Filter>Public\wadlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wadlib\texturemanager.cpp">
+      <Filter>Public\wadlib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1584,6 +1599,18 @@
     </ClInclude>
     <ClInclude Include="vgui_controls\CvarToggleCheckButton.h">
       <Filter>VGUI\control</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wadlib\texturepackage.h">
+      <Filter>Public\wadlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wadlib\wadfile.h">
+      <Filter>Public\wadlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wadlib\texture.h">
+      <Filter>Public\wadlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wadlib\texturemanager.h">
+      <Filter>Public\wadlib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

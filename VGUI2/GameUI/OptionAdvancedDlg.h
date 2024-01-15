@@ -8,6 +8,7 @@
 #include "vgui_controls/PropertyPage.h"
 #include "vgui_controls/PropertyDialog.h"
 
+class TextureManager;
 namespace vgui {
 	class CrossHairDisplay;
 	class GaussianBlurPanel;
@@ -19,11 +20,15 @@ namespace vgui {
 	class Button;
 	class CCvarSlider;
 	class CCvarToggleCheckButton;
+	class ImagePanel;
+	class Button;
+	class FileOpenDialog;
 
 class COptionsAdvanceSubMultiPlay : public PropertyPage{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubMultiPlay, PropertyPage);
 public:
 	COptionsAdvanceSubMultiPlay(Panel* parent);
+	~COptionsAdvanceSubMultiPlay();
 	void ResetModel();
 	void ChangeModel(const char* mdl);
 	void BuildModelList(const char* filter = nullptr);
@@ -36,37 +41,44 @@ protected:
 	virtual void ApplySchemeSettings(IScheme* pScheme) override;
 private:
 	std::set<std::string> m_aryModelList;
-	ModelViewPanel* m_pModelViewer;
-	Slider* m_pModelController;
-	Label* m_pPlayerName;
-	ListPanel* m_pModelList;
-	TextEntry* m_pModelFilter;
-	Button* m_pModelFilterButton;
+	ModelViewPanel* m_pModelViewer = nullptr;
+	Slider* m_pModelController = nullptr;
+	Label* m_pPlayerName = nullptr;
+	ListPanel* m_pModelList = nullptr;
+	TextEntry* m_pModelFilter = nullptr;
+	Button* m_pModelFilterButton = nullptr;
 
-	CrossHairDisplay* m_pCrosshairDisplay;
+	CrossHairDisplay* m_pCrosshairDisplay = nullptr;
+	Label* m_pColorLabel = nullptr;
+	CCvarSlider* m_pCrosshairr = nullptr;
+	CCvarSlider* m_pCrosshairg = nullptr;
+	CCvarSlider* m_pCrosshairb = nullptr;
+	CCvarSlider* m_pCrosshaira = nullptr;
+	Label* m_OutlineLabel = nullptr;
+	CCvarSlider* m_pCrosshairOutliner = nullptr;
+	CCvarSlider* m_pCrosshairOutlineg = nullptr;
+	CCvarSlider* m_pCrosshairOutlineb = nullptr;
+	CCvarSlider* m_pCrosshairOutlinea = nullptr;
+	Label* m_pWidthLabel = nullptr;
+	CCvarSlider* m_pCrosshairWidth = nullptr;
+	Label* m_pLengthLabel = nullptr;
+	CCvarSlider* m_pCrosshairLength = nullptr;
+	Label* m_pOutlineWidthLabel = nullptr;
+	CCvarSlider* m_pCrosshairOutlineWidth = nullptr;
+	Label* m_pOffsetLable = nullptr;
+	CCvarSlider* m_pCrosshairOffset = nullptr;
+	CCvarToggleCheckButton* m_pCrosshairDot = nullptr;
+	CCvarToggleCheckButton* m_pCrosshairT = nullptr;
+	CCvarToggleCheckButton* m_pCrosshairOutline = nullptr;
 
-	Label* m_pColorLabel;
-	CCvarSlider* m_pCrosshairr;
-	CCvarSlider* m_pCrosshairg;
-	CCvarSlider* m_pCrosshairb;
-	CCvarSlider* m_pCrosshaira;
+	Panel* m_pSpliter = nullptr;
 
-	Label* m_OutlineLabel;
-	CCvarSlider* m_pCrosshairOutliner;
-	CCvarSlider* m_pCrosshairOutlineg;
-	CCvarSlider* m_pCrosshairOutlineb;
-	CCvarSlider* m_pCrosshairOutlinea;
-	Label* m_pWidthLabel;
-	CCvarSlider* m_pCrosshairWidth;
-	Label* m_pLengthLabel;
-	CCvarSlider* m_pCrosshairLength;
-	Label* m_pOutlineWidthLabel;
-	CCvarSlider* m_pCrosshairOutlineWidth;
-	Label* m_pOffsetLable;
-	CCvarSlider* m_pCrosshairOffset;
-	CCvarToggleCheckButton* m_pCrosshairDot;
-	CCvarToggleCheckButton* m_pCrosshairT;
-	CCvarToggleCheckButton* m_pCrosshairOutline;
+	ImagePanel* m_pSpary = nullptr;
+	Button* m_pLoadSpary = nullptr;
+	FileOpenDialog* m_pFileDialog = nullptr;
+
+	KeyValues* m_pFileKeyvalues = nullptr;
+	TextureManager* m_pWadManager = nullptr;
 };
 
 class COptionsAdvanceDialog : public PropertyDialog{
@@ -76,9 +88,9 @@ public:
 	virtual void Activate() override;
 protected:
 	virtual void ApplySettings(KeyValues* inResourceData) override;
-	virtual void PaintBackground() override;
 	virtual void ApplySchemeSettings(IScheme* pScheme) override;
 private:
+
 	GaussianBlurPanel* m_pBlur;
 	COptionsAdvanceSubMultiPlay* m_pMultiPlayPage;
 };
