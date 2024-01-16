@@ -3,14 +3,6 @@
 
 #pragma comment(lib,"FreeImage/FreeImage.lib")
 
-typedef struct BSPMipTexHeader_s{
-    char name[16];
-    unsigned int width;
-    unsigned int height;
-    unsigned int offsets[4];
-
-} BSPMipTexHeader_t;
-
 WadTexture::WadTexture(std::string const &name, WadFile*package, unsigned char* miptexData, WAD3Lump_t& lump){
     m_szName = name;
     m_pPackage = package;
@@ -31,9 +23,11 @@ size_t WadTexture::GetRawDataSize(){
     return sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3;
 }
 
-unsigned char* WadTexture::GetRawData() {
+void WadTexture::GetRawData(std::ofstream& stream) {
+    FIBITMAP* img = FreeImage_ConvertFromRawBits(m_pPixels, m_iWidth, m_iHeight, m_iPitch, m_iBpp, FI_RGBA_BLUE_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_RED_MASK);
+    FIBITMAP* nimg = FreeImage_ColorQuantizeEx(img, FIQ_WUQUANT, 256);
+    FreeImage_Unload(img);
     int size = m_iWidth * m_iHeight;
-    unsigned char* rawData = new unsigned char[GetRawDataSize()];
     BSPMipTexHeader_t header;
     std::strncpy(header.name, m_szName.c_str(), 16);
     header.width = m_iWidth;
@@ -42,40 +36,41 @@ unsigned char* WadTexture::GetRawData() {
     header.offsets[1] = sizeof(BSPMipTexHeader_t) + size;
     header.offsets[2] = sizeof(BSPMipTexHeader_t) + size + (size / 4);
     header.offsets[3] = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16);
-    memcpy(rawData, &header, sizeof(BSPMipTexHeader_t));
-    FIBITMAP* img = FreeImage_ConvertFromRawBits(m_pPixels, m_iWidth, m_iHeight, m_iPitch, m_iBpp, FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK);
-    FIBITMAP* nimg = FreeImage_ColorQuantizeEx(img);
-    FreeImage_Unload(img);
+    stream.write((char*)&header, sizeof(BSPMipTexHeader_t));
+    //its 8 bpp...
+    BYTE* bits = FreeImage_GetBits(nimg);
+    //mip 0
+    char buf;
+    for (size_t i = 0; i < size; i++) {
+        buf = bits[i];
+        stream.write((char*)&buf, 1);
+    }
+    //mip 1
+    for (size_t i = 0; i < size / 4; i++) {
+        buf = bits[i * 2];
+        stream.write((char*)&buf, 1);
+    }
+    //mip 2
+    for (size_t i = 0; i < size / 16; i++) {
+        buf = bits[i * 4];
+        stream.write((char*)&buf, 1);
+    }
+    //mip 3
+    for (size_t i = 0; i < size / 64; i++) {
+        buf = bits[i * 8];
+        stream.write((char*)&buf, 1);
+    }
+    short dummy = 0;
+    stream.write((char*)&dummy, sizeof(short));
     //Palette
     RGBQUAD* palette = FreeImage_GetPalette(nimg);
-    size_t palletstart = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short);
-    for (size_t i = 0; i < 256;i++) {
+    for (size_t i = 0; i < 256; i++) {
         RGBQUAD* p = palette + i;
-        size_t pi = i * 3 + palletstart;
-        rawData[pi + 0] = p->rgbRed;
-        rawData[pi + 1] = p->rgbGreen;
-        rawData[pi + 2] = p->rgbBlue;
+        stream.write((char*)&p->rgbRed, 1);
+        stream.write((char*)&p->rgbGreen, 1);
+        stream.write((char*)&p->rgbBlue, 1);
     }
-    //mip 0
-    BYTE* bits = FreeImage_GetBits(nimg);
-    memcpy(rawData + sizeof(BSPMipTexHeader_t), bits, size);
-    //mip 1
-    img = FreeImage_Rescale(nimg, m_iWidth / 2, m_iHeight / 2);
-    FreeImage_Unload(nimg);
-    bits = FreeImage_GetBits(img);
-    memcpy(rawData + sizeof(BSPMipTexHeader_t) + size, bits, size / 4);
-    //mip 2
-    nimg = FreeImage_Rescale(img, m_iWidth / 4, m_iHeight / 4);
-    FreeImage_Unload(img);
-    bits = FreeImage_GetBits(nimg);
-    memcpy(rawData + sizeof(BSPMipTexHeader_t) + size + (size / 4), bits, size / 16);
-    //mip 3
-    img = FreeImage_Rescale(nimg, m_iWidth / 8, m_iHeight / 8);
-    FreeImage_Unload(nimg);
-    bits = FreeImage_GetBits(img);
-    memcpy(rawData + sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16), bits, size / 64);
-    FreeImage_Unload(img);
-    return rawData;
+   
 }
 unsigned char* WadTexture::GetPixelsFromRaw(unsigned char* miptexData){
     if (miptexData == nullptr)
