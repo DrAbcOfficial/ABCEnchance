@@ -1391,7 +1391,7 @@ void RichText::LayoutVerticalScrollBarSlider()
 
 	// calculate how many lines we can fully display
 	int displayLines = tall / (surface()->GetFontTall(_font) + _drawOffsetY);
-	if (!displayLines)
+	if (displayLines < 1)
 		displayLines = 1;
 	int numLines = m_LineBreaks.Count();
 
