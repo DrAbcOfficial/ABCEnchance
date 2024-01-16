@@ -175,6 +175,14 @@ void vgui::COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 	else if (!std::strncmp(ext, ".png", 4))
 		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_PNG, fullpath, 0);
 	if (img) {
+		std::ofstream stream;
+		char wadpath[MAX_PATH];
+		filesystem()->GetLocalPath("tempdecal.wad", wadpath, MAX_PATH);
+		stream.open(wadpath, std::ios::out | std::ios::binary);
+		if (!stream.is_open()) {
+			FreeImage_Unload(img);
+			return;
+		}
 		size_t w = FreeImage_GetWidth(img);
 		size_t h = FreeImage_GetHeight(img);
 		size_t nw = w;
@@ -182,73 +190,71 @@ void vgui::COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		GetValidateSparySize(nw, nh);
 		FIBITMAP* nimg = FreeImage_Rescale(img, nw, nh);
 		FreeImage_Unload(img);
-		BYTE* bits = FreeImage_GetBits(nimg);
-		int bpp = FreeImage_GetBPP(nimg);
-		int pitch = FreeImage_GetPitch(nimg);
-		auto bits_to_rgba = [](BYTE* bits, unsigned int width, unsigned int height, int bpp, int pitch) -> byte* {
-			int bitnum = bpp / 8;
-			static size_t s_iArea;
-			static byte* s_pBuf;
-			if (s_iArea < width * height) {
-				s_iArea = width * height;
-				delete[] s_pBuf;
-				s_pBuf = new byte[s_iArea * 4];
-			}
-			size_t c = 0;
-			bits += pitch * (height - 1);
-			for (int y = 0; y < height; y++) {
-				BYTE* pixel = (BYTE*)bits;
-				for (int x = 0; x < width; x++) {
-					switch (bitnum) {
-						//8bpp
-					case 1: {
-						BYTE grey = pixel[0];
-						s_pBuf[c * 4 + 0] = grey;
-						s_pBuf[c * 4 + 1] = grey;
-						s_pBuf[c * 4 + 2] = grey;
-						s_pBuf[c * 4 + 3] = 255;
-						break;
-					}
-						  //16bpp
-					case 2: {
-						int code = (pixel[1] << 8) + pixel[0];
-						s_pBuf[c * 4 + 0] = code & 0x1F;
-						s_pBuf[c * 4 + 1] = (code & 0x7E0) >> 5;
-						s_pBuf[c * 4 + 2] = (code & 0xF800) >> 11;
-						s_pBuf[c * 4 + 3] = 255;
-						break;
-					}
-						  //24bpp
-					case 3: {
-						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
-						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
-						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
-						s_pBuf[c * 4 + 3] = 255;
-						break;
-					}
-						  //32bpp
-					case 4: {
-						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
-						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
-						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
-						s_pBuf[c * 4 + 3] = pixel[FI_RGBA_ALPHA];
-						break;
-					}
-						  //cnmdwy
-					default: break;
-					}
-					pixel += bitnum;
-					c++;
+		img = FreeImage_ColorQuantizeEx(nimg, FIQ_WUQUANT, 256);
+		FreeImage_Unload(nimg);
+		//header
+		stream.write("WAD3", 4);
+		unsigned int headerbuf = 1;
+		stream.write((char*)&headerbuf, 4);
+		headerbuf = sizeof(WAD3Header_t);
+		stream.write((char*)&headerbuf, 4);
+		//lump
+		size_t size = nw * nh;
+		WAD3Lump_t lump;
+		lump.compression = 0;
+		lump.dummy = 0;
+		lump.type = 0x43; //miptex
+		std::strncpy(lump.name, "{LOGO", 16);
+		lump.offset = sizeof(WAD3Header_t) + sizeof(WAD3Lump_t);
+		lump.size = lump.sizeOnDisk = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3;
+		stream.write((char*)&lump, sizeof(WAD3Lump_t));
+		//mips header
+		BSPMipTexHeader_t header;
+		std::strncpy(header.name, "{LOGO", 16);
+		header.width = nw;
+		header.height = nh;
+		header.offsets[0] = sizeof(BSPMipTexHeader_t);
+		header.offsets[1] = sizeof(BSPMipTexHeader_t) + size;
+		header.offsets[2] = sizeof(BSPMipTexHeader_t) + size + (size / 4);
+		header.offsets[3] = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16);
+		stream.write((char*)&header, sizeof(BSPMipTexHeader_t));
+		BYTE* bits = FreeImage_GetBits(img);
+		BYTE* flipped = new BYTE[size];
+		for (int i = 0; i < nh; i++) {
+			memcpy(flipped + i * nw, bits + (nh - i - 1) * nw, nw);
+		}
+		//mips data
+		auto write_mips = [&](int mips_level) {
+			int lv = pow(2, mips_level);
+			for (size_t i = 0; i < (nh/lv); i++) {
+				for (size_t j = 0; j < (nw/lv); j++) {
+					char buf = flipped[i * lv * nw + j * lv];
+					stream.write((char*)&buf, 1);
 				}
-				bits -= pitch;
 			}
-			return s_pBuf;
 		};
-		auto rgba = bits_to_rgba(bits, nw, nh, bpp, pitch);
+		for (size_t i = 0; i < 4; i++) {
+			write_mips(i);
+		}
+		delete[] flipped;
+		short dummy = 0;
+		stream.write((char*)&dummy, sizeof(short));
+		//Palette
+		RGBQUAD* palette = FreeImage_GetPalette(img);
+		for (size_t i = 0; i < 256; i++) {
+			RGBQUAD p = palette[i];
+			stream.write((char*)&p.rgbRed, 1);
+			stream.write((char*)&p.rgbGreen, 1);
+			stream.write((char*)&p.rgbBlue, 1);
+		}
+		stream.close();
+		FreeImage_Save(FIF_BMP, img, "1.bmp");
+		FreeImage_Unload(img);
+
+		m_pSparyWad->Load(wadpath);
 		WadTexture* tex = m_pSparyWad->Get("{logo");
-		tex->SetPixels((unsigned char*)rgba, nw, nh, bpp, pitch);
-		SetSparyPixel(tex->GetPixels(), nw, nh);
-		m_pSparyWad->SaveToFile("C:\\Users\\64150\\Downloads\\1.wad");
+		if (tex)
+			SetSparyPixel(tex->GetPixels(), tex->Width(), tex->Height());
 	}
 }
 

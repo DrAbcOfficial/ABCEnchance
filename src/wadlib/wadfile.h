@@ -20,8 +20,8 @@ public:
     WadTexture* Get(std::string name, bool ignoreCase = true);
     bool Load(std::string const &filePath);
     bool SaveToFile(std::string const& filePath);
-private:
     void Clear();
+private:
     std::string m_szFilePath;
     std::vector<WadTexture*> m_aryTextures;
     WAD3Header_t m_pHeader;

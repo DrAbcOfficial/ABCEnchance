@@ -81,15 +81,13 @@ bool WadFile::SaveToFile(std::string const& filePath){
         lump.dummy = 0;
         lump.type = 0x43; //miptex
         std::strncpy(lump.name, (*iter)->Name().c_str(), 16);
-        lump.offset = m_aryTextures.size() * sizeof(WAD3Lump_t) + lastsize;
+        lump.offset = sizeof(WAD3Header_t) + m_aryTextures.size() * sizeof(WAD3Lump_t) + lastsize;
         lump.size = lump.sizeOnDisk = (*iter)->GetRawDataSize();
         lastsize += lump.size;
         stream.write((char*)&lump, sizeof(WAD3Lump_t));
     }
     for (auto iter = m_aryTextures.begin(); iter != m_aryTextures.end(); iter++) {
-        unsigned char* rawdata = (*iter)->GetRawData();
-        stream.write((char*)rawdata, (*iter)->GetRawDataSize());
-        delete[] rawdata;
+        (*iter)->GetRawData(stream);
     }
     stream.close();
 }
