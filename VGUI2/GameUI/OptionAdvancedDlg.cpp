@@ -248,7 +248,6 @@ void vgui::COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			stream.write((char*)&p.rgbBlue, 1);
 		}
 		stream.close();
-		FreeImage_Save(FIF_BMP, img, "1.bmp");
 		FreeImage_Unload(img);
 
 		m_pSparyWad->Load(wadpath);
