@@ -334,6 +334,24 @@ public:
 		return m_pstudiomdl != nullptr && m_ptexturemdl != nullptr;
 	}
 
+	void SetAmbientLight(int light) {
+		m_ambientlight = light;
+	}
+	void SetShadeLight(int light) {
+		m_shadelight = light;
+	}
+	void SetLightColor(int r, int g, int b) {
+		m_lightcolor[0] = (float)r / 255.0f;
+		m_lightcolor[1] = (float)g / 255.0f;
+		m_lightcolor[2] = (float)b / 255.0f;
+	}
+	void SetLightOrigin(float x, float y, float z) {
+		m_lightvec[0] = x;
+		m_lightvec[1] = y;
+		m_lightvec[2] = -z + -1.0f;
+		SetupLighting();
+	}
+
 	int						m_sequence;			// sequence index
 	float					m_frame;			// frame
 	byte					m_mouth;			// mouth position
@@ -361,7 +379,6 @@ private:
 	vec3_t* m_pxformverts;
 	vec3_t* m_pvlightvalues;
 	vec3_t			m_xformverts[MAXSTUDIOVERTS];	// transformed vertices
-	vec3_t			m_lightvec;						// light vector in model reference frame
 	vec3_t			m_lightvalues[MAXSTUDIOVERTS];	// light surface normals
 	vec3_t			m_blightvec[MAXSTUDIOBONES];	// light vectors in bone reference frames
 	float			m_bonetransform[MAXSTUDIOBONES][3][4];	// bone transformation matrix
@@ -369,9 +386,11 @@ private:
 	int				m_chromeage[MAXSTUDIOBONES];	// last time chrome vectors were updated
 	vec3_t			m_chromeup[MAXSTUDIOBONES];		// chrome vector "up" in bone reference frames
 	vec3_t			m_chromeright[MAXSTUDIOBONES];	// chrome vector "right" in bone reference frames
-	vec3_t			m_lightcolor;
-	int				m_ambientlight;					// ambient world light
-	float			m_shadelight;					// direct world light
+
+	vec3_t			m_lightvec = { 0.0f,0.0f,-1.0f };						// light vector in model reference frame
+	vec3_t			m_lightcolor = { 1.0f,1.0f,1.0f };
+	int				m_ambientlight = 32;					// ambient world light
+	float			m_shadelight = 192;					// direct world light
 
 	model_t* LoadModel(const char* modelname) {
 		return IEngineStudio.Mod_ForName(modelname, false);
@@ -746,8 +765,7 @@ private:
 		lv = (float*)m_pvlightvalues;
 		for (j = 0; j < m_pmodel->nummesh; j++)
 		{
-			int flags;
-			flags = ptexture[pskinref[pmesh[j].skinref]].flags;
+			int flags = ptexture[pskinref[pmesh[j].skinref]].flags;
 			for (i = 0; i < pmesh[j].numnorms; i++, lv += 3, pstudionorms++, pnormbone++)
 			{
 				Lighting(&lv_tmp, *pnormbone, flags, (float*)pstudionorms);
@@ -774,7 +792,6 @@ private:
 
 			s = 1.0 / (float)ptexture[pskinref[pmesh->skinref]].width;
 			t = 1.0 / (float)ptexture[pskinref[pmesh->skinref]].height;
-
 			glBindTexture(GL_TEXTURE_2D, ptexture[pskinref[pmesh->skinref]].index);
 
 			if (ptexture[pskinref[pmesh->skinref]].flags & STUDIO_NF_CHROME)
@@ -807,7 +824,7 @@ private:
 				}
 			}
 			else
-			{
+			{				
 				while (i = *(ptricmds++))
 				{
 					if (i < 0)
@@ -909,21 +926,9 @@ private:
 	void SetupLighting(void) {
 		if (!m_pstudiomdl)
 			return;
-		int i;
-		m_ambientlight = 32;
-		m_shadelight = 192;
-
-		m_lightvec[0] = 0;
-		m_lightvec[1] = 0;
-		m_lightvec[2] = -1.0;
-
-		m_lightcolor[0] = 1.0;
-		m_lightcolor[1] = 1.0;
-		m_lightcolor[2] = 1.0;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		// TODO: only do it for bones that actually have textures
-		for (i = 0; i < hdr->numbones; i++)
-		{
+		for (int i = 0; i < hdr->numbones; i++){
 			mathlib::VectorIRotate(m_lightvec, m_bonetransform[i], m_blightvec[i]);
 		}
 	}
@@ -1137,6 +1142,22 @@ void vgui::ModelViewPanel::SetMouth(int mouth){
 	m_iMouth = mouth;
 }
 
+void vgui::ModelViewPanel::SetAmbientLight(int light){
+	m_Renderer->SetAmbientLight(light);
+}
+
+void vgui::ModelViewPanel::SetShadeLight(int light){
+	m_Renderer->SetShadeLight(light);
+}
+
+void vgui::ModelViewPanel::SetLightColor(int r, int g, int b){
+	m_Renderer->SetLightColor(r, g, b);
+}
+
+void vgui::ModelViewPanel::SetLightOrigin(float x, float y, float z){
+	m_Renderer->SetLightOrigin(x, y, z);
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: draws the graph
 //-----------------------------------------------------------------------------
@@ -1230,4 +1251,18 @@ void vgui::ModelViewPanel::ApplySettings(KeyValues* inResourceData){
 	result = std::sscanf(buf, "%f %f %f", &a, &b, &c);
 	if (result != EOF)
 		SetModelRotate(a, b, c);
+
+	int rr, gg, bb;
+	buf = inResourceData->GetString("light_color", "255 255 255");
+	result = std::sscanf(buf, "%d %d %d", &rr, &gg, &bb);
+	if (result != EOF)
+		SetLightColor(rr, gg, bb);
+
+	SetAmbientLight(inResourceData->GetInt("ambient_light", 32));
+	SetShadeLight(inResourceData->GetInt("shade_light", 192));
+
+	buf = inResourceData->GetString("light_origin", "0 0 0");
+	result = std::sscanf(buf, "%f %f %f", &a, &b, &c);
+	if (result != EOF)
+		SetLightOrigin(a, b, c);
 }
