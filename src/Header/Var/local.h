@@ -11,6 +11,7 @@ void ConsoleWriteline(const char* x);
 cvar_t* CVAR_GET_POINTER(const char* x);
 float CVAR_GET_FLOAT(const char* x);
 const char* CVAR_GET_STRING(const char* x);
+void CVAR_SET_STRING(const char* x, const char* v);
 cvar_t* CREATE_CVAR(const char* name, const char* val, int flag, cvar_callback_t callback);
 void ServerCmd(const char* x);
 void EngineClientCmd(const char* x);

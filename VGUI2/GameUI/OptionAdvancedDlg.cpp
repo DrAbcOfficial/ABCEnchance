@@ -5,6 +5,7 @@
 
 #include "vgui_controls/PropertySheet.h"
 #include "vgui_controls/Label.h"
+#include "vgui_controls/UrlLabel.h"
 #include "vgui_controls/Slider.h"
 #include "vgui_controls/ListPanel.h"
 #include "vgui_controls/TextEntry.h"
@@ -29,6 +30,7 @@
 #pragma comment(lib,"FreeImage/FreeImage.lib")
 
 extern const char* CVAR_GET_STRING(const char* x);
+extern void CVAR_SET_STRING(const char* x, const char* v);
 extern float CVAR_GET_FLOAT(const char* x);
 extern size_t ScreenWidth();
 extern size_t ScreenHeight();
@@ -40,6 +42,7 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pModelController = new Slider(this, "ModelController");
 	m_pModelList = new ListPanel(this, "ModelList");
 	m_pModelFilter = new TextEntry(this, "ModelFilter");
+	m_pModelFilter->SendNewLine(true);
 	m_pModelFilterButton = new Button(this, "ModelFilterButton", "#GameUI_ABC_SubmitModelFilter", this, "FilterModel");
 	m_pPlayerName = new Label(this, "PlayerName", CVAR_GET_STRING("name"));
 	m_pCrosshairDisplay = new CrossHairDisplay(this, "CrossHairDisplay");
@@ -74,6 +77,8 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pSpary = new ImagePanel(this, "SparyImage");
 	m_pSpary->SetImage(bitmap);
 	m_pLoadSpary = new Button(this, "SparyLoadButton", "#GameUI_ABC_LoadSpary", this, "OpenLoadSparyDialog");
+
+	m_pUrl = new URLLabel(this, "URLLable", "#GameUI_ABC_Url", "https://github.com/DrAbcOfficial/ABCEnchance");
 
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubMultiPlay.res");
 
@@ -155,7 +160,9 @@ void COptionsAdvanceSubMultiPlay::OnSliderMoved() {
 void COptionsAdvanceSubMultiPlay::OnItemSelected() {
 	ChangeModel(m_pModelList->GetItem(m_pModelList->GetSelectedItem(0))->GetName());
 }
-
+void vgui::COptionsAdvanceSubMultiPlay::OnTextNewLine() {
+	FilterModel();
+}
 void vgui::COptionsAdvanceSubMultiPlay::OnButtonChanged(){
 	m_pCrosshairDisplay->SetDot(m_pCrosshairDot->IsSelected());
 	m_pCrosshairDisplay->SetT(m_pCrosshairT->IsSelected());
@@ -287,18 +294,34 @@ void vgui::COptionsAdvanceSubMultiPlay::OnResetData(){
 	
 }
 
+void vgui::COptionsAdvanceSubMultiPlay::OnApplyChanges(){
+	BaseClass::OnApplyChanges();
+	int mdlIndex = m_pModelList->GetSelectedItem(0);
+	if (mdlIndex != -1) 
+		CVAR_SET_STRING("model", m_pModelList->GetItem(mdlIndex)->GetName());
+
+	m_pCrosshairr->ApplyChanges();
+	m_pCrosshairg->ApplyChanges();
+	m_pCrosshairb->ApplyChanges();
+	m_pCrosshaira->ApplyChanges();
+
+	m_pCrosshairOutliner->ApplyChanges();
+	m_pCrosshairOutlineg->ApplyChanges();
+	m_pCrosshairOutlineb->ApplyChanges();
+	m_pCrosshairOutlinea->ApplyChanges();
+
+	m_pCrosshairWidth->ApplyChanges();
+	m_pCrosshairLength->ApplyChanges();
+	m_pCrosshairOutlineWidth->ApplyChanges();
+	m_pCrosshairOffset->ApplyChanges();
+	m_pCrosshairDot->ApplyChanges();
+	m_pCrosshairT->ApplyChanges();
+	m_pCrosshairOutline->ApplyChanges();
+}
+
 void vgui::COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
-	if (!std::strcmp(cmd, "FilterModel")) {
-		char buf[MAX_PATH];
-		m_pModelFilter->GetText(buf, MAX_PATH);
-		if (std::strlen(buf) > 0) {
-			m_pModelList->RemoveAll();
-			m_pModelList->ResetScrollBar();
-			BuildModelList(buf);
-		}
-		else
-			BuildModelList(nullptr);
-	}
+	if (!std::strcmp(cmd, "FilterModel"))
+		FilterModel();
 	else if (!std::strcmp(cmd, "OpenLoadSparyDialog")) {
 		m_pFileDialog = new FileOpenDialog(this, "#GameUI_ABC_LoadSpary", FileOpenDialogType_t::FOD_OPEN, new KeyValues("FileInfo"));
 		m_pFileDialog->SetDeleteSelfOnClose(true);
@@ -313,6 +336,18 @@ void COptionsAdvanceSubMultiPlay::ApplySchemeSettings(IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 	Color empty = Color(0, 0, 0, 0);
 	m_pModelViewer->SetBgColor(empty);
+}
+
+void vgui::COptionsAdvanceSubMultiPlay::FilterModel(){
+	char buf[MAX_PATH];
+	m_pModelFilter->GetText(buf, MAX_PATH);
+	if (std::strlen(buf) > 0) {
+		m_pModelList->RemoveAll();
+		m_pModelList->ResetScrollBar();
+		BuildModelList(buf);
+	}
+	else
+		BuildModelList(nullptr);
 }
 
 void vgui::COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t& oh){

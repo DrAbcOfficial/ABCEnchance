@@ -25,6 +25,11 @@ float CVAR_GET_FLOAT(const char* x) {
 const char* CVAR_GET_STRING(const char* x) {
 	return gEngfuncs.pfnGetCvarString(x);
 }
+void CVAR_SET_STRING(const char* x, const char* v) {
+	char buf[256];
+	snprintf(buf, 256, "%s %s", x, v);
+	gEngfuncs.pfnClientCmd(buf);
+}
 cvar_t* CREATE_CVAR(const char* name, const char* val, int flag, cvar_callback_t callback) {
 	cvar_t* cvar = gEngfuncs.pfnRegisterVariable(const_cast<char*>(name), const_cast<char*>(val), flag);
 	if (callback)
