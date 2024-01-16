@@ -65,6 +65,11 @@ public:
 
 	int GetMouth();
 	void SetMouth(int mouth);
+
+	void SetAmbientLight(int light);
+	void SetShadeLight(int light);
+	void SetLightColor(int r, int g, int b);
+	void SetLightOrigin(float x, float y, float z);
 protected:
 	virtual void Paint() override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
