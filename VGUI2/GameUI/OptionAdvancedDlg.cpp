@@ -78,7 +78,7 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pSpary->SetImage(bitmap);
 	m_pLoadSpary = new Button(this, "SparyLoadButton", "#GameUI_ABC_LoadSpary", this, "OpenLoadSparyDialog");
 
-	m_pUrl = new URLLabel(this, "URLLable", "#GameUI_ABC_Url", "https://github.com/DrAbcOfficial/ABCEnchance");
+	m_pUrl = new URLLabel(this, "URLLable", "ABCEnchance  ||  " __DATE__, "https://github.com/DrAbcOfficial/ABCEnchance");
 
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubMultiPlay.res");
 
@@ -323,19 +323,25 @@ void vgui::COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
 	if (!std::strcmp(cmd, "FilterModel"))
 		FilterModel();
 	else if (!std::strcmp(cmd, "OpenLoadSparyDialog")) {
+		if (m_pFileDialog) {
+			delete m_pFileDialog;
+			m_pFileDialog = nullptr;
+		}
 		m_pFileDialog = new FileOpenDialog(this, "#GameUI_ABC_LoadSpary", FileOpenDialogType_t::FOD_OPEN, new KeyValues("FileInfo"));
-		m_pFileDialog->SetDeleteSelfOnClose(true);
 		m_pFileDialog->SetProportional(false);
 		m_pFileDialog->AddFilter("*.tga;*.png;*.bmp;*.jpg", "#GameUI_ABC_SparyFilter", true, "image");
 		m_pFileDialog->Activate();
-		m_pFileDialog->SetPos(ScreenWidth() / 2, ScreenHeight() / 2);
+		int w, h;
+		m_pFileDialog->GetSize(w, h);
+		m_pFileDialog->SetPos((ScreenWidth() - w) / 2, (ScreenHeight() - h) / 2);
 	}
 }
 
 void COptionsAdvanceSubMultiPlay::ApplySchemeSettings(IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
-	Color empty = Color(0, 0, 0, 0);
-	m_pModelViewer->SetBgColor(empty);
+	m_pModelViewer->SetBgColor(GetSchemeColor("ModelViewer/BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pModelController->SetBgColor(GetSchemeColor("ModelViewer/SliderBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pPlayerName->SetBgColor(GetSchemeColor("ModelViewer/NameTagBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
 
 void vgui::COptionsAdvanceSubMultiPlay::FilterModel(){
@@ -396,6 +402,7 @@ COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, 
 	SetMoveable(false);
 	SetProportional(true);
 
+	SetScheme("OptionsAdvanceDialogScheme");
 	m_pBlur = new GaussianBlurPanel(this, "BlurPanel");
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceDialog.res");
 	m_pMultiPlayPage = new COptionsAdvanceSubMultiPlay(this);
@@ -410,13 +417,18 @@ void COptionsAdvanceDialog::ApplySettings(KeyValues* inResourceData){
 }
 void COptionsAdvanceDialog::ApplySchemeSettings(IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
+	
+	SetBgColor(GetSchemeColor("OptionsAdvanceDialog/BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	SetBorder(pScheme->GetBorder("DialogBorder"));
+
 	auto sheet = GetPropertySheet();
-	Color empty = Color(0, 0, 0, 0);
-	SetBgColor(empty);
-	SetBorder(nullptr);
-	m_pMultiPlayPage->SetBgColor(empty);
-	m_pMultiPlayPage->SetBorder(nullptr);
-	sheet->SetBgColor(empty);
-	sheet->SetBorder(nullptr);
+	sheet->SetBgColor(GetSchemeColor("OptionsAdvanceDialog/SheetBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	sheet->SetBorder(pScheme->GetBorder("SheetBorder"));
+
+	m_pMultiPlayPage->SetBgColor(GetSchemeColor("OptionsAdvanceDialog/SheetBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pMultiPlayPage->SetBorder(pScheme->GetBorder("SheetBorder"));
+	
+
+	//ofc
 	m_pBlur->SetBgColor(Color(255, 255, 255, 255));
 }
