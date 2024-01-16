@@ -23,6 +23,7 @@ namespace vgui {
 	class ImagePanel;
 	class Button;
 	class FileOpenDialog;
+	class URLLabel;
 
 class COptionsAdvanceSubMultiPlay : public PropertyPage{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubMultiPlay, PropertyPage);
@@ -36,11 +37,14 @@ protected:
 	MESSAGE_FUNC(OnSliderMoved, "SliderMoved");
 	MESSAGE_FUNC(OnItemSelected, "ItemSelected");
 	MESSAGE_FUNC(OnButtonChanged, "ButtonChanged");
+	MESSAGE_FUNC(OnTextNewLine, "TextNewLine");
 	MESSAGE_FUNC_CHARPTR(OnFileSelected, "FileSelected", fullpath);
 	virtual void OnResetData() override;
+	virtual void OnApplyChanges() override;
 	virtual void OnCommand(const char* cmd) override;
 	virtual void ApplySchemeSettings(IScheme* pScheme) override;
 private:
+	void FilterModel();
 	void GetValidateSparySize(size_t& ow, size_t& oh);
 	void SetSparyPixel(unsigned char* pixels, size_t wide, size_t height);
 	std::set<std::string> m_aryModelList;
@@ -79,6 +83,8 @@ private:
 	ImagePanel* m_pSpary = nullptr;
 	Button* m_pLoadSpary = nullptr;
 	FileOpenDialog* m_pFileDialog = nullptr;
+
+	URLLabel* m_pUrl = nullptr;
 
 	KeyValues* m_pFileKeyvalues = nullptr;
 	WadFile* m_pSparyWad = nullptr;
