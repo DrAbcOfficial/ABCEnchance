@@ -244,6 +244,7 @@ static vgui::DHANDLE<vgui::COptionsAdvanceDialog>g_pAdvanceOptPanel;
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_pBasePanel = static_cast<IVanilliaPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
+	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/OptionsAdvanceDialogScheme.res", "OptionsAdvanceDialogScheme");
 	return g_pBasePanel;
 }
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
