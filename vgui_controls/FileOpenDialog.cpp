@@ -23,19 +23,18 @@
 #undef GetCurrentDirectory
 #include <algorithm>
 #include <filesystem>
-#include <chrono>
-#include <iomanip>
-#include <sstream>
+#include <map>
 
 #include "filesystem_helpers.h"
 
 #include "tier1/utldict.h"
 #include "tier1/utlstring.h"
 
+#include <KeyValues.h>
+
 #include <vgui/IScheme.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
-#include <KeyValues.h>
 #include <vgui/IVGui.h>
 #include <vgui/ILocalize.h>
 #include <vgui/IInput.h>
@@ -58,8 +57,6 @@
 #undef GetCurrentDirectory
 #endif
 #include <codecvt>
-
-#pragma comment(lib, "version")
 
 using namespace vgui;
 namespace fs = std::filesystem;
@@ -213,74 +210,11 @@ std::wstring UTF8ToWString(const std::string& str){
 	return strCnv.from_bytes(str);
 }
 template <typename TP>
-std::time_t ToTimeT(TP tp)
-{
+std::time_t ToTimeT(TP tp){
 	using namespace std::chrono;
 	auto sctp = time_point_cast<system_clock::duration>(tp - TP::clock::now()
 		+ system_clock::now());
 	return system_clock::to_time_t(sctp);
-}
-bool QueryValue(const std::string& ValueName, const std::string& szModuleName, std::string& RetStr) {
-	bool bSuccess = FALSE;
-	BYTE* m_lpVersionData = NULL;
-	DWORD   m_dwLangCharset = 0;
-	CHAR* tmpstr = NULL;
-	do
-	{
-		if (!ValueName.size() || !szModuleName.size())
-			break;
-
-		DWORD dwHandle;
-		// 判断系统能否检索到指定文件的版本信息
-		DWORD dwDataSize = ::GetFileVersionInfoSizeA((LPCSTR)szModuleName.c_str(), &dwHandle);
-		if (dwDataSize == 0)
-			break;
-
-		m_lpVersionData = new (std::nothrow) BYTE[dwDataSize];// 分配缓冲区
-		if (NULL == m_lpVersionData)
-			break;
-
-		// 检索信息
-		if (!::GetFileVersionInfoA((LPCSTR)szModuleName.c_str(), dwHandle, dwDataSize,
-			(void*)m_lpVersionData))
-			break;
-
-		UINT nQuerySize;
-		DWORD* pTransTable;
-		// 设置语言
-		if (!::VerQueryValueA(m_lpVersionData, "\\VarFileInfo\\Translation", (void**)&pTransTable, &nQuerySize))
-			break;
-
-		m_dwLangCharset = MAKELONG(HIWORD(pTransTable[0]), LOWORD(pTransTable[0]));
-		if (m_lpVersionData == NULL)
-			break;
-
-		tmpstr = new (std::nothrow) CHAR[128];// 分配缓冲区
-		if (NULL == tmpstr)
-			break;
-		sprintf_s(tmpstr, 128, "\\StringFileInfo\\%08lx\\%s", m_dwLangCharset, ValueName.c_str());
-		LPVOID lpData;
-
-		// 调用此函数查询前需要先依次调用函数GetFileVersionInfoSize和GetFileVersionInfo
-		if (::VerQueryValueA((void*)m_lpVersionData, tmpstr, &lpData, &nQuerySize))
-			RetStr = (char*)lpData;
-
-		bSuccess = TRUE;
-	} while (FALSE);
-
-	// 销毁缓冲区
-	if (m_lpVersionData)
-	{
-		delete[] m_lpVersionData;
-		m_lpVersionData = NULL;
-	}
-	if (tmpstr)
-	{
-		delete[] tmpstr;
-		tmpstr = NULL;
-	}
-
-	return bSuccess;
 }
 bool WildMatch(const std::string& str, const std::string& pat) {
 	std::string::const_iterator str_it = str.begin();
@@ -319,11 +253,207 @@ bool WildMatch(const std::string& str, const std::string& pat) {
 
 	return str_it == str.end();
 }
+class IconImage : public IImage
+{
+public:
+	IconImage(unsigned char* data, size_t w, size_t h) {
+		_id = surface()->CreateNewTextureID();
+		_wide = w;
+		_tall = h;
+		_color = Color(255, 255, 255, 255);
+		surface()->DrawSetTextureRGBA(_id, data, w, h, 1, 0);
+	}
 
+public:
+	virtual void Paint(void) {
+		if (!_id)
+			_id = surface()->CreateNewTextureID();
+		surface()->DrawSetColor(_color[0], _color[1], _color[2], _color[3]);
+		surface()->DrawSetTexture(_id);
+		if (_wide == 0)
+			GetSize(_wide, _tall);
+		surface()->DrawTexturedRect(_pos[0], _pos[1], _pos[0] + _wide, _pos[1] + _tall);
+	}
+	virtual void GetSize(int& wide, int& tall) {
+		wide = 0;
+		tall = 0;
+		if (0 == _wide && 0 == _tall)
+			surface()->DrawGetTextureSize(_id, _wide, _tall);
+		wide = _wide;
+		tall = _tall;
+	}
+	virtual void GetContentSize(int& wide, int& tall) {
+		GetSize(wide, tall);
+	}
+	virtual void SetSize(int x, int y) {
+		_wide = x;
+		_tall = y;
+	}
+	virtual void SetPos(int x, int y) {
+		_pos[0] = x;
+		_pos[1] = y;
+	}
 
+	virtual void SetColor(Color col) {
+		_color = col;
+	}
+private:
+	HTexture _id;
+	int _pos[2];
+	Color _color;
+	int _wide, _tall;
+};
+
+#ifdef WIN32	
+const char* Win32GetAttributesAsString(DWORD dwAttributes)
+{
+	static char out[256];
+	out[0] = 0;
+	if (dwAttributes & FILE_ATTRIBUTE_ARCHIVE)
+	{
+		Q_strncat(out, "A", sizeof(out), COPY_ALL_CHARACTERS);
+	}
+	if (dwAttributes & FILE_ATTRIBUTE_COMPRESSED)
+	{
+		Q_strncat(out, "C", sizeof(out), COPY_ALL_CHARACTERS);
+	}
+	if (dwAttributes & FILE_ATTRIBUTE_DIRECTORY)
+	{
+		Q_strncat(out, "D", sizeof(out), COPY_ALL_CHARACTERS);
+	}
+	if (dwAttributes & FILE_ATTRIBUTE_HIDDEN)
+	{
+		Q_strncat(out, "H", sizeof(out), COPY_ALL_CHARACTERS);
+	}
+	if (dwAttributes & FILE_ATTRIBUTE_READONLY)
+	{
+		Q_strncat(out, "R", sizeof(out), COPY_ALL_CHARACTERS);
+	}
+	if (dwAttributes & FILE_ATTRIBUTE_SYSTEM)
+	{
+		Q_strncat(out, "S", sizeof(out), COPY_ALL_CHARACTERS);
+	}
+	if (dwAttributes & FILE_ATTRIBUTE_TEMPORARY)
+	{
+		Q_strncat(out, "T", sizeof(out), COPY_ALL_CHARACTERS);
+	}
+	return out;
+}
+const char* Win32GetFileTimetamp(FILETIME ft){
+	SYSTEMTIME local;
+	FILETIME localFileTime;
+	FileTimeToLocalFileTime(&ft, &localFileTime);
+	FileTimeToSystemTime(&localFileTime, &local);
+
+	static char out[256];
+
+	bool am = true;
+	WORD hour = local.wHour;
+	if (hour >= 12)
+	{
+		am = false;
+		// 12:42 pm displays as 12:42 pm
+		// 13:42 pm displays as 1:42 pm
+		if (hour > 12)
+		{
+			hour -= 12;
+		}
+	}
+	Q_snprintf(out, sizeof(out), "%d/%02d/%04d %d:%02d %s",
+		local.wMonth,
+		local.wDay,
+		local.wYear,
+		hour,
+		local.wMinute,
+		am ? "AM" : "PM" // TODO: Localize this?
+	);
+	return out;
+}
+std::string Win32GetStringValueFromRegistry(HKEY hKey, const std::string& subKey, const std::string& valueName) {
+	std::string result;
+	DWORD size = 0;
+	if (RegGetValueA(hKey, subKey.c_str(), valueName.c_str(), RRF_RT_REG_SZ, NULL, NULL, &size) == ERROR_SUCCESS) {
+		char* buffer = new char[size];
+		if (RegGetValueA(hKey, subKey.c_str(), valueName.c_str(), RRF_RT_REG_SZ, NULL, buffer, &size) == ERROR_SUCCESS)
+			result = std::string(buffer, size - 1);
+		delete[] buffer;
+	}
+	return result;
+}
+std::string Win32GetDefaultValueFromRegistry(HKEY hKey, const std::string& subKey) {
+	return Win32GetStringValueFromRegistry(hKey, subKey, "");
+}
+std::string Win32GetFileDescriptionByExtension(const std::string& extension) {
+	HKEY hKey;
+	if (RegOpenKeyExA(HKEY_CLASSES_ROOT, NULL, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+		std::string subKey = Win32GetDefaultValueFromRegistry(hKey, extension);
+		std::string description = Win32GetDefaultValueFromRegistry(hKey, subKey);
+		RegCloseKey(hKey);
+		return description;
+	}
+	return "";
+}
+HICON Win32GetFileIconByExtension(const std::string& extension) {
+	HKEY hKey;
+	if (RegOpenKeyExA(HKEY_CLASSES_ROOT, NULL, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+		std::string subKey = Win32GetDefaultValueFromRegistry(hKey, extension);
+		std::string iconPath = Win32GetDefaultValueFromRegistry(hKey, subKey + "\\DefaultIcon");
+		RegCloseKey(hKey);
+		if (iconPath.size() == 0)
+			return NULL;
+		size_t pos = iconPath.find_last_of(',');
+		std::string path = iconPath.substr(0, pos);
+		int index = std::stoi(iconPath.substr(pos + 1));
+		char expandedPath[MAX_PATH];
+		ExpandEnvironmentStringsA(path.c_str(), expandedPath, MAX_PATH);
+		HICON smallIcon;
+		ExtractIconExW(std::wstring(expandedPath, expandedPath + strlen(expandedPath)).c_str(), index, NULL, &smallIcon, 1);
+		return smallIcon;
+	}
+	return NULL;
+}
+BITMAP Win32GetBitmapInfo(HICON hIcon) {
+	BITMAP bmp;
+	ICONINFO iconInfo;
+	GetIconInfo(hIcon, &iconInfo);
+	GetObject(iconInfo.hbmColor, sizeof(BITMAP), &bmp);
+	return bmp;
+}
+std::vector<unsigned char> Win32ConvertHICONToRGBA(HICON hIcon, size_t& ww, size_t& hh) {
+	BITMAP bmp = Win32GetBitmapInfo(hIcon);
+	int width = bmp.bmWidth;
+	int height = bmp.bmHeight;
+	ww = width;
+	hh = height;
+	HDC hdc = CreateCompatibleDC(NULL);
+	BITMAPINFO bmi;
+	ZeroMemory(&bmi, sizeof(BITMAPINFO));
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biWidth = width;
+	bmi.bmiHeader.biHeight = -height;
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biBitCount = 32;
+	bmi.bmiHeader.biCompression = BI_RGB;
+	unsigned char* bits = new unsigned char[width * height * 4];
+	HBITMAP hBmp = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
+	SelectObject(hdc, hBmp);
+	DrawIconEx(hdc, 0, 0, hIcon, width, height, 0, NULL, DI_NORMAL);
+	std::vector<unsigned char> rgba;
+	for (int i = 0; i < width * height * 4; i += 4) {
+		rgba.push_back(bits[i + 2]);
+		rgba.push_back(bits[i + 1]);
+		rgba.push_back(bits[i]);
+		rgba.push_back(bits[i + 3]);
+	}
+	DeleteObject(hBmp);
+	DeleteDC(hdc);
+	return rgba;
+}
+#endif
 
 namespace vgui
 {
+	static std::map<std::string, IconImage*> g_dicExtensionIcons;
 
 	class FileCompletionMenu : public Menu
 	{
@@ -369,8 +499,6 @@ namespace vgui
 	private:
 		FileCompletionMenu* m_pDropDown;
 	};
-
-
 
 	FileCompletionEdit::FileCompletionEdit(Panel* parent) : TextEntry(parent, NULL)
 	{
@@ -1137,6 +1265,36 @@ void FileOpenDialog::NewFolder(char const* folderName)
 		++i;
 	} while (i <= 999);
 }
+IImage* FileOpenDialog::GetIconFromExtension(const char* extension){
+#ifdef WIN32
+	auto it = g_dicExtensionIcons.find(extension);
+	if (it != g_dicExtensionIcons.end())
+		return it->second;
+	else {
+		HICON icon = Win32GetFileIconByExtension(extension);
+		if (icon == NULL)
+			return nullptr;
+		size_t iw, ih;
+		auto bits = Win32ConvertHICONToRGBA(icon, iw, ih);
+		DestroyIcon(icon);
+		IconImage* img = new IconImage(bits.data(), iw, ih);
+		std::string key = extension;
+		g_dicExtensionIcons.insert(std::make_pair(key, img));
+		return img;
+	}
+#else
+	return nullptr;
+#endif // WIN32
+}
+
+void FileOpenDialog::GetFileDescriptionByExtension(const char* extension, char* buf){
+#ifdef WIN32
+	std::string type = Win32GetFileDescriptionByExtension(extension);
+	std::strcpy(buf, type.c_str());
+#else
+	returen extension;
+#endif // WIN32
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: Move the directory structure up
@@ -1193,75 +1351,6 @@ void FileOpenDialog::ValidatePath()
 	m_pFullPathEdit->GetTooltip()->SetText(m_szLastPath);
 }
 
-#ifdef WIN32	
-const char* GetAttributesAsString(DWORD dwAttributes)
-{
-	static char out[256];
-	out[0] = 0;
-	if (dwAttributes & FILE_ATTRIBUTE_ARCHIVE)
-	{
-		Q_strncat(out, "A", sizeof(out), COPY_ALL_CHARACTERS);
-	}
-	if (dwAttributes & FILE_ATTRIBUTE_COMPRESSED)
-	{
-		Q_strncat(out, "C", sizeof(out), COPY_ALL_CHARACTERS);
-	}
-	if (dwAttributes & FILE_ATTRIBUTE_DIRECTORY)
-	{
-		Q_strncat(out, "D", sizeof(out), COPY_ALL_CHARACTERS);
-	}
-	if (dwAttributes & FILE_ATTRIBUTE_HIDDEN)
-	{
-		Q_strncat(out, "H", sizeof(out), COPY_ALL_CHARACTERS);
-	}
-	if (dwAttributes & FILE_ATTRIBUTE_READONLY)
-	{
-		Q_strncat(out, "R", sizeof(out), COPY_ALL_CHARACTERS);
-	}
-	if (dwAttributes & FILE_ATTRIBUTE_SYSTEM)
-	{
-		Q_strncat(out, "S", sizeof(out), COPY_ALL_CHARACTERS);
-	}
-	if (dwAttributes & FILE_ATTRIBUTE_TEMPORARY)
-	{
-		Q_strncat(out, "T", sizeof(out), COPY_ALL_CHARACTERS);
-	}
-	return out;
-}
-
-const char* GetFileTimetamp(FILETIME ft)
-{
-	SYSTEMTIME local;
-	FILETIME localFileTime;
-	FileTimeToLocalFileTime(&ft, &localFileTime);
-	FileTimeToSystemTime(&localFileTime, &local);
-
-	static char out[256];
-
-	bool am = true;
-	WORD hour = local.wHour;
-	if (hour >= 12)
-	{
-		am = false;
-		// 12:42 pm displays as 12:42 pm
-		// 13:42 pm displays as 1:42 pm
-		if (hour > 12)
-		{
-			hour -= 12;
-		}
-	}
-	Q_snprintf(out, sizeof(out), "%d/%02d/%04d %d:%02d %s",
-		local.wMonth,
-		local.wDay,
-		local.wYear,
-		hour,
-		local.wMinute,
-		am ? "AM" : "PM" // TODO: Localize this?
-	);
-	return out;
-}
-#endif
-
 //-----------------------------------------------------------------------------
 // Purpose: Fill the filelist with the names of all the files in the current directory
 //-----------------------------------------------------------------------------
@@ -1302,29 +1391,32 @@ void FileOpenDialog::PopulateFileList()
 			aryFilters.push_back(curFilter);
 		}
 	}
-
 	// find all the directories
 	KeyValues* kv = new KeyValues("item");
 	for(auto& iter : dirIterator){
 		std::string dirname = iter.path().filename().u8string();
 		if (!iter.is_directory()) {
+			std::string extension = iter.path().extension().u8string();
 			if (aryFilters.size() > 0) {
-				std::string extension = iter.path().extension().u8string();
 				std::transform(extension.begin(), extension.end(), extension.begin(), static_cast<int(*)(int)>(std::tolower));
 				if (std::find_if(aryFilters.begin(), aryFilters.end(), [&extension](std::string& a) -> bool {return WildMatch(extension, a); }) == aryFilters.end())
 					continue;
 			}
+			IImage* img = GetIconFromExtension(extension.c_str());
+			if (img)
+				kv->SetPtr("iconImage", (void*)img);
 			kv->SetInt("image", 1);
 			kv->SetInt("imageSelected", 1);
 			kv->SetInt("directory", 0);
 			kv->SetString("filesize", Q_pretifymem(iter.file_size(), 0, true));
-			std::string type;
-			QueryValue("FileDescription", iter.path().u8string(), type);
-			kv->SetString("type", type.c_str());
+			char icon[64];
+			GetFileDescriptionByExtension(extension.c_str(), icon);
+			kv->SetString("type", icon);
 		}
 		else {
 			if (dirname[0] != '.')
 			{
+				kv->SetPtr("iconImage", (void*)nullptr);
 				kv->SetInt("image", 2);
 				kv->SetInt("imageSelected", 3);
 				kv->SetInt("directory", 1);
@@ -1336,11 +1428,12 @@ void FileOpenDialog::PopulateFileList()
 		bool filewritable = (iter.status().permissions() & fs::perms::owner_write) == fs::perms::others_write;
 		kv->SetString("attributes", filewritable ? "WR" : "R");
 		std::time_t tt = ToTimeT(iter.last_write_time());
-		std::tm* gmt = std::gmtime(&tt);
-		std::stringstream buffer;
-		buffer << std::put_time(gmt, "%D %H:%M");
-		kv->SetString("modified", buffer.str().c_str());
-		kv->SetString("created", buffer.str().c_str());
+		tm* tm = localtime(&tt);
+		char buffer[80];
+		strftime(buffer, 80, "%F %T", tm);
+
+		kv->SetString("modified", buffer);
+		kv->SetString("created", buffer);
 		m_pFileList->AddItem(kv, 0, false, false);
 	}
 	kv->deleteThis();

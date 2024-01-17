@@ -130,6 +130,9 @@ namespace vgui
 		// Creates a new folder
 		void NewFolder(char const* folderName);
 
+		IImage* GetIconFromExtension(const char* extension);
+		void GetFileDescriptionByExtension(const char* extension, char* buf);
+
 		ComboBox* m_pFullPathEdit;
 		ListPanel* m_pFileList;
 
