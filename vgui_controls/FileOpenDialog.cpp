@@ -23,7 +23,6 @@
 #undef GetCurrentDirectory
 #include <algorithm>
 #include <filesystem>
-#include <map>
 
 #include "filesystem_helpers.h"
 
