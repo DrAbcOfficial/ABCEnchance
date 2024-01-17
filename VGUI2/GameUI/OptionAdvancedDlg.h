@@ -3,7 +3,7 @@
 
 #pragma once
 #include <string>
-#include <set>
+#include <map>
 
 #include "vgui_controls/PropertyPage.h"
 #include "vgui_controls/PropertyDialog.h"
@@ -24,6 +24,7 @@ namespace vgui {
 	class Button;
 	class FileOpenDialog;
 	class URLLabel;
+	class CheckButton;
 
 class COptionsAdvanceSubMultiPlay : public PropertyPage{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubMultiPlay, PropertyPage);
@@ -37,8 +38,9 @@ protected:
 	MESSAGE_FUNC(OnSliderMoved, "SliderMoved");
 	MESSAGE_FUNC(OnItemSelected, "ItemSelected");
 	MESSAGE_FUNC(OnButtonChanged, "ButtonChanged");
-	MESSAGE_FUNC(OnTextNewLine, "TextNewLine");
 	MESSAGE_FUNC_CHARPTR(OnFileSelected, "FileSelected", fullpath);
+	MESSAGE_FUNC_INT(OnOpenContextMenu, "OpenContextMenu", itemID);
+	MESSAGE_FUNC_INT_INT(OnFavChange, "FavChange", itemID, add);
 	virtual void OnResetData() override;
 	virtual void OnApplyChanges() override;
 	virtual void OnCommand(const char* cmd) override;
@@ -47,13 +49,16 @@ private:
 	void FilterModel();
 	void GetValidateSparySize(size_t& ow, size_t& oh);
 	void SetSparyPixel(unsigned char* pixels, size_t wide, size_t height);
-	std::set<std::string> m_aryModelList;
+
+	std::map<std::string, bool> m_aryModelList;
+
 	ModelViewPanel* m_pModelViewer = nullptr;
 	Slider* m_pModelController = nullptr;
 	Label* m_pPlayerName = nullptr;
 	ListPanel* m_pModelList = nullptr;
 	TextEntry* m_pModelFilter = nullptr;
 	Button* m_pModelFilterButton = nullptr;
+	CheckButton* m_pFavCheckButton = nullptr;
 
 	CrossHairDisplay* m_pCrosshairDisplay = nullptr;
 	Label* m_pColorLabel = nullptr;
