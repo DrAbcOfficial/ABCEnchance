@@ -1,12 +1,78 @@
+#include <map>
+#include <filesystem>
+
+#include <wtypes.h>
+#include <win32helper.h>
+#undef CreateFont
+
 #include <vgui/ISurface.h>
 #include <vgui/ISurface2.h>
 #include <vgui/Cursor.h>
+
 
 extern vgui::ISurface* g_pSurface;
 
 using namespace vgui;
 
 static CSurface s_Surface;
+
+namespace vgui {
+	class SystemIconImage : public IImage
+	{
+	public:
+		SystemIconImage(unsigned char* data, size_t w, size_t h) {
+			_id = s_Surface.CreateNewTextureID();
+			_wide = w;
+			_tall = h;
+			_color = Color(255, 255, 255, 255);
+			s_Surface.DrawSetTextureRGBA(_id, data, w, h, 1, 0);
+		}
+
+	public:
+		virtual void Paint(void) {
+			if (!_id)
+				_id = s_Surface.CreateNewTextureID();
+			s_Surface.DrawSetColor(_color[0], _color[1], _color[2], _color[3]);
+			s_Surface.DrawSetTexture(_id);
+			if (_wide == 0)
+				GetSize(_wide, _tall);
+			s_Surface.DrawTexturedRect(_pos[0], _pos[1], _pos[0] + _wide, _pos[1] + _tall);
+		}
+		virtual void GetSize(int& wide, int& tall) {
+			wide = 0;
+			tall = 0;
+			if (0 == _wide && 0 == _tall)
+				s_Surface.DrawGetTextureSize(_id, _wide, _tall);
+			wide = _wide;
+			tall = _tall;
+		}
+		virtual void GetContentSize(int& wide, int& tall) {
+			GetSize(wide, tall);
+		}
+		virtual void SetSize(int x, int y) {
+			_wide = x;
+			_tall = y;
+		}
+		virtual void SetPos(int x, int y) {
+			_pos[0] = x;
+			_pos[1] = y;
+		}
+
+		virtual void SetColor(Color col) {
+			_color = col;
+		}
+	private:
+		HTexture _id;
+		int _pos[2];
+		Color _color;
+		int _wide, _tall;
+	};
+
+
+}
+static std::map<std::string, SystemIconImage*> g_dicExtensionIcons;
+
+
 
 vgui::CSurface* g_pVGuiSurface = &s_Surface;
 
@@ -809,7 +875,26 @@ void CSurface::ClearTemporaryFontCache(void)
 
 IImage* CSurface::GetIconImageForFullPath(const char* pFullPath)
 {
-	return NULL;
+#ifdef WIN32
+	std::string extension = std::filesystem::path(pFullPath).extension().u8string();
+	auto it = g_dicExtensionIcons.find(extension);
+	if (it != g_dicExtensionIcons.end())
+		return it->second;
+	else {
+		HICON icon = Win32GetFileIconByExtension(extension);
+		if (icon == NULL)
+			return nullptr;
+		size_t iw, ih;
+		auto bits = Win32ConvertHICONToRGBA(icon, iw, ih);
+		DestroyIcon(icon);
+		SystemIconImage* img = new SystemIconImage(bits.data(), iw, ih);
+		std::string key = extension;
+		g_dicExtensionIcons.insert(std::make_pair(key, img));
+		return img;
+	}
+#else
+	return nullptr;
+#endif // WIN32
 }
 
 void CSurface::DrawUnicodeString(const wchar_t* pwString, int drawType)
