@@ -53,8 +53,6 @@ void ClientVGUIShutdown(void) {
 		g_pViewPort = nullptr;
 	}
 }
-extern vgui::ISurface* g_pSurface;
-
 
 static void(__fastcall* m_pfnCClientVGUI_Initialize)(void* pthis, int, CreateInterfaceFn* factories, int count) = NULL;
 static void(__fastcall* m_pfnCClientVGUI_Start)(void* pthis, int) = NULL;
