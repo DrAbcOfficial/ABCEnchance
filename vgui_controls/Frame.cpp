@@ -821,7 +821,7 @@ Frame::Frame(Panel* parent, const char* panelName, bool showTaskbarIcon /*=true*
 	_closeButton->AddActionSignalTarget(this);
 	_closeButton->SetCommand(new KeyValues("CloseFrameButtonPressed"));
 
-	if (!surface()->SupportsFeature(CSurface::FRAME_MINIMIZE_MAXIMIZE))
+	if (!surface()->SupportsFeature(FRAME_MINIMIZE_MAXIMIZE))
 	{
 		SetMinimizeButtonVisible(false);
 		SetMaximizeButtonVisible(false);
@@ -978,7 +978,7 @@ void Frame::CloseModal()
 //-----------------------------------------------------------------------------
 void Frame::ActivateMinimized()
 {
-	if ((IsVisible() && !IsMinimized()) || !surface()->SupportsFeature(CSurface::FRAME_MINIMIZE_MAXIMIZE))
+	if ((IsVisible() && !IsMinimized()) || !surface()->SupportsFeature(FRAME_MINIMIZE_MAXIMIZE))
 	{
 		Activate();
 	}
@@ -2205,7 +2205,7 @@ void Frame::OnKeyCodeTyped(KeyCode code)
 		}
 	}
 	else if (code == KEY_ESCAPE &&
-		surface()->SupportsFeature(CSurface::ESCAPE_KEY) &&
+		surface()->SupportsFeature(ESCAPE_KEY) &&
 		input()->GetAppModalSurface() == GetVPanel())
 	{
 		// ESC cancels, unless we're in the engine - in the engine ESC flips between the UI and the game

@@ -7,7 +7,6 @@
 
 #include <VGUI\IScheme.h>
 #include <VGUI\ILocalize.h>
-#include <VGUI\ISurface.h>
 #include <VGUI\IInput.h>
 #include "FontTextureCache.h"
 #include <IEngineSurface.h>
@@ -59,7 +58,6 @@ static CBaseUI s_BaseUI;
 IBaseUI *baseuifuncs;
 IGameUIFuncs *gameuifuncs;
 
-extern vgui::ISurface *g_pSurface;
 extern vgui::ISchemeManager *g_pScheme;
 extern IKeyValuesSystem *g_pKeyValuesSystem;
 extern IEngineSurface *staticSurface;
@@ -78,11 +76,8 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 		g_pKeyValuesSystem = (IKeyValuesSystem *)fnVGUI2CreateInterface(KEYVALUESSYSTEM_INTERFACE_VERSION, NULL);
 		g_pVGuiSchemeManager = g_pScheme;
 	}
-
-	g_pSurface = (vgui::ISurface *)factories[0](VGUI_SURFACE_INTERFACE_VERSION, NULL);
 	staticSurface = (IEngineSurface *)factories[0](ENGINE_SURFACE_VERSION, NULL);
 
-	Surface_InstallHooks();
 	GameConsole_InstallHook();
 	GameUI_InstallHook();
 	BasePanel_InstallHook();

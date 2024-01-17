@@ -14,7 +14,7 @@ vgui::IVGui *g_pVGui;
 vgui::IPanel *g_pVGuiPanel;
 vgui::ILocalize *g_pVGuiLocalize;
 
-vgui::ISurface *g_pSurface;
+vgui::ISurface2 *g_pSurface;
 vgui::ISchemeManager *g_pScheme;
 
 IFileSystem *g_pFullFileSystem;

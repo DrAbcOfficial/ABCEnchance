@@ -8,7 +8,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include <vgui/ISurface2.h>
 #include <vgui/IScheme.h>
 
 #include <tier1/KeyValues.h>

@@ -22,9 +22,6 @@ public:
 	 * .tga extension doesn't need to be specified.
 	 */
 	void LoadImage(const char *pFilePath);
-
-	virtual ~CTGAImage();
-
 	virtual void Paint();
 	virtual void SetPos(int x, int y);
 	virtual void GetContentSize(int &wide, int &tall);
