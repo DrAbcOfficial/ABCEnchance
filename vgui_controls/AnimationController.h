@@ -1,4 +1,4 @@
-//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -10,8 +10,8 @@
 #pragma once
 #endif
 
-#include "Panel.h"
-#include "PHandle.h"
+#include <vgui_controls/Panel.h>
+#include <vgui_controls/PHandle.h>
 
 #include "tier1/utlsymbol.h"
 #include "tier1/utlvector.h"
@@ -40,6 +40,8 @@ namespace vgui
 		// runs a frame of animation (time is passed in so slow motion, etc. works)
 		void UpdateAnimations(float curtime);
 
+		int	 GetNumActiveAnimations(void) { return m_ActiveAnimations.Count(); }
+
 		// plays all animations to completion instantly
 		void RunAllAnimationsToCompletion();
 
@@ -49,6 +51,9 @@ namespace vgui
 		// starts an animation sequence script
 		bool StartAnimationSequence(const char* sequenceName);
 		bool StartAnimationSequence(Panel* pWithinParent, const char* sequenceName);
+
+		bool StopAnimationSequence(Panel* pWithinParent, const char* sequenceName);
+		void CancelAnimationsForPanel(Panel* pWithinParent);
 
 		// gets the length of an animation sequence, in seconds
 		float GetAnimationSequenceLength(const char* sequenceName);
@@ -65,12 +70,12 @@ namespace vgui
 			INTERPOLATOR_PULSE,
 			INTERPOLATOR_FLICKER,
 			INTERPOLATOR_SIMPLESPLINE, // ease in / out
+			INTERPOLATOR_BOUNCE,	   // gravitational bounce
 		};
 
 		// runs the specific animation command (doesn't use script file at all)
-		void RunAnimationCommand(vgui::Panel* panel, const char* variable, float targetValue, float startDelaySeconds, float durationSeconds, Interpolators_e interpolator, float animParameter = 0);
-		void RunAnimationCommand(vgui::Panel* panel, const char* variable, Color targetValue, float startDelaySeconds, float durationSeconds, Interpolators_e interpolator, float animParameter = 0);
-		void RunAnimationCommand(vgui::Panel* panel, const char* variable, Vector targetValue, float startDelaySeconds, float durationSeconds, Interpolators_e interpolator, float animParameter = 0);
+		void RunAnimationCommand(Panel* panel, const char* variable, float targetValue, float startDelaySeconds, float durationSeconds, Interpolators_e interpolator, float animParameter = 0);
+		void RunAnimationCommand(Panel* panel, const char* variable, Color targetValue, float startDelaySeconds, float durationSeconds, Interpolators_e interpolator, float animParameter = 0);
 
 	private:
 		bool UpdateScreenSize();
@@ -94,6 +99,9 @@ namespace vgui
 			CMD_SETFONT,
 			CMD_SETTEXTURE,
 			CMD_SETSTRING,
+			CMD_RUNEVENTCHILD,
+			CMD_FIRECOMMAND,
+			CMD_SETVISIBLE,
 		};
 
 		enum RelativeAlignment
@@ -221,6 +229,7 @@ namespace vgui
 		// variable names
 		UtlSymId_t m_sPosition, m_sSize, m_sFgColor, m_sBgColor, m_sAlpha;
 		UtlSymId_t m_sXPos, m_sYPos, m_sWide, m_sTall;
+		UtlSymId_t m_sModelPos;
 
 		// file name
 		CUtlVector<UtlSymId_t>	m_ScriptFileNames;
@@ -228,9 +237,9 @@ namespace vgui
 		// runs a single line of the script
 		void ExecAnimationCommand(UtlSymId_t seqName, AnimCommand_t& animCommand, Panel* pWithinParent);
 		// removes all commands belonging to a script
-		void RemoveQueuedAnimationCommands(UtlSymId_t seqName, vgui::Panel* panel = NULL);
+		void RemoveQueuedAnimationCommands(UtlSymId_t seqName, Panel* panel = NULL);
 		// removes an existing instance of a command
-		void RemoveQueuedAnimationByType(vgui::Panel* panel, UtlSymId_t variable, UtlSymId_t sequenceToIgnore);
+		void RemoveQueuedAnimationByType(Panel* panel, UtlSymId_t variable, UtlSymId_t sequenceToIgnore);
 
 		// handlers
 		void StartCmd_Animate(UtlSymId_t seqName, AnimCmdAnimate_t& cmd, Panel* pWithinParent);

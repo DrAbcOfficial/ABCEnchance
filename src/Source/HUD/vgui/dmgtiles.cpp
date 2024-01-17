@@ -33,14 +33,14 @@ CTileIconItem::CTileIconItem(Panel* parent, const char* text, const char* icon, 
 	iDmg = dmg;
 }
 
-void CTileIconItem::PaintBackground(){
+void CTileIconItem::PerformLayout(){
+	BaseClass::PerformLayout();
 	int w, h;
 	GetSize(w, h);
 	int img = min(w * 0.25, h);
 	m_pPanel->SetSize(img, img);
 	m_pText->SetPos(w * 0.25, 0);
 	m_pText->SetSize(w * 0.75, h);
-	BaseClass::PaintBackground();
 }
 
 const char* CTileIconItem::GetIconKey(){
@@ -80,7 +80,13 @@ void CTileIconItem::SetExpire(float f){
 	fExpire = f;
 }
 void CTileIconItem::CheckExpire(){
+	if (fExpire <= 0)
+		return;
 	float flTime = ClientTime();
+	if (fExpire + 0.3f <= flTime) {
+		fExpire = 0;
+		return;
+	}
 	if (fExpire < flTime)
 		GetAnimationController()->RunAnimationCommand(this, "alpha", 0, 0.0f, 0.3f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
