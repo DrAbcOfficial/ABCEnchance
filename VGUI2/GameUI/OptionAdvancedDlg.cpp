@@ -15,6 +15,8 @@
 #include "vgui_controls/CvarToggleCheckButton.h"
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/FileOpenDialog.h"
+#include "vgui_controls/Menu.h"
+#include "vgui_controls/MenuItem.h"
 
 #include "FreeImage/FreeImage.h"
 #include "wadlib/wadfile.h"
@@ -34,16 +36,28 @@ extern void CVAR_SET_STRING(const char* x, const char* v);
 extern float CVAR_GET_FLOAT(const char* x);
 extern size_t ScreenWidth();
 extern size_t ScreenHeight();
+constexpr char* FAVMODEL_ICON = "#GameUI_ABC_Favorite";
 
 using namespace vgui;
 
+class ModelListPanel : public ListPanel {
+public:
+	ModelListPanel(Panel* parent, const char* name): ListPanel(parent, name) {
+	}
+	void ModelListPanel::OnMouseDoublePressed(MouseCode code){
+		if (GetItemCount() > 0) {
+			int itemID = GetSelectedItem(0);
+			PostActionSignal(new KeyValues("FavChange", "itemID", itemID, "add", !std::strcmp(GetItem(itemID)->GetString("fav"), FAVMODEL_ICON) ? 0 : 1));
+		}
+	}
+};
 COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubMultiPlay"){
 	m_pModelViewer = new ModelViewPanel(this, "ModelViewer");
 	m_pModelController = new Slider(this, "ModelController");
-	m_pModelList = new ListPanel(this, "ModelList");
+	m_pModelList = new ModelListPanel(this, "ModelList");
 	m_pModelFilter = new TextEntry(this, "ModelFilter");
-	m_pModelFilter->SendNewLine(true);
 	m_pModelFilterButton = new Button(this, "ModelFilterButton", "#GameUI_ABC_SubmitModelFilter", this, "FilterModel");
+	m_pFavCheckButton = new CheckButton(this, "ModelFavFilter", "#GameUI_ABC_FilteFavOnly");
 	m_pPlayerName = new Label(this, "PlayerName", CVAR_GET_STRING("name"));
 	m_pCrosshairDisplay = new CrossHairDisplay(this, "CrossHairDisplay");
 
@@ -91,6 +105,7 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pModelController->SetValue(y, true);
 
 	m_pModelList->AddColumnHeader(0, "modelname", "#GameUI_ABC_Model", 0, ListPanel::ColumnFlags_e::COLUMN_RESIZEWITHWINDOW);
+	m_pModelList->AddColumnHeader(1, "fav", "#GameUI_ABC_FavModel", m_pModelList->GetWide() / 5, ListPanel::ColumnFlags_e::COLUMN_RESIZEWITHWINDOW & ListPanel::ColumnFlags_e::COLUMN_FIXEDSIZE);
 	m_pModelList->AddActionSignalTarget(this);
 	m_pModelList->SetMultiselectEnabled(false);
 
@@ -111,6 +126,8 @@ void COptionsAdvanceSubMultiPlay::ChangeModel(const char* mdl){
 	m_pModelViewer->ChangeModel(path);
 }
 void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter){
+	m_pModelList->RemoveAll();
+	m_aryModelList.clear();
 	FileFindHandle_t findHandle;
 	auto pszFileName = filesystem()->FindFirst("models/player/*.*", &findHandle);
 	if (!pszFileName)
@@ -118,32 +135,85 @@ void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter){
 	if (pszFileName){
 		do{
 			if (filesystem()->FindIsDirectory(findHandle) && *pszFileName != '.') {
-				m_aryModelList.insert(pszFileName);
+				m_aryModelList.insert(std::make_pair<std::string, bool>(pszFileName, false));
 			}
 		} while ((pszFileName = filesystem()->FindNext(findHandle)) != nullptr);
 	}
 	filesystem()->FindClose(findHandle);
 
+	FileHandle_t file = filesystem()->Open("abcenchance/model_favlist.txt","r");
+	if (file) {
+		char buffer[MAX_PATH];
+		std::vector<std::string> favarray;
+		while (!filesystem()->EndOfFile(file)) {
+			filesystem()->ReadLine(buffer, MAX_PATH, file);
+			std::string str = buffer;
+			str.erase(str.end() - 1);
+			favarray.push_back(str.c_str());
+		}
+		for (auto iter = m_aryModelList.begin(); iter != m_aryModelList.end(); iter++) {
+			const std::string& name = iter->first;
+			if (std::find(favarray.begin(), favarray.end(), name) != favarray.end()) {
+				iter->second = true;
+			}
+		}
+		filesystem()->Close(file);
+	}
+	
 	size_t counter = 0;
 	size_t plr = 0;
 	std::string flt = filter ? filter : "";
 	std::transform(flt.begin(), flt.end(), flt.begin(), ::tolower);
 	const char* playermdl = CVAR_GET_STRING("model");
 	for (auto iter = m_aryModelList.begin(); iter != m_aryModelList.end(); iter++) {
-		const char* mdl = iter->c_str();
+		if (m_pFavCheckButton->IsSelected() && !iter->second)
+			continue;
+		const char* mdl = iter->first.c_str();
 		std::string str = mdl;
 		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
 		if ((flt.size() == 0) || (str.find(flt) != std::string::npos)) {
 			if (!std::strcmp(mdl, playermdl))
 				plr = counter;
 			counter++;
-			KeyValues kv(mdl, "modelname", mdl);
+			KeyValues kv(mdl, "modelname", mdl, "fav", iter->second ? FAVMODEL_ICON : "");
 			m_pModelList->AddItem(&kv, 0, plr == counter, false);
 		}
 	}
 	m_pModelList->SetSingleSelectedItem(plr);
 }
-
+void COptionsAdvanceSubMultiPlay::OnFavChange(int itemID, int add) {
+	auto item = m_pModelList->GetItem(itemID);
+	if (item) {
+		item->SetString("fav", add == 1 ? FAVMODEL_ICON : "");
+		auto it = m_aryModelList.find(std::string(item->GetName()));
+		if (it != m_aryModelList.end())
+			it->second = true;
+		FileHandle_t file = filesystem()->Open("abcenchance/model_favlist.txt", "w");
+		if (file) {
+			for(auto iter = m_aryModelList.begin(); iter != m_aryModelList.end();iter++){
+				if (iter->second) {
+					std::string buffer = iter->first + '\n';
+					filesystem()->Write(buffer.c_str(), buffer.size(), file);
+				}
+			}
+			filesystem()->Close(file);
+		}
+	}
+}
+void COptionsAdvanceSubMultiPlay::OnOpenContextMenu(int itemID) {
+	if (itemID < 0)
+		return;
+	Menu* menu = new Menu(this, "FavMenu");
+	menu->SetAutoDelete(true);
+	menu->SetVisible(false);
+	menu->AddActionSignalTarget(this);
+	if (!std::strcmp(m_pModelList->GetItem(itemID)->GetString("fav"), FAVMODEL_ICON))
+		menu->AddMenuItem("AddFav", "#GameUI_ABC_RemoveFav", new KeyValues("FavChange", "itemID", itemID, "add", 0), this);
+	else
+		menu->AddMenuItem("AddFav", "#GameUI_ABC_AddFav", new KeyValues("FavChange", "itemID", itemID, "add", 1), this);
+	menu->PositionRelativeToPanel(this, vgui::Menu::CURSOR, 0, true);
+	menu->MakePopup();
+}
 void COptionsAdvanceSubMultiPlay::OnSliderMoved() {
 	m_pModelViewer->SetModelRotate(0, m_pModelController->GetValue(), 0);
 
@@ -159,9 +229,6 @@ void COptionsAdvanceSubMultiPlay::OnSliderMoved() {
 }
 void COptionsAdvanceSubMultiPlay::OnItemSelected() {
 	ChangeModel(m_pModelList->GetItem(m_pModelList->GetSelectedItem(0))->GetName());
-}
-void vgui::COptionsAdvanceSubMultiPlay::OnTextNewLine() {
-	FilterModel();
 }
 void vgui::COptionsAdvanceSubMultiPlay::OnButtonChanged(){
 	m_pCrosshairDisplay->SetDot(m_pCrosshairDot->IsSelected());
@@ -401,12 +468,13 @@ COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, 
 	SetSizeable(false);
 	SetMoveable(false);
 	SetProportional(true);
-
 	SetScheme("OptionsAdvanceDialogScheme");
 	m_pBlur = new GaussianBlurPanel(this, "BlurPanel");
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceDialog.res");
 	m_pMultiPlayPage = new COptionsAdvanceSubMultiPlay(this);
 	AddPage(m_pMultiPlayPage, "#GameUI_ABC_MultiPlayPage");
+
+	EnableApplyButton(true);
 }
 void COptionsAdvanceDialog::Activate(){
 	BaseClass::Activate();
