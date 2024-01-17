@@ -8,6 +8,7 @@
 #include <vgui/ISurface.h>
 #include <vgui/ISurface2.h>
 #include <vgui/Cursor.h>
+#include <codecvt>
 
 
 extern vgui::ISurface* g_pSurface;
@@ -876,7 +877,8 @@ void CSurface::ClearTemporaryFontCache(void)
 IImage* CSurface::GetIconImageForFullPath(const char* pFullPath)
 {
 #ifdef WIN32
-	std::string extension = std::filesystem::path(pFullPath).extension().u8string();
+	std::wstring ph = std::wstring_convert< std::codecvt_utf8<wchar_t>, wchar_t >{}.from_bytes(pFullPath);
+	std::string extension = std::filesystem::path(ph).extension().u8string();
 	auto it = g_dicExtensionIcons.find(extension);
 	if (it != g_dicExtensionIcons.end())
 		return it->second;

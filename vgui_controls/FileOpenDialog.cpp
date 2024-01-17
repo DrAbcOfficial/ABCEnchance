@@ -203,11 +203,6 @@ static int ListFileTypeSortFunc(ListPanel* pPanel, const ListPanelItem& item1, c
 {
 	return ListBaseStringSortFunc(pPanel, item1, item2, "type");
 }
-
-std::wstring UTF8ToWString(const std::string& str){
-	std::wstring_convert< std::codecvt_utf8<wchar_t> > strCnv;
-	return strCnv.from_bytes(str);
-}
 template <typename TP>
 std::time_t ToTimeT(TP tp){
 	using namespace std::chrono;
@@ -1053,8 +1048,8 @@ void FileOpenDialog::NewFolder(char const* folderName)
 	do
 	{
 		Q_MakeAbsolutePath(pFullPath, sizeof(pFullPath), pNewFolderName, pCurrentDirectory);
-
-		std::wstring widePath = UTF8ToWString(pFullPath);
+		wchar_t widePath[MAX_PATH];
+		Q_UTF8ToUnicode(pFullPath, widePath, MAX_PATH);
 		if (!fs::exists(widePath) && !fs::is_directory(widePath)){
 			fs::create_directories(widePath);
 			m_pFileNameEdit->SetText(pNewFolderName);
@@ -1100,11 +1095,9 @@ void FileOpenDialog::ValidatePath()
 {
 	char thingfullpath[MAX_PATH * 4];
 	GetCurrentDirectory(thingfullpath, sizeof(thingfullpath) - MAX_PATH);
-	std::wstring w = UTF8ToWString(thingfullpath);
 	wchar_t fullpath[MAX_PATH * 4];
-	wcsncpy(fullpath, w.c_str(), MAX_PATH * 4);
+	Q_UTF8ToUnicode(thingfullpath, fullpath, MAX_PATH * 4);
 	Q_RemoveDotSlashes(fullpath);
-
 	// when statting a directory on Windows, you want to include
 	// the terminal slash exactly when you are statting a root
 	// directory. PKMN.
@@ -1142,7 +1135,9 @@ void FileOpenDialog::PopulateFileList()
 	char currentDir[MAX_PATH * 4];
 	char filterList[MAX_FILTER_LENGTH + 1];
 	GetCurrentDirectory(currentDir, sizeof(currentDir));
-	auto dirIterator = fs::directory_iterator(UTF8ToWString(currentDir));
+	wchar_t widePath[MAX_PATH];
+	Q_UTF8ToUnicode(currentDir, widePath, MAX_PATH);
+	auto dirIterator = fs::directory_iterator(widePath);
 	KeyValues* combokv = m_pFileTypeCombo->GetActiveItemUserData();
 	if (combokv)
 		Q_strncpy(filterList, combokv->GetString("filter", "*"), MAX_FILTER_LENGTH);
@@ -1396,8 +1391,9 @@ void FileOpenDialog::OnSelectFolder()
 	{
 		Q_strncpy(pFullPath, pFileName, sizeof(pFullPath));
 	}
-
-	if (fs::exists(UTF8ToWString(pFullPath)))
+	wchar_t widePath[MAX_PATH];
+	Q_UTF8ToUnicode(pFullPath, widePath, MAX_PATH);
+	if (fs::exists(widePath))
 	{
 		// open the file!
 		SaveFileToStartDirContext(pFullPath);
@@ -1471,9 +1467,10 @@ void FileOpenDialog::OnOpen()
 		Q_AppendSlash(pFullPath, Q_ARRAYSIZE(pFullPath));
 	}
 #endif
-
+	wchar_t widePath[MAX_PATH];
+	Q_UTF8ToUnicode(pFullPath, widePath, MAX_PATH);
 	// If the name specified is a directory, then change directory
-	if (fs::is_directory(UTF8ToWString(pFullPath)) && (!IsOSX() || (IsOSX() && !Q_stristr(pFullPath, ".app"))))
+	if (fs::is_directory(widePath) && (!IsOSX() || (IsOSX() && !Q_stristr(pFullPath, ".app"))))
 	{
 		// it's a directory; change to the specified directory
 		if (!bSpecifiedDirectory)
@@ -1507,8 +1504,8 @@ void FileOpenDialog::OnOpen()
 		ChooseExtension(extension, sizeof(extension));
 		Q_SetExtension(pFullPath, extension, sizeof(pFullPath));
 	}
-
-	if (fs::exists(UTF8ToWString(pFullPath)))
+	Q_UTF8ToUnicode(pFullPath, widePath, MAX_PATH);
+	if (fs::exists(widePath))
 	{
 		// open the file!
 		SaveFileToStartDirContext(pFullPath);
