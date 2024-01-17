@@ -6,15 +6,14 @@
 
 namespace vgui {
 	class Label;
-	class ImagePanel;
+	class ImageSprPanel;
 }
 class CTileIconItem : public vgui::EditablePanel {
 public:
 	DECLARE_CLASS_SIMPLE(CTileIconItem, vgui::EditablePanel);
 	CTileIconItem(Panel* parent, const char* text, const char* icon, int dmg);
 
-	virtual void PaintBackground() override;
-	
+	virtual void PerformLayout() override;
 	const char* GetIconKey();
 	int GetDMG();
 

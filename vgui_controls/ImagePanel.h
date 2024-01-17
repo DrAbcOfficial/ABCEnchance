@@ -28,7 +28,7 @@ namespace vgui
 		DECLARE_CLASS_SIMPLE(ImagePanel, Panel);
 	public:
 		ImagePanel(Panel* parent, const char* name);
-		virtual ~ImagePanel();
+		~ImagePanel();
 
 		virtual void SetImage(IImage* image);
 		virtual void SetImage(const char* imageName);
@@ -65,6 +65,7 @@ namespace vgui
 		virtual void OnSizeChanged(int newWide, int newTall);
 		virtual void ApplySchemeSettings(IScheme* pScheme);
 
+	protected:
 		IImage* m_pImage;
 		char* m_pszImageName;
 		char* m_pszFillColorName;
@@ -80,6 +81,6 @@ namespace vgui
 		Color m_DrawColor;
 	};
 
-} // namespace vgui2
+} // namespace vgui
 
 #endif // IMAGEPANEL_H

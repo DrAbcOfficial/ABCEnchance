@@ -1,35 +1,33 @@
-//========= Copyright ?1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
 //=============================================================================//
 #pragma warning( disable : 4244 ) // conversion from 'double' to 'float', possible loss of data
 
+#include <tier0/platform.h>
 #include <vgui/IScheme.h>
-#include <vgui/ISurface2.h>
+#include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/IVGui.h>
-#include <IFileSystem.h>
-
-#include <tier1/KeyValues.h>
-#include <tier1/mempool.h>
-#include <tier1/utldict.h>
-#include <tier1/characterset.h>
-
-#include "AnimationController.h"
-
-#include <filesystem_helpers.h>
+#include <KeyValues.h>
+#include <vgui_controls/AnimationController.h>
+#include "interface.h"
+#include "IFileSystem.h"
+#include "filesystem_helpers.h"
 
 #include <stdio.h>
 #include <math.h>
-
-#include <mathlib/mathlib.h>
+#include "mempool.h"
+#include "utldict.h"
+#include "mathlib/mathlib.h"
+#include "characterset.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/dbg.h>
 // for SRC
 #include <vstdlib/random.h>
-////#include <tier0/memdbgon.h>
+#include <tier0/memdbgon.h>
 
 using namespace vgui;
 
@@ -66,12 +64,14 @@ AnimationController::AnimationController(Panel* parent) : BaseClass(parent, NULL
 	m_sSize = g_ScriptSymbols.AddString("size");
 	m_sFgColor = g_ScriptSymbols.AddString("fgcolor");
 	m_sBgColor = g_ScriptSymbols.AddString("bgcolor");
-	m_sAlpha = g_ScriptSymbols.AddString("alpha");
 
 	m_sXPos = g_ScriptSymbols.AddString("xpos");
 	m_sYPos = g_ScriptSymbols.AddString("ypos");
 	m_sWide = g_ScriptSymbols.AddString("wide");
 	m_sTall = g_ScriptSymbols.AddString("tall");
+	m_sAlpha = g_ScriptSymbols.AddString("alpha");
+
+	m_sModelPos = g_ScriptSymbols.AddString("model_pos");
 
 	m_flCurrentTime = 0.0f;
 }
@@ -270,7 +270,7 @@ void AnimationController::SetupPosition(AnimCmdAnimate_t& cmd, float* output, ch
 	// scale the values
 	if (IsProportional())
 	{
-		pos = vgui::scheme()->GetProportionalScaledValueEx(GetScheme(), pos);
+		pos = scheme()->GetProportionalScaledValue(pos);
 	}
 
 	// adjust the positions
@@ -348,7 +348,7 @@ bool AnimationController::ParseScriptFile(char* pMem, int length)
 		}
 
 		// walk the commands
-		while (token && token[0])
+		while (token[0])
 		{
 			// get the command type
 			pMem = ParseFile(pMem, token, NULL);
@@ -403,8 +403,34 @@ bool AnimationController::ParseScriptFile(char* pMem, int length)
 					// parse the floating point values right out
 					if (0 == sscanf(token, "%f %f %f %f", &cmdAnimate.target.a, &cmdAnimate.target.b, &cmdAnimate.target.c, &cmdAnimate.target.d))
 					{
+						//=============================================================================
+						// HPE_BEGIN:
+						// [pfreese] Improved handling colors not defined in scheme 
+						//=============================================================================
+
 						// could be referencing a value in the scheme file, lookup
-						Color col = scheme->GetColor(token, Color(0, 0, 0, 0));
+						Color default_invisible_black(0, 0, 0, 0);
+						Color col = scheme->GetColor(token, default_invisible_black);
+
+						// we don't have a way of seeing if the color is not declared in the scheme, so we use this
+						// silly method of trying again with a different default to see if we get the fallback again
+						if (col == default_invisible_black)
+						{
+							Color error_pink(255, 0, 255, 255);	// make it extremely obvious if a scheme lookup fails
+							col = scheme->GetColor(token, error_pink);
+
+							// commented out for Soldier/Demo release...(getting spammed in console)
+							// we'll try to figure this out after the update is out
+// 							if (col == error_pink)
+// 							{
+// 								Warning("Missing color in scheme: %s\n", token);
+// 							}
+						}
+
+						//=============================================================================
+						// HPE_END
+						//=============================================================================
+
 						cmdAnimate.target.a = col[0];
 						cmdAnimate.target.b = col[1];
 						cmdAnimate.target.c = col[2];
@@ -417,17 +443,18 @@ bool AnimationController::ParseScriptFile(char* pMem, int length)
 				{
 					if (IsProportional())
 					{
-						cmdAnimate.target.a = static_cast<float>(vgui::scheme()->GetProportionalScaledValueEx(GetScheme(), cmdAnimate.target.a));
-						cmdAnimate.target.b = static_cast<float>(vgui::scheme()->GetProportionalScaledValueEx(GetScheme(), cmdAnimate.target.b));
+						cmdAnimate.target.a = static_cast<float>(vgui::scheme()->GetProportionalScaledValue(cmdAnimate.target.a));
+						cmdAnimate.target.b = static_cast<float>(vgui::scheme()->GetProportionalScaledValue(cmdAnimate.target.b));
 					}
 				}
 				else if (cmdAnimate.variable == m_sWide ||
-					cmdAnimate.variable == m_sTall)
+					cmdAnimate.variable == m_sTall || 
+					cmdAnimate.variable == m_sAlpha)
 				{
 					if (IsProportional())
 					{
 						// Wide and tall both use.a
-						cmdAnimate.target.a = static_cast<float>(vgui::scheme()->GetProportionalScaledValueEx(GetScheme(), cmdAnimate.target.a));
+						cmdAnimate.target.a = static_cast<float>(vgui::scheme()->GetProportionalScaledValue(cmdAnimate.target.a));
 					}
 				}
 
@@ -459,6 +486,10 @@ bool AnimationController::ParseScriptFile(char* pMem, int length)
 					pMem = ParseFile(pMem, token, NULL);
 					cmdAnimate.interpolationParameter = (float)atof(token);
 				}
+				else if (!stricmp(token, "Bounce"))
+				{
+					cmdAnimate.interpolationFunction = INTERPOLATOR_BOUNCE;
+				}
 				else
 				{
 					cmdAnimate.interpolationFunction = INTERPOLATOR_LINEAR;
@@ -480,6 +511,34 @@ bool AnimationController::ParseScriptFile(char* pMem, int length)
 				animCmd.commandType = CMD_RUNEVENT;
 				pMem = ParseFile(pMem, token, NULL);
 				animCmd.cmdData.runEvent.event = g_ScriptSymbols.AddString(token);
+				pMem = ParseFile(pMem, token, NULL);
+				animCmd.cmdData.runEvent.timeDelay = (float)atof(token);
+			}
+			else if (!stricmp(token, "runeventchild"))
+			{
+				animCmd.commandType = CMD_RUNEVENTCHILD;
+				pMem = ParseFile(pMem, token, NULL);
+				animCmd.cmdData.runEvent.variable = g_ScriptSymbols.AddString(token);
+				pMem = ParseFile(pMem, token, NULL);
+				animCmd.cmdData.runEvent.event = g_ScriptSymbols.AddString(token);
+				pMem = ParseFile(pMem, token, NULL);
+				animCmd.cmdData.runEvent.timeDelay = (float)atof(token);
+			}
+			else if (!stricmp(token, "firecommand"))
+			{
+				animCmd.commandType = CMD_FIRECOMMAND;
+				pMem = ParseFile(pMem, token, NULL);
+				animCmd.cmdData.runEvent.timeDelay = (float)atof(token);
+				pMem = ParseFile(pMem, token, NULL);
+				animCmd.cmdData.runEvent.variable = g_ScriptSymbols.AddString(token);
+			}
+			else if (!stricmp(token, "setvisible"))
+			{
+				animCmd.commandType = CMD_SETVISIBLE;
+				pMem = ParseFile(pMem, token, NULL);
+				animCmd.cmdData.runEvent.variable = g_ScriptSymbols.AddString(token);
+				pMem = ParseFile(pMem, token, NULL);
+				animCmd.cmdData.runEvent.variable2 = atoi(token);
 				pMem = ParseFile(pMem, token, NULL);
 				animCmd.cmdData.runEvent.timeDelay = (float)atof(token);
 			}
@@ -634,7 +693,9 @@ void AnimationController::UpdatePostedMessages(bool bRunToCompletion)
 		case CMD_RUNEVENT:
 		{
 			RanEvent_t curEvent;
+			curEvent.pParent = NULL;
 			curEvent.event = msg.event;
+
 			curEvent.pParent = msg.parent.Get();
 
 			// run the event, but only if we haven't already run it this frame, for this parent
@@ -642,6 +703,37 @@ void AnimationController::UpdatePostedMessages(bool bRunToCompletion)
 			{
 				eventsRanThisFrame.AddToTail(curEvent);
 				RunCmd_RunEvent(msg);
+			}
+		}
+		break;
+		case CMD_RUNEVENTCHILD:
+		{
+			RanEvent_t curEvent;
+			curEvent.pParent = NULL;
+			curEvent.event = msg.event;
+
+			curEvent.pParent = msg.parent.Get()->FindChildByName(g_ScriptSymbols.String(msg.variable));
+			msg.parent = curEvent.pParent;
+
+			// run the event, but only if we haven't already run it this frame, for this parent
+			if (!eventsRanThisFrame.HasElement(curEvent))
+			{
+				eventsRanThisFrame.AddToTail(curEvent);
+				RunCmd_RunEvent(msg);
+			}
+		}
+		break;
+		case CMD_FIRECOMMAND:
+		{
+			msg.parent->OnCommand(g_ScriptSymbols.String(msg.variable));
+		}
+		break;
+		case CMD_SETVISIBLE:
+		{
+			Panel* pPanel = msg.parent.Get()->FindChildByName(g_ScriptSymbols.String(msg.variable));
+			if (pPanel)
+			{
+				pPanel->SetVisible(msg.variable2 == 1);
 			}
 		}
 		break;
@@ -824,6 +916,27 @@ AnimationController::Value_t AnimationController::GetInterpolatedValue(int inter
 			pos = 0.0f;
 		}
 		break;
+	case INTERPOLATOR_BOUNCE:
+	{
+		// fall from startValue to endValue, bouncing a few times and settling out at endValue
+		const float hit1 = 0.33f;
+		const float hit2 = 0.67f;
+		const float hit3 = 1.0f;
+
+		if (pos < hit1)
+		{
+			pos = 1.0f - sin(M_PI * pos / hit1);
+		}
+		else if (pos < hit2)
+		{
+			pos = 0.5f + 0.5f * (1.0f - sin(M_PI * (pos - hit1) / (hit2 - hit1)));
+		}
+		else
+		{
+			pos = 0.8f + 0.2f * (1.0f - sin(M_PI * (pos - hit2) / (hit3 - hit2)));
+		}
+		break;
+	}
 	case INTERPOLATOR_LINEAR:
 	default:
 		break;
@@ -901,9 +1014,66 @@ bool AnimationController::StartAnimationSequence(Panel* pWithinParent, const cha
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: stops an animation sequence script
+//-----------------------------------------------------------------------------
+bool AnimationController::StopAnimationSequence(Panel* pWithinParent, const char* sequenceName)
+{
+	Assert(pWithinParent);
+
+	// lookup the symbol for the name
+	UtlSymId_t seqName = g_ScriptSymbols.Find(sequenceName);
+	if (seqName == UTL_INVAL_SYMBOL)
+		return false;
+
+	// remove the existing command from the queue
+	RemoveQueuedAnimationCommands(seqName, pWithinParent);
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Runs a custom command from code, not from a script file
 //-----------------------------------------------------------------------------
-void AnimationController::RunAnimationCommand(vgui::Panel* panel, const char* variable, float targetValue, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter /* = 0 */)
+void AnimationController::CancelAnimationsForPanel(Panel* pWithinParent)
+{
+	// Msg("Removing queued anims for sequence %s\n", g_ScriptSymbols.String(seqName));
+
+	// remove messages posted by this sequence
+	// if pWithinParent is specified, remove only messages under that parent
+	{
+		for (int i = 0; i < m_PostedMessages.Count(); i++)
+		{
+			if (m_PostedMessages[i].parent == pWithinParent)
+			{
+				m_PostedMessages.Remove(i);
+				--i;
+			}
+		}
+	}
+
+	// remove all animations
+	// if pWithinParent is specified, remove only animations under that parent
+	for (int i = 0; i < m_ActiveAnimations.Count(); i++)
+	{
+		Panel* animPanel = m_ActiveAnimations[i].panel;
+
+		if (!animPanel)
+			continue;
+
+		Panel* foundPanel = pWithinParent->FindChildByName(animPanel->GetName(), true);
+
+		if (foundPanel != animPanel)
+			continue;
+
+		m_ActiveAnimations.Remove(i);
+		--i;
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Runs a custom command from code, not from a script file
+//-----------------------------------------------------------------------------
+void AnimationController::RunAnimationCommand(Panel* panel, const char* variable, float targetValue, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter /* = 0 */)
 {
 	// clear any previous animations of this variable
 	UtlSymId_t var = g_ScriptSymbols.AddString(variable);
@@ -927,7 +1097,7 @@ void AnimationController::RunAnimationCommand(vgui::Panel* panel, const char* va
 //-----------------------------------------------------------------------------
 // Purpose: Runs a custom command from code, not from a script file
 //-----------------------------------------------------------------------------
-void AnimationController::RunAnimationCommand(vgui::Panel* panel, const char* variable, Color targetValue, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter /* = 0 */)
+void AnimationController::RunAnimationCommand(Panel* panel, const char* variable, Color targetValue, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter /* = 0 */)
 {
 	// clear any previous animations of this variable
 	UtlSymId_t var = g_ScriptSymbols.AddString(variable);
@@ -942,32 +1112,6 @@ void AnimationController::RunAnimationCommand(vgui::Panel* panel, const char* va
 	animateCmd.target.b = targetValue[1];
 	animateCmd.target.c = targetValue[2];
 	animateCmd.target.d = targetValue[3];
-	animateCmd.interpolationFunction = interpolator;
-	animateCmd.interpolationParameter = animParameter;
-	animateCmd.startTime = startDelaySeconds;
-	animateCmd.duration = duration;
-
-	// start immediately
-	StartCmd_Animate(panel, 0, animateCmd);
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: Runs a custom command from code, not from a script file
-//-----------------------------------------------------------------------------
-void AnimationController::RunAnimationCommand(vgui::Panel* panel, const char* variable, Vector targetValue, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter /* = 0 */)
-{
-	// clear any previous animations of this variable
-	UtlSymId_t var = g_ScriptSymbols.AddString(variable);
-	RemoveQueuedAnimationByType(panel, var, UTL_INVAL_SYMBOL);
-
-	// build a new animation
-	AnimCmdAnimate_t animateCmd;
-	memset(&animateCmd, 0, sizeof(animateCmd));
-	animateCmd.panel = 0;
-	animateCmd.variable = var;
-	animateCmd.target.a = targetValue.x;
-	animateCmd.target.b = targetValue.y;
-	animateCmd.target.c = targetValue.z;
 	animateCmd.interpolationFunction = interpolator;
 	animateCmd.interpolationParameter = animParameter;
 	animateCmd.startTime = startDelaySeconds;
@@ -1049,7 +1193,7 @@ void AnimationController::RemoveQueuedAnimationCommands(UtlSymId_t seqName, Pane
 //-----------------------------------------------------------------------------
 // Purpose: removes the specified queued animation
 //-----------------------------------------------------------------------------
-void AnimationController::RemoveQueuedAnimationByType(vgui::Panel* panel, UtlSymId_t variable, UtlSymId_t sequenceToIgnore)
+void AnimationController::RemoveQueuedAnimationByType(Panel* panel, UtlSymId_t variable, UtlSymId_t sequenceToIgnore)
 {
 	for (int i = 0; i < m_ActiveAnimations.Count(); i++)
 	{
@@ -1091,6 +1235,8 @@ void AnimationController::ExecAnimationCommand(UtlSymId_t seqName, AnimCommand_t
 void AnimationController::StartCmd_Animate(UtlSymId_t seqName, AnimCmdAnimate_t& cmd, Panel* pWithinParent)
 {
 	Assert(pWithinParent);
+	if (!pWithinParent)
+		return;
 
 	// make sure the child exists
 	Panel* panel = pWithinParent->FindChildByName(g_ScriptSymbols.String(cmd.panel), true);
@@ -1333,10 +1479,6 @@ AnimationController::Value_t AnimationController::GetValue(ActiveAnimation_t& an
 		val.c = col[2];
 		val.d = col[3];
 	}
-	//	else if (var == m_sAlpha)
-	//	{
-	//		val.a = panel->GetAlpha();
-	//	}
 	else if (var == m_sXPos)
 	{
 		int x, y;
@@ -1360,6 +1502,11 @@ AnimationController::Value_t AnimationController::GetValue(ActiveAnimation_t& an
 		int w, h;
 		panel->GetSize(w, h);
 		val.a = (float)h;
+	}
+	else if (var == m_sAlpha)
+	{
+		int a = panel->GetAlpha();
+		val.a = (float)a;
 	}
 	else
 	{
@@ -1426,10 +1573,6 @@ void AnimationController::SetValue(ActiveAnimation_t& anim, Panel* panel, UtlSym
 		col[3] = (unsigned char)value.d;
 		panel->SetBgColor(col);
 	}
-	//	else if (var == m_sAlpha)
-	//	{
-	//		panel->SetAlpha( (int)value.a );
-	//	}
 	else if (var == m_sXPos)
 	{
 		int newx = (int)value.a + GetRelativeOffset(anim.align, true);
@@ -1461,6 +1604,10 @@ void AnimationController::SetValue(ActiveAnimation_t& anim, Panel* panel, UtlSym
 		panel->GetSize(w, h);
 		h = newh;
 		panel->SetSize(w, h);
+	}
+	else if (var == m_sAlpha)
+	{
+		panel->SetAlpha((int)value.a);
 	}
 	else
 	{
@@ -1518,10 +1665,16 @@ private:
 
 char const* CPanelAnimationDictionary::StripNamespace(char const* className)
 {
-	if (!Q_strnicmp(className, "vgui::", 6))
+	if (!Q_strnicmp(className, "", 7))
+	{
+		return className + 7;
+	}
+#ifdef SOURCE_SDK_VGUI_NS_ALIAS
+	else if (!Q_strnicmp(className, "vgui::", 6))
 	{
 		return className + 6;
 	}
+#endif
 	return className;
 }
 
