@@ -111,6 +111,8 @@ IClientVGUI* g_pClientVGUI = nullptr;
 static CClientVGUI s_ClientVGUI;
 extern void AddHook(hook_t* hook);
 
+vgui::ISurface2* g_pVGuiSurface;
+
 void ClientVGUIInstallHook(void){
 	CreateInterfaceFn ClientVGUICreateInterface = (CreateInterfaceFn)Sys_GetFactory((HINTERFACEMODULE)g_metaplugins.captionmod.info.PluginModuleBase);
 	if (ClientVGUICreateInterface) {
@@ -124,6 +126,7 @@ void ClientVGUIInstallHook(void){
 			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 8, (void*)pVFTable[8], (void**)&m_pfnCClientVGUI_HideClientUI));
 			g_IsClientVGUI2 = true;
 		}
+		g_pVGuiSurface = (vgui::ISurface2*)ClientVGUICreateInterface(VGUI_SURFACE2_INTERFACE_VERSION, NULL);
 	}
 }
 

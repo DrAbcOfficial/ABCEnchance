@@ -268,8 +268,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp" />
     <ClCompile Include="VGUI2\Scheme2.cpp" />
     <ClCompile Include="VGUI2\spr_image.cpp" />
-    <ClCompile Include="VGUI2\Surface.cpp" />
-    <ClCompile Include="VGUI2\SurfaceHook.cpp" />
     <ClCompile Include="VGUI2\tga_image.cpp" />
     <ClCompile Include="VGUI2\VPanel.cpp" />
     <ClCompile Include="VGUI2\VPanelWrapper.cpp" />
@@ -548,7 +546,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\interface\IVanilliaPanel.h" />
     <ClInclude Include="VGUI2\interface\IViewportPanel.h" />
     <ClInclude Include="VGUI2\spr_image.h" />
-    <ClInclude Include="VGUI2\SurfaceHook.h" />
     <ClInclude Include="VGUI2\tga_image.h" />
     <ClInclude Include="VGUI2\viewport_panel_names.h" />
     <ClInclude Include="VGUI2\VPanel.h" />
@@ -566,7 +563,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI\IPanel.h" />
     <ClInclude Include="VGUI\IScheme.h" />
     <ClInclude Include="VGUI\ISurface.h" />
-    <ClInclude Include="VGUI\ISurface2.h" />
     <ClInclude Include="VGUI\ISystem.h" />
     <ClInclude Include="VGUI\IVGUI.h" />
     <ClInclude Include="VGUI\KeyCode.h" />

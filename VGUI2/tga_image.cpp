@@ -1,6 +1,5 @@
 #include <vgui/ISurface.h>
 #include <vgui_controls/Controls.h>
-#include <VGUI2/SurfaceHook.h>
 #include "tga_image.h"
 
 CTGAImage::CTGAImage()
@@ -17,12 +16,6 @@ CTGAImage::CTGAImage(const char *pFilePath)
 void CTGAImage::LoadImage(const char *pFilePath)
 {
 	vgui::surface()->DrawSetTextureFile(m_iTextureID, pFilePath, true, false);
-}
-
-CTGAImage::~CTGAImage()
-{
-	if (m_iTextureID != -1)
-		g_SurfaceProxy.DeleteTextureByID(m_iTextureID);
 }
 
 void CTGAImage::Paint()

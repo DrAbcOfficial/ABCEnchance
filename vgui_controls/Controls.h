@@ -21,7 +21,6 @@
 #include <vgui/IInput.h>
 #include <vgui/IInputInternal.h>
 #include <vgui/IScheme.h>
-#include <vgui/ISurface.h>
 #include <vgui/ISurface2.h>
 #include <vgui/ISystem.h>
 #include <vgui/IVGUI.h>
@@ -34,7 +33,7 @@ extern IFileSystem *g_pFullFileSystem;
 
 extern vgui::IInput *g_pVGuiInput;
 extern vgui::ISchemeManager *g_pVGuiSchemeManager;
-extern vgui::CSurface *g_pVGuiSurface;
+extern vgui::ISurface2 *g_pVGuiSurface;
 extern vgui::ISystem *g_pVGuiSystem;
 extern vgui::IVGui *g_pVGui;
 extern vgui::IPanel *g_pVGuiPanel;
@@ -82,7 +81,7 @@ inline vgui::ISchemeManager *scheme()
 }
 
 // #include <vgui/ISurface.h>
-inline vgui::CSurface *surface()
+inline vgui::ISurface2 *surface()
 {
 	return g_pVGuiSurface;
 }

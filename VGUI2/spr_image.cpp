@@ -1,8 +1,6 @@
 #include <metahook.h>
 #include <triangleapi.h>
 
-#include <vgui2/SurfaceHook.h>
-
 #include "local.h"
 #include "spr_image.h"
 
