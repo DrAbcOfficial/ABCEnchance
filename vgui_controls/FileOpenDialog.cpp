@@ -55,7 +55,6 @@
 #include "xbox/xbox_win32stubs.h"
 #undef GetCurrentDirectory
 #endif
-#include <codecvt>
 
 using namespace vgui;
 namespace fs = std::filesystem;
