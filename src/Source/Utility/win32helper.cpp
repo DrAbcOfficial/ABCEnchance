@@ -1,6 +1,4 @@
 #include <wtypes.h>
-#include <strtools.h>
-
 #include <win32helper.h>
 
 #ifdef WIN32	
@@ -9,33 +7,19 @@ const char* Win32GetAttributesAsString(DWORD dwAttributes)
 	static char out[256];
 	out[0] = 0;
 	if (dwAttributes & FILE_ATTRIBUTE_ARCHIVE)
-	{
-		Q_strncat(out, "A", sizeof(out), COPY_ALL_CHARACTERS);
-	}
+		std::strncat(out, "A", 1);
 	if (dwAttributes & FILE_ATTRIBUTE_COMPRESSED)
-	{
-		Q_strncat(out, "C", sizeof(out), COPY_ALL_CHARACTERS);
-	}
+		std::strncat(out, "C", 1);
 	if (dwAttributes & FILE_ATTRIBUTE_DIRECTORY)
-	{
-		Q_strncat(out, "D", sizeof(out), COPY_ALL_CHARACTERS);
-	}
+		std::strncat(out, "D", 1);
 	if (dwAttributes & FILE_ATTRIBUTE_HIDDEN)
-	{
-		Q_strncat(out, "H", sizeof(out), COPY_ALL_CHARACTERS);
-	}
+		std::strncat(out, "H", 1);
 	if (dwAttributes & FILE_ATTRIBUTE_READONLY)
-	{
-		Q_strncat(out, "R", sizeof(out), COPY_ALL_CHARACTERS);
-	}
+		std::strncat(out, "R", 1);
 	if (dwAttributes & FILE_ATTRIBUTE_SYSTEM)
-	{
-		Q_strncat(out, "S", sizeof(out), COPY_ALL_CHARACTERS);
-	}
+		std::strncat(out, "S", 1);
 	if (dwAttributes & FILE_ATTRIBUTE_TEMPORARY)
-	{
-		Q_strncat(out, "T", sizeof(out), COPY_ALL_CHARACTERS);
-	}
+		std::strncat(out, "T", 1);
 	return out;
 }
 
