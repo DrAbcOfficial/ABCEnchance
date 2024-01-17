@@ -81,7 +81,7 @@ void ImagePanel::SetImage(IImage* image)
 //-----------------------------------------------------------------------------
 void ImagePanel::SetImage(const char* imageName)
 {
-	if (imageName && m_pszImageName && V_stricmp(imageName, m_pszImageName) == 0)
+	if (imageName && m_pszImageName && Q_stricmp(imageName, m_pszImageName) == 0)
 		return;
 
 	int len = Q_strlen(imageName) + 1;
