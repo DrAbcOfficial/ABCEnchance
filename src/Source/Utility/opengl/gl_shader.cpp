@@ -9,6 +9,8 @@
 #include <sstream>
 #include <regex>
 
+extern void SysError(const char* message ...);
+
 std::vector<glshader_t> g_ShaderTable;
 void GL_FreeShaders(){
 	for (size_t i = 0; i < g_ShaderTable.size(); ++i){
@@ -43,7 +45,7 @@ void GL_CheckShaderError(GLuint shader, const char* code, const char* filename){
 			g_pFileSystem->Write(szCompilerLog, nInfoLength, FileHandle);
 			g_pFileSystem->Close(FileHandle);
 		}
-		g_pMetaHookAPI->SysError("Shader %s compiled with error:\n%s", filename, szCompilerLog);
+		SysError("Shader %s compiled with error:\n%s", filename, szCompilerLog);
 		return;
 	}
 }
@@ -85,7 +87,7 @@ GLuint R_CompileShader(const char* vscode, const char* fscode, const char* vsfil
 		char szCompilerLog[1024] = { 0 };
 		glGetProgramInfoLog(program, sizeof(szCompilerLog), &nInfoLength, szCompilerLog);
 
-		g_pMetaHookAPI->SysError("Shader linked with error:\n%s", szCompilerLog);
+		SysError("Shader linked with error:\n%s", szCompilerLog);
 	}
 
 	g_ShaderTable.emplace_back(program, shader_objects, shader_object_used);
@@ -178,7 +180,7 @@ GLuint R_CompileShaderFileEx(
 	auto vscode = (char*)gEngfuncs.COM_LoadFile((char*)vsfile, 5, 0);
 	std::string vs;
 	if (!vscode)
-		g_pMetaHookAPI->SysError("R_CompileShaderFileEx: %s not found!", vsfile);
+		SysError("R_CompileShaderFileEx: %s not found!", vsfile);
 	else
 		vs = std::string(vscode);
 
@@ -192,7 +194,7 @@ GLuint R_CompileShaderFileEx(
 	auto fscode = (char*)gEngfuncs.COM_LoadFile((char*)fsfile, 5, 0);
 	std::string fs;
 	if (!fscode)
-		g_pMetaHookAPI->SysError("R_CompileShaderFileEx: %s not found!", fsfile);
+		SysError("R_CompileShaderFileEx: %s not found!", fsfile);
 	else
 		fs = std::string(fscode);
 

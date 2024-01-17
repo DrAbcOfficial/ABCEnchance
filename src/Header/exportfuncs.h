@@ -58,7 +58,7 @@ void R_NewMap(void);
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
-#define Sig_NotFound(name) g_pMetaHookAPI->SysError("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
+#define Sig_NotFound(name) SysError("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
 #define Sig_FuncNotFound(name) if(!gHookFuncs.name) Sig_NotFound(name)
 #define Sig_AddrNotFound(name) if(!addr) Sig_NotFound(name)
 #define Sig_AddrFoundOrFill(name) Sig_AddrNotFound(name) else name = (decltype(name))addr;

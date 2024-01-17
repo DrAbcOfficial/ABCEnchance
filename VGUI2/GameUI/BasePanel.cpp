@@ -27,6 +27,8 @@
 #include <Border.h>
 #include "OptionAdvancedDlg.h"
 
+extern void SysError(const char* message ...);
+
 bool g_bInitialized = false;
 int g_iTextureID;
 
@@ -292,7 +294,7 @@ void BasePanel_InstallHook(void){
 		}
 	}
 	else
-		g_pMetaHookAPI->SysError("[ABCEnchace] Can not find game ui for dynamic background.");
+		SysError("Can not find game ui for dynamic background.");
 
 	HMODULE hVPX= LoadLibrary("vpx.dll");
 	if (hVPX) {
@@ -315,5 +317,5 @@ void BasePanel_InstallHook(void){
 #undef GetFuncVPX
 	}
 	else
-		g_pMetaHookAPI->SysError("[ABCEnchace] Can not open vpx.dll!");
+		SysError("Can not open vpx.dll!");
 }

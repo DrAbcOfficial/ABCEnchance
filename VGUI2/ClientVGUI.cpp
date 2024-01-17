@@ -1,4 +1,3 @@
-#include <metahook.h>
 #include <vector>
 #include <string>
 #include <vgui/VGUI.h>
@@ -26,6 +25,7 @@ namespace vgui{
 	bool VGui_InitInterfacesList(const char* moduleName, CreateInterfaceFn* factoryList, int numFactories);
 }
 
+extern void SysError(const char* message ...);
 void ClientVGUIInit(CreateInterfaceFn* factories, int count) {
 	vgui::VGui_InitInterfacesList("ABCEnchance", factories, count);
 	vgui::HScheme iScheme = vgui::scheme()->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
@@ -35,17 +35,17 @@ void ClientVGUIInit(CreateInterfaceFn* factories, int count) {
 		iPluginVersion = atoi(pSchemeData->GetResourceString("Version"));
 	}
 	else {
-		g_pMetaHookAPI->SysError("[ABCEnchance]:\nOoops! Can not load resource file!\nHave you installed it correctly?\n");
+		SysError("Ooops! Can not load resource file!\nHave you installed it correctly?\n");
 		return;
 	}
 	if (iPluginVersion < PLUGIN_VERSION)
-		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
+		SysError("Mismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, iPluginVersion);
 	char localizePath[260];
 	snprintf(localizePath, sizeof(localizePath), "abcenchance/localize/%s.txt",
 		(!strlen(pSchemeData->GetResourceString("Language"))) ? "%language%" : pSchemeData->GetResourceString("Language"));
 	if (!vgui::localize()->AddFile(g_pFileSystem, localizePath))
-		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMissing Localize file: %s\n", localizePath);
+		SysError("Missing Localize file: %s\n", localizePath);
 }
 void ClientVGUIShutdown(void) {
 	if (g_pViewPort) {
@@ -128,7 +128,7 @@ void ClientVGUIInstallHook(void){
 		}
 		g_pVGuiSurface = (vgui::ISurface2*)ClientVGUICreateInterface(VGUI_SURFACE2_INTERFACE_VERSION, NULL);
 		if (!g_pVGuiSurface)
-			g_pMetaHookAPI->SysError("[ABCEnchance]Your CaptionMod version are outdate, please update it and run again.");
+			SysError("Your CaptionMod version are outdate, please update it and run again.");
 	}
 }
 

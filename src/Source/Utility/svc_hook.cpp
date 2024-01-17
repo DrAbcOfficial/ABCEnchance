@@ -3,6 +3,8 @@
 #include "svc_hook.h"
 #include <exportfuncs.h>
 
+extern void SysError(const char* message ...);
+
 int SVC_LASTMSG = 50;
 
 typedef struct svc_func_s
