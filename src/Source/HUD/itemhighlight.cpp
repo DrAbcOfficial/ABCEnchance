@@ -18,6 +18,7 @@
 #include "itemhighlight.h"
 
 #define ITEM_LIST_PATH "abcenchance/ItemHighLightList.txt"
+extern void SysError(const char* message ...);
 
 std::vector<cl_hightlight_s*> aryHighLightList;
 CHudItemHighLight g_HudItemHighLight;
@@ -136,6 +137,6 @@ void CHudItemHighLight::LoadItemList() {
 			i = 0;
 	}
 	if (i != 0)
-		g_pMetaHookAPI->SysError("Error in parsing file:%s\nLine:%d\nBuf is not end with even.", ITEM_LIST_PATH, index);
+		SysError("Error in parsing file:%s\nLine:%d\nBuf is not end with even.", ITEM_LIST_PATH, index);
 	gEngfuncs.COM_FreeFile(pfile);
 }

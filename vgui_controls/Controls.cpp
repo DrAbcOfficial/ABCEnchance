@@ -1,12 +1,10 @@
-#include <metahook.h>
 #include "Controls.h"
 #include <locale.h>
 #include <VGUI/IEngineVGui.h>
 #include <IEngineSurface.h>
 #include "plugins.h"
-#include "exportfuncs.h"
 
-#include <capstone.h>
+extern void SysError(const char* message ...);
 
 vgui::IInput *g_pVGuiInput;
 vgui::ISystem *g_pVGuiSystem;
@@ -49,7 +47,7 @@ bool VGui_InitInterfacesList(const char *moduleName, CreateInterfaceFn *factoryL
 
 	if (!g_pFullFileSystem || !g_pKeyValuesSystem || !g_pVGuiInput || !g_pVGuiSystem || !g_pVGui || !g_pVGuiPanel || !g_pVGuiLocalize)
 	{
-		g_pMetaHookAPI->SysError("vgui_controls is missing a required interface!\n");
+		SysError("vgui_controls is missing a required interface!\n");
 		return false;
 	}
 	return true;

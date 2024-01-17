@@ -5,6 +5,8 @@
 
 #include <vgui_controls/consoledialog.h>
 
+extern void SysError(const char* message ...);
+
 vgui::CConsoleDialog* g_ConsoleDialog;
 
 void(__fastcall* m_pfnCGameConsole_Activate)(void* pthis, int);
@@ -75,7 +77,7 @@ void GameConsole_InstallHook(void){
 		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 8, (void*)pVFTable[8], (void**)&m_pfnCGameConsole_SetParent));
 	}
 	else
-		g_pMetaHookAPI->SysError("[ABCEnchace] Can not create interface of gameconsole.");
+		SysError("Can not create interface of gameconsole.");
 }
 
 IGameConsole* GameConsole() {

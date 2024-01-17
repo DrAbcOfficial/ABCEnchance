@@ -50,6 +50,8 @@
 #include <CVector.h>
 #include <ClientParticleMan.h>
 
+extern void SysError(const char* message ...);
+
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 metaplugins_t g_metaplugins;
@@ -178,7 +180,7 @@ void CheckOtherPlugin(){
 		g_metaplugins.captionmod.has = true;
 	}
 	else
-		g_pMetaHookAPI->SysError("[ABCEnchance]\nThis plugin relay on Captionmod to work, please add Captionmod.dll in your plugin.lst");
+		SysError("This plugin relay on Captionmod to work, please add Captionmod.dll in your plugin.lst");
 }
 void FillEngineAddress() {
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
@@ -302,14 +304,14 @@ void UninstallClientHook() {
 void CheckAsset() {
 	auto c = gEngfuncs.COM_LoadFile(const_cast<char*>("abcenchance/ABCEnchance.res"), 5, 0);
 	if(!c)
-		g_pMetaHookAPI->SysError("[ABCEnchance]:\nMissing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
+		SysError("Missing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
 	gEngfuncs.COM_FreeFile(c);
 }
 void GL_Init(void){
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
 	if (GLEW_OK != err){
-		g_pMetaHookAPI->SysError("glewInit failed, %s", glewGetErrorString(err));
+		SysError("glewInit failed, %s", glewGetErrorString(err));
 		return;
 	}
 	GL_ShaderInit();
