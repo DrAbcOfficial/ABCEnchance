@@ -114,7 +114,7 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pCrosshairT->AddActionSignalTarget(this);
 	m_pCrosshairOutline->AddActionSignalTarget(this);
 }
-vgui::COptionsAdvanceSubMultiPlay::~COptionsAdvanceSubMultiPlay(){
+COptionsAdvanceSubMultiPlay::~COptionsAdvanceSubMultiPlay(){
 	delete m_pSparyWad;
 }
 void COptionsAdvanceSubMultiPlay::ResetModel(){
@@ -211,7 +211,7 @@ void COptionsAdvanceSubMultiPlay::OnOpenContextMenu(int itemID) {
 		menu->AddMenuItem("AddFav", "#GameUI_ABC_RemoveFav", new KeyValues("FavChange", "itemID", itemID, "add", 0), this);
 	else
 		menu->AddMenuItem("AddFav", "#GameUI_ABC_AddFav", new KeyValues("FavChange", "itemID", itemID, "add", 1), this);
-	menu->PositionRelativeToPanel(this, vgui::Menu::CURSOR, 0, true);
+	menu->PositionRelativeToPanel(this, Menu::CURSOR, 0, true);
 	menu->MakePopup();
 }
 void COptionsAdvanceSubMultiPlay::OnSliderMoved() {
@@ -230,13 +230,13 @@ void COptionsAdvanceSubMultiPlay::OnSliderMoved() {
 void COptionsAdvanceSubMultiPlay::OnItemSelected() {
 	ChangeModel(m_pModelList->GetItem(m_pModelList->GetSelectedItem(0))->GetName());
 }
-void vgui::COptionsAdvanceSubMultiPlay::OnButtonChanged(){
+void COptionsAdvanceSubMultiPlay::OnButtonChanged(){
 	m_pCrosshairDisplay->SetDot(m_pCrosshairDot->IsSelected());
 	m_pCrosshairDisplay->SetT(m_pCrosshairT->IsSelected());
 	m_pCrosshairDisplay->SetOutline(m_pCrosshairOutline->IsSelected());
 	m_pCrosshairDisplay->InvalidateLayout();
 }
-void vgui::COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
+void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 	FIBITMAP* img = nullptr;
 	char ext[4];
 	std::strcpy(ext, std::filesystem::path(fullpath).extension().u8string().c_str());
@@ -330,8 +330,7 @@ void vgui::COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			SetSparyPixel(tex->GetPixels(), tex->Width(), tex->Height());
 	}
 }
-
-void vgui::COptionsAdvanceSubMultiPlay::OnResetData(){
+void COptionsAdvanceSubMultiPlay::OnResetData(){
 	ResetModel();
 	BuildModelList();
 
@@ -360,8 +359,7 @@ void vgui::COptionsAdvanceSubMultiPlay::OnResetData(){
 		SetSparyPixel(tex->GetPixels(), tex->Width(), tex->Height());
 	
 }
-
-void vgui::COptionsAdvanceSubMultiPlay::OnApplyChanges(){
+void COptionsAdvanceSubMultiPlay::OnApplyChanges(){
 	BaseClass::OnApplyChanges();
 	int mdlIndex = m_pModelList->GetSelectedItem(0);
 	if (mdlIndex != -1) 
@@ -385,8 +383,7 @@ void vgui::COptionsAdvanceSubMultiPlay::OnApplyChanges(){
 	m_pCrosshairT->ApplyChanges();
 	m_pCrosshairOutline->ApplyChanges();
 }
-
-void vgui::COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
+void COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
 	if (!std::strcmp(cmd, "FilterModel"))
 		FilterModel();
 	else if (!std::strcmp(cmd, "OpenLoadSparyDialog")) {
@@ -403,15 +400,13 @@ void vgui::COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
 		m_pFileDialog->SetPos((ScreenWidth() - w) / 2, (ScreenHeight() - h) / 2);
 	}
 }
-
 void COptionsAdvanceSubMultiPlay::ApplySchemeSettings(IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 	m_pModelViewer->SetBgColor(GetSchemeColor("ModelViewer/BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pModelController->SetBgColor(GetSchemeColor("ModelViewer/SliderBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pPlayerName->SetBgColor(GetSchemeColor("ModelViewer/NameTagBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
-
-void vgui::COptionsAdvanceSubMultiPlay::FilterModel(){
+void COptionsAdvanceSubMultiPlay::FilterModel(){
 	char buf[MAX_PATH];
 	m_pModelFilter->GetText(buf, MAX_PATH);
 	if (std::strlen(buf) > 0) {
@@ -422,8 +417,7 @@ void vgui::COptionsAdvanceSubMultiPlay::FilterModel(){
 	else
 		BuildModelList(nullptr);
 }
-
-void vgui::COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t& oh){
+void COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t& oh){
 	float w = static_cast<float>(ow);
 	float h = static_cast<float>(oh);
 	if (w * h > 14336.0f) {
@@ -456,12 +450,15 @@ void vgui::COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t&
 	ow = static_cast<size_t>(w);
 	oh = static_cast<size_t>(h);
 }
-
-void vgui::COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wide, size_t height){
+void COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wide, size_t height){
 	CTGAImage* img = reinterpret_cast<CTGAImage*>(m_pSpary->GetImage());
-	vgui::surface()->DrawSetTextureRGBA(img->GetTextureId(), pixels, wide, height, true, false);
+	surface()->DrawSetTextureRGBA(img->GetTextureId(), pixels, wide, height, true, false);
 	img->SetSize(wide, height);
 }
+
+
+
+
 
 COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, "OptionsAdvanceDialog") {
 	SetDeleteSelfOnClose(true);
