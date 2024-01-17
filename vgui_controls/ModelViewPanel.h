@@ -12,7 +12,7 @@
 
 #include "Panel.h"
 
-class StudioModel;
+class IStudioModel;
 namespace vgui
 {
 //-----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ private:
 
 	float m_flPrevAnimeTime = 0;
 
-	StudioModel* m_Renderer = nullptr;
+	IStudioModel* m_Renderer = nullptr;
 
 	uint m_hBufferTex = 0;
 	uint m_hBufferFBO = 0;

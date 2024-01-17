@@ -21,9 +21,30 @@
 
 using namespace vgui;
 
-class StudioModel {
+class IStudioModel {
 public:
-	void Init(const char* modelname) {
+	virtual void Init(const char* modelname) = 0;
+	virtual void DrawModel(void) = 0;
+	virtual void AdvanceFrame(float dt) = 0;
+	virtual void ExtractBbox(float* mins, float* maxs) = 0;
+	virtual int SetSequence(int iSequence) = 0;
+	virtual int GetSequence(void) = 0;
+	virtual void GetSequenceInfo(float* pflFrameRate, float* pflGroundSpeed) = 0;
+	virtual float SetController(int iController, float flValue) = 0;
+	virtual float SetMouth(float flValue) = 0;
+	virtual float SetBlending(int iBlender, float flValue) = 0;
+	virtual int SetBodygroup(int iGroup, int iValue) = 0;
+	virtual int SetSkin(int iValue) = 0;
+	virtual void SetFrame(int iValue) = 0;
+	virtual bool IsValid() = 0;
+	virtual void SetAmbientLight(int light) = 0;
+	virtual void SetShadeLight(int light) = 0;
+	virtual void SetLightColor(int r, int g, int b) = 0;
+	virtual void SetLightOrigin(float x, float y, float z) = 0;
+};
+class StudioModel : public IStudioModel {
+public:
+	virtual void Init(const char* modelname) {
 		m_pstudiomdl = LoadModel(modelname);
 		if (!m_pstudiomdl)
 			return;
@@ -53,7 +74,7 @@ public:
 			}
 		}
 	}
-	void DrawModel(void) {
+	virtual void DrawModel(void) {
 		if (!m_pstudiomdl)
 			return;
 		int i;
@@ -94,7 +115,7 @@ public:
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		glPopMatrix();
 	}
-	void AdvanceFrame(float dt) {
+	virtual void AdvanceFrame(float dt) {
 		if (!m_pstudiomdl)
 			return;
 		mstudioseqdesc_t* pseqdesc;
@@ -116,7 +137,7 @@ public:
 		}
 	}
 
-	void ExtractBbox(float* mins, float* maxs) {
+	virtual void ExtractBbox(float* mins, float* maxs) {
 		if (!m_pstudiomdl)
 			return;
 		mstudioseqdesc_t* pseqdesc;
@@ -132,7 +153,7 @@ public:
 		maxs[2] = pseqdesc[m_sequence].bbmax[2];
 	}
 
-	int SetSequence(int iSequence) {
+	virtual int SetSequence(int iSequence) {
 		if (!m_pstudiomdl)
 			return 0;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
@@ -146,10 +167,10 @@ public:
 
 		return m_sequence;
 	}
-	int GetSequence(void) {
+	virtual int GetSequence(void) {
 		return m_sequence;
 	}
-	void GetSequenceInfo(float* pflFrameRate, float* pflGroundSpeed) {
+	virtual void GetSequenceInfo(float* pflFrameRate, float* pflGroundSpeed) {
 		if (!m_pstudiomdl)
 			return;
 		mstudioseqdesc_t* pseqdesc;
@@ -169,7 +190,7 @@ public:
 		}
 	}
 
-	float SetController(int iController, float flValue) {
+	virtual float SetController(int iController, float flValue) {
 		if (!m_pstudiomdl)
 			return 0;
 		int i;
@@ -217,7 +238,7 @@ public:
 
 		return setting * (1.0 / 255.0) * (pbonecontroller->end - pbonecontroller->start) + pbonecontroller->start;
 	}
-	float SetMouth(float flValue) {
+	virtual float SetMouth(float flValue) {
 		if (!m_pstudiomdl)
 			return 0;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
@@ -262,7 +283,7 @@ public:
 
 		return setting * (1.0 / 64.0) * (pbonecontroller->end - pbonecontroller->start) + pbonecontroller->start;
 	}
-	float SetBlending(int iBlender, float flValue) {
+	virtual float SetBlending(int iBlender, float flValue) {
 		if (!m_pstudiomdl)
 			return 0;
 		mstudioseqdesc_t* pseqdesc;
@@ -297,7 +318,7 @@ public:
 
 		return setting * (1.0 / 255.0) * (pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender]) + pseqdesc->blendstart[iBlender];
 	}
-	int SetBodygroup(int iGroup, int iValue) {
+	virtual int SetBodygroup(int iGroup, int iValue) {
 		if (!m_pstudiomdl)
 			return 0;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
@@ -316,7 +337,7 @@ public:
 		return iValue;
 	}
 
-	int SetSkin(int iValue) {
+	virtual int SetSkin(int iValue) {
 		if (!m_pstudiomdl)
 			return 0;
 		auto hdr = GetStudioHdr(m_pstudiomdl);
@@ -330,31 +351,30 @@ public:
 		return iValue;
 	}
 
-	bool IsValid() {
+	virtual void SetFrame(int iValue) {
+		m_frame = iValue;
+	}
+	virtual bool IsValid() {
 		return m_pstudiomdl != nullptr && m_ptexturemdl != nullptr;
 	}
 
-	void SetAmbientLight(int light) {
+	virtual void SetAmbientLight(int light) {
 		m_ambientlight = light;
 	}
-	void SetShadeLight(int light) {
+	virtual void SetShadeLight(int light) {
 		m_shadelight = light;
 	}
-	void SetLightColor(int r, int g, int b) {
+	virtual void SetLightColor(int r, int g, int b) {
 		m_lightcolor[0] = (float)r / 255.0f;
 		m_lightcolor[1] = (float)g / 255.0f;
 		m_lightcolor[2] = (float)b / 255.0f;
 	}
-	void SetLightOrigin(float x, float y, float z) {
+	virtual void SetLightOrigin(float x, float y, float z) {
 		m_lightvec[0] = x;
 		m_lightvec[1] = y;
 		m_lightvec[2] = -z + -1.0f;
 		SetupLighting();
 	}
-
-	int						m_sequence;			// sequence index
-	float					m_frame;			// frame
-	byte					m_mouth;			// mouth position
 private:
 	// entity settings
 	vec3_t					m_origin;
@@ -363,6 +383,9 @@ private:
 	int						m_skinnum;			// skin group selection
 	byte					m_controller[4];	// bone controllers
 	byte					m_blending[2];		// animation blending
+	int						m_sequence;			// sequence index
+	float					m_frame;			// frame
+	byte					m_mouth;			// mouth position
 
 	// internal data
 	model_t* m_pstudiomdl;
@@ -952,7 +975,31 @@ private:
 	}
 };
 
-DECLARE_BUILD_FACTORY(ModelViewPanel);
+mnode_t node;
+class EStudioModel : public IStudioModel {
+public:
+	virtual void Init(const char* modelname) = 0;
+	virtual void DrawModel(void) = 0;
+	virtual void AdvanceFrame(float dt) = 0;
+	virtual void ExtractBbox(float* mins, float* maxs) = 0;
+	virtual int SetSequence(int iSequence) = 0;
+	virtual int GetSequence(void) = 0;
+	virtual void GetSequenceInfo(float* pflFrameRate, float* pflGroundSpeed) = 0;
+	virtual float SetController(int iController, float flValue) = 0;
+	virtual float SetMouth(float flValue) = 0;
+	virtual float SetBlending(int iBlender, float flValue) = 0;
+	virtual int SetBodygroup(int iGroup, int iValue) = 0;
+	virtual int SetSkin(int iValue) = 0;
+	virtual void SetFrame(int iValue) = 0;
+	virtual bool IsValid() = 0;
+	virtual void SetAmbientLight(int light) = 0;
+	virtual void SetShadeLight(int light) = 0;
+	virtual void SetLightColor(int r, int g, int b) = 0;
+	virtual void SetLightOrigin(float x, float y, float z) = 0;
+private:
+	cl_entity_t m_pEntity;
+
+};
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
@@ -1079,7 +1126,7 @@ int vgui::ModelViewPanel::GetFrame(){
 }
 void vgui::ModelViewPanel::SetFrame(int frame){
 	m_iFrame = frame;
-	m_Renderer->m_frame = m_iFrame;
+	m_Renderer->SetFrame(m_iFrame);
 }
 float vgui::ModelViewPanel::GetFrameRate(){
 	return m_flFrameRate;
