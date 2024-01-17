@@ -127,6 +127,8 @@ void ClientVGUIInstallHook(void){
 			g_IsClientVGUI2 = true;
 		}
 		g_pVGuiSurface = (vgui::ISurface2*)ClientVGUICreateInterface(VGUI_SURFACE2_INTERFACE_VERSION, NULL);
+		if (!g_pVGuiSurface)
+			g_pMetaHookAPI->SysError("[ABCEnchance]Your CaptionMod version are outdate, please update it and run again.");
 	}
 }
 
