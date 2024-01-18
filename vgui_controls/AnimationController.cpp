@@ -1097,6 +1097,32 @@ void AnimationController::RunAnimationCommand(Panel* panel, const char* variable
 //-----------------------------------------------------------------------------
 // Purpose: Runs a custom command from code, not from a script file
 //-----------------------------------------------------------------------------
+void AnimationController::RunAnimationCommand(Panel* panel, const char* variable, float* targetValue, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter /* = 0 */)
+{
+	// clear any previous animations of this variable
+	UtlSymId_t var = g_ScriptSymbols.AddString(variable);
+	RemoveQueuedAnimationByType(panel, var, UTL_INVAL_SYMBOL);
+
+	// build a new animation
+	AnimCmdAnimate_t animateCmd;
+	memset(&animateCmd, 0, sizeof(animateCmd));
+	animateCmd.panel = 0;
+	animateCmd.variable = var;
+	animateCmd.target.a = targetValue[0];
+	animateCmd.target.b = targetValue[1];
+	animateCmd.target.c = targetValue[2];
+	animateCmd.interpolationFunction = interpolator;
+	animateCmd.interpolationParameter = animParameter;
+	animateCmd.startTime = startDelaySeconds;
+	animateCmd.duration = duration;
+
+	// start immediately
+	StartCmd_Animate(panel, 0, animateCmd);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Runs a custom command from code, not from a script file
+//-----------------------------------------------------------------------------
 void AnimationController::RunAnimationCommand(Panel* panel, const char* variable, Color targetValue, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter /* = 0 */)
 {
 	// clear any previous animations of this variable

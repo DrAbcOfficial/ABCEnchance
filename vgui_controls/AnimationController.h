@@ -75,6 +75,7 @@ namespace vgui
 
 		// runs the specific animation command (doesn't use script file at all)
 		void RunAnimationCommand(Panel* panel, const char* variable, float targetValue, float startDelaySeconds, float durationSeconds, Interpolators_e interpolator, float animParameter = 0);
+		void RunAnimationCommand(Panel* panel, const char* variable, float* targetValue, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter = 0 );
 		void RunAnimationCommand(Panel* panel, const char* variable, Color targetValue, float startDelaySeconds, float durationSeconds, Interpolators_e interpolator, float animParameter = 0);
 
 	private:
