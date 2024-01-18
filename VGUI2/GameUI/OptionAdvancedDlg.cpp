@@ -19,7 +19,6 @@
 #include "vgui_controls/MenuItem.h"
 #include "vgui_controls/MemoryBitmap.h"
 
-#undef _MSC_VER
 #include "FreeImage.h"
 #include "wadlib/wadfile.h"
 
