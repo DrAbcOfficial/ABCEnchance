@@ -84,9 +84,6 @@
     <Filter Include="Public\Fmod">
       <UniqueIdentifier>{c5d8daf0-4fe0-4687-8d97-a6511c5c0de5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="FreeImage">
-      <UniqueIdentifier>{5e97f87e-0430-4bb5-9243-3ebe858da7f0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Public\liblrc">
       <UniqueIdentifier>{26e8c825-2ed9-494b-804d-bf2859a5d597}</UniqueIdentifier>
     </Filter>
@@ -1236,9 +1233,6 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\neteasemusic.h">
       <Filter>Public\Header\HUD\vgui</Filter>
-    </ClInclude>
-    <ClInclude Include="FreeImage\FreeImage.h">
-      <Filter>FreeImage</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\formatter.h">
       <Filter>Public\Header\Utility</Filter>

@@ -24,11 +24,9 @@
 #include "Viewport.h"
 #include "BaseUI.h"
 #include "neteasemusic.h"
-#include "FreeImage/FreeImage.h"
+#include "FreeImage.h"
 #include "curl.h"
 #include "qrcodegen.h"
-
-#pragma comment(lib,"FreeImage/FreeImage.lib")
 
 #define VIEWPORT_NETEASEMUSIC_NAME "NeteasePanel"
 #define VIEWPORT_NETEASEMUSICQR_NAME "NeteaseQRPanel"

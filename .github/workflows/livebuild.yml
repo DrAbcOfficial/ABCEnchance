@@ -37,17 +37,21 @@ jobs:
           git submodule update --init --recursive
           Copy-Item -Force -Path "./tools/global_template.props" -Destination "./tools/global.props"
 
-    - name: Setup glew
+    - name: Build glew
       working-directory: MetaHookSv
       run: ./scripts/build-glew-x86-Release.bat
     
-    - name: Setup glew AVX
+    - name: Build glew AVX
       working-directory: MetaHookSv
       run: ./scripts/build-glew-x86-Release_AVX2.bat
 
-    - name: Setup Capstone
+    - name: Build Capstone
       working-directory: MetaHookSv
       run: ./scripts/build-capstone-x86-Release.bat
+
+    - name: Build FreeImage
+      working-directory: MetaHookSv
+      run: ./scripts/build-FreeImage-x86-Release.bat
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2

@@ -19,7 +19,8 @@
 #include "vgui_controls/MenuItem.h"
 #include "vgui_controls/MemoryBitmap.h"
 
-#include "FreeImage/FreeImage.h"
+#undef _MSC_VER
+#include "FreeImage.h"
 #include "wadlib/wadfile.h"
 
 #include <GaussianBlurPanel.h>
@@ -27,8 +28,6 @@
 
 #include "OptionAdvancedDlg.h"
 #include <filesystem>
-
-#pragma comment(lib,"FreeImage/FreeImage.lib")
 
 extern const char* CVAR_GET_STRING(const char* x);
 extern void CVAR_SET_STRING(const char* x, const char* v);
