@@ -35,7 +35,7 @@
 
     手动:
 
-    1. 从release或者action下载压缩包，解压到 `svencoop`文件夹里, 再把`ABCEnchance.dll`文件移动到`svencoop/metahook/plugins`，把`vpx.dll`和`FreeImage.dll`移动到安装目录，最终看起来像是这样👇
+    1. 从release或者action下载压缩包，解压到 `svencoop`文件夹里, 再把`ABCEnchance.dll`文件移动到`svencoop/metahook/plugins`，把`vpx.dll`和`FreeImage.dll`移动到`metahook/dlls`目录，然后在`metahook/configs/dllpaths.lst`中另起一行添加`vpx`，最终看起来像是这样👇
    
     ```
         Sven Coop
@@ -49,12 +49,17 @@
         │  │  ├─....
         │  │  ABCEnchance.res
         │  └─metahook
-        │     └─plugins
-        │        └─ABCEnchance.dll       
+        │     ├─plugins
+        │     │  └─ABCEnchance.dll
+        │     └─dlls
+        │        ├─FreeImage
+        │        │  └─FreeIamge.dll
+        │        └─vpx
+        │           └─vpx.dll
+        ├─svencoop_addon
+        │  └─resource
+        │     └─.....
         svencoop.exe
-        vpx.dll
-        FreeImage.dll
-
     ```
 
     2. 打开 `svencoop/metahook/configs/plugins.lst`, 在CaptionMod前另起一行加上 `ABCEnchance.dll` .

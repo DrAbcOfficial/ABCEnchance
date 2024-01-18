@@ -37,7 +37,7 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 
     Manual:
 
-    1. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory and put `vpx.dll` and `FreeImage.dll` into game directory. The results will be as follows:
+    3. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory and put `vpx.dll` and `FreeImage.dll` into `metahook/dlls` and add `vpx` info `metahook/configs/dllpaths.lst`. The results will be as follows:
    
     ```
         Sven Coop
@@ -51,18 +51,22 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
         │  │  ├─....
         │  │  ABCEnchance.res
         │  └─metahook
-        │     └─plugins
-        │        └─ABCEnchance.dll       
+        │     ├─plugins
+        │     │  └─ABCEnchance.dll
+        │     └─dlls
+        │        ├─FreeImage
+        │        │  └─FreeIamge.dll
+        │        └─vpx
+        │           └─vpx.dll
+        ├─svencoop_addon
+        │  └─resource
+        │     └─.....
         svencoop.exe
-        vpx.dll
-        FreeImage.dll
-
-
     ```
 
-    2. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line. Please load the plugin before CaptionMod.
+    4. Open `svencoop/metahook/configs/plugins.lst`, add `ABCEnchance.dll` as a new line. Please load the plugin before CaptionMod.
 
-    3. Edit the res file in `svencoop/abcenchance/` to your liking.
+    5. Edit the res file in `svencoop/abcenchance/` to your liking.
 
 # 🏗️ Build
  1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
