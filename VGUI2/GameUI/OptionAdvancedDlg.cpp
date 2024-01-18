@@ -108,6 +108,7 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pCrosshairDot->AddActionSignalTarget(this);
 	m_pCrosshairT->AddActionSignalTarget(this);
 	m_pCrosshairOutline->AddActionSignalTarget(this);
+	m_pFavCheckButton->AddActionSignalTarget(this);
 }
 COptionsAdvanceSubMultiPlay::~COptionsAdvanceSubMultiPlay(){
 	delete m_pSparyWad;
@@ -208,6 +209,9 @@ void COptionsAdvanceSubMultiPlay::OnOpenContextMenu(int itemID) {
 		menu->AddMenuItem("AddFav", "#GameUI_ABC_AddFav", new KeyValues("FavChange", "itemID", itemID, "add", 1), this);
 	menu->PositionRelativeToPanel(this, Menu::CURSOR, 0, true);
 	menu->MakePopup();
+}
+void COptionsAdvanceSubMultiPlay::OnCheckButtonChecked(int state) {
+	FilterModel();
 }
 void COptionsAdvanceSubMultiPlay::OnSliderMoved() {
 	m_pModelViewer->SetModelRotate(0, m_pModelController->GetValue(), 0);
