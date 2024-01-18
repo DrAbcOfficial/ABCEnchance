@@ -56,7 +56,11 @@ void MemoryBitmap::GetSize(int& wide, int& tall)
 	if (!_valid)
 		return;
 
-	surface()->DrawGetTextureSize(_id, wide, tall);
+	if (0 == _w && 0 == _h)
+		surface()->DrawGetTextureSize(_id, _w, _h);
+
+	wide = _w;
+	tall = _h;
 }
 
 //-----------------------------------------------------------------------------
@@ -72,6 +76,8 @@ void MemoryBitmap::GetContentSize(int& wide, int& tall)
 //-----------------------------------------------------------------------------
 void MemoryBitmap::SetSize(int x, int y)
 {
+	_w = x;
+	_h = y;
 }
 
 //-----------------------------------------------------------------------------
@@ -126,9 +132,11 @@ void MemoryBitmap::Paint()
 	surface()->DrawSetTexture(_id);
 	surface()->DrawSetColor(_color[0], _color[1], _color[2], _color[3]);
 
-	int wide, tall;
-	GetSize(wide, tall);
-	surface()->DrawTexturedRect(_pos[0], _pos[1], _pos[0] + wide, _pos[1] + tall);
+	if (_w == 0)
+		GetSize(_w, _h);
+
+	surface()->DrawTexturedRect(_pos[0], _pos[1], _pos[0] + _w, _pos[1] + _h);
+
 }
 
 
