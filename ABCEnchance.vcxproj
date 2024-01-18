@@ -259,16 +259,12 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="VGUI2\Bitmap.cpp" />
     <ClCompile Include="VGUI2\Border.cpp" />
     <ClCompile Include="VGUI2\ClientVGUI.cpp" />
-    <ClCompile Include="VGUI2\FontAmalgam.cpp" />
-    <ClCompile Include="VGUI2\FontManager.cpp" />
-    <ClCompile Include="VGUI2\FontTextureCache.cpp" />
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp" />
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp" />
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp" />
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp" />
     <ClCompile Include="VGUI2\VPanel.cpp" />
     <ClCompile Include="VGUI2\VPanelWrapper.cpp" />
-    <ClCompile Include="VGUI2\Win32Font.cpp" />
     <ClCompile Include="vgui_controls\AnalogBar.cpp" />
     <ClCompile Include="vgui_controls\AnimatingImagePanel.cpp" />
     <ClCompile Include="vgui_controls\AnimationController.cpp" />
@@ -531,9 +527,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\Bitmap.h" />
     <ClInclude Include="VGUI2\Border.h" />
     <ClInclude Include="VGUI2\ClientVGUI.h" />
-    <ClInclude Include="VGUI2\FontAmalgam.h" />
-    <ClInclude Include="VGUI2\FontManager.h" />
-    <ClInclude Include="VGUI2\FontTextureCache.h" />
     <ClInclude Include="VGUI2\GameUI\BasePanel.h" />
     <ClInclude Include="VGUI2\GameUI\GameConsole.h" />
     <ClInclude Include="VGUI2\GameUI\GameUI.h" />
@@ -545,9 +538,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\interface\IVanilliaPanel.h" />
     <ClInclude Include="VGUI2\interface\IViewportPanel.h" />
     <ClInclude Include="VGUI2\VGUI2.h" />
-    <ClInclude Include="VGUI2\viewport_panel_names.h" />
     <ClInclude Include="VGUI2\VPanel.h" />
-    <ClInclude Include="VGUI2\Win32Font.h" />
     <ClInclude Include="vgui_controls\AnalogBar.h" />
     <ClInclude Include="vgui_controls\AnimatingImagePanel.h" />
     <ClInclude Include="vgui_controls\AnimationController.h" />

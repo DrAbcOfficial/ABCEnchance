@@ -8,7 +8,6 @@
 #include <VGUI\IScheme.h>
 #include <VGUI\ILocalize.h>
 #include <VGUI\IInput.h>
-#include "FontTextureCache.h"
 #include <IEngineSurface.h>
 #include "vgui_internal.h"
 #include "IKeyValuesSystem.h"
