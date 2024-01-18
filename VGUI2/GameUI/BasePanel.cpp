@@ -17,12 +17,10 @@
 #include "GameUI/BasePanel.h"
 
 #include "exportfuncs.h"
-#include "plugins.h"
-#include <mymathlib.h>
-#include <Border.h>
 #include "OptionAdvancedDlg.h"
 
 extern void SysError(const char* message ...);
+extern DWORD g_dwEngineBuildnum;
 
 bool g_bInitialized = false;
 int g_iTextureID;
@@ -65,7 +63,7 @@ void ReadBackGroundList() {
 			break;
 		if (c >= 1) {
 			backgroundinfo_t* info = new backgroundinfo_t();
-			g_pFileSystem->GetLocalPath(buffer1, info->video, MAX_PATH);
+			vgui::filesystem()->GetLocalPath(buffer1, info->video, MAX_PATH);
 			strcpy(info->audio, buffer2);
 			g_aryBackGrounds.push_back(info);
 			c = 0;

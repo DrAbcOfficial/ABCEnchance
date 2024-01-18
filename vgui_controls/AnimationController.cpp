@@ -1097,7 +1097,7 @@ void AnimationController::RunAnimationCommand(Panel* panel, const char* variable
 //-----------------------------------------------------------------------------
 // Purpose: Runs a custom command from code, not from a script file
 //-----------------------------------------------------------------------------
-void AnimationController::RunAnimationCommand(Panel* panel, const char* variable, float* targetValue, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter /* = 0 */)
+void AnimationController::RunAnimationCommandEx(Panel* panel, const char* variable, float* targetValue, size_t targetNum, float startDelaySeconds, float duration, Interpolators_e interpolator, float animParameter /* = 0 */)
 {
 	// clear any previous animations of this variable
 	UtlSymId_t var = g_ScriptSymbols.AddString(variable);
@@ -1108,9 +1108,15 @@ void AnimationController::RunAnimationCommand(Panel* panel, const char* variable
 	memset(&animateCmd, 0, sizeof(animateCmd));
 	animateCmd.panel = 0;
 	animateCmd.variable = var;
-	animateCmd.target.a = targetValue[0];
-	animateCmd.target.b = targetValue[1];
-	animateCmd.target.c = targetValue[2];
+	switch (targetNum)
+	{
+		default:
+		case 4:animateCmd.target.d = targetValue[3];
+		case 3:animateCmd.target.c = targetValue[2];
+		case 2:animateCmd.target.b = targetValue[1];
+		case 1:animateCmd.target.a = targetValue[0]; 
+		case 0:break;
+	}
 	animateCmd.interpolationFunction = interpolator;
 	animateCmd.interpolationParameter = animParameter;
 	animateCmd.startTime = startDelaySeconds;
