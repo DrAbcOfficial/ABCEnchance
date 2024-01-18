@@ -1,9 +1,8 @@
 #include "plugins.h"
 #include <vector>
 #include <filesystem>
+#include <string>
 //Lib
-#include "cmath"
-#include "malloc.h"
 #include "cl_entity.h"
 #include "mymathlib.h"
 #include "com_model.h"
@@ -34,19 +33,15 @@
 //Base HUD
 #include "CCustomHud.h"
 #include "local.h"
-#include <string>
 #include "steam_api.h"
 #include "player_info.h"
 //HUD
-#include "ammo.h"
-#include "scoreboard.h"
 #include "neteasemusic.h"
 #include "Viewport.h"
 //efx
 #include "efxenchance.h"
 #include "viewmodellag.h"
 #include <voice_status.h>
-#include <CVector.h>
 #include <ClientParticleMan.h>
 
 extern void SysError(const char* message ...);
