@@ -58,7 +58,6 @@ static CBaseUI s_BaseUI;
 IBaseUI *baseuifuncs;
 IGameUIFuncs *gameuifuncs;
 
-extern vgui::ISchemeManager *g_pScheme;
 extern IKeyValuesSystem *g_pKeyValuesSystem;
 extern IEngineSurface *staticSurface;
 
@@ -72,9 +71,7 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 	if(hVGUI2)
 	{
 		CreateInterfaceFn fnVGUI2CreateInterface = Sys_GetFactory(hVGUI2);
-		g_pScheme = (vgui::ISchemeManager *)fnVGUI2CreateInterface(VGUI_SCHEME_INTERFACE_VERSION, NULL);
 		g_pKeyValuesSystem = (IKeyValuesSystem *)fnVGUI2CreateInterface(KEYVALUESSYSTEM_INTERFACE_VERSION, NULL);
-		g_pVGuiSchemeManager = g_pScheme;
 	}
 	staticSurface = (IEngineSurface *)factories[0](ENGINE_SURFACE_VERSION, NULL);
 

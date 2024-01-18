@@ -1,6 +1,3 @@
-#include <VGUI/IScheme.h>
-#include <VGUI/ISurface.h>
-#include <VGUI/ILocalize.h>
 #include "enginedef.h"
 #include "r_studioint.h"
 
