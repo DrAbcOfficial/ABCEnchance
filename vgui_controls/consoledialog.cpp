@@ -26,7 +26,7 @@
 #include <BaseUI.h>
 
 #include "vgui_controls/Button.h"
-#include "vgui/KeyCode.h"
+#include "vgui2/KeyCode.h"
 #include "vgui_controls/Menu.h"
 #include "vgui_controls/TextEntry.h"
 #include "vgui_controls/RichText.h"

@@ -17,11 +17,10 @@
 #include "vgui_controls/FileOpenDialog.h"
 #include "vgui_controls/Menu.h"
 #include "vgui_controls/MenuItem.h"
+#include "vgui_controls/MemoryBitmap.h"
 
 #include "FreeImage/FreeImage.h"
 #include "wadlib/wadfile.h"
-
-#include "vgui2/tga_image.h"
 
 #include <GaussianBlurPanel.h>
 #include <ModelViewPanel.h>
@@ -87,9 +86,7 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 
 	m_pSparyWad = new WadFile();
 
-	CTGAImage* bitmap = new CTGAImage();
 	m_pSpary = new ImagePanel(this, "SparyImage");
-	m_pSpary->SetImage(bitmap);
 	m_pLoadSpary = new Button(this, "SparyLoadButton", "#GameUI_ABC_LoadSpary", this, "OpenLoadSparyDialog");
 
 	m_pUrl = new URLLabel(this, "URLLable", "ABCEnchance  ||  " __DATE__, "https://github.com/DrAbcOfficial/ABCEnchance");
@@ -451,9 +448,7 @@ void COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t& oh){
 	oh = static_cast<size_t>(h);
 }
 void COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wide, size_t height){
-	CTGAImage* img = reinterpret_cast<CTGAImage*>(m_pSpary->GetImage());
-	surface()->DrawSetTextureRGBA(img->GetTextureId(), pixels, wide, height, true, false);
-	img->SetSize(wide, height);
+	m_pSpary->SetImage(new MemoryBitmap(pixels, wide, height));
 }
 
 

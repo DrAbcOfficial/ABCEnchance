@@ -1,5 +1,8 @@
 #include <metahook.h>
 
+#include "local.h"
+#include "vguilocal.h"
+
 #include <vector>
 #include <string>
 #include <thread>

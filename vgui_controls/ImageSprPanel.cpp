@@ -13,7 +13,7 @@
 #include <vgui/IBorder.h>
 #include <KeyValues.h>
 
-#include <vgui2/spr_image.h>
+#include <vgui_controls/spr_image.h>
 #include <vgui_controls/ImageSprPanel.h>
 #include <vgui_controls/Image.h>
 #include <vgui_controls/Controls.h>

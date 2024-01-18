@@ -18,7 +18,7 @@
 #include <tier1/utlflags.h>
 #include <tier1/utlsymbol.h>
 
-#include <vgui/VGUI.h>
+#include <vgui2/VGUI2.h>
 #include <vgui/Dar.h>
 #include <vgui/IClientPanel.h>
 #include <vgui/IScheme.h>
@@ -51,7 +51,6 @@ class CUtlBuffer;
 
 namespace vgui
 {
-
 #if !defined( _X360 )
 #define VGUI_USEDRAGDROP 1
 #endif

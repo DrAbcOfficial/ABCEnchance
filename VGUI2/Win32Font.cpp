@@ -5,7 +5,7 @@
 #include <malloc.h>
 #include "Win32Font.h"
 #include <tier0/dbg.h>
-#include <vgui/ISurface.h>
+#include <vgui/ISurface2.h>
 #include <tier0/mem.h>
 #include <tier1/utlbuffer.h>
 #include "FontManager.h"
@@ -89,17 +89,17 @@ bool CWin32Font::Create(const char *windowsFontName, int tall, int weight, int b
 	m_iTall = tall;
 	m_iWeight = weight;
 	m_iFlags = flags;
-	m_bAntiAliased = (flags & vgui::ISurface::FONTFLAG_ANTIALIAS) ? 1 : 0;
-	m_bUnderlined = flags & vgui::ISurface::FONTFLAG_UNDERLINE;
-	m_iDropShadowOffset = (flags & vgui::ISurface::FONTFLAG_DROPSHADOW) ? 1 : 0;
-	m_iOutlineSize = (flags & vgui::ISurface::FONTFLAG_OUTLINE) ? 1 : 0;
-	m_bOutlined = (flags & vgui::ISurface::FONTFLAG_OUTLINE2) ? true : false;
+	m_bAntiAliased = (flags & vgui::ISurface2::FONTFLAG_ANTIALIAS) ? 1 : 0;
+	m_bUnderlined = flags & vgui::ISurface2::FONTFLAG_UNDERLINE;
+	m_iDropShadowOffset = (flags & vgui::ISurface2::FONTFLAG_DROPSHADOW) ? 1 : 0;
+	m_iOutlineSize = (flags & vgui::ISurface2::FONTFLAG_OUTLINE) ? 1 : 0;
+	m_bOutlined = (flags & vgui::ISurface2::FONTFLAG_OUTLINE2) ? true : false;
 	m_iBlur = blur;
 	m_iScanLines = scanlines;
-	m_bRotary = (flags & vgui::ISurface::FONTFLAG_ROTARY) ? 1 : 0;
-	m_bAdditive = (flags & vgui::ISurface::FONTFLAG_ADDITIVE) ? 1 : 0;
+	m_bRotary = (flags & vgui::ISurface2::FONTFLAG_ROTARY) ? 1 : 0;
+	m_bAdditive = (flags & vgui::ISurface2::FONTFLAG_ADDITIVE) ? 1 : 0;
 
-	int charset = (flags & vgui::ISurface::FONTFLAG_SYMBOL) ? SYMBOL_CHARSET : DEFAULT_CHARSET;
+	int charset = (flags & vgui::ISurface2::FONTFLAG_SYMBOL) ? SYMBOL_CHARSET : DEFAULT_CHARSET;
 
 	if (!stricmp(windowsFontName, "win98japanese"))
 	{
@@ -123,7 +123,7 @@ bool CWin32Font::Create(const char *windowsFontName, int tall, int weight, int b
 		return false;
 	}
 
-	m_hFont = ::CreateFontA(tall, 0, 0, 0, m_iWeight, flags & vgui::ISurface::FONTFLAG_ITALIC, flags & vgui::ISurface::FONTFLAG_UNDERLINE, flags & vgui::ISurface::FONTFLAG_STRIKEOUT, charset, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, m_bAntiAliased ? ANTIALIASED_QUALITY : NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, windowsFontName);
+	m_hFont = ::CreateFontA(tall, 0, 0, 0, m_iWeight, flags & vgui::ISurface2::FONTFLAG_ITALIC, flags & vgui::ISurface2::FONTFLAG_UNDERLINE, flags & vgui::ISurface2::FONTFLAG_STRIKEOUT, charset, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, m_bAntiAliased ? ANTIALIASED_QUALITY : NONANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE, windowsFontName);
 
 	if (!m_hFont)
 	{
@@ -217,7 +217,7 @@ void CWin32Font::GetCharRGBA(int ch, int rgbaX, int rgbaY, int rgbaWide, int rgb
 
 	bool bShouldAntialias = m_bAntiAliased;
 
-	if (ch > 0x00FF && !(m_iFlags & vgui::ISurface::FONTFLAG_CUSTOM))
+	if (ch > 0x00FF && !(m_iFlags & vgui::ISurface2::FONTFLAG_CUSTOM))
 		bShouldAntialias = false;
 
 	if (!s_bSupportsUnicode)

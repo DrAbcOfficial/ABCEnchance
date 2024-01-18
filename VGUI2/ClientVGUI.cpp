@@ -107,7 +107,7 @@ IClientVGUI* g_pClientVGUI = nullptr;
 static CClientVGUI s_ClientVGUI;
 extern void AddHook(hook_t* hook);
 
-vgui::ISchemeManager2* g_pVGuiSchemeManager;
+vgui::ISchemeManager2* g_pVGuiSchemeManager2;
 vgui::ISurface2* g_pVGuiSurface;
 
 void ClientVGUIInstallHook(void){
@@ -124,8 +124,8 @@ void ClientVGUIInstallHook(void){
 			g_IsClientVGUI2 = true;
 		}
 		g_pVGuiSurface = (vgui::ISurface2*)ClientVGUICreateInterface(VGUI_SURFACE2_INTERFACE_VERSION, NULL);
-		g_pVGuiSchemeManager = (vgui::ISchemeManager2*)ClientVGUICreateInterface(VGUI_SCHEME2_INTERFACE_VERSION, NULL);
-		if (!g_pVGuiSurface || !g_pVGuiSchemeManager)
+		g_pVGuiSchemeManager2 = (vgui::ISchemeManager2*)ClientVGUICreateInterface(VGUI_SCHEME2_INTERFACE_VERSION, NULL);
+		if (!g_pVGuiSurface || !g_pVGuiSchemeManager2)
 			SysError("Your CaptionMod version are outdate, please update it and run again.");
 	}
 }

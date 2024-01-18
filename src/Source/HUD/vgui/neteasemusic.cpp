@@ -16,7 +16,7 @@
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/ImageClipPanel.h"
 #include "vgui_controls/Button.h"
-#include "VGUI2/avatar_image.h"
+#include "vgui_controls/avatar_image.h"
 
 #include "local.h"
 #include "vguilocal.h"

@@ -16,7 +16,6 @@ extern Color gDefaultColor;
 size_t ScreenHeight();
 // ScreenWidth returns the width of the screen, in pixels
 size_t ScreenWidth();
-
 //VGUI2
 #define VGUI2_ROOT_DIR "abcenchance/res/"
 enum {

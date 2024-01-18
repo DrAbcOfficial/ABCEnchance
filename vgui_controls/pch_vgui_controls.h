@@ -32,7 +32,7 @@
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/IVGUI.h>
-#include <vgui/KeyCode.h>
+#include <vgui2/KeyCode.h>
 #include <vgui/Cursor.h>
 #include <vgui/MouseCode.h>
 
