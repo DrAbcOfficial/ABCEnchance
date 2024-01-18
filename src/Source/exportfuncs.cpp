@@ -1,6 +1,5 @@
 #include "plugins.h"
 #include <vector>
-#include <filesystem>
 #include <string>
 //Lib
 #include "cl_entity.h"
@@ -337,30 +336,24 @@ void HUD_Init(void){
 	gEngfuncs.pfnAddCommand("models", []() {
 		if (gEngfuncs.Cmd_Argc() <= 1)
 			return;
-		static auto toLower = [](std::string& sz) {
-			std::transform(sz.begin(), sz.end(), sz.begin(),
-				[](unsigned char c) { return std::tolower(c); });
-		};
-		static auto searchAndprint = [&](const char* subpath) {
-			std::string szPath = gEngfuncs.pfnGetGameDirectory();
-			szPath += subpath;
-			if (std::filesystem::exists(szPath)) {
-				std::filesystem::directory_iterator iter(szPath);
-				for (const auto& entry : iter) {
-					if (std::filesystem::is_directory(entry)) {
-						std::string szName = entry.path().filename().string();
-						toLower(szName);
-						if (szName.find(gEngfuncs.Cmd_Argv(1)) != std::string::npos)
-							gEngfuncs.Con_Printf("%s\n", szName.c_str());
-					}
-				}
-			}
-		};
+		std::string sz = gEngfuncs.Cmd_Argv(1);
+		std::transform(sz.begin(), sz.end(), sz.begin(), std::tolower);
+		sz = "models/player/" + sz + "*.*";
 		gEngfuncs.Con_Printf("Models\n==============\n");
-		searchAndprint("/models/player");
-		searchAndprint("_addon/models/player");
-		searchAndprint("_downloads/models/player");
-		searchAndprint("_hd/models/player");
+		FileFindHandle_t walk;
+		auto pszFileName = vgui::filesystem()->FindFirst(sz.c_str(), &walk);
+		if (pszFileName) {
+			do {
+				if (vgui::filesystem()->FindIsDirectory(walk))
+					gEngfuncs.Con_Printf("%s\n", pszFileName);
+			} while ((pszFileName = vgui::filesystem()->FindNext(walk)) != nullptr);
+		}
+		else {
+			gEngfuncs.Con_Printf("!!!Noting!!!\n");
+			gEngfuncs.Con_Printf("==============\n");
+			return;
+		}
+		vgui::filesystem()->FindClose(walk);
 		gEngfuncs.Con_Printf("==============\n");
 	});
 
