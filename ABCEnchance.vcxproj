@@ -284,7 +284,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\consoledialog.cpp" />
     <ClCompile Include="vgui_controls\ControllerMap.cpp" />
     <ClCompile Include="vgui_controls\Controls.cpp" />
-    <ClCompile Include="vgui_controls\CrossHairDispay.cpp" />
     <ClCompile Include="vgui_controls\CrossHairDisplay.cpp" />
     <ClCompile Include="vgui_controls\CvarSlider.cpp" />
     <ClCompile Include="vgui_controls\CvarToggleCheckButton.cpp" />
@@ -545,6 +544,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\interface\IGameUIFuncs.h" />
     <ClInclude Include="VGUI2\interface\IVanilliaPanel.h" />
     <ClInclude Include="VGUI2\interface\IViewportPanel.h" />
+    <ClInclude Include="VGUI2\VGUI2.h" />
     <ClInclude Include="VGUI2\viewport_panel_names.h" />
     <ClInclude Include="VGUI2\VPanel.h" />
     <ClInclude Include="VGUI2\Win32Font.h" />

@@ -15,7 +15,7 @@
 #include <malloc.h>
 #endif
 
-#include <vgui/vgui.h>
+#include <vgui2/vgui2.h>
 #include <vgui/IPanel.h>
 #include <vgui/ISurface.h>
 #include <vgui/IScheme.h>

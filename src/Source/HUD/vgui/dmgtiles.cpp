@@ -6,8 +6,8 @@
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
-#include <VGUI2/spr_image.h>
 
+#include "vgui_controls/spr_image.h"
 #include "vgui_controls/Panel.h"
 #include "vgui_controls/Label.h"
 #include "vgui_controls/ImagePanel.h"

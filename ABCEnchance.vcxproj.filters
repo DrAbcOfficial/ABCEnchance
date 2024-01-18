@@ -485,9 +485,6 @@
     <ClCompile Include="vgui_controls\Controls.cpp">
       <Filter>vgui_controls</Filter>
     </ClCompile>
-    <ClCompile Include="vgui_controls\CrossHairDispay.cpp">
-      <Filter>vgui_controls</Filter>
-    </ClCompile>
     <ClCompile Include="vgui_controls\CrossHairDisplay.cpp">
       <Filter>vgui_controls</Filter>
     </ClCompile>
@@ -1539,6 +1536,9 @@
     </ClInclude>
     <ClInclude Include="vgui_controls\avatar_image.h">
       <Filter>vgui_controls</Filter>
+    </ClInclude>
+    <ClInclude Include="VGUI2\VGUI2.h">
+      <Filter>VGUI2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

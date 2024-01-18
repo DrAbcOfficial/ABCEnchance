@@ -1,7 +1,7 @@
 #include <locale.h>
 #include "FontManager.h"
 #include <tier0/dbg.h>
-#include <vgui/ISurface.h>
+#include <vgui/ISurface2.h>
 #include "vgui_internal.h"
 
 static CFontManager s_FontManager;
@@ -49,7 +49,7 @@ bool CFontManager::AddGlyphSetToFont(HFont font, const char *windowsFontName, in
 
 	CWin32Font *winFont = CreateOrFindWin32Font(windowsFontName, tall, weight, blur, scanlines, flags);
 
-	if (flags & vgui::ISurface::FONTFLAG_CUSTOM)
+	if (flags & vgui::ISurface2::FONTFLAG_CUSTOM)
 	{
 		if (winFont)
 			m_FontAmalgams[font].AddFont(winFont, 0x0, 0xFFFF);
@@ -145,7 +145,7 @@ int CFontManager::GetFontAscent(HFont font, wchar_t wch)
 
 bool CFontManager::IsFontAdditive(HFont font)
 {
-	return (m_FontAmalgams[font].GetFlags(0) & vgui::ISurface::FONTFLAG_ADDITIVE) ? true : false;
+	return (m_FontAmalgams[font].GetFlags(0) & vgui::ISurface2::FONTFLAG_ADDITIVE) ? true : false;
 }
 
 int CFontManager::GetCharacterWidth(vgui::HFont font, int ch)

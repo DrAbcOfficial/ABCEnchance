@@ -8,7 +8,7 @@
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
-#include <vgui2/spr_image.h>
+#include <vgui_controls/spr_image.h>
 #include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/AnimationController.h>
 #include "ammobar.h"

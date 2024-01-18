@@ -14,9 +14,11 @@
 #include <vgui/ILocalize.h>
 #include <vgui/IScheme.h>
 #include <vgui/ISurface.h>
-#include <KeyValues.h>
 #include <vgui/MouseCode.h>
 
+#include <KeyValues.h>
+
+#include "VGUI2/KeyCode.h"
 #include <vguilocal.h>
 
 #include <vgui_controls/SectionedListPanel.h>

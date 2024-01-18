@@ -19,7 +19,7 @@
 #include <vgui/IInput.h>
 #include <vgui/IInputInternal.h>
 #include <vgui/IPanel.h>
-#include <vgui/IScheme.h>
+#include <vgui/IScheme2.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
@@ -6050,7 +6050,7 @@ class CHFontProperty : public vgui::IPanelAnimationPropertyConverter
 public:
 	virtual void GetData(Panel* panel, KeyValues* kv, PanelAnimationMapEntry* entry)
 	{
-		vgui::IScheme* scheme = vgui::scheme()->GetIScheme(panel->GetScheme());
+		vgui::IScheme2* scheme = reinterpret_cast<IScheme2*>(vgui::scheme()->GetIScheme(panel->GetScheme()));
 		Assert(scheme);
 		if (scheme)
 		{

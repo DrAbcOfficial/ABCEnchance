@@ -11,7 +11,7 @@
 #include <vgui/IScheme.h>
 #include <vgui/ISystem.h>
 #include <vgui/IVGui.h>
-#include <vgui/KeyCode.h>
+#include <vgui2/KeyCode.h>
 #include <KeyValues.h>
 #include <vgui/MouseCode.h>
 #include <vgui/ISurface.h>

@@ -15,7 +15,7 @@
 #include <vgui/ISystem.h>
 #include <vgui/IVGui.h>
 #include <vgui/MouseCode.h>
-#include <vgui/KeyCode.h>
+#include <vgui2/KeyCode.h>
 #include <KeyValues.h>
 
 #include <vgui_controls/Button.h>
@@ -337,7 +337,7 @@ void Button::NavigateFrom()
 
 	SetArmed(false);
 
-	OnKeyCodeReleased(KEY_XBUTTON_A);
+	OnKeyCodeReleased(static_cast<vgui::KeyCode>(KEY_XBUTTON_A));
 }
 
 //-----------------------------------------------------------------------------
