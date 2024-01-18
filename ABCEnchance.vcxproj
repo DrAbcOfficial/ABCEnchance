@@ -313,6 +313,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\LabelEx.cpp" />
     <ClCompile Include="vgui_controls\ListPanel.cpp" />
     <ClCompile Include="vgui_controls\ListViewPanel.cpp" />
+    <ClCompile Include="vgui_controls\MemoryBitmap.cpp" />
     <ClCompile Include="vgui_controls\Menu.cpp" />
     <ClCompile Include="vgui_controls\MenuBar.cpp" />
     <ClCompile Include="vgui_controls\MenuButton.cpp" />
@@ -611,6 +612,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\LabelEx.h" />
     <ClInclude Include="vgui_controls\ListPanel.h" />
     <ClInclude Include="vgui_controls\ListViewPanel.h" />
+    <ClInclude Include="vgui_controls\MemoryBitmap.h" />
     <ClInclude Include="vgui_controls\Menu.h" />
     <ClInclude Include="vgui_controls\MenuBar.h" />
     <ClInclude Include="vgui_controls\MenuButton.h" />

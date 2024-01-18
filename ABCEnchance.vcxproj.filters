@@ -416,12 +416,6 @@
     <ClCompile Include="VGUI2\FontAmalgam.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
-    <ClCompile Include="VGUI2\SurfaceHook.cpp">
-      <Filter>VGUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\Surface.cpp">
-      <Filter>VGUI2</Filter>
-    </ClCompile>
     <ClCompile Include="VGUI2\Bitmap.cpp">
       <Filter>VGUI2</Filter>
     </ClCompile>
@@ -689,6 +683,9 @@
     <ClCompile Include="src\Source\Utility\win32helper.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="vgui_controls\MemoryBitmap.cpp">
+      <Filter>VGUI\control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -713,9 +710,6 @@
       <Filter>VGUI</Filter>
     </ClInclude>
     <ClInclude Include="VGUI\ISystem.h">
-      <Filter>VGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI\ISurface2.h">
       <Filter>VGUI</Filter>
     </ClInclude>
     <ClInclude Include="VGUI\IScheme.h">
@@ -1210,9 +1204,6 @@
     <ClInclude Include="VGUI2\FontAmalgam.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
-    <ClInclude Include="VGUI2\SurfaceHook.h">
-      <Filter>VGUI2</Filter>
-    </ClInclude>
     <ClInclude Include="VGUI2\Bitmap.h">
       <Filter>VGUI2</Filter>
     </ClInclude>
@@ -1605,6 +1596,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\Utility\win32helper.h">
       <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\MemoryBitmap.h">
+      <Filter>VGUI\control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
