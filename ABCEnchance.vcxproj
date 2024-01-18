@@ -242,7 +242,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\Utility\parsemsg.cpp" />
     <ClCompile Include="src\Source\Utility\player_info.cpp" />
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp" />
-    <ClCompile Include="src\Source\Utility\regquery.cpp" />
     <ClCompile Include="src\Source\Utility\steamid.cpp" />
     <ClCompile Include="src\Source\Utility\svc_hook.cpp" />
     <ClCompile Include="src\Source\Utility\Task.cpp" />
@@ -496,7 +495,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\Utility\parsemsg.h" />
     <ClInclude Include="src\Header\Utility\player_info.h" />
     <ClInclude Include="src\Header\Utility\qrcodegen.h" />
-    <ClInclude Include="src\Header\Utility\regquery.h" />
     <ClInclude Include="src\Header\Utility\svc_hook.h" />
     <ClInclude Include="src\Header\Utility\Task.h" />
     <ClInclude Include="src\Header\Utility\win32helper.h" />

@@ -10,5 +10,6 @@ std::string Win32GetDefaultValueFromRegistry(HKEY hKey, const std::string& subKe
 HICON Win32GetFileIconByExtension(const std::string& extension);
 BITMAP Win32GetBitmapInfo(HICON hIcon);
 std::vector<unsigned char> Win32ConvertHICONToRGBA(HICON hIcon, size_t& ww, size_t& hh);
+void Win32GetRegKeyValue(char* pszSubKey, char* pszElement, char* pszReturnString, int nReturnLength, char* pszDefaultValue);
 #endif // WIN32
 

@@ -105,6 +105,15 @@
     <Filter Include="vgui_controls\base">
       <UniqueIdentifier>{d6358a88-bc48-463b-9218-d2fcf8a74a7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Header\HUD\legacy">
+      <UniqueIdentifier>{0a7e9ba5-0189-4d79-a984-b4060d980d44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Header\LIb">
+      <UniqueIdentifier>{36642d05-7eed-4e41-bd6d-17935118c305}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Source\LIb">
+      <UniqueIdentifier>{e12ea5e1-0aa6-43da-a112-d3b27347411f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
@@ -251,19 +260,10 @@
     <ClCompile Include="src\Source\Utility\opengl\gl_utility.cpp">
       <Filter>Public\Source\Utility\opengl</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\client_steam_context.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\mymathlib.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\parsemsg.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Utility\player_info.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\regquery.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Utility\steamid.cpp">
@@ -377,15 +377,6 @@
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp">
       <Filter>vgui2\gameui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\NeteaseApi.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\crypto.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\curl.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
@@ -394,9 +385,6 @@
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\neteasemusic.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\Task.cpp">
-      <Filter>Public\Source\Utility</Filter>
     </ClCompile>
     <ClCompile Include="src\liblrc\lrc_parser.cpp">
       <Filter>Public\liblrc</Filter>
@@ -674,6 +662,24 @@
     <ClCompile Include="vgui_controls\WizardSubPanel.cpp">
       <Filter>vgui_controls\base</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\Utility\client_steam_context.cpp">
+      <Filter>Public\Source\LIb</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\crypto.cpp">
+      <Filter>Public\Source\LIb</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\curl.cpp">
+      <Filter>Public\Source\LIb</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\mymathlib.cpp">
+      <Filter>Public\Source\LIb</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\NeteaseApi.cpp">
+      <Filter>Public\Source\LIb</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\Task.cpp">
+      <Filter>Public\Source\LIb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -922,55 +928,22 @@
     <ClInclude Include="src\Header\HUD\vgui\scoreboard.h">
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\ammo.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\basehud.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\cctv.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\CCustomHud.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\eccobuymenu.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\indicator.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\historyresource.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\itemhighlight.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\numdisplay.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\Viewport.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\weaponbank.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\client_steam_context.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Utility\CVector.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\mymathlib.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\parsemsg.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\player_info.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\regquery.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\svc_hook.h">
@@ -1041,9 +1014,6 @@
     </ClInclude>
     <ClInclude Include="src\Header\viewmodellag.h">
       <Filter>Public\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\weaponselect.h">
-      <Filter>Public\Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\playerboard.h">
       <Filter>Public\Header\HUD\vgui</Filter>
@@ -1156,18 +1126,6 @@
     <ClInclude Include="VGUI2\GameUI\GameUI.h">
       <Filter>vgui2\gameui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Utility\NeteaseApi.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\crypto.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\curl.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\qrcodegen.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="src\Fmod\fmod.h">
       <Filter>Public\Fmod</Filter>
     </ClInclude>
@@ -1206,12 +1164,6 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\neteasemusic.h">
       <Filter>Public\Header\HUD\vgui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\formatter.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\Task.h">
-      <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\liblrc\lrc_parser.h">
       <Filter>Public\liblrc</Filter>
@@ -1506,6 +1458,57 @@
     </ClInclude>
     <ClInclude Include="vgui_controls\FileOpenDialog.h">
       <Filter>vgui_controls\dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\ammo.h">
+      <Filter>Public\Header\HUD\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\cctv.h">
+      <Filter>Public\Header\HUD\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\eccobuymenu.h">
+      <Filter>Public\Header\HUD\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\historyresource.h">
+      <Filter>Public\Header\HUD\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\indicator.h">
+      <Filter>Public\Header\HUD\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\itemhighlight.h">
+      <Filter>Public\Header\HUD\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\numdisplay.h">
+      <Filter>Public\Header\HUD\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\weaponbank.h">
+      <Filter>Public\Header\HUD\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\weaponselect.h">
+      <Filter>Public\Header\HUD\legacy</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\client_steam_context.h">
+      <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\crypto.h">
+      <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\curl.h">
+      <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\formatter.h">
+      <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\mymathlib.h">
+      <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\NeteaseApi.h">
+      <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\qrcodegen.h">
+      <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\Task.h">
+      <Filter>Public\Header\LIb</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

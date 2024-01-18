@@ -21,7 +21,6 @@
 #include "weapon.h"
 #include "usercmd.h"
 #include "extraprecache.h"
-#include "regquery.h"
 #include "pm_defs.h"
 #include "usercmd.h"
 #include "StudioModelRenderer.h"

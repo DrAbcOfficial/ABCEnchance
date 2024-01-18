@@ -103,4 +103,43 @@ std::vector<unsigned char> Win32ConvertHICONToRGBA(HICON hIcon, size_t& ww, size
 	DeleteDC(hdc);
 	return rgba;
 }
+void Sys_GetRegKeyValueUnderRoot(HKEY rootKey, const char* pszSubKey, const char* pszElement, char* pszReturnString, int nReturnLength, const char* pszDefaultValue){
+	LONG lResult;
+	HKEY hKey;
+	char szBuff[128];
+	DWORD dwDisposition;
+	DWORD dwType;
+	DWORD dwSize;
+	snprintf(pszReturnString, nReturnLength, pszDefaultValue);
+	lResult = RegCreateKeyEx(
+		rootKey,
+		pszSubKey,
+		0,
+		(LPSTR)"String",
+		REG_OPTION_NON_VOLATILE,
+		KEY_ALL_ACCESS,
+		NULL,
+		&hKey,
+		&dwDisposition);
+	if (lResult != ERROR_SUCCESS)
+		return;
+	if (dwDisposition == REG_CREATED_NEW_KEY)
+		lResult = RegSetValueEx(hKey, pszElement, 0, REG_SZ, (CONST BYTE*)pszDefaultValue, strlen(pszDefaultValue) + 1);
+	else{
+		dwSize = nReturnLength;
+		lResult = RegQueryValueEx(hKey, pszElement, 0, &dwType, (unsigned char*)szBuff, &dwSize);
+		if (lResult == ERROR_SUCCESS){
+			if (dwType == REG_SZ){
+				strncpy(pszReturnString, szBuff, nReturnLength);
+				pszReturnString[nReturnLength - 1] = '\0';
+			}
+		}
+		else
+			lResult = RegSetValueEx(hKey, pszElement, 0, REG_SZ, (CONST BYTE*)pszDefaultValue, strlen(pszDefaultValue) + 1);
+	};
+	RegCloseKey(hKey);
+}
+void Win32GetRegKeyValue(char* pszSubKey, char* pszElement, char* pszReturnString, int nReturnLength, char* pszDefaultValue){
+	Sys_GetRegKeyValueUnderRoot(HKEY_CURRENT_USER, pszSubKey, pszElement, pszReturnString, nReturnLength, pszDefaultValue);
+}
 #endif
