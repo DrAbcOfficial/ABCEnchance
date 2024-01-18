@@ -77,7 +77,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Debug\include\GL;..\..\thirdparty\install\capstone\x86\Debug\include\capstone;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\VGUI;..\..\include\HLSDK\cl_dll;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Debug\include\GL;..\..\thirdparty\install\capstone\x86\Debug\include\capstone;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -254,7 +254,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\viewmodellag.cpp" />
     <ClCompile Include="src\wadlib\texture.cpp" />
     <ClCompile Include="src\wadlib\wadfile.cpp" />
-    <ClCompile Include="VGUI2\avatar_image.cpp" />
     <ClCompile Include="VGUI2\BaseUI.cpp" />
     <ClCompile Include="VGUI2\Bitmap.cpp" />
     <ClCompile Include="VGUI2\Border.cpp" />
@@ -266,15 +265,13 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp" />
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp" />
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp" />
-    <ClCompile Include="VGUI2\Scheme2.cpp" />
-    <ClCompile Include="VGUI2\spr_image.cpp" />
-    <ClCompile Include="VGUI2\tga_image.cpp" />
     <ClCompile Include="VGUI2\VPanel.cpp" />
     <ClCompile Include="VGUI2\VPanelWrapper.cpp" />
     <ClCompile Include="VGUI2\Win32Font.cpp" />
     <ClCompile Include="vgui_controls\AnalogBar.cpp" />
     <ClCompile Include="vgui_controls\AnimatingImagePanel.cpp" />
     <ClCompile Include="vgui_controls\AnimationController.cpp" />
+    <ClCompile Include="vgui_controls\avatar_image.cpp" />
     <ClCompile Include="vgui_controls\BitmapImagePanel.cpp" />
     <ClCompile Include="vgui_controls\BuildFactoryHelper.cpp" />
     <ClCompile Include="vgui_controls\BuildGroup.cpp" />
@@ -287,6 +284,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\consoledialog.cpp" />
     <ClCompile Include="vgui_controls\ControllerMap.cpp" />
     <ClCompile Include="vgui_controls\Controls.cpp" />
+    <ClCompile Include="vgui_controls\CrossHairDispay.cpp" />
     <ClCompile Include="vgui_controls\CrossHairDisplay.cpp" />
     <ClCompile Include="vgui_controls\CvarSlider.cpp" />
     <ClCompile Include="vgui_controls\CvarToggleCheckButton.cpp" />
@@ -340,10 +338,12 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\SectionedListPanel.cpp" />
     <ClCompile Include="vgui_controls\Slider.cpp" />
     <ClCompile Include="vgui_controls\Splitter.cpp" />
+    <ClCompile Include="vgui_controls\spr_image.cpp" />
     <ClCompile Include="vgui_controls\subrectimage.cpp" />
     <ClCompile Include="vgui_controls\TextEntry.cpp" />
     <ClCompile Include="vgui_controls\TextImage.cpp" />
     <ClCompile Include="vgui_controls\TextImageEx.cpp" />
+    <ClCompile Include="vgui_controls\tga_image.cpp" />
     <ClCompile Include="vgui_controls\ToggleButton.cpp" />
     <ClCompile Include="vgui_controls\Tooltip.cpp" />
     <ClCompile Include="vgui_controls\ToolWindow.cpp" />
@@ -528,7 +528,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Particleman\pman_triangleffect.h" />
     <ClInclude Include="src\wadlib\texture.h" />
     <ClInclude Include="src\wadlib\wadfile.h" />
-    <ClInclude Include="VGUI2\avatar_image.h" />
     <ClInclude Include="VGUI2\BaseUI.h" />
     <ClInclude Include="VGUI2\Bitmap.h" />
     <ClInclude Include="VGUI2\Border.h" />
@@ -546,33 +545,13 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="VGUI2\interface\IGameUIFuncs.h" />
     <ClInclude Include="VGUI2\interface\IVanilliaPanel.h" />
     <ClInclude Include="VGUI2\interface\IViewportPanel.h" />
-    <ClInclude Include="VGUI2\spr_image.h" />
-    <ClInclude Include="VGUI2\tga_image.h" />
     <ClInclude Include="VGUI2\viewport_panel_names.h" />
     <ClInclude Include="VGUI2\VPanel.h" />
     <ClInclude Include="VGUI2\Win32Font.h" />
-    <ClInclude Include="VGUI\Cursor.h" />
-    <ClInclude Include="VGUI\Dar.h" />
-    <ClInclude Include="VGUI\IBorder.h" />
-    <ClInclude Include="VGUI\IClientPanel.h" />
-    <ClInclude Include="VGUI\IEngineVGui.h" />
-    <ClInclude Include="VGUI\IHTML.h" />
-    <ClInclude Include="VGUI\IImage.h" />
-    <ClInclude Include="VGUI\IInput.h" />
-    <ClInclude Include="VGUI\IInputInternal.h" />
-    <ClInclude Include="VGUI\ILocalize.h" />
-    <ClInclude Include="VGUI\IPanel.h" />
-    <ClInclude Include="VGUI\IScheme.h" />
-    <ClInclude Include="VGUI\ISurface.h" />
-    <ClInclude Include="VGUI\ISystem.h" />
-    <ClInclude Include="VGUI\IVGUI.h" />
-    <ClInclude Include="VGUI\KeyCode.h" />
-    <ClInclude Include="VGUI\MouseCode.h" />
-    <ClInclude Include="VGUI\OLDDar.h" />
-    <ClInclude Include="VGUI\VGUI.h" />
     <ClInclude Include="vgui_controls\AnalogBar.h" />
     <ClInclude Include="vgui_controls\AnimatingImagePanel.h" />
     <ClInclude Include="vgui_controls\AnimationController.h" />
+    <ClInclude Include="vgui_controls\avatar_image.h" />
     <ClInclude Include="vgui_controls\BitmapImagePanel.h" />
     <ClInclude Include="vgui_controls\BuildGroup.h" />
     <ClInclude Include="vgui_controls\BuildModeDialog.h" />
@@ -643,10 +622,12 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\SectionedListPanel.h" />
     <ClInclude Include="vgui_controls\Slider.h" />
     <ClInclude Include="vgui_controls\Splitter.h" />
+    <ClInclude Include="vgui_controls\spr_image.h" />
     <ClInclude Include="vgui_controls\subrectimage.h" />
     <ClInclude Include="vgui_controls\TextEntry.h" />
     <ClInclude Include="vgui_controls\TextImage.h" />
     <ClInclude Include="vgui_controls\TextImageEx.h" />
+    <ClInclude Include="vgui_controls\tga_image.h" />
     <ClInclude Include="vgui_controls\ToggleButton.h" />
     <ClInclude Include="vgui_controls\Tooltip.h" />
     <ClInclude Include="vgui_controls\ToolWindow.h" />

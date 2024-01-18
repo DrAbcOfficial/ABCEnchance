@@ -1,13 +1,5 @@
 #include <metahook.h>
 
-#include "local.h"
-#include "vguilocal.h"
-#include "IFileSystem.h"
-#include "IVanilliaPanel.h"
-
-#include <vgui_controls/Slider.h>
-#include <ModelViewPanel.h>
-
 #include <vector>
 #include <string>
 #include <thread>

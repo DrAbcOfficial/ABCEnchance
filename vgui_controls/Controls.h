@@ -32,7 +32,7 @@
 extern IFileSystem *g_pFullFileSystem;
 
 extern vgui::IInput *g_pVGuiInput;
-extern vgui::ISchemeManager *g_pVGuiSchemeManager;
+extern vgui::ISchemeManager2 *g_pVGuiSchemeManager;
 extern vgui::ISurface2 *g_pVGuiSurface;
 extern vgui::ISystem *g_pVGuiSystem;
 extern vgui::IVGui *g_pVGui;
@@ -74,13 +74,13 @@ inline vgui::IInputInternal *inputinternal()
 	return (vgui::IInputInternal *)g_pVGuiInput;
 }
 
-// #include <vgui/IScheme.h>
-inline vgui::ISchemeManager *scheme()
+// #include <vgui/IScheme2.h>
+inline vgui::ISchemeManager2 *scheme()
 {
 	return g_pVGuiSchemeManager;
 }
 
-// #include <vgui/ISurface.h>
+// #include <vgui/ISurface2.h>
 inline vgui::ISurface2 *surface()
 {
 	return g_pVGuiSurface;
