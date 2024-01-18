@@ -1,21 +1,5 @@
 $conflictPlugins = @("CommunicationDemo.dll")
 
-function WritePluginLine($path){
-    $lines = Get-Content($path)
-    $new = "ABCEnchance.dll`n"
-    $newLines = @($new)
-    foreach($l in $lines){
-        if(!(([string]$l).CompareTo($new))){
-            continue
-        }
-        if($conflictPlugins.Contains($l)){
-            Write-Warning "$($l) conflicts with ABCEnchance and has been removed from the load list"
-            continue
-        }
-        $newLines += @("$($l)`n")
-    }
-    Set-Content $path -Value $newLines
-}
 $svenLocation = (Get-ItemPropertyValue -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 225840" -Name "InstallLocation" -ErrorAction SilentlyContinue)
 if([String]::IsNullOrEmpty($svenLocation)){
     $pinfo = New-Object System.Diagnostics.ProcessStartInfo
@@ -33,13 +17,40 @@ if([String]::IsNullOrEmpty($svenLocation)){
 $metaLocation = "$($svenLocation)/svencoop/metahook/"
 if(Test-Path("$($svenLocation)/svencoop")){
     Write-Output "Copying dlls"
-    Copy-Item -Force -Path "./abcenchance" -Destination "$($svenLocation)/svencoop"
+    Copy-Item -Force -Path "./svencoop" -Destination "$($svenLocation)"
+    Copy-Item -Force -Path "./svencoop_addon" -Destination "$($svenLocation)"
     Copy-Item -Force -Path "./ABCEnchance.dll" -Destination "$($metaLocation)/plugins"
     Copy-Item -Force -Path "./ABCEnchance_AVX2.dll" -Destination "$($metaLocation)/plugins"
     Write-Output "Done"
+    Write-Output "Writing config load list"
+    if(Test-Path("$($metaLocation)/configs/dllpaths.lst")){
+        $lines = Get-Content("$($metaLocation)/configs/dllpaths.lst")
+		$new = "vpx`n"
+		$newLines = @($new)
+		foreach($l in $lines){
+			if(!(([string]$l).CompareTo($new))){
+				continue
+			}
+			$newLines += @("$($l)`n")
+		}
+		Set-Content "$($metaLocation)/configs/dllpaths.lst" -Value $newLines
+    }
     Write-Output "Writing plugin load list"
     if(Test-Path("$($metaLocation)/configs/plugins.lst")){
-        WritePluginLine "$($metaLocation)/configs/plugins.lst"
+        $lines = Get-Content("$($metaLocation)/configs/plugins.lst")
+		$new = "ABCEnchance.dll`n"
+		$newLines = @($new)
+		foreach($l in $lines){
+			if(!(([string]$l).CompareTo($new))){
+				continue
+			}
+			if($conflictPlugins.Contains($l)){
+				Write-Warning "$($l) conflicts with ABCEnchance and has been removed from the load list"
+				continue
+			}
+			$newLines += @("$($l)`n")
+		}
+		Set-Content "$($metaLocation)/configs/plugins.lst" -Value $newLines
     }
     Write-Output "Done"
 }
