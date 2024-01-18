@@ -54,9 +54,6 @@
     <Filter Include="SourceSDK\vstdlib">
       <UniqueIdentifier>{d217d160-6b96-4e48-95f4-cc8d170da775}</UniqueIdentifier>
     </Filter>
-    <Filter Include="VGUI2">
-      <UniqueIdentifier>{4482ca35-4aaa-4534-9fc7-8485e221c687}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Public\Source\HUD\vgui">
       <UniqueIdentifier>{3e33e7f1-0416-451d-9d2b-dfc1263ecde5}</UniqueIdentifier>
     </Filter>
@@ -72,14 +69,8 @@
     <Filter Include="Public\Particleman">
       <UniqueIdentifier>{022c55ca-987d-47f3-bc42-d90dcab1b592}</UniqueIdentifier>
     </Filter>
-    <Filter Include="VGUI2\interface">
-      <UniqueIdentifier>{57059889-dcf1-4422-bbb4-a16b2ded33b6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="vpx">
       <UniqueIdentifier>{a1f28372-aa4c-49ce-9f8e-6ee600e9caa4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="VGUI2\gameui">
-      <UniqueIdentifier>{42740f0e-8fa8-480d-984a-fc1be9d4e576}</UniqueIdentifier>
     </Filter>
     <Filter Include="Public\Fmod">
       <UniqueIdentifier>{c5d8daf0-4fe0-4687-8d97-a6511c5c0de5}</UniqueIdentifier>
@@ -95,6 +86,15 @@
     </Filter>
     <Filter Include="vgui_controls">
       <UniqueIdentifier>{7888dd84-dee7-4110-9bfe-431022c3f8c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vgui2">
+      <UniqueIdentifier>{4482ca35-4aaa-4534-9fc7-8485e221c687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vgui2\interface">
+      <UniqueIdentifier>{57059889-dcf1-4422-bbb4-a16b2ded33b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vgui2\gameui">
+      <UniqueIdentifier>{42740f0e-8fa8-480d-984a-fc1be9d4e576}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -186,31 +186,31 @@
       <Filter>SourceSDK\tier0</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\ClientVGUI.cpp">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\VPanel.cpp">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\FontTextureCache.cpp">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\FontManager.cpp">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\FontAmalgam.cpp">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\Bitmap.cpp">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\Border.cpp">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\Win32Font.cpp">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\VPanelWrapper.cpp">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\scoreboard.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
@@ -369,16 +369,16 @@
       <Filter>vpx</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\BaseUI.cpp">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Utility\NeteaseApi.cpp">
       <Filter>Public\Source\Utility</Filter>
@@ -414,7 +414,7 @@
       <Filter>Public\Source</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="src\wadlib\wadfile.cpp">
       <Filter>Public\wadlib</Filter>
@@ -905,28 +905,28 @@
       <Filter>SourceSDK\mathlib</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\VPanel.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\FontTextureCache.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\FontManager.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\FontAmalgam.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\Bitmap.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\Border.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\Win32Font.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\viewport_panel_names.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
     <ClInclude Include="SourceSDK\tier1\utldelegate.h">
       <Filter>SourceSDK\tier1</Filter>
@@ -1109,19 +1109,19 @@
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\interface\IClientVGUI.h">
-      <Filter>VGUI2\interface</Filter>
+      <Filter>vgui2\interface</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\interface\IGameConsole.h">
-      <Filter>VGUI2\interface</Filter>
+      <Filter>vgui2\interface</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\interface\IGameUI.h">
-      <Filter>VGUI2\interface</Filter>
+      <Filter>vgui2\interface</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\interface\IGameUIFuncs.h">
-      <Filter>VGUI2\interface</Filter>
+      <Filter>vgui2\interface</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\interface\IViewportPanel.h">
-      <Filter>VGUI2\interface</Filter>
+      <Filter>vgui2\interface</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\StudioModelRenderer.h">
       <Filter>Public\Header\Var</Filter>
@@ -1169,19 +1169,19 @@
       <Filter>vpx</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\interface\IVanilliaPanel.h">
-      <Filter>VGUI2\interface</Filter>
+      <Filter>vgui2\interface</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\BaseUI.h">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\BasePanel.h">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\GameConsole.h">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\GameUI.h">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\NeteaseApi.h">
       <Filter>Public\Header\Utility</Filter>
@@ -1253,10 +1253,10 @@
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\ClientVGUI.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\OptionAdvancedDlg.h">
-      <Filter>VGUI2\gameui</Filter>
+      <Filter>vgui2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="src\wadlib\wadfile.h">
       <Filter>Public\wadlib</Filter>
@@ -1532,7 +1532,7 @@
       <Filter>vgui_controls</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\VGUI2.h">
-      <Filter>VGUI2</Filter>
+      <Filter>vgui2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
