@@ -1090,16 +1090,7 @@
     <ClInclude Include="src\Header\HUD\vgui\effect.h">
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
-    <ClInclude Include="VGUI2\interface\IClientVGUI.h">
-      <Filter>vgui2\interface</Filter>
-    </ClInclude>
     <ClInclude Include="VGUI2\interface\IGameConsole.h">
-      <Filter>vgui2\interface</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\interface\IGameUI.h">
-      <Filter>vgui2\interface</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\interface\IGameUIFuncs.h">
       <Filter>vgui2\interface</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\interface\IViewportPanel.h">
