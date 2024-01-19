@@ -48,13 +48,24 @@ public:
 		}
 	}
 };
+class ModelFilterButton : public CheckButton {
+public:
+	ModelFilterButton(Panel* parent, const char* name, const char* content) : CheckButton(parent, name, content) {
+
+	}
+	void SetSelected(bool state) override{
+		KeyValues* msg = new KeyValues("FilterModelChecked", "state", (int)state);
+		PostActionSignal(msg);
+		Button::SetSelected(state);
+	}
+};
 COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubMultiPlay"){
 	m_pModelViewer = new ModelViewPanel(this, "ModelViewer");
 	m_pModelController = new Slider(this, "ModelController");
 	m_pModelList = new ModelListPanel(this, "ModelList");
 	m_pModelFilter = new TextEntry(this, "ModelFilter");
 	m_pModelFilterButton = new Button(this, "ModelFilterButton", "#GameUI_ABC_SubmitModelFilter", this, "FilterModel");
-	m_pFavCheckButton = new CheckButton(this, "ModelFavFilter", "#GameUI_ABC_FilteFavOnly");
+	m_pFavCheckButton = new ModelFilterButton(this, "ModelFavFilter", "#GameUI_ABC_FilteFavOnly");
 	m_pPlayerName = new Label(this, "PlayerName", CVAR_GET_STRING("name"));
 	m_pCrosshairDisplay = new CrossHairDisplay(this, "CrossHairDisplay");
 
@@ -210,7 +221,7 @@ void COptionsAdvanceSubMultiPlay::OnOpenContextMenu(int itemID) {
 	menu->PositionRelativeToPanel(this, Menu::CURSOR, 0, true);
 	menu->MakePopup();
 }
-void COptionsAdvanceSubMultiPlay::OnCheckButtonChecked(int state) {
+void COptionsAdvanceSubMultiPlay::OnFilterModelChecked(int state) {
 	FilterModel();
 }
 void COptionsAdvanceSubMultiPlay::OnSliderMoved() {

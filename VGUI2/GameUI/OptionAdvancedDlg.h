@@ -40,7 +40,7 @@ protected:
 	MESSAGE_FUNC(OnButtonChanged, "ButtonChanged");
 	MESSAGE_FUNC_CHARPTR(OnFileSelected, "FileSelected", fullpath);
 	MESSAGE_FUNC_INT(OnOpenContextMenu, "OpenContextMenu", itemID);
-	MESSAGE_FUNC_INT(OnCheckButtonChecked, "CheckButtonChecked", state);
+	MESSAGE_FUNC_INT(OnFilterModelChecked, "FilterModelChecked", state);
 	MESSAGE_FUNC_INT_INT(OnFavChange, "FavChange", itemID, add);
 	virtual void OnResetData() override;
 	virtual void OnApplyChanges() override;
