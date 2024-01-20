@@ -19,6 +19,7 @@
 #include "vgui_controls/Menu.h"
 #include "vgui_controls/MenuItem.h"
 #include "vgui_controls/MemoryBitmap.h"
+#include "vgui_controls/GroupBox.h"
 
 #include "FreeImage.h"
 #include "wadlib/wadfile.h"
@@ -469,19 +470,26 @@ void COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wi
 vgui::COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubOtherOption"){
 	m_pDynamicBackground = new CCvarToggleCheckButton(this, "DynamicBackground", "#GameUI_ABC_Cvar_DynamicBackground", "hud_dynamic_background");
 
+	m_pScoreBoard = new GroupBox(this, "ScoreGroup", "#GameUI_ABC_ScoreOptions", 8);
 	m_pScoreShowAvatar = new CCvarToggleCheckButton(this, "ScoreShowAvatar", "#GameUI_ABC_Cvar_ScoreShowAvatar", "hud_scoreboard_showavatars");
 	m_pScoreShowLoss = new CCvarToggleCheckButton(this, "ScoreShowLoss", "#GameUI_ABC_Cvar_ScoreShowLoss", "hud_scoreboard_showloss");
 	m_pScoreShowSteamId = new CCvarToggleCheckButton(this, "ScoreShowSteamId", "#GameUI_ABC_Cvar_ScoreShowSteamId", "hud_scoreboard_showsteamid");
 	m_pScoreShowSteamIdType = new CCvarComboBox(this, "ScoreShowSteamIdType", "#GameUI_ABC_Cvar_ScoreShowSteamIdType", 2, "hud_scoreboard_showsteamidtype");
-	m_pScoreShowSteamIdType->AddItem("SteamID 64", nullptr);
-	m_pScoreShowSteamIdType->AddItem("SteamID", nullptr);
+	m_pScoreShowSteamIdType->AddItem("#GameUI_ABC_SteamID", nullptr);
+	m_pScoreShowSteamIdType->AddItem("#GameUI_ABC_SteamID64", nullptr);
 	m_pScoreShowRealName = new CCvarToggleCheckButton(this, "ScoreShowRealName", "#GameUI_ABC_Cvar_ScoreShowRealName", "hud_scoreboard_showrealname");
-	m_pScoreSpacingNormal = new CCvarToggleCheckButton(this, "ScoreSpacingNormal", "#GameUI_ABC_Cvar_ScoreSpacingNormal", "hud_scoreboard_spacing_normal");
-	m_pScoreSpacingCompact = new CCvarToggleCheckButton(this, "ScoreSpacingCompact", "#GameUI_ABC_Cvar_ScoreSpacingCompact", "hud_scoreboard_spacing_compact");
+	m_pScoreSpacingNormal = new CCvarLabelSlider(this, "ScoreSpacingNormal", "#GameUI_ABC_Cvar_ScoreSpacingNormal", "#GameUI_ABC_Cvar_ScoreSpacingNormal", 0, 10, "hud_scoreboard_spacing_normal");
+	m_pScoreSpacingCompact = new CCvarLabelSlider(this, "ScoreSpacingCompact", "#GameUI_ABC_Cvar_ScoreSpacingCompact", "#GameUI_ABC_Cvar_ScoreSpacingCompact", 0, 10, "hud_scoreboard_spacing_compact");
 	m_pScoreSize = new CCvarComboBox(this, "ScoreSize", "#GameUI_ABC_Cvar_ScoreSize", 3, "hud_scoreboard_size");
 	m_pScoreSize->AddItem("#GameUI_ABC_Cvar_ScoreSizeAuto", nullptr);
 	m_pScoreSize->AddItem("#GameUI_ABC_Cvar_ScoreSizeNormal", nullptr);
 	m_pScoreSize->AddItem("#GameUI_ABC_Cvar_ScoreSizeCompact", nullptr);
+
+	m_pPopNumber = new CCvarToggleCheckButton(this, "PopNumber", "#GameUI_ABC_Cvar_PopNumber", "cl_popnumber");
+
+	m_pPlayerTitleGroup = new GroupBox(this, "PlayerTitleGroup", "#GameUI_ABC_PlayerTitleOptions", 2);
+	m_pPlayerTitle = new CCvarToggleCheckButton(this, "PlayerTitle", "#GameUI_ABC_Cvar_PlayerTitle", "cl_popnumber");
+	m_pPlayerTitleDanger = new CCvarLabelSlider(this, "PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", 0, 100, "cl_playertitle_danger");
 
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubOtherOption.res");
 }

@@ -94,8 +94,8 @@ void CCvarComboBox::PerformLayout(){
 	BaseClass::PerformLayout();
 	int w, h;
 	GetSize(w, h);
-	m_pLabel->SetSize(w * 0.25, h);
-	m_pComboBox->SetSize(w * 0.75, h);
-	m_pComboBox->SetPos(w * 0.25, 0);
+	m_pLabel->SetSize(w * 0.3333, h);
+	m_pComboBox->SetSize(w * 0.6666, h);
+	m_pComboBox->SetPos(w * 0.3333, 0);
 	Reset();
 }

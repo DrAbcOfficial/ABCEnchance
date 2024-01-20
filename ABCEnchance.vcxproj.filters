@@ -686,6 +686,9 @@
     <ClCompile Include="vgui_controls\CvarComboBox.cpp">
       <Filter>vgui_controls\base</Filter>
     </ClCompile>
+    <ClCompile Include="vgui_controls\GroupBox.cpp">
+      <Filter>vgui_controls\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1520,6 +1523,9 @@
       <Filter>vgui_controls\base</Filter>
     </ClInclude>
     <ClInclude Include="vgui_controls\CvarComboBox.h">
+      <Filter>vgui_controls\base</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\GroupBox.h">
       <Filter>vgui_controls\base</Filter>
     </ClInclude>
   </ItemGroup>
