@@ -174,6 +174,13 @@ private:
 	Label* m_pVoteNo;
 	Button* m_pVoteYesButton;
 	Button* m_pVoteNoButton;
+
+	GroupBox* m_pEfxGroup;
+	CCvarToggleCheckButton* m_pShellEfx;
+	CCvarToggleCheckButton* m_pGaussEfx;
+	CCvarToggleCheckButton* m_pBloodEfx;
+	CCvarLabelSlider* m_pBloodSpriteSpeed;
+	CCvarLabelSlider* m_pBloodSpriteCount;
 };
 
 
