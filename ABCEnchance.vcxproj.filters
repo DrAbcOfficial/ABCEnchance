@@ -680,6 +680,12 @@
     <ClCompile Include="src\Source\Utility\Task.cpp">
       <Filter>Public\Source\LIb</Filter>
     </ClCompile>
+    <ClCompile Include="vgui_controls\CvarLabelSlider.cpp">
+      <Filter>vgui_controls\base</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_controls\CvarComboBox.cpp">
+      <Filter>vgui_controls\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1509,6 +1515,12 @@
     </ClInclude>
     <ClInclude Include="src\Header\Utility\Task.h">
       <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\CvarLabelSlider.h">
+      <Filter>vgui_controls\base</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\CvarComboBox.h">
+      <Filter>vgui_controls\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
