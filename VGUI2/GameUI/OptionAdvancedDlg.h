@@ -104,6 +104,7 @@ class COptionsAdvanceSubOtherOption : public PropertyPage {
 public:
 	COptionsAdvanceSubOtherOption(Panel* parent);
 protected:
+	virtual void OnApplyChanges();
 private:
 	CCvarToggleCheckButton* m_pNewHud;
 	CCvarToggleCheckButton* m_pDynamicBackground;

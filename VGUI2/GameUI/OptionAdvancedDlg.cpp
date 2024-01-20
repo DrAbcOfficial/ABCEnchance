@@ -523,6 +523,49 @@ vgui::COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubOtherOption.res");
 }
 
+void COptionsAdvanceSubOtherOption::OnApplyChanges(){
+	m_pNewHud->ApplyChanges();
+	m_pDynamicBackground->ApplyChanges();
+
+	m_pScoreShowAvatar->ApplyChanges();
+	m_pScoreShowLoss->ApplyChanges();
+	m_pScoreShowSteamId->ApplyChanges();
+	m_pScoreShowSteamIdType->ApplyChanges();
+	m_pScoreShowRealName->ApplyChanges();
+	m_pScoreSpacingNormal->ApplyChanges();
+	m_pScoreSpacingCompact->ApplyChanges();
+	m_pScoreSize->ApplyChanges();
+
+	m_pPopNumber->ApplyChanges();
+
+	m_pPlayerTitle->ApplyChanges();
+	m_pPlayerTitleDanger->ApplyChanges();
+
+
+	m_pCameraHeightValue->ApplyChanges();
+	m_pCameraRightValue->ApplyChanges();
+
+	m_pModelLag->ApplyChanges();
+	m_pModelLagAutoStop->ApplyChanges();
+	m_pModelLagAutoValue->ApplyChanges();
+	m_pModelSlide->ApplyChanges();
+	m_pModelSlideAngle->ApplyChanges();
+	m_pModelSlideLength->ApplyChanges();
+	m_pModelSlideHeight->ApplyChanges();
+
+	m_pDamageShock->ApplyChanges();
+	m_pDamageShockFactor->ApplyChanges();
+	m_pDamageShockDmg->ApplyChanges();
+	m_pDangerHealth->ApplyChanges();
+	m_pDangerArmor->ApplyChanges();
+
+	m_pItemHighLight->ApplyChanges();
+	m_pItemHighLightRange->ApplyChanges();
+
+	m_pAutojump->ApplyChanges();
+	m_pRainbowMenu->ApplyChanges();
+}
+
 
 
 COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, "OptionsAdvanceDialog") {
