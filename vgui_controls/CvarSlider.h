@@ -13,7 +13,7 @@ namespace vgui {
 
 	public:
 		CCvarSlider(Panel* parent, const char* panelName);
-		CCvarSlider(Panel* parent, const char* panelName, const char* caption, float minValue, float maxValue, char const* cvarname, bool bAllowOutOfRange = false);
+		CCvarSlider(Panel* parent, const char* panelName, const char* caption, float minValue, float maxValue, char const* cvarname, bool bAllowOutOfRange = false, bool floatvalue = false);
 		~CCvarSlider(void);
 
 	public:
@@ -21,6 +21,7 @@ namespace vgui {
 		void SetCVarName(char const* cvarname);
 		void SetMinMaxValues(float minValue, float maxValue, bool bSetTickdisplay = true);
 		void SetTickColor(Color color);
+		void SetFloatValue(bool state);
 
 	public:
 		virtual void Paint(void);
@@ -49,6 +50,7 @@ namespace vgui {
 		bool m_bCreatedInCode;
 		float m_flMinValue;
 		float m_flMaxValue;
+		bool m_bIsFloat;
 	};
 }
 

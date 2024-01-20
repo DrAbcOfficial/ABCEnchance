@@ -6,6 +6,7 @@
 #include <vgui_controls/propertypage.h>
 
 #define CVARSLIDER_SCALE_FACTOR 1.0f
+#define CVARSLIDER_FLOAT_SCALE_FACTOR 100.0f
 
 using namespace vgui;
 
@@ -19,8 +20,9 @@ CCvarSlider::CCvarSlider(Panel *parent, const char *name) : Slider(parent, name)
 	AddActionSignalTarget(this);
 }
 
-CCvarSlider::CCvarSlider(Panel *parent, const char *panelName, const char*caption, float minValue, float maxValue, char const *cvarname, bool bAllowOutOfRange) : Slider(parent, panelName)
+CCvarSlider::CCvarSlider(Panel *parent, const char *panelName, const char*caption, float minValue, float maxValue, char const *cvarname, bool bAllowOutOfRange, bool floatvalue) : Slider(parent, panelName)
 {
+	m_bIsFloat = floatvalue;
 	AddActionSignalTarget(this);
 	SetupSlider(minValue, maxValue, cvarname, bAllowOutOfRange);
 
@@ -32,13 +34,23 @@ void CCvarSlider::SetupSlider(float minValue, float maxValue, const char *cvarna
 	m_flMinValue = minValue;
 	m_flMaxValue = maxValue;
 
-	SetRange((int)(CVARSLIDER_SCALE_FACTOR * minValue), (int)(CVARSLIDER_SCALE_FACTOR * maxValue));
+	if (m_bIsFloat)
+		SetRange((int)(CVARSLIDER_FLOAT_SCALE_FACTOR * minValue), (int)(CVARSLIDER_FLOAT_SCALE_FACTOR * maxValue));
+	else
+		SetRange((int)(CVARSLIDER_SCALE_FACTOR * minValue), (int)(CVARSLIDER_SCALE_FACTOR * maxValue));
 
 	char szMin[32];
 	char szMax[32];
 
-	Q_snprintf(szMin, sizeof(szMin), "%d", (int)minValue);
-	Q_snprintf(szMax, sizeof(szMax), "%d", (int)maxValue);
+	if (m_bIsFloat) {
+		Q_snprintf(szMin, sizeof(szMin), "%.2f", minValue);
+		Q_snprintf(szMax, sizeof(szMax), "%.2f", maxValue);
+	}
+	else {
+		Q_snprintf(szMin, sizeof(szMin), "%d", (int)minValue);
+		Q_snprintf(szMax, sizeof(szMax), "%d", (int)maxValue);
+	}
+	
 
 	SetTickCaptions(szMin, szMax);
 
@@ -100,15 +112,24 @@ void CCvarSlider::SetCVarName(char const *cvarname)
 
 void CCvarSlider::SetMinMaxValues(float minValue, float maxValue, bool bSetTickDisplay)
 {
-	SetRange((int)(CVARSLIDER_SCALE_FACTOR * minValue), (int)(CVARSLIDER_SCALE_FACTOR * maxValue));
+	if (m_bIsFloat)
+		SetRange((int)(CVARSLIDER_FLOAT_SCALE_FACTOR * minValue), (int)(CVARSLIDER_FLOAT_SCALE_FACTOR * maxValue));
+	else
+		SetRange((int)(CVARSLIDER_SCALE_FACTOR * minValue), (int)(CVARSLIDER_SCALE_FACTOR * maxValue));
 
 	if (bSetTickDisplay)
 	{
 		char szMin[32];
 		char szMax[32];
 
-		Q_snprintf(szMin, sizeof(szMin), "%.2f", minValue);
-		Q_snprintf(szMax, sizeof(szMax), "%.2f", maxValue);
+		if (m_bIsFloat) {
+			Q_snprintf(szMin, sizeof(szMin), "%.2f", minValue);
+			Q_snprintf(szMax, sizeof(szMax), "%.2f", maxValue);
+		}
+		else {
+			Q_snprintf(szMin, sizeof(szMin), "%d", (int)minValue);
+			Q_snprintf(szMax, sizeof(szMax), "%d", (int)maxValue);
+		}
 
 		SetTickCaptions(szMin, szMax);
 	}
@@ -121,13 +142,17 @@ void CCvarSlider::SetTickColor(Color color)
 	m_TickColor = color;
 }
 
+void CCvarSlider::SetFloatValue(bool state){
+	m_bIsFloat = state;
+}
+
 void CCvarSlider::Paint(void)
 {
 	float curvalue = gEngfuncs.pfnGetCvarFloat(m_szCvarName);
 
 	if (curvalue != m_fStartValue)
 	{
-		int val = (int)(CVARSLIDER_SCALE_FACTOR * curvalue);
+		int val = (int)((m_bIsFloat ? CVARSLIDER_FLOAT_SCALE_FACTOR : CVARSLIDER_SCALE_FACTOR) * curvalue);
 		m_fStartValue = curvalue;
 		m_fCurrentValue = curvalue;
 
@@ -147,7 +172,7 @@ void CCvarSlider::ApplyChanges(void)
 		if (m_bAllowOutOfRange)
 			m_fStartValue = m_fCurrentValue;
 		else
-			m_fStartValue = (float)m_iStartValue / CVARSLIDER_SCALE_FACTOR;
+			m_fStartValue = (float)m_iStartValue / (m_bIsFloat ? CVARSLIDER_FLOAT_SCALE_FACTOR : CVARSLIDER_SCALE_FACTOR);
 
 		char value[128];
 		Q_snprintf(value, sizeof(value), "%.2f", m_fStartValue);
@@ -160,12 +185,12 @@ float CCvarSlider::GetSliderValue(void)
 	if (m_bAllowOutOfRange)
 		return m_fCurrentValue;
 	else
-		return ((float)GetValue()) / CVARSLIDER_SCALE_FACTOR;
+		return ((float)GetValue()) / (m_bIsFloat ? CVARSLIDER_FLOAT_SCALE_FACTOR : CVARSLIDER_SCALE_FACTOR);
 }
 
 void CCvarSlider::SetSliderValue(float fValue)
 {
-	int nVal = (int)(CVARSLIDER_SCALE_FACTOR * fValue);
+	int nVal = (int)((m_bIsFloat ? CVARSLIDER_FLOAT_SCALE_FACTOR : CVARSLIDER_SCALE_FACTOR) * fValue);
 	SetValue(nVal, false);
 
 	m_iLastSliderValue = GetValue();
@@ -189,7 +214,7 @@ void CCvarSlider::Reset(void)
 	m_fStartValue = gEngfuncs.pfnGetCvarFloat(m_szCvarName);
 	m_fCurrentValue = m_fStartValue;
 
-	int value = (int)(CVARSLIDER_SCALE_FACTOR * m_fStartValue);
+	int value = (int)((m_bIsFloat ? CVARSLIDER_FLOAT_SCALE_FACTOR : CVARSLIDER_SCALE_FACTOR) * m_fStartValue);
 	SetValue(value);
 
 	m_iStartValue = GetValue();
@@ -211,7 +236,7 @@ void CCvarSlider::OnSliderMoved(void)
 		if (m_iLastSliderValue != GetValue())
 		{
 			m_iLastSliderValue = GetValue();
-			m_fCurrentValue = ((float) m_iLastSliderValue) / CVARSLIDER_SCALE_FACTOR;
+			m_fCurrentValue = ((float)m_iLastSliderValue) / (m_bIsFloat ? CVARSLIDER_FLOAT_SCALE_FACTOR : CVARSLIDER_SCALE_FACTOR);
 		}
 
 		PostActionSignal(new KeyValues("ControlModified"));

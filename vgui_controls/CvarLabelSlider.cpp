@@ -10,10 +10,10 @@ CCvarLabelSlider::CCvarLabelSlider(Panel *parent, const char *name) : BaseClass(
 	m_pSlider = new CCvarSlider(this, "CvarSlider");
 }
 
-CCvarLabelSlider::CCvarLabelSlider(Panel *parent, const char *panelName, const char* labelcontent, const char *caption, float minValue, float maxValue, char const *cvarname, bool bAllowOutOfRange) : 
-	BaseClass(parent, panelName) {
+CCvarLabelSlider::CCvarLabelSlider(Panel *parent, const char *panelName, const char* labelcontent, const char *caption, 
+	float minValue, float maxValue, char const *cvarname, bool bAllowOutOfRange, bool isfloat) : BaseClass(parent, panelName) {
 	m_pLabel = new Label(this, "CvarLabel", labelcontent);
-	m_pSlider = new CCvarSlider(this, "CvarSlider", caption, minValue, maxValue, cvarname, bAllowOutOfRange);
+	m_pSlider = new CCvarSlider(this, "CvarSlider", caption, minValue, maxValue, cvarname, bAllowOutOfRange, isfloat);
 }
 
 void vgui::CCvarLabelSlider::SetupSlider(float minValue, float maxValue, const char* cvarname, bool bAllowOutOfRange){
@@ -30,6 +30,10 @@ void vgui::CCvarLabelSlider::SetMinMaxValues(float minValue, float maxValue, boo
 
 void vgui::CCvarLabelSlider::SetTickColor(Color color){
 	m_pSlider->SetTickColor(color);
+}
+
+void vgui::CCvarLabelSlider::SetFloatValue(bool state){
+	m_pSlider->SetFloatValue(state);
 }
 
 void CCvarLabelSlider::PerformLayout(void){

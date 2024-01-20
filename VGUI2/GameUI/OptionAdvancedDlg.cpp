@@ -491,6 +491,22 @@ vgui::COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent
 	m_pPlayerTitle = new CCvarToggleCheckButton(this, "PlayerTitle", "#GameUI_ABC_Cvar_PlayerTitle", "cl_popnumber");
 	m_pPlayerTitleDanger = new CCvarLabelSlider(this, "PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", 0, 100, "cl_playertitle_danger");
 
+
+	m_pCameraGroup = new GroupBox(this, "CameraGroup", "#GameUI_ABC_CameraGroup", 2);
+	m_pCameraHeightValue = new CCvarLabelSlider(this, "CameraHeight", "#GameUI_ABC_Cvar_CameraHeight", "#GameUI_ABC_Cvar_CameraHeight", -100, 100, "cam_idealheight");
+	m_pCameraRightValue = new CCvarLabelSlider(this, "CameraRight", "#GameUI_ABC_Cvar_CameraRight", "#GameUI_ABC_Cvar_CameraRight", -100, 100, "cam_idealright");
+
+	m_pModelLagGroup = new GroupBox(this, "ModelLagGroup", "#GameUI_ABC_ModelLagGroup", 7);
+	m_pModelLag = new CCvarToggleCheckButton(this, "ModelLag", "#GameUI_ABC_Cvar_ModelLag", "cl_modellag");
+	m_pModelLagAutoStop = new CCvarToggleCheckButton(this, "ModelLagAutoStop", "#GameUI_ABC_Cvar_ModelLagAutoStop", "cl_modellag_autostop");
+	m_pModelLagAutoValue = new CCvarLabelSlider(this, "ModelLagValue", "#GameUI_ABC_Cvar_ModelLagValue", "#GameUI_ABC_Cvar_ModelLagValue", 0.0f, 5.0f, "cl_modellag_value", false, true);
+	m_pModelSlide = new CCvarToggleCheckButton(this, "ModelSlide", "#GameUI_ABC_Cvar_ModelSlide", "cl_modelslide");
+	m_pModelSlideAngle = new CCvarLabelSlider(this, "ModelSlideAngle", "#GameUI_ABC_Cvar_ModelSlideAngle", "#GameUI_ABC_Cvar_ModelSlideAngle", 0.0f, 90.0f, "cl_modelslide_angle", false, true);
+	m_pModelSlideLength = new CCvarLabelSlider(this, "ModelSlideLength", "#GameUI_ABC_Cvar_ModelSlideLength", "#GameUI_ABC_Cvar_ModelSlideLength", -30.0f, 30.0f, "cl_modelslide_length");
+	m_pModelSlideHeight = new CCvarLabelSlider(this, "ModelSlideHeight", "#GameUI_ABC_Cvar_ModelSlideHeight", "#GameUI_ABC_Cvar_ModelSlideHeight", -30.0f, 30.0f, "cl_modelslide_height");
+
+	m_pAutojump = new CCvarToggleCheckButton(this, "AutoJump", "#GameUI_ABC_Cvar_AutoJump", "cl_autojump");
+
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubOtherOption.res");
 }
 
