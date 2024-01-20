@@ -235,6 +235,15 @@ IVanilliaPanel* BasePanel(){
 }
 
 static vgui::DHANDLE<vgui::COptionsAdvanceDialog>g_pAdvanceOptPanel;
+
+void SetAdvanceOptPanelVisible(bool state) {
+	if (g_pAdvanceOptPanel) {
+		if (state)
+			g_pAdvanceOptPanel->Activate();
+		else
+			g_pAdvanceOptPanel->Close();
+	}
+}
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	g_pBasePanel = static_cast<IVanilliaPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);

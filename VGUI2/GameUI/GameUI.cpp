@@ -31,6 +31,7 @@ void (__fastcall *g_pfnOnDisconnectFromServer)(void* pThis, int, int maybeport, 
 void (__fastcall *g_pfnShowPasswordPromptAndRetry)(void* pThis, int, char* passwd, bool correct);
 void (__fastcall *g_pfnOnExitToDesktop)(void* pThis, int);
 
+extern void SetAdvanceOptPanelVisible(bool state);
 class CGameUI : public IGameUI{
 public:
 	virtual void Initialize(CreateInterfaceFn* factories, int count) {
@@ -65,6 +66,7 @@ public:
 	}
 	virtual void HideGameUI() {
 		g_pfnHideGameUI(this, 0);
+		SetAdvanceOptPanelVisible(false);
 	}
 	virtual bool IsGameUIActive() {
 		return g_pfnIsGameUIActive(this, 0);
@@ -130,7 +132,7 @@ void GameUI_InstallHook(){
 		//GAMEUI_VFTHOOK(7, RunFrame);
 		GAMEUI_VFTHOOK(8, ConnectToServer);
 		GAMEUI_VFTHOOK(9, DisconnectFromServer);
-		//GAMEUI_VFTHOOK(10, HideGameUI);
+		GAMEUI_VFTHOOK(10, HideGameUI);
 		//GAMEUI_VFTHOOK(11, IsGameUIActive);
 		//GAMEUI_VFTHOOK(12, LoadingStarted);
 		//GAMEUI_VFTHOOK(13, LoadingFinished);
