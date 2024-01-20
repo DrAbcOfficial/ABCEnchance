@@ -91,7 +91,6 @@ private:
 
 	ImagePanel* m_pSpary = nullptr;
 	Button* m_pLoadSpary = nullptr;
-	FileOpenDialog* m_pFileDialog = nullptr;
 
 	URLLabel* m_pUrl = nullptr;
 
@@ -104,7 +103,11 @@ class COptionsAdvanceSubOtherOption : public PropertyPage {
 public:
 	COptionsAdvanceSubOtherOption(Panel* parent);
 protected:
-	virtual void OnApplyChanges();
+	virtual void OnResetData() override;
+	virtual void OnApplyChanges() override;
+	virtual void OnCommand(const char* cmd) override;
+
+	MESSAGE_FUNC_PTR_INT(OnKeyBinded, "KeyBinded", target, code);
 private:
 	CCvarToggleCheckButton* m_pNewHud;
 	CCvarToggleCheckButton* m_pDynamicBackground;
@@ -138,9 +141,6 @@ private:
 	CCvarLabelSlider* m_pModelSlideLength;
 	CCvarLabelSlider* m_pModelSlideHeight;
 
-	CCvarToggleCheckButton* m_pAutojump;
-	CCvarToggleCheckButton* m_pRainbowMenu;
-
 	GroupBox* m_pHealthArmor;
 	CCvarToggleCheckButton* m_pDamageShock;
 	CCvarLabelSlider* m_pDamageShockFactor;
@@ -151,6 +151,29 @@ private:
 	GroupBox* m_pItemHighLightGroup;
 	CCvarToggleCheckButton* m_pItemHighLight;
 	CCvarLabelSlider* m_pItemHighLightRange;
+
+	CCvarToggleCheckButton* m_pAutojump;
+	CCvarToggleCheckButton* m_pRainbowMenu;
+	CCvarToggleCheckButton* m_pEfxHud;
+	CCvarToggleCheckButton* m_pSidePanel;
+	CCvarComboBox* m_pMotd;
+
+	GroupBox* m_pDeathNoticeGroup;
+	CCvarToggleCheckButton* m_pDeathNotice;
+	CCvarLabelSlider* m_pDeathNoticeTime;
+	CCvarLabelSlider* m_pDeathNoticeCount;
+
+	GroupBox* m_pGrenadeIndicatorGroup;
+	CCvarToggleCheckButton* m_pGrenadeIndicator;
+	CCvarLabelSlider* m_pGrenadeIndicatorTime;
+	CCvarLabelSlider* m_pGrenadeIndicatorRange;
+
+	GroupBox* m_pVoteGroup;
+	CCvarToggleCheckButton* m_pVote;
+	Label* m_pVoteYes;
+	Label* m_pVoteNo;
+	Button* m_pVoteYesButton;
+	Button* m_pVoteNoButton;
 };
 
 
