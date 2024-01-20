@@ -13,7 +13,7 @@ namespace vgui {
 
 	public:
 		CCvarSlider(Panel* parent, const char* panelName);
-		CCvarSlider(Panel* parent, const char* panelName, char const* caption, float minValue, float maxValue, char const* cvarname, bool bAllowOutOfRange = false);
+		CCvarSlider(Panel* parent, const char* panelName, const char* caption, float minValue, float maxValue, char const* cvarname, bool bAllowOutOfRange = false);
 		~CCvarSlider(void);
 
 	public:
@@ -34,7 +34,7 @@ namespace vgui {
 		void Reset(void);
 		bool HasBeenModified(void);
 
-	private:
+	public:
 		MESSAGE_FUNC(OnSliderMoved, "SliderMoved");
 		MESSAGE_FUNC(OnApplyChanges, "ApplyChanges");
 

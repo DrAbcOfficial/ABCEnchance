@@ -25,6 +25,8 @@ namespace vgui {
 	class FileOpenDialog;
 	class URLLabel;
 	class CheckButton;
+	class CCvarLabelSlider;
+	class CCvarComboBox;
 
 class COptionsAdvanceSubMultiPlay : public PropertyPage{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubMultiPlay, PropertyPage);
@@ -96,6 +98,25 @@ private:
 	WadFile* m_pSparyWad = nullptr;
 };
 
+class COptionsAdvanceSubOtherOption : public PropertyPage {
+	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubOtherOption, PropertyPage);
+public:
+	COptionsAdvanceSubOtherOption(Panel* parent);
+protected:
+private:
+	CCvarToggleCheckButton* m_pDynamicBackground;
+
+	CCvarToggleCheckButton* m_pScoreShowAvatar;
+	CCvarToggleCheckButton* m_pScoreShowLoss;
+	CCvarToggleCheckButton* m_pScoreShowSteamId;
+	CCvarComboBox* m_pScoreShowSteamIdType;
+	CCvarToggleCheckButton* m_pScoreShowRealName;
+	CCvarToggleCheckButton* m_pScoreSpacingNormal;
+	CCvarToggleCheckButton* m_pScoreSpacingCompact;
+	CCvarComboBox* m_pScoreSize;
+};
+
+
 class COptionsAdvanceDialog : public PropertyDialog{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceDialog, PropertyDialog);
 public:
@@ -108,6 +129,7 @@ private:
 
 	GaussianBlurPanel* m_pBlur;
 	COptionsAdvanceSubMultiPlay* m_pMultiPlayPage;
+	COptionsAdvanceSubOtherOption* m_pOtherOption;
 };
 
 }

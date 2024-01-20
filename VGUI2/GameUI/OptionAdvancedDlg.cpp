@@ -11,8 +11,9 @@
 #include "vgui_controls/TextEntry.h"
 #include "vgui_controls/Button.h"
 #include "vgui_controls/CrossHairDisplay.h"
-#include "vgui_controls/CvarSlider.h"
+#include "vgui_controls/CvarLabelSlider.h"
 #include "vgui_controls/CvarToggleCheckButton.h"
+#include "vgui_controls/CvarComboBox.h"
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/FileOpenDialog.h"
 #include "vgui_controls/Menu.h"
@@ -465,6 +466,25 @@ void COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wi
 }
 
 
+vgui::COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubOtherOption"){
+	m_pDynamicBackground = new CCvarToggleCheckButton(this, "DynamicBackground", "#GameUI_ABC_Cvar_DynamicBackground", "hud_dynamic_background");
+
+	m_pScoreShowAvatar = new CCvarToggleCheckButton(this, "ScoreShowAvatar", "#GameUI_ABC_Cvar_ScoreShowAvatar", "hud_scoreboard_showavatars");
+	m_pScoreShowLoss = new CCvarToggleCheckButton(this, "ScoreShowLoss", "#GameUI_ABC_Cvar_ScoreShowLoss", "hud_scoreboard_showloss");
+	m_pScoreShowSteamId = new CCvarToggleCheckButton(this, "ScoreShowSteamId", "#GameUI_ABC_Cvar_ScoreShowSteamId", "hud_scoreboard_showsteamid");
+	m_pScoreShowSteamIdType = new CCvarComboBox(this, "ScoreShowSteamIdType", "#GameUI_ABC_Cvar_ScoreShowSteamIdType", 2, "hud_scoreboard_showsteamidtype");
+	m_pScoreShowSteamIdType->AddItem("SteamID 64", nullptr);
+	m_pScoreShowSteamIdType->AddItem("SteamID", nullptr);
+	m_pScoreShowRealName = new CCvarToggleCheckButton(this, "ScoreShowRealName", "#GameUI_ABC_Cvar_ScoreShowRealName", "hud_scoreboard_showrealname");
+	m_pScoreSpacingNormal = new CCvarToggleCheckButton(this, "ScoreSpacingNormal", "#GameUI_ABC_Cvar_ScoreSpacingNormal", "hud_scoreboard_spacing_normal");
+	m_pScoreSpacingCompact = new CCvarToggleCheckButton(this, "ScoreSpacingCompact", "#GameUI_ABC_Cvar_ScoreSpacingCompact", "hud_scoreboard_spacing_compact");
+	m_pScoreSize = new CCvarComboBox(this, "ScoreSize", "#GameUI_ABC_Cvar_ScoreSize", 3, "hud_scoreboard_size");
+	m_pScoreSize->AddItem("#GameUI_ABC_Cvar_ScoreSizeAuto", nullptr);
+	m_pScoreSize->AddItem("#GameUI_ABC_Cvar_ScoreSizeNormal", nullptr);
+	m_pScoreSize->AddItem("#GameUI_ABC_Cvar_ScoreSizeCompact", nullptr);
+
+	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubOtherOption.res");
+}
 
 
 
@@ -477,7 +497,9 @@ COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, 
 	m_pBlur = new GaussianBlurPanel(this, "BlurPanel");
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceDialog.res");
 	m_pMultiPlayPage = new COptionsAdvanceSubMultiPlay(this);
+	m_pOtherOption = new COptionsAdvanceSubOtherOption(this);
 	AddPage(m_pMultiPlayPage, "#GameUI_ABC_MultiPlayPage");
+	AddPage(m_pOtherOption, "#GameUI_ABC_OtherOption");
 
 	EnableApplyButton(true);
 }

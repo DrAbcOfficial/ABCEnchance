@@ -19,7 +19,7 @@ CCvarSlider::CCvarSlider(Panel *parent, const char *name) : Slider(parent, name)
 	AddActionSignalTarget(this);
 }
 
-CCvarSlider::CCvarSlider(Panel *parent, const char *panelName, char const *caption, float minValue, float maxValue, char const *cvarname, bool bAllowOutOfRange) : Slider(parent, panelName)
+CCvarSlider::CCvarSlider(Panel *parent, const char *panelName, const char*caption, float minValue, float maxValue, char const *cvarname, bool bAllowOutOfRange) : Slider(parent, panelName)
 {
 	AddActionSignalTarget(this);
 	SetupSlider(minValue, maxValue, cvarname, bAllowOutOfRange);
