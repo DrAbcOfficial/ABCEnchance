@@ -468,6 +468,7 @@ void COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wi
 
 
 vgui::COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubOtherOption"){
+	m_pNewHud = new CCvarToggleCheckButton(this, "NewHud", "#GameUI_ABC_Cvar_NewHud", "cl_hud_csgo");
 	m_pDynamicBackground = new CCvarToggleCheckButton(this, "DynamicBackground", "#GameUI_ABC_Cvar_DynamicBackground", "hud_dynamic_background");
 
 	m_pScoreBoard = new GroupBox(this, "ScoreGroup", "#GameUI_ABC_ScoreOptions", 8);
@@ -505,7 +506,19 @@ vgui::COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent
 	m_pModelSlideLength = new CCvarLabelSlider(this, "ModelSlideLength", "#GameUI_ABC_Cvar_ModelSlideLength", "#GameUI_ABC_Cvar_ModelSlideLength", -30.0f, 30.0f, "cl_modelslide_length");
 	m_pModelSlideHeight = new CCvarLabelSlider(this, "ModelSlideHeight", "#GameUI_ABC_Cvar_ModelSlideHeight", "#GameUI_ABC_Cvar_ModelSlideHeight", -30.0f, 30.0f, "cl_modelslide_height");
 
+	m_pHealthArmor = new GroupBox(this, "HPAPGroup", "#GameUI_ABC_HPAPGroup", 5);
+	m_pDamageShock = new CCvarToggleCheckButton(this, "DamageShock", "#GameUI_ABC_Cvar_DamageShock", "cl_damageshock_factor");
+	m_pDamageShockFactor = new CCvarLabelSlider(this, "DamageShockFactor", "#GameUI_ABC_Cvar_DamageShockFactor", "#GameUI_ABC_Cvar_DamageShockFactor", 0.0f, 0.1f, "cl_damageshock_factor", false, true);
+	m_pDamageShockDmg = new CCvarLabelSlider(this, "DamageShockDmg", "#GameUI_ABC_Cvar_DamageShockDmg", "#GameUI_ABC_Cvar_DamageShockDmg", 0, 100, "cl_damageshock_base");
+	m_pDangerHealth = new CCvarLabelSlider(this, "DangerHealth", "#GameUI_ABC_Cvar_DangerHealth", "#GameUI_ABC_Cvar_DangerHealth", 0, 100, "cl_dangerhealth");
+	m_pDangerArmor = new CCvarLabelSlider(this, "DangerArmor", "#GameUI_ABC_Cvar_DangerArmor", "#GameUI_ABC_Cvar_DangerArmor", 0, 100, "cl_dangerarmor");
+
+	m_pItemHighLightGroup = new GroupBox(this, "ItemHighLightGroup", "#GameUI_ABC_ItemHighLightGroup", 2);
+	m_pItemHighLight = new CCvarToggleCheckButton(this, "ItemHighLight", "#GameUI_ABC_Cvar_ItemHighLight", "cl_itemhighlight");
+	m_pItemHighLightRange = new CCvarLabelSlider(this, "ItemHighLightRange", "#GameUI_ABC_Cvar_ItemHighLightRange", "#GameUI_ABC_Cvar_ItemHighLightRange", 0, 344, "cl_itemhighlightrange");
+
 	m_pAutojump = new CCvarToggleCheckButton(this, "AutoJump", "#GameUI_ABC_Cvar_AutoJump", "cl_autojump");
+	m_pRainbowMenu = new CCvarToggleCheckButton(this, "RainbowMenu", "#GameUI_ABC_Cvar_RainbowMenu", "cl_rainbowmenu");
 
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubOtherOption.res");
 }

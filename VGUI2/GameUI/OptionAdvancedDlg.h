@@ -105,6 +105,7 @@ public:
 	COptionsAdvanceSubOtherOption(Panel* parent);
 protected:
 private:
+	CCvarToggleCheckButton* m_pNewHud;
 	CCvarToggleCheckButton* m_pDynamicBackground;
 
 	GroupBox* m_pScoreBoard;
@@ -137,6 +138,18 @@ private:
 	CCvarLabelSlider* m_pModelSlideHeight;
 
 	CCvarToggleCheckButton* m_pAutojump;
+	CCvarToggleCheckButton* m_pRainbowMenu;
+
+	GroupBox* m_pHealthArmor;
+	CCvarToggleCheckButton* m_pDamageShock;
+	CCvarLabelSlider* m_pDamageShockFactor;
+	CCvarLabelSlider* m_pDamageShockDmg;
+	CCvarLabelSlider* m_pDangerHealth;
+	CCvarLabelSlider* m_pDangerArmor;
+
+	GroupBox* m_pItemHighLightGroup;
+	CCvarToggleCheckButton* m_pItemHighLight;
+	CCvarLabelSlider* m_pItemHighLightRange;
 };
 
 
