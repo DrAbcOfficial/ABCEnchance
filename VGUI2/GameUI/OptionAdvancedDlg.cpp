@@ -558,6 +558,14 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 	m_pVoteNo = new Label(this, "VoteNo", "#GameUI_ABC_Cvar_VoteNo");
 	m_pVoteYesButton = new Button(this, "VoteBindingYes", "#GameUI_ABC_Cvar_BindgKeyBoard", this, "VoteYesBind");
 	m_pVoteNoButton = new Button(this, "VoteBindingNo", "#GameUI_ABC_Cvar_BindgKeyBoard", this, "VoteNoBind");
+
+	m_pEfxGroup = new GroupBox(this, "EfxGroup", "#GameUI_ABC_EfxGroup", 5);
+	m_pShellEfx = new CCvarToggleCheckButton(this, "ShellEfx", "#GameUI_ABC_Cvar_ShellEfx", "abc_shellefx");
+	m_pGaussEfx = new CCvarToggleCheckButton(this, "GaussEfx", "#GameUI_ABC_Cvar_GaussEfx", "abc_gaussefx");
+	m_pBloodEfx = new CCvarToggleCheckButton(this, "BloodEfx", "#GameUI_ABC_Cvar_BloodEfx", "abc_bloodefx");
+	m_pBloodSpriteSpeed = new CCvarLabelSlider(this, "BloodEfxSpeed", "#GameUI_ABC_Cvar_BloodEfxSpeed", "#GameUI_ABC_Cvar_BloodEfxSpeed", 0, 256, "abc_bloodsprite_speed");
+	m_pBloodSpriteCount = new CCvarLabelSlider(this, "BloodEfxCount", "#GameUI_ABC_Cvar_BloodEfxCount", "#GameUI_ABC_Cvar_BloodEfxCount", 0, 64, "abc_bloodsprite_num");
+
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubOtherOption.res");
 }
 void COptionsAdvanceSubOtherOption::OnResetData(){
@@ -624,6 +632,12 @@ void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 	CVAR_SET_STRING("cl_hud_votekey_yes", buf);
 	m_pVoteNoButton->GetText(buf, 64);
 	CVAR_SET_STRING("cl_hud_votekey_no", buf);
+
+	m_pShellEfx->ApplyChanges();
+	m_pGaussEfx->ApplyChanges();
+	m_pBloodEfx->ApplyChanges();
+	m_pBloodSpriteSpeed->ApplyChanges();
+	m_pBloodSpriteCount->ApplyChanges();
 }
 void COptionsAdvanceSubOtherOption::OnKeyBinded(Panel* target, int code) {
 	char buf[64];
