@@ -122,6 +122,21 @@ private:
 	GroupBox* m_pPlayerTitleGroup;
 	CCvarToggleCheckButton* m_pPlayerTitle;
 	CCvarLabelSlider* m_pPlayerTitleDanger;
+
+	GroupBox* m_pCameraGroup;
+	CCvarLabelSlider* m_pCameraHeightValue;
+	CCvarLabelSlider* m_pCameraRightValue;
+
+	GroupBox* m_pModelLagGroup;
+	CCvarToggleCheckButton* m_pModelLag;
+	CCvarToggleCheckButton* m_pModelLagAutoStop;
+	CCvarLabelSlider* m_pModelLagAutoValue;
+	CCvarToggleCheckButton* m_pModelSlide;
+	CCvarLabelSlider* m_pModelSlideAngle;
+	CCvarLabelSlider* m_pModelSlideLength;
+	CCvarLabelSlider* m_pModelSlideHeight;
+
+	CCvarToggleCheckButton* m_pAutojump;
 };
 
 

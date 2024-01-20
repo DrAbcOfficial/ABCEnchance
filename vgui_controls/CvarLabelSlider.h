@@ -13,12 +13,13 @@ namespace vgui {
 
 	public:
 		CCvarLabelSlider(Panel* parent, const char* panelName);
-		CCvarLabelSlider(Panel* parent, const char* panelName, char const* labelcontent, const char* caption, float minValue, float maxValue, char const* cvarname, bool bAllowOutOfRange = false);
+		CCvarLabelSlider(Panel* parent, const char* panelName, char const* labelcontent, const char* caption, float minValue, float maxValue, char const* cvarname, bool bAllowOutOfRange = false, bool isfloat = false);
 
 		void SetupSlider(float minValue, float maxValue, const char* cvarname, bool bAllowOutOfRange);
 		void SetCVarName(char const* cvarname);
 		void SetMinMaxValues(float minValue, float maxValue, bool bSetTickdisplay = true);
 		void SetTickColor(Color color);
+		void SetFloatValue(bool state);
 	public:
 		virtual void PerformLayout(void) override;
 	public:
