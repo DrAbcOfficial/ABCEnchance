@@ -27,6 +27,7 @@ namespace vgui {
 	class CheckButton;
 	class CCvarLabelSlider;
 	class CCvarComboBox;
+	class GroupBox;
 
 class COptionsAdvanceSubMultiPlay : public PropertyPage{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubMultiPlay, PropertyPage);
@@ -106,14 +107,21 @@ protected:
 private:
 	CCvarToggleCheckButton* m_pDynamicBackground;
 
+	GroupBox* m_pScoreBoard;
 	CCvarToggleCheckButton* m_pScoreShowAvatar;
 	CCvarToggleCheckButton* m_pScoreShowLoss;
 	CCvarToggleCheckButton* m_pScoreShowSteamId;
 	CCvarComboBox* m_pScoreShowSteamIdType;
 	CCvarToggleCheckButton* m_pScoreShowRealName;
-	CCvarToggleCheckButton* m_pScoreSpacingNormal;
-	CCvarToggleCheckButton* m_pScoreSpacingCompact;
+	CCvarLabelSlider* m_pScoreSpacingNormal;
+	CCvarLabelSlider* m_pScoreSpacingCompact;
 	CCvarComboBox* m_pScoreSize;
+
+	CCvarToggleCheckButton* m_pPopNumber;
+
+	GroupBox* m_pPlayerTitleGroup;
+	CCvarToggleCheckButton* m_pPlayerTitle;
+	CCvarLabelSlider* m_pPlayerTitleDanger;
 };
 
 
