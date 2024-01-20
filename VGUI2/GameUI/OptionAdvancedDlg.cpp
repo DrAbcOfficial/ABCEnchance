@@ -20,6 +20,7 @@
 #include "vgui_controls/MenuItem.h"
 #include "vgui_controls/MemoryBitmap.h"
 #include "vgui_controls/GroupBox.h"
+#include "vgui_controls/MessageBox.h"
 
 #include "FreeImage.h"
 #include "wadlib/wadfile.h"
@@ -399,17 +400,15 @@ void COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
 	if (!std::strcmp(cmd, "FilterModel"))
 		FilterModel();
 	else if (!std::strcmp(cmd, "OpenLoadSparyDialog")) {
-		if (m_pFileDialog) {
-			delete m_pFileDialog;
-			m_pFileDialog = nullptr;
-		}
-		m_pFileDialog = new FileOpenDialog(this, "#GameUI_ABC_LoadSpary", FileOpenDialogType_t::FOD_OPEN, new KeyValues("FileInfo"));
-		m_pFileDialog->SetProportional(false);
-		m_pFileDialog->AddFilter("*.tga;*.png;*.bmp;*.jpg", "#GameUI_ABC_SparyFilter", true, "image");
-		m_pFileDialog->Activate();
+		auto filedialog = new FileOpenDialog(this, "#GameUI_ABC_LoadSpary", FileOpenDialogType_t::FOD_OPEN, new KeyValues("FileInfo"));
+		filedialog->SetProportional(false);
+		filedialog->SetAutoDelete(true);
+		filedialog->AddFilter("*.tga;*.png;*.bmp;*.jpg", "#GameUI_ABC_SparyFilter", true, "image");
+		filedialog->Activate();
 		int w, h;
-		m_pFileDialog->GetSize(w, h);
-		m_pFileDialog->SetPos((ScreenWidth() - w) / 2, (ScreenHeight() - h) / 2);
+		filedialog->GetSize(w, h);
+		filedialog->SetPos((ScreenWidth() - w) / 2, (ScreenHeight() - h) / 2);
+		input()->SetAppModalSurface(filedialog->GetVPanel());
 	}
 }
 void COptionsAdvanceSubMultiPlay::ApplySchemeSettings(IScheme* pScheme){
@@ -467,7 +466,24 @@ void COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wi
 }
 
 
-vgui::COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubOtherOption"){
+
+class KeyBindingBox : public MessageBox {
+public:
+	KeyBindingBox(Panel* parent, const char* msg, Panel* target) : MessageBox(msg, msg, parent) {
+		AddActionSignalTarget(parent);
+		m_pTarget = target;
+	}
+	void OnKeyCodeTyped(KeyCode code) override {
+		auto kv = new KeyValues("KeyBinded");
+		kv->SetPtr("target", m_pTarget);
+		kv->SetInt("code", (int)code);
+		PostActionSignal(kv);
+		Close();
+	}
+private:
+	Panel* m_pTarget;
+};
+COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubOtherOption"){
 	m_pNewHud = new CCvarToggleCheckButton(this, "NewHud", "#GameUI_ABC_Cvar_NewHud", "cl_hud_csgo");
 	m_pDynamicBackground = new CCvarToggleCheckButton(this, "DynamicBackground", "#GameUI_ABC_Cvar_DynamicBackground", "hud_dynamic_background");
 
@@ -519,10 +535,36 @@ vgui::COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent
 
 	m_pAutojump = new CCvarToggleCheckButton(this, "AutoJump", "#GameUI_ABC_Cvar_AutoJump", "cl_autojump");
 	m_pRainbowMenu = new CCvarToggleCheckButton(this, "RainbowMenu", "#GameUI_ABC_Cvar_RainbowMenu", "cl_rainbowmenu");
+	m_pEfxHud = new CCvarToggleCheckButton(this, "ExfHud", "#GameUI_ABC_Cvar_ExfHud", "cl_efxhud");
+	m_pSidePanel = new CCvarToggleCheckButton(this, "SideHud", "#GameUI_ABC_Cvar_SideHud", "cl_sideenable");
+	m_pMotd = new CCvarComboBox(this, "Motd", "#GameUI_ABC_Cvar_Motd", 3, "hud_motd");
+	m_pMotd->AddItem("#GameUI_ABC_Cvar_MotdNone", new KeyValues("value", "value", -1));
+	m_pMotd->AddItem("#GameUI_ABC_Cvar_MotdVanillia", new KeyValues("value", "value", 0));
+	m_pMotd->AddItem("#GameUI_ABC_Cvar_MotdNew", new KeyValues("value", "value", 1));
 
+	m_pDeathNoticeGroup = new GroupBox(this, "DeathNoticeGroup", "#GameUI_ABC_DeathNoticeGroup", 3);
+	m_pDeathNotice = new CCvarToggleCheckButton(this, "DeathNotice", "#GameUI_ABC_Cvar_DeathNotice", "hud_deathnotice");
+	m_pDeathNoticeTime = new CCvarLabelSlider(this, "DeathNoticeTime", "#GameUI_ABC_Cvar_DeathNoticeTime", "#GameUI_ABC_Cvar_DeathNoticeTime", 0.0f, 30.0f, "hud_deathnotice_time", false, true);
+	m_pDeathNoticeCount = new CCvarLabelSlider(this, "DeathNoticeCount", "#GameUI_ABC_Cvar_DeathNoticeCount", "#GameUI_ABC_Cvar_DeathNoticeCount", 0, 10, "hud_deathnotice_count");
+
+	m_pGrenadeIndicatorGroup = new GroupBox(this, "GrenadeIndicatorGroup", "#GameUI_ABC_GrenadeIndicatorGroup", 3);
+	m_pGrenadeIndicator = new CCvarToggleCheckButton(this, "GrenadeIndicator", "#GameUI_ABC_Cvar_GrenadeIndicator", "cl_grenadeindicator");
+	m_pGrenadeIndicatorTime = new CCvarLabelSlider(this, "GrenadeIndicatorTime", "#GameUI_ABC_Cvar_GrenadeIndicatorTime", "#GameUI_ABC_Cvar_GrenadeIndicatorTime", 0.0f, 30.0f, "cl_grenadeindicator_time", false, true);
+	m_pGrenadeIndicatorRange = new CCvarLabelSlider(this, "GrenadeIndicatorRange", "#GameUI_ABC_Cvar_GrenadeIndicatorRange", "#GameUI_ABC_Cvar_GrenadeIndicatorRange", 0, 1024, "cl_grenadeindicator_range");
+
+	m_pVoteGroup = new GroupBox(this, "VoteGroup", "#GameUI_ABC_VoteGroup", 3);
+	m_pVote = new CCvarToggleCheckButton(this, "Vote", "#GameUI_ABC_Cvar_Vote", "cl_hud_vote");
+	m_pVoteYes = new Label(this, "VoteYes", "#GameUI_ABC_Cvar_VoteYes");
+	m_pVoteNo = new Label(this, "VoteNo", "#GameUI_ABC_Cvar_VoteNo");
+	m_pVoteYesButton = new Button(this, "VoteBindingYes", "#GameUI_ABC_Cvar_BindgKeyBoard", this, "VoteYesBind");
+	m_pVoteNoButton = new Button(this, "VoteBindingNo", "#GameUI_ABC_Cvar_BindgKeyBoard", this, "VoteNoBind");
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubOtherOption.res");
 }
-
+void COptionsAdvanceSubOtherOption::OnResetData(){
+	BaseClass::OnResetData();
+	m_pVoteYesButton->SetText(CVAR_GET_STRING("cl_hud_votekey_yes"));
+	m_pVoteNoButton->SetText(CVAR_GET_STRING("cl_hud_votekey_no"));
+}
 void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 	m_pNewHud->ApplyChanges();
 	m_pDynamicBackground->ApplyChanges();
@@ -564,6 +606,50 @@ void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 
 	m_pAutojump->ApplyChanges();
 	m_pRainbowMenu->ApplyChanges();
+	m_pEfxHud->ApplyChanges();
+	m_pSidePanel->ApplyChanges();
+	m_pMotd->ApplyChanges();
+
+	m_pDeathNotice->ApplyChanges();
+	m_pDeathNoticeTime->ApplyChanges();
+	m_pDeathNoticeCount->ApplyChanges();
+
+	m_pGrenadeIndicator->ApplyChanges();
+	m_pGrenadeIndicatorTime->ApplyChanges();
+	m_pGrenadeIndicatorRange->ApplyChanges();
+
+	m_pVote->ApplyChanges();
+	char buf[64];
+	m_pVoteYesButton->GetText(buf, 64);
+	CVAR_SET_STRING("cl_hud_votekey_yes", buf);
+	m_pVoteNoButton->GetText(buf, 64);
+	CVAR_SET_STRING("cl_hud_votekey_no", buf);
+}
+void COptionsAdvanceSubOtherOption::OnKeyBinded(Panel* target, int code) {
+	char buf[64];
+	vgui::input()->GetKeyCodeText((KeyCode)code, buf, 64);
+	wchar_t wbuf[32];
+	Q_UTF8ToUnicode((char*)(buf + 4), wbuf, 32);
+	reinterpret_cast<Button*>(target)->SetText(wbuf);
+}
+void COptionsAdvanceSubOtherOption::OnCommand(const char* cmd){
+	static auto popkeybindbox = [](Panel* parent, Panel* target) {
+		auto msgbox = new KeyBindingBox(parent, "#GameUI_ABC_Cvar_AnyKeyBinding", target);
+		msgbox->SetAutoDelete(true);
+		msgbox->SetProportional(false);
+		int w, h;
+		parent->GetSize(w, h);
+		msgbox->SetPos((ScreenWidth() - w) / 2, (ScreenHeight() - h) / 2);
+		msgbox->Activate();
+		msgbox->MakePopup();
+		input()->SetAppModalSurface(msgbox->GetVPanel());
+	};
+	if (!Q_strcmp(cmd, "VoteYesBind"))
+		popkeybindbox(this, m_pVoteYesButton);
+	else if (!Q_strcmp(cmd, "VoteNoBind")) 
+		popkeybindbox(this, m_pVoteNoButton);
+	else
+		BaseClass::OnCommand(cmd);
 }
 
 

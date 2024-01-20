@@ -40,7 +40,7 @@ void CCvarComboBox::ApplyChanges(void)
 		CVAR_SET_FLOAT(m_szCvarName, active->GetFloat("value"));
 	else {
 		int item = m_pComboBox->GetActiveItem();
-		if (item > 0) 
+		if (item >= 0) 
 			CVAR_SET_FLOAT(m_szCvarName, item);
 	}
 }
