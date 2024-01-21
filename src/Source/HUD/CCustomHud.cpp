@@ -458,7 +458,7 @@ void CCustomHud::HUD_Init(void){
 	gCVars.pDamageScreenBase = CREATE_CVAR("cl_damageshock_base", "15", FCVAR_VALUE, nullptr);
 	gCVars.pDangerHealth = CREATE_CVAR("cl_dangerhealth", "45", FCVAR_VALUE, nullptr);
 	gCVars.pDangerArmor = CREATE_CVAR("cl_dangerarmor", "45", FCVAR_VALUE, nullptr);
-	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_enable", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->SetVisible(cvar->value > 0);
 	});
 
