@@ -74,10 +74,8 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_Redraw = HUD_Redraw;
 	pExportFunc->IN_MouseEvent = IN_MouseEvent;
 	pExportFunc->HUD_Key_Event = HUD_KeyEvent;
-	pExportFunc->IN_Accumulate = IN_Accumulate;
 	pExportFunc->CL_CreateMove = CL_CreateMove;
 	pExportFunc->HUD_UpdateClientData = HUD_UpdateClientData;
-	//pExportFunc->HUD_Reset = HUD_Reset;
 	pExportFunc->HUD_TxferLocalOverrides = HUD_TxferLocalOverrides;
 	pExportFunc->HUD_PlayerMove = HUD_ClientMove;
 	pExportFunc->HUD_AddEntity = HUD_AddEntity;

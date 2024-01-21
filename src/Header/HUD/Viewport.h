@@ -18,8 +18,6 @@
 #include <VGUI_controls/Frame.h>
 
 class CPlayerInfoPanel;
-class CScorePanel;
-class CVotePanel;
 class CMotdPanel;
 class CSidePanel;
 class CTextMenu;
@@ -35,12 +33,13 @@ class CDeathMsgPanel;
 class CNeteasePanel;
 class CRadarPanel;
 
-class ISchemel;
-
 class WEAPON;
-class CViewport : public vgui::Panel
+namespace vgui {
+	class CScorePanel;
+	class CVotePanel;
+class CViewport : public Panel
 {
-	DECLARE_CLASS_SIMPLE(CViewport, vgui::Panel);
+	DECLARE_CLASS_SIMPLE(CViewport, Panel);
 
 public:
 	CViewport(void);
@@ -74,7 +73,7 @@ public:
 	void HudHideCallBack(int token);
 	void LongjumpCallBack(bool state);
 
-	vgui::HScheme GetBaseScheme();
+	HScheme GetBaseScheme();
 
 	bool IsScoreBoardVisible();
 	void ShowScoreBoard();
@@ -168,5 +167,5 @@ private:
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 };
-
-extern CViewport *g_pViewPort;
+}
+extern vgui::CViewport *g_pViewPort;

@@ -29,6 +29,9 @@
 #include "flashlight.h"
 #include "notice.h"
 #include "crosshair.h"
+#include <regex>
+#include <bitset>
+
 #include "effect.h"
 #include "health.h"
 #include "ammobar.h"
@@ -44,12 +47,14 @@
 #include "exportfuncs.h"
 #include "keydefs.h"
 #include <parsemsg.h>
-#include <regex>
-#include <bitset>
 
 using namespace vgui;
 
 CViewport *g_pViewPort = nullptr;
+
+vgui::HScheme GetViewPortBaseScheme() {
+	return g_pViewPort->GetBaseScheme();
+}
 
 CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	int swide, stall;
@@ -98,8 +103,8 @@ void CViewport::Start(void){
 	AddNewPanel(m_pTextMenu = new CTextMenu()); 
 	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
 	AddNewPanel(m_pNeteaseMusic = new CNeteasePanel());
-	AddNewPanel(m_pVotePanel = new CVotePanel());
-	AddNewPanel(m_pScorePanel = new CScorePanel());
+	AddNewPanel(m_pVotePanel = new vgui::CVotePanel());
+	AddNewPanel(m_pScorePanel = new vgui::CScorePanel());
 	SetVisible(false);
 }
 
@@ -145,6 +150,10 @@ void CViewport::VidInit(void){
 	Reset();
 }
 
+vgui::HScheme CViewport::GetBaseScheme() {
+	return m_hBaseScheme;
+}
+
 void CViewport::Reset() {
 	for (IViewportPanel* pPanel : m_Panels)
 		pPanel->Reset();
@@ -179,7 +188,6 @@ bool CViewport::KeyInput(int down, int keynum, const char* pszCurrentBinding){
 	}
 	return true;
 }
-
 void CViewport::AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	m_pGIndicator->AddEntity(ent, modelname);
 }
@@ -227,9 +235,6 @@ void CViewport::ShowScoreBoard(){
 }
 void CViewport::LongjumpCallBack(bool state){
 	m_pHealthPanel->SetLongJump(state);
-}
-vgui::HScheme CViewport::GetBaseScheme(){
-	return m_hBaseScheme;
 }
 void CViewport::HideScoreBoard(){
 	m_pScorePanel->ShowPanel(false);

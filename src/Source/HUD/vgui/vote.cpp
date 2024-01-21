@@ -1,4 +1,6 @@
 #pragma once
+#include <regex>
+
 #include <metahook.h>
 
 #include <vgui/IImage.h>
@@ -6,19 +8,15 @@
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
 #include <vgui_controls/Label.h>
-
-#include "local.h"
-#include "vguilocal.h"
-
-#include <keydefs.h>
 #include "vgui_controls/ImagePanel.h"
-#include "vote.h"
+
+#include "vguilocal.h"
+#include <local.h>
+
 #include "Viewport.h"
 #include "BaseUI.h"
 
-#include "plugins.h"
-#include <regex>
-
+#include "vote.h"
 
 #define VIEWPORT_VOTE_NAME "VotePanel"
 #define VOTE_TITLE_LOCALIZE_TOKEN "#Vote_DefaultMessage"
@@ -29,12 +27,15 @@
 #define VOTE_BAN_LOCALIZE_TOKEN "Vote_VoteBan"
 #define VOTE_MAP_LOCALIZE_TOKEN "Vote_VoteMap"
 
+using namespace vgui;
+extern vgui::HScheme GetViewPortBaseScheme();
+
 CVotePanel::CVotePanel()
 	: BaseClass(nullptr, VIEWPORT_VOTE_NAME){
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	// Header labels
 	m_pContentPanel = new vgui::Panel(this, "VoteContentPanel");
@@ -50,11 +51,11 @@ CVotePanel::CVotePanel()
 	SetVisible(false);
 
 	m_pHudVote = CREATE_CVAR("cl_hud_vote", "1", FCVAR_VALUE, nullptr);
-	m_pHudVoteKeyYes = CREATE_CVAR("cl_hud_votekey_yes", "F1", FCVAR_VALUE, [](cvar_t* cvar) {
-		g_pViewPort->GetVotePanel()->m_iYes = gameuifuncs->Key_KeyStringToKeyNum(cvar->string);
+	m_pHudVoteKeyYes = CREATE_CVAR("cl_hud_votekey_yes", "92", FCVAR_VALUE, [](cvar_t* cvar) {
+		g_pViewPort->GetVotePanel()->m_iYes = static_cast<int>(cvar->value);
 	});
-	m_pHudVoteKeyNo = CREATE_CVAR("cl_hud_votekey_no", "F2", FCVAR_VALUE, [](cvar_t* cvar) {
-		g_pViewPort->GetVotePanel()->m_iNo = gameuifuncs->Key_KeyStringToKeyNum(cvar->string);
+	m_pHudVoteKeyNo = CREATE_CVAR("cl_hud_votekey_no", "93", FCVAR_VALUE, [](cvar_t* cvar) {
+		g_pViewPort->GetVotePanel()->m_iNo = static_cast<int>(cvar->value);
 	});
 }
 const char* CVotePanel::GetName(){
@@ -63,8 +64,6 @@ const char* CVotePanel::GetName(){
 void CVotePanel::Reset(){
 	if (IsVisible())
 		ShowPanel(false);
-	m_iYes = gameuifuncs->Key_KeyStringToKeyNum(m_pHudVoteKeyYes->string);
-	m_iNo = gameuifuncs->Key_KeyStringToKeyNum(m_pHudVoteKeyNo->string);
 }
 void CVotePanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -123,7 +122,7 @@ void CVotePanel::StartVote(char* szContent, char* szYes, char* szNo, int iVoteTy
 	std::string szPatten;
 	std::string szToken;
 
-#define BUFSIZE 256
+#define BUFSIZE 16
 	wchar_t buf[BUFSIZE];
 	Q_UTF8ToUnicode(gameuifuncs->Key_NameForKey(m_iYes), buf, BUFSIZE);
 	std::wstring wszYes = buf;

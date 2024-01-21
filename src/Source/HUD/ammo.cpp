@@ -43,6 +43,8 @@ pfnUserMsgHook m_pfnHideWeapon;
 pfnUserMsgHook m_pfnHideHUD;
 pfnUserMsgHook m_pfnWeaponSpr;
 
+extern bool IsCustomHudEnabled();
+
 int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
@@ -272,7 +274,7 @@ void CHudCustomAmmo::ChosePlayerWeapon(){
 	}
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bWheel){
-	if (!gCustomHud.IsHudEnable())
+	if (!IsCustomHudEnabled())
 		return;
 	if (gCustomHud.SelectTextMenuItem(iSlot + 1))
 		return;

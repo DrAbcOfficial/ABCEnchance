@@ -203,7 +203,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 	if (g_pViewPort && g_pViewPort->TextMsg(pszName, iSize, pbuf))
 		return 1;
 	BEGIN_READ(pbuf, iSize);
-	CViewport::HUDNOTICE msg_dest = static_cast<CViewport::HUDNOTICE>(READ_BYTE());
+	vgui::CViewport::HUDNOTICE msg_dest = static_cast<vgui::CViewport::HUDNOTICE>(READ_BYTE());
 #define BUFFER_SIZE 256
 	static auto findLocalize = [](std::string& str) {
 			if (str.front() == '#') {
@@ -251,8 +251,8 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 
 	switch (msg_dest)
 	{
-	case CViewport::HUDNOTICE::PRINTNOTIFY:
-	case CViewport::HUDNOTICE::PRINTCENTER:
+	case vgui::CViewport::HUDNOTICE::PRINTNOTIFY:
+	case vgui::CViewport::HUDNOTICE::PRINTCENTER:
 		if (g_pViewPort)
 			g_pViewPort->ShowNotice(msg_dest, szBuf.c_str());
 		break;
@@ -395,6 +395,10 @@ void __UserCmd_Attack1(void) {
 	return UserCmd_Attack1();
 }
 
+bool IsCustomHudEnabled() {
+	return gCVars.pDynamicHUD->value > 0;
+}
+
 void CCustomHud::GL_Init(void){
 	m_HudIndicator.GLInit();
 	m_HudEccoBuyMenu.GLInit();
@@ -446,7 +450,9 @@ void CCustomHud::HUD_Init(void){
 	gCVars.pDamageScreenBase = CREATE_CVAR("cl_damageshock_base", "15", FCVAR_VALUE, nullptr);
 	gCVars.pDangerHealth = CREATE_CVAR("cl_dangerhealth", "45", FCVAR_VALUE, nullptr);
 	gCVars.pDangerArmor = CREATE_CVAR("cl_dangerarmor", "45", FCVAR_VALUE, nullptr);
-	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, nullptr);
+	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_csgo", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+		g_pViewPort->SetVisible(cvar->value > 0);
+	});
 
 	m_HudIndicator.Init();
 	m_HudCustomAmmo.Init();
@@ -504,9 +510,6 @@ void CCustomHud::HUD_Draw(float flTime){
 #ifdef _DEBUG
 	m_HudCCTV.Draw(flTime);
 #endif
-
-	if (!IsHudEnable())
-		return;
 	m_HudIndicator.Draw(flTime);
 	m_HudCustomAmmo.Draw(flTime);
 }
@@ -531,15 +534,9 @@ void CCustomHud::HUD_Reset(void){
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
 }
 void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
-	if (!IsHudEnable())
-		return;
 	m_iWeaponBits = cdata->iWeaponBits;
 	m_bPlayerLongjump = mathlib::fatoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
 	g_pViewPort->LongjumpCallBack(m_bPlayerLongjump);
-}
-void CCustomHud::HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
-	if (!IsHudEnable())
-		return;
 }
 void CCustomHud::HUD_Clear(void){
 	m_HudEccoBuyMenu.Clear();
@@ -550,8 +547,6 @@ void CCustomHud::HUD_BlitRadarFramebuffer()
 	g_pViewPort->GetRadarPanel()->BlitFramebuffer();
 }
 void CCustomHud::IN_MouseEvent(int mstate){
-	if (!IsHudEnable())
-		return;
 	auto MouseTest = [&](int mstate, int testBit, vgui::MouseCode enumMouse) {
 		//Яждкга
 		if ((mstate & testBit) != 0) {
@@ -588,21 +583,7 @@ void CCustomHud::IN_MouseEvent(int mstate){
 		MouseTest(mstate, 1 << i, static_cast<vgui::MouseCode>(i));
 	}
 }
-int CCustomHud::HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
-	int result = 1;
-	if(g_pViewPort)
-		result = g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding);
-	if (!IsHudEnable())
-		return 1;
-	return result;
-}
-void CCustomHud::IN_Accumulate(void){
-	if (!IsHudEnable())
-		return;
-}
 int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname){
-	if (!IsHudEnable())
-		return true;
 	bool result = true;
 	result = result && m_HudEccoBuyMenu.AddEntity(type, ent, modelname);
 	g_HudItemHighLight.AddEntity(type, ent, modelname);
@@ -623,9 +604,6 @@ void CCustomHud::HudHideCallBack(int hidetoken){
 }
 bool CCustomHud::IsHudHide(int HideToken) {
 	return (m_iHideHUDDisplay & HideToken) != 0;
-}
-bool CCustomHud::IsHudEnable() {
-	return gCVars.pDynamicHUD->value > 0;
 }
 bool CCustomHud::IsInSpectate() {
 	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
@@ -679,7 +657,7 @@ void CCustomHud::OnMousePressed(int code) {
 	}
 }
 void CCustomHud::SetBaseHudActivity() {
-	if (IsHudEnable()) {
+	if (IsCustomHudEnabled()) {
 		if (gHookHud.m_Ammo)
 			gHookHud.m_Ammo->m_iFlags &= ~HUD_ACTIVE;
 		if (gHookHud.m_Battery)

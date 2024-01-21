@@ -31,7 +31,7 @@
 
 CRadarAvatarPanel::CRadarAvatarPanel(vgui::Panel* parent, int index) : BaseClass(parent, "") {
 	m_iIndex = index + 1;
-	m_pAvatar = new CAvatarImage();
+	m_pAvatar = new vgui::CAvatarImage();
 	SetImage(m_pAvatar);
 }
 void CRadarAvatarPanel::Paint(){
@@ -129,7 +129,7 @@ private:
 	Color m_DrawColor = Color(255, 255, 255, 255);
 };
 
-extern CViewport* g_pViewPort;
+extern vgui::CViewport* g_pViewPort;
 #define VIEWPORT_RADAR_NAME "RadarPanel"
 CRadarPanel::CRadarPanel()
 	: BaseClass(nullptr, VIEWPORT_RADAR_NAME) {
