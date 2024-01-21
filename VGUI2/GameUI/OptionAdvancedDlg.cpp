@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <filesystem>
 
 #include "interface.h"
 #include "IFileSystem.h"
@@ -21,19 +22,20 @@
 #include "vgui_controls/MemoryBitmap.h"
 #include "vgui_controls/GroupBox.h"
 #include "vgui_controls/MessageBox.h"
+#include "vgui_controls/GaussianBlurPanel.h"
+#include "vgui_controls/ModelViewPanel.h"
 
 #include "FreeImage.h"
 #include "wadlib/wadfile.h"
 
-#include <GaussianBlurPanel.h>
-#include <ModelViewPanel.h>
+#include "BaseUI.h"
 
 #include "OptionAdvancedDlg.h"
-#include <filesystem>
 
 extern const char* CVAR_GET_STRING(const char* x);
 extern void CVAR_SET_STRING(const char* x, const char* v);
 extern float CVAR_GET_FLOAT(const char* x);
+extern void CVAR_SET_FLOAT(const char* x, float v);
 extern size_t ScreenWidth();
 extern size_t ScreenHeight();
 constexpr char* FAVMODEL_ICON = "#GameUI_ABC_Favorite";
@@ -483,6 +485,21 @@ public:
 private:
 	Panel* m_pTarget;
 };
+class KeyBindingButton : public Button {
+public:
+	KeyBindingButton(Panel* parent, const char* panelName, const char* text, Panel* pActionSignalTarget = NULL, const char* pCmd = NULL) :
+		Button(parent, panelName, text, pActionSignalTarget, pCmd){
+
+	}
+	int GetKeyCode() {
+		return m_iCode;
+	}
+	void SetKeyCode(int code) {
+		m_iCode = code;
+	}
+private:
+	int m_iCode = 0;
+};
 COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubOtherOption"){
 	m_pNewHud = new CCvarToggleCheckButton(this, "NewHud", "#GameUI_ABC_Cvar_NewHud", "cl_hud_csgo");
 	m_pDynamicBackground = new CCvarToggleCheckButton(this, "DynamicBackground", "#GameUI_ABC_Cvar_DynamicBackground", "hud_dynamic_background");
@@ -556,8 +573,8 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 	m_pVote = new CCvarToggleCheckButton(this, "Vote", "#GameUI_ABC_Cvar_Vote", "cl_hud_vote");
 	m_pVoteYes = new Label(this, "VoteYes", "#GameUI_ABC_Cvar_VoteYes");
 	m_pVoteNo = new Label(this, "VoteNo", "#GameUI_ABC_Cvar_VoteNo");
-	m_pVoteYesButton = new Button(this, "VoteBindingYes", "#GameUI_ABC_Cvar_BindgKeyBoard", this, "VoteYesBind");
-	m_pVoteNoButton = new Button(this, "VoteBindingNo", "#GameUI_ABC_Cvar_BindgKeyBoard", this, "VoteNoBind");
+	m_pVoteYesButton = new KeyBindingButton(this, "VoteBindingYes", "#GameUI_ABC_Cvar_BindgKeyBoard", this, "VoteYesBind");
+	m_pVoteNoButton = new KeyBindingButton(this, "VoteBindingNo", "#GameUI_ABC_Cvar_BindgKeyBoard", this, "VoteNoBind");
 
 	m_pEfxGroup = new GroupBox(this, "EfxGroup", "#GameUI_ABC_EfxGroup", 5);
 	m_pShellEfx = new CCvarToggleCheckButton(this, "ShellEfx", "#GameUI_ABC_Cvar_ShellEfx", "abc_shellefx");
@@ -570,8 +587,8 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 }
 void COptionsAdvanceSubOtherOption::OnResetData(){
 	BaseClass::OnResetData();
-	m_pVoteYesButton->SetText(CVAR_GET_STRING("cl_hud_votekey_yes"));
-	m_pVoteNoButton->SetText(CVAR_GET_STRING("cl_hud_votekey_no"));
+	m_pVoteYesButton->SetText(gameuifuncs->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_yes")));
+	m_pVoteNoButton->SetText(gameuifuncs->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_no")));
 }
 void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 	m_pNewHud->ApplyChanges();
@@ -627,11 +644,9 @@ void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 	m_pGrenadeIndicatorRange->ApplyChanges();
 
 	m_pVote->ApplyChanges();
-	char buf[64];
-	m_pVoteYesButton->GetText(buf, 64);
-	CVAR_SET_STRING("cl_hud_votekey_yes", buf);
-	m_pVoteNoButton->GetText(buf, 64);
-	CVAR_SET_STRING("cl_hud_votekey_no", buf);
+
+	CVAR_SET_FLOAT("cl_hud_votekey_yes", reinterpret_cast<KeyBindingButton*>(m_pVoteYesButton)->GetKeyCode());
+	CVAR_SET_FLOAT("cl_hud_votekey_no", reinterpret_cast<KeyBindingButton*>(m_pVoteNoButton)->GetKeyCode());
 
 	m_pShellEfx->ApplyChanges();
 	m_pGaussEfx->ApplyChanges();
@@ -644,7 +659,9 @@ void COptionsAdvanceSubOtherOption::OnKeyBinded(Panel* target, int code) {
 	vgui::input()->GetKeyCodeText((KeyCode)code, buf, 64);
 	wchar_t wbuf[32];
 	Q_UTF8ToUnicode((char*)(buf + 4), wbuf, 32);
-	reinterpret_cast<Button*>(target)->SetText(wbuf);
+	KeyBindingButton* btn = reinterpret_cast<KeyBindingButton*>(target);
+	btn->SetText(wbuf);
+	btn->SetKeyCode(gameuifuncs->Key_KeyStringToKeyNum(buf + 4));
 }
 void COptionsAdvanceSubOtherOption::OnCommand(const char* cmd){
 	static auto popkeybindbox = [](Panel* parent, Panel* target) {

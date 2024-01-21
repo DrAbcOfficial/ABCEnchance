@@ -6,8 +6,9 @@
 #include <vgui_controls/EditablePanel.h>
 #include <vgui_controls/ImagePanel.h>
 #include "IViewportPanel.h"
-
-class CAvatarImage;
+namespace vgui {
+	class CAvatarImage;
+}
 
 class CRadarAvatarPanel : public vgui::ImagePanel {
 	DECLARE_CLASS_SIMPLE(CRadarAvatarPanel, ImagePanel);
@@ -15,7 +16,7 @@ public:
 	CRadarAvatarPanel(vgui::Panel* parent, int index);
 	virtual void Paint() override;
 private:
-	CAvatarImage* m_pAvatar;
+	vgui::CAvatarImage* m_pAvatar;
 	int m_iIndex;
 };
 

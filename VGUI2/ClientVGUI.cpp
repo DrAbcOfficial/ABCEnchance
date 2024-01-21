@@ -69,7 +69,7 @@ public:
 	virtual void Start(void) {
 		m_pfnCClientVGUI_Start(this, 0);
 
-		g_pViewPort = new CViewport();
+		g_pViewPort = new vgui::CViewport();
 		g_pViewPort->Start();
 	}
 	virtual void SetParent(vgui::VPANEL parent) {

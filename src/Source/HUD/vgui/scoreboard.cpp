@@ -59,166 +59,166 @@
 
 #define DONOR_IMAGELIST_BASE 40
 
-namespace
-{
-	int s_iMutedIconTexture = -1;
-	int s_iDefaultAvatarTexture = -1;
-	class CPlayerImage : public vgui::IImage
-	{
-	public:
-		void ResetAvatarInfo() {
-			m_pAvatar->SetPos(m_iX, m_iY);
-			m_pAvatar->SetOffset(m_iOffX, m_iOffY);
-			m_pAvatar->SetSize(m_iWide, m_iTall);
-			m_pAvatar->SetColor(m_DrawColor);
-		}
-		void SetAdminTexture(int tex) {
-			iAdminTexture = tex;
-		}
-		void SetAvatar(CSteamID* pSteamID)
-		{
-			if (!pSteamID)
-				return;
-			m_pAvatar->SetAvatarSteamID(*pSteamID);
-			m_pAvatar->SetDrawFriend(false);
-			ResetAvatarInfo();
-		}
-
-		void SetMuted(bool state)
-		{
-			m_bIsMuted = state;
-		}
-
-		// Call to Paint the image
-		// Image will draw within the current panel context at the specified position
-		virtual void Paint() override
-		{
-			if (m_pAvatar->IsValid())
-				m_pAvatar->Paint();
-			else if(s_iDefaultAvatarTexture >= 0) {
-				vgui::surface()->DrawSetTexture(s_iDefaultAvatarTexture);
-				vgui::surface()->DrawSetColor(m_DrawColor);
-				vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
-					m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
-			}
-
-			if (m_bIsMuted && s_iMutedIconTexture >= 0){
-				vgui::surface()->DrawSetTexture(s_iMutedIconTexture);
-				vgui::surface()->DrawSetColor(m_DrawColor);
-				vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
-					m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
-			}
-			if (iAdminTexture >= 0) {
-				vgui::surface()->DrawSetTexture(iAdminTexture);
-				vgui::surface()->DrawSetColor(m_DrawColor);
-				vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
-					m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
-			}
-		}
-
-		// Set the position of the image
-		virtual void SetPos(int x, int y) override
-		{
-			m_iX = x;
-			m_iY = y;
-			ResetAvatarInfo();
-		}
-
-		virtual void SetOffset(int x, int y)
-		{
-			m_iOffX = x;
-			m_iOffY = y;
-			ResetAvatarInfo();
-		}
-
-		// Gets the size of the content
-		virtual void GetContentSize(int& wide, int& tall) override
-		{
-			wide = m_iWide;
-			tall = m_iTall;
-		}
-
-		// Get the size the image will actually draw in (usually defaults to the content size)
-		virtual void GetSize(int& wide, int& tall) override
-		{
-			GetContentSize(wide, tall);
-		}
-
-		// Sets the size of the image
-		virtual void SetSize(int wide, int tall) override
-		{
-			m_iWide = wide;
-			m_iTall = tall;
-			ResetAvatarInfo();
-		}
-
-		// Set the draw color
-		virtual void SetColor(Color col) override
-		{
-			m_DrawColor = col;
-			ResetAvatarInfo();
-		}
-
-	private:
-		int m_iX = 0, m_iY = 0;
-		int m_iOffX = 0, m_iOffY = 0;
-		int m_iWide = 0, m_iTall = 0;
-		Color m_DrawColor = Color(255, 255, 255, 255);
-		CAvatarImage* m_pAvatar = new CAvatarImage();
-		bool m_bIsMuted = false;
-		int iAdminTexture = 0;
-	};
-	class CDonorImage : public vgui::IImage {
-	public:
-		void SetTexture(int level) {
-			m_iLevelTexture = level;
-		}
-		virtual void Paint() override{
-			if (m_iLevelTexture < 0)
-				return;
-			vgui::surface()->DrawSetTexture(m_iLevelTexture);
-			vgui::surface()->DrawSetColor(m_DrawColor);
-			vgui::surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
-					m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
-		}
-		// Get the size the image will actually draw in (usually defaults to the content size)
-		virtual void GetSize(int& wide, int& tall) override{
-			GetContentSize(wide, tall);
-		}
-
-		// Sets the size of the image
-		virtual void SetSize(int wide, int tall) override{
-			m_iWide = wide;
-			m_iTall = tall;
-		}
-		// Set the position of the image
-		virtual void SetPos(int x, int y) override{
-			m_iX = x;
-			m_iY = y;
-		}
-		virtual void SetOffset(int x, int y){
-			m_iOffX = x;
-			m_iOffY = y;
-		}
-		// Gets the size of the content
-		virtual void GetContentSize(int& wide, int& tall) override{
-			wide = m_iWide;
-			tall = m_iTall;
-		}
-		// Set the draw color
-		virtual void SetColor(Color col) override{
-			m_DrawColor = col;
-		}
-	private:
-		int m_iLevelTexture = 0;
-		int m_iX = 0, m_iY = 0;
-		int m_iOffX = 0, m_iOffY = 0;
-		int m_iWide = 0, m_iTall = 0;
-		Color m_DrawColor = Color(255, 255, 255, 255);
-	};
-}
-
 #define VIEWPORT_SCOREPANEL_NAME "ScorePanel"
+
+using namespace vgui;
+
+int s_iMutedIconTexture = -1;
+int s_iDefaultAvatarTexture = -1;
+class CPlayerImage : public IImage
+{
+public:
+	void ResetAvatarInfo() {
+		m_pAvatar->SetPos(m_iX, m_iY);
+		m_pAvatar->SetOffset(m_iOffX, m_iOffY);
+		m_pAvatar->SetSize(m_iWide, m_iTall);
+		m_pAvatar->SetColor(m_DrawColor);
+	}
+	void SetAdminTexture(int tex) {
+		iAdminTexture = tex;
+	}
+	void SetAvatar(CSteamID* pSteamID)
+	{
+		if (!pSteamID)
+			return;
+		m_pAvatar->SetAvatarSteamID(*pSteamID);
+		m_pAvatar->SetDrawFriend(false);
+		ResetAvatarInfo();
+	}
+
+	void SetMuted(bool state)
+	{
+		m_bIsMuted = state;
+	}
+
+	// Call to Paint the image
+	// Image will draw within the current panel context at the specified position
+	virtual void Paint() override
+	{
+		if (m_pAvatar->IsValid())
+			m_pAvatar->Paint();
+		else if(s_iDefaultAvatarTexture >= 0) {
+			surface()->DrawSetTexture(s_iDefaultAvatarTexture);
+			surface()->DrawSetColor(m_DrawColor);
+			surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
+				m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
+		}
+
+		if (m_bIsMuted && s_iMutedIconTexture >= 0){
+			surface()->DrawSetTexture(s_iMutedIconTexture);
+			surface()->DrawSetColor(m_DrawColor);
+			surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
+				m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
+		}
+		if (iAdminTexture >= 0) {
+			surface()->DrawSetTexture(iAdminTexture);
+			surface()->DrawSetColor(m_DrawColor);
+			surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
+				m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
+		}
+	}
+
+	// Set the position of the image
+	virtual void SetPos(int x, int y) override
+	{
+		m_iX = x;
+		m_iY = y;
+		ResetAvatarInfo();
+	}
+
+	virtual void SetOffset(int x, int y)
+	{
+		m_iOffX = x;
+		m_iOffY = y;
+		ResetAvatarInfo();
+	}
+
+	// Gets the size of the content
+	virtual void GetContentSize(int& wide, int& tall) override
+	{
+		wide = m_iWide;
+		tall = m_iTall;
+	}
+
+	// Get the size the image will actually draw in (usually defaults to the content size)
+	virtual void GetSize(int& wide, int& tall) override
+	{
+		GetContentSize(wide, tall);
+	}
+
+	// Sets the size of the image
+	virtual void SetSize(int wide, int tall) override
+	{
+		m_iWide = wide;
+		m_iTall = tall;
+		ResetAvatarInfo();
+	}
+
+	// Set the draw color
+	virtual void SetColor(Color col) override
+	{
+		m_DrawColor = col;
+		ResetAvatarInfo();
+	}
+
+private:
+	int m_iX = 0, m_iY = 0;
+	int m_iOffX = 0, m_iOffY = 0;
+	int m_iWide = 0, m_iTall = 0;
+	Color m_DrawColor = Color(255, 255, 255, 255);
+	CAvatarImage* m_pAvatar = new CAvatarImage();
+	bool m_bIsMuted = false;
+	int iAdminTexture = 0;
+};
+class CDonorImage : public IImage {
+public:
+	void SetTexture(int level) {
+		m_iLevelTexture = level;
+	}
+	virtual void Paint() override {
+		if (m_iLevelTexture < 0)
+			return;
+		surface()->DrawSetTexture(m_iLevelTexture);
+		surface()->DrawSetColor(m_DrawColor);
+		surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
+			m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
+	}
+	// Get the size the image will actually draw in (usually defaults to the content size)
+	virtual void GetSize(int& wide, int& tall) override {
+		GetContentSize(wide, tall);
+	}
+
+	// Sets the size of the image
+	virtual void SetSize(int wide, int tall) override {
+		m_iWide = wide;
+		m_iTall = tall;
+	}
+	// Set the position of the image
+	virtual void SetPos(int x, int y) override {
+		m_iX = x;
+		m_iY = y;
+	}
+	virtual void SetOffset(int x, int y) {
+		m_iOffX = x;
+		m_iOffY = y;
+	}
+	// Gets the size of the content
+	virtual void GetContentSize(int& wide, int& tall) override {
+		wide = m_iWide;
+		tall = m_iTall;
+	}
+	// Set the draw color
+	virtual void SetColor(Color col) override {
+		m_DrawColor = col;
+	}
+private:
+	int m_iLevelTexture = 0;
+	int m_iX = 0, m_iY = 0;
+	int m_iOffX = 0, m_iOffY = 0;
+	int m_iWide = 0, m_iTall = 0;
+	Color m_DrawColor = Color(255, 255, 255, 255);
+};
+
 
 CScorePanel::CScorePanel()
 	: BaseClass(nullptr, VIEWPORT_SCOREPANEL_NAME)
@@ -243,22 +243,22 @@ CScorePanel::CScorePanel()
 	hud_scoreboard_spacing_compact = CREATE_CVAR("hud_scoreboard_spacing_compact", "0", FCVAR_ARCHIVE, nullptr);
 
 	// Header labels
-	m_pServerNameLabel = new vgui::Label(this, "ServerName", "Sven Co-op Server");
-	m_pMapNameLabel = new vgui::Label(this, "MapName", "");
-	m_pPlayerCountLabel = new vgui::Label(this, "PlayerCount", "");
-	m_pNextMapLable = new vgui::Label(this, "NextMap", "");
-	m_pTimeEndLable = new vgui::Label(this, "TimeEnd", "");
+	m_pServerNameLabel = new Label(this, "ServerName", "Sven Co-op Server");
+	m_pMapNameLabel = new Label(this, "MapName", "");
+	m_pPlayerCountLabel = new Label(this, "PlayerCount", "");
+	m_pNextMapLable = new Label(this, "NextMap", "");
+	m_pTimeEndLable = new Label(this, "TimeEnd", "");
 
 	// Player list
-	m_pPlayerList = new vgui::SectionedListPanel(this, "PlayerList");
+	m_pPlayerList = new SectionedListPanel(this, "PlayerList");
 	m_pPlayerList->SetMouseInputEnabled(true);
 	m_pPlayerList->SetVerticalScrollbar(false);
-	wchar_t* specTag = vgui::localize()->Find(SPECTATOR_LOCALIZE_TOKEN);
+	wchar_t* specTag = localize()->Find(SPECTATOR_LOCALIZE_TOKEN);
 	if (specTag)
 		Q_UnicodeToUTF8(specTag, m_szSpectatorTag, sizeof(m_szSpectatorTag));
 
 	// Image list
-	m_pImageList = new vgui::ImageList(true);
+	m_pImageList = new ImageList(true);
 	m_pPlayerList->SetImageList(m_pImageList, true);
 
 	for (int i = 1; i <= SC_MAX_PLAYERS; i++)
@@ -290,7 +290,7 @@ void CScorePanel::UpdateTimeEndInternal() {
 		char buf[64];
 		snprintf(buf, sizeof(buf), "%.1d:%.2d", iMin, iSec);
 		wchar_t wbuf[64];
-		vgui::localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
+		localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
 		m_pTimeEndLable->SetText(wbuf);
 		m_iTimeEndCount -= (flTime - m_flLastUpdateTimeEndTime);
 		m_flLastUpdateTimeEndTime = flTime + 1.0f;
@@ -303,13 +303,13 @@ void CScorePanel::UpdateTimeEnd() {
 }
 void CScorePanel::UpdateServerName(){
 	wchar_t wbuf[MAX_SERVERNAME_LENGTH];
-	vgui::localize()->ConvertANSIToUnicode(g_pViewPort->GetServerName(), wbuf, sizeof(wbuf));
+	localize()->ConvertANSIToUnicode(g_pViewPort->GetServerName(), wbuf, sizeof(wbuf));
 	m_pServerNameLabel->SetText(wbuf);
 }
 void CScorePanel::UpdateNextMap() {
-	std::wstring buf = vgui::localize()->Find(NEXTMAP_LOCALIZE_TOKEN);;
+	std::wstring buf = localize()->Find(NEXTMAP_LOCALIZE_TOKEN);;
 	wchar_t wbuf[MAX_SERVERNAME_LENGTH];
-	vgui::localize()->ConvertANSIToUnicode(g_pViewPort->GetNextMap(), wbuf, sizeof(wbuf));
+	localize()->ConvertANSIToUnicode(g_pViewPort->GetNextMap(), wbuf, sizeof(wbuf));
 	buf += wbuf;
 	m_pNextMapLable->SetText(buf.c_str());
 }
@@ -346,7 +346,7 @@ void CScorePanel::DeathMsg(int killer, int victim)
 	}
 }
 
-void CScorePanel::ApplySchemeSettings(vgui::IScheme* pScheme)
+void CScorePanel::ApplySchemeSettings(IScheme* pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
 
@@ -428,7 +428,7 @@ void CScorePanel::ShowPanel(bool state)
 	SetVisible(state);
 }
 
-vgui::VPANEL CScorePanel::GetVPanel()
+VPANEL CScorePanel::GetVPanel()
 {
 	return BaseClass::GetVPanel();
 }
@@ -438,7 +438,7 @@ bool CScorePanel::IsVisible()
 	return BaseClass::IsVisible();
 }
 
-void CScorePanel::SetParent(vgui::VPANEL parent)
+void CScorePanel::SetParent(VPANEL parent)
 {
 	BaseClass::SetParent(parent);
 }
@@ -455,7 +455,7 @@ void CScorePanel::UpdateMapName()
 	char buf[64];
 	wchar_t wbuf[64];
 	V_FileBase(gEngfuncs.pfnGetLevelName(), buf, sizeof(buf));
-	vgui::localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
+	localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
 	m_pMapNameLabel->SetText(wbuf);
 }
 
@@ -566,12 +566,12 @@ void CScorePanel::CreateSection(int nTeamID){
 
 	// Avatar
 	m_pPlayerList->AddColumnToSection(nTeamID, AVATAR_KEY, "",
-		vgui::SectionedListPanel::COLUMN_IMAGE | vgui::SectionedListPanel::COLUMN_CENTER,
+		SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::COLUMN_CENTER,
 		m_iColumnWidthAvatar);
 
 	//Donor
 	m_pPlayerList->AddColumnToSection(nTeamID, DONOR_KEY, "",
-		vgui::SectionedListPanel::COLUMN_IMAGE | vgui::SectionedListPanel::COLUMN_CENTER,
+		SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::COLUMN_CENTER,
 		m_iColumnWidthDonor);
 	
 	// Name
@@ -583,35 +583,35 @@ void CScorePanel::CreateSection(int nTeamID){
 		nameCol = NA_LOCALIZE_TOKEN;
 
 	m_pPlayerList->AddColumnToSection(nTeamID, NAME_KEY, nameCol,
-		vgui::SectionedListPanel::COLUMN_BRIGHT | vgui::SectionedListPanel::COLUMN_COLORED,
+		SectionedListPanel::COLUMN_BRIGHT | SectionedListPanel::COLUMN_COLORED,
 		GetNameColumnWidth());
 
 	// SteamID
 	if (hud_scoreboard_showsteamid->value > 0)
 	{
 		m_pPlayerList->AddColumnToSection(nTeamID, STEAMID_KEY, nTeamID == HEADER_SECTION_ID ? STEAMID_LOCALIZE_TOKEN : "",
-			vgui::SectionedListPanel::COLUMN_BRIGHT,
+			SectionedListPanel::COLUMN_BRIGHT,
 			m_iColumnWidthSteamID);
 	}
 
 	// Frags
 	m_pPlayerList->AddColumnToSection(nTeamID, HEALTH_KEY, nTeamID == HEADER_SECTION_ID ? HEALTH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
-		vgui::SectionedListPanel::COLUMN_BRIGHT,
+		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthHealth);
 
 	// Frags
 	m_pPlayerList->AddColumnToSection(nTeamID, ARMOR_KEY, nTeamID == HEADER_SECTION_ID ? ARMOR_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
-		vgui::SectionedListPanel::COLUMN_BRIGHT,
+		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthArmor);
 
 	// Frags
 	m_pPlayerList->AddColumnToSection(nTeamID, FRAG_KEY, nTeamID == HEADER_SECTION_ID ? SCORE_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
-		vgui::SectionedListPanel::COLUMN_BRIGHT,
+		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthFrags);
 
 	// Deaths
 	m_pPlayerList->AddColumnToSection(nTeamID, DEATH_KEY, nTeamID == HEADER_SECTION_ID ? DEATH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
-		vgui::SectionedListPanel::COLUMN_BRIGHT,
+		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthDeaths);
 
 	// Ping
@@ -623,7 +623,7 @@ void CScorePanel::CreateSection(int nTeamID){
 		pingLabel = "";
 
 	m_pPlayerList->AddColumnToSection(nTeamID, PING_KEY, pingLabel,
-		vgui::SectionedListPanel::COLUMN_BRIGHT,
+		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthPing);
 }
 
@@ -833,9 +833,9 @@ void CScorePanel::UpdateScoresAndCounts(){
 		// Team name and player count
 		wchar_t wbuf2[128];
 		wchar_t* localizedName = nullptr;
-		if (!(localizedName = vgui::localize()->Find(pszTeamName))){
+		if (!(localizedName = localize()->Find(pszTeamName))){
 			// set localizedName to pszTeamName converted to WString
-			vgui::localize()->ConvertANSIToUnicode(pszTeamName, wbuf2, sizeof(wbuf2));
+			localize()->ConvertANSIToUnicode(pszTeamName, wbuf2, sizeof(wbuf2));
 			localizedName = wbuf2;
 		}
 
@@ -847,12 +847,12 @@ void CScorePanel::UpdateScoresAndCounts(){
 
 		// Team frags
 		snprintf(buf, sizeof(buf), "%d", td.iFrags);
-		vgui::localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
+		localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
 		m_pPlayerList->ModifyColumn(nTeamID, FRAG_KEY, wbuf);
 
 		// Team deaths
 		snprintf(buf, sizeof(buf), "%d", td.iDeaths);
-		vgui::localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
+		localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
 		m_pPlayerList->ModifyColumn(nTeamID, DEATH_KEY, wbuf);
 	};
 
@@ -912,7 +912,7 @@ int CScorePanel::GetClientIconSize()
 }
 
 void CScorePanel::CreatePlayerMenu(){
-	m_pPlayerMenu = new vgui::Menu(this, "PlayerMenu");
+	m_pPlayerMenu = new Menu(this, "PlayerMenu");
 	m_pPlayerMenu->SetVisible(false);
 	m_pPlayerMenu->AddActionSignalTarget(this);
 
@@ -965,7 +965,7 @@ void CScorePanel::OpenPlayerMenu(int itemID){
 		else
 			m_pPlayerMenu->UpdateMenuItem(m_MenuData.nMuteItemID, "#Scores_MenuMute", new KeyValues("MenuMute"));
 	}
-	m_pPlayerMenu->PositionRelativeToPanel(this, vgui::Menu::CURSOR, 0, true);
+	m_pPlayerMenu->PositionRelativeToPanel(this, Menu::CURSOR, 0, true);
 }
 
 void CScorePanel::OnItemContextMenu(int itemID) {
@@ -1002,7 +1002,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 		{
 			// Open in browser
 			std::string url = STEAM_PROFILE_URL + std::to_string(m_MenuData.nSteamID64);
-			vgui::system()->ShellExecute("open", url.c_str());
+			system()->ShellExecute("open", url.c_str());
 		}
 
 		break;
@@ -1010,33 +1010,33 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	case MenuAction::SteamURL:
 	{
 		std::string url = STEAM_PROFILE_URL + std::to_string(m_MenuData.nSteamID64);
-		vgui::system()->SetClipboardText(url.c_str(), url.size());
+		system()->SetClipboardText(url.c_str(), url.size());
 		break;
 	}
 	case MenuAction::CopyName:
 	{
 		wchar_t name[MAX_PLAYERNAME_LENGTH + 1];
-		vgui::localize()->ConvertANSIToUnicode(pi->GetRealName(), name, sizeof(name));
-		vgui::system()->SetClipboardText(name, wcslen(name));
+		localize()->ConvertANSIToUnicode(pi->GetRealName(), name, sizeof(name));
+		system()->SetClipboardText(name, wcslen(name));
 		break;
 	}
 	case MenuAction::CopyNameRaw:
 	{
 		wchar_t name[MAX_PLAYERNAME_LENGTH + 1];
-		vgui::localize()->ConvertANSIToUnicode(pi->GetName(), name, sizeof(name));
-		vgui::system()->SetClipboardText(name, wcslen(name));
+		localize()->ConvertANSIToUnicode(pi->GetName(), name, sizeof(name));
+		system()->SetClipboardText(name, wcslen(name));
 		break;
 	}
 	case MenuAction::CopySteamID:
 	{
 		std::string steamid = std::string(pi->GetSteamIDString());
-		vgui::system()->SetClipboardText(steamid.c_str(), steamid.size());
+		system()->SetClipboardText(steamid.c_str(), steamid.size());
 		break;
 	}
 	case MenuAction::CopySteamID64:
 	{
 		std::string steamid = std::to_string(m_MenuData.nSteamID64);
-		vgui::system()->SetClipboardText(steamid.c_str(), steamid.size());
+		system()->SetClipboardText(steamid.c_str(), steamid.size());
 		break;
 	}
 	}
@@ -1148,7 +1148,7 @@ void CScorePanel::Resize()
 	SetPos(x, y);
 }
 
-bool CScorePanel::StaticPlayerSortFuncByFrags(vgui::SectionedListPanel* list, int itemID1, int itemID2)
+bool CScorePanel::StaticPlayerSortFuncByFrags(SectionedListPanel* list, int itemID1, int itemID2)
 {
 	KeyValues* it1 = list->GetItemData(itemID1);
 	KeyValues* it2 = list->GetItemData(itemID2);

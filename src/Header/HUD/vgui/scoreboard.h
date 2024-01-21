@@ -15,14 +15,13 @@ namespace vgui
 	class CheckButton;
 	class SectionedListPanel;
 	class ImageList;
-}
 
 class CAvatarImage;
 
-class CScorePanel : public vgui::Frame, public IViewportPanel
+class CScorePanel : public Frame, public IViewportPanel
 {
 public:
-	DECLARE_CLASS_SIMPLE(CScorePanel, vgui::Frame);
+	DECLARE_CLASS_SIMPLE(CScorePanel, Frame);
 
 	CScorePanel();
 
@@ -49,7 +48,7 @@ public:
 	void DeathMsg(int killer, int victim);
 
 	// Frame overrides
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	virtual void ApplySchemeSettings(IScheme* pScheme) override;
 	virtual void OnThink() override;
 
 	MESSAGE_FUNC(MenuMute, "MenuMute");
@@ -64,9 +63,9 @@ public:
 	virtual const char* GetName() override;
 	virtual void Reset() override;
 	virtual void ShowPanel(bool state) override;
-	virtual vgui::VPANEL GetVPanel() override;
+	virtual VPANEL GetVPanel() override;
 	virtual bool IsVisible() override;
-	virtual void SetParent(vgui::VPANEL parent) override;
+	virtual void SetParent(VPANEL parent) override;
 
 	cvar_t* hud_scoreboard_showavatars;
 	cvar_t* hud_scoreboard_showloss;
@@ -128,14 +127,14 @@ private:
 		uint64 nSteamID64;
 	};
 
-	vgui::SectionedListPanel* m_pPlayerList = nullptr;
-	vgui::Label* m_pNextMapLable = nullptr;
-	vgui::Label* m_pTimeEndLable = nullptr;
-	vgui::Label* m_pServerNameLabel = nullptr;
-	vgui::Label* m_pMapNameLabel = nullptr;
-	vgui::Label* m_pPlayerCountLabel = nullptr;
-	vgui::ImageList* m_pImageList = nullptr;
-	vgui::Menu* m_pPlayerMenu = nullptr;
+	SectionedListPanel* m_pPlayerList = nullptr;
+	Label* m_pNextMapLable = nullptr;
+	Label* m_pTimeEndLable = nullptr;
+	Label* m_pServerNameLabel = nullptr;
+	Label* m_pMapNameLabel = nullptr;
+	Label* m_pPlayerCountLabel = nullptr;
+	ImageList* m_pImageList = nullptr;
+	Menu* m_pPlayerMenu = nullptr;
 
 	std::array<TeamData, SC_MAX_TEAMS + 2> m_TeamData;
 	std::array<bool, SC_MAX_TEAMS + 2> m_IsTeamSectionCreated;
@@ -298,7 +297,7 @@ private:
 	/**
 	 * Sorts rows in DESC order by frags.
 	 */
-	static bool StaticPlayerSortFuncByFrags(vgui::SectionedListPanel* list, int itemID1, int itemID2);
+	static bool StaticPlayerSortFuncByFrags(SectionedListPanel* list, int itemID1, int itemID2);
 };
-
+}
 #endif
