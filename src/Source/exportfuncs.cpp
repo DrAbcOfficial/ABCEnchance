@@ -75,21 +75,21 @@ void R_NewMap(void){
 	gHookFuncs.R_NewMap();
 }
 int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1){
-	if (IsCustomHudEnabled) {
+	if (IsCustomHudEnabled()) {
 		if (gCVars.pDynamicCrossHair->value > 0)
 			return 0;
 	}
 	return gHookFuncs.R_CrossHair_ReDraw(pthis, dummy, param_1);
 }
 void __fastcall TFV_ShowScoreBoard(void* pthis) {
-	if (IsCustomHudEnabled) {
+	if (IsCustomHudEnabled()) {
 		if (gCVars.pDynamicHUD->value > 0)
 			return;
 	}
 	gHookFuncs.TFV_ShowScoreBoard(pthis);
 }
 void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
-	if (IsCustomHudEnabled) {
+	if (IsCustomHudEnabled()) {
 		switch (iVguiMenu) {
 			//MissionBrief
 		case 4: return;
@@ -157,7 +157,7 @@ model_t* CL_GetModelByIndex (int index){
 void __fastcall CClient_SoundEngine_PlayFMODSound(void* pEngine, int dummy, int param_1, int param_2, float* param_3, int channel,
 	char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
 	float param_11) {
-	if (IsCustomHudEnabled) {
+	if (IsCustomHudEnabled()) {
 		if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
 			if (g_pViewPort->GetMusicPanel()->GetPlayListSize() > 0)
 				return;
@@ -378,7 +378,7 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 }
 int HUD_VidInit(void){
 	//Search and destory vanillia HUDs
-	if (g_dwHUDListAddr && gCVars.pDynamicHUD->value > 0) {
+	if (g_dwHUDListAddr) {
 		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(g_dwHUDListAddr + 0x0));
 		size_t iter = 0;
 		while (pHudList) {
@@ -412,7 +412,7 @@ int HUD_VidInit(void){
 	return result;
 }
 void HUD_VoiceStatus(int entindex, qboolean talking) {
-	if (IsCustomHudEnabled)
+	if (IsCustomHudEnabled())
 		GetClientVoiceMgr()->UpdateSpeakerStatus(entindex, talking);
 	//sorry, i dont wanna hear your shit
 	//if (talking && GetClientVoiceMgr()->IsPlayerBlocked(entindex))
@@ -420,14 +420,15 @@ void HUD_VoiceStatus(int entindex, qboolean talking) {
 	gExportfuncs.HUD_VoiceStatus(entindex, talking);
 }
 void HUD_Frame(double frametime) {
-	if (IsCustomHudEnabled)
+	if (IsCustomHudEnabled())
 		GetClientVoiceMgr()->Frame(frametime);
 	gExportfuncs.HUD_Frame(frametime);
 	//task
 	GetTaskManager()->CheckAll();
 }
 int HUD_Redraw(float time, int intermission){
-	if (IsCustomHudEnabled) {
+	gCustomHud.SetBaseHudActivity();
+	if (IsCustomHudEnabled()) {
 		gCustomHud.HUD_Draw(time);
 		g_pViewPort->SetInterMission(intermission);
 	}
@@ -438,7 +439,7 @@ void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientda
 	gExportfuncs.HUD_TxferLocalOverrides(state, client);
 }
 int HUD_UpdateClientData (struct client_data_s* c, float f){
-	if (IsCustomHudEnabled) {
+	if (IsCustomHudEnabled()) {
 		m_hfov = c->fov;
 		gCustomHud.HUD_UpdateClientData(c, f);
 	}
@@ -451,14 +452,14 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	return gExportfuncs.HUD_PlayerMove(ppmove, server);
 }
 void HUD_TxferPredictionData (struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
-	if (IsCustomHudEnabled)
+	if (IsCustomHudEnabled())
 		gCustomHud.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 	gExportfuncs.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 }
 void V_CalcRefdef(struct ref_params_s* pparams){
 	//pparams->nextView will be zeroed by client dll
 	gExportfuncs.V_CalcRefdef(pparams);
-	if (IsCustomHudEnabled) {
+	if (IsCustomHudEnabled()) {
 		if (gCVars.pRadar->value)
 		{
 			if (!gCustomHud.m_bRenderRadarView)
@@ -567,12 +568,12 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 	}
 }
 void IN_MouseEvent(int mstate){
-	if (IsCustomHudEnabled)
+	if (IsCustomHudEnabled())
 		gCustomHud.IN_MouseEvent(mstate);
 	gExportfuncs.IN_MouseEvent(mstate);
 }
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
-	if (!IsCustomHudEnabled) {
+	if (!IsCustomHudEnabled()) {
 		gExportfuncs.CL_CreateMove(frametime, cmd, active);
 		return;
 	}
@@ -596,7 +597,7 @@ void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
 	s_jump_was_down_last_frame = ((cmd->buttons & IN_JUMP) != 0);
 }
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
-	if (!IsCustomHudEnabled)
+	if (!IsCustomHudEnabled())
 		return gExportfuncs.HUD_AddEntity(type, ent, modelname);
 	if (!gCustomHud.HUD_AddEntity(type, ent, modelname))
 		return 0;

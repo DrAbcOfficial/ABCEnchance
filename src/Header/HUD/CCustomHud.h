@@ -127,8 +127,8 @@ public:
 	enum class ABCCustomMsg {
 		POPNUMBER = 0
 	};
-private:
 	void SetBaseHudActivity();
+private:
 	
 	int m_iMouseState = 0;
 	int m_iLastClick = 5;

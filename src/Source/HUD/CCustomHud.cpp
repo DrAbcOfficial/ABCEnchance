@@ -46,6 +46,11 @@
 #include "weaponbank.h"
 #include <CVector.h>
 
+bool IsCustomHudEnabled() {
+	if (!gCVars.pDynamicHUD)
+		return false;
+	return gCVars.pDynamicHUD->value > 0;
+}
 
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
@@ -380,23 +385,26 @@ void __UserCmd_PrevWeapon(void) {
 	return UserCmd_PrevWeapon();
 }
 void __UserCmd_OpenScoreboard(void) {
-	gCustomHud.m_bInScore = true;
-	if (g_pViewPort && !g_pViewPort->GetInterMission())
-		g_pViewPort->ShowScoreBoard();
+	if (IsCustomHudEnabled()) {
+		gCustomHud.m_bInScore = true;
+		if (g_pViewPort && !g_pViewPort->GetInterMission())
+			g_pViewPort->ShowScoreBoard();
+		return;
+	}
+	UserCmd_ShowScores();
 }
 void __UserCmd_CloseScoreboard(void) {
-	gCustomHud.m_bInScore = false;
-	if(g_pViewPort && !g_pViewPort->GetInterMission())
-		g_pViewPort->HideScoreBoard();
+	if (IsCustomHudEnabled()) {
+		gCustomHud.m_bInScore = false;
+		if (g_pViewPort && !g_pViewPort->GetInterMission())
+			g_pViewPort->HideScoreBoard();
+	}
+	UserCmd_HideScores();
 }
 void __UserCmd_Attack1(void) {
 	if (m_HudCustomAmmo.BlockAttackOnce())
 		return;
 	return UserCmd_Attack1();
-}
-
-bool IsCustomHudEnabled() {
-	return gCVars.pDynamicHUD->value > 0;
 }
 
 void CCustomHud::GL_Init(void){
@@ -503,7 +511,6 @@ void CCustomHud::HUD_VidInit(void){
 	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
 }
 void CCustomHud::HUD_Draw(float flTime){
-	SetBaseHudActivity();
 	CheckSpectator();
 	m_HudEccoBuyMenu.Draw(flTime);
 
@@ -535,7 +542,7 @@ void CCustomHud::HUD_Reset(void){
 }
 void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 	m_iWeaponBits = cdata->iWeaponBits;
-	m_bPlayerLongjump = mathlib::fatoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
+	m_bPlayerLongjump = std::atoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
 	g_pViewPort->LongjumpCallBack(m_bPlayerLongjump);
 }
 void CCustomHud::HUD_Clear(void){
