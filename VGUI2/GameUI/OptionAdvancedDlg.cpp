@@ -683,10 +683,6 @@ COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, 
 
 	EnableApplyButton(true);
 }
-void COptionsAdvanceDialog::Activate(){
-	BaseClass::Activate();
-	input()->SetAppModalSurface(GetVPanel());
-}
 void COptionsAdvanceDialog::ApplySettings(KeyValues* inResourceData){
 	BaseClass::ApplySettings(inResourceData);
 }

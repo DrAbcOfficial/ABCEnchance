@@ -188,7 +188,6 @@ class COptionsAdvanceDialog : public PropertyDialog{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceDialog, PropertyDialog);
 public:
 	COptionsAdvanceDialog(Panel* parent);
-	virtual void Activate() override;
 protected:
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual void ApplySchemeSettings(IScheme* pScheme) override;
