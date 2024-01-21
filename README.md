@@ -96,7 +96,7 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 # 📊 CVars
 |CVar|uses|default|range|
 |---|---|---|---|
-|cl_hud_csgo|enable hud or not|1|0/1|
+|cl_hud_enable|enable hud or not|1|0/1|
 |---|---|---|---|
 |hud_dynamic_background|use dynamic background|1|0/1|
 |---|---|---|---|
