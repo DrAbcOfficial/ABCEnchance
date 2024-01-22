@@ -38,7 +38,7 @@ Scheme
     //时间单位为秒
 	BaseSettings
 	{
-		"Version"						"100017"
+		"Version"						"100020"
 		"Language"                      ""
 		//[尺寸]鼠标光标大小
 		"Common.CursorSize"             "0.03"
@@ -75,6 +75,21 @@ Scheme
 		"WMenuBucket.SelectAnimateTime"	"0.12"
 		//经典菜单消失动画时间
 		"WMenuBucket.SelectFadeTime"	"0.2"
+
+        //雷达起始宽
+		"Radar.XOffset"			"0.012"
+		//雷达起始高
+		"Radar.YOffset"			"0.0225"
+		//指北针N图标尺寸
+		"Radar.NorthPointerSize"	"0.0233"
+		//雷达中心图标尺寸
+		"Radar.ViewAngleSize"	"0.125"
+		//雷达灰色背景图标不透明度
+		"Radar.OutLineAlpha"	"255"
+		//雷达地图不透明度
+		"Radar.MapAlpha"		"255"
+		//雷达中心图标不透明度
+		"Radar.CenterAlpha"		"255"
 
         //死亡消息起始宽
 		"DeathMsg.XOffset"		"0.93"
