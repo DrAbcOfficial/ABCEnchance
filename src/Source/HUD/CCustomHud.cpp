@@ -613,7 +613,10 @@ bool CCustomHud::IsHudHide(int HideToken) {
 	return (m_iHideHUDDisplay & HideToken) != 0;
 }
 bool CCustomHud::IsInSpectate() {
-	return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
+	if (gEngfuncs.GetLocalPlayer())
+		return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
+	else
+		return false;
 }
 bool CCustomHud::IsSpectator(int client){
 	return m_SpectatePlayer[client];
