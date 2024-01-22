@@ -447,9 +447,7 @@ bool AnimationController::ParseScriptFile(char* pMem, int length)
 						cmdAnimate.target.b = static_cast<float>(vgui::scheme()->GetProportionalScaledValue(cmdAnimate.target.b));
 					}
 				}
-				else if (cmdAnimate.variable == m_sWide ||
-					cmdAnimate.variable == m_sTall || 
-					cmdAnimate.variable == m_sAlpha)
+				else if (cmdAnimate.variable == m_sWide || cmdAnimate.variable == m_sTall)
 				{
 					if (IsProportional())
 					{
