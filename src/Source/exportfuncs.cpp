@@ -43,6 +43,9 @@
 #include <voice_status.h>
 #include <ClientParticleMan.h>
 
+#define _STR(s) #s
+#define STR(s) _STR(s)
+
 extern void SysError(const char* message ...);
 extern bool IsCustomHudEnabled();
 
@@ -341,6 +344,11 @@ void HUD_Init(void){
 	gCVars.pCamIdealRight = CREATE_CVAR("cam_idealright", "0", FCVAR_VALUE, nullptr);
 
 	gCVars.pCVarAutoBunnyJump = CREATE_CVAR("cl_autojump", "0", FCVAR_VALUE, nullptr);
+  
+	CREATE_CVAR("abc_version", STR(PLUGIN_VERSION), FCVAR_EXTDLL | FCVAR_CLIENTDLL, [](cvar_t* cvar) {
+		if (cvar->value != PLUGIN_VERSION)
+			gEngfuncs.Cvar_SetValue("abc_version", PLUGIN_VERSION);
+	});
 
 	gEngfuncs.pfnAddCommand("models", []() {
 		if (gEngfuncs.Cmd_Argc() <= 1)
