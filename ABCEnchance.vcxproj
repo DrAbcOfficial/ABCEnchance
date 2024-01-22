@@ -45,15 +45,21 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\tools\global.props" />
+    <Import Project="..\..\tools\global.props" Condition="exists('..\..\tools\global.props')" />
+    <Import Project="..\..\tools\global_template.props" Condition="!exists('..\..\tools\global.props') and exists('$(SolutionDir)tools\global_template.props')" />
+    <Import Project="..\..\tools\global_common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\tools\global.props" />
+    <Import Project="..\..\tools\global.props" Condition="exists('..\..\tools\global.props')" />
+    <Import Project="..\..\tools\global_template.props" Condition="!exists('..\..\tools\global.props') and exists('$(SolutionDir)tools\global_template.props')" />
+    <Import Project="..\..\tools\global_common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\tools\global.props" />
+    <Import Project="..\..\tools\global.props" Condition="exists('..\..\tools\global.props')" />
+    <Import Project="..\..\tools\global_template.props" Condition="!exists('..\..\tools\global.props') and exists('$(SolutionDir)tools\global_template.props')" />
+    <Import Project="..\..\tools\global_common.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -97,7 +103,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "D:\SteamLibrary\steamapps\common\Sven Co-op\svencoop\metahook\plugins\$(TargetName)$(TargetExt)"</Command>
+      <Command>$(PluginPostBuildCommand)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,7 +133,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "$(ProjectDir)..\..\Build\svencoop\metahook\plugins\"
+      <Command>$(PluginPostBuildCommand)
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -159,7 +165,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDir)$(TargetName)$(TargetExt)" "$(ProjectDir)..\..\Build\svencoop\metahook\plugins\$(TargetName)_AVX2$(TargetExt)"
+      <Command>$(PluginPostBuildCommand)
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$(TargetExt)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
