@@ -18,11 +18,18 @@ namespace netease {
 	};
 	string buildparam(const std::map<string, string>& map) {
 		string paramStr;
-		for (auto iter = map.begin(); iter != map.end(); iter++) {
+		auto iter = map.begin();
+		while (iter != map.end()) {
+
 			paramStr += (*iter).first + "=" + (*iter).second;
-			paramStr += "&";
+
+			iter++;
+
+			if (iter != map.end())
+			{
+				paramStr += "&";
+			}
 		}
-		paramStr.pop_back();
 		return paramStr;
 	}
 	curl_slist* buildheader() {
