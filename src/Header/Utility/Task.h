@@ -5,6 +5,9 @@
 
 class ITaskItem {
 public:
+	virtual ~ITaskItem() {
+
+	}
 	virtual ITaskItem* Start() = 0;
 	virtual bool IsReady() = 0;
 	virtual std::function<void()> GetCaller() = 0;
@@ -53,7 +56,7 @@ public:
 	}
 private:
 	Result m_pValue;
-	std::function<void(Result&)> m_pContinue = nullptr;
+	std::function<void(Result&)> m_pContinue;
 };
 
 class CTaskManager {
