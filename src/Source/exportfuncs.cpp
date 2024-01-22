@@ -47,7 +47,6 @@
 #define STR(s) _STR(s)
 
 extern void SysError(const char* message ...);
-extern bool IsCustomHudEnabled();
 
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
@@ -78,48 +77,41 @@ void R_NewMap(void){
 	gHookFuncs.R_NewMap();
 }
 int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1){
-	if (IsCustomHudEnabled()) {
-		if (gCVars.pDynamicCrossHair->value > 0)
-			return 0;
-	}
+	if (gCVars.pDynamicCrossHair->value > 0)
+		return 0;
 	return gHookFuncs.R_CrossHair_ReDraw(pthis, dummy, param_1);
 }
 void __fastcall TFV_ShowScoreBoard(void* pthis) {
-	if (IsCustomHudEnabled()) {
-		if (gCVars.pDynamicHUD->value > 0)
-			return;
-	}
-	gHookFuncs.TFV_ShowScoreBoard(pthis);
+	return;
+	//gHookFuncs.TFV_ShowScoreBoard(pthis);
 }
 void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
-	if (IsCustomHudEnabled()) {
-		switch (iVguiMenu) {
-			//MissionBrief
-		case 4: return;
-			//MOTD
-		case 5: {
-			if (gCVars.pMotd->value != 0) {
-				if (gCVars.pMotd->value >= 1)
-					g_pViewPort->ShowMOTD();
-				return;
-			}
+	switch (iVguiMenu) {
+		//MissionBrief
+	case 4: return;
+		//MOTD
+	case 5: {
+		if (gCVars.pMotd->value != 0) {
+			if (gCVars.pMotd->value >= 1)
+				g_pViewPort->ShowMOTD();
+			return;
 		}
-			  //TeamMenu
-		case 2:
-			//Vote
-		case 0x16:
-			//MapVote
-		case 0x17:
-			//VotePopUp
-		case 0x18:
-			//CameraMenu
-		case 0x19:
-			//InventroyMenu
-		case 0x1A:
-			//MediaMenu
-		case 0x1E:
-		default: break;
-		}
+	}
+		  //TeamMenu
+	case 2:
+		//Vote
+	case 0x16:
+		//MapVote
+	case 0x17:
+		//VotePopUp
+	case 0x18:
+		//CameraMenu
+	case 0x19:
+		//InventroyMenu
+	case 0x1A:
+		//MediaMenu
+	case 0x1E:
+	default: break;
 	}
 	//mission brief shit2 is 4, but fku all vgui shit
 	gHookFuncs.TFV_ShowVGUIMenu(pthis, dummy, iVguiMenu);
@@ -160,11 +152,9 @@ model_t* CL_GetModelByIndex (int index){
 void __fastcall CClient_SoundEngine_PlayFMODSound(void* pEngine, int dummy, int param_1, int param_2, float* param_3, int channel,
 	char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
 	float param_11) {
-	if (IsCustomHudEnabled()) {
-		if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
-			if (g_pViewPort->GetMusicPanel()->GetPlayListSize() > 0)
-				return;
-		}
+	if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
+		if (g_pViewPort->GetMusicPanel()->GetPlayListSize() > 0)
+			return;
 	}
 	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pEngine, dummy, param_1, param_2, param_3, channel, param_5, param_6, param_7, param_8, param_9, param_10, param_11);
 }
@@ -420,26 +410,22 @@ int HUD_VidInit(void){
 	return result;
 }
 void HUD_VoiceStatus(int entindex, qboolean talking) {
-	if (IsCustomHudEnabled())
-		GetClientVoiceMgr()->UpdateSpeakerStatus(entindex, talking);
+	GetClientVoiceMgr()->UpdateSpeakerStatus(entindex, talking);
 	//sorry, i dont wanna hear your shit
 	//if (talking && GetClientVoiceMgr()->IsPlayerBlocked(entindex))
 	//	return;
 	gExportfuncs.HUD_VoiceStatus(entindex, talking);
 }
 void HUD_Frame(double frametime) {
-	if (IsCustomHudEnabled())
-		GetClientVoiceMgr()->Frame(frametime);
+	GetClientVoiceMgr()->Frame(frametime);
 	gExportfuncs.HUD_Frame(frametime);
 	//task
 	GetTaskManager()->CheckAll();
 }
 int HUD_Redraw(float time, int intermission){
 	gCustomHud.SetBaseHudActivity();
-	if (IsCustomHudEnabled()) {
-		gCustomHud.HUD_Draw(time);
-		g_pViewPort->SetInterMission(intermission);
-	}
+	gCustomHud.HUD_Draw(time);
+	g_pViewPort->SetInterMission(intermission);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client){
@@ -447,10 +433,8 @@ void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientda
 	gExportfuncs.HUD_TxferLocalOverrides(state, client);
 }
 int HUD_UpdateClientData (struct client_data_s* c, float f){
-	if (IsCustomHudEnabled()) {
-		m_hfov = c->fov;
-		gCustomHud.HUD_UpdateClientData(c, f);
-	}
+	m_hfov = c->fov;
+	gCustomHud.HUD_UpdateClientData(c, f);
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
@@ -460,131 +444,109 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	return gExportfuncs.HUD_PlayerMove(ppmove, server);
 }
 void HUD_TxferPredictionData (struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
-	if (IsCustomHudEnabled())
-		gCustomHud.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
+	gCustomHud.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 	gExportfuncs.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 }
 void V_CalcRefdef(struct ref_params_s* pparams){
 	//pparams->nextView will be zeroed by client dll
 	gExportfuncs.V_CalcRefdef(pparams);
-	if (IsCustomHudEnabled()) {
-		if (gCVars.pRadar->value)
-		{
-			if (!gCustomHud.m_bRenderRadarView)
-			{
-				//Tell engine to render twice
-				pparams->nextView = 1;
+	if (gCVars.pRadar->value) {
+		if (!gCustomHud.m_bRenderRadarView) {
+			//Tell engine to render twice
+			pparams->nextView = 1;
 
-				gCustomHud.m_bRenderRadarView = true;
+			gCustomHud.m_bRenderRadarView = true;
 
-				//设置到玩家脑袋上朝下看
-				gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
-				cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-				gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
-				gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
-				gCustomHud.m_flOverViewYaw = local->curstate.angles[Q_YAW];
+			//设置到玩家脑袋上朝下看
+			gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
+			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+			gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
+			gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
+			gCustomHud.m_flOverViewYaw = local->curstate.angles[Q_YAW];
 
-				gCustomHud.m_iIsOverView = 1;
+			gCustomHud.m_iIsOverView = 1;
 
-				gCustomHud.m_flSavedCvars[0] = gCVars.pCVarDevOverview->value;
-				gCustomHud.m_flSavedCvars[1] = gCVars.pCVarDrawEntities->value;
-				gCustomHud.m_flSavedCvars[2] = gCVars.pCVarDrawViewModel->value;
-				gCustomHud.m_flSavedCvars[3] = gCVars.pCVarDrawDynamic->value;
+			gCustomHud.m_flSavedCvars[0] = gCVars.pCVarDevOverview->value;
+			gCustomHud.m_flSavedCvars[1] = gCVars.pCVarDrawEntities->value;
+			gCustomHud.m_flSavedCvars[2] = gCVars.pCVarDrawViewModel->value;
+			gCustomHud.m_flSavedCvars[3] = gCVars.pCVarDrawDynamic->value;
 
-				if (gCVars.pCVarFXAA)
-					gCustomHud.m_flSavedCvars[4] = gCVars.pCVarFXAA->value;
-				if (gCVars.pCVarWater)
-					gCustomHud.m_flSavedCvars[5] = gCVars.pCVarWater->value;
-				if (gCVars.pCVarShadow)
-					gCustomHud.m_flSavedCvars[6] = gCVars.pCVarShadow->value;
+			if (gCVars.pCVarFXAA)
+				gCustomHud.m_flSavedCvars[4] = gCVars.pCVarFXAA->value;
+			if (gCVars.pCVarWater)
+				gCustomHud.m_flSavedCvars[5] = gCVars.pCVarWater->value;
+			if (gCVars.pCVarShadow)
+				gCustomHud.m_flSavedCvars[6] = gCVars.pCVarShadow->value;
 
-				gCVars.pCVarDevOverview->value = 2;
-				gCVars.pCVarDrawEntities->value = 0;
-				gCVars.pCVarDrawViewModel->value = 0;
-				gCVars.pCVarDrawDynamic->value = 0;
-				if (gCVars.pCVarFXAA)
-					gCVars.pCVarFXAA->value = 0;
-				if (gCVars.pCVarWater)
-					gCVars.pCVarWater->value = 0;
-				if (gCVars.pCVarShadow)
-					gCVars.pCVarShadow->value = 0;
-			}
-			else
-			{
-				//The first render pass is done
-				//Now blit the radar overview from final buffer into radar texture
-
-				gCustomHud.HUD_BlitRadarFramebuffer();
-
-				gCustomHud.m_bRenderRadarView = false;
-
-				gCustomHud.m_iIsOverView = 0;
-
-				gCVars.pCVarDevOverview->value = gCustomHud.m_flSavedCvars[0];
-				gCVars.pCVarDrawEntities->value = gCustomHud.m_flSavedCvars[1];
-				gCVars.pCVarDrawViewModel->value = gCustomHud.m_flSavedCvars[2];
-				gCVars.pCVarDrawDynamic->value = gCustomHud.m_flSavedCvars[3];
-				if (gCVars.pCVarFXAA)
-					gCVars.pCVarFXAA->value = gCustomHud.m_flSavedCvars[4];
-				if (gCVars.pCVarWater)
-					gCVars.pCVarWater->value = gCustomHud.m_flSavedCvars[5];
-				if (gCVars.pCVarShadow)
-					gCVars.pCVarShadow->value = gCustomHud.m_flSavedCvars[6];
-			}
+			gCVars.pCVarDevOverview->value = 2;
+			gCVars.pCVarDrawEntities->value = 0;
+			gCVars.pCVarDrawViewModel->value = 0;
+			gCVars.pCVarDrawDynamic->value = 0;
+			if (gCVars.pCVarFXAA)
+				gCVars.pCVarFXAA->value = 0;
+			if (gCVars.pCVarWater)
+				gCVars.pCVarWater->value = 0;
+			if (gCVars.pCVarShadow)
+				gCVars.pCVarShadow->value = 0;
 		}
+		else {
+			//The first render pass is done
+			//Now blit the radar overview from final buffer into radar texture
 
-		if (!gCustomHud.m_bRenderRadarView)
-		{
-			if (!gExportfuncs.CL_IsThirdPerson())
-			{
-				// fudge position around to keep amount of weapon visible
-				// roughly equal with different FOV
-				cl_entity_t* view = gEngfuncs.GetViewModel();
-				if (pparams->viewsize == 110)
-				{
-					view->origin[2] += 1;
-				}
-				else if (pparams->viewsize == 100)
-				{
-					view->origin[2] += 2;
-				}
-				else if (pparams->viewsize == 90)
-				{
-					view->origin[2] += 1;
-				}
-				else if (pparams->viewsize == 80)
-				{
-					view->origin[2] += 0.5;
-				}
-				CVector viewOrigin = view->origin;
-				CVector viewAngles = view->angles;
-				V_CalcViewModelLag(pparams, viewOrigin, viewAngles, pparams->cl_viewangles);
-				mathlib::VectorCopy(viewOrigin, view->origin);
-				mathlib::VectorCopy(viewAngles, view->angles);
-				V_CalcModelSlide(pparams);
-			}
-			else
-			{
-				vec3_t vecRight;
-				mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
-				mathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
-				pparams->vieworg[0] += vecRight[0];
-				pparams->vieworg[1] += vecRight[1];
-				pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
-			}
+			gCustomHud.HUD_BlitRadarFramebuffer();
+
+			gCustomHud.m_bRenderRadarView = false;
+
+			gCustomHud.m_iIsOverView = 0;
+
+			gCVars.pCVarDevOverview->value = gCustomHud.m_flSavedCvars[0];
+			gCVars.pCVarDrawEntities->value = gCustomHud.m_flSavedCvars[1];
+			gCVars.pCVarDrawViewModel->value = gCustomHud.m_flSavedCvars[2];
+			gCVars.pCVarDrawDynamic->value = gCustomHud.m_flSavedCvars[3];
+			if (gCVars.pCVarFXAA)
+				gCVars.pCVarFXAA->value = gCustomHud.m_flSavedCvars[4];
+			if (gCVars.pCVarWater)
+				gCVars.pCVarWater->value = gCustomHud.m_flSavedCvars[5];
+			if (gCVars.pCVarShadow)
+				gCVars.pCVarShadow->value = gCustomHud.m_flSavedCvars[6];
+		}
+	}
+
+	if (!gCustomHud.m_bRenderRadarView) {
+		if (!gExportfuncs.CL_IsThirdPerson()) {
+			// fudge position around to keep amount of weapon visible
+			// roughly equal with different FOV
+			cl_entity_t* view = gEngfuncs.GetViewModel();
+			if (pparams->viewsize == 110)
+				view->origin[2] += 1;
+			else if (pparams->viewsize == 100)
+				view->origin[2] += 2;
+			else if (pparams->viewsize == 90)
+				view->origin[2] += 1;
+			else if (pparams->viewsize == 80)
+				view->origin[2] += 0.5;
+			CVector viewOrigin = view->origin;
+			CVector viewAngles = view->angles;
+			V_CalcViewModelLag(pparams, viewOrigin, viewAngles, pparams->cl_viewangles);
+			mathlib::VectorCopy(viewOrigin, view->origin);
+			mathlib::VectorCopy(viewAngles, view->angles);
+			V_CalcModelSlide(pparams);
+		}
+		else {
+			vec3_t vecRight;
+			mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
+			mathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
+			pparams->vieworg[0] += vecRight[0];
+			pparams->vieworg[1] += vecRight[1];
+			pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
 		}
 	}
 }
 void IN_MouseEvent(int mstate){
-	if (IsCustomHudEnabled())
-		gCustomHud.IN_MouseEvent(mstate);
+	gCustomHud.IN_MouseEvent(mstate);
 	gExportfuncs.IN_MouseEvent(mstate);
 }
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
-	if (!IsCustomHudEnabled()) {
-		gExportfuncs.CL_CreateMove(frametime, cmd, active);
-		return;
-	}
 	if (gCustomHud.IsMouseVisible()) {
 		gExportfuncs.CL_CreateMove(frametime, cmd, active);
 		gCustomHud.CL_CreateMove(frametime, cmd, active);
@@ -605,8 +567,6 @@ void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
 	s_jump_was_down_last_frame = ((cmd->buttons & IN_JUMP) != 0);
 }
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
-	if (!IsCustomHudEnabled())
-		return gExportfuncs.HUD_AddEntity(type, ent, modelname);
 	if (!gCustomHud.HUD_AddEntity(type, ent, modelname))
 		return 0;
 	return gExportfuncs.HUD_AddEntity(type, ent, modelname);
