@@ -23,6 +23,9 @@ using namespace vgui;
 
 class IStudioModel {
 public:
+	virtual ~IStudioModel() {
+
+	};
 	virtual void Init(const char* modelname) = 0;
 	virtual void DrawModel(void) = 0;
 	virtual void AdvanceFrame(float dt) = 0;
@@ -978,6 +981,9 @@ private:
 mnode_t node;
 class EStudioModel : public IStudioModel {
 public:
+	virtual ~EStudioModel() {
+
+	};
 	virtual void Init(const char* modelname) = 0;
 	virtual void DrawModel(void) = 0;
 	virtual void AdvanceFrame(float dt) = 0;
