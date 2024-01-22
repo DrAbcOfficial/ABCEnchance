@@ -1,7 +1,7 @@
 #include "enginedef.h"
 #include "r_studioint.h"
 
-#define PLUGIN_VERSION 100017
+#define PLUGIN_VERSION 100020
 
 class CGameStudioModelRenderer;
 
