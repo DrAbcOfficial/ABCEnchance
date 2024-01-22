@@ -50,8 +50,6 @@
 
 using namespace vgui;
 
-extern bool IsCustomHudEnabled();
-
 CViewport *g_pViewPort = nullptr;
 
 vgui::HScheme GetViewPortBaseScheme() {
@@ -83,12 +81,6 @@ CViewport::~CViewport(void){
 	for (auto panel : m_Panels) {
 		panel->~IViewportPanel();
 	}
-}
-
-void CViewport::SetVisible(bool state){
-	if (!IsCustomHudEnabled())
-		state = false;
-	BaseClass::SetVisible(state);
 }
 
 void CViewport::Start(void){

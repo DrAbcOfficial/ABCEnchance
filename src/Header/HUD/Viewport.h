@@ -44,7 +44,6 @@ class CViewport : public Panel
 public:
 	CViewport(void);
 	virtual ~CViewport(void);
-	virtual void SetVisible(bool state)override;
 
 public:
 	//ClientVGUI Interface

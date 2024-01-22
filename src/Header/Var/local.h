@@ -94,8 +94,6 @@ typedef struct cl_cvars_s{
 
 	cvar_t* pDynamicCrossHair = nullptr;
 
-	cvar_t* pDynamicHUD = nullptr;
-
 	cvar_t* pAmmoMenuDrawRainbow = nullptr;
 
 	cvar_t* pModelLag = nullptr;

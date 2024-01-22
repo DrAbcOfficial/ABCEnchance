@@ -584,6 +584,9 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 	m_pBloodSpriteCount = new CCvarLabelSlider(this, "BloodEfxCount", "#GameUI_ABC_Cvar_BloodEfxCount", "#GameUI_ABC_Cvar_BloodEfxCount", 0, 64, "abc_bloodsprite_num");
 
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubOtherOption.res");
+
+	m_pNewHud->SetEnabled(false);
+	m_pNewHud->SetSelected(true);
 }
 void COptionsAdvanceSubOtherOption::OnResetData(){
 	BaseClass::OnResetData();
@@ -591,7 +594,7 @@ void COptionsAdvanceSubOtherOption::OnResetData(){
 	m_pVoteNoButton->SetText(gameuifuncs->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_no")));
 }
 void COptionsAdvanceSubOtherOption::OnApplyChanges(){
-	m_pNewHud->ApplyChanges();
+	//m_pNewHud->ApplyChanges();
 	m_pDynamicBackground->ApplyChanges();
 
 	m_pScoreShowAvatar->ApplyChanges();
