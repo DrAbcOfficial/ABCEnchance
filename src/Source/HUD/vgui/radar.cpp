@@ -115,7 +115,7 @@ public:
 	void SetRadius(float r) {
 		m_flRoundRadius = r;
 	}
-	~CRadarMapImage() {
+	virtual ~CRadarMapImage() {
 		if (m_hBufferTex)
 			glDeleteTextures(1, &m_hBufferTex);
 	}
@@ -186,7 +186,6 @@ CRadarPanel::CRadarPanel()
 CRadarPanel::~CRadarPanel(){
 	if (m_hRadarBufferFBO)
 		glDeleteFramebuffers(1, &m_hRadarBufferFBO);
-	delete m_pMapground->GetImage();
 }
 
 void CRadarPanel::PerformLayout(){
