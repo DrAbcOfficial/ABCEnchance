@@ -17,7 +17,7 @@ if(!(Test-Path("../../tools/global.props"))){
     &Rename-Item -Path "../../tools/global_template.props" -NewName "global.props"
 }
 if($BuildTarget -eq "Debug"){
-    if(!(Test-Path("../../install/glew/x86/Debug/lib/glewd.lib"))){
+    if(!(Test-Path("../../thirdparty/install/glew/x86/Debug/lib/glewd.lib"))){
         Write-Warning "Can not find glew, building..."
         &"../../scripts/build-glew-x86-Debug.bat"
     }
