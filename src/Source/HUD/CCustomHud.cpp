@@ -46,12 +46,6 @@
 #include "weaponbank.h"
 #include <CVector.h>
 
-bool IsCustomHudEnabled() {
-	if (!gCVars.pDynamicHUD)
-		return false;
-	return gCVars.pDynamicHUD->value > 0;
-}
-
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
@@ -385,21 +379,17 @@ void __UserCmd_PrevWeapon(void) {
 	return UserCmd_PrevWeapon();
 }
 void __UserCmd_OpenScoreboard(void) {
-	if (IsCustomHudEnabled()) {
-		gCustomHud.m_bInScore = true;
-		if (g_pViewPort && !g_pViewPort->GetInterMission())
-			g_pViewPort->ShowScoreBoard();
-		return;
-	}
-	UserCmd_ShowScores();
+	gCustomHud.m_bInScore = true;
+	if (g_pViewPort && !g_pViewPort->GetInterMission())
+		g_pViewPort->ShowScoreBoard();
+	return;
+	//UserCmd_ShowScores();
 }
 void __UserCmd_CloseScoreboard(void) {
-	if (IsCustomHudEnabled()) {
-		gCustomHud.m_bInScore = false;
-		if (g_pViewPort && !g_pViewPort->GetInterMission())
-			g_pViewPort->HideScoreBoard();
-	}
-	UserCmd_HideScores();
+	gCustomHud.m_bInScore = false;
+	if (g_pViewPort && !g_pViewPort->GetInterMission())
+		g_pViewPort->HideScoreBoard();
+	//UserCmd_HideScores();
 }
 void __UserCmd_Attack1(void) {
 	if (m_HudCustomAmmo.BlockAttackOnce())
@@ -458,9 +448,6 @@ void CCustomHud::HUD_Init(void){
 	gCVars.pDamageScreenBase = CREATE_CVAR("cl_damageshock_base", "15", FCVAR_VALUE, nullptr);
 	gCVars.pDangerHealth = CREATE_CVAR("cl_dangerhealth", "45", FCVAR_VALUE, nullptr);
 	gCVars.pDangerArmor = CREATE_CVAR("cl_dangerarmor", "45", FCVAR_VALUE, nullptr);
-	gCVars.pDynamicHUD = CREATE_CVAR("cl_hud_enable", "1", FCVAR_VALUE, [](cvar_t* cvar) {
-		g_pViewPort->SetVisible(cvar->value > 0);
-	});
 
 	m_HudIndicator.Init();
 	m_HudCustomAmmo.Init();
@@ -613,8 +600,9 @@ bool CCustomHud::IsHudHide(int HideToken) {
 	return (m_iHideHUDDisplay & HideToken) != 0;
 }
 bool CCustomHud::IsInSpectate() {
-	if (gEngfuncs.GetLocalPlayer())
-		return gEngfuncs.GetLocalPlayer()->curstate.iuser1 > 0;
+	auto local = gEngfuncs.GetLocalPlayer();
+	if (local)
+		return local->curstate.iuser1 > 0;
 	else
 		return false;
 }
@@ -667,26 +655,14 @@ void CCustomHud::OnMousePressed(int code) {
 	}
 }
 void CCustomHud::SetBaseHudActivity() {
-	if (IsCustomHudEnabled()) {
-		if (gHookHud.m_Ammo)
-			gHookHud.m_Ammo->m_iFlags &= ~HUD_ACTIVE;
-		if (gHookHud.m_Battery)
-			gHookHud.m_Battery->m_iFlags &= ~HUD_ACTIVE;
-		if (gHookHud.m_Health)
-			gHookHud.m_Health->m_iFlags &= ~HUD_ACTIVE;
-		if(gHookHud.m_Flash)
-			gHookHud.m_Flash->m_iFlags &= ~HUD_ACTIVE;
-	}
-	else {
-		if (gHookHud.m_Ammo)
-			gHookHud.m_Ammo->m_iFlags |= HUD_ACTIVE;
-		if (gHookHud.m_Battery)
-			gHookHud.m_Battery->m_iFlags |= HUD_ACTIVE;
-		if (gHookHud.m_Health)
-			gHookHud.m_Health->m_iFlags |= HUD_ACTIVE;
-		if (gHookHud.m_Flash)
-			gHookHud.m_Flash->m_iFlags |= HUD_ACTIVE;
-	}
+	if (gHookHud.m_Ammo)
+		gHookHud.m_Ammo->m_iFlags &= ~HUD_ACTIVE;
+	if (gHookHud.m_Battery)
+		gHookHud.m_Battery->m_iFlags &= ~HUD_ACTIVE;
+	if (gHookHud.m_Health)
+		gHookHud.m_Health->m_iFlags &= ~HUD_ACTIVE;
+	if(gHookHud.m_Flash)
+		gHookHud.m_Flash->m_iFlags &= ~HUD_ACTIVE;
 }
 HSPRITE CCustomHud::GetSprite(size_t index) {
 	return (index < 0) ? 0 : m_arySprites[index]->spr;
