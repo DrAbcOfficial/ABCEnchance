@@ -38,3 +38,5 @@
 /Release
 /Release_AVX2
 /Release_AVX512
+/ABCEnchanceInstaller/bin/Debug/net7.0
+/ABCEnchanceInstaller/obj
