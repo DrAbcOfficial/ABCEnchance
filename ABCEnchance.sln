@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ABCEnchance", "ABCEnchance.vcxproj", "{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCEnchanceInstaller", "ABCEnchanceInstaller\ABCEnchanceInstaller.csproj", "{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -20,10 +18,6 @@ Global
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Win32.Build.0 = Release_AVX2|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Win32.ActiveCfg = Release|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Win32.Build.0 = Release|Win32
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release_AVX2|Win32.ActiveCfg = Release|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release|Win32.ActiveCfg = Release|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release|Win32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
