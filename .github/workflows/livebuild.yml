@@ -64,11 +64,11 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION_AVX}} ${{env.SOLUTION_FILE_PATH}}
     
-    - name: Copy to build
+    - name: Move to build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-          Copy-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Release/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/svencoop/metahook/plugins/ABCEnchance.dll"
-          Copy-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Release_AVX2/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/svencoop/metahook/plugins/ABCEnchance_AVX2.dll"
+          Move-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Release/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/svencoop/metahook/plugins/ABCEnchance.dll"
+          Move-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Release_AVX2/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/svencoop/metahook/plugins/ABCEnchance_AVX2.dll"
     - name: Zipping All
       uses: vimtor/action-zip@v1
       with:
