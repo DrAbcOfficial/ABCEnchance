@@ -33,9 +33,9 @@ void CWeaponMenuSlot::VidInit() {
 	SelectYOffset = GET_SCREEN_PIXEL(true, "WMenuBucket.SelectYOffset");
 	SelectXGap = GET_SCREEN_PIXEL(false, "WMenuBucket.SelectXGap");
 	SelectYGap = GET_SCREEN_PIXEL(true, "WMenuBucket.SelectYGap");
-	SelectAnimateTime = atof(pSchemeData->GetResourceString("WMenuBucket.SelectAnimateTime"));
-	SelectFadeTime = atof(pSchemeData->GetResourceString("WMenuBucket.SelectFadeTime"));
-	SelectHoldTime = atof(pSchemeData->GetResourceString("WMenuBucket.SelectHoldTime"));
+	SelectAnimateTime = (float)atof(pSchemeData->GetResourceString("WMenuBucket.SelectAnimateTime"));
+	SelectFadeTime = (float)atof(pSchemeData->GetResourceString("WMenuBucket.SelectFadeTime"));
+	SelectHoldTime = (float)atof(pSchemeData->GetResourceString("WMenuBucket.SelectHoldTime"));
 
 	iBucket0Spr = gCustomHud.GetSpriteIndex("bucket1");
 	iSelectionSpr = gCustomHud.GetSpriteIndex("selection");
@@ -58,7 +58,7 @@ int CWeaponMenuSlot::DrawBar(int x, int y, int width, int height, float f) {
 	int r = 0, g = 0, b = 0, a = 0;
 	f = mathlib::clamp(f, 0.0f, 1.0f);
 	if (f) {
-		int w = f * width;
+		int w = (int)(f * width);
 		if (w <= 0)
 			w = 1;
 		SelectIconColor.GetColor(r, g, b, a);
@@ -122,9 +122,9 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 	for (size_t i = 0; i < MAX_WEAPON_SLOT; i++) {
 		int iWidth;
 		if (gWR.m_iNowSlot == i)
-			a = 255 * flAlphaRatio;
+			a = (int)(255.0f * flAlphaRatio);
 		else
-			a = 192 * flAlphaRatio;
+			a = (int)(192.0f * flAlphaRatio);
 		SelectColor.GetColor(r, g, b, dummy);
 		SPR_Set(gCustomHud.GetSprite(iBucket0Spr + i), r, g, b);
 		// make active slot wide enough to accomodate gun pictures

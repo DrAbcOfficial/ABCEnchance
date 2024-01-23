@@ -22,13 +22,13 @@ static int* msg_readcount = nullptr;
 
 void SVC_FillAddress(void)
 {
-	DWORD addr_svc_bad = (DWORD)g_pMetaHookAPI->SearchPattern((void*)g_dwEngineBase, g_dwEngineSize, "svc_bad", sizeof("svc_bad") - 1);
-	DWORD addr_svc_nop = (DWORD)g_pMetaHookAPI->SearchPattern((void*)addr_svc_bad, 0x100, "svc_nop", sizeof("svc_nop") - 1);
+	ULONG_PTR addr_svc_bad = (ULONG_PTR)g_pMetaHookAPI->SearchPattern((void*)g_dwEngineBase, g_dwEngineSize, "svc_bad", sizeof("svc_bad") - 1);
+	ULONG_PTR addr_svc_nop = (ULONG_PTR)g_pMetaHookAPI->SearchPattern((void*)addr_svc_bad, 0x100, "svc_nop", sizeof("svc_nop") - 1);
 
-	int svc[6] = { 0, addr_svc_bad, 0, 1, addr_svc_nop, 0 };
+	ULONG_PTR svc[6] = { 0, addr_svc_bad, 0, 1, addr_svc_nop, 0 };
 	char* sig_svc = (char*)svc;
 
-	DWORD addr_cl_parsefuncs = (DWORD)g_pMetaHookAPI->SearchPattern((void*)g_dwEngineBase, g_dwEngineSize, sig_svc, sizeof(svc));
+	DWORD addr_cl_parsefuncs = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, sig_svc, sizeof(svc));
 
 	if (addr_cl_parsefuncs)
 	{

@@ -309,7 +309,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		stream.write((char*)&header, sizeof(BSPMipTexHeader_t));
 		BYTE* bits = FreeImage_GetBits(img);
 		BYTE* flipped = new BYTE[size];
-		for (int i = 0; i < nh; i++) {
+		for (size_t i = 0; i < nh; i++) {
 			memcpy(flipped + i * nw, bits + (nh - i - 1) * nw, nw);
 		}
 		//mips data
