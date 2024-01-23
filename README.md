@@ -31,7 +31,7 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
     
     Automatic:
 
-    1. Run `install-ABCEnchance.ps1` in PowerShell
+    1. Double Click `ABCEnchanceInstaller.exe`，then run game
    
     2. Edit `svencoop/abcenchance/ABCEnchance.res` files as you like.
 
