@@ -63,8 +63,8 @@ void vgui::CrossHairDisplay::PerformLayout() {
 	for (auto iter = m_aryCrosshair.begin() + 2; iter != m_aryCrosshair.end(); iter++) {
 		(*iter)->SetBgColor(m_cCrosshair);
 	}
-	m_aryCrosshair[0]->SetBgColor(m_bHasDot > 0 ? m_cCrosshair : Color(0, 0, 0, 0));
-	m_aryCrosshair[1]->SetBgColor(m_bT <= 0 ? m_cCrosshair : Color(0, 0, 0, 0));
+	m_aryCrosshair[0]->SetBgColor((m_bHasDot) ? m_cCrosshair : Color(0, 0, 0, 0));
+	m_aryCrosshair[1]->SetBgColor((m_bT) ? m_cCrosshair : Color(0, 0, 0, 0));
 
 	int w, h;
 	GetSize(w, h);
@@ -82,8 +82,8 @@ void vgui::CrossHairDisplay::PerformLayout() {
 		(*iter)->SetVisible(m_bOutline);
 		(*iter)->SetBgColor(m_cOutline);
 	}
-	m_aryCrosshairBorder[0]->SetAlpha(m_bHasDot > 0 ? m_cOutline.a() : 0);
-	m_aryCrosshairBorder[1]->SetAlpha(m_bT <= 0 ? m_cOutline.a() : 0);
+	m_aryCrosshairBorder[0]->SetAlpha((m_bHasDot) ? m_cOutline.a() : 0);
+	m_aryCrosshairBorder[1]->SetAlpha((!m_bT) ? m_cOutline.a() : 0);
 	m_aryCrosshairBorder[0]->SetBounds(
 		cx - iWidthOffset - iOutLineWidth,
 		cy - iWidthOffset - iOutLineWidth,

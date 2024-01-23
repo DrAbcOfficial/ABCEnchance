@@ -255,9 +255,9 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 		if (g_pViewPort)
 			g_pViewPort->ShowNotice(msg_dest, szBuf.c_str());
 		break;
-	default:
-		return m_pfnTextMsg(pszName, iSize, pbuf);
 	}
+
+	return m_pfnTextMsg(pszName, iSize, pbuf);
 }
 int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);

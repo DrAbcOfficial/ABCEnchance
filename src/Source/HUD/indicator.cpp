@@ -66,7 +66,7 @@ int CHudIndicator::Draw(float flTime) {
 		return 1;
 	if (gCustomHud.IsHudHide(HUD_HIDEALL))
 		return 1;
-	DrawPain(flTime);
+	return DrawPain(flTime);
 }
 void CHudIndicator::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
 	float flTime = gEngfuncs.GetClientTime();

@@ -38,6 +38,7 @@ public:
 	DECLARE_CLASS_SIMPLE(CNeteasePanel, vgui::EditablePanel);
 
 	CNeteasePanel();
+	~CNeteasePanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
@@ -144,5 +145,8 @@ private:
 		PLAYTYPE type;
 	};
 	std::list<std::shared_ptr<PlayItem>> m_aryPlayList;
+
+	size_t s_iBufSize = 0;
+	byte* s_pBuf = nullptr;
 };
 #endif

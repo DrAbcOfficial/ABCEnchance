@@ -25,7 +25,7 @@ void WadTexture::GetRawData(std::ofstream& stream) {
     FIBITMAP* img = FreeImage_ConvertFromRawBits(m_pPixels, m_iWidth, m_iHeight, m_iPitch, m_iBpp, FI_RGBA_BLUE_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_RED_MASK);
     FIBITMAP* nimg = FreeImage_ColorQuantizeEx(img, FIQ_WUQUANT, 256);
     FreeImage_Unload(img);
-    int size = m_iWidth * m_iHeight;
+    size_t size = m_iWidth * m_iHeight;
     BSPMipTexHeader_t header;
     std::strncpy(header.name, m_szName.c_str(), 16);
     header.width = m_iWidth;

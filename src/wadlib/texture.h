@@ -41,10 +41,10 @@ private:
 
     std::string m_szName;
     class WadFile* m_pPackage;
-    int m_iWidth;
-    int m_iHeight;
-    int m_iBpp;
-    int m_iPitch;
+    size_t m_iWidth;
+    size_t m_iHeight;
+    size_t m_iBpp;
+    size_t m_iPitch;
     unsigned char* m_pPixels = nullptr;
     WAD3Lump_t m_pLump;
 };
