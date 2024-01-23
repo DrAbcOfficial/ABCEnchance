@@ -20,7 +20,6 @@ function TestOrBuild($test, $build, $msg){
 	if(!(Test-Path("../../thirdparty/install/" + $test))){
         Write-Warning ("Can not find " + $msg + ", building...")
         $cmd = ("../../scripts/" + $build)
-        Echo $cmd
         &$cmd
     }
 }
@@ -49,7 +48,7 @@ if(Test-Path("$($vsLocation)\Common7\Tools\vsdevcmd.bat")){
 else {
     Write-Error "`n`
         -------------------------------------------------`n`
-        (®s®F°ı°‰)®s¶‡©ﬂ©•©ﬂ Can not find Visual Studio`n`
+        (‚ïØ‚Äµ‚ñ°‚Ä≤)‚ïØÔ∏µ‚îª‚îÅ‚îª Can not find Visual Studio`n`
         Is the plugin folder in the correct location?`n`
         Eg: ./Github/MetaHookSv/Plugins/ABCEnchance`n`
         -------------------------------------------------`n"
