@@ -254,7 +254,7 @@ void COptionsAdvanceSubMultiPlay::OnButtonChanged(){
 void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 	FIBITMAP* img = nullptr;
 	char ext[4];
-	std::strcpy(ext, std::filesystem::path(fullpath).extension().u8string().c_str());
+	std::strncpy(ext, std::filesystem::path(fullpath).extension().u8string().c_str(), 4);
 	if (!std::strncmp(ext, ".tga", 4))
 		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_TARGA, fullpath, 0);
 	else if(!std::strncmp(ext, ".bmp", 4))
