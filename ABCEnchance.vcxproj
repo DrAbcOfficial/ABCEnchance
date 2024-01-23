@@ -156,7 +156,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>..\..\glew\build\lib\Release\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;..\..\thirdparty\install\glew\x86\Release\lib\glew.lib;..\..\thirdparty\install\FreeImage\x86\Release\lib\FreeImage.lib;../../include/SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;..\..\thirdparty\install\glew\x86\Release_AVX2\lib\glew.lib;..\..\thirdparty\install\FreeImage\x86\Release\lib\FreeImage.lib;../../include/SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
