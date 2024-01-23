@@ -29,7 +29,7 @@
     
     自动脚本:
 
-    1. 在 PowerShell中运行 `install-ABCEnchance.ps1`
+    1. 在 双击`ABCEnchanceInstaller.exe`，然后看绿色闪过，启动游戏
    
     2. 按你的喜好随便编辑 `svencoop/abcenchance/` 里的res文件.
 
