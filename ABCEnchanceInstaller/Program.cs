@@ -1,10 +1,7 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Steamworks;
-
+﻿using Steamworks;
 static void CopyFolder(string source, string destination)
 {
     Directory.CreateDirectory(destination);
-
     foreach (string file in Directory.EnumerateFiles(source))
     {
         string fileName = Path.GetFileName(file);
@@ -23,18 +20,15 @@ static void CopyFolder(string source, string destination)
             Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
-
     foreach (string folder in Directory.EnumerateDirectories(source))
     {
-        string folderName = Path.GetFileName(folder);
-        string destFolder = Path.Combine(destination, folderName);
-        CopyFolder(folder, destFolder);
+        CopyFolder(folder, Path.Combine(destination, Path.GetFileName(folder)));
     }
 }
 static void FileWriter(string file, string add, string ignored = "")
 {
     List<string> filelist = new();
-    using (StreamReader sr = new StreamReader(file))
+    using (StreamReader sr = new(file))
     {
         while (!sr.EndOfStream)
         {
@@ -53,32 +47,34 @@ static void FileWriter(string file, string add, string ignored = "")
         }
     }
     filelist.Insert(0, add);
-    using (StreamWriter sw = new StreamWriter(file))
+    using StreamWriter sw = new(file);
+    foreach (string line in filelist)
     {
-        foreach (string line in filelist)
-        {
-            sw.WriteLine(line);
-        }
+        sw.WriteLine(line);
     }
 }
-
-Console.WriteLine("Hello, World!");
+static void AnyKeyExit(string msg)
+{
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine(msg);
+    Console.WriteLine("Any Key Exit...");
+    Console.ReadKey();
+}
 Environment.SetEnvironmentVariable("SteamAppId", "225840");
 if (!SteamAPI.Init())
 {
-    Console.WriteLine("Steamworks.NET could not be initialized.");
+    AnyKeyExit("Steamworks.NET could not be initialized.");
     return;
 }
-AppId_t appId = new(225840);
-string svenPath = "";
-uint result = SteamApps.GetAppInstallDir(appId, out svenPath, 260);
+string svenPath;
+uint result = SteamApps.GetAppInstallDir(new AppId_t(225840), out svenPath, 260);
 if (result == 0)
 {
-    Console.WriteLine("Steamworks.NET could not init game.");
+    AnyKeyExit("Steamworks.NET could not init game.");
     return;
 }
 CopyFolder("./svencoop", svenPath + "/svencoop");
 CopyFolder("./svencoop_addon", svenPath + "/svencoop_addon");
-
 FileWriter(svenPath + "/svencoop/metahook/configs/dllpaths.lst", "vpx");
 FileWriter(svenPath + "/svencoop/metahook/configs/plugins.lst", "ABCEnchance.dll", "CommunicationDemo.dll");
+AnyKeyExit("Done!");
