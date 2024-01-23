@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ABCEnchance", "ABCEnchance.vcxproj", "{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABCEnchanceInstaller", "ABCEnchanceInstaller\ABCEnchanceInstaller.csproj", "{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCEnchanceInstaller", "ABCEnchanceInstaller\ABCEnchanceInstaller.csproj", "{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,7 +36,6 @@ Global
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release_AVX2|Any CPU.ActiveCfg = Release|Any CPU
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release_AVX2|Any CPU.Build.0 = Release|Any CPU
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release_AVX2|Win32.ActiveCfg = Release|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release_AVX2|Win32.Build.0 = Release|Any CPU
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release|Win32.ActiveCfg = Release|Any CPU
