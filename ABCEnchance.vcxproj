@@ -638,6 +638,9 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vpx\vpx_image.h" />
     <ClInclude Include="vpx\vpx_integer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ABCEnchanceInstaller\ABCEnchanceInstaller.csproj" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

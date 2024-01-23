@@ -37,7 +37,7 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 
     Manual:
 
-    3. Download Build directory, put  `abcenchance` into `svencoop` directory, put `ABCEnchance.dll` into `svencoop/metahook/plugins` directory and put `vpx.dll` and `FreeImage.dll` into `metahook/dlls` and add `vpx` info `metahook/configs/dllpaths.lst`. The results will be as follows:
+    3. Download Build directory, put `svencoop` and `svencoop_addon` directory into game root, and add `vpx` info `metahook/configs/dllpaths.lst`. The results will be as follows:
    
     ```
         Sven Coop
