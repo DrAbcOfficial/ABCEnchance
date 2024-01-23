@@ -1529,7 +1529,4 @@
       <Filter>vgui_controls\base</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="ABCEnchanceInstaller\ABCEnchanceInstaller.csproj" />
-  </ItemGroup>
 </Project>
