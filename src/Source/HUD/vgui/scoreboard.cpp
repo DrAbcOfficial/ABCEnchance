@@ -881,7 +881,7 @@ int CScorePanel::GetNameColumnWidth()
 {
 	int w = m_iColumnWidthName;
 
-	if (!hud_scoreboard_showsteamid->value > 0)
+	if (hud_scoreboard_showsteamid->value > 0)
 		w += m_iColumnWidthSteamID;
 
 	return w;
@@ -1103,10 +1103,10 @@ void CScorePanel::Resize()
 		listHeight = max(m_iMinHeight, tall);
 		height += listHeight;
 
-		if (ScreenHeight() - height < m_iVerticalMargin * 2)
+		if ((int)ScreenHeight() - height < m_iVerticalMargin * 2)
 		{
 			// It didn't fit
-			height = ScreenHeight() - m_iVerticalMargin * 2;
+			height = (int)ScreenHeight() - m_iVerticalMargin * 2;
 			listHeight = height - addHeight;
 			m_pPlayerList->SetVerticalScrollbar(true);
 			bIsOverflowed = true;

@@ -17,12 +17,14 @@
 #include <tier0/dbg.h>
 #include "memstack.h"
 #include "utlmap.h"
-//#include <tier0/memdbgon.h>
+#include <tier0/memdbgon.h>
 
 #ifdef _WIN32
 #pragma warning(disable:4073)
 #pragma init_seg(lib)
 #endif
+
+#ifndef NO_MALLOC_OVERRIDE
 
 //-----------------------------------------------------------------------------
 
@@ -295,3 +297,5 @@ void CMemoryStack::PrintContents()
 }
 
 //-----------------------------------------------------------------------------
+
+#endif //NO_MALLOC_OVERRIDE

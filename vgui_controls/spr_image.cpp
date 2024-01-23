@@ -58,7 +58,7 @@ void CSPRImage::Animate(){
 		if (m_bSequenceLoop)
 			m_flFrame -= (int)(m_flFrame / m_iAllFrames) * m_iAllFrames;
 		else
-			m_flFrame = (m_flFrame < 0.0) ? 0 : 255;
+			m_flFrame = (m_flFrame < 0) ? 0.0f : 255.0f;
 	}
 }
 
@@ -83,8 +83,8 @@ void CSPRImage::SetRenderMode(int mode){
 
 void CSPRImage::Paint(){
 	if (m_iTextureID != -1){
-		float h = gEngfuncs.pfnSPR_Height(m_iTextureID, m_flFrame);
-		float w = gEngfuncs.pfnSPR_Width(m_iTextureID, m_flFrame);
+		float h = (float)gEngfuncs.pfnSPR_Height(m_iTextureID, (int)m_flFrame);
+		float w = (float)gEngfuncs.pfnSPR_Width(m_iTextureID, (int)m_flFrame);
 		rect_s rect = { m_nLeft, m_nRight, m_nTop, m_nBottom };
 		float flLeft = static_cast<float>(rect.left) / w;
 		float flRight = static_cast<float>(rect.right) / w;
@@ -92,23 +92,23 @@ void CSPRImage::Paint(){
 		float flBottom = static_cast<float>(rect.bottom) / h;
 		int r, g, b, a;
 		m_Color.GetColor(r, g, b, a);
-		gEngfuncs.pTriAPI->SpriteTexture(const_cast<struct model_s*>(gEngfuncs.GetSpritePointer(m_iTextureID, m_iTextureID)), m_flFrame);
+		gEngfuncs.pTriAPI->SpriteTexture(const_cast<struct model_s*>(gEngfuncs.GetSpritePointer(m_iTextureID)), m_flFrame);
 		gEngfuncs.pTriAPI->RenderMode(m_iRenderMode);
 		gEngfuncs.pTriAPI->CullFace(TRI_NONE);
 		gEngfuncs.pTriAPI->Begin(TRI_QUADS);
 		gEngfuncs.pTriAPI->Color4ub(r, g, b, a);
 		gEngfuncs.pTriAPI->Brightness(1);
 		gEngfuncs.pTriAPI->TexCoord2f(flLeft, flTop);
-		gEngfuncs.pTriAPI->Vertex3f(m_nX, m_nY, 0);
+		gEngfuncs.pTriAPI->Vertex3f((float)(m_nX), (float)(m_nY), 0);
 		gEngfuncs.pTriAPI->Brightness(1);
 		gEngfuncs.pTriAPI->TexCoord2f(flLeft, flBottom);
-		gEngfuncs.pTriAPI->Vertex3f(m_nX, m_nY + m_tall, 0);
+		gEngfuncs.pTriAPI->Vertex3f((float)(m_nX), (float)(m_nY + m_tall), 0);
 		gEngfuncs.pTriAPI->Brightness(1);
 		gEngfuncs.pTriAPI->TexCoord2f(flRight, flBottom);
-		gEngfuncs.pTriAPI->Vertex3f(m_nX + m_wide, m_nY + m_tall, 0);
+		gEngfuncs.pTriAPI->Vertex3f((float)(m_nX + m_wide), (float)(m_nY + m_tall), 0);
 		gEngfuncs.pTriAPI->Brightness(1);
 		gEngfuncs.pTriAPI->TexCoord2f(flRight, flTop);
-		gEngfuncs.pTriAPI->Vertex3f(m_nX + m_wide, m_nY, 0);
+		gEngfuncs.pTriAPI->Vertex3f((float)(m_nX + m_wide), (float)(m_nY), 0);
 		gEngfuncs.pTriAPI->End();
 		gEngfuncs.pTriAPI->CullFace(TRI_FRONT);
 		gEngfuncs.pTriAPI->RenderMode(kRenderNormal);

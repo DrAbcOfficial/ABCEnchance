@@ -104,7 +104,7 @@ void CMotdPanel::BuildPageInternal() {
 	m_pMessage->GetSize(w, h);
 	int fh = vgui::surface()->GetFontTall(m_pMessage->GetFont());
 	int iMaxClipSize = (w / (fh / 1.66f)) * (h / fh);
-	if (m_szBuffer.size() > iMaxClipSize) {
+	if ((int)m_szBuffer.size() > iMaxClipSize) {
 		for (size_t i = 0; i < m_szBuffer.size(); i += iMaxClipSize) {
 			m_aryClipedPage.push_back(m_szBuffer.substr(i, iMaxClipSize));
 		}

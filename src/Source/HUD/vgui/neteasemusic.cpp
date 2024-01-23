@@ -192,7 +192,7 @@ public:
 	}
 };
 inline void SearchCaller(CNeteasePanel* panel, CCloudMusicCmdItem* caller, netease::SearchType type) {
-	if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 2) {
+	if (gEngfuncs.Cmd_Argc() >= (int)caller->Sub() + 2) {
 		char* keyword = gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1);
 		panel->Search(keyword, type);
 	}
@@ -204,14 +204,14 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 		CCloudMusicCmdItem("login", {
 			CCloudMusicCmdItem("qr", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {panel->QRLogin(); }),
 			CCloudMusicCmdItem("email", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
-				if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 3)
+				if (gEngfuncs.Cmd_Argc() >= (int)caller->Sub() + 3)
 					panel->EmailLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1));
 				else
 					CNeteasePanel::PrintF("#Netease_InvalidId", false);
 			 }),
 			CCloudMusicCmdItem("send_sms", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
-				if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 2) {
-					if(gEngfuncs.Cmd_Argc() >= caller->Sub() + 3)
+				if (gEngfuncs.Cmd_Argc() >= (int)caller->Sub() + 2) {
+					if(gEngfuncs.Cmd_Argc() >= (int)caller->Sub() + 3)
 						panel->SendSMS(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), std::atoi(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1)));
 					else
 						panel->SendSMS(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), 86);
@@ -220,8 +220,8 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 					CNeteasePanel::PrintF("#Netease_InvalidId", false);
 			 }),
 			CCloudMusicCmdItem("phone_passwd", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
-				if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 3) {
-					if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 4)
+				if (gEngfuncs.Cmd_Argc() >= (int)caller->Sub() + 3) {
+					if (gEngfuncs.Cmd_Argc() >= (int)caller->Sub() + 4)
 						panel->PhoneLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 3), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), std::atoi(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1)));
 					else
 						panel->PhoneLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), 86);
@@ -230,8 +230,8 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 					CNeteasePanel::PrintF("#Netease_InvalidId", false);
 			 }),
 			CCloudMusicCmdItem("phone_sms", [](CNeteasePanel* panel, CCloudMusicCmdItem* caller) {
-				if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 3) {
-					if (gEngfuncs.Cmd_Argc() >= caller->Sub() + 4)
+				if (gEngfuncs.Cmd_Argc() >= (int)caller->Sub() + 3) {
+					if (gEngfuncs.Cmd_Argc() >= (int)caller->Sub() + 4)
 						panel->SMSLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 3), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), std::atoi(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1)));
 					else
 						panel->SMSLogin(gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 2), gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1), 86);
@@ -325,6 +325,15 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 		}),
 	}
 );
+
+CNeteasePanel::~CNeteasePanel()
+{
+	if (s_pBuf)
+	{
+		delete[]s_pBuf;
+		s_pBuf = nullptr;
+	}
+}
 
 CNeteasePanel::CNeteasePanel()
 	: BaseClass(nullptr, VIEWPORT_NETEASEMUSIC_NAME) {
@@ -693,7 +702,7 @@ void CNeteasePanel::PlayListMusic(){
 		StopMusic();
 	auto item = *m_aryPlayList.begin();
 	m_aryPlayList.pop_front();
-	GetTaskManager()->Add(std::async([](std::shared_ptr<PlayItem> playitem, size_t quality) -> music_obj* {
+	GetTaskManager()->Add(std::async([this](std::shared_ptr<PlayItem> playitem, size_t quality) -> music_obj* {
 		static music_obj obj;
 		//Load Music
 		std::shared_ptr <netease::CMusic> music;
@@ -720,23 +729,22 @@ void CNeteasePanel::PlayListMusic(){
 		FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
 		FIBITMAP* bitmap = FreeImage_LoadFromMemory(format, mem);
 		byte* pixels = (byte*)FreeImage_GetBits(bitmap);
-		int width = FreeImage_GetWidth(bitmap);
-		int height = FreeImage_GetHeight(bitmap);
-		int pitch = FreeImage_GetPitch(bitmap);
-		int bpp = FreeImage_GetBPP(bitmap);
-		int bitnum = bpp / 8;
-		static size_t s_iArea;
-		static byte* s_pBuf;
-		if (s_iArea < width * height) {
-			s_iArea = width * height;
+		auto width = FreeImage_GetWidth(bitmap);
+		auto height = FreeImage_GetHeight(bitmap);
+		auto pitch = FreeImage_GetPitch(bitmap);
+		auto bpp = FreeImage_GetBPP(bitmap);
+		auto bitnum = bpp / 8;
+
+		if (s_iBufSize < width * height * 4) {
+			s_iBufSize = width * height * 4;
 			delete[] s_pBuf;
-			s_pBuf = new byte[s_iArea * 4];
+			s_pBuf = new byte[s_iBufSize];
 		}
 		size_t c = 0;
 		pixels += pitch * (height - 1);
-		for (int y = 0; y < height; y++) {
+		for (size_t y = 0; y < height; y++) {
 			BYTE* pixel = (BYTE*)pixels;
-			for (int x = 0; x < width; x++) {
+			for (size_t x = 0; x < width; x++) {
 				switch (bitnum) {
 					//8bpp
 					case 1: {

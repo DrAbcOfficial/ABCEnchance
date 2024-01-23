@@ -20,7 +20,7 @@ void glBind(GLint tex){
 }
 
 void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame) {
-	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), frame);
+	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle), frame);
 	gEngfuncs.pTriAPI->RenderMode(mode);
 	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
 	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
@@ -42,7 +42,7 @@ void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, in
 	gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
 }
 void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], int r, int g, int b, int a) {
-	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle, SprHandle), 0);
+	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle), 0);
 	gEngfuncs.pTriAPI->RenderMode(mode);
 	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
 	gEngfuncs.pTriAPI->Begin(TRI_QUADS);
