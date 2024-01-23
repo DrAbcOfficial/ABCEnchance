@@ -40,3 +40,7 @@
 /Release_AVX512
 /ABCEnchanceInstaller/bin/Debug/net7.0
 /ABCEnchanceInstaller/obj
+/ABCEnchanceInstaller/ABCEnchanceInstaller.csproj.user
+/ABCEnchanceInstaller/Properties/PublishProfiles
+/ABCEnchanceInstaller/Properties/PublishProfiles/FolderProfile.pubxml
+/ABCEnchanceInstaller/Properties/PublishProfiles/FolderProfile.pubxml.user
