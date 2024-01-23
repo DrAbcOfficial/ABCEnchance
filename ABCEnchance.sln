@@ -9,35 +9,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ABCEnchanceInstaller", "ABC
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|Win32 = Debug|Win32
-		Release_AVX2|Any CPU = Release_AVX2|Any CPU
 		Release_AVX2|Win32 = Release_AVX2|Win32
-		Release|Any CPU = Release|Any CPU
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Debug|Any CPU.Build.0 = Debug|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Debug|Win32.ActiveCfg = Debug|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Debug|Win32.Build.0 = Debug|Win32
-		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Any CPU.ActiveCfg = Release_AVX2|Win32
-		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Any CPU.Build.0 = Release_AVX2|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Win32.ActiveCfg = Release_AVX2|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Win32.Build.0 = Release_AVX2|Win32
-		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Any CPU.ActiveCfg = Release|Win32
-		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Any CPU.Build.0 = Release|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Win32.ActiveCfg = Release|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Win32.Build.0 = Release|Win32
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Debug|Win32.Build.0 = Debug|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release_AVX2|Any CPU.ActiveCfg = Release|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release_AVX2|Any CPU.Build.0 = Release|Any CPU
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release_AVX2|Win32.ActiveCfg = Release|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release|Win32.ActiveCfg = Release|Any CPU
 		{45B8AB0D-567F-4A3B-AEF2-A61CED2A85A9}.Release|Win32.Build.0 = Release|Any CPU
 	EndGlobalSection
