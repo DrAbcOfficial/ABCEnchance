@@ -95,13 +95,13 @@ TEMPENTITY* R_TempModel(float* pos, float* dir, float* angles, float life, int m
 		tent->entity.curstate.renderamt = 255;
 		tent->fadeSpeed = gEngfuncs.GetClientTime() + life;
 		tent->callback = [](struct tempent_s* ent, float frametime, float currenttime) {
-			ent->entity.curstate.renderamt = (ent->fadeSpeed - currenttime) * 255;
+			ent->entity.curstate.renderamt = (int)((ent->fadeSpeed - currenttime) * 255.0f);
 		};
 		vec3_t smokedir = { dir[0], dir[1],RANDOM_FLOAT(70, 155)};
 		TEMPENTITY* smoke = gHookFuncs.R_TempModel(pos, smokedir, angles, life/2, gEfxVarible.iGunSmoke, 0);
 		if (smoke) {
 			smoke->flags = FTENT_SPRANIMATE | FTENT_FADEOUT;
-			smoke->entity.baseline.scale = RANDOM_FLOAT(0.07, 0.15);
+			smoke->entity.baseline.scale = RANDOM_FLOAT(0.07f, 0.15);
 			smoke->entity.curstate.renderamt = RANDOM_LONG(10, 25);
 			smoke->entity.curstate.rendermode = kRenderTransAlpha;
 			smoke->entity.curstate.framerate = RANDOM_FLOAT(25, 35);
@@ -165,12 +165,12 @@ void DoGaussFire(float fparam1, int bparam1) {
 		if (fFirstBeam) {
 			local->curstate.effects |= EF_MUZZLEFLASH;
 			fFirstBeam = false;
-			gEngfuncs.pEfxAPI->R_BeamEntPoint(local->index + (gExportfuncs.CL_IsThirdPerson() ? 0 : 4096), tr.endpos, gEfxVarible.iGaussBeam, 0.2,
-				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8 : 1, bparam1 ? 0 : 1);
+			gEngfuncs.pEfxAPI->R_BeamEntPoint(local->index + (gExportfuncs.CL_IsThirdPerson() ? 0 : 4096), tr.endpos, gEfxVarible.iGaussBeam, 0.2f,
+				bparam1 ? (float)GAUSS_LASER_P_WIDTH : (float)GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8f : 1.0f, bparam1 ? 0 : 1);
 		}
 		else
-			gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, tr.endpos, gEfxVarible.iGaussBeam, 0.2,
-				bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8 : 1, bparam1 ? 0 : 1);
+			gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, tr.endpos, gEfxVarible.iGaussBeam, 0.2f,
+				bparam1 ? (float)GAUSS_LASER_P_WIDTH : (float)GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8f : 1.0f, bparam1 ? 0 : 1);
 		cl_entity_t* hit = gEngfuncs.GetEntityByIndex(tr.ent);
 		//可反射高斯
 		if (hit && hit->model && hit->model->type == mod_brush) {
@@ -187,15 +187,15 @@ void DoGaussFire(float fparam1, int bparam1) {
 			if (n < 0.5) {
 				// reflect
 				//向量和相加乘二取得终点坐标
-				vecReflect[0] = 2.0 * vecNormal[0] * n + vecDir[0];
-				vecReflect[1] = 2.0 * vecNormal[1] * n + vecDir[1];
-				vecReflect[2] = 2.0 * vecNormal[2] * n + vecDir[2];
+				vecReflect[0] = 2.0f * vecNormal[0] * n + vecDir[0];
+				vecReflect[1] = 2.0f * vecNormal[1] * n + vecDir[1];
+				vecReflect[2] = 2.0f * vecNormal[2] * n + vecDir[2];
 				//取得新的射线坐标和方向
 				mathlib::VectorCopy(vecReflect, vecDir);
 				mathlib::VectorCopy(tr.endpos, vecSrc);
-				vecDest[0] = vecSrc[0] + vecDir[0] * 8192;
-				vecDest[1] = vecSrc[1] + vecDir[1] * 8192;
-				vecDest[2] = vecSrc[2] + vecDir[2] * 8192;
+				vecDest[0] = vecSrc[0] + vecDir[0] * 8192.0f;
+				vecDest[1] = vecSrc[1] + vecDir[1] * 8192.0f;
+				vecDest[2] = vecSrc[2] + vecDir[2] * 8192.0f;
 				//落点绘制随机散射波动Spr
 				for (int i = 0; i < RANDOM_LONG(0, 4); i++) {
 					vecRandom[0] = vecSrc[0] + RANDOM_FLOAT(GAUSS_WAVE_LENGTH / 2, GAUSS_WAVE_LENGTH) * 
@@ -204,12 +204,12 @@ void DoGaussFire(float fparam1, int bparam1) {
 						(vecNormal[1] * n * RANDOM_FLOAT(1, 3) + vecDir[1] * RANDOM_FLOAT(-3, 3));
 					vecRandom[2] = vecSrc[2] + RANDOM_FLOAT(GAUSS_WAVE_LENGTH / 2, GAUSS_WAVE_LENGTH) * 
 						(vecNormal[2] * n * RANDOM_FLOAT(1, 3) + vecDir[2] * RANDOM_FLOAT(-3, 3));
-					gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, vecRandom, gEfxVarible.iGaussWaveBeam, 0.2,
-						bparam1 ? GAUSS_LASER_P_WIDTH : GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, 0.8, 0);
+					gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, vecRandom, gEfxVarible.iGaussWaveBeam, 0.2f,
+						bparam1 ? (float)GAUSS_LASER_P_WIDTH : (float)GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, 0.8f, 0);
 				}
 				// lose energy
 				if (n == 0)
-					n = 0.1;
+					n = 0.1f;
 				flDamage *= 1 - n;
 			}
 			else {
@@ -235,7 +235,7 @@ void DoGaussFire(float fparam1, int bparam1) {
 						gEngfuncs.pEventAPI->EV_PlayerTrace(beam_tr.endpos, tr.endpos, PM_NORMAL, entignore, &beam_tr);
 						//求该射线长度为n
 						mathlib::VectorSubtract(beam_tr.endpos, tr.endpos, vecLength);
-						n = mathlib::VectorLength(vecLength);
+						n = (float)mathlib::VectorLength(vecLength);
 						//如果长度比伤害小
 						//射线的后面一点做球
 						mathlib::VectorCopy(beam_tr.endpos, vecRandomSrc);

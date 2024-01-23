@@ -77,7 +77,7 @@ void CHudEccoBuyMenu::Reset() {
 }
 int CHudEccoBuyMenu::GetMenuId(int i) {
 	int realId = i + (iNextPageBase * 9);
-	return realId >= 0 && realId < MenuList.size() ? MenuList[realId] : -1;
+	return realId >= 0 && realId < (int)MenuList.size() ? MenuList[realId] : -1;
 }
 int CHudEccoBuyMenu::Draw(float flTime){
 	if (gCVars.pEccoBuyMenu->value <= 0)
@@ -297,7 +297,7 @@ void CHudEccoBuyMenu::AddInfo(buymenuitem_t item){
 	buymenuinfo.push_back(item);
 }
 buymenuitem_t* CHudEccoBuyMenu::GetInfo(int index) {
-	if (index >= 0 && index < buymenuinfo.size())
+	if (index >= 0 && index < (int)buymenuinfo.size())
 		return &buymenuinfo[index];
 	return nullptr;
 }
