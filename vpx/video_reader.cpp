@@ -21,8 +21,7 @@ CIVFVideoReader::CIVFVideoReader(const char* filename){
     Open(filename);
 }
 CIVFVideoReader::~CIVFVideoReader(){
-    Close();
-    delete this;
+    //Close();
 }
 bool CIVFVideoReader::Open(const char* filename){
     char header[32];
