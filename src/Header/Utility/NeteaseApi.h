@@ -67,8 +67,8 @@ namespace netease {
 		string aliasName;
 		// 0 = free
 		// 1 = need money
-		bool copyright = false;
-		unsigned long duration = 0;
+		int copyright = 0;
+		unsigned long long duration = 0;
 		CMusic(rapidjson::Value& json);
 		virtual std::optional<string> GetPlayUrl(const char* quality, char* encode);
 		string GetArtists();
@@ -77,8 +77,8 @@ namespace netease {
 	public:
 		neteaseid_t mainTrackId;
 		string coverUrl;
-		unsigned long listenerCount;
-		unsigned long likedCount;
+		unsigned long long listenerCount;
+		unsigned long long likedCount;
 		string description;
 		CDjMusic(rapidjson::Value& json);
 		std::optional<string> GetPlayUrl(const char* quality, char* encode) override;
@@ -95,10 +95,10 @@ namespace netease {
 		string signature;
 		unsigned int level = 0;
 		unsigned int vip = 0;
-		unsigned long listenSongs = 0;
+		unsigned long long listenSongs = 0;
 		unsigned int playlistCount = 0;
-		unsigned long createTime = 0;
-		unsigned long createDay = 0;
+		unsigned long long createTime = 0;
+		unsigned long long createDay = 0;
 		neteaseid_t likePlayListId = 0;
 	};
 	class CMy : public CUser {

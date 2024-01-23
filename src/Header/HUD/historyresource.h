@@ -36,9 +36,9 @@ private:
 	Color WeaponPickUpEmptyColor;
 	Color ItemPickUpColor;
 
-	vec2_t vecAmmoPickUpPos;
-	vec2_t vecWeaponPickUpPos;
-	vec2_t vecItemPickUpPos;
+	int vecAmmoPickUpPos[2];
+	int vecWeaponPickUpPos[2];
+	int vecItemPickUpPos[2];
 
 	vgui::HFont hFont;
 };

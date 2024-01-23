@@ -96,18 +96,17 @@ int HistoryResource::DrawAmmoHistory(float flTime){
 				ypos = vecAmmoPickUpPos[1] - (max(iTextHeight, (rcPic.bottom - rcPic.top)) * j);
 
 				AmmoTextColor.GetColor(r, g, b, a);
-				float scale = GetAlphaScale(a, item->DisplayTime - flTime);
-				r *= scale;
-				g *= scale;
-				b *= scale;
-
+				float scale = GetAlphaScale((float)a, item->DisplayTime - flTime);
+				r = (int)((float)r * scale);
+				g = (int)((float)g * scale);
+				b = (int)((float)b * scale);
 				DrawVGUI2String(buf, xpos, ypos, r, g, b, hFont, true);
 				xpos += iTextWidth + iIconWidth;
 				if (spr && *spr) {
 					AmmoIconColor.GetColor(r, g, b, a);
-					r *= scale;
-					g *= scale;
-					b *= scale;
+					r = (int)((float)r * scale);
+					g = (int)((float)g * scale);
+					b = (int)((float)b * scale);
 					SPR_Set(*spr, r, g, b);
 					SPR_DrawAdditive(0, xpos, ypos, &rcPic);
 				}
@@ -120,12 +119,12 @@ int HistoryResource::DrawAmmoHistory(float flTime){
 				WeaponPickUpColor.GetColor(r, g, b, a);
 				if (!gWR.HasAmmo(weap))
 					WeaponPickUpEmptyColor.GetColor(r, g, b, a);
-				float scale = GetAlphaScale(a, item->DisplayTime - flTime);
-				r *= scale;
-				g *= scale;
-				b *= scale;
+				float scale = GetAlphaScale((float)a, item->DisplayTime - flTime);
+				r = (int)((float)r * scale);
+				g = (int)((float)g * scale);
+				b = (int)((float)b * scale);
 				xpos = vecWeaponPickUpPos[0] - (weap->rcInactive.right - weap->rcInactive.left);
-				ypos = vecWeaponPickUpPos[1] - (float)(weap->rcInactive.bottom - weap->rcInactive.top) * 1.5F * j;
+				ypos = vecWeaponPickUpPos[1] - (weap->rcInactive.bottom - weap->rcInactive.top) * j * 3 / 2;
 				SPR_Set(weap->hInactive, r, g, b);
 				SPR_DrawAdditive(0, xpos, ypos, &weap->rcInactive);
 				break;
@@ -135,12 +134,12 @@ int HistoryResource::DrawAmmoHistory(float flTime){
 					continue;
 				wrect_t* rect = gCustomHud.GetSpriteRect(item->iId);
 				ItemPickUpColor.GetColor(r, g, b, a);
-				float scale = GetAlphaScale(a, item->DisplayTime - flTime);
-				r *= scale;
-				g *= scale;
-				b *= scale;
-				xpos = vecItemPickUpPos[0] + rect->right - rect->left;
-				ypos = vecItemPickUpPos[1] - (rect->bottom - rect->top) * j;
+				float scale = GetAlphaScale((float)a, item->DisplayTime - flTime);
+				r = (int)((float)r * scale);
+				g = (int)((float)g * scale);
+				b = (int)((float)b * scale);
+				xpos = (vecItemPickUpPos[0] + (rect->right - rect->left));
+				ypos = (vecItemPickUpPos[1] - (rect->bottom - rect->top) * j);
 
 				SPR_Set(gCustomHud.GetSprite(item->iId), r, g, b);
 				SPR_DrawAdditive(0, xpos, ypos, rect);

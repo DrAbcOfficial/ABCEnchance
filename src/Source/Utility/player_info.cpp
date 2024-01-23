@@ -85,7 +85,7 @@ const char* CPlayerInfo::GetSteamIDString() {
 	return m_pSteamId.Render();
 }
 const char* CPlayerInfo::GetSteamIDString64() {
-	char buffer[64];
+	static char buffer[64];
 	Q_snprintf(buffer, sizeof(buffer), "%llu", m_pSteamId.ConvertToUint64());
 	return buffer;
 }

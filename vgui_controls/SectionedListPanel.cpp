@@ -879,10 +879,10 @@ SectionedListPanel::SectionedListPanel(vgui::Panel* parent, const char* name) : 
 //-----------------------------------------------------------------------------
 SectionedListPanel::~SectionedListPanel()
 {
-	if (m_bDeleteImageListWhenDone)
+	/*if (m_bDeleteImageListWhenDone)
 	{
 		delete m_pImageList;
-	}
+	}*/
 
 	m_pImageList = nullptr;
 }

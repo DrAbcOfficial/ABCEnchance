@@ -19,7 +19,7 @@
 // Include this because tons of code was implicitly getting utlsymbol or utlvector via utldict.h
 #include "tier1/utlsymbol.h"
 
-//#include "tier0/memdbgon.h"
+#include "tier0/memdbgon.h"
 
 enum EDictCompareType
 {
@@ -264,7 +264,8 @@ void CUtlDict<T, I>::RemoveAll()
 	typename DictElementMap_t::IndexType_t index = m_Elements.FirstInorder();
 	while (index != m_Elements.InvalidIndex())
 	{
-		free((void*)m_Elements.Key(index));
+		auto key = (char*)m_Elements.Key(index);
+		free(key);
 		index = m_Elements.NextInorder(index);
 	}
 
@@ -285,7 +286,8 @@ void CUtlDict<T, I>::PurgeAndDeleteElements()
 	I index = m_Elements.FirstInorder();
 	while (index != m_Elements.InvalidIndex())
 	{
-		free((void*)m_Elements.Key(index));
+		auto key = (char*)m_Elements.Key(index)
+		free(key);
 		delete m_Elements[index];
 		index = m_Elements.NextInorder(index);
 	}
@@ -301,14 +303,30 @@ template <class T, class I>
 I CUtlDict<T, I>::Insert(const char* pName, const T& element)
 {
 	MEM_ALLOC_CREDIT_CLASS();
-	return m_Elements.Insert(strdup(pName), element);
+#ifdef __SANITIZE_ADDRESS__ //Humorous MSVC ASAN reports error on freeing memory that allocated from strdup
+	auto keylen = strlen(pName);
+	auto key = (char *)malloc(keylen + 1);
+	memcpy(key, pName, keylen);
+	key[keylen] = 0;
+#else
+	auto key = strdup(pName);
+#endif
+	return m_Elements.Insert(key, element);
 }
 
 template <class T, class I>
 I CUtlDict<T, I>::Insert(const char* pName)
 {
 	MEM_ALLOC_CREDIT_CLASS();
-	return m_Elements.Insert(strdup(pName));
+#ifdef __SANITIZE_ADDRESS__ //Humorous MSVC ASAN reports error on freeing memory that allocated from strdup
+	auto keylen = strlen(pName);
+	auto key = (char*)malloc(keylen + 1);
+	memcpy(key, pName, keylen);
+	key[keylen] = 0;
+#else
+	auto key = strdup(pName);
+#endif
+	return m_Elements.Insert(key);
 }
 
 
@@ -353,6 +371,6 @@ I CUtlDict<T, I>::Next(I i) const
 	return m_Elements.NextInorder(i);
 }
 
-//#include "tier0/memdbgoff.h"
+#include "tier0/memdbgoff.h"
 
 #endif // UTLDICT_H

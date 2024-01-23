@@ -267,7 +267,7 @@ float mathlib::FVectorLength(vec3_t v) {
 	float length = 0;
 	for (int i = 0; i < 3; i++)
 		length += pow(v[i], 2);
-	return mathlib::fsqrt(length);
+	return sqrt(length);
 }
 double mathlib::VectorLength(vec3_t v){
 	double length = 0;
@@ -872,15 +872,17 @@ void mathlib::HSVToRGB(float h, float s, float v, int& r, int& g, int& b) {
 	g = (hg + m) * 255;
 	b = (hb + m) * 255;
 }
-//快速近似平方根
+//快速近似平方根 //undefined behavior
+#if 0
 float mathlib::fsqrt(float x){
 	float a = x;
 	unsigned int i = *(unsigned int*)&x;
 	i = (i + 0x3F76CF62) >> 1;
 	x = *(float*)&i;
-	x = (x + a / x) * 0.5;
+	x = (x + a / x) * 0.5f;
 	return x;
 }
+#endif
 //https://github.com/quiath/fast-atoi/blob/master/main.cpp#L22
 int mathlib::fatoi(const char* b){
 	int res = 0;

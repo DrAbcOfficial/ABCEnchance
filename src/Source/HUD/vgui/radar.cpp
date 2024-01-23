@@ -115,7 +115,7 @@ public:
 	void SetRadius(float r) {
 		m_flRoundRadius = r;
 	}
-	~CRadarMapImage() {
+	virtual ~CRadarMapImage() {
 		if (m_hBufferTex)
 			glDeleteTextures(1, &m_hBufferTex);
 	}
@@ -186,7 +186,6 @@ CRadarPanel::CRadarPanel()
 CRadarPanel::~CRadarPanel(){
 	if (m_hRadarBufferFBO)
 		glDeleteFramebuffers(1, &m_hRadarBufferFBO);
-	delete m_pMapground->GetImage();
 }
 
 void CRadarPanel::PerformLayout(){
@@ -224,7 +223,7 @@ void CRadarPanel::Paint(){
 		m_pNorthground->GetSize(nw, nh);
 		int len = GetWide() - nw;
 		float rotate = mathlib::Q_DEG2RAD(local->curstate.angles[Q_YAW]);
-		int hh = gCVars.pRadar->value > 1 ? len / 2 : mathlib::fsqrt(2 * pow(len, 2)) / 2;
+		int hh = gCVars.pRadar->value > 1 ? len / 2 : sqrt(2 * pow(len, 2)) / 2;
 		int stx = mathlib::clamp(((size / 2) + hh * cos(rotate)), 0.0f, (float)len);
 		int sty = mathlib::clamp(((size / 2) + hh * sin(rotate)), 0.0f, (float)len);
 		m_pNorthground->SetPos(stx, sty);
@@ -265,7 +264,7 @@ void CRadarPanel::Paint(){
 				vecLength.z = 0;
 				float vlen = vecLength.Length();
 				int ale = GetWide() - ww;
-				int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : mathlib::fsqrt(2 * pow(vlen, 2)) / 2;
+				int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : sqrt(2 * pow(vlen, 2)) / 2;
 				int atx = mathlib::clamp((Length - w + ahh * cos(nyaw)), 0.0f, static_cast<float>(ale));
 				int aty = mathlib::clamp((Length - w + ahh * sin(nyaw)), 0.0f, static_cast<float>(ale));
 				aty = ale - aty;
