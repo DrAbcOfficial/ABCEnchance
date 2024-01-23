@@ -121,8 +121,8 @@ namespace netease {
 		act.url = "https://interface3.music.163.com/api/song/enhance/player/url/v1";
 		string json = post(act);
 		rapidjson::Document data;
-		data.Parse(json.c_str());
-		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+		data.Parse(json.c_str(), json.length());
+		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto arr = data["data"].GetArray();
 			if (arr.Size() > 0) {
 				if(!arr[0]["url"].IsNull())
@@ -168,8 +168,8 @@ namespace netease {
 		act.url = "https://interface3.music.163.com/api/song/enhance/player/url/v1";
 		string json = post(act);
 		rapidjson::Document data;
-		data.Parse(json.c_str());
-		if (data.HasMember("data") && data.HasMember("code") && data["code"].GetInt() == 200) {
+		data.Parse(json.c_str(), json.length());
+		if (data.IsObject() && data.HasMember("data") && data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto music = data["data"].GetArray().Begin();
 			return (!(*music)["url"].IsNull()) ? std::make_optional<std::string>((*music)["url"].GetString()) : std::nullopt;
 		}
@@ -223,9 +223,9 @@ namespace netease {
 		std::map<string, string> p = {};
 		string json = post(Action("/v3/discovery/recommend/songs", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
+		data.Parse(json.c_str(), json.length());
 		std::vector<neteaseid_t> ret;
-		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto arr = data["data"]["dailySongs"].GetArray();
 			for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
 				ret.push_back((*iter)["id"].GetUint64());
@@ -237,9 +237,9 @@ namespace netease {
 		std::map<string, string> p = {};
 		string json = post(Action("/v1/radio/get", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
+		data.Parse(json.c_str(), json.length());
 		std::vector<neteaseid_t> ret;
-		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto arr = data["data"].GetArray();
 			for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
 				ret.push_back((*iter)["id"].GetUint64());
@@ -276,9 +276,9 @@ namespace netease {
 		std::map<string, string> p = {};
 		string json = post(Action("/v1/album/" + std::to_string(id), p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
+		data.Parse(json.c_str(), json.length());
 		std::vector<std::shared_ptr<CMusic>> songs;
-		if (data.HasMember("code") && data["code"].GetInt() == 200 && 
+		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200 &&
 			data.HasMember("resourceState") && data["resourceState"].GetBool()) {
 			auto arr = data["songs"].GetArray();
 			for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
@@ -296,9 +296,9 @@ namespace netease {
 		};
 		string json = post(Action("/dj/program/byradio", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
+		data.Parse(json.c_str(), json.length());
 		std::vector<std::shared_ptr<CDjMusic>> songs;
-		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto arr = data["programs"].GetArray();
 			for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
 				songs.push_back(std::make_shared<CDjMusic>(*iter));
@@ -313,10 +313,13 @@ namespace netease {
 					{"asc", "0"}
 				};
 				json = post(Action("/dj/program/byradio", p));
-				data.Parse(json.c_str());
-				arr = data["programs"].GetArray();
-				for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
-					songs.push_back(std::make_shared<CDjMusic>(*iter));
+				data.Parse(json.c_str(), json.length());
+				if (data.IsObject() && data.HasMember("programs"))
+				{
+					arr = data["programs"].GetArray();
+					for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
+						songs.push_back(std::make_shared<CDjMusic>(*iter));
+					}
 				}
 				counter++;
 			}
@@ -329,9 +332,9 @@ namespace netease {
 		};
 		string json = post(Action("/artist/head/info/get", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
+		data.Parse(json.c_str(), json.length());
 		std::shared_ptr<CArtist> artist = nullptr;
-		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			artist = std::make_shared<CArtist>((data["data"]["artist"]));
 		}
 		return artist;
@@ -346,9 +349,9 @@ namespace netease {
 		};
 		string json = post(Action("/cloudsearch/pc", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
+		data.Parse(json.c_str(), json.length());
 		std::vector<std::shared_ptr<CSearchResult>> ret;
-		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			size_t count = 0;
 			switch (type){
 			case netease::ST_LYRIC:
@@ -435,9 +438,9 @@ namespace netease {
 		};
 		string json = post(Action("/v3/song/detail", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
+		data.Parse(json.c_str(), json.length());
 		std::shared_ptr<CMusic> song = nullptr;
-		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto arr = data["songs"].GetArray();
 			if(arr.Size() > 0)
 				song = std::make_shared<CMusic>(*(arr.Begin()));
@@ -450,9 +453,9 @@ namespace netease {
 		};
 		string json = post(Action("/dj/program/detail", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
+		data.Parse(json.c_str(), json.length());
 		std::shared_ptr<CDjMusic> dj = nullptr;
-		if (data.HasMember("code") && data["code"].GetInt() == 200) {
+		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			if (data.HasMember("program"))
 				dj = std::make_shared<CDjMusic>(data["program"]);
 		}
@@ -466,27 +469,44 @@ namespace netease {
 		};
 		string json = post(Action("/song/lyric", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
-		return std::make_shared<CLyric>(data);
+		data.Parse(json.c_str(), json.length());
+
+		if (data.IsObject())
+		{
+			return std::make_shared<CLyric>(data);
+		}
+
+		return nullptr;
 	}
 	std::shared_ptr<CMy> CNeteaseMusicAPI::GetMyself() {
 		std::map<string, string> p = {};
 		string json = post(Action("/w/nuser/account/get/", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
-		if (data.HasMember("profile") && !data["profile"].IsNull()) {
+		data.Parse(json.c_str(), json.length());
+		if (data.IsObject() && data.HasMember("profile") && !data["profile"].IsNull()) {
 			json = post(Action("/v1/user/detail/" + std::to_string(data["profile"]["userId"].GetInt()), p));
-			data.Parse(json.c_str());
-			return std::make_shared<CMy>(data);
+			data.Parse(json.c_str(), json.length());
+			if (data.IsObject())
+			{
+				return std::make_shared<CMy>(data);
+			}
+			else
+			{
+				return nullptr;
+			}
 		}
-		return std::shared_ptr<CMy>(nullptr);
+		return nullptr;
 	}
 	std::shared_ptr<CUser> CNeteaseMusicAPI::GetUser(neteaseid_t userid) {
 		std::map<string, string> p = {};
 		string json = post(Action("/v1/user/detail/" + std::to_string(userid), p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
-		return std::make_shared<CUser>(data);
+		data.Parse(json.c_str(), json.length());
+		if (data.IsObject())
+		{
+			return std::make_shared<CUser>(data);
+		}
+		return nullptr;
 	}
 
 	static string s_szCookie = "./neteaseapicookie";
@@ -509,8 +529,12 @@ namespace netease {
 		};
 		string json = post(Action("/v6/playlist/detail", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
-		return std::make_shared<CPlayList>(data);
+		data.Parse(json.c_str(), json.length());
+		if (data.IsObject())
+		{
+			return std::make_shared<CPlayList>(data);
+		}
+		return nullptr;
 	}
 
 	void CLocalUser::SendCaptcha(neteaseid_t phone, int country){
@@ -552,8 +576,8 @@ namespace netease {
 		};
 		string json = post(Action("/login/qrcode/unikey", p));
 		rapidjson::Document data;
-		data.Parse(json.c_str());
-		if (data.HasMember("unikey"))
+		data.Parse(json.c_str(), json.length());
+		if (data.IsObject() && data.HasMember("unikey") && data["unikey"].IsString())
 			return data["unikey"].GetString();
 		return "";
 	}
@@ -576,12 +600,16 @@ namespace netease {
 		return out;
 	}
 	neteasecode_t CLocalUser::GetCookiePost(Action& action, int successcode){
-		string str = post(action);
+		string json = post(action);
+
 		rapidjson::Document data;
-		data.Parse(str.c_str());
-		neteasecode_t neteasecode = 0;
-		if (data.HasMember("code"))
-			neteasecode = data["code"].GetInt();
-		return neteasecode;
+		data.Parse(json.c_str(), json.length());
+
+		if (data.IsObject() && data.HasMember("code") && data["code"].IsInt())
+		{
+			return data["code"].GetInt();
+		}
+
+		return 0;
 	}
 }
