@@ -16,36 +16,31 @@ if(!(Test-Path("../../tools/global.props"))){
     Write-Warning "Init build enviroment..."
     &Rename-Item -Path "../../tools/global_template.props" -NewName "global.props"
 }
+function TestOrBuild($test, $build, $msg){
+	if(!(Test-Path("../../thirdparty/install/" + $test))){
+        Write-Warning ("Can not find " + $msg + ", building...")
+        $cmd = ("../../scripts/" + $build)
+        Echo $cmd
+        &$cmd
+    }
+}
 if($BuildTarget -eq "Debug"){
-    if(!(Test-Path("../../thirdparty/install/glew/x86/Debug/lib/glewd.lib"))){
-        Write-Warning "Can not find glew, building..."
-        &"../../scripts/build-glew-x86-Debug.bat"
-    }
-    if(!(Test-Path("../../thirdparty/install/capstone/x86/Debug/lib/capstone.lib"))){
-        Write-Warning "Can not find capstone, building..."
-        &"../../scripts/build-capstone-x86-Debug.bat"
-    }
+    TestOrBuild "glew/x86/Debug/lib/glewd.lib" "build-glew-x86-Debug.bat" "glew"
+    TestOrBuild "capstone/x86/Debug/lib/capstone.lib" "build-capstone-x86-Debug.bat" "capstone"
+	TestOrBuild "FreeImage/x86/Debug/lib/FreeImaged.lib" "build-FreeImage-x86-Debug.bat" "FreeImage"
 }
 if($BuildTarget -eq "Release"){
-    if(!(Test-Path("../../thirdparty/install/glew/x86/Release/lib/glew.lib"))){
-        Write-Warning "Can not find glew, building..."
-        &"../../scripts/build-glew-x86-Release.bat"
-    }
-    if(!(Test-Path("../../thirdparty/install/capstone/x86/Release/lib/capstone.lib"))){
-        Write-Warning "Can not find capstone, building..."
-        &"../../scripts/build-capstone-x86-Release.bat"
-    }
+    TestOrBuild "glew/x86/Release/lib/glew.lib" "build-glew-x86-Release.bat" "glew"
+    TestOrBuild "capstone/x86/Release/lib/capstone.lib" "build-capstone-x86-Release.bat" "capstone"
+	TestOrBuild "FreeImage/x86/Release/lib/FreeImage.lib" "build-FreeImage-x86-Release.bat" "FreeImage"
 }
 if($BuildTarget -eq "Release_AVX2"){
-    if(!(Test-Path("../../thirdparty/install/glew/x86/Release_AVX2/lib/glew.lib"))){
-        Write-Warning "Can not find glew, building..."
-        &"../../scripts/build-glew-x86-Release_AVX2.bat"
-    }
-    if(!(Test-Path("../../thirdparty/install/capstone/x86/Release/lib/capstone.lib"))){
-        Write-Warning "Can not find capstone, building..."
-        &"../../scripts/build-capstone-x86-Release.bat"
-    }
+    TestOrBuild "glew/x86/Release_AVX2/lib/glew.lib" "build-glew-x86-Release_AVX2" "glew"
+    TestOrBuild "capstone/x86/Release/lib/capstone.lib" "build-capstone-x86-Release.bat" "capstone"
+	TestOrBuild "FreeImage/x86/Release/lib/FreeImage.lib" "build-FreeImage-x86-Release.bat" "FreeImage"
 }
+
+Write-Warning "Starting plugin building..."
 $vsLocation=[string](../../tools/vswhere.exe -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
 if(Test-Path("$($vsLocation)\Common7\Tools\vsdevcmd.bat")){
     &"$($vsLocation)\Common7\Tools\vsdevcmd.bat" "-arch=x86"
