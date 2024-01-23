@@ -30,7 +30,7 @@ void GL_Uniform4i(GLuint loc, int v0, int v1, int v2, int v3);
 void GL_Uniform1f(GLuint loc, float v0);
 void GL_Uniform2f(GLuint loc, float v0, float v1);
 void GL_Uniform3f(GLuint loc, float v0, float v1, float v2);
-void GL_Uniform4f(GLuint loc, float v0, int v1, int v2, int v3);
+void GL_Uniform4f(GLuint loc, float v0, float v1, float v2, float v3);
 void GL_VertexAttrib3f(GLuint index, float x, float y, float z);
 void GL_VertexAttrib3fv(GLuint index, float* v);
 void GL_MultiTexCoord2f(GLenum target, float s, float t);

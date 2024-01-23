@@ -265,7 +265,7 @@ void GL_Uniform3f(GLuint loc, float v0, float v1, float v2){
 	glUniform3f(loc, v0, v1, v2);
 }
 
-void GL_Uniform4f(GLuint loc, float v0, int v1, int v2, int v3){
+void GL_Uniform4f(GLuint loc, float v0, float v1, float v2, float v3){
 	glUniform4f(loc, v0, v1, v2, v3);
 }
 

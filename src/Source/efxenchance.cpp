@@ -101,7 +101,7 @@ TEMPENTITY* R_TempModel(float* pos, float* dir, float* angles, float life, int m
 		TEMPENTITY* smoke = gHookFuncs.R_TempModel(pos, smokedir, angles, life/2, gEfxVarible.iGunSmoke, 0);
 		if (smoke) {
 			smoke->flags = FTENT_SPRANIMATE | FTENT_FADEOUT;
-			smoke->entity.baseline.scale = RANDOM_FLOAT(0.07f, 0.15);
+			smoke->entity.baseline.scale = RANDOM_FLOAT(0.07f, 0.15f);
 			smoke->entity.curstate.renderamt = RANDOM_LONG(10, 25);
 			smoke->entity.curstate.rendermode = kRenderTransAlpha;
 			smoke->entity.curstate.framerate = RANDOM_FLOAT(25, 35);
@@ -166,11 +166,11 @@ void DoGaussFire(float fparam1, int bparam1) {
 			local->curstate.effects |= EF_MUZZLEFLASH;
 			fFirstBeam = false;
 			gEngfuncs.pEfxAPI->R_BeamEntPoint(local->index + (gExportfuncs.CL_IsThirdPerson() ? 0 : 4096), tr.endpos, gEfxVarible.iGaussBeam, 0.2f,
-				bparam1 ? (float)GAUSS_LASER_P_WIDTH : (float)GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8f : 1.0f, bparam1 ? 0 : 1);
+				bparam1 ? (float)GAUSS_LASER_P_WIDTH : (float)GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8f : 1.0f, bparam1 ? 0.0f : 1.0f);
 		}
 		else
 			gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, tr.endpos, gEfxVarible.iGaussBeam, 0.2f,
-				bparam1 ? (float)GAUSS_LASER_P_WIDTH : (float)GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8f : 1.0f, bparam1 ? 0 : 1);
+				bparam1 ? (float)GAUSS_LASER_P_WIDTH : (float)GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8f : 1.0f, bparam1 ? 0.0f : 1.0f);
 		cl_entity_t* hit = gEngfuncs.GetEntityByIndex(tr.ent);
 		//可反射高斯
 		if (hit && hit->model && hit->model->type == mod_brush) {
