@@ -19,7 +19,7 @@
 // Include this because tons of code was implicitly getting utlsymbol or utlvector via utldict.h
 #include "tier1/utlsymbol.h"
 
-//#include "tier0/memdbgon.h"
+#include "tier0/memdbgon.h"
 
 enum EDictCompareType
 {
@@ -310,7 +310,6 @@ I CUtlDict<T, I>::Insert(const char* pName, const T& element)
 	key[keylen] = 0;
 #else
 	auto key = strdup(pName);
-	free(key);
 #endif
 	return m_Elements.Insert(key, element);
 }
@@ -326,7 +325,6 @@ I CUtlDict<T, I>::Insert(const char* pName)
 	key[keylen] = 0;
 #else
 	auto key = strdup(pName);
-	free(key);
 #endif
 	return m_Elements.Insert(key);
 }
@@ -373,6 +371,6 @@ I CUtlDict<T, I>::Next(I i) const
 	return m_Elements.NextInorder(i);
 }
 
-//#include "tier0/memdbgoff.h"
+#include "tier0/memdbgoff.h"
 
 #endif // UTLDICT_H
