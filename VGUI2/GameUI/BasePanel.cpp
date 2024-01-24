@@ -20,7 +20,6 @@
 #include "exportfuncs.h"
 #include "OptionAdvancedDlg.h"
 
-extern void SysError(const char* message ...);
 extern DWORD g_dwEngineBuildnum;
 extern IFileSystem* g_pFileSystem;
 
