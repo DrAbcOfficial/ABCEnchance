@@ -4,8 +4,6 @@
 #include <IEngineSurface.h>
 #include "plugins.h"
 
-extern void SysError(const char* message ...);
-
 vgui::IInput *g_pVGuiInput;
 vgui::ISystem *g_pVGuiSystem;
 vgui::IVGui *g_pVGui;
@@ -44,7 +42,7 @@ bool VGui_InitInterfacesList(const char *moduleName, CreateInterfaceFn *factoryL
 
 	if (!g_pFullFileSystem || !g_pKeyValuesSystem || !g_pVGuiInput || !g_pVGuiSystem || !g_pVGui || !g_pVGuiPanel || !g_pVGuiLocalize)
 	{
-		SysError("vgui_controls is missing a required interface!\n");
+		SYS_ERROR("vgui_controls is missing a required interface!\n");
 		return false;
 	}
 	return true;

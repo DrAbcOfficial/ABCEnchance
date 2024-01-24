@@ -29,11 +29,13 @@ void InstallClientHook();
 void UninstallEngineHook();
 void UninstallClientHook();
 void CheckAsset();
+void DllLoadNotification(mh_load_dll_notification_context_t* ctx);
 
 void GL_Init(void);
 void HUD_Init(void);
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio);
 int HUD_VidInit(void);
+void HUD_Shutdown(void);
 int HUD_Redraw(float time, int intermission);
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);
 int HUD_UpdateClientData(struct client_data_s* c, float f);
@@ -52,7 +54,7 @@ void R_NewMap(void);
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
-#define Sig_NotFound(name) SysError("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
+#define Sig_NotFound(name) SYS_ERROR("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
 #define Sig_FuncNotFound(name) if(!gHookFuncs.name) Sig_NotFound(name)
 #define Sig_AddrNotFound(name) if(!addr) Sig_NotFound(name)
 #define Sig_AddrFoundOrFill(name) Sig_AddrNotFound(name) else name = (decltype(name))addr;

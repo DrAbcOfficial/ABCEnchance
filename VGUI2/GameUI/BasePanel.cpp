@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include "plugins.h"
 
 #include "local.h"
 #include "vguilocal.h"
@@ -279,28 +280,32 @@ void __fastcall CBasePanel_RunMenuCommand(vgui::Panel* pthis, int dummy, const c
 		gHookFuncs.CBasePanel_RunMenuCommand(pthis, dummy, command);
 }
 
-void BasePanel_InstallHook(void){
+void BasePanel_InstallHook(void)
+{
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
-	if (hGameUI) {
-		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
-		DWORD moduleSize = g_pMetaHookAPI->GetModuleSize(hGameUI);
-		if (fnCreateInterface) {
-#define SC_CBASEPANEL_CTOR_SIG "\x55\x8B\xEC\x51\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\x6A\x00\x89\x75\xFC\xE8\x2A\x2A\x2A\x2A\xC7"
-			Fill_Sig(SC_CBASEPANEL_CTOR_SIG, hGameUI, moduleSize, CBasePanel_ctor);
-			Install_InlineHook(CBasePanel_ctor);
-#define SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG "\x55\x8B\xEC\x83\xEC\x38\x53\x8D\x45\xCC\x8B\xD9\x50\x8D\x45\xC8\x89\x5D\xD0\x50\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8D\x4D\xD4\x51"
-			Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, hGameUI, moduleSize, CBasePanel_PaintBackground);
-			Install_InlineHook(CBasePanel_PaintBackground);
-#define SC_CBASEPANEL_RUNMENUCOMMAND_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x51\x53\x56\x57\xA1\x2A\x2A\x2A\x2A\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x2A\x2A\x2A\x2A\x8B\xD9\x8B\x75\x08\x68\x2A\x2A\x2A\x2A\x56"
-			Fill_Sig(SC_CBASEPANEL_RUNMENUCOMMAND_SIG, hGameUI, moduleSize, CBasePanel_RunMenuCommand);
-			Install_InlineHook(CBasePanel_RunMenuCommand);
-		}
+	if (!hGameUI) {
+		SYS_ERROR("Failed to locate GameUI.dll");
+		return;
 	}
-	else
-		SysError("Can not find game ui for dynamic background.");
 
-	HMODULE hVPX= LoadLibrary("vpx.dll");
-	if (hVPX) {
+	auto GameUIBase = g_pMetaHookAPI->GetModuleBase(hGameUI);
+	auto GameUISize = g_pMetaHookAPI->GetModuleSize(hGameUI);
+
+#define SC_CBASEPANEL_CTOR_SIG "\x55\x8B\xEC\x51\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\x6A\x00\x89\x75\xFC\xE8\x2A\x2A\x2A\x2A\xC7"
+	Fill_Sig(SC_CBASEPANEL_CTOR_SIG, GameUIBase, GameUISize, CBasePanel_ctor);
+	Install_InlineHook(CBasePanel_ctor);
+#define SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG "\x55\x8B\xEC\x83\xEC\x38\x53\x8D\x45\xCC\x8B\xD9\x50\x8D\x45\xC8\x89\x5D\xD0\x50\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8D\x4D\xD4\x51"
+	Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, GameUIBase, GameUISize, CBasePanel_PaintBackground);
+	Install_InlineHook(CBasePanel_PaintBackground);
+#define SC_CBASEPANEL_RUNMENUCOMMAND_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x51\x53\x56\x57\xA1\x2A\x2A\x2A\x2A\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x2A\x2A\x2A\x2A\x8B\xD9\x8B\x75\x08\x68\x2A\x2A\x2A\x2A\x56"
+	Fill_Sig(SC_CBASEPANEL_RUNMENUCOMMAND_SIG, GameUIBase, GameUISize, CBasePanel_RunMenuCommand);
+	Install_InlineHook(CBasePanel_RunMenuCommand);
+
+	HMODULE hVPX = LoadLibrary("vpx.dll");
+	if (!hVPX) {
+		SYS_ERROR("Could not load vpx.dll!");
+		return;
+	}
 #define GetFuncVPX(name) name = (decltype(name))(GetProcAddress(hVPX, #name))
 		GetFuncVPX(vpx_codec_dec_init_ver);
 		GetFuncVPX(vpx_codec_peek_stream_info);
@@ -318,7 +323,4 @@ void BasePanel_InstallHook(void){
 		GetFuncVPX(vpx_img_wrap);
 		GetFuncVPX(vpx_img_free);
 #undef GetFuncVPX
-	}
-	else
-		SysError("Can not open vpx.dll!");
 }
