@@ -64,7 +64,7 @@ void vgui::CrossHairDisplay::PerformLayout() {
 		(*iter)->SetBgColor(m_cCrosshair);
 	}
 	m_aryCrosshair[0]->SetBgColor((m_bHasDot) ? m_cCrosshair : Color(0, 0, 0, 0));
-	m_aryCrosshair[1]->SetBgColor((m_bT) ? m_cCrosshair : Color(0, 0, 0, 0));
+	m_aryCrosshair[1]->SetBgColor((!m_bT) ? m_cCrosshair : Color(0, 0, 0, 0));
 
 	int w, h;
 	GetSize(w, h);
