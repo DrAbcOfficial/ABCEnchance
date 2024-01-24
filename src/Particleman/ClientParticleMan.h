@@ -1,4 +1,4 @@
 #include "IParticleMan.h"
 
-void InitCreateParticleMan();
+void LoadParticleMan();
 void FreeParticleMan();

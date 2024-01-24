@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include "plugins.h"
 #include "exportfuncs.h"
 #include "ClientParticleMan.h"
 #include "curl.h"
@@ -47,15 +48,20 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	g_dwEngineRdataBase = g_pMetaHookAPI->GetSectionByName(g_dwEngineBase, ".rdata\x0\x0", &g_dwEngineRdataSize);
 
 	memcpy(&gEngfuncs, pEngfuncs, sizeof(gEngfuncs));
+
 	if (g_iEngineType != ENGINE_SVENGINE)
-		g_pMetaHookAPI->SysError("%s can only run in SvenEngine!\nEngine type: %d\nEngine buildnum: %d", 
+	{
+		SYS_ERROR("%s can only run in SvEngine!\nEngine type: %d\nEngine buildnum: %d",
 			"ABCEnchance.dll", g_iEngineType, g_dwEngineBuildnum);
+	}
 
 	CheckOtherPlugin();
 	FillEngineAddress();
 	//SVC_FillAddress();
 	InstallEngineHook();
 	BaseUI_InstallHook();
+
+	g_pMetaHookAPI->RegisterLoadDllNotificationCallback(DllLoadNotification);
 }
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
@@ -72,6 +78,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_GetStudioModelInterface = HUD_GetStudioModelInterface;
 	pExportFunc->HUD_VidInit = HUD_VidInit;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
+	pExportFunc->HUD_Shutdown = HUD_Shutdown;
 	pExportFunc->IN_MouseEvent = IN_MouseEvent;
 	pExportFunc->HUD_Key_Event = HUD_KeyEvent;
 	pExportFunc->CL_CreateMove = CL_CreateMove;
@@ -87,19 +94,18 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	FillAddress();
 	InstallClientHook();
 	ClientVGUIInstallHook();
-	InitCreateParticleMan();
+	LoadParticleMan();
 	LoadLibcurl();
-	FModEngine::InitFModLibrary();
 }
 void IPluginsV4::Shutdown(void){
-	HUD_Clear();
+	
+	g_pMetaHookAPI->UnregisterLoadDllNotificationCallback(DllLoadNotification);
 }
 void IPluginsV4::ExitGame(int iResult){
 	UninstallClientHook();
 	UninstallEngineHook();
 	FreeParticleMan();
 	CloseLibcurl();
-	FModEngine::FreeFModLibrary();
 }
 
 #define STR1(R) #R

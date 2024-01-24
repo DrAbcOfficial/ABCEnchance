@@ -21,27 +21,36 @@ namespace vgui{
 	bool VGui_InitInterfacesList(const char* moduleName, CreateInterfaceFn* factoryList, int numFactories);
 }
 
-extern void SysError(const char* message ...);
 void ClientVGUIInit(CreateInterfaceFn* factories, int count) {
 	vgui::VGui_InitInterfacesList("ABCEnchance", factories, count);
-	vgui::HScheme iScheme = vgui::scheme()->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
+	vgui::HScheme iScheme = vgui::scheme()->LoadSchemeFromFile("abcenchance\\ABCEnchance.res", "ABCEnchance");
 	int iPluginVersion = 0;
-	if (iScheme > 0) {
+	if (iScheme != 0) {
 		pSchemeData = vgui::scheme()->GetIScheme(vgui::scheme()->GetScheme("ABCEnchance"));
 		iPluginVersion = atoi(pSchemeData->GetResourceString("Version"));
 	}
-	else {
-		SysError("Ooops! Can not load resource file!\nHave you installed it correctly?\n");
+	else
+	{
+		SYS_ERROR("Could not load \"abcenchance\\ABCEnchance.res\"!\nHave you installed it correctly?\n");
 		return;
 	}
+
 	if (iPluginVersion < PLUGIN_VERSION)
-		SysError("Mismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
+	{
+		SYS_ERROR("Resource version mismatch: \"abcenchance\\ABCEnchance.res\" too old.\nRequired Version: %d\nYour Version: %d\n",
 			PLUGIN_VERSION, iPluginVersion);
-	char localizePath[260];
-	snprintf(localizePath, sizeof(localizePath), "abcenchance/localize/%s.txt",
+		return;
+	}
+
+	char localizePath[MAX_PATH];
+	snprintf(localizePath, sizeof(localizePath), "abcenchance\\localize\\%s.txt",
 		(!strlen(pSchemeData->GetResourceString("Language"))) ? "%language%" : pSchemeData->GetResourceString("Language"));
+
 	if (!vgui::localize()->AddFile(g_pFileSystem, localizePath))
-		SysError("Missing Localize file: %s\n", localizePath);
+	{
+		SYS_ERROR("Missing localization file: %s\n", localizePath);
+		return;
+	}
 }
 void ClientVGUIShutdown(void) {
 	if (g_pViewPort) {
@@ -125,8 +134,11 @@ void ClientVGUIInstallHook(void){
 		}
 		g_pVGuiSurface = (vgui::ISurface2*)ClientVGUICreateInterface(VGUI_SURFACE2_INTERFACE_VERSION, NULL);
 		g_pVGuiSchemeManager2 = (vgui::ISchemeManager2*)ClientVGUICreateInterface(VGUI_SCHEME2_INTERFACE_VERSION, NULL);
+
 		if (!g_pVGuiSurface || !g_pVGuiSchemeManager2)
-			SysError("Your CaptionMod version are outdate, please update it and run again.");
+		{
+			SYS_ERROR("Your CaptionMod version is outdate, please update it and run again.");
+		}
 	}
 }
 
