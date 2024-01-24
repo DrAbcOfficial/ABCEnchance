@@ -206,6 +206,10 @@ namespace netease {
 				vip = profile["vipType"].GetUint();
 			if (profile.HasMember("playlistCount"))
 				playlistCount = profile["playlistCount"].GetUint();
+			if(profile.HasMember("avatarUrl"))
+				avatarurl = profile["avatarUrl"].GetString();
+			if (profile.HasMember("backgroundUrl"))
+				backgroundurl = profile["backgroundUrl"].GetString();
 		}
 		if (json.HasMember("listenSongs"))
 			listenSongs = json["listenSongs"].GetUint64();

@@ -93,6 +93,8 @@ namespace netease {
 	public:
 		CUser(rapidjson::Value& json);
 		string signature;
+		string avatarurl;
+		string backgroundurl;
 		unsigned int level = 0;
 		unsigned int vip = 0;
 		unsigned long long listenSongs = 0;

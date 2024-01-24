@@ -1048,3 +1048,7 @@ void CQRLoginPanel::ResetText(){
 void CQRLoginPanel::SendMyInfo(){
 	m_pMusicPanel->GetMyInfo();
 }
+
+std::atomic<netease::CNeteaseMusicAPI*> GetNeteaseApi() {
+	return s_pNeteaseApi.load();
+}
