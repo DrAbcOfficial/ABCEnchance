@@ -30,6 +30,9 @@ DWORD g_dwEngineRdataSize;
 int g_iEngineType;
 bool g_IsClientVGUI2 = false;
 
+void FMOD_Init();
+void FMOD_Shutdown();
+
 void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave){
 	g_pInterface = pInterface;
 	g_pMetaHookAPI = pAPI;
@@ -61,7 +64,7 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	InstallEngineHook();
 	BaseUI_InstallHook();
 
-	g_pMetaHookAPI->RegisterLoadDllNotificationCallback(DllLoadNotification);
+	//g_pMetaHookAPI->RegisterLoadDllNotificationCallback(DllLoadNotification);
 }
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
@@ -94,12 +97,13 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	FillAddress();
 	InstallClientHook();
 	ClientVGUIInstallHook();
+	FMOD_Init();
 	LoadParticleMan();
 	LoadLibcurl();
 }
 void IPluginsV4::Shutdown(void){
 	
-	g_pMetaHookAPI->UnregisterLoadDllNotificationCallback(DllLoadNotification);
+	//g_pMetaHookAPI->UnregisterLoadDllNotificationCallback(DllLoadNotification);
 }
 void IPluginsV4::ExitGame(int iResult){
 	UninstallClientHook();
