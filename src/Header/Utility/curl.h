@@ -1318,4 +1318,4 @@ extern void (*curl_easy_cleanup)(void* curl);
 extern struct curl_slist* (*curl_slist_append)(struct curl_slist*, const char*);
 extern void (*curl_slist_free_all)(struct curl_slist* list);
 void LoadLibcurl();
-void CloseLibcurl();
+void FreeLibcurl();
