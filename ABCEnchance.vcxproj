@@ -45,21 +45,21 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\tools\global.props" Condition="exists('..\..\tools\global.props')" />
-    <Import Project="..\..\tools\global_template.props" Condition="!exists('..\..\tools\global.props') and exists('$(SolutionDir)tools\global_template.props')" />
-    <Import Project="..\..\tools\global_common.props" />
+    <Import Project="$(ProjectDir)..\..\tools\global.props" Condition="exists('$(ProjectDir)..\..\tools\global.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_template.props" Condition="!exists('$(ProjectDir)..\..\tools\global.props') and exists('$(ProjectDir)..\..\tools\global_template.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\tools\global.props" Condition="exists('..\..\tools\global.props')" />
-    <Import Project="..\..\tools\global_template.props" Condition="!exists('..\..\tools\global.props') and exists('$(SolutionDir)tools\global_template.props')" />
-    <Import Project="..\..\tools\global_common.props" />
+    <Import Project="$(ProjectDir)..\..\tools\global.props" Condition="exists('$(ProjectDir)..\..\tools\global.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_template.props" Condition="!exists('$(ProjectDir)..\..\tools\global.props') and exists('$(ProjectDir)..\..\tools\global_template.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\tools\global.props" Condition="exists('..\..\tools\global.props')" />
-    <Import Project="..\..\tools\global_template.props" Condition="!exists('..\..\tools\global.props') and exists('$(SolutionDir)tools\global_template.props')" />
-    <Import Project="..\..\tools\global_common.props" />
+    <Import Project="$(ProjectDir)..\..\tools\global.props" Condition="exists('$(ProjectDir)..\..\tools\global.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_template.props" Condition="!exists('$(ProjectDir)..\..\tools\global.props') and exists('$(ProjectDir)..\..\tools\global_template.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_common.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -68,18 +68,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <LinkIncremental>true</LinkIncremental>
-    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -97,13 +93,17 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;..\..\thirdparty\install\glew\x86\Debug\lib\glewd.lib;..\..\thirdparty\install\FreeImage\x86\Debug\lib\FreeImaged.lib;../../include/SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>$(PluginPostBuildCommand)</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>$(GLEWCheckRequirements)
+$(FreeImageCheckRequirements)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -125,14 +125,18 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;..\..\thirdparty\install\glew\x86\Release\lib\glew.lib;..\..\thirdparty\install\FreeImage\x86\Release\lib\FreeImage.lib;../../include/SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>$(PluginPostBuildCommand)
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>$(GLEWCheckRequirements)
+$(FreeImageCheckRequirements)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
     <ClCompile>
@@ -155,14 +159,18 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\glew\build\lib\Release\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;..\..\thirdparty\install\glew\x86\Release_AVX2\lib\glew.lib;..\..\thirdparty\install\FreeImage\x86\Release\lib\FreeImage.lib;../../include/SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>$(PluginPostBuildCommand)
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$(TargetExt)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>$(GLEWCheckRequirements)
+$(FreeImageCheckRequirements)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\include\HLSDK\common\interface.cpp" />
