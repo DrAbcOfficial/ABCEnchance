@@ -63,8 +63,6 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	//SVC_FillAddress();
 	InstallEngineHook();
 	BaseUI_InstallHook();
-
-	//g_pMetaHookAPI->RegisterLoadDllNotificationCallback(DllLoadNotification);
 }
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
@@ -103,13 +101,10 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 }
 void IPluginsV4::Shutdown(void){
 	
-	//g_pMetaHookAPI->UnregisterLoadDllNotificationCallback(DllLoadNotification);
 }
 void IPluginsV4::ExitGame(int iResult){
-	UninstallClientHook();
+
 	UninstallEngineHook();
-	FreeParticleMan();
-	CloseLibcurl();
 }
 
 #define STR1(R) #R

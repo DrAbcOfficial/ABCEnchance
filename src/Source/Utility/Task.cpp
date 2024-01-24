@@ -12,6 +12,19 @@ bool CTaskManager::Has(ITaskItem* check){
 	}
 	return false;
 }
+void CTaskManager::Shutdown() {
+	for (auto iter = m_aryList.begin(); iter != m_aryList.end();) {
+		auto item = *iter;
+		delete item;
+	}
+	m_aryList.clear();
+
+	for (auto iter = m_aryPending.begin(); iter != m_aryPending.end();) {
+		auto item = *iter;
+		delete item;
+	}
+	m_aryPending.clear();
+}
 void CTaskManager::CheckAll(){
 	for (auto iter = m_aryList.begin(); iter != m_aryList.end();) {
 		auto item = *iter;

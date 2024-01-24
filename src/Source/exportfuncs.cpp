@@ -8,7 +8,9 @@
 #include "triangleapi.h"
 #include "pm_movevars.h"
 #include "cvardef.h"
-#include "capstone.h"
+
+//Òª¤é¤Ê¤¤
+//#include "capstone.h"
 #include "CVector.h"
 #include "Task.h"
 //Def
@@ -301,32 +303,6 @@ void UninstallClientHook() {
 	}
 	aryClientHook.clear();
 }
-
-extern HMODULE g_hFMODEx;
-void FMOD_OnLoad(HMODULE hFModEx);
-void FMOD_OnUnload(HMODULE hFModEx);
-#if 0
-void DllLoadNotification(mh_load_dll_notification_context_t* ctx)
-{
-	if (ctx->flags & LOAD_DLL_NOTIFICATION_IS_LOAD)
-	{
-		if (ctx->BaseDllName && ctx->hModule && !_wcsicmp(ctx->BaseDllName, L"fmodex.dll"))
-		{
-			g_hFMODEx = ctx->hModule;
-			FMOD_OnLoad(ctx->hModule);
-		}
-	}
-	else if (ctx->flags & LOAD_DLL_NOTIFICATION_IS_UNLOAD)
-	{
-		if (ctx->hModule == g_hFMODEx)
-		{
-			FMOD_OnUnload(ctx->hModule);
-			g_hFMODEx = NULL;
-		}
-	}
-}
-#endif
-
 void CheckAsset()
 {
 	if (!g_pFileSystem->FileExists("abcenchance/ABCEnchance.res"))
@@ -414,6 +390,7 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 }
 
 void FMOD_Shutdown();
+void FreeLibcurl();
 
 void HUD_Shutdown(void)
 {
@@ -422,7 +399,13 @@ void HUD_Shutdown(void)
 	gCustomHud.HUD_Clear();
 	GL_FreeShaders();
 	ClearExtraPrecache();
+
+	GetTaskManager()->Shutdown();
+
 	FMOD_Shutdown();
+	FreeParticleMan();
+	FreeLibcurl();
+	UninstallClientHook();
 }
 
 int HUD_VidInit(void)
