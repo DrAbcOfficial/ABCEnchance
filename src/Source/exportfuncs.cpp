@@ -68,7 +68,8 @@ struct playerppmoveinfo {
 
 //FINAL SHIT
 void R_NewMap(void){
-	ClearExtraPrecache();
+	//これ　勣らないから
+	//ClearExtraPrecache();
 
 	gCustomHud.HUD_Reset();
 	EfxReset();
@@ -302,9 +303,9 @@ void UninstallClientHook() {
 }
 
 extern HMODULE g_hFMODEx;
-void FMOD_InstallHooks(HMODULE hFModEx);
-void FMOD_UninstallHooks(HMODULE hFModEx);
-
+void FMOD_OnLoad(HMODULE hFModEx);
+void FMOD_OnUnload(HMODULE hFModEx);
+#if 0
 void DllLoadNotification(mh_load_dll_notification_context_t* ctx)
 {
 	if (ctx->flags & LOAD_DLL_NOTIFICATION_IS_LOAD)
@@ -312,18 +313,19 @@ void DllLoadNotification(mh_load_dll_notification_context_t* ctx)
 		if (ctx->BaseDllName && ctx->hModule && !_wcsicmp(ctx->BaseDllName, L"fmodex.dll"))
 		{
 			g_hFMODEx = ctx->hModule;
-			FMOD_InstallHooks(ctx->hModule);
+			FMOD_OnLoad(ctx->hModule);
 		}
 	}
 	else if (ctx->flags & LOAD_DLL_NOTIFICATION_IS_UNLOAD)
 	{
 		if (ctx->hModule == g_hFMODEx)
 		{
-			FMOD_UninstallHooks(ctx->hModule);
+			FMOD_OnUnload(ctx->hModule);
 			g_hFMODEx = NULL;
 		}
 	}
 }
+#endif
 
 void CheckAsset()
 {
@@ -348,6 +350,7 @@ void GL_Init(void)
 	gCustomHud.GL_Init();
 }
 void HUD_Init(void){
+
 	//VGUI init
 	gCVars.pShellEfx = CREATE_CVAR("abc_shellefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
@@ -404,10 +407,13 @@ void HUD_Init(void){
 	if (g_pParticleMan)
 		g_pParticleMan->ResetParticles();
 }
+
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
 	memcpy(&IEngineStudio, pstudio, sizeof(IEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
+
+void FMOD_Shutdown();
 
 void HUD_Shutdown(void)
 {
@@ -416,10 +422,12 @@ void HUD_Shutdown(void)
 	gCustomHud.HUD_Clear();
 	GL_FreeShaders();
 	ClearExtraPrecache();
+	FMOD_Shutdown();
 }
 
 int HUD_VidInit(void)
 {
+
 	//Search and destory vanillia HUDs
 	if (g_dwHUDListAddr) {
 		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(g_dwHUDListAddr + 0x0));
@@ -440,6 +448,7 @@ int HUD_VidInit(void)
 	}
 	if (g_pViewPort)
 		g_pViewPort->VidInit();
+
 	//Fillup Default CVars
 	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
 	gCVars.pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
@@ -462,6 +471,7 @@ void HUD_VoiceStatus(int entindex, qboolean talking) {
 	gExportfuncs.HUD_VoiceStatus(entindex, talking);
 }
 void HUD_Frame(double frametime) {
+
 	GetClientVoiceMgr()->Frame(frametime);
 	gExportfuncs.HUD_Frame(frametime);
 	//task
