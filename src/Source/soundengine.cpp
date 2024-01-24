@@ -1,8 +1,8 @@
 #include <metahook.h>
+#include "plugins.h"
 #include "soundengine.h"
 
 HMODULE g_hFMODEx = nullptr;
-
 
 #define FMOD_FUNCTION_DEFINE(name) static decltype(name) * g_pfn##name
 #ifdef __USE_FMOD_SYSTEM_H_
@@ -272,7 +272,6 @@ FMOD_FUNCTION_DEFINE(FMOD_Channel_GetUserData);
 FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMemoryInfo);
 #endif // __USE_FMOD_CHANNEL_H_
 
-
 namespace FModEngine {
 
 	CFModSystem* g_pFModSystem = nullptr;
@@ -288,8 +287,8 @@ namespace FModEngine {
 		Create();
 	}
 	CFModSystem::~CFModSystem() {
-		//Close();
-		//Release();
+		Release();
+		m_pFModSystem = nullptr;
 	}
 	FMOD_RESULT CFModSystem::Create() {
 		return g_pfnFMOD_System_Create(&m_pFModSystem);
@@ -998,7 +997,7 @@ namespace FModEngine {
 
 }
 
-void FMOD_InstallHooks(HMODULE hFModEx)
+void FMOD_OnLoad(HMODULE hFModEx)
 {
 #define FMOD_DLSYM_CLIENT(name) g_pfn##name = (decltype(g_pfn##name))GetProcAddress(hFModEx, #name);
 
@@ -1269,15 +1268,71 @@ void FMOD_InstallHooks(HMODULE hFModEx)
 	FMOD_DLSYM_CLIENT(FMOD_Channel_GetMemoryInfo);
 #endif // __USE_FMOD_CHANNEL_H_
 
-	using namespace FModEngine;
 
-	g_pFModSystem = new CFModSystem();
-	g_pFModSystem->Init(SYSTEM_MAXCHANNEL, FMOD_INIT_NORMAL, 0);
 }
 
-void FMOD_UninstallHooks(HMODULE hFMODEx) {
+void FMOD_OnUnload(HMODULE hFMODEx)
+{
+
+
+}
+
+static FMOD_RESULT F_CALLBACK EmptyFMODCallback(FMOD_SYSTEM* system, FMOD_SYSTEM_CALLBACKTYPE type, void* commanddata1, void* commanddata2)
+{
+	return FMOD_OK;
+}
+
+void FMOD_Init()
+{
+	g_hFMODEx = (HMODULE)Sys_LoadModule("svencoop\\fmodex.dll");
+
+	if (!g_hFMODEx)
+	{
+		SYS_ERROR("Could not load fmodex.dll");
+		return;
+	}
+
+	FMOD_OnLoad(g_hFMODEx);
 
 	using namespace FModEngine;
 
-	delete g_pFModSystem;
+	if (!g_pFModSystem)
+	{
+		g_pFModSystem = new CFModSystem();
+		g_pFModSystem->SetCallback(EmptyFMODCallback);
+		g_pFModSystem->SetOutput(FMOD_OUTPUTTYPE_AUTODETECT);
+		auto result = g_pFModSystem->Init(SYSTEM_MAXCHANNEL, FMOD_INIT_NORMAL, 0);
+
+		if (result != FMOD_OK)
+		{
+			if (g_pFModSystem)
+			{
+				g_pFModSystem->Release();
+				g_pFModSystem = NULL;
+			}
+
+			SYS_ERROR("Could not init g_pFModSystem!");
+		}
+	}
+}
+
+void FMOD_Shutdown()
+{
+	using namespace FModEngine;
+
+	if (g_pFModSystem)
+	{
+		g_pFModSystem->Close();
+		delete g_pFModSystem;
+		g_pFModSystem = nullptr;
+	}
+
+	if (g_hFMODEx)
+	{
+		FMOD_OnUnload(g_hFMODEx);
+
+		Sys_FreeModule((HINTERFACEMODULE)g_hFMODEx);
+
+		g_hFMODEx = NULL;
+	}
 }
