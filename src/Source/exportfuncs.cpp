@@ -9,8 +9,6 @@
 #include "pm_movevars.h"
 #include "cvardef.h"
 
-//Òª¤é¤Ê¤¤
-//#include "capstone.h"
 #include "CVector.h"
 #include "Task.h"
 //Def
