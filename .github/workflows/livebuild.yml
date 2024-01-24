@@ -45,10 +45,6 @@ jobs:
       working-directory: MetaHookSv
       run: ./scripts/build-glew-x86-Release_AVX2.bat
 
-    - name: Build Capstone
-      working-directory: MetaHookSv
-      run: ./scripts/build-capstone-x86-Release.bat
-
     - name: Build FreeImage
       working-directory: MetaHookSv
       run: ./scripts/build-FreeImage-x86-Release.bat
