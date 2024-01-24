@@ -142,7 +142,7 @@ namespace FModEngine {
 
         operator FMOD_SYSTEM*();
     private:
-        FMOD_SYSTEM* m_pFModSystem;
+        FMOD_SYSTEM* m_pFModSystem{};
     };
     CFModSystem* GetSystem();
 #endif // __USE_FMOD_SYSTEM_H_
