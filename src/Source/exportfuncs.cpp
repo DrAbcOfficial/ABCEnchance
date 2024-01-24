@@ -46,8 +46,6 @@
 #define _STR(s) #s
 #define STR(s) _STR(s)
 
-extern void SysError(const char* message ...);
-
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 metaplugins_t g_metaplugins;
@@ -144,11 +142,16 @@ void R_ForceCVars(qboolean mp){
 		return;
 	gHookFuncs.R_ForceCVars(mp);
 }
-model_t* CL_GetModelByIndex (int index){
-	if (index >= EXTRPRECACHE_INDEX_BASE && index < EXTRPRECACHE_INDEX_BASE + MAX_EXTRA_PRECACHENUM)
-		return g_ExtraPreacheModel[index - EXTRPRECACHE_INDEX_BASE];
+
+model_t* CL_GetModelByIndex (int index)
+{
+	auto extra = GetExtraModelByModelIndex(index);
+	if (extra)
+		return extra;
+
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
+
 void __fastcall CClient_SoundEngine_PlayFMODSound(void* pEngine, int dummy, int param_1, int param_2, float* param_3, int channel,
 	char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
 	float param_11) {
@@ -175,7 +178,9 @@ void CheckOtherPlugin(){
 		g_metaplugins.captionmod.has = true;
 	}
 	else
-		SysError("This plugin relay on Captionmod to work, please add Captionmod.dll in your plugin.lst");
+	{
+		SYS_ERROR("The \"CaptionMod.dll\" is required!\nPlease add CaptionMod.dll in your plugin.lst");
+	}
 }
 void FillEngineAddress() {
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
@@ -296,17 +301,46 @@ void UninstallClientHook() {
 	aryClientHook.clear();
 }
 
-void CheckAsset() {
-	auto c = gEngfuncs.COM_LoadFile(const_cast<char*>("abcenchance/ABCEnchance.res"), 5, 0);
-	if(!c)
-		SysError("Missing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
-	gEngfuncs.COM_FreeFile(c);
+extern HMODULE g_hFMODEx;
+void FMOD_InstallHooks(HMODULE hFModEx);
+void FMOD_UninstallHooks(HMODULE hFModEx);
+
+void DllLoadNotification(mh_load_dll_notification_context_t* ctx)
+{
+	if (ctx->flags & LOAD_DLL_NOTIFICATION_IS_LOAD)
+	{
+		if (ctx->BaseDllName && ctx->hModule && !_wcsicmp(ctx->BaseDllName, L"fmodex.dll"))
+		{
+			g_hFMODEx = ctx->hModule;
+			FMOD_InstallHooks(ctx->hModule);
+		}
+	}
+	else if (ctx->flags & LOAD_DLL_NOTIFICATION_IS_UNLOAD)
+	{
+		if (ctx->hModule == g_hFMODEx)
+		{
+			FMOD_UninstallHooks(ctx->hModule);
+			g_hFMODEx = NULL;
+		}
+	}
 }
-void GL_Init(void){
+
+void CheckAsset()
+{
+	if (!g_pFileSystem->FileExists("abcenchance/ABCEnchance.res"))
+	{
+		SYS_ERROR("Missing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
+		return;
+	}
+}
+
+void GL_Init(void)
+{
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
+
 	auto err = glewInit();
 	if (GLEW_OK != err){
-		SysError("glewInit failed, %s", glewGetErrorString(err));
+		SYS_ERROR("glewInit failed, %s", glewGetErrorString(err));
 		return;
 	}
 	GL_ShaderInit();
@@ -374,7 +408,18 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 	memcpy(&IEngineStudio, pstudio, sizeof(IEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
-int HUD_VidInit(void){
+
+void HUD_Shutdown(void)
+{
+	gExportfuncs.HUD_Shutdown();
+
+	gCustomHud.HUD_Clear();
+	GL_FreeShaders();
+	ClearExtraPrecache();
+}
+
+int HUD_VidInit(void)
+{
 	//Search and destory vanillia HUDs
 	if (g_dwHUDListAddr) {
 		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(g_dwHUDListAddr + 0x0));
@@ -574,9 +619,4 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	return g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding) ? 
 		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
-}
-void HUD_Clear(void){
-	gCustomHud.HUD_Clear();
-	GL_FreeShaders();
-	ClearExtraPrecache();
 }
