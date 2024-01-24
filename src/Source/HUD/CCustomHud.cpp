@@ -254,7 +254,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 	case vgui::CViewport::HUDNOTICE::PRINTCENTER:
 		if (g_pViewPort)
 			g_pViewPort->ShowNotice(msg_dest, szBuf.c_str());
-		break;
+		return 0;
 	}
 
 	return m_pfnTextMsg(pszName, iSize, pbuf);
