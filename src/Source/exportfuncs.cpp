@@ -68,7 +68,8 @@ struct playerppmoveinfo {
 
 //FINAL SHIT
 void R_NewMap(void){
-	ClearExtraPrecache();
+	//これ　勣らないから
+	//ClearExtraPrecache();
 
 	gCustomHud.HUD_Reset();
 	EfxReset();
