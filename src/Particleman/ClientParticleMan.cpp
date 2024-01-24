@@ -2,10 +2,8 @@
 #include <plugins.h>
 #include "IParticleMan.h"
 
-extern void SysError(const char* message ...);
-
 IParticleMan* g_pParticleMan = nullptr;
-HINTERFACEMODULE g_hParticleman = NULL;
+HINTERFACEMODULE g_hParticleman = nullptr;
 
 void LoadParticleMan()
 {
@@ -27,7 +25,7 @@ void LoadParticleMan()
 		SYS_ERROR("Could not get factory from particleman.dll!");
 		return;
 	}
-	g_pParticleMan = (IParticleMan*)ParticleManCreateInterface(PARTICLEMAN_INTERFACE, NULL);
+	g_pParticleMan = (IParticleMan*)ParticleManCreateInterface(PARTICLEMAN_INTERFACE, nullptr);
 	if (!g_pParticleMan) {
 		SYS_ERROR("Could not get interface \"" PARTICLEMAN_INTERFACE "\" from particleman.dll!");
 		return;
