@@ -269,6 +269,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp" />
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp" />
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp" />
+    <ClCompile Include="vgui2\GameUI\NeteaseMusicDialog.cpp" />
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp" />
     <ClCompile Include="VGUI2\VPanel.cpp" />
     <ClCompile Include="VGUI2\VPanelWrapper.cpp" />
@@ -539,6 +540,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="VGUI2\GameUI\BasePanel.h" />
     <ClInclude Include="VGUI2\GameUI\GameConsole.h" />
     <ClInclude Include="VGUI2\GameUI\GameUI.h" />
+    <ClInclude Include="vgui2\GameUI\NeteaseMusicDialog.h" />
     <ClInclude Include="VGUI2\GameUI\OptionAdvancedDlg.h" />
     <ClInclude Include="VGUI2\interface\IGameConsole.h" />
     <ClInclude Include="VGUI2\interface\IVanilliaPanel.h" />
