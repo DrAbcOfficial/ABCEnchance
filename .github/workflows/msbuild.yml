@@ -58,12 +58,17 @@ jobs:
     - name: Build AVX
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION_AVX}} ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Build Installer
+      working-directory: ${{env.GITHUB_WORKSPACE}}/ABCEnchanceInstaller
+      run: dotnet publish -p:PublishProfile=FolderProfile
     
     - name: Move to build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
           Move-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Build/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/svencoop/metahook/plugins/ABCEnchance.dll"
           Move-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Build/ABCEnchance_AVX2.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/svencoop/metahook/plugins/ABCEnchance_AVX2.dll"
+          Move-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/ABCEnchanceInstaller/bin/publish/ABCEnchanceInstaller.exe" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/Installer.exe"
 
     - name: Zipping All
       uses: vimtor/action-zip@v1
