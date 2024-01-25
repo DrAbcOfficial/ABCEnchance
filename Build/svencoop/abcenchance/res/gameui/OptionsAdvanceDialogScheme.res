@@ -26,6 +26,7 @@ Scheme
 	
 	BaseSettings
 	{
+		FrameTitleButton.FgColor "TitleText"
 		FrameTitleBar.TextColor	"ControlText"
 		FrameTitleBar.BgColor	"ControlBG"
 		
