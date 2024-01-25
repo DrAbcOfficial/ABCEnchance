@@ -689,6 +689,9 @@
     <ClCompile Include="vgui_controls\GroupBox.cpp">
       <Filter>vgui_controls\base</Filter>
     </ClCompile>
+    <ClCompile Include="vgui2\GameUI\NeteaseMusicDialog.cpp">
+      <Filter>vgui2\gameui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1527,6 +1530,9 @@
     </ClInclude>
     <ClInclude Include="vgui_controls\GroupBox.h">
       <Filter>vgui_controls\base</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui2\GameUI\NeteaseMusicDialog.h">
+      <Filter>vgui2\gameui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -59,6 +59,7 @@ IGameUIFuncs *gameuifuncs;
 
 extern IKeyValuesSystem *g_pKeyValuesSystem;
 extern IEngineSurface *staticSurface;
+extern void CreateNeteaseMusicDialogCmd();
 
 static bool s_LoadingClientFactory = false;
 
@@ -78,6 +79,7 @@ void CBaseUI::Initialize(CreateInterfaceFn *factories, int count)
 	GameUI_InstallHook();
 	BasePanel_InstallHook();
 	BackGroundVideoInit();
+	CreateNeteaseMusicDialogCmd();
 }
 
 void CBaseUI::Start(struct cl_enginefuncs_s *engineFuncs, int interfaceVersion)

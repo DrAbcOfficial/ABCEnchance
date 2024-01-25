@@ -33,7 +33,7 @@ class COptionsAdvanceSubMultiPlay : public PropertyPage{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubMultiPlay, PropertyPage);
 public:
 	COptionsAdvanceSubMultiPlay(Panel* parent);
-	~COptionsAdvanceSubMultiPlay();
+	virtual ~COptionsAdvanceSubMultiPlay();
 	void ResetModel();
 	void ChangeModel(const char* mdl);
 	void BuildModelList(const char* filter = nullptr);
@@ -183,27 +183,17 @@ private:
 	CCvarLabelSlider* m_pBloodSpriteCount;
 };
 
-class COptionAdvanceSubNeteaseOption : public PropertyPage{
-	DECLARE_CLASS_SIMPLE(COptionAdvanceSubNeteaseOption, PropertyPage);
-public:
-	COptionAdvanceSubNeteaseOption(Panel* parent);
-private:
-	Panel* m_pUserInfoPanel;
-};
-
 class COptionsAdvanceDialog : public PropertyDialog{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceDialog, PropertyDialog);
 public:
 	COptionsAdvanceDialog(Panel* parent);
 protected:
-	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual void ApplySchemeSettings(IScheme* pScheme) override;
 private:
 
 	GaussianBlurPanel* m_pBlur;
 	COptionsAdvanceSubMultiPlay* m_pMultiPlayPage;
 	COptionsAdvanceSubOtherOption* m_pOtherOption;
-	COptionAdvanceSubNeteaseOption* m_pNeteaseOption;
 };
 
 }
