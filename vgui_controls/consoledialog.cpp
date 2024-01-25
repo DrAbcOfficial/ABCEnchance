@@ -31,6 +31,7 @@
 #include "vgui_controls/TextEntry.h"
 #include "vgui_controls/RichText.h"
 #include "vgui_controls/ScrollBar.h"
+#include "vgui_controls/GaussianBlurPanel.h"
 
 #include <stdlib.h>
 
@@ -40,7 +41,6 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-#include <GaussianBlurPanel.h>
 
 using namespace vgui;
 
@@ -905,7 +905,6 @@ void CConsolePanel::PerformLayout()
 		m_pHistory->InvalidateLayout();
 		m_pBlurBackend->SetPos(inset, inset + topHeight);
 		m_pBlurBackend->SetSize(wide - (inset * 2), tall - (entryInset * 2 + inset * 2 + topHeight + entryHeight));
-		m_pBlurBackend->InvalidateLayout();
 
 		int nSubmitXPos = wide - (inset + submitWide + submitInset);
 		int nYPos = tall - (entryInset * 2 + entryHeight);

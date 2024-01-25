@@ -26,8 +26,8 @@ public:
 	GaussianBlurPanel(Panel *parent, const char *name);
 	~GaussianBlurPanel();
 
-	float GetBlurRatio();
-	void SetBlurRatio(float f);
+	size_t GetBlurness();
+	void SetBlurness(size_t f);
 protected:
 	virtual void PaintBackground();
 	virtual void ApplySettings(KeyValues *inResourceData);
@@ -35,8 +35,8 @@ private:
 	uint m_hBufferTex = 0;
 	uint m_hBufferFBO = 0;
 	int m_oldFrameBuffer = 0;
-	float m_flRatio = 2.0f;
-	size_t m_iBlurness = 4;
+	size_t m_iBlurness = 16;
+	size_t m_iBlurOffset = 5;
 };
 
 } // namespace vgui

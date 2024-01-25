@@ -7,16 +7,20 @@ typedef struct pp_texround_program_s {
 }pp_texround_program_t;
 typedef struct{
 	GLuint program;
-	GLuint du;
-	GLuint res;
-}pp_gaussianblur_program_t;
+	GLuint iResolution;
+	GLuint offset;
+	GLuint halfpixel;
+}pp_kawaseblur_program_t;
+typedef pp_kawaseblur_program_t pp_kawaseblur_up_program_t;
+typedef pp_kawaseblur_program_t pp_kawaseblur_down_program_t;
 typedef struct {
 	GLuint program;
 	GLuint ha;
 }pp_colorlize_program_t;
 
 extern pp_texround_program_t pp_texround;
-extern pp_gaussianblur_program_t pp_gaussianblur;
+extern pp_kawaseblur_up_program_t pp_kawaseblur_up;
+extern pp_kawaseblur_down_program_t pp_kawaseblur_down;
 extern pp_colorlize_program_t pp_colorlize;
 
 void GL_ShaderInit();
