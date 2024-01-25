@@ -200,14 +200,24 @@ void DrawQuad(int w, int h) {
 void DrawScreenQuad() {
 	DrawQuad(ScreenWidth(), ScreenHeight());
 }
-void DrawGaussianBlur(GLint tex, float ratio, int w, int h) {
+void DrawKawaseBlur(GLint tex, size_t blurness, float offsetw, float offseth, int w,int h) {
+	static auto rendershader = [](pp_kawaseblur_program_t shader, GLint tex, float offsetw, float offseth, int w, int h) {
+		glBind(tex);
+		GL_UseProgram(shader.program);
+		GL_Uniform2f(shader.offset, offsetw, offseth);
+		GL_Uniform2f(shader.iResolution, w, h);
+		GL_Uniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
+		glColor4ub(255, 255, 255, 255);
+		DrawQuad(w, h);
+		GL_UseProgram(0);
+	};
 	glEnable(GL_TEXTURE_2D);
-	glBind(tex);
-	GL_UseProgram(pp_gaussianblur.program);
-	GL_Uniform1f(pp_gaussianblur.du, ratio);
-	GL_Uniform2f(pp_gaussianblur.res, (float)w, (float)h);
-	glColor4ub(255, 255, 255, 255);
-	DrawQuad(w, h);
-	GL_UseProgram(0);
+	glPushAttrib(GL_VIEWPORT_BIT);
+	glViewport(0, 0, w, h);
+	for (size_t i = 0; i < blurness; i++) {
+		rendershader(pp_kawaseblur_down, tex, offsetw, offseth, w, h);
+		rendershader(pp_kawaseblur_up, tex, offsetw, offseth, w, h);
+	}
+	glPopAttrib();
 	glDisable(GL_TEXTURE_2D);
 }

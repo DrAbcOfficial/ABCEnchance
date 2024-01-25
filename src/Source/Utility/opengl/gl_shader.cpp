@@ -229,12 +229,12 @@ GLuint R_CompileShaderFile(const char* vsfile, const char* fsfile, ExtraShaderSt
 }
 
 void GL_UseProgram(GLuint program){
-	static int currentprogram = -1;
+	//static int currentprogram = -1;
 
-	if (currentprogram != program){
-		currentprogram = program;
+	//if (currentprogram != program){
+	//	currentprogram = program;
 		glUseProgramObjectARB(program);
-	}
+	//}
 }
 
 GLuint GL_GetUniformLoc(GLuint program, const char* name){
