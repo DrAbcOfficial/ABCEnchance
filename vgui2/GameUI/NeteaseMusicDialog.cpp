@@ -294,13 +294,13 @@ vgui::CNeteaseMusicDialog::~CNeteaseMusicDialog(){
 
 static CNeteaseMusicDialog* s_pNeteaseDialog;
 void CreateNeteaseMusicDialogCmd() {
-	gEngfuncs.pfnAddCommand("open_neteasedialog", []() {
-		if (!s_pNeteaseDialog)
-			s_pNeteaseDialog = new CNeteaseMusicDialog(reinterpret_cast<Panel*>(BasePanel()));
-		int x, y;
-		input()->GetCursorPos(x, y);
-		s_pNeteaseDialog->SetPos(x, y);
-		s_pNeteaseDialog->MakePopup();
-		s_pNeteaseDialog->Activate();
-	});
+	//gEngfuncs.pfnAddCommand("open_neteasedialog", []() {
+	//	if (!s_pNeteaseDialog)
+	//		s_pNeteaseDialog = new CNeteaseMusicDialog(reinterpret_cast<Panel*>(BasePanel()));
+	//	int x, y;
+	//	input()->GetCursorPos(x, y);
+	//	s_pNeteaseDialog->SetPos(x, y);
+	//	s_pNeteaseDialog->MakePopup();
+	//	s_pNeteaseDialog->Activate();
+	//});
 }
