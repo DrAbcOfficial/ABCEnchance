@@ -306,6 +306,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="vgui_controls\GroupBox.cpp" />
     <ClCompile Include="vgui_controls\HTML.cpp" />
     <ClCompile Include="vgui_controls\Image.cpp" />
+    <ClCompile Include="vgui_controls\ImageButton.cpp" />
     <ClCompile Include="vgui_controls\ImageClipPanel.cpp" />
     <ClCompile Include="vgui_controls\ImageList.cpp" />
     <ClCompile Include="vgui_controls\ImagePanel.cpp" />
@@ -580,6 +581,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="vgui_controls\GroupBox.h" />
     <ClInclude Include="vgui_controls\HTML.h" />
     <ClInclude Include="vgui_controls\Image.h" />
+    <ClInclude Include="vgui_controls\ImageButton.h" />
     <ClInclude Include="vgui_controls\ImageClipPanel.h" />
     <ClInclude Include="vgui_controls\ImageList.h" />
     <ClInclude Include="vgui_controls\ImagePanel.h" />

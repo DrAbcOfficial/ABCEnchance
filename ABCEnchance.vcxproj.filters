@@ -692,6 +692,9 @@
     <ClCompile Include="vgui2\GameUI\NeteaseMusicDialog.cpp">
       <Filter>vgui2\gameui</Filter>
     </ClCompile>
+    <ClCompile Include="vgui_controls\ImageButton.cpp">
+      <Filter>vgui_controls\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1533,6 +1536,9 @@
     </ClInclude>
     <ClInclude Include="vgui2\GameUI\NeteaseMusicDialog.h">
       <Filter>vgui2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\ImageButton.h">
+      <Filter>vgui_controls\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

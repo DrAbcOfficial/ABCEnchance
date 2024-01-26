@@ -1,4 +1,4 @@
-#include <vector>
+﻿#include <vector>
 #include <future>
 #include <atomic>
 
@@ -7,7 +7,9 @@
 #include "vgui_controls/MemoryBitmap.h"
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/Label.h"
-#include "vgui_controls/Button.h"
+#include "vgui_controls/ImageList.h"
+#include "vgui_controls/ImageButton.h"
+#include "vgui_controls/ListViewPanel.h"
 
 #include "BasePanel.h"
 
@@ -282,11 +284,33 @@ private:
 vgui::CNeteaseMusicDialog::CNeteaseMusicDialog(Panel* parent) : BaseClass(parent, "NeteaseMusicDialog", false, true){
 	SetProportional(true);
 	SetSizeable(false);
-	SetTitle("#GaemUI_ABC_Netease_Title", false);
 	SetScheme("OptionsAdvanceDialogScheme");
+	m_pIcon = new ImagePanel(this, "TitleIcon");
+	m_pTitle = new Label(this, "Title", "#GaemUI_ABC_Netease_Title");
 	m_pUserInfo = new CNeteaseUserButton(this, "UserInfoButton");
 	m_pDivideLine = new Panel(this, "Divide");
+	m_pAlubmImage = new ImagePanel(this, "AlbumImage");
+	m_pSongName = new Label(this, "SongName", "(song)");
+	m_pSongTime = new Label(this, "SongTime", "(time)");
+	m_pLyric = new Label(this, "LyricPanel", "(lyric)");
+	m_pVolumn = new ImageButton(this, "VolumnButton", "abcenchance/tga/netease_volumn", this, "OpenVolumn");
+	m_pPlay = new ImageButton(this, "PlayButton", "abcenchance/tga/netease_play", this, "PlayButton");
+	m_pNext = new ImageButton(this, "NextButton", "abcenchance/tga/netease_next", this, "NextSong");
+	m_pLast = new ImageButton(this, "LastButton", "abcenchance/tga/netease_last", this, "LastSong");
+	m_pClose = new ImageButton(this, "CloseButton", "abcenchance/tga/button_close", this, "Close");
+	m_pSideBar = new ListViewPanel(this, "SideBar");
+	m_pSearchPage = new Panel(this, "SearchPage");
 	LoadControlSettings("abcenchance/res/gameui/NeteaseMusicDialog.res");
+
+	ImageList* img = new ImageList(true);
+	KeyValues* kv = new KeyValues("search", "text", "#GaemUI_ABC_Netease_Search");
+	kv->SetInt("image", img->AddImage(scheme()->GetImage("abcenchance/tga/netease_search", true)));
+	m_pSideBar->AddItem(kv, false, false);
+	m_pSideBar->SetImageList(img, true);
+
+	SetTitleBarVisible(false);
+	SetCloseButtonVisible(false);
+	SetMenuButtonVisible(false);
 }
 
 vgui::CNeteaseMusicDialog::~CNeteaseMusicDialog(){
@@ -294,13 +318,15 @@ vgui::CNeteaseMusicDialog::~CNeteaseMusicDialog(){
 
 static CNeteaseMusicDialog* s_pNeteaseDialog;
 void CreateNeteaseMusicDialogCmd() {
-	//gEngfuncs.pfnAddCommand("open_neteasedialog", []() {
-	//	if (!s_pNeteaseDialog)
-	//		s_pNeteaseDialog = new CNeteaseMusicDialog(reinterpret_cast<Panel*>(BasePanel()));
-	//	int x, y;
-	//	input()->GetCursorPos(x, y);
-	//	s_pNeteaseDialog->SetPos(x, y);
-	//	s_pNeteaseDialog->MakePopup();
-	//	s_pNeteaseDialog->Activate();
-	//});
+	gEngfuncs.pfnAddCommand("open_neteasedialog", []() {
+		if (!s_pNeteaseDialog)
+			s_pNeteaseDialog = new CNeteaseMusicDialog(reinterpret_cast<Panel*>(BasePanel()));
+		int w, h;
+		extern size_t ScreenWidth();
+		extern size_t ScreenHeight();
+		s_pNeteaseDialog->GetSize(w, h);
+		s_pNeteaseDialog->SetPos((ScreenWidth() - w) / 2, (ScreenHeight() - h) / 2);
+		s_pNeteaseDialog->MakePopup();
+		s_pNeteaseDialog->Activate();
+	});
 }
