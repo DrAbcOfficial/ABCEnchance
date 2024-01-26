@@ -35,7 +35,7 @@ private:
 	uint m_hBufferTex = 0;
 	uint m_hBufferFBO = 0;
 	int m_oldFrameBuffer = 0;
-	size_t m_iBlurness = 16;
+	size_t m_iBlurIteration = 3;
 	size_t m_iBlurOffset = 5;
 };
 

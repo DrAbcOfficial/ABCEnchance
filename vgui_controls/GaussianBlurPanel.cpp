@@ -21,7 +21,7 @@ using namespace vgui;
 //-----------------------------------------------------------------------------
 GaussianBlurPanel::GaussianBlurPanel(Panel *parent, const char *name) : Panel(parent, name){
 	glGenFramebuffers(1, &m_hBufferFBO);
-	m_hBufferTex = GL_GenTextureRGBA8(ScreenWidth() / 2, ScreenHeight() / 2);
+	m_hBufferTex = GL_GenTextureRGB8(ScreenWidth() / 2, ScreenHeight() / 2);
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hBufferTex, 0);
@@ -37,11 +37,11 @@ GaussianBlurPanel::~GaussianBlurPanel(){
 
 
 size_t GaussianBlurPanel::GetBlurness(){
-	return m_iBlurness;
+	return m_iBlurIteration;
 }
 
 void GaussianBlurPanel::SetBlurness(size_t f){
-	m_iBlurness = f;
+	m_iBlurIteration = f;
 }
 
 //-----------------------------------------------------------------------------
@@ -78,10 +78,10 @@ void GaussianBlurPanel::PaintBackground(){
 	glViewport(-hw, -hh, ScreenWidth(), ScreenHeight());
 	glEnable(GL_TEXTURE_2D);
 	glBind(m_hBufferTex);
-	for (size_t i = 0; i < m_iBlurness; i++) {
+	for (size_t i = 0; i < m_iBlurIteration; i++) {
 		rendershader(pp_kawaseblur_down, m_iBlurOffset, hw, hh);
 	}
-	for (size_t i = 0; i < m_iBlurness; i++) {
+	for (size_t i = 0; i < m_iBlurIteration; i++) {
 		rendershader(pp_kawaseblur_up, m_iBlurOffset, hw, hh);
 	}
 	glPopAttrib();
@@ -119,5 +119,5 @@ void GaussianBlurPanel::PaintBackground(){
 void GaussianBlurPanel::ApplySettings(KeyValues *inResourceData){
 	BaseClass::ApplySettings(inResourceData);
 	m_iBlurOffset = inResourceData->GetInt("offset", 5);
-	m_iBlurness = inResourceData->GetInt("blurness", 16);
+	m_iBlurIteration = inResourceData->GetInt("iteration", 3);
 }
