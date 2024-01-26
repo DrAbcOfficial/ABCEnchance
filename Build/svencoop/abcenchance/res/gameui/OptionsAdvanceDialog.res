@@ -31,6 +31,6 @@
 		"visible"			"1"
 		"enabled"			"1"
 		"offset"			"7"
-		"blurness"			"7"
+		"iteration"			"7"
 	}
 }
