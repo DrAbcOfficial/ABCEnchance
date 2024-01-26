@@ -80,6 +80,8 @@ void GaussianBlurPanel::PaintBackground(){
 	glBind(m_hBufferTex);
 	for (size_t i = 0; i < m_iBlurness; i++) {
 		rendershader(pp_kawaseblur_down, m_iBlurOffset, hw, hh);
+	}
+	for (size_t i = 0; i < m_iBlurness; i++) {
 		rendershader(pp_kawaseblur_up, m_iBlurOffset, hw, hh);
 	}
 	glPopAttrib();
