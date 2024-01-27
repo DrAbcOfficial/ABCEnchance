@@ -1967,9 +1967,10 @@ void RichText::InsertString(const char* text)
 
 	// upgrade the ansi text to unicode to display it
 	int len = strlen(text);
-	wchar_t* unicode = (wchar_t*)_alloca((len + 1) * sizeof(wchar_t));
+	wchar_t* unicode = (wchar_t*)_malloca((len + 1) * sizeof(wchar_t));
 	Q_UTF8ToUnicode(text, unicode, ((len + 1) * sizeof(wchar_t)));
 	InsertString(unicode);
+	_freea(unicode);
 }
 
 //-----------------------------------------------------------------------------
