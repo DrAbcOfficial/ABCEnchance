@@ -59,6 +59,9 @@ public:
 
 	CHttpClientItem* SetFeild(const char* key, const char* var);
 	HTTPCLIENT_STATE GetState() const;
+
+	UtilHTTPRequestId_t GetId();
+	bool Interrupt();
 protected:
 	virtual void Destroy();
 	virtual void OnResponseComplete(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance);
@@ -88,6 +91,7 @@ public:
 	void ClearAll();
 	CHttpClientItem* Fetch(const char* url, UtilHTTPMethod method);
 	CHttpClientItem* Fetch(httpContext_s* ctx);
+	bool Interrupt(UtilHTTPRequestId_t id);
 private:
 	std::vector<CHttpClientItem*> m_aryItems;
 };

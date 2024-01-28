@@ -77,96 +77,6 @@ public:
 		m_pIsVip->SetBounds(startX + avatarSize + 2, startY + avatarSize / 3 * 2, contentW - 2 - avatarSize, avatarSize / 3);
 		m_pSignature->SetBounds(startX, startY + avatarSize, contentW, h / 2 - startY);
 	}
-	static void DecodeImage(unsigned char* raw, size_t size, ImagePanel* target, CNeteaseUserInfo* info) {
-		int ar = 0, ag = 0, ab = 0;
-		FIMEMORY* mem = FreeImage_OpenMemory(raw, size);
-		FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
-		FIBITMAP* bitmap = FreeImage_LoadFromMemory(format, mem);
-		byte* pixels = (byte*)FreeImage_GetBits(bitmap);
-		auto width = FreeImage_GetWidth(bitmap);
-		auto height = FreeImage_GetHeight(bitmap);
-		auto pitch = FreeImage_GetPitch(bitmap);
-		auto bpp = FreeImage_GetBPP(bitmap);
-		auto bitnum = bpp / 8;
-		static byte* s_pBuf;
-		static int s_Size;
-		if (s_Size < width * height) {
-			if (s_pBuf)
-				delete[] s_pBuf;
-			s_Size = width * height;
-			s_pBuf = new byte[width * height * 4];
-		}
-		size_t c = 0;
-		pixels += pitch * (height - 1);
-		for (size_t y = 0; y < height; y++) {
-			BYTE* pixel = (BYTE*)pixels;
-			for (size_t x = 0; x < width; x++) {
-				switch (bitnum) {
-					//8bpp
-				case 1: {
-					BYTE grey = pixel[0];
-					s_pBuf[c * 4 + 0] = grey;
-					s_pBuf[c * 4 + 1] = grey;
-					s_pBuf[c * 4 + 2] = grey;
-					s_pBuf[c * 4 + 3] = 255;
-					ar = (ar + grey) / 2;
-					ag = (ag + grey) / 2;
-					ab = (ab + grey) / 2;
-					break;
-				}
-					  //16bpp
-				case 2: {
-					int code = (pixel[1] << 8) + pixel[0];
-					s_pBuf[c * 4 + 0] = code & 0x1F;
-					s_pBuf[c * 4 + 1] = (code & 0x7E0) >> 5;
-					s_pBuf[c * 4 + 2] = (code & 0xF800) >> 11;
-					s_pBuf[c * 4 + 3] = 255;
-					ar = (ar + s_pBuf[c * 4 + 0]) / 2;
-					ag = (ag + s_pBuf[c * 4 + 1]) / 2;
-					ab = (ab + s_pBuf[c * 4 + 2]) / 2;
-					break;
-				}
-					  //24bpp
-				case 3: {
-					s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
-					s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
-					s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
-					s_pBuf[c * 4 + 3] = 255;
-					ar = (ar + pixel[FI_RGBA_RED]) / 2;
-					ag = (ag + pixel[FI_RGBA_GREEN]) / 2;
-					ab = (ab + pixel[FI_RGBA_BLUE]) / 2;
-					break;
-				}
-					  //32bpp
-				case 4: {
-					s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
-					s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
-					s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
-					s_pBuf[c * 4 + 3] = pixel[FI_RGBA_ALPHA];
-					ar = (ar + pixel[FI_RGBA_RED]) / 2;
-					ag = (ag + pixel[FI_RGBA_GREEN]) / 2;
-					ab = (ab + pixel[FI_RGBA_BLUE]) / 2;
-					break;
-				}
-					  //cnmdwy
-				default: break;
-				}
-				pixel += bitnum;
-				c++;
-			}
-			pixels -= pitch;
-		}
-		FreeImage_Unload(bitmap);
-		FreeImage_CloseMemory(mem);
-
-		Vector crgb = Vector(ar, ag, ab);
-		Vector chsv;
-		RGBtoHSV(crgb, chsv);
-		chsv.x = fmodf((chsv.x + 120), 360.0f);
-		HSVtoRGB(chsv, crgb);
-		info->SetTextColor(Color(crgb.x, crgb.y, crgb.z));
-		target->SetImage(new MemoryBitmap(s_pBuf, width, height));
-	}
 	void SetUserInfo(std::shared_ptr<netease::CMy> myinfo) {
 		if (myinfo == nullptr) {
 			m_pName->SetText("#GaemUI_ABC_Netease_NotLogin");
@@ -178,7 +88,94 @@ public:
 		static auto decodecallback = [](IUtilHTTPResponse* rep, ImagePanel* target, CNeteaseUserInfo* info) {
 			const unsigned char* data = reinterpret_cast<const unsigned char*>(rep->GetPayload()->GetBytes());
 			size_t size = rep->GetPayload()->GetLength();
-			DecodeImage(const_cast<unsigned char*>(data), size, target, info);
+			int ar = 0, ag = 0, ab = 0;
+			FIMEMORY* mem = FreeImage_OpenMemory(const_cast<unsigned char*>(data), size);
+			FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
+			FIBITMAP* bitmap = FreeImage_LoadFromMemory(format, mem);
+			byte* pixels = (byte*)FreeImage_GetBits(bitmap);
+			auto width = FreeImage_GetWidth(bitmap);
+			auto height = FreeImage_GetHeight(bitmap);
+			auto pitch = FreeImage_GetPitch(bitmap);
+			auto bpp = FreeImage_GetBPP(bitmap);
+			auto bitnum = bpp / 8;
+			static byte* s_pBuf;
+			static int s_Size;
+			if (s_Size < width * height) {
+				if (s_pBuf)
+					delete[] s_pBuf;
+				s_Size = width * height;
+				s_pBuf = new byte[width * height * 4];
+			}
+			size_t c = 0;
+			pixels += pitch * (height - 1);
+			for (size_t y = 0; y < height; y++) {
+				BYTE* pixel = (BYTE*)pixels;
+				for (size_t x = 0; x < width; x++) {
+					switch (bitnum) {
+						//8bpp
+					case 1: {
+						BYTE grey = pixel[0];
+						s_pBuf[c * 4 + 0] = grey;
+						s_pBuf[c * 4 + 1] = grey;
+						s_pBuf[c * 4 + 2] = grey;
+						s_pBuf[c * 4 + 3] = 255;
+						ar = (ar + grey) / 2;
+						ag = (ag + grey) / 2;
+						ab = (ab + grey) / 2;
+						break;
+					}
+						  //16bpp
+					case 2: {
+						int code = (pixel[1] << 8) + pixel[0];
+						s_pBuf[c * 4 + 0] = code & 0x1F;
+						s_pBuf[c * 4 + 1] = (code & 0x7E0) >> 5;
+						s_pBuf[c * 4 + 2] = (code & 0xF800) >> 11;
+						s_pBuf[c * 4 + 3] = 255;
+						ar = (ar + s_pBuf[c * 4 + 0]) / 2;
+						ag = (ag + s_pBuf[c * 4 + 1]) / 2;
+						ab = (ab + s_pBuf[c * 4 + 2]) / 2;
+						break;
+					}
+						  //24bpp
+					case 3: {
+						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
+						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+						s_pBuf[c * 4 + 3] = 255;
+						ar = (ar + pixel[FI_RGBA_RED]) / 2;
+						ag = (ag + pixel[FI_RGBA_GREEN]) / 2;
+						ab = (ab + pixel[FI_RGBA_BLUE]) / 2;
+						break;
+					}
+						  //32bpp
+					case 4: {
+						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
+						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+						s_pBuf[c * 4 + 3] = pixel[FI_RGBA_ALPHA];
+						ar = (ar + pixel[FI_RGBA_RED]) / 2;
+						ag = (ag + pixel[FI_RGBA_GREEN]) / 2;
+						ab = (ab + pixel[FI_RGBA_BLUE]) / 2;
+						break;
+					}
+						  //cnmdwy
+					default: break;
+					}
+					pixel += bitnum;
+					c++;
+				}
+				pixels -= pitch;
+			}
+			FreeImage_Unload(bitmap);
+			FreeImage_CloseMemory(mem);
+
+			Vector crgb = Vector(ar, ag, ab);
+			Vector chsv;
+			RGBtoHSV(crgb, chsv);
+			chsv.x = fmodf((chsv.x + 120), 360.0f);
+			HSVtoRGB(chsv, crgb);
+			info->SetTextColor(Color(crgb.x, crgb.y, crgb.z));
+			target->SetImage(new MemoryBitmap(s_pBuf, width, height));
 		};
 		GetHttpClient()->Fetch((myinfo->avatarurl + "?param=130y130").c_str(), UtilHTTPMethod::Get)->
 			OnRespond(decodecallback, m_pAvatar, this)->
