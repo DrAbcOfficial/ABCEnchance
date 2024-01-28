@@ -668,9 +668,6 @@
     <ClCompile Include="src\Source\crypto.cpp">
       <Filter>Public\Source\LIb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\curl.cpp">
-      <Filter>Public\Source\LIb</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\mymathlib.cpp">
       <Filter>Public\Source\LIb</Filter>
     </ClCompile>
@@ -1508,9 +1505,6 @@
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\crypto.h">
-      <Filter>Public\Header\LIb</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\curl.h">
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\formatter.h">

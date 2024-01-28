@@ -16,9 +16,9 @@
 #include "Task.h"
 #include "FreeImage.h"
 #include "NeteaseApi.h"
-#include "curl.h"
 
 #include "NeteaseMusicDialog.h"
+#include <httpclient.h>
 
 extern std::atomic<netease::CNeteaseMusicAPI*> GetNeteaseApi();
 
@@ -77,36 +77,9 @@ public:
 		m_pIsVip->SetBounds(startX + avatarSize + 2, startY + avatarSize / 3 * 2, contentW - 2 - avatarSize, avatarSize / 3);
 		m_pSignature->SetBounds(startX, startY + avatarSize, contentW, h / 2 - startY);
 	}
-	static size_t append(void* ptr, size_t size, size_t nmemb, void* user) {
-		std::vector<byte>* p = (std::vector<byte>*)user;
-		auto cs = p->size();
-		p->resize(cs + size * nmemb);
-		memcpy(p->data() + cs, ptr, size * nmemb);
-		return size * nmemb;
-	}
-	static std::vector<byte> DownLoadImg(std::string url) {
-		std::vector<byte> retdata;
-		void* curl = curl_easy_init();
-		if (curl) {
-			curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-			curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-			curl_easy_setopt(curl, CURLOPT_READFUNCTION, nullptr);
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &append);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retdata);
-			curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
-			//curl_easy_setopt(curl, CURLOPT_COOKIEFILE, netease::CNeteaseMusicAPI::CokkieInPath().c_str());
-			//curl_easy_setopt(curl, CURLOPT_COOKIEJAR, netease::CNeteaseMusicAPI::CookieOutPath().c_str());
-			curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 6); // set transport and time out time  
-			curl_easy_setopt(curl, CURLOPT_TIMEOUT, 6);
-			curl_easy_perform(curl);
-		}
-		curl_easy_cleanup(curl);
-		return retdata;
-	}
-	static void DecodeImage(std::vector<byte> raw, ImagePanel* target, CNeteaseUserInfo* info) {
+	static void DecodeImage(unsigned char* raw, size_t size, ImagePanel* target, CNeteaseUserInfo* info) {
 		int ar = 0, ag = 0, ab = 0;
-		FIMEMORY* mem = FreeImage_OpenMemory(raw.data(), raw.size());
+		FIMEMORY* mem = FreeImage_OpenMemory(raw, size);
 		FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
 		FIBITMAP* bitmap = FreeImage_LoadFromMemory(format, mem);
 		byte* pixels = (byte*)FreeImage_GetBits(bitmap);
@@ -202,27 +175,25 @@ public:
 			m_pLevelNum->SetText("");
 			return;
 		}
-		GetTaskManager()->Add(
-			std::async([](std::string url) {
-				return DownLoadImg(url);
-				}, myinfo->avatarurl + "?param=130y130")
-		)->ContinueWith(
-			[](std::vector<byte> retdata, ImagePanel* target, CNeteaseUserInfo* info) {
-				DecodeImage(retdata, target, info);
-			}, m_pAvatar, this
-		)->Start();
-
+		GetHttpClient()->Fetch((myinfo->avatarurl + "?param=130y130").c_str(), UtilHTTPMethod::Get)->
+			OnRespond([](IUtilHTTPResponse* rep, ImagePanel* target, CNeteaseUserInfo* info) {
+				const unsigned char* data = reinterpret_cast<const unsigned char*>(rep->GetPayload()->GetBytes());
+				size_t size = rep->GetPayload()->GetLength();
+				DecodeImage(const_cast<unsigned char*>(data), size, target, info);
+			}, m_pAvatar, this)->
+			Create(true)->
+			Start();
+		
 		int w, h;
 		GetSize(w, h);
-		GetTaskManager()->Add(
-			std::async([](std::string url) {
-				return DownLoadImg(url);
-				}, myinfo->backgroundurl + "?param=" + std::to_string(w) + "y" + std::to_string(h))
-		)->ContinueWith(
-			[](std::vector<byte> retdata, ImagePanel* target, CNeteaseUserInfo* info) {
-				DecodeImage(retdata, target, info);
-			}, m_pBackgroud, this
-		)->Start();
+		GetHttpClient()->Fetch((myinfo->backgroundurl + "?param=" + std::to_string(w) + "y" + std::to_string(h)).c_str(), UtilHTTPMethod::Get)->
+			OnRespond([](IUtilHTTPResponse* rep, ImagePanel* target, CNeteaseUserInfo* info) {
+				const unsigned char* data = reinterpret_cast<const unsigned char*>(rep->GetPayload()->GetBytes());
+				size_t size = rep->GetPayload()->GetLength();
+				DecodeImage(const_cast<unsigned char*>(data), size, target, info);
+			}, m_pBackgroud, this)->
+			Create(true)->
+			Start();
 
 		m_pName->SetText(myinfo->name.c_str());
 		m_pSignature->SetText(myinfo->signature.c_str());
