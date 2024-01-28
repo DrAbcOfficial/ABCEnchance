@@ -2,6 +2,7 @@
 #include "plugins.h"
 #include "exportfuncs.h"
 #include "ClientParticleMan.h"
+#include "httpclient.h"
 #include "curl.h"
 #include "soundengine.h"
 #include <vgui_controls/Controls.h>
@@ -98,6 +99,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	FMOD_Init();
 	LoadParticleMan();
 	LoadLibcurl();
+	CHttpClient::Init();
 }
 void IPluginsV4::Shutdown(void){
 	

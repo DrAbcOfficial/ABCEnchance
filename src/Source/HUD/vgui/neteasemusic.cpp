@@ -23,10 +23,12 @@
 
 #include "Viewport.h"
 #include "BaseUI.h"
-#include "neteasemusic.h"
+
 #include "FreeImage.h"
-#include "curl.h"
+#include "httpclient.h"
 #include "qrcodegen.h"
+
+#include "neteasemusic.h"
 
 #define VIEWPORT_NETEASEMUSIC_NAME "NeteasePanel"
 #define VIEWPORT_NETEASEMUSICQR_NAME "NeteaseQRPanel"
@@ -84,9 +86,9 @@ public:
 	{
 		m_Color = col;
 	}
-	bool IsValid() { return m_bValid; }
-	int GetWide() { return m_wide; }
-	int GetTall() { return m_tall; }
+	bool IsValid() const { return m_bValid; }
+	int GetWide() const { return m_wide; }
+	int GetTall() const { return m_tall; }
 	virtual void InitFromRGBA(const byte* rgba, int width, int height) {
 		if(m_iTextureID <= 0)
 			m_iTextureID = vgui::surface()->CreateNewTextureID(true);
@@ -121,13 +123,13 @@ public:
 	CCloudMusicCmdItem* GetParent() {
 		return parent;
 	}
-	size_t Sub() {
+	size_t Sub() const {
 		return sub;
 	}
 	size_t Size() {
 		return children.size();
 	}
-	bool IsTerminal() {
+	bool IsTerminal() const {
 		return terminal;
 	}
 	void Excute(CNeteasePanel* panel) {
@@ -371,10 +373,6 @@ CNeteasePanel::CNeteasePanel()
 	m_pSuppressMusic = CREATE_CVAR("cl_netease_suppressmusic", "1", FCVAR_VALUE, nullptr);
 
 	s_pNeteaseApi = new netease::CNeteaseMusicAPI();
-	char buf[MAX_PATH];
-	vgui::filesystem()->GetLocalPath("abcenchance/", buf, MAX_PATH);
-	V_snprintf(buf, "%sneteasecookie", buf);
-	netease::CNeteaseMusicAPI::SetCookie(buf);
 
 	LoadControlSettings(VGUI2_ROOT_DIR "NeteasePanel.res");
 	SetVisible(false);
@@ -488,24 +486,15 @@ size_t append(void* ptr, size_t size, size_t nmemb, void* user) {
 	memcpy(p->data() + cs, ptr, size * nmemb);
 	return size * nmemb;
 }
-std::vector<byte> DownLoad(const std::string& url) {
+static std::vector<byte> DownLoad(const std::string& url) {
 	std::vector<byte> retdata;
-	void* curl = curl_easy_init();
-	if (curl) {
-		curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-		curl_easy_setopt(curl, CURLOPT_READFUNCTION, nullptr);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &append);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retdata);
-		curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
-		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, netease::CNeteaseMusicAPI::CokkieInPath().c_str());
-		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, netease::CNeteaseMusicAPI::CookieOutPath().c_str());
-		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 6); // set transport and time out time  
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 6);
-		curl_easy_perform(curl);
-	}
-	curl_easy_cleanup(curl);
+	GetHttpClient()->Fetch(url.c_str(), UtilHTTPMethod::Get)->OnRespond([](IUtilHTTPResponse* rep, std::vector<byte>& data) {
+		const char* bytes = rep->GetPayload()->GetBytes();
+		size_t len = rep->GetPayload()->GetLength();
+		std::copy(bytes, bytes + len, std::back_inserter(data));
+	}, retdata)->
+	Create(false)->
+	Start();
 	return retdata;
 }
 const char* g_aryMusicQuality[] = {
@@ -880,7 +869,7 @@ void CNeteasePanel::PauseMusic(){
 	m_bPaused = !m_bPaused;
 	m_pChannel.SetPaused(m_bPaused);
 }
-bool CNeteasePanel::IsPaused(){
+bool CNeteasePanel::IsPaused() const{
 	return m_bPaused;
 }
 void CNeteasePanel::QRLogin() {

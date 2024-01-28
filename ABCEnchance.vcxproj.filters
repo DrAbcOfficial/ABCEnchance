@@ -695,6 +695,9 @@
     <ClCompile Include="vgui_controls\ImageButton.cpp">
       <Filter>vgui_controls\base</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\Utility\httpclient.cpp">
+      <Filter>Public\Source\LIb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1539,6 +1542,9 @@
     </ClInclude>
     <ClInclude Include="vgui_controls\ImageButton.h">
       <Filter>vgui_controls\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\httpclient.h">
+      <Filter>Public\Header\LIb</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

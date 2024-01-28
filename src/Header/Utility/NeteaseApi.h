@@ -167,10 +167,6 @@ namespace netease {
 		std::shared_ptr<CMy> GetMyself();
 		std::shared_ptr<CPlayList> GetPlayList(neteaseid_t listid);
 
-		static const std::string CookieOutPath();
-		static const std::string CokkieInPath();
-		static void SetCookie(const char* cookie);
-
 		CLocalUser* GetUser();
 	private:
 		CLocalUser m_pUser;

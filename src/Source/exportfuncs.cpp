@@ -8,6 +8,7 @@
 #include "triangleapi.h"
 #include "pm_movevars.h"
 #include "cvardef.h"
+#include "httpclient.h"
 
 #include "CVector.h"
 #include "Task.h"
@@ -324,7 +325,6 @@ void GL_Init(void)
 	gCustomHud.GL_Init();
 }
 void HUD_Init(void){
-
 	//VGUI init
 	gCVars.pShellEfx = CREATE_CVAR("abc_shellefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
@@ -390,8 +390,7 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 void FMOD_Shutdown();
 void FreeLibcurl();
 
-void HUD_Shutdown(void)
-{
+void HUD_Shutdown(void){
 	gExportfuncs.HUD_Shutdown();
 
 	gCustomHud.HUD_Clear();
@@ -404,11 +403,10 @@ void HUD_Shutdown(void)
 	FreeParticleMan();
 	FreeLibcurl();
 	UninstallClientHook();
+	CHttpClient::ShutDown();
 }
 
-int HUD_VidInit(void)
-{
-
+int HUD_VidInit(void){
 	//Search and destory vanillia HUDs
 	if (g_dwHUDListAddr) {
 		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(g_dwHUDListAddr + 0x0));
@@ -452,11 +450,11 @@ void HUD_VoiceStatus(int entindex, qboolean talking) {
 	gExportfuncs.HUD_VoiceStatus(entindex, talking);
 }
 void HUD_Frame(double frametime) {
-
 	GetClientVoiceMgr()->Frame(frametime);
 	gExportfuncs.HUD_Frame(frametime);
 	//task
 	GetTaskManager()->CheckAll();
+	CHttpClient::RunFrame();
 }
 int HUD_Redraw(float time, int intermission){
 	gCustomHud.SetBaseHudActivity();

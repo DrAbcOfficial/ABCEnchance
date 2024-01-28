@@ -95,8 +95,8 @@ public:
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &append);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retdata);
 			curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
-			curl_easy_setopt(curl, CURLOPT_COOKIEFILE, netease::CNeteaseMusicAPI::CokkieInPath().c_str());
-			curl_easy_setopt(curl, CURLOPT_COOKIEJAR, netease::CNeteaseMusicAPI::CookieOutPath().c_str());
+			//curl_easy_setopt(curl, CURLOPT_COOKIEFILE, netease::CNeteaseMusicAPI::CokkieInPath().c_str());
+			//curl_easy_setopt(curl, CURLOPT_COOKIEJAR, netease::CNeteaseMusicAPI::CookieOutPath().c_str());
 			curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 6); // set transport and time out time  
 			curl_easy_setopt(curl, CURLOPT_TIMEOUT, 6);
 			curl_easy_perform(curl);
