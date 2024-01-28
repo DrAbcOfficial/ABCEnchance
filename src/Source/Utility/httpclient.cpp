@@ -79,6 +79,22 @@ CHttpClientItem* CHttpClient::Fetch(httpContext_s* ctx){
 	m_aryItems.push_back(item);
 	return item;
 }
+bool CHttpClient::Interrupt(UtilHTTPRequestId_t id){
+	for (auto iter = m_aryItems.begin(); iter != m_aryItems.end();) {
+		auto item = *iter;
+		if (item->GetId() == id) {
+			bool state = item->Interrupt();
+			if (state) {
+				delete item;
+				iter = m_aryItems.erase(iter);
+			}
+			return state;
+		}
+		else
+			iter++;
+	}
+	return g_pUtilHTTPClient->DestroyRequestById(id);
+}
 
 CHttpClientItem::CHttpClientItem(httpContext_s* ctx) : IUtilHTTPCallbacks(){
 	m_hContext.url = ctx->url;
@@ -118,6 +134,12 @@ CHttpClientItem* CHttpClientItem::SetFeild(const char* key, const char* var){
 
 HTTPCLIENT_STATE CHttpClientItem::GetState() const{
 	return m_iStatue;
+}
+UtilHTTPRequestId_t CHttpClientItem::GetId(){
+	return m_pId;
+}
+bool CHttpClientItem::Interrupt(){
+	return g_pUtilHTTPClient->DestroyRequestById(m_pId);
 }
 void CHttpClientItem::Destroy() {
 	m_iStatue = HTTPCLIENT_STATE::DESTORYED;
