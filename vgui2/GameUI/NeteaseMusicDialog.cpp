@@ -175,23 +175,20 @@ public:
 			m_pLevelNum->SetText("");
 			return;
 		}
+		static auto decodecallback = [](IUtilHTTPResponse* rep, ImagePanel* target, CNeteaseUserInfo* info) {
+			const unsigned char* data = reinterpret_cast<const unsigned char*>(rep->GetPayload()->GetBytes());
+			size_t size = rep->GetPayload()->GetLength();
+			DecodeImage(const_cast<unsigned char*>(data), size, target, info);
+		};
 		GetHttpClient()->Fetch((myinfo->avatarurl + "?param=130y130").c_str(), UtilHTTPMethod::Get)->
-			OnRespond([](IUtilHTTPResponse* rep, ImagePanel* target, CNeteaseUserInfo* info) {
-				const unsigned char* data = reinterpret_cast<const unsigned char*>(rep->GetPayload()->GetBytes());
-				size_t size = rep->GetPayload()->GetLength();
-				DecodeImage(const_cast<unsigned char*>(data), size, target, info);
-			}, m_pAvatar, this)->
+			OnRespond(decodecallback, m_pAvatar, this)->
 			Create(true)->
 			Start();
 		
 		int w, h;
 		GetSize(w, h);
 		GetHttpClient()->Fetch((myinfo->backgroundurl + "?param=" + std::to_string(w) + "y" + std::to_string(h)).c_str(), UtilHTTPMethod::Get)->
-			OnRespond([](IUtilHTTPResponse* rep, ImagePanel* target, CNeteaseUserInfo* info) {
-				const unsigned char* data = reinterpret_cast<const unsigned char*>(rep->GetPayload()->GetBytes());
-				size_t size = rep->GetPayload()->GetLength();
-				DecodeImage(const_cast<unsigned char*>(data), size, target, info);
-			}, m_pBackgroud, this)->
+			OnRespond(decodecallback, m_pBackgroud, this)->
 			Create(true)->
 			Start();
 
