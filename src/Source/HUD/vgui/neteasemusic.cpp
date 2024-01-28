@@ -479,22 +479,14 @@ void CNeteasePanel::Think() {
 			NextMusic();
 	}
 }
-size_t append(void* ptr, size_t size, size_t nmemb, void* user) {
-	std::vector<byte>* p = (std::vector<byte>*)user;
-	auto cs = p->size();
-	p->resize(cs + size * nmemb);
-	memcpy(p->data() + cs, ptr, size * nmemb);
-	return size * nmemb;
-}
 static std::vector<byte> DownLoad(const std::string& url) {
 	std::vector<byte> retdata;
-	GetHttpClient()->Fetch(url.c_str(), UtilHTTPMethod::Get)->OnRespond([](IUtilHTTPResponse* rep, std::vector<byte>& data) {
-		const char* bytes = rep->GetPayload()->GetBytes();
-		size_t len = rep->GetPayload()->GetLength();
-		std::copy(bytes, bytes + len, std::back_inserter(data));
-	}, retdata)->
+	auto rep = GetHttpClient()->Fetch(url.c_str(), UtilHTTPMethod::Get)->
 	Create(false)->
-	Start();
+	StartSync();
+	const char* bytes = rep->GetPayload()->GetBytes();
+	size_t len = rep->GetPayload()->GetLength();
+	std::copy(bytes, bytes + len, std::back_inserter(retdata));
 	return retdata;
 }
 const char* g_aryMusicQuality[] = {

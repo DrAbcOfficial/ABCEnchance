@@ -388,7 +388,6 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 }
 
 void FMOD_Shutdown();
-void FreeLibcurl();
 
 void HUD_Shutdown(void){
 	gExportfuncs.HUD_Shutdown();
@@ -401,7 +400,6 @@ void HUD_Shutdown(void){
 
 	FMOD_Shutdown();
 	FreeParticleMan();
-	FreeLibcurl();
 	UninstallClientHook();
 	CHttpClient::ShutDown();
 }

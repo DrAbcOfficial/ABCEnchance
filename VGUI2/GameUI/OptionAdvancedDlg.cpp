@@ -3,7 +3,6 @@
 #include <atomic>
 
 #include "Task.h"
-#include "curl.h"
 
 #include "interface.h"
 #include "IFileSystem.h"
