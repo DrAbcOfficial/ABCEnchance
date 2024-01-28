@@ -14,11 +14,11 @@
 #include "BasePanel.h"
 
 #include "Task.h"
+#include "httpclient.h"
 #include "FreeImage.h"
 #include "NeteaseApi.h"
 
 #include "NeteaseMusicDialog.h"
-#include <httpclient.h>
 
 extern std::atomic<netease::CNeteaseMusicAPI*> GetNeteaseApi();
 
