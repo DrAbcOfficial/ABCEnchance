@@ -170,6 +170,8 @@ namespace vgui
 
 		// returns pointer to Panel's vgui VPanel interface handle
 		virtual VPANEL GetVPanel() { return _vpanel; }
+
+		virtual void IPanel_dtor() { Panel::~Panel(); }
 		HPanel ToHandle() const;
 
 		virtual void Init(int x, int y, int wide, int tall);
@@ -219,6 +221,7 @@ namespace vgui
 		virtual VPANEL IsWithinTraverse(int x, int y, bool traversePopups);	// recursive; returns a pointer to the panel at those coordinates
 		MESSAGE_FUNC(Repaint, "Repaint");							// marks the panel as needing to be repainted
 		virtual void PostMessage(VPANEL target, KeyValues* message, float delaySeconds = 0.0f);
+		virtual void PostMessage2(VPANEL target, KeyValues* message, float delaySeconds = 0.0f) { PostMessage(target, message, delaySeconds); }
 
 		bool IsWithin(int x, int y); //in screen space
 		void LocalToScreen(int& x, int& y);
@@ -251,11 +254,13 @@ namespace vgui
 		// messaging
 		virtual void AddActionSignalTarget(Panel* messageTarget);
 		virtual void AddActionSignalTarget(VPANEL messageTarget);
+		virtual void AddActionSignalTarget2(VPANEL messageTarget) { AddActionSignalTarget(messageTarget); }
 		virtual void RemoveActionSignalTarget(Panel* oldTarget);
 		virtual void PostActionSignal(KeyValues* message);			// sends a message to the current actionSignalTarget(s)
 		virtual bool RequestInfoFromChild(const char* childName, KeyValues* outputData);
 		virtual void PostMessageToChild(const char* childName, KeyValues* messsage);
 		virtual void PostMessage(Panel* target, KeyValues* message, float delaySeconds = 0.0f);
+		virtual void PostMessage1(Panel* target, KeyValues* message, float delaySeconds = 0.0f) { PostMessage(target, message, delaySeconds); }
 		virtual bool RequestInfo(KeyValues* outputData);				// returns true if output is successfully written.  You should always chain back to the base class if info request is not handled
 		virtual bool SetInfo(KeyValues* inputData);						// sets a specified value in the control - inverse of the above
 		virtual void SetSilentMode(bool bSilent);						//change the panel's silent mode; if silent, the panel will not post any action signals
@@ -352,10 +357,12 @@ namespace vgui
 
 		// scheme access functions
 		virtual HScheme GetScheme();
+		virtual void SetScheme2(const char* tag) { SetScheme(tag); }
 		virtual void SetScheme(const char* tag);
 		virtual void SetScheme(HScheme scheme);
 		virtual Color GetSchemeColor(const char* keyName, IScheme* pScheme);
 		virtual Color GetSchemeColor(const char* keyName, Color defaultColor, IScheme* pScheme);
+		virtual Color GetSchemeColor2(const char* keyName, Color defaultColor, IScheme* pScheme) { return GetSchemeColor(keyName, defaultColor, pScheme); }
 
 		// called when scheme settings need to be applied; called the first time before the panel is painted
 		virtual void ApplySchemeSettings(IScheme* pScheme);
