@@ -18,7 +18,7 @@
 #include <tier1/strtools.h>
 
 #include <vgui/VGUI.h>
-#include <vgui/IInput.h>
+#include <vgui/IInput2.h>
 #include <vgui/IInputInternal.h>
 #include <vgui/IScheme2.h>
 #include <vgui/ISurface2.h>
@@ -31,7 +31,7 @@
 
 extern IFileSystem *g_pFullFileSystem;
 
-extern vgui::IInput *g_pVGuiInput;
+extern vgui::IInput2 *g_pVGuiInput2;
 extern vgui::ISchemeManager2 * g_pVGuiSchemeManager;
 extern vgui::ISurface2 *g_pVGuiSurface;
 extern vgui::ISystem *g_pVGuiSystem;
@@ -51,7 +51,7 @@ bool VGui_InitInterfacesList( const char *moduleName, CreateInterfaceFn *factory
 const char *GetControlsModuleName();
 
 class IPanel;
-class IInput;
+class IInput2;
 class ISchemeManager;
 class ISurface;
 class ISystem;
@@ -64,14 +64,14 @@ class IVGui;
 //-----------------------------------------------------------------------------
 
 // #include <vgui/IInput.h>
-inline vgui::IInput *input()
+inline vgui::IInput2 *input()
 {
-	return g_pVGuiInput;
+	return g_pVGuiInput2;
 }
 
 inline vgui::IInputInternal *inputinternal()
 {
-	return (vgui::IInputInternal *)g_pVGuiInput;
+	return (vgui::IInputInternal *)g_pVGuiInput2;
 }
 
 // #include <vgui/IScheme2.h>

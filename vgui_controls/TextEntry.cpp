@@ -1330,12 +1330,12 @@ void TextEntry::CreateEditMenu()
 
 	if (m_bAllowNonAsciiCharacters)
 	{
-		IInput::LanguageItem* langs = NULL;
+		LanguageItem* langs = NULL;
 
 		int count = input()->GetIMELanguageList(NULL, 0);
 		if (count > 0)
 		{
-			langs = new IInput::LanguageItem[count];
+			langs = new LanguageItem[count];
 			input()->GetIMELanguageList(langs, count);
 
 			// Create a submenu
@@ -1357,13 +1357,13 @@ void TextEntry::CreateEditMenu()
 			delete[] langs;
 		}
 
-		IInput::ConversionModeItem* modes = NULL;
+		ConversionModeItem* modes = NULL;
 
 		count = input()->GetIMEConversionModes(NULL, 0);
 		// if count == 0 then native mode is the only mode...
 		if (count > 0)
 		{
-			modes = new IInput::ConversionModeItem[count];
+			modes = new ConversionModeItem[count];
 			input()->GetIMEConversionModes(modes, count);
 
 			// Create a submenu
@@ -1385,13 +1385,13 @@ void TextEntry::CreateEditMenu()
 			delete[] modes;
 		}
 
-		IInput::SentenceModeItem* sentencemodes = NULL;
+		SentenceModeItem* sentencemodes = NULL;
 
 		count = input()->GetIMESentenceModes(NULL, 0);
 		// if count == 0 then native mode is the only mode...
 		if (count > 0)
 		{
-			sentencemodes = new IInput::SentenceModeItem[count];
+			sentencemodes = new SentenceModeItem[count];
 			input()->GetIMESentenceModes(sentencemodes, count);
 
 			// Create a submenu

@@ -27,11 +27,11 @@ extern void CreateNeteaseMusicDialogCmd();
 class CVGUI2Extension_BaseUICallbacks : public IVGUI2Extension_BaseUICallbacks
 {
 public:
-	int GetAltitude() const override{
+	virtual int GetAltitude() const override{
 		return 0;
 	}
 
-	void Initialize(CreateInterfaceFn* factories, int count) override{
+	virtual void Initialize(CreateInterfaceFn* factories, int count) override{
 		HINTERFACEMODULE hVGUI2 = (HINTERFACEMODULE)GetModuleHandleA("vgui2.dll");
 
 		if (hVGUI2){
@@ -45,31 +45,34 @@ public:
 		BackGroundVideoInit();
 		CreateNeteaseMusicDialogCmd();
 	}
-	void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion) override{
+	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion) override{
 
 	}
-	void Shutdown(void){
+	virtual void Shutdown(void){
 		BackGroundVideoClose();
 	}
-	void Key_Event(int& down, int& keynum, const char*& pszCurrentBinding, VGUI2Extension_CallbackContext* CallbackContext) override{
+	virtual void Key_Event(int& down, int& keynum, const char*& pszCurrentBinding, VGUI2Extension_CallbackContext* CallbackContext) override{
 
 	}
-	void CallEngineSurfaceProc(void*& pevent, void*& userData, VGUI2Extension_CallbackContext* CallbackContext) override{
+	virtual void CallEngineSurfaceAppProc(void*& pevent, void*& userData, VGUI2Extension_CallbackContext* CallbackContext) override {
 
 	}
-	void Paint(int& x, int& y, int& right, int& bottom, VGUI2Extension_CallbackContext* CallbackContext) override{
+	virtual void CallEngineSurfaceWndProc(void*& hwnd, unsigned int& msg, unsigned int& wparam, long& lparam, VGUI2Extension_CallbackContext* CallbackContext) override {
 
 	}
-	void HideGameUI(VGUI2Extension_CallbackContext* CallbackContext) override{
+	virtual void Paint(int& x, int& y, int& right, int& bottom, VGUI2Extension_CallbackContext* CallbackContext) override{
 
 	}
-	void ActivateGameUI(VGUI2Extension_CallbackContext* CallbackContext) override{
+	virtual void HideGameUI(VGUI2Extension_CallbackContext* CallbackContext) override{
 
 	}
-	void HideConsole(VGUI2Extension_CallbackContext* CallbackContext) override{
+	virtual void ActivateGameUI(VGUI2Extension_CallbackContext* CallbackContext) override{
 
 	}
-	void ShowConsole(VGUI2Extension_CallbackContext* CallbackContext) override{
+	virtual void HideConsole(VGUI2Extension_CallbackContext* CallbackContext) override{
+
+	}
+	virtual void ShowConsole(VGUI2Extension_CallbackContext* CallbackContext) override{
 
 	}
 };
