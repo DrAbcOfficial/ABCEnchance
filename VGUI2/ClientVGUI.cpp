@@ -99,7 +99,7 @@ bool IsOSX(){
 	return false;
 }
 double GetAbsoluteTime() {
-	return gEngfuncs.GetAbsoluteTime();
+	return vgui::surface()->GetAbsoluteTime();
 }
 ICommandLine* CommandLine(void) {
 	return g_pInterface->CommandLine;

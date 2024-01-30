@@ -119,9 +119,6 @@
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
       <Filter>SourceSDK</Filter>
     </ClCompile>
-    <ClCompile Include="SourceSDK\InputWin32.cpp">
-      <Filter>SourceSDK</Filter>
-    </ClCompile>
     <ClCompile Include="SourceSDK\mathlib\3dnow.cpp">
       <Filter>SourceSDK\mathlib</Filter>
     </ClCompile>
@@ -707,9 +704,6 @@
       <Filter>SourceSDK</Filter>
     </ClInclude>
     <ClInclude Include="SourceSDK\filesystem_helpers.h">
-      <Filter>SourceSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceSDK\OfflineMode.h">
       <Filter>SourceSDK</Filter>
     </ClInclude>
     <ClInclude Include="SourceSDK\winlite.h">

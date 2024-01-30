@@ -3,11 +3,15 @@
 #include <ISurface2.h>
 #include "plugins.h"
 #include "VGUI2ExtensionImport.h"
+#include <IPanel.h>
+#include <IInput2.h>
 
 IVGUI2Extension* g_pVGUI2Extension = nullptr;
 IDpiManager* g_pDpiManager = nullptr;
 vgui::ISchemeManager2* g_pVGuiSchemeManager = nullptr;
 vgui::ISurface2* g_pVGuiSurface = nullptr;
+vgui::IPanel2* g_pVGuiPanel2 = nullptr;
+vgui::IInput2* g_pVGuiInput2 = nullptr;
 
 void VGUI2Extension_Init()
 {
@@ -25,33 +29,13 @@ void VGUI2Extension_Init()
 		return;
 	}
 
-	g_pVGUI2Extension = (decltype(g_pVGUI2Extension))factory(VGUI2_EXTENSION_INTERFACE_VERSION, NULL);
-
-	if (!g_pVGUI2Extension){
-		SYS_ERROR("Could not get interface \"" VGUI2_EXTENSION_INTERFACE_VERSION "\" from VGUI2Extension.dll");
-		return;
-	}
-
-	g_pDpiManager = (decltype(g_pDpiManager))factory(DPI_MANAGER_INTERFACE_VERSION, NULL);
-
-	if (!g_pDpiManager){
-		SYS_ERROR("Could not get interface \"" DPI_MANAGER_INTERFACE_VERSION "\" from VGUI2Extension.dll");
-		return;
-	}
-
-	g_pVGuiSurface = (decltype(g_pVGuiSurface))factory(VGUI_SURFACE2_INTERFACE_VERSION, NULL);
-
-	if (!g_pVGuiSurface){
-		SYS_ERROR("Could not get interface \"" VGUI_SURFACE2_INTERFACE_VERSION "\" from VGUI2Extension.dll");
-		return;
-	}
-
-	g_pVGuiSchemeManager = (decltype(g_pVGuiSchemeManager))factory(VGUI_SCHEME2_INTERFACE_VERSION, NULL);
-
-	if (!g_pVGuiSchemeManager){
-		SYS_ERROR("Could not get interface \"" VGUI_SCHEME2_INTERFACE_VERSION "\" from VGUI2Extension.dll");
-		return;
-	}
+#define LOAD_FROM_EXTENSION(dst, itf) dst = (decltype(dst))factory(itf, nullptr);if(!dst){SYS_ERROR("Could not get interface \"" itf "\" from VGUI2Extension.dll");return;}
+	LOAD_FROM_EXTENSION(g_pVGUI2Extension, VGUI2_EXTENSION_INTERFACE_VERSION);
+	LOAD_FROM_EXTENSION(g_pDpiManager, DPI_MANAGER_INTERFACE_VERSION);
+	LOAD_FROM_EXTENSION(g_pVGuiSurface, VGUI_SURFACE2_INTERFACE_VERSION);
+	LOAD_FROM_EXTENSION(g_pVGuiSchemeManager, VGUI_SCHEME2_INTERFACE_VERSION);
+	LOAD_FROM_EXTENSION(g_pVGuiInput2, VGUI_INPUT2_INTERFACE_VERSION);
+#undef LOAD_FROM_EXTENSION
 }
 
 void VGUI2Extension_Shutdown()

@@ -176,7 +176,6 @@ $(FreeImageCheckRequirements)</Command>
   <ItemGroup>
     <ClCompile Include="..\..\include\HLSDK\common\interface.cpp" />
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp" />
-    <ClCompile Include="SourceSDK\InputWin32.cpp" />
     <ClCompile Include="SourceSDK\mathlib\3dnow.cpp" />
     <ClCompile Include="SourceSDK\mathlib\mathlib_base.cpp" />
     <ClCompile Include="SourceSDK\mathlib\sse.cpp" />
@@ -385,7 +384,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="SourceSDK\mathlib\ssemath.h" />
     <ClInclude Include="SourceSDK\mathlib\ssequaternion.h" />
     <ClInclude Include="SourceSDK\mathlib\vector2d.h" />
-    <ClInclude Include="SourceSDK\OfflineMode.h" />
     <ClInclude Include="SourceSDK\tier0\basetypes.h" />
     <ClInclude Include="SourceSDK\tier0\commonmacros.h" />
     <ClInclude Include="SourceSDK\tier0\dbg.h" />

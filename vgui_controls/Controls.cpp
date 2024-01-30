@@ -4,7 +4,6 @@
 #include <IEngineSurface.h>
 #include "plugins.h"
 
-vgui::IInput *g_pVGuiInput;
 vgui::ISystem *g_pVGuiSystem;
 vgui::IVGui *g_pVGui;
 vgui::IPanel *g_pVGuiPanel;
@@ -32,7 +31,6 @@ bool VGui_InitInterfacesList(const char *moduleName, CreateInterfaceFn *factoryL
 	setlocale(LC_COLLATE, "");
 	setlocale(LC_MONETARY, "");
 
-	g_pVGuiInput = (IInput *)factoryList[1](VGUI_INPUT_INTERFACE_VERSION, NULL);
 	g_pVGuiSystem = (ISystem *)factoryList[1](VGUI_SYSTEM_INTERFACE_VERSION, NULL);
 	g_pVGui = (IVGui *)factoryList[1](VGUI_IVGUI_INTERFACE_VERSION, NULL);
 	g_pVGuiPanel = (IPanel *)factoryList[1](VGUI_PANEL_INTERFACE_VERSION, NULL);
@@ -40,7 +38,7 @@ bool VGui_InitInterfacesList(const char *moduleName, CreateInterfaceFn *factoryL
 	g_pFullFileSystem = (IFileSystem*)factoryList[2](FILESYSTEM_INTERFACE_VERSION, NULL);
 	g_pEngineVGui = (IEngineVGui *)factoryList[0](VENGINE_VGUI_VERSION, NULL);
 
-	if (!g_pFullFileSystem || !g_pKeyValuesSystem || !g_pVGuiInput || !g_pVGuiSystem || !g_pVGui || !g_pVGuiPanel || !g_pVGuiLocalize)
+	if (!g_pFullFileSystem || !g_pKeyValuesSystem || !g_pVGuiSystem || !g_pVGui || !g_pVGuiPanel || !g_pVGuiLocalize)
 	{
 		SYS_ERROR("vgui_controls is missing a required interface!\n");
 		return false;
