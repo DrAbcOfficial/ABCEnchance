@@ -29,7 +29,7 @@ public:
 			}
 		);
 	}
-	~CTaskItem() {
+	virtual ~CTaskItem() {
 		if (m_pThread.joinable())
 			m_pThread.join();
 	}
