@@ -7,6 +7,8 @@
 #include "interface.h"
 #include "IFileSystem.h"
 
+#include "vgui/IGameUIFuncs.h"
+
 #include "vgui_controls/PropertySheet.h"
 #include "vgui_controls/Label.h"
 #include "vgui_controls/UrlLabel.h"
@@ -32,8 +34,6 @@
 #include "wadlib/wadfile.h"
 #include "NeteaseApi.h"
 
-#include "BaseUI.h"
-
 #include "OptionAdvancedDlg.h"
 
 extern const char* CVAR_GET_STRING(const char* x);
@@ -43,6 +43,7 @@ extern void CVAR_SET_FLOAT(const char* x, float v);
 extern size_t ScreenWidth();
 extern size_t ScreenHeight();
 extern std::atomic<netease::CNeteaseMusicAPI*> GetNeteaseApi();
+extern IGameUIFuncs* GameUIFuncs();
 constexpr char* FAVMODEL_ICON = "#GameUI_ABC_Favorite";
 
 using namespace vgui;
@@ -595,8 +596,8 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 }
 void COptionsAdvanceSubOtherOption::OnResetData(){
 	BaseClass::OnResetData();
-	m_pVoteYesButton->SetText(gameuifuncs->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_yes")));
-	m_pVoteNoButton->SetText(gameuifuncs->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_no")));
+	m_pVoteYesButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_yes")));
+	m_pVoteNoButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_no")));
 }
 void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 	//m_pNewHud->ApplyChanges();
@@ -669,7 +670,7 @@ void COptionsAdvanceSubOtherOption::OnKeyBinded(Panel* target, int code) {
 	Q_UTF8ToUnicode((char*)(buf + 4), wbuf, 32);
 	KeyBindingButton* btn = reinterpret_cast<KeyBindingButton*>(target);
 	btn->SetText(wbuf);
-	btn->SetKeyCode(gameuifuncs->Key_KeyStringToKeyNum(buf + 4));
+	btn->SetKeyCode(GameUIFuncs()->Key_KeyStringToKeyNum(buf + 4));
 }
 void COptionsAdvanceSubOtherOption::OnCommand(const char* cmd){
 	static auto popkeybindbox = [](Panel* parent, Panel* target) {

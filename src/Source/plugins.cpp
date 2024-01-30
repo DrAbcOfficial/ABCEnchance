@@ -4,8 +4,8 @@
 #include "ClientParticleMan.h"
 #include "httpclient.h"
 #include "soundengine.h"
+#include "VGUI2ExtensionImport.h"
 #include <vgui_controls/Controls.h>
-#include <VGUI2/ClientVGUI.h>
 
 cl_enginefunc_t gEnginefuncs;
 mh_interface_t *g_pInterface;
@@ -62,7 +62,11 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	FillEngineAddress();
 	//SVC_FillAddress();
 	InstallEngineHook();
-	BaseUI_InstallHook();
+
+	VGUI2Extension_Init();
+	ClientVGUI_InstallHooks();
+	BaseUI_InstallHooks();
+	GameUI_InstallHooks();
 }
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
@@ -94,7 +98,6 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 
 	FillAddress();
 	InstallClientHook();
-	ClientVGUIInstallHook();
 	FMOD_Init();
 	LoadParticleMan();
 	CHttpClient::Init();
@@ -105,6 +108,11 @@ void IPluginsV4::Shutdown(void){
 void IPluginsV4::ExitGame(int iResult){
 
 	UninstallEngineHook();
+
+	GameUI_UninstallHooks();
+	BaseUI_UninstallHooks();
+	ClientVGUI_UninstallHooks();
+	VGUI2Extension_Shutdown();
 }
 
 #define STR1(R) #R

@@ -22,7 +22,6 @@
 #include "vguilocal.h"
 
 #include "Viewport.h"
-#include "BaseUI.h"
 
 #include "FreeImage.h"
 #include "httpclient.h"
