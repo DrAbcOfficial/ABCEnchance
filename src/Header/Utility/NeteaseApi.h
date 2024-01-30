@@ -18,7 +18,6 @@ namespace netease {
 	struct Action {
 		string url;
 		std::map<string, string> post;
-		std::function<std::string> func = nullptr;
 		Action(string u, std::map<string, string> p) : url("https://music.163.com/api" + u), post(p) {}
 	};
 

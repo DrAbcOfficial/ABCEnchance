@@ -12,7 +12,7 @@
 #include <vgui/IScheme.h>
 #include <vgui/IVGui.h>
 #include <vgui/IInput.h>
-#include <vgui2/interface/IViewportPanel.h>
+#include <vgui/IViewportPanel.h>
 #include <VGUI_controls/Controls.h>
 #include <VGUI_controls/Panel.h>
 #include <VGUI_controls/Frame.h>

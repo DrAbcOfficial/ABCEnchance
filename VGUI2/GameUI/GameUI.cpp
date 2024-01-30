@@ -1,151 +1,168 @@
-#include <metahook.h>
-
-#include <VGUI/VGUI.h>
-#include <IVanilliaPanel.h>
-#include <GameUI/GameConsole.h>
-#include <GameUI/BasePanel.h>
-
-#include "GameUI.h"
-
-void (__fastcall *g_pfnInitialize)(void* pThis, int, CreateInterfaceFn* factories, int count);
-void (__fastcall *g_pfnStart)(void* pThis, int, struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system);
-void (__fastcall *g_pfnShutdown)(void* pThis, int);
-int  (__fastcall *g_pfnActivateGameUI)(void* pThis, int);
-int  (__fastcall *g_pfnActivateDemoUI)(void* pThis, int);
-int  (__fastcall *g_pfnHasExclusiveInput)(void* pThis, int);
-void (__fastcall *g_pfnRunFrame)(void* pThis, int);
-void (__fastcall *g_pfnConnectToServer)(void* pThis, int, const char* game, int IP, int port);
-void (__fastcall *g_pfnDisconnectFromServer)(void* pThis, int);
-void (__fastcall *g_pfnHideGameUI)(void* pThis, int);
-bool (__fastcall *g_pfnIsGameUIActive)(void* pThis, int);
-void (__fastcall *g_pfnLoadingStarted)(void* pThis, int, const char* resourceType, const char* resourceName);
-void (__fastcall *g_pfnLoadingFinished)(void* pThis, int, const char* resourceType, const char* resourceName);
-void (__fastcall *g_pfnStartProgressBar)(void* pThis, int, const char* progressType, int progressSteps);
-int  (__fastcall *g_pfnContinueProgressBar)(void* pThis, int, int progressPoint, float progressFraction);
-void (__fastcall *g_pfnStopProgressBar)(void* pThis, int, bool bError, const char* failureReason, const char* extendedReason);
-int  (__fastcall *g_pfnSetProgressBarStatusText)(void* pThis, int, const char* statusText);
-void (__fastcall *g_pfnSetSecondaryProgressBar)(void* pThis, int, float progress);
-void (__fastcall *g_pfnSetSecondaryProgressBarText)(void* pThis, int, const char* statusText);
-void (__fastcall *g_pfnValidateCDKey)(void* pThis, int, bool force, bool inConnect);
-void (__fastcall *g_pfnOnDisconnectFromServer)(void* pThis, int, int maybeport, char* maybeip);
-void (__fastcall *g_pfnShowPasswordPromptAndRetry)(void* pThis, int, char* passwd, bool correct);
-void (__fastcall *g_pfnOnExitToDesktop)(void* pThis, int);
+#include <KeyValues.h>
+#include "BasePanel.h"
+#include <IVGUI2Extension.h>
 
 extern void SetAdvanceOptPanelVisible(bool state);
-class CGameUI : public IGameUI{
+
+class CVGUI2Extension_GameUICallbacks : public IVGUI2Extension_GameUICallbacks
+{
 public:
-	virtual void Initialize(CreateInterfaceFn* factories, int count) {
-		g_pfnInitialize(this, 0, factories, count);
+	int GetAltitude() const override
+	{
+		return 0;
 	}
-	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system) {
-		g_pfnStart(this, 0, engineFuncs, interfaceVersion, system);
+	const char* GetControlModuleName() const
+	{
+		return "ABCEnchance";
+	}
+	void Initialize(CreateInterfaceFn* factories, int count) override{
+	}
+	void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system) override
+	{
 		BackGroundInitMusic();
 	}
-	virtual void Shutdown() {
-		g_pfnShutdown(this, 0);
+
+	void Shutdown(void) override
+	{
+
 	}
-	virtual int ActivateGameUI() {
-		return g_pfnActivateGameUI(this, 0);
+
+	void ActivateGameUI(VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
 	}
-	virtual int ActivateDemoUI() {
-		return g_pfnActivateDemoUI(this, 0);
+
+	void ActivateDemoUI(VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
 	}
-	virtual int HasExclusiveInput() {
-		return g_pfnHasExclusiveInput(this, 0);
+
+	void HasExclusiveInput(VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
 	}
-	virtual void RunFrame() {
-		g_pfnRunFrame(this, 0);
+
+	void RunFrame(VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
 	}
-	virtual void ConnectToServer(const char* game, int IP, int port) {
+
+	void ConnectToServer(const char*& game, int& IP, int& port, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
 		BackGroundSetDecodeState(false);
-		g_pfnConnectToServer(this, 0, game, IP, port);
 	}
-	virtual void DisconnectFromServer() {
+
+	void DisconnectFromServer(VGUI2Extension_CallbackContext* CallbackContext) override
+	{
 		BackGroundSetDecodeState(true);
-		g_pfnDisconnectFromServer(this, 0);
 	}
-	virtual void HideGameUI() {
-		g_pfnHideGameUI(this, 0);
+
+	void HideGameUI(VGUI2Extension_CallbackContext* CallbackContext) override
+	{
 		SetAdvanceOptPanelVisible(false);
 	}
-	virtual bool IsGameUIActive() {
-		return g_pfnIsGameUIActive(this, 0);
-	}
-	virtual void LoadingStarted(const char* resourceType, const char* resourceName) {
-		g_pfnLoadingStarted(this, 0, resourceType, resourceName);
-	}
-	virtual void LoadingFinished(const char* resourceType, const char* resourceName) {
-		g_pfnLoadingFinished(this, 0, resourceType, resourceName);
-	}
-	virtual void StartProgressBar(const char* progressType, int progressSteps) {
-		g_pfnStartProgressBar(this, 0, progressType, progressSteps);
-	}
-	virtual int ContinueProgressBar(int progressPoint, float progressFraction) {
-		return g_pfnContinueProgressBar(this, 0, progressPoint, progressFraction);
-	}
-	virtual void StopProgressBar(bool bError, const char* failureReason, const char* extendedReason = nullptr) {
-		g_pfnStopProgressBar(this, 0, bError, failureReason, extendedReason);
-	}
-	virtual int SetProgressBarStatusText(const char* statusText) {
-		return g_pfnSetProgressBarStatusText(this, 0, statusText);
-	}
-	virtual void SetSecondaryProgressBar(float progress) {
-		g_pfnSetSecondaryProgressBar(this, 0, progress);
-	}
-	virtual void SetSecondaryProgressBarText(const char* statusText) {
-		g_pfnSetSecondaryProgressBarText(this, 0, statusText);
-	}
-	virtual void ValidateCDKey(bool force, bool inConnect) {
-		g_pfnValidateCDKey(this, 0, force, inConnect);
-	}
-	virtual void OnDisconnectFromServer(int maybeport, char* maybeip) {
-		g_pfnOnDisconnectFromServer(this, 0, maybeport, maybeip);
-	}
-	virtual void ShowPasswordPromptAndRetry(char* passwd, bool correct) {
-		g_pfnShowPasswordPromptAndRetry(this, 0, passwd, correct);
-	}
-	virtual void OnExitToDesktop() {
-		g_pfnOnExitToDesktop(this, 0);
+
+	void IsGameUIActive(VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
 	}
 
-	bool m_bLoadlingLevel;
-	char m_szPreviousStatusText[128];
+	void LoadingStarted(const char*& resourceType, const char*& resourceName, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
+	}
+
+	void LoadingFinished(const char*& resourceType, const char*& resourceName, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
+	}
+
+	void StartProgressBar(const char*& progressType, int& progressSteps, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
+	}
+
+	void ContinueProgressBar(int& progressPoint, float& progressFraction, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
+	}
+
+	void StopProgressBar(bool& bError, const char*& failureReason, const char*& extendedReason, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
+	}
+
+	void SetProgressBarStatusText(const char*& statusText, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
+	}
+
+	void SetSecondaryProgressBar(float& progress, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
+	}
+
+	void SetSecondaryProgressBarText(const char*& statusText, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
+	}
+
 };
-static CGameUI s_GameUI;
-IGameUI* gameui;
+static CVGUI2Extension_GameUICallbacks s_GameUICallbacks;
 
-extern void AddHook(hook_t* hook);
-
-void GameUI_InstallHook(){
-	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
-	if (hGameUI) {
-		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
-		gameui = static_cast<IGameUI*>(fnCreateInterface(GAMEUI_INTERFACE_VERSION, nullptr));
-		DWORD* pVFTable = *(DWORD**)&s_GameUI;
-#define GAMEUI_VFTHOOK(index, name) AddHook(g_pMetaHookAPI->VFTHook(gameui, 0, index, (void *)pVFTable[index], (void **)&g_pfn##name))
-		//GAMEUI_VFTHOOK(1, Initialize);
-		GAMEUI_VFTHOOK(2, Start);
-		//GAMEUI_VFTHOOK(3, Shutdown);
-		//GAMEUI_VFTHOOK(4, ActivateGameUI);
-		//GAMEUI_VFTHOOK(5, ActivateDemoUI);
-		//GAMEUI_VFTHOOK(6, HasExclusiveInput);
-		//GAMEUI_VFTHOOK(7, RunFrame);
-		GAMEUI_VFTHOOK(8, ConnectToServer);
-		GAMEUI_VFTHOOK(9, DisconnectFromServer);
-		GAMEUI_VFTHOOK(10, HideGameUI);
-		//GAMEUI_VFTHOOK(11, IsGameUIActive);
-		//GAMEUI_VFTHOOK(12, LoadingStarted);
-		//GAMEUI_VFTHOOK(13, LoadingFinished);
-		//GAMEUI_VFTHOOK(14, StartProgressBar);
-		//GAMEUI_VFTHOOK(15, ContinueProgressBar);
-		//GAMEUI_VFTHOOK(16, StopProgressBar);
-		//GAMEUI_VFTHOOK(17, SetProgressBarStatusText);
-		//GAMEUI_VFTHOOK(18, SetSecondaryProgressBar);
-		//GAMEUI_VFTHOOK(19, SetSecondaryProgressBarText);
-		//GAMEUI_VFTHOOK(20, ValidateCDKey);
-		//GAMEUI_VFTHOOK(21, OnDisconnectFromServer);
-		//GAMEUI_VFTHOOK(22, ShowPasswordPromptAndRetry);
-		//GAMEUI_VFTHOOK(23, OnExitToDesktop);
+class CVGUI2Extension_GameUIKeyValuesCallbacks : public IVGUI2Extension_GameUIKeyValuesCallbacks{
+public:
+	int GetAltitude() const override
+	{
+		return 0;
 	}
-#undef GAMEUI_VFTHOOK
+
+	void KeyValues_LoadFromFile(void*& pthis, IFileSystem*& pFileSystem, const char*& resourceName, const char*& pathId, VGUI2Extension_CallbackContext* CallbackContext){
+		/*if (CallbackContext->IsPost && !strcmp(resourceName, "resource/GameMenu.res")){
+			bool* pRealReturnValue = (bool*)CallbackContext->pRealReturnValue;
+			if ((*pRealReturnValue) == true){
+				KeyValues* pKeyValues = (KeyValues*)pthis;
+				auto name = pKeyValues->GetName();
+				KeyValues* SectionQuit = nullptr;
+				for (auto p = pKeyValues->GetFirstSubKey(); p; p = p->GetNextKey()){
+					auto command = p->GetString("command");
+					if (!strcmp(command, "Quit"))
+						SectionQuit = p;
+				}
+				if (SectionQuit){
+					auto NameSectionQuit = SectionQuit->GetName();
+					int iNameSectionQuit = atoi(NameSectionQuit);
+					if (iNameSectionQuit > 0){
+						char szNewNameSectionQuit[32];
+						snprintf(szNewNameSectionQuit, sizeof(szNewNameSectionQuit), "%d", iNameSectionQuit + 1);
+						SectionQuit->SetName(szNewNameSectionQuit);
+						char szNewNameTestButton[32];
+						snprintf(szNewNameTestButton, sizeof(szNewNameTestButton), "%d", iNameSectionQuit);
+						auto SectionTestButton = new KeyValues(szNewNameTestButton);
+						SectionTestButton->SetString("label", "#GameUI_ABC_Options");
+						SectionTestButton->SetString("command", "OpenOptionsDialog");
+						pKeyValues->AddSubKeyBefore(SectionTestButton, SectionQuit);
+					}
+				}
+			}
+		}*/
+	}
+};
+
+static CVGUI2Extension_GameUIKeyValuesCallbacks s_GameUIKeyValuesCallbacks;
+
+/*
+=================================================================================================================
+GameUI init & shutdown
+=================================================================================================================
+*/
+
+void GameUI_InstallHooks(void){
+	VGUI2Extension()->RegisterGameUICallbacks(&s_GameUICallbacks);
+	VGUI2Extension()->RegisterGameUIKeyValuesCallbacks(&s_GameUIKeyValuesCallbacks);
+}
+
+void GameUI_UninstallHooks(void){
+	VGUI2Extension()->UnregisterGameUICallbacks(&s_GameUICallbacks);
+	VGUI2Extension()->UnregisterGameUIKeyValuesCallbacks(&s_GameUIKeyValuesCallbacks);
 }

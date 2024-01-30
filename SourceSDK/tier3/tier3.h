@@ -53,7 +53,7 @@ extern vgui::IInput *g_pVGuiInput;
 extern vgui::IVGui *g_pVGui;
 extern vgui::IPanel *g_pVGuiPanel;
 extern vgui::ILocalize *g_pVGuiLocalize;
-extern vgui::ISchemeManager *g_pVGuiSchemeManager;
+//extern vgui::ISchemeManager *g_pVGuiSchemeManager;
 extern vgui::ISystem *g_pVGuiSystem;
 extern IDataCache *g_pDataCache;	// FIXME: Should IDataCache be in tier2?
 extern IMDLCache *g_pMDLCache;

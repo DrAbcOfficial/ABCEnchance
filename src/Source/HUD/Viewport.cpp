@@ -11,7 +11,6 @@
 #include <vgui_controls/Label.h>
 #include <vgui_controls/AnimationController.h>
 
-#include "BaseUI.h"
 #include "mymathlib.h"
 #include "local.h"
 #include "vguilocal.h"
