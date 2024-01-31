@@ -10,7 +10,6 @@ IVGUI2Extension* g_pVGUI2Extension = nullptr;
 IDpiManager* g_pDpiManager = nullptr;
 vgui::ISchemeManager2* g_pVGuiSchemeManager = nullptr;
 vgui::ISurface2* g_pVGuiSurface = nullptr;
-vgui::IPanel2* g_pVGuiPanel2 = nullptr;
 vgui::IInput2* g_pVGuiInput2 = nullptr;
 
 void VGUI2Extension_Init()
