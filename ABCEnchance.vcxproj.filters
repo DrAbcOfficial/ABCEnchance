@@ -90,9 +90,6 @@
     <Filter Include="vgui2">
       <UniqueIdentifier>{4482ca35-4aaa-4534-9fc7-8485e221c687}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vgui2\interface">
-      <UniqueIdentifier>{57059889-dcf1-4422-bbb4-a16b2ded33b6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="vgui2\gameui">
       <UniqueIdentifier>{42740f0e-8fa8-480d-984a-fc1be9d4e576}</UniqueIdentifier>
     </Filter>
@@ -1068,9 +1065,6 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\effect.h">
       <Filter>Public\Header\HUD\vgui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\interface\IGameConsole.h">
-      <Filter>vgui2\interface</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\StudioModelRenderer.h">
       <Filter>Public\Header\Var</Filter>
