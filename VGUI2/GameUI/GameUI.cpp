@@ -118,7 +118,7 @@ public:
 	}
 
 	void KeyValues_LoadFromFile(void*& pthis, IFileSystem*& pFileSystem, const char*& resourceName, const char*& pathId, VGUI2Extension_CallbackContext* CallbackContext){
-		/*if (CallbackContext->IsPost && !strcmp(resourceName, "resource/GameMenu.res")){
+		if (CallbackContext->IsPost && !strcmp(resourceName, "resource/GameMenu.res")){
 			bool* pRealReturnValue = (bool*)CallbackContext->pRealReturnValue;
 			if ((*pRealReturnValue) == true){
 				KeyValues* pKeyValues = (KeyValues*)pthis;
@@ -126,7 +126,7 @@ public:
 				KeyValues* SectionQuit = nullptr;
 				for (auto p = pKeyValues->GetFirstSubKey(); p; p = p->GetNextKey()){
 					auto command = p->GetString("command");
-					if (!strcmp(command, "Quit"))
+					if (!strcmp(command, "OpenOptionsDialog"))
 						SectionQuit = p;
 				}
 				if (SectionQuit){
@@ -140,12 +140,12 @@ public:
 						snprintf(szNewNameTestButton, sizeof(szNewNameTestButton), "%d", iNameSectionQuit);
 						auto SectionTestButton = new KeyValues(szNewNameTestButton);
 						SectionTestButton->SetString("label", "#GameUI_ABC_Options");
-						SectionTestButton->SetString("command", "OpenOptionsDialog");
-						pKeyValues->AddSubKeyBefore(SectionTestButton, SectionQuit);
+						SectionTestButton->SetString("command", "OpenOptionsABCEnchanceDialog");
+						pKeyValues->AddSubKeyAfter(SectionTestButton, SectionQuit);
 					}
 				}
 			}
-		}*/
+		}
 	}
 };
 

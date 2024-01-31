@@ -268,6 +268,16 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	vgui::surface()->DrawSetTexture(g_iTextureID);
 	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth(), ScreenHeight());
 }
+void __fastcall CBasePanel_RunMenuCommand(vgui::Panel* pthis, int dummy, const char* command) {
+	if (!std::strcmp(command, "OpenOptionsABCEnchanceDialog")) {
+		if (g_pAdvanceOptPanel == nullptr) {
+			g_pAdvanceOptPanel = new vgui::COptionsAdvanceDialog(pthis);
+		}
+		g_pAdvanceOptPanel->Activate();
+	}
+	else
+		gHookFuncs.CBasePanel_RunMenuCommand(pthis, dummy, command);
+}
 
 void BasePanel_InstallHook(void)
 {
@@ -285,6 +295,9 @@ void BasePanel_InstallHook(void)
 #define SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG "\x55\x8B\xEC\x83\xEC\x38\x53\x8D\x45\xCC\x8B\xD9\x50\x8D\x45\xC8\x89\x5D\xD0\x50\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8D\x4D\xD4\x51"
 	Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, GameUIBase, GameUISize, CBasePanel_PaintBackground);
 	Install_InlineHook(CBasePanel_PaintBackground);
+#define SC_CBASEPANEL_RUNMENUCOMMAND_SIG "\x55\x8B\xEC\x6A\xFF\x68\x2A\x2A\x2A\x2A\x64\xA1\x2A\x2A\x2A\x2A\x50\x51\x53\x56\x57\xA1\x2A\x2A\x2A\x2A\x33\xC5\x50\x8D\x45\xF4\x64\xA3\x2A\x2A\x2A\x2A\x8B\xD9\x8B\x75\x08\x68\x2A\x2A\x2A\x2A\x56"
+	Fill_Sig(SC_CBASEPANEL_RUNMENUCOMMAND_SIG, GameUIBase, GameUISize, CBasePanel_RunMenuCommand);
+	Install_InlineHook(CBasePanel_RunMenuCommand);
 
 	HMODULE hVPX = LoadLibrary("vpx.dll");
 	if (!hVPX) {
