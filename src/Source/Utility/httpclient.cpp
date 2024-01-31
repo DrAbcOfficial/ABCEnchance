@@ -120,6 +120,7 @@ CHttpClientItem* CHttpClientItem::Start(){
 }
 IUtilHTTPResponse* CHttpClientItem::StartSync(){
 	if (!m_bAsync) {
+		m_pSyncReq->SendAsyncRequest();
 		m_pSyncReq->WaitForResponse();
 		return m_pSyncReq->GetResponse();
 	}

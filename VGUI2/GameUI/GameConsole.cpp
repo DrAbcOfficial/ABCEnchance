@@ -52,7 +52,7 @@ public:
 		va_end(args);
 	}
 	//virtual void ColorPrintf(Color &clr) = 0;	// Doesn't exist on GS
-	virtual void SetParent(int parent) {
+	virtual void SetParent(vgui::VPANEL parent) {
 		g_ConsoleDialog->SetParent(parent);
 	}
 };

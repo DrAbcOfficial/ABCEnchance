@@ -1,3 +1,4 @@
+#include <Panel.h>
 #include <KeyValues.h>
 #include "BasePanel.h"
 #include <IVGUI2Extension.h>
@@ -112,11 +113,9 @@ static CVGUI2Extension_GameUICallbacks s_GameUICallbacks;
 
 class CVGUI2Extension_GameUIKeyValuesCallbacks : public IVGUI2Extension_GameUIKeyValuesCallbacks{
 public:
-	int GetAltitude() const override
-	{
+	int GetAltitude() const override{
 		return 0;
 	}
-
 	void KeyValues_LoadFromFile(void*& pthis, IFileSystem*& pFileSystem, const char*& resourceName, const char*& pathId, VGUI2Extension_CallbackContext* CallbackContext){
 		if (CallbackContext->IsPost && !strcmp(resourceName, "resource/GameMenu.res")){
 			bool* pRealReturnValue = (bool*)CallbackContext->pRealReturnValue;
@@ -126,7 +125,7 @@ public:
 				KeyValues* SectionQuit = nullptr;
 				for (auto p = pKeyValues->GetFirstSubKey(); p; p = p->GetNextKey()){
 					auto command = p->GetString("command");
-					if (!strcmp(command, "OpenOptionsDialog"))
+					if (!stricmp(command, "OpenOptionsDialog"))
 						SectionQuit = p;
 				}
 				if (SectionQuit){
@@ -151,6 +150,21 @@ public:
 
 static CVGUI2Extension_GameUIKeyValuesCallbacks s_GameUIKeyValuesCallbacks;
 
+extern void OpenAdvanceOptPanel(vgui::Panel* pthis);
+class CVGUI2Extension_TaskBarCallbacks : public IVGUI2Extension_GameUITaskBarCallbacks {
+	int GetAltitude() const override{
+		return 0;
+	}
+	virtual void CTaskBar_ctor(IGameUITaskBarCtorCallbackContext* CallbackContext) override {
+
+	}
+	virtual void CTaskBar_OnCommand(void*& pPanel, const char*& command, VGUI2Extension_CallbackContext* CallbackContext) override {
+		if (!strcmp(command, "OpenOptionsABCEnchanceDialog")) {
+			OpenAdvanceOptPanel(reinterpret_cast<vgui::Panel*>(pPanel));
+		}
+	}
+};
+static CVGUI2Extension_TaskBarCallbacks s_TaskBarCallbacks;
 /*
 =================================================================================================================
 GameUI init & shutdown
@@ -160,9 +174,11 @@ GameUI init & shutdown
 void GameUI_InstallHooks(void){
 	VGUI2Extension()->RegisterGameUICallbacks(&s_GameUICallbacks);
 	VGUI2Extension()->RegisterGameUIKeyValuesCallbacks(&s_GameUIKeyValuesCallbacks);
+	VGUI2Extension()->RegisterGameUITaskBarCallbacks(&s_TaskBarCallbacks);
 }
 
 void GameUI_UninstallHooks(void){
 	VGUI2Extension()->UnregisterGameUICallbacks(&s_GameUICallbacks);
 	VGUI2Extension()->UnregisterGameUIKeyValuesCallbacks(&s_GameUIKeyValuesCallbacks);
+	VGUI2Extension()->UnregisterGameUITaskBarCallbacks(&s_TaskBarCallbacks);
 }
