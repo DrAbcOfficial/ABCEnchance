@@ -537,7 +537,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="VGUI2\Border.h" />
     <ClInclude Include="VGUI2\ClientVGUI.h" />
     <ClInclude Include="VGUI2\GameUI\BasePanel.h" />
-    <ClInclude Include="VGUI2\GameUI\GameConsole.h" />
     <ClInclude Include="vgui2\GameUI\NeteaseMusicDialog.h" />
     <ClInclude Include="VGUI2\GameUI\OptionAdvancedDlg.h" />
     <ClInclude Include="VGUI2\VGUI2.h" />

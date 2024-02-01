@@ -359,9 +359,6 @@
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp">
       <Filter>vgui2\gameui</Filter>
     </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\GameConsole.cpp">
-      <Filter>vgui2\gameui</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
@@ -687,6 +684,9 @@
       <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp">
+      <Filter>vgui2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\GameUI\GameConsole.cpp">
       <Filter>vgui2</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1112,9 +1112,6 @@
       <Filter>vpx</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\BasePanel.h">
-      <Filter>vgui2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\GameConsole.h">
       <Filter>vgui2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="src\Fmod\fmod.h">
