@@ -18,12 +18,12 @@
 #include "vgui/IVGui.h"
 #include "vgui/ISurface.h"
 #include "vgui/ILocalize.h"
+#include "vgui/IGameUIFuncs.h"
 
 #include "KeyValues.h"
 #include <IFileSystem.h>
 
 #include <vguilocal.h>
-#include <BaseUI.h>
 
 #include "vgui_controls/Button.h"
 #include "vgui2/KeyCode.h"
@@ -31,6 +31,7 @@
 #include "vgui_controls/TextEntry.h"
 #include "vgui_controls/RichText.h"
 #include "vgui_controls/ScrollBar.h"
+#include "vgui_controls/GaussianBlurPanel.h"
 
 #include <stdlib.h>
 
@@ -40,9 +41,10 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-#include <GaussianBlurPanel.h>
 
 using namespace vgui;
+
+extern IGameUIFuncs* GameUIFuncs();
 
 
 //-----------------------------------------------------------------------------
@@ -680,7 +682,7 @@ void CConsolePanel::OnTextChanged(Panel* panel)
 	int len = Q_strlen(m_szPartialText);
 
 	//old code can not work anymore because of some stupid IME change in win11
-	KeyCode consoleKey = gameuifuncs->GetVGUI2KeyCodeForBind("toggleconsole");
+	KeyCode consoleKey = GameUIFuncs()->GetVGUI2KeyCodeForBind("toggleconsole");
 	bool hitTilde = input()->IsKeyDown(consoleKey);
 	bool altKeyDown = input()->IsKeyDown(KEY_LALT) || input()->IsKeyDown(KEY_RALT);
 	bool ctrlKeyDown = input()->IsKeyDown(KEY_LCONTROL) || input()->IsKeyDown(KEY_RCONTROL);
@@ -852,7 +854,7 @@ void CConsolePanel::OnKeyCodeTyped(KeyCode code)
 //-----------------------------------------------------------------------------
 void CConsolePanel::OnKeyCodePressed(KeyCode code)
 {
-	if (code == gameuifuncs->GetVGUI2KeyCodeForBind("toggleconsole")) {
+	if (code == GameUIFuncs()->GetVGUI2KeyCodeForBind("toggleconsole")) {
 		PostActionSignal(new KeyValues("ClosedByHittingTilde"));
 		return;
 	}
@@ -905,7 +907,6 @@ void CConsolePanel::PerformLayout()
 		m_pHistory->InvalidateLayout();
 		m_pBlurBackend->SetPos(inset, inset + topHeight);
 		m_pBlurBackend->SetSize(wide - (inset * 2), tall - (entryInset * 2 + inset * 2 + topHeight + entryHeight));
-		m_pBlurBackend->InvalidateLayout();
 
 		int nSubmitXPos = wide - (inset + submitWide + submitInset);
 		int nYPos = tall - (entryInset * 2 + entryHeight);
@@ -1296,8 +1297,9 @@ void CConsoleDialog::OnCommandSubmitted(const char* pCommand)
 }
 
 void CConsoleDialog::ClosedByHittingTilde() {
-	if (baseuifuncs->IsGameUIVisible())
-		baseuifuncs->HideGameUI();
+	//if (baseuifuncs->IsGameUIVisible())
+	//	baseuifuncs->HideGameUI();
+	SetVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -1331,7 +1333,7 @@ void CConsoleDialog::DumpConsoleTextToFile()
 
 void CConsoleDialog::OnKeyCodePressed(KeyCode code)
 {	
-	if (code == gameuifuncs->GetVGUI2KeyCodeForBind("toggleconsole"))
+	if (code == GameUIFuncs()->GetVGUI2KeyCodeForBind("toggleconsole"))
 		ClosedByHittingTilde();
 	else if (code == KEY_XBUTTON_B)
 		Close();

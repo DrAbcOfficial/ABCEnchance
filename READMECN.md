@@ -29,13 +29,13 @@
     
     自动脚本:
 
-    1. 在 PowerShell中运行 `install-ABCEnchance.ps1`
+    1. 在 双击`ABCEnchanceInstaller.exe`，然后看绿色闪过，启动游戏
    
     2. 按你的喜好随便编辑 `svencoop/abcenchance/` 里的res文件.
 
     手动:
 
-    1. 从release或者action下载压缩包，解压到 `svencoop`文件夹里, 再把`ABCEnchance.dll`文件移动到`svencoop/metahook/plugins`，把`vpx.dll`和`FreeImage.dll`移动到`metahook/dlls`目录，然后在`metahook/configs/dllpaths.lst`中另起一行添加`vpx`，最终看起来像是这样👇
+    3. 从release或者action下载压缩包，将`svencoop`文件夹与`svencoop_addon`文件夹解压至游戏根目录, 然后在`metahook/configs/dllpaths.lst`中另起一行添加`vpx`，最终看起来像是这样👇
    
     ```
         Sven Coop
@@ -62,9 +62,9 @@
         svencoop.exe
     ```
 
-    2. 打开 `svencoop/metahook/configs/plugins.lst`, 在CaptionMod前另起一行加上 `ABCEnchance.dll` .
+    4. 打开 `svencoop/metahook/configs/plugins.lst`, 在CaptionMod前另起一行加上 `ABCEnchance.dll` .
 
-    3. 按你的喜好随便编辑 `svencoop/abcenchance/` 里的res文件.
+    5. 按你的喜好随便编辑 `svencoop/abcenchance/` 里的res文件.
 
 # 🏗️ 构建
  1. 克隆 [MetahookSV](https://github.com/hzqst/MetaHookSv)

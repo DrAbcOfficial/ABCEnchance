@@ -1,8 +1,13 @@
 #include <algorithm>
 #include <filesystem>
+#include <atomic>
+
+#include "Task.h"
 
 #include "interface.h"
 #include "IFileSystem.h"
+
+#include "vgui/IGameUIFuncs.h"
 
 #include "vgui_controls/PropertySheet.h"
 #include "vgui_controls/Label.h"
@@ -27,8 +32,7 @@
 
 #include "FreeImage.h"
 #include "wadlib/wadfile.h"
-
-#include "BaseUI.h"
+#include "NeteaseApi.h"
 
 #include "OptionAdvancedDlg.h"
 
@@ -38,6 +42,8 @@ extern float CVAR_GET_FLOAT(const char* x);
 extern void CVAR_SET_FLOAT(const char* x, float v);
 extern size_t ScreenWidth();
 extern size_t ScreenHeight();
+extern std::atomic<netease::CNeteaseMusicAPI*> GetNeteaseApi();
+extern IGameUIFuncs* GameUIFuncs();
 constexpr char* FAVMODEL_ICON = "#GameUI_ABC_Favorite";
 
 using namespace vgui;
@@ -254,7 +260,7 @@ void COptionsAdvanceSubMultiPlay::OnButtonChanged(){
 void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 	FIBITMAP* img = nullptr;
 	char ext[4];
-	std::strcpy(ext, std::filesystem::path(fullpath).extension().u8string().c_str());
+	std::strncpy(ext, std::filesystem::path(fullpath).extension().u8string().c_str(), 4);
 	if (!std::strncmp(ext, ".tga", 4))
 		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_TARGA, fullpath, 0);
 	else if(!std::strncmp(ext, ".bmp", 4))
@@ -590,8 +596,8 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 }
 void COptionsAdvanceSubOtherOption::OnResetData(){
 	BaseClass::OnResetData();
-	m_pVoteYesButton->SetText(gameuifuncs->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_yes")));
-	m_pVoteNoButton->SetText(gameuifuncs->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_no")));
+	m_pVoteYesButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_yes")));
+	m_pVoteNoButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_no")));
 }
 void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 	//m_pNewHud->ApplyChanges();
@@ -664,7 +670,7 @@ void COptionsAdvanceSubOtherOption::OnKeyBinded(Panel* target, int code) {
 	Q_UTF8ToUnicode((char*)(buf + 4), wbuf, 32);
 	KeyBindingButton* btn = reinterpret_cast<KeyBindingButton*>(target);
 	btn->SetText(wbuf);
-	btn->SetKeyCode(gameuifuncs->Key_KeyStringToKeyNum(buf + 4));
+	btn->SetKeyCode(GameUIFuncs()->Key_KeyStringToKeyNum(buf + 4));
 }
 void COptionsAdvanceSubOtherOption::OnCommand(const char* cmd){
 	static auto popkeybindbox = [](Panel* parent, Panel* target) {
@@ -686,8 +692,6 @@ void COptionsAdvanceSubOtherOption::OnCommand(const char* cmd){
 		BaseClass::OnCommand(cmd);
 }
 
-
-
 COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, "OptionsAdvanceDialog") {
 	SetDeleteSelfOnClose(true);
 	SetSizeable(false);
@@ -702,9 +706,6 @@ COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, 
 	AddPage(m_pOtherOption, "#GameUI_ABC_OtherOption");
 
 	EnableApplyButton(true);
-}
-void COptionsAdvanceDialog::ApplySettings(KeyValues* inResourceData){
-	BaseClass::ApplySettings(inResourceData);
 }
 void COptionsAdvanceDialog::ApplySchemeSettings(IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);

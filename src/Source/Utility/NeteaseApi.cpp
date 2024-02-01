@@ -1,22 +1,14 @@
 #include "NeteaseApi.h"
 #include "crypto.h"
-#include "curl.h"
 #include "qrcodegen.h"
+
+#include "httpclient.h"
 
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
 namespace netease {
-	const std::map<char*, char*> header = {
-		{"Accept", "*/*"},
-		{"Accept-Language", "zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4"},
-		{"Connection", "keep-alive"},
-		{"Content-Type", "application/x-www-form-urlencoded"},
-		{"Referer", "http://music.163.com"},
-		{"Host", "music.163.com"},
-		{"User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36"}
-	};
-	string buildparam(const std::map<string, string>& map) {
+	static string buildparam(const std::map<string, string>& map) {
 		string paramStr;
 		auto iter = map.begin();
 		while (iter != map.end()) {
@@ -32,40 +24,23 @@ namespace netease {
 		}
 		return paramStr;
 	}
-	curl_slist* buildheader() {
-		curl_slist* header = nullptr;
-		for (auto iter = netease::header.begin(); iter != netease::header.end(); iter++) {
-			string h = string(iter->first) + ": " + string(iter->second);
-			header = curl_slist_append(header, h.c_str());
-		}
-		return header;
-	}
-	size_t append(void* ptr, size_t size, size_t nmemb, void* user) {
-		std::vector<char>* p = (std::vector<char>*)user;
-		auto cs = p->size();
-		p->resize(cs + size * nmemb);
-		memcpy(p->data() + cs, ptr, size * nmemb);
-		return size * nmemb;
-	}
-	string post(const Action& action) {
-		string postStr = buildparam(action.post);
-		std::vector<char> retdata;
-		void* curl = curl_easy_init();
-		curl_slist* header = buildheader();
-		curl_easy_setopt(curl, CURLOPT_POST, 1);
-		curl_easy_setopt(curl, CURLOPT_URL, action.url.c_str());
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &append);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retdata);
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postStr.c_str());
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, postStr.length());
-		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, CNeteaseMusicAPI::CokkieInPath().c_str());
-		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, CNeteaseMusicAPI::CookieOutPath().c_str());
-		auto result = curl_easy_perform(curl);
-		curl_slist_free_all(header);
-		curl_easy_cleanup(curl);
-		retdata.push_back(0);
-		return retdata.data();
+	static string post(const Action& action) {
+		string url = action.url + (action.post.size() > 0 ? ("?" + buildparam(action.post)) : "");
+		string retdata;
+		auto rep = GetHttpClient()->Fetch(url.c_str(), UtilHTTPMethod::Post)->
+			Create(false)->
+			SetFeild("Accept", "*/*")->
+			SetFeild("Accept-Language", "zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4")->
+			SetFeild("Connection", "keep-alive")->
+			SetFeild("Content-Type", "application/x-www-form-urlencoded")->
+			SetFeild("Referer", "http://music.163.com")->
+			SetFeild("Host", "music.163.com")->
+			SetFeild("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")->
+			StartSync();
+		auto paylod = rep->GetPayload();
+		auto size = paylod->GetLength();
+		retdata = paylod->GetBytes();
+		return retdata;
 	}
 	CBase163Object::CBase163Object(rapidjson::Value& json) {
 		if (json.HasMember("name") && json.HasMember("id")) {
@@ -206,6 +181,10 @@ namespace netease {
 				vip = profile["vipType"].GetUint();
 			if (profile.HasMember("playlistCount"))
 				playlistCount = profile["playlistCount"].GetUint();
+			if(profile.HasMember("avatarUrl"))
+				avatarurl = profile["avatarUrl"].GetString();
+			if (profile.HasMember("backgroundUrl"))
+				backgroundurl = profile["backgroundUrl"].GetString();
 		}
 		if (json.HasMember("listenSongs"))
 			listenSongs = json["listenSongs"].GetUint64();
@@ -507,17 +486,6 @@ namespace netease {
 			return std::make_shared<CUser>(data);
 		}
 		return nullptr;
-	}
-
-	static string s_szCookie = "./neteaseapicookie";
-	const std::string CNeteaseMusicAPI::CookieOutPath(){
-		return s_szCookie;
-	}
-	const std::string CNeteaseMusicAPI::CokkieInPath(){
-		return s_szCookie;
-	}
-	void CNeteaseMusicAPI::SetCookie(const char* cookie) {
-		s_szCookie = cookie;
 	}
 	CLocalUser* CNeteaseMusicAPI::GetUser() {
 		return &m_pUser;

@@ -81,7 +81,7 @@ namespace netease {
 		unsigned long long likedCount;
 		string description;
 		CDjMusic(rapidjson::Value& json);
-		std::optional<string> GetPlayUrl(const char* quality, char* encode) override;
+		virtual std::optional<string> GetPlayUrl(const char* quality, char* encode) override;
 	};
 	class CLyric {
 	public:
@@ -93,6 +93,8 @@ namespace netease {
 	public:
 		CUser(rapidjson::Value& json);
 		string signature;
+		string avatarurl;
+		string backgroundurl;
 		unsigned int level = 0;
 		unsigned int vip = 0;
 		unsigned long long listenSongs = 0;
@@ -164,10 +166,6 @@ namespace netease {
 		std::shared_ptr<CUser> GetUser(neteaseid_t userid);
 		std::shared_ptr<CMy> GetMyself();
 		std::shared_ptr<CPlayList> GetPlayList(neteaseid_t listid);
-
-		static const std::string CookieOutPath();
-		static const std::string CokkieInPath();
-		static void SetCookie(const char* cookie);
 
 		CLocalUser* GetUser();
 	private:

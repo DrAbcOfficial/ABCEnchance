@@ -30,7 +30,7 @@
 		"tall"				"f0"
 		"visible"			"1"
 		"enabled"			"1"
-		"ratio"				"3"
-		"blurness"			"8"
+		"offset"			"7"
+		"iteration"			"7"
 	}
 }

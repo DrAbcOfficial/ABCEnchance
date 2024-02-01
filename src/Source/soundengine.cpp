@@ -1,558 +1,280 @@
 #include <metahook.h>
+#include "plugins.h"
 #include "soundengine.h"
 
-namespace FModEngine {
-	static HMODULE g_hFmod = nullptr;
-	static CFModSystem* g_pFModSystem;
+HMODULE g_hFMODEx = nullptr;
+
 #define FMOD_FUNCTION_DEFINE(name) static decltype(name) * g_pfn##name
 #ifdef __USE_FMOD_SYSTEM_H_
-		/*
-		FMOD System factory functions.  Use this to create an FMOD System Instance.  below you will see FMOD_System_Init/Close to get started.
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_Create);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Release);
+/*
+FMOD System factory functions.  Use this to create an FMOD System Instance.  below you will see FMOD_System_Init/Close to get started.
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_Create);
+FMOD_FUNCTION_DEFINE(FMOD_System_Release);
 
-		/*
-			'System' API
-		*/
-		/*
-			 Pre-init functions.
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetOutput);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetOutput);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetNumDrivers);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetDriverInfo);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetDriverInfoW);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetDriverCaps);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetDriver);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetDriver);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetHardwareChannels);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetSoftwareChannels);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetSoftwareChannels);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetSoftwareFormat);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetSoftwareFormat);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetDSPBufferSize);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetDSPBufferSize);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetFileSystem);
-		FMOD_FUNCTION_DEFINE(FMOD_System_AttachFileSystem);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetAdvancedSettings);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetAdvancedSettings);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetSpeakerMode);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetSpeakerMode);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetCallback);
-		/*
-			 Plug-in support
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetPluginPath);
-		FMOD_FUNCTION_DEFINE(FMOD_System_LoadPlugin);
-		FMOD_FUNCTION_DEFINE(FMOD_System_UnloadPlugin);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetNumPlugins);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetPluginHandle);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetPluginInfo);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetOutputByPlugin);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetOutputByPlugin);
-		FMOD_FUNCTION_DEFINE(FMOD_System_CreateDSPByPlugin);
-		FMOD_FUNCTION_DEFINE(FMOD_System_RegisterCodec);
-		FMOD_FUNCTION_DEFINE(FMOD_System_RegisterDSP);
-		/*
-			 Init/Close
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_Init);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Close);
-		/*
-			 General post-init system functions
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_Update);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Set3DSettings);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Get3DSettings);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Set3DNumListeners);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Get3DNumListeners);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Set3DListenerAttributes);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Get3DListenerAttributes);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Set3DRolloffCallback);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Set3DSpeakerPosition);
-		FMOD_FUNCTION_DEFINE(FMOD_System_Get3DSpeakerPosition);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetStreamBufferSize);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetStreamBufferSize);
-		/*
-			 System information functions.
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetVersion);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetOutputHandle);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetChannelsPlaying);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetHardwareChannels);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetCPUUsage);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetSoundRAM);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetNumCDROMDrives);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetCDROMDriveName);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetSpectrum);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetWaveData);
-		/*
-			 Sound/DSP/Channel/FX creation and retrieval.
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_CreateSound);
-		FMOD_FUNCTION_DEFINE(FMOD_System_CreateStream);
-		FMOD_FUNCTION_DEFINE(FMOD_System_CreateDSP);
-		FMOD_FUNCTION_DEFINE(FMOD_System_CreateDSPByType);
-		FMOD_FUNCTION_DEFINE(FMOD_System_CreateChannelGroup);
-		FMOD_FUNCTION_DEFINE(FMOD_System_CreateSoundGroup);
-		FMOD_FUNCTION_DEFINE(FMOD_System_CreateReverb);
-		FMOD_FUNCTION_DEFINE(FMOD_System_PlaySound);
-		FMOD_FUNCTION_DEFINE(FMOD_System_PlayDSP);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetChannel);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetMasterChannelGroup);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetMasterSoundGroup);
-		/*
-			 Reverb API
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetReverbProperties);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetReverbProperties);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetReverbAmbientProperties);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetReverbAmbientProperties);
-		/*
-			 System level DSP access.
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetDSPHead);
-		FMOD_FUNCTION_DEFINE(FMOD_System_AddDSP);
-		FMOD_FUNCTION_DEFINE(FMOD_System_LockDSP);
-		FMOD_FUNCTION_DEFINE(FMOD_System_UnlockDSP);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetDSPClock);
-		/*
-			 Recording API.
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordNumDrivers);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordDriverInfo);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordDriverInfoW);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordDriverCaps);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordPosition);
-		FMOD_FUNCTION_DEFINE(FMOD_System_RecordStart);
-		FMOD_FUNCTION_DEFINE(FMOD_System_RecordStop);
-		FMOD_FUNCTION_DEFINE(FMOD_System_IsRecording);
-		/*
-			 Geometry API.
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_CreateGeometry);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetGeometrySettings);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetGeometrySettings);
-		FMOD_FUNCTION_DEFINE(FMOD_System_LoadGeometry);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetGeometryOcclusion);
-		/*
-			 Network functions.
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetNetworkProxy);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetNetworkProxy);
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetNetworkTimeout);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetNetworkTimeout);
-		/*
-			 Userdata set/get.
-		*/
-		FMOD_FUNCTION_DEFINE(FMOD_System_SetUserData);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetUserData);
-		FMOD_FUNCTION_DEFINE(FMOD_System_GetMemoryInfo);
+/*
+	'System' API
+*/
+/*
+	 Pre-init functions.
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_SetOutput);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetOutput);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetNumDrivers);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetDriverInfo);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetDriverInfoW);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetDriverCaps);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetDriver);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetDriver);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetHardwareChannels);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetSoftwareChannels);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetSoftwareChannels);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetSoftwareFormat);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetSoftwareFormat);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetDSPBufferSize);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetDSPBufferSize);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetFileSystem);
+FMOD_FUNCTION_DEFINE(FMOD_System_AttachFileSystem);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetAdvancedSettings);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetAdvancedSettings);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetSpeakerMode);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetSpeakerMode);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetCallback);
+/*
+	 Plug-in support
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_SetPluginPath);
+FMOD_FUNCTION_DEFINE(FMOD_System_LoadPlugin);
+FMOD_FUNCTION_DEFINE(FMOD_System_UnloadPlugin);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetNumPlugins);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetPluginHandle);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetPluginInfo);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetOutputByPlugin);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetOutputByPlugin);
+FMOD_FUNCTION_DEFINE(FMOD_System_CreateDSPByPlugin);
+FMOD_FUNCTION_DEFINE(FMOD_System_RegisterCodec);
+FMOD_FUNCTION_DEFINE(FMOD_System_RegisterDSP);
+/*
+	 Init/Close
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_Init);
+FMOD_FUNCTION_DEFINE(FMOD_System_Close);
+/*
+	 General post-init system functions
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_Update);
+FMOD_FUNCTION_DEFINE(FMOD_System_Set3DSettings);
+FMOD_FUNCTION_DEFINE(FMOD_System_Get3DSettings);
+FMOD_FUNCTION_DEFINE(FMOD_System_Set3DNumListeners);
+FMOD_FUNCTION_DEFINE(FMOD_System_Get3DNumListeners);
+FMOD_FUNCTION_DEFINE(FMOD_System_Set3DListenerAttributes);
+FMOD_FUNCTION_DEFINE(FMOD_System_Get3DListenerAttributes);
+FMOD_FUNCTION_DEFINE(FMOD_System_Set3DRolloffCallback);
+FMOD_FUNCTION_DEFINE(FMOD_System_Set3DSpeakerPosition);
+FMOD_FUNCTION_DEFINE(FMOD_System_Get3DSpeakerPosition);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetStreamBufferSize);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetStreamBufferSize);
+/*
+	 System information functions.
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_GetVersion);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetOutputHandle);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetChannelsPlaying);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetHardwareChannels);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetCPUUsage);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetSoundRAM);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetNumCDROMDrives);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetCDROMDriveName);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetSpectrum);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetWaveData);
+/*
+	 Sound/DSP/Channel/FX creation and retrieval.
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_CreateSound);
+FMOD_FUNCTION_DEFINE(FMOD_System_CreateStream);
+FMOD_FUNCTION_DEFINE(FMOD_System_CreateDSP);
+FMOD_FUNCTION_DEFINE(FMOD_System_CreateDSPByType);
+FMOD_FUNCTION_DEFINE(FMOD_System_CreateChannelGroup);
+FMOD_FUNCTION_DEFINE(FMOD_System_CreateSoundGroup);
+FMOD_FUNCTION_DEFINE(FMOD_System_CreateReverb);
+FMOD_FUNCTION_DEFINE(FMOD_System_PlaySound);
+FMOD_FUNCTION_DEFINE(FMOD_System_PlayDSP);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetChannel);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetMasterChannelGroup);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetMasterSoundGroup);
+/*
+	 Reverb API
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_SetReverbProperties);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetReverbProperties);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetReverbAmbientProperties);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetReverbAmbientProperties);
+/*
+	 System level DSP access.
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_GetDSPHead);
+FMOD_FUNCTION_DEFINE(FMOD_System_AddDSP);
+FMOD_FUNCTION_DEFINE(FMOD_System_LockDSP);
+FMOD_FUNCTION_DEFINE(FMOD_System_UnlockDSP);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetDSPClock);
+/*
+	 Recording API.
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordNumDrivers);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordDriverInfo);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordDriverInfoW);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordDriverCaps);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetRecordPosition);
+FMOD_FUNCTION_DEFINE(FMOD_System_RecordStart);
+FMOD_FUNCTION_DEFINE(FMOD_System_RecordStop);
+FMOD_FUNCTION_DEFINE(FMOD_System_IsRecording);
+/*
+	 Geometry API.
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_CreateGeometry);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetGeometrySettings);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetGeometrySettings);
+FMOD_FUNCTION_DEFINE(FMOD_System_LoadGeometry);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetGeometryOcclusion);
+/*
+	 Network functions.
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_SetNetworkProxy);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetNetworkProxy);
+FMOD_FUNCTION_DEFINE(FMOD_System_SetNetworkTimeout);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetNetworkTimeout);
+/*
+	 Userdata set/get.
+*/
+FMOD_FUNCTION_DEFINE(FMOD_System_SetUserData);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetUserData);
+FMOD_FUNCTION_DEFINE(FMOD_System_GetMemoryInfo);
 #endif
 #ifdef  __USE_FMOD_SOUND_H_
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_Release);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSystemObject);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_Lock);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_Unlock);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetDefaults);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetDefaults);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetVariations);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetVariations);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_Set3DMinMaxDistance);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_Get3DMinMaxDistance);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_Set3DConeSettings);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_Get3DConeSettings);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_Set3DCustomRolloff);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_Get3DCustomRolloff);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetSubSound);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSubSound);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSubSoundParent);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetSubSoundSentence);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetName);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLength);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetFormat);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetNumSubSounds);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetNumTags);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetTag);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetOpenState);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_ReadData);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SeekData);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetSoundGroup);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSoundGroup);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetNumSyncPoints);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSyncPoint);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSyncPointInfo);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_AddSyncPoint);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_DeleteSyncPoint);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetMode);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMode);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetLoopCount);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLoopCount);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetLoopPoints);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLoopPoints);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMusicNumChannels);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetMusicChannelVolume);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMusicChannelVolume);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetMusicSpeed);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMusicSpeed);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_SetUserData);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetUserData);
-		FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMemoryInfo);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_Release);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSystemObject);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_Lock);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_Unlock);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetDefaults);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetDefaults);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetVariations);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetVariations);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_Set3DMinMaxDistance);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_Get3DMinMaxDistance);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_Set3DConeSettings);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_Get3DConeSettings);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_Set3DCustomRolloff);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_Get3DCustomRolloff);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetSubSound);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSubSound);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSubSoundParent);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetSubSoundSentence);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetName);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLength);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetFormat);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetNumSubSounds);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetNumTags);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetTag);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetOpenState);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_ReadData);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SeekData);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetSoundGroup);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSoundGroup);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetNumSyncPoints);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSyncPoint);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetSyncPointInfo);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_AddSyncPoint);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_DeleteSyncPoint);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetMode);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMode);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetLoopCount);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLoopCount);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetLoopPoints);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetLoopPoints);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMusicNumChannels);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetMusicChannelVolume);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMusicChannelVolume);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetMusicSpeed);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMusicSpeed);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_SetUserData);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetUserData);
+FMOD_FUNCTION_DEFINE(FMOD_Sound_GetMemoryInfo);
 #endif //  __USE_FMOD_SOUND_H_
 #ifdef __USE_FMOD_CHANNEL_H_
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSystemObject);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Stop);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPaused);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPaused);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetVolume);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetVolume);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetFrequency);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetFrequency);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPan);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPan);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetDelay);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetDelay);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetSpeakerMix);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSpeakerMix);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetSpeakerLevels);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSpeakerLevels);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetInputChannelMix);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetInputChannelMix);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetMute);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMute);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPriority);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPriority);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPosition);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPosition);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetReverbProperties);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetReverbProperties);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetLowPassGain);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetLowPassGain);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetChannelGroup);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetChannelGroup);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetCallback);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DAttributes);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DAttributes);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DMinMaxDistance);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DMinMaxDistance);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DConeSettings);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DConeSettings);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DConeOrientation);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DConeOrientation);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DCustomRolloff);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DCustomRolloff);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DOcclusion);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DOcclusion);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DSpread);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DSpread);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DPanLevel);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DPanLevel);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DDopplerLevel);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DDopplerLevel);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DDistanceFilter);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DDistanceFilter);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetDSPHead);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_AddDSP);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_IsPlaying);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_IsVirtual);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetAudibility);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetCurrentSound);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSpectrum);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetWaveData);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetIndex);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetMode);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMode);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetLoopCount);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetLoopCount);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetLoopPoints);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetLoopPoints);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_SetUserData);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetUserData);
-		FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMemoryInfo);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSystemObject);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Stop);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPaused);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPaused);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetVolume);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetVolume);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetFrequency);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetFrequency);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPan);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPan);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetDelay);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetDelay);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetSpeakerMix);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSpeakerMix);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetSpeakerLevels);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSpeakerLevels);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetInputChannelMix);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetInputChannelMix);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetMute);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMute);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPriority);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPriority);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetPosition);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetPosition);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetReverbProperties);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetReverbProperties);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetLowPassGain);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetLowPassGain);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetChannelGroup);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetChannelGroup);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetCallback);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DAttributes);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DAttributes);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DMinMaxDistance);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DMinMaxDistance);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DConeSettings);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DConeSettings);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DConeOrientation);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DConeOrientation);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DCustomRolloff);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DCustomRolloff);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DOcclusion);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DOcclusion);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DSpread);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DSpread);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DPanLevel);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DPanLevel);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DDopplerLevel);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DDopplerLevel);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Set3DDistanceFilter);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_Get3DDistanceFilter);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetDSPHead);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_AddDSP);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_IsPlaying);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_IsVirtual);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetAudibility);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetCurrentSound);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetSpectrum);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetWaveData);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetIndex);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetMode);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMode);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetLoopCount);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetLoopCount);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetLoopPoints);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetLoopPoints);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_SetUserData);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetUserData);
+FMOD_FUNCTION_DEFINE(FMOD_Channel_GetMemoryInfo);
 #endif // __USE_FMOD_CHANNEL_H_
 
-	void InitFModLibrary() {
-		g_hFmod = GetModuleHandle("svencoop/fmodex.dll");
-		if (!g_hFmod)
-			g_hFmod = LoadLibrary("svencoop/fmodex.dll");
-		if (g_hFmod) {
-#define FMOD_DLSYM_CLIEN(name) g_pfn##name = (decltype(g_pfn##name))GetProcAddress(g_hFmod, #name);
-#ifdef __USE_FMOD_SYSTEM_H_
-			/*
-			FMOD System factory functions.  Use this to create an FMOD System Instance.  below you will see FMOD_System_Init/Close to get started.
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_Create);
-			FMOD_DLSYM_CLIEN(FMOD_System_Release);
+namespace FModEngine {
 
-			/*
-				'System' API
-			*/
-			/*
-				 Pre-init functions.
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_SetOutput);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetOutput);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetNumDrivers);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetDriverInfo);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetDriverInfoW);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetDriverCaps);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetDriver);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetDriver);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetHardwareChannels);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetSoftwareChannels);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetSoftwareChannels);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetSoftwareFormat);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetSoftwareFormat);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetDSPBufferSize);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetDSPBufferSize);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetFileSystem);
-			FMOD_DLSYM_CLIEN(FMOD_System_AttachFileSystem);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetAdvancedSettings);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetAdvancedSettings);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetSpeakerMode);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetSpeakerMode);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetCallback);
-			/*
-				 Plug-in support
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_SetPluginPath);
-			FMOD_DLSYM_CLIEN(FMOD_System_LoadPlugin);
-			FMOD_DLSYM_CLIEN(FMOD_System_UnloadPlugin);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetNumPlugins);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetPluginHandle);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetPluginInfo);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetOutputByPlugin);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetOutputByPlugin);
-			FMOD_DLSYM_CLIEN(FMOD_System_CreateDSPByPlugin);
-			FMOD_DLSYM_CLIEN(FMOD_System_RegisterCodec);
-			FMOD_DLSYM_CLIEN(FMOD_System_RegisterDSP);
-			/*
-				 Init/Close
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_Init);
-			FMOD_DLSYM_CLIEN(FMOD_System_Close);
-			/*
-				 General post-init system functions
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_Update);
-			FMOD_DLSYM_CLIEN(FMOD_System_Set3DSettings);
-			FMOD_DLSYM_CLIEN(FMOD_System_Get3DSettings);
-			FMOD_DLSYM_CLIEN(FMOD_System_Set3DNumListeners);
-			FMOD_DLSYM_CLIEN(FMOD_System_Get3DNumListeners);
-			FMOD_DLSYM_CLIEN(FMOD_System_Set3DListenerAttributes);
-			FMOD_DLSYM_CLIEN(FMOD_System_Get3DListenerAttributes);
-			FMOD_DLSYM_CLIEN(FMOD_System_Set3DRolloffCallback);
-			FMOD_DLSYM_CLIEN(FMOD_System_Set3DSpeakerPosition);
-			FMOD_DLSYM_CLIEN(FMOD_System_Get3DSpeakerPosition);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetStreamBufferSize);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetStreamBufferSize);
-			/*
-				 System information functions.
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_GetVersion);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetOutputHandle);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetChannelsPlaying);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetHardwareChannels);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetCPUUsage);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetSoundRAM);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetNumCDROMDrives);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetCDROMDriveName);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetSpectrum);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetWaveData);
-			/*
-				 Sound/DSP/Channel/FX creation and retrieval.
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_CreateSound);
-			FMOD_DLSYM_CLIEN(FMOD_System_CreateStream);
-			FMOD_DLSYM_CLIEN(FMOD_System_CreateDSP);
-			FMOD_DLSYM_CLIEN(FMOD_System_CreateDSPByType);
-			FMOD_DLSYM_CLIEN(FMOD_System_CreateChannelGroup);
-			FMOD_DLSYM_CLIEN(FMOD_System_CreateSoundGroup);
-			FMOD_DLSYM_CLIEN(FMOD_System_CreateReverb);
-			FMOD_DLSYM_CLIEN(FMOD_System_PlaySound);
-			FMOD_DLSYM_CLIEN(FMOD_System_PlayDSP);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetChannel);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetMasterChannelGroup);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetMasterSoundGroup);
-			/*
-				 Reverb API
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_SetReverbProperties);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetReverbProperties);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetReverbAmbientProperties);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetReverbAmbientProperties);
-			/*
-				 System level DSP access.
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_GetDSPHead);
-			FMOD_DLSYM_CLIEN(FMOD_System_AddDSP);
-			FMOD_DLSYM_CLIEN(FMOD_System_LockDSP);
-			FMOD_DLSYM_CLIEN(FMOD_System_UnlockDSP);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetDSPClock);
-			/*
-				 Recording API.
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_GetRecordNumDrivers);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetRecordDriverInfo);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetRecordDriverInfoW);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetRecordDriverCaps);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetRecordPosition);
-			FMOD_DLSYM_CLIEN(FMOD_System_RecordStart);
-			FMOD_DLSYM_CLIEN(FMOD_System_RecordStop);
-			FMOD_DLSYM_CLIEN(FMOD_System_IsRecording);
-			/*
-				 Geometry API.
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_CreateGeometry);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetGeometrySettings);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetGeometrySettings);
-			FMOD_DLSYM_CLIEN(FMOD_System_LoadGeometry);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetGeometryOcclusion);
-			/*
-				 Network functions.
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_SetNetworkProxy);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetNetworkProxy);
-			FMOD_DLSYM_CLIEN(FMOD_System_SetNetworkTimeout);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetNetworkTimeout);
-			/*
-				 Userdata set/get.
-			*/
-			FMOD_DLSYM_CLIEN(FMOD_System_SetUserData);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetUserData);
-			FMOD_DLSYM_CLIEN(FMOD_System_GetMemoryInfo);
-#endif // FMOD_SYSTEM
-#ifdef __USE_FMOD_SOUND_H_
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Release);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSystemObject);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Lock);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Unlock);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetDefaults);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetDefaults);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetVariations);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetVariations);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Set3DMinMaxDistance);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Get3DMinMaxDistance);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Set3DConeSettings);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Get3DConeSettings);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Set3DCustomRolloff);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_Get3DCustomRolloff);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetSubSound);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSubSound);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSubSoundParent);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetSubSoundSentence);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetName);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLength);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetFormat);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetNumSubSounds);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetNumTags);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetTag);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetOpenState);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_ReadData);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SeekData);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetSoundGroup);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSoundGroup);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetNumSyncPoints);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSyncPoint);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetSyncPointInfo);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_AddSyncPoint);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_DeleteSyncPoint);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetMode);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMode);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetLoopCount);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLoopCount);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetLoopPoints);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetLoopPoints);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMusicNumChannels);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetMusicChannelVolume);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMusicChannelVolume);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetMusicSpeed);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMusicSpeed);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_SetUserData);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetUserData);
-			FMOD_DLSYM_CLIEN(FMOD_Sound_GetMemoryInfo);
-#endif // __USE_FMOD_SOUND_H_
-#ifdef __USE_FMOD_CHANNEL_H_
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetSystemObject);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Stop);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetPaused);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetPaused);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetVolume);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetVolume);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetFrequency);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetFrequency);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetPan);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetPan);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetDelay);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetDelay);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetSpeakerMix);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetSpeakerMix);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetSpeakerLevels);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetSpeakerLevels);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetInputChannelMix);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetInputChannelMix);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetMute);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetMute);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetPriority);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetPriority);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetPosition);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetPosition);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetReverbProperties);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetReverbProperties);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetLowPassGain);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetLowPassGain);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetChannelGroup);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetChannelGroup);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetCallback);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DAttributes);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DAttributes);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DMinMaxDistance);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DMinMaxDistance);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DConeSettings);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DConeSettings);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DConeOrientation);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DConeOrientation);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DCustomRolloff);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DCustomRolloff);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DOcclusion);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DOcclusion);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DSpread);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DSpread);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DPanLevel);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DPanLevel);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DDopplerLevel);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DDopplerLevel);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Set3DDistanceFilter);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_Get3DDistanceFilter);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetDSPHead);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_AddDSP);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_IsPlaying);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_IsVirtual);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetAudibility);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetCurrentSound);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetSpectrum);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetWaveData);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetIndex);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetMode);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetMode);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetLoopCount);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetLoopCount);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetLoopPoints);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetLoopPoints);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_SetUserData);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetUserData);
-			FMOD_DLSYM_CLIEN(FMOD_Channel_GetMemoryInfo);
-#endif // __USE_FMOD_CHANNEL_H_
-
-		}
-		g_pFModSystem = new CFModSystem();
-		g_pFModSystem->Init(SYSTEM_MAXCHANNEL, FMOD_INIT_NORMAL, 0);
-	}
-	void FreeFModLibrary() {
-		FreeLibrary(g_hFmod);
-		delete g_pFModSystem;
-	}
+	CFModSystem* g_pFModSystem = nullptr;
 
 #ifdef __USE_FMOD_SYSTEM_H_
 	CFModSystem* GetSystem() {
@@ -565,8 +287,8 @@ namespace FModEngine {
 		Create();
 	}
 	CFModSystem::~CFModSystem() {
-		//Close();
-		//Release();
+		Release();
+		m_pFModSystem = nullptr;
 	}
 	FMOD_RESULT CFModSystem::Create() {
 		return g_pfnFMOD_System_Create(&m_pFModSystem);
@@ -1273,4 +995,344 @@ namespace FModEngine {
 	}
 #endif // __USE_FMOD_CHANNEL_H_
 
+}
+
+void FMOD_OnLoad(HMODULE hFModEx)
+{
+#define FMOD_DLSYM_CLIENT(name) g_pfn##name = (decltype(g_pfn##name))GetProcAddress(hFModEx, #name);
+
+#ifdef __USE_FMOD_SYSTEM_H_
+	/*
+	FMOD System factory functions.  Use this to create an FMOD System Instance.  below you will see FMOD_System_Init/Close to get started.
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_Create);
+	FMOD_DLSYM_CLIENT(FMOD_System_Release);
+
+	/*
+		'System' API
+	*/
+	/*
+		 Pre-init functions.
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_SetOutput);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetOutput);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetNumDrivers);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetDriverInfo);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetDriverInfoW);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetDriverCaps);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetDriver);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetDriver);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetHardwareChannels);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetSoftwareChannels);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetSoftwareChannels);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetSoftwareFormat);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetSoftwareFormat);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetDSPBufferSize);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetDSPBufferSize);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetFileSystem);
+	FMOD_DLSYM_CLIENT(FMOD_System_AttachFileSystem);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetAdvancedSettings);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetAdvancedSettings);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetSpeakerMode);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetSpeakerMode);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetCallback);
+	/*
+		 Plug-in support
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_SetPluginPath);
+	FMOD_DLSYM_CLIENT(FMOD_System_LoadPlugin);
+	FMOD_DLSYM_CLIENT(FMOD_System_UnloadPlugin);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetNumPlugins);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetPluginHandle);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetPluginInfo);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetOutputByPlugin);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetOutputByPlugin);
+	FMOD_DLSYM_CLIENT(FMOD_System_CreateDSPByPlugin);
+	FMOD_DLSYM_CLIENT(FMOD_System_RegisterCodec);
+	FMOD_DLSYM_CLIENT(FMOD_System_RegisterDSP);
+	/*
+		 Init/Close
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_Init);
+	FMOD_DLSYM_CLIENT(FMOD_System_Close);
+	/*
+		 General post-init system functions
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_Update);
+	FMOD_DLSYM_CLIENT(FMOD_System_Set3DSettings);
+	FMOD_DLSYM_CLIENT(FMOD_System_Get3DSettings);
+	FMOD_DLSYM_CLIENT(FMOD_System_Set3DNumListeners);
+	FMOD_DLSYM_CLIENT(FMOD_System_Get3DNumListeners);
+	FMOD_DLSYM_CLIENT(FMOD_System_Set3DListenerAttributes);
+	FMOD_DLSYM_CLIENT(FMOD_System_Get3DListenerAttributes);
+	FMOD_DLSYM_CLIENT(FMOD_System_Set3DRolloffCallback);
+	FMOD_DLSYM_CLIENT(FMOD_System_Set3DSpeakerPosition);
+	FMOD_DLSYM_CLIENT(FMOD_System_Get3DSpeakerPosition);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetStreamBufferSize);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetStreamBufferSize);
+	/*
+		 System information functions.
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_GetVersion);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetOutputHandle);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetChannelsPlaying);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetHardwareChannels);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetCPUUsage);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetSoundRAM);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetNumCDROMDrives);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetCDROMDriveName);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetSpectrum);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetWaveData);
+	/*
+		 Sound/DSP/Channel/FX creation and retrieval.
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_CreateSound);
+	FMOD_DLSYM_CLIENT(FMOD_System_CreateStream);
+	FMOD_DLSYM_CLIENT(FMOD_System_CreateDSP);
+	FMOD_DLSYM_CLIENT(FMOD_System_CreateDSPByType);
+	FMOD_DLSYM_CLIENT(FMOD_System_CreateChannelGroup);
+	FMOD_DLSYM_CLIENT(FMOD_System_CreateSoundGroup);
+	FMOD_DLSYM_CLIENT(FMOD_System_CreateReverb);
+	FMOD_DLSYM_CLIENT(FMOD_System_PlaySound);
+	FMOD_DLSYM_CLIENT(FMOD_System_PlayDSP);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetChannel);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetMasterChannelGroup);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetMasterSoundGroup);
+	/*
+		 Reverb API
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_SetReverbProperties);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetReverbProperties);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetReverbAmbientProperties);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetReverbAmbientProperties);
+	/*
+		 System level DSP access.
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_GetDSPHead);
+	FMOD_DLSYM_CLIENT(FMOD_System_AddDSP);
+	FMOD_DLSYM_CLIENT(FMOD_System_LockDSP);
+	FMOD_DLSYM_CLIENT(FMOD_System_UnlockDSP);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetDSPClock);
+	/*
+		 Recording API.
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_GetRecordNumDrivers);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetRecordDriverInfo);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetRecordDriverInfoW);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetRecordDriverCaps);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetRecordPosition);
+	FMOD_DLSYM_CLIENT(FMOD_System_RecordStart);
+	FMOD_DLSYM_CLIENT(FMOD_System_RecordStop);
+	FMOD_DLSYM_CLIENT(FMOD_System_IsRecording);
+	/*
+		 Geometry API.
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_CreateGeometry);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetGeometrySettings);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetGeometrySettings);
+	FMOD_DLSYM_CLIENT(FMOD_System_LoadGeometry);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetGeometryOcclusion);
+	/*
+		 Network functions.
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_SetNetworkProxy);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetNetworkProxy);
+	FMOD_DLSYM_CLIENT(FMOD_System_SetNetworkTimeout);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetNetworkTimeout);
+	/*
+		 Userdata set/get.
+	*/
+	FMOD_DLSYM_CLIENT(FMOD_System_SetUserData);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetUserData);
+	FMOD_DLSYM_CLIENT(FMOD_System_GetMemoryInfo);
+#endif // FMOD_SYSTEM
+#ifdef __USE_FMOD_SOUND_H_
+	FMOD_DLSYM_CLIENT(FMOD_Sound_Release);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetSystemObject);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_Lock);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_Unlock);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetDefaults);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetDefaults);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetVariations);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetVariations);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_Set3DMinMaxDistance);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_Get3DMinMaxDistance);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_Set3DConeSettings);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_Get3DConeSettings);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_Set3DCustomRolloff);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_Get3DCustomRolloff);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetSubSound);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetSubSound);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetSubSoundParent);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetSubSoundSentence);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetName);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetLength);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetFormat);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetNumSubSounds);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetNumTags);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetTag);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetOpenState);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_ReadData);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SeekData);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetSoundGroup);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetSoundGroup);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetNumSyncPoints);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetSyncPoint);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetSyncPointInfo);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_AddSyncPoint);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_DeleteSyncPoint);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetMode);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetMode);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetLoopCount);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetLoopCount);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetLoopPoints);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetLoopPoints);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetMusicNumChannels);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetMusicChannelVolume);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetMusicChannelVolume);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetMusicSpeed);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetMusicSpeed);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_SetUserData);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetUserData);
+	FMOD_DLSYM_CLIENT(FMOD_Sound_GetMemoryInfo);
+#endif // __USE_FMOD_SOUND_H_
+#ifdef __USE_FMOD_CHANNEL_H_
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetSystemObject);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Stop);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetPaused);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetPaused);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetVolume);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetVolume);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetFrequency);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetFrequency);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetPan);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetPan);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetDelay);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetDelay);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetSpeakerMix);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetSpeakerMix);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetSpeakerLevels);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetSpeakerLevels);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetInputChannelMix);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetInputChannelMix);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetMute);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetMute);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetPriority);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetPriority);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetPosition);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetPosition);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetReverbProperties);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetReverbProperties);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetLowPassGain);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetLowPassGain);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetChannelGroup);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetChannelGroup);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetCallback);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DAttributes);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DAttributes);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DMinMaxDistance);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DMinMaxDistance);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DConeSettings);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DConeSettings);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DConeOrientation);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DConeOrientation);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DCustomRolloff);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DCustomRolloff);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DOcclusion);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DOcclusion);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DSpread);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DSpread);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DPanLevel);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DPanLevel);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DDopplerLevel);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DDopplerLevel);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Set3DDistanceFilter);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_Get3DDistanceFilter);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetDSPHead);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_AddDSP);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_IsPlaying);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_IsVirtual);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetAudibility);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetCurrentSound);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetSpectrum);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetWaveData);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetIndex);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetMode);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetMode);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetLoopCount);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetLoopCount);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetLoopPoints);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetLoopPoints);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_SetUserData);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetUserData);
+	FMOD_DLSYM_CLIENT(FMOD_Channel_GetMemoryInfo);
+#endif // __USE_FMOD_CHANNEL_H_
+
+
+}
+
+void FMOD_OnUnload(HMODULE hFMODEx)
+{
+
+
+}
+
+static FMOD_RESULT F_CALLBACK EmptyFMODCallback(FMOD_SYSTEM* system, FMOD_SYSTEM_CALLBACKTYPE type, void* commanddata1, void* commanddata2)
+{
+	return FMOD_OK;
+}
+
+void FMOD_Init()
+{
+	g_hFMODEx = (HMODULE)Sys_LoadModule("svencoop\\fmodex.dll");
+
+	if (!g_hFMODEx)
+	{
+		SYS_ERROR("Could not load fmodex.dll");
+		return;
+	}
+
+	FMOD_OnLoad(g_hFMODEx);
+
+	using namespace FModEngine;
+
+	if (!g_pFModSystem)
+	{
+		g_pFModSystem = new CFModSystem();
+		g_pFModSystem->SetCallback(EmptyFMODCallback);
+		g_pFModSystem->SetOutput(FMOD_OUTPUTTYPE_AUTODETECT);
+		auto result = g_pFModSystem->Init(SYSTEM_MAXCHANNEL, FMOD_INIT_NORMAL, 0);
+
+		if (result != FMOD_OK)
+		{
+			if (g_pFModSystem)
+			{
+				g_pFModSystem->Release();
+				g_pFModSystem = NULL;
+			}
+
+			SYS_ERROR("Could not init g_pFModSystem!");
+		}
+	}
+}
+
+void FMOD_Shutdown()
+{
+	using namespace FModEngine;
+
+	if (g_pFModSystem)
+	{
+		g_pFModSystem->Close();
+		delete g_pFModSystem;
+		g_pFModSystem = nullptr;
+	}
+
+	if (g_hFMODEx)
+	{
+		FMOD_OnUnload(g_hFMODEx);
+
+		Sys_FreeModule((HINTERFACEMODULE)g_hFMODEx);
+
+		g_hFMODEx = NULL;
+	}
 }

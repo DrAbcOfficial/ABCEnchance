@@ -68,7 +68,7 @@ public:
 	void StopMusic();
 	void NextMusic();
 	void PauseMusic();
-	bool IsPaused();
+	bool IsPaused() const;
 	void SetVolume(float vol);
 	bool SetPlayPos(unsigned long offset);
 

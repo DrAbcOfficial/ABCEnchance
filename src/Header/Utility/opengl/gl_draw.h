@@ -10,4 +10,4 @@ void ScaleColors(int& r, int& g, int& b, int a);
 void DrawQuadPos(int x, int y, int w, int h);
 void DrawQuad(int w, int h);
 void DrawScreenQuad();
-void DrawGaussianBlur(GLint tex, float ratio, int w, int h);
+void DrawKawaseBlur(GLint tex, size_t blurness, float offsetw, float offseth, int w, int h);

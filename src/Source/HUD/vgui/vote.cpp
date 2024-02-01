@@ -7,6 +7,7 @@
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
+#include <vgui/IGameUIFuncs.h>
 #include <vgui_controls/Label.h>
 #include "vgui_controls/ImagePanel.h"
 
@@ -14,7 +15,6 @@
 #include <local.h>
 
 #include "Viewport.h"
-#include "BaseUI.h"
 
 #include "vote.h"
 
@@ -29,6 +29,7 @@
 
 using namespace vgui;
 extern vgui::HScheme GetViewPortBaseScheme();
+extern IGameUIFuncs* GameUIFuncs();
 
 CVotePanel::CVotePanel()
 	: BaseClass(nullptr, VIEWPORT_VOTE_NAME){
@@ -124,10 +125,10 @@ void CVotePanel::StartVote(char* szContent, char* szYes, char* szNo, int iVoteTy
 
 #define BUFSIZE 16
 	wchar_t buf[BUFSIZE];
-	Q_UTF8ToUnicode(gameuifuncs->Key_NameForKey(m_iYes), buf, BUFSIZE);
+	Q_UTF8ToUnicode(GameUIFuncs()->Key_NameForKey(m_iYes), buf, BUFSIZE);
 	std::wstring wszYes = buf;
 	wszYes += L" ";
-	Q_UTF8ToUnicode(gameuifuncs->Key_NameForKey(m_iNo), buf, BUFSIZE);
+	Q_UTF8ToUnicode(GameUIFuncs()->Key_NameForKey(m_iNo), buf, BUFSIZE);
 	std::wstring wszNo = buf;
 	wszNo += L" ";
 	switch (iVoteType){

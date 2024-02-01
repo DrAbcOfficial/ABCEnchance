@@ -29,7 +29,7 @@ public:
 			}
 		);
 	}
-	~CTaskItem() {
+	virtual ~CTaskItem() {
 		if (m_pThread.joinable())
 			m_pThread.join();
 	}
@@ -72,6 +72,7 @@ public:
 	bool Has(ITaskItem* check);
 	//check per frame
 	void CheckAll();
+	void Shutdown();
 private:
 	std::list<ITaskItem*> m_aryList;
 	std::list<ITaskItem*> m_aryPending;

@@ -1,10 +1,11 @@
 #include <metahook.h>
+#include "plugins.h"
 #include "exportfuncs.h"
 #include "ClientParticleMan.h"
-#include "curl.h"
+#include "httpclient.h"
 #include "soundengine.h"
+#include "VGUI2ExtensionImport.h"
 #include <vgui_controls/Controls.h>
-#include <VGUI2/ClientVGUI.h>
 
 cl_enginefunc_t gEnginefuncs;
 mh_interface_t *g_pInterface;
@@ -29,6 +30,9 @@ DWORD g_dwEngineRdataSize;
 int g_iEngineType;
 bool g_IsClientVGUI2 = false;
 
+void FMOD_Init();
+void FMOD_Shutdown();
+
 void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave){
 	g_pInterface = pInterface;
 	g_pMetaHookAPI = pAPI;
@@ -47,15 +51,22 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	g_dwEngineRdataBase = g_pMetaHookAPI->GetSectionByName(g_dwEngineBase, ".rdata\x0\x0", &g_dwEngineRdataSize);
 
 	memcpy(&gEngfuncs, pEngfuncs, sizeof(gEngfuncs));
+
 	if (g_iEngineType != ENGINE_SVENGINE)
-		g_pMetaHookAPI->SysError("%s can only run in SvenEngine!\nEngine type: %d\nEngine buildnum: %d", 
+	{
+		SYS_ERROR("%s can only run in SvEngine!\nEngine type: %d\nEngine buildnum: %d",
 			"ABCEnchance.dll", g_iEngineType, g_dwEngineBuildnum);
+	}
 
 	CheckOtherPlugin();
 	FillEngineAddress();
 	//SVC_FillAddress();
 	InstallEngineHook();
-	BaseUI_InstallHook();
+
+	VGUI2Extension_Init();
+	ClientVGUI_InstallHooks();
+	BaseUI_InstallHooks();
+	GameUI_InstallHooks();
 }
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
@@ -72,6 +83,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_GetStudioModelInterface = HUD_GetStudioModelInterface;
 	pExportFunc->HUD_VidInit = HUD_VidInit;
 	pExportFunc->HUD_Redraw = HUD_Redraw;
+	pExportFunc->HUD_Shutdown = HUD_Shutdown;
 	pExportFunc->IN_MouseEvent = IN_MouseEvent;
 	pExportFunc->HUD_Key_Event = HUD_KeyEvent;
 	pExportFunc->CL_CreateMove = CL_CreateMove;
@@ -86,20 +98,21 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 
 	FillAddress();
 	InstallClientHook();
-	ClientVGUIInstallHook();
-	InitCreateParticleMan();
-	LoadLibcurl();
-	FModEngine::InitFModLibrary();
+	FMOD_Init();
+	LoadParticleMan();
+	CHttpClient::Init();
 }
 void IPluginsV4::Shutdown(void){
-	HUD_Clear();
+	
 }
 void IPluginsV4::ExitGame(int iResult){
-	UninstallClientHook();
+
 	UninstallEngineHook();
-	FreeParticleMan();
-	CloseLibcurl();
-	FModEngine::FreeFModLibrary();
+
+	GameUI_UninstallHooks();
+	BaseUI_UninstallHooks();
+	ClientVGUI_UninstallHooks();
+	VGUI2Extension_Shutdown();
 }
 
 #define STR1(R) #R

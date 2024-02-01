@@ -67,7 +67,6 @@ typedef struct{
 
 	void* (__fastcall* CBasePanel_ctor)(void* pthis, int dummy);
 	void(__fastcall* CBasePanel_PaintBackground)(void* pthis, int dummy);
-	void (__fastcall* CBasePanel_RunMenuCommand)(void* pthis, int dummy, const char* command);
 
 	void(__fastcall* CGameUI_Start)(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem);
 

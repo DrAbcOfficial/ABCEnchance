@@ -16,134 +16,91 @@
 
 #include <vgui.h>
 #include "ClientVGUI.h"
+#include <IVGUI2Extension.h>
 
 namespace vgui{
 	bool VGui_InitInterfacesList(const char* moduleName, CreateInterfaceFn* factoryList, int numFactories);
 }
 
-extern void SysError(const char* message ...);
-void ClientVGUIInit(CreateInterfaceFn* factories, int count) {
-	vgui::VGui_InitInterfacesList("ABCEnchance", factories, count);
-	vgui::HScheme iScheme = vgui::scheme()->LoadSchemeFromFile("abcenchance/ABCEnchance.res", "ABCEnchance");
-	int iPluginVersion = 0;
-	if (iScheme > 0) {
-		pSchemeData = vgui::scheme()->GetIScheme(vgui::scheme()->GetScheme("ABCEnchance"));
-		iPluginVersion = atoi(pSchemeData->GetResourceString("Version"));
-	}
-	else {
-		SysError("Ooops! Can not load resource file!\nHave you installed it correctly?\n");
-		return;
-	}
-	if (iPluginVersion < PLUGIN_VERSION)
-		SysError("Mismatched Resource file: abcenchance/ABCEnchance.res\nRequire Version: %d\nYour Version: %d\n",
-			PLUGIN_VERSION, iPluginVersion);
-	char localizePath[260];
-	snprintf(localizePath, sizeof(localizePath), "abcenchance/localize/%s.txt",
-		(!strlen(pSchemeData->GetResourceString("Language"))) ? "%language%" : pSchemeData->GetResourceString("Language"));
-	if (!vgui::localize()->AddFile(g_pFileSystem, localizePath))
-		SysError("Missing Localize file: %s\n", localizePath);
-}
-void ClientVGUIShutdown(void) {
-	if (g_pViewPort) {
-		delete g_pViewPort;
-		g_pViewPort = nullptr;
-	}
-}
-
-static void(__fastcall* m_pfnCClientVGUI_Initialize)(void* pthis, int, CreateInterfaceFn* factories, int count) = NULL;
-static void(__fastcall* m_pfnCClientVGUI_Start)(void* pthis, int) = NULL;
-static void(__fastcall* m_pfnCClientVGUI_SetParent)(void* pthis, int, vgui::VPANEL parent) = NULL;
-static bool(__fastcall* m_pfnCClientVGUI_UseVGUI1)(void* pthis, int) = NULL;
-static void(__fastcall* m_pfnCClientVGUI_HideScoreBoard)(void* pthis, int) = NULL;
-static void(__fastcall* m_pfnCClientVGUI_HideAllVGUIMenu)(void* pthis, int) = NULL;
-static void(__fastcall* m_pfnCClientVGUI_ActivateClientUI)(void* pthis, int) = NULL;
-static void(__fastcall* m_pfnCClientVGUI_HideClientUI)(void* pthis, int) = NULL;
-
-class CClientVGUI : public IClientVGUI{
+class CVGUI2Extension_ClientVGUICallbacks : public IVGUI2Extension_ClientVGUICallbacks {
 public:
-	virtual void Initialize(CreateInterfaceFn* factories, int count) {
-		m_pfnCClientVGUI_Initialize(this, 0, factories, count);
-		ClientVGUIInit(factories, count);
+	virtual void Initialize(CreateInterfaceFn* factories, int count) override {
+		vgui::VGui_InitInterfacesList("ABCEnchance", factories, count);
+		vgui::HScheme iScheme = vgui::scheme()->LoadSchemeFromFile("abcenchance\\ABCEnchance.res", "ABCEnchance");
+		int iPluginVersion = 0;
+		if (iScheme != 0) {
+			pSchemeData = vgui::scheme()->GetIScheme(vgui::scheme()->GetScheme("ABCEnchance"));
+			iPluginVersion = atoi(pSchemeData->GetResourceString("Version"));
+		}
+		else{
+			SYS_ERROR("Could not load \"abcenchance\\ABCEnchance.res\"!\nHave you installed it correctly?\n");
+			return;
+		}
+
+		if (iPluginVersion < PLUGIN_VERSION){
+			SYS_ERROR("Resource version mismatch: \"abcenchance\\ABCEnchance.res\" too old.\nRequired Version: %d\nYour Version: %d\n",
+				PLUGIN_VERSION, iPluginVersion);
+			return;
+		}
+
+		if (g_pFileSystem){
+			if (!vgui::localize()->AddFile(g_pFileSystem, "abcenchance/localize/%language%.txt")){
+				if (!vgui::localize()->AddFile(g_pFileSystem, "abcenchance/localize/english.txt"))
+					SYS_ERROR("Failed to load abcenchance/localize/english.txt");
+			}
+		}
 	}
-
-	virtual void Start(void) {
-		m_pfnCClientVGUI_Start(this, 0);
-
+	virtual void Start(void) override {
 		g_pViewPort = new vgui::CViewport();
 		g_pViewPort->Start();
 	}
-	virtual void SetParent(vgui::VPANEL parent) {
-		m_pfnCClientVGUI_SetParent(this, 0, parent);
-
+	virtual void SetParent(vgui::VPANEL parent) override {
 		g_pViewPort->SetParent(parent);
 	}
-	virtual bool UseVGUI1(void) {
-		return m_pfnCClientVGUI_UseVGUI1(this, 0);
+	virtual void UseVGUI1(VGUI2Extension_CallbackContext* CallbackContext) override {
 	}
-	virtual void HideScoreBoard(void) {
-		m_pfnCClientVGUI_HideScoreBoard(this, 0);
-	}
-	virtual void HideAllVGUIMenu(void) {
-		m_pfnCClientVGUI_HideAllVGUIMenu(this, 0);
-	}
-	virtual void ActivateClientUI(void) {
-		m_pfnCClientVGUI_ActivateClientUI(this, 0);
+	virtual void HideScoreBoard(VGUI2Extension_CallbackContext* CallbackContext) override {
 
+	}
+	virtual void HideAllVGUIMenu(VGUI2Extension_CallbackContext* CallbackContext) override {
+	}
+	virtual void ActivateClientUI(VGUI2Extension_CallbackContext* CallbackContext) override {
 		g_pViewPort->ActivateClientUI();
 	}
-	virtual void HideClientUI(void) {
-		m_pfnCClientVGUI_HideClientUI(this, 0);
-
+	virtual void HideClientUI(VGUI2Extension_CallbackContext* CallbackContext) override {
 		g_pViewPort->HideClientUI();
 	}
-	virtual void unknown(void) {
-
+	virtual void Shutdown() override {
+		if (g_pViewPort) {
+			delete g_pViewPort;
+			g_pViewPort = nullptr;
+		}
 	}
-	virtual void Shutdown(void) {
-
+	virtual int GetAltitude() const override{
+		return 0;
 	}
 };
-IClientVGUI* g_pClientVGUI = nullptr;
-static CClientVGUI s_ClientVGUI;
-extern void AddHook(hook_t* hook);
+static CVGUI2Extension_ClientVGUICallbacks s_ClientVGUICallbacks;
 
-vgui::ISchemeManager2* g_pVGuiSchemeManager2;
-vgui::ISurface2* g_pVGuiSurface;
+extern IVGUI2Extension* VGUI2Extension();
 
-void ClientVGUIInstallHook(void){
-	CreateInterfaceFn ClientVGUICreateInterface = (CreateInterfaceFn)Sys_GetFactory((HINTERFACEMODULE)g_metaplugins.captionmod.info.PluginModuleBase);
-	if (ClientVGUICreateInterface) {
-		g_pClientVGUI = (IClientVGUI*)ClientVGUICreateInterface(CLIENTVGUI_INTERFACE_VERSION, NULL);
-		if (g_pClientVGUI) {
-			DWORD* pVFTable = *(DWORD**)&s_ClientVGUI;
-			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 1, (void*)pVFTable[1], (void**)&m_pfnCClientVGUI_Initialize));
-			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 2, (void*)pVFTable[2], (void**)&m_pfnCClientVGUI_Start));
-			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 3, (void*)pVFTable[3], (void**)&m_pfnCClientVGUI_SetParent));
-			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 7, (void*)pVFTable[7], (void**)&m_pfnCClientVGUI_ActivateClientUI));
-			AddHook(g_pMetaHookAPI->VFTHook(g_pClientVGUI, 0, 8, (void*)pVFTable[8], (void**)&m_pfnCClientVGUI_HideClientUI));
-			g_IsClientVGUI2 = true;
-		}
-		g_pVGuiSurface = (vgui::ISurface2*)ClientVGUICreateInterface(VGUI_SURFACE2_INTERFACE_VERSION, NULL);
-		g_pVGuiSchemeManager2 = (vgui::ISchemeManager2*)ClientVGUICreateInterface(VGUI_SCHEME2_INTERFACE_VERSION, NULL);
-		if (!g_pVGuiSurface || !g_pVGuiSchemeManager2)
-			SysError("Your CaptionMod version are outdate, please update it and run again.");
-	}
+void ClientVGUI_InstallHooks(void) {
+	VGUI2Extension()->RegisterClientVGUICallbacks(&s_ClientVGUICallbacks);
+}
+void ClientVGUI_UninstallHooks(void){
+	VGUI2Extension()->UnregisterClientVGUICallbacks(&s_ClientVGUICallbacks);
 }
 
 //vgui2
-
 bool g_bIMEComposing = false;
 double g_flImeComposingTime = 0;
-
 //fuck me
 bool IsOSX(){
 	return false;
 }
-
 double GetAbsoluteTime() {
-	return gEngfuncs.GetAbsoluteTime();
+	return vgui::surface()->GetAbsoluteTime();
 }
-
 ICommandLine* CommandLine(void) {
 	return g_pInterface->CommandLine;
 }

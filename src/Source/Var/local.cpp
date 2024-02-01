@@ -54,11 +54,3 @@ void VEC_WorldToScreen(vec3_t world, vec3_t screen ) {
 float ClientTime() {
 	return gEngfuncs.GetClientTime();
 }
-void SysError(const char* message ...) {
-	char buf[2048] = { 0 };
-	va_list pArgs;
-	va_start(pArgs, message);
-	vsprintf(buf, message, pArgs);
-	va_end(pArgs);
-	g_pMetaHookAPI->SysError("[ABCEnchance]:\n%s", buf);
-}

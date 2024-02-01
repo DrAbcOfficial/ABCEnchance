@@ -8,7 +8,8 @@
 #include "triangleapi.h"
 #include "pm_movevars.h"
 #include "cvardef.h"
-#include "capstone.h"
+#include "httpclient.h"
+
 #include "CVector.h"
 #include "Task.h"
 //Def
@@ -46,8 +47,6 @@
 #define _STR(s) #s
 #define STR(s) _STR(s)
 
-extern void SysError(const char* message ...);
-
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 metaplugins_t g_metaplugins;
@@ -70,7 +69,8 @@ struct playerppmoveinfo {
 
 //FINAL SHIT
 void R_NewMap(void){
-	ClearExtraPrecache();
+	//これ　勣らないから
+	//ClearExtraPrecache();
 
 	gCustomHud.HUD_Reset();
 	EfxReset();
@@ -144,11 +144,16 @@ void R_ForceCVars(qboolean mp){
 		return;
 	gHookFuncs.R_ForceCVars(mp);
 }
-model_t* CL_GetModelByIndex (int index){
-	if (index >= EXTRPRECACHE_INDEX_BASE && index < EXTRPRECACHE_INDEX_BASE + MAX_EXTRA_PRECACHENUM)
-		return g_ExtraPreacheModel[index - EXTRPRECACHE_INDEX_BASE];
+
+model_t* CL_GetModelByIndex (int index)
+{
+	auto extra = GetExtraModelByModelIndex(index);
+	if (extra)
+		return extra;
+
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
+
 void __fastcall CClient_SoundEngine_PlayFMODSound(void* pEngine, int dummy, int param_1, int param_2, float* param_3, int channel,
 	char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
 	float param_11) {
@@ -175,7 +180,9 @@ void CheckOtherPlugin(){
 		g_metaplugins.captionmod.has = true;
 	}
 	else
-		SysError("This plugin relay on Captionmod to work, please add Captionmod.dll in your plugin.lst");
+	{
+		SYS_ERROR("The \"CaptionMod.dll\" is required!\nPlease add CaptionMod.dll in your plugin.lst");
+	}
 }
 void FillEngineAddress() {
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
@@ -295,18 +302,22 @@ void UninstallClientHook() {
 	}
 	aryClientHook.clear();
 }
-
-void CheckAsset() {
-	auto c = gEngfuncs.COM_LoadFile(const_cast<char*>("abcenchance/ABCEnchance.res"), 5, 0);
-	if(!c)
-		SysError("Missing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
-	gEngfuncs.COM_FreeFile(c);
+void CheckAsset()
+{
+	if (!g_pFileSystem->FileExists("abcenchance/ABCEnchance.res"))
+	{
+		SYS_ERROR("Missing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
+		return;
+	}
 }
-void GL_Init(void){
+
+void GL_Init(void)
+{
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
+
 	auto err = glewInit();
 	if (GLEW_OK != err){
-		SysError("glewInit failed, %s", glewGetErrorString(err));
+		SYS_ERROR("glewInit failed, %s", glewGetErrorString(err));
 		return;
 	}
 	GL_ShaderInit();
@@ -370,10 +381,29 @@ void HUD_Init(void){
 	if (g_pParticleMan)
 		g_pParticleMan->ResetParticles();
 }
+
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
 	memcpy(&IEngineStudio, pstudio, sizeof(IEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
+
+void FMOD_Shutdown();
+
+void HUD_Shutdown(void){
+	gExportfuncs.HUD_Shutdown();
+
+	gCustomHud.HUD_Clear();
+	GL_FreeShaders();
+	ClearExtraPrecache();
+
+	GetTaskManager()->Shutdown();
+
+	FMOD_Shutdown();
+	FreeParticleMan();
+	UninstallClientHook();
+	CHttpClient::ShutDown();
+}
+
 int HUD_VidInit(void){
 	//Search and destory vanillia HUDs
 	if (g_dwHUDListAddr) {
@@ -395,6 +425,7 @@ int HUD_VidInit(void){
 	}
 	if (g_pViewPort)
 		g_pViewPort->VidInit();
+
 	//Fillup Default CVars
 	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
 	gCVars.pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
@@ -421,6 +452,7 @@ void HUD_Frame(double frametime) {
 	gExportfuncs.HUD_Frame(frametime);
 	//task
 	GetTaskManager()->CheckAll();
+	CHttpClient::RunFrame();
 }
 int HUD_Redraw(float time, int intermission){
 	gCustomHud.SetBaseHudActivity();
@@ -574,9 +606,4 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	return g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding) ? 
 		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
-}
-void HUD_Clear(void){
-	gCustomHud.HUD_Clear();
-	GL_FreeShaders();
-	ClearExtraPrecache();
 }

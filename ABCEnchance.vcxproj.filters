@@ -90,9 +90,6 @@
     <Filter Include="vgui2">
       <UniqueIdentifier>{4482ca35-4aaa-4534-9fc7-8485e221c687}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vgui2\interface">
-      <UniqueIdentifier>{57059889-dcf1-4422-bbb4-a16b2ded33b6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="vgui2\gameui">
       <UniqueIdentifier>{42740f0e-8fa8-480d-984a-fc1be9d4e576}</UniqueIdentifier>
     </Filter>
@@ -117,9 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
-      <Filter>SourceSDK</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceSDK\InputWin32.cpp">
       <Filter>SourceSDK</Filter>
     </ClCompile>
     <ClCompile Include="SourceSDK\mathlib\3dnow.cpp">
@@ -213,9 +207,6 @@
       <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\Border.cpp">
-      <Filter>vgui2</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\VPanelWrapper.cpp">
       <Filter>vgui2</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\scoreboard.cpp">
@@ -365,16 +356,10 @@
     <ClCompile Include="vpx\vpx_image.cpp">
       <Filter>vpx</Filter>
     </ClCompile>
-    <ClCompile Include="VGUI2\BaseUI.cpp">
-      <Filter>vgui2\gameui</Filter>
-    </ClCompile>
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp">
       <Filter>vgui2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp">
-      <Filter>vgui2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="VGUI2\GameUI\GameUI.cpp">
       <Filter>vgui2\gameui</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
@@ -668,9 +653,6 @@
     <ClCompile Include="src\Source\crypto.cpp">
       <Filter>Public\Source\LIb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\curl.cpp">
-      <Filter>Public\Source\LIb</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\mymathlib.cpp">
       <Filter>Public\Source\LIb</Filter>
     </ClCompile>
@@ -689,6 +671,24 @@
     <ClCompile Include="vgui_controls\GroupBox.cpp">
       <Filter>vgui_controls\base</Filter>
     </ClCompile>
+    <ClCompile Include="vgui2\GameUI\NeteaseMusicDialog.cpp">
+      <Filter>vgui2\gameui</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui_controls\ImageButton.cpp">
+      <Filter>vgui_controls\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\httpclient.cpp">
+      <Filter>Public\Source\LIb</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui2\VGUI2ExtensionImport.cpp">
+      <Filter>vgui2</Filter>
+    </ClCompile>
+    <ClCompile Include="vgui2\BaseUI.cpp">
+      <Filter>vgui2</Filter>
+    </ClCompile>
+    <ClCompile Include="VGUI2\GameUI\GameUI.cpp">
+      <Filter>vgui2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -701,9 +701,6 @@
       <Filter>SourceSDK</Filter>
     </ClInclude>
     <ClInclude Include="SourceSDK\filesystem_helpers.h">
-      <Filter>SourceSDK</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceSDK\OfflineMode.h">
       <Filter>SourceSDK</Filter>
     </ClInclude>
     <ClInclude Include="SourceSDK\winlite.h">
@@ -1069,12 +1066,6 @@
     <ClInclude Include="src\Header\HUD\vgui\effect.h">
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
-    <ClInclude Include="VGUI2\interface\IGameConsole.h">
-      <Filter>vgui2\interface</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\interface\IViewportPanel.h">
-      <Filter>vgui2\interface</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Var\StudioModelRenderer.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
@@ -1120,19 +1111,10 @@
     <ClInclude Include="vpx\memle.h">
       <Filter>vpx</Filter>
     </ClInclude>
-    <ClInclude Include="VGUI2\interface\IVanilliaPanel.h">
-      <Filter>vgui2\interface</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\BaseUI.h">
-      <Filter>vgui2\gameui</Filter>
-    </ClInclude>
     <ClInclude Include="VGUI2\GameUI\BasePanel.h">
       <Filter>vgui2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\GameConsole.h">
-      <Filter>vgui2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="VGUI2\GameUI\GameUI.h">
       <Filter>vgui2\gameui</Filter>
     </ClInclude>
     <ClInclude Include="src\Fmod\fmod.h">
@@ -1501,9 +1483,6 @@
     <ClInclude Include="src\Header\Utility\crypto.h">
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Utility\curl.h">
-      <Filter>Public\Header\LIb</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Utility\formatter.h">
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
@@ -1527,6 +1506,18 @@
     </ClInclude>
     <ClInclude Include="vgui_controls\GroupBox.h">
       <Filter>vgui_controls\base</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui2\GameUI\NeteaseMusicDialog.h">
+      <Filter>vgui2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui_controls\ImageButton.h">
+      <Filter>vgui_controls\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\httpclient.h">
+      <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui2\VGUI2ExtensionImport.h">
+      <Filter>vgui2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

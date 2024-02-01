@@ -17,11 +17,11 @@
 #define GAUSS_LASER_S_WIDTH 4
 
 struct EfxVarible{
-	int iGaussBeam;
-	int iGaussWaveBeam;
-	int iGaussChargeSprite;
-	float flGaussStartChargeTime;
-	model_t* iGaussLoophole;
+	int iGaussBeam{};
+	int iGaussWaveBeam{};
+	int iGaussChargeSprite{};
+	int iGaussLoophole{};
+	float flGaussStartChargeTime{};
 	mstudioevent_t pGaussFireSoundEvent = { 0, 5004, 0, "weapons/gauss2.wav" };
 
 	int iGunSmoke;
@@ -31,7 +31,7 @@ void EfxReset() {
 	gEfxVarible.iGaussBeam = PrecacheExtraModel("sprites/laserbeam.spr");
 	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel("abcenchance/spr/gauss_wave.spr");
 	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel("abcenchance/spr/gauss_spark.spr");
-	gEfxVarible.iGaussLoophole = gEngfuncs.hudGetModelByIndex(PrecacheExtraModel("abcenchance/mdl/gauss_loophole.mdl"));
+	gEfxVarible.iGaussLoophole = PrecacheExtraModel("abcenchance/mdl/gauss_loophole.mdl");
 	gEfxVarible.iGunSmoke = PrecacheExtraModel("sprites/Puff1.spr");
 }
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size){
@@ -112,7 +112,7 @@ TEMPENTITY* R_TempModel(float* pos, float* dir, float* angles, float life, int m
 }
 
 void CreateGaussLoophole(pmtrace_t* tr) {
-	TEMPENTITY* pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(tr->endpos, gEfxVarible.iGaussLoophole);
+	TEMPENTITY* pTemp = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(tr->endpos, gEngfuncs.hudGetModelByIndex(gEfxVarible.iGaussLoophole));
 	if (!pTemp)
 		return;
 	mathlib::VectorAngles(tr->plane.normal, pTemp->entity.angles);

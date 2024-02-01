@@ -21,7 +21,7 @@ using namespace vgui;
 //-----------------------------------------------------------------------------
 GaussianBlurPanel::GaussianBlurPanel(Panel *parent, const char *name) : Panel(parent, name){
 	glGenFramebuffers(1, &m_hBufferFBO);
-	m_hBufferTex = GL_GenTextureRGBA8(ScreenWidth() / 2, ScreenHeight() / 2);
+	m_hBufferTex = GL_GenTextureRGB8(ScreenWidth() / 2, ScreenHeight() / 2);
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hBufferTex, 0);
@@ -36,50 +36,57 @@ GaussianBlurPanel::~GaussianBlurPanel(){
 }
 
 
-float GaussianBlurPanel::GetBlurRatio(){
-	return m_flRatio;
+size_t GaussianBlurPanel::GetBlurness(){
+	return m_iBlurIteration;
 }
 
-void GaussianBlurPanel::SetBlurRatio(float f){
-	m_flRatio = f;
+void GaussianBlurPanel::SetBlurness(size_t f){
+	m_iBlurIteration = f;
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
 void GaussianBlurPanel::PaintBackground(){
-	int hw = ScreenWidth() / 2;
-	int hh = ScreenHeight() / 2;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hBufferFBO, ScreenWidth(), ScreenHeight(), hw, hh);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
-
-	glPushAttrib(GL_VIEWPORT_BIT);
-	glViewport(0, 0, hw, hh);
-	for (size_t i = 0; i < m_iBlurness; i++) {
-		glEnable(GL_TEXTURE_2D);
-		glBind(m_hBufferTex);
-		GL_UseProgram(pp_gaussianblur.program);
-		GL_Uniform1f(pp_gaussianblur.du, m_flRatio);
-		GL_Uniform2f(pp_gaussianblur.res, hw, hh);
+	static auto rendershader = [](pp_kawaseblur_program_t shader, float offset, int w, int h) {
+		GL_UseProgram(shader.program);
+		GL_Uniform2f(shader.offset, offset, offset);
+		GL_Uniform2f(shader.iResolution, w, h);
+		GL_Uniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
 		glColor4ub(255, 255, 255, 255);
 		glBegin(GL_QUADS);
 		glTexCoord2i(0, 0);
 		glVertex2i(0, 0);
 		glTexCoord2i(0, 1);
-		glVertex2i(0, ScreenHeight());
+		glVertex2i(0, h);
 		glTexCoord2i(1, 1);
-		glVertex2i(ScreenWidth(), ScreenHeight());
+		glVertex2i(w, h);
 		glTexCoord2i(1, 0);
-		glVertex2i(ScreenWidth(), 0);
+		glVertex2i(w, 0);
 		glEnd();
 		GL_UseProgram(0);
-		glDisable(GL_TEXTURE_2D);
+	};
+
+	int hw = ScreenWidth() / 2;
+	int hh = ScreenHeight() / 2;
+	
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hBufferFBO, ScreenWidth(), ScreenHeight(), hw, hh);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
+
+	glPushAttrib(GL_VIEWPORT_BIT);
+	glViewport(-hw, -hh, ScreenWidth(), ScreenHeight());
+	glEnable(GL_TEXTURE_2D);
+	glBind(m_hBufferTex);
+	for (size_t i = 0; i < m_iBlurIteration; i++) {
+		rendershader(pp_kawaseblur_down, m_iBlurOffset, hw, hh);
+	}
+	for (size_t i = 0; i < m_iBlurIteration; i++) {
+		rendershader(pp_kawaseblur_up, m_iBlurOffset, hw, hh);
 	}
 	glPopAttrib();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 
-	glEnable(GL_TEXTURE_2D);
 	glBind(m_hBufferTex);
 	Color bgcolor = GetBgColor();
 	glColor4ub(bgcolor.r(), bgcolor.g(), bgcolor.b(), bgcolor.a());
@@ -111,6 +118,6 @@ void GaussianBlurPanel::PaintBackground(){
 //-----------------------------------------------------------------------------
 void GaussianBlurPanel::ApplySettings(KeyValues *inResourceData){
 	BaseClass::ApplySettings(inResourceData);
-	m_flRatio = inResourceData->GetFloat("ratio", 1.0f);
-	m_iBlurness = inResourceData->GetInt("blurness", 16);
+	m_iBlurOffset = inResourceData->GetInt("offset", 5);
+	m_iBlurIteration = inResourceData->GetInt("iteration", 3);
 }

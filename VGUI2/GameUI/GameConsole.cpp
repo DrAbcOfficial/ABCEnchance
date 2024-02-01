@@ -1,11 +1,10 @@
 #include <metahook.h>
+#include "plugins.h"
 
 #include "GameConsole.h"
 #include <IGameConsole.h>
 
 #include <vgui_controls/consoledialog.h>
-
-extern void SysError(const char* message ...);
 
 vgui::CConsoleDialog* g_ConsoleDialog;
 
@@ -53,7 +52,7 @@ public:
 		va_end(args);
 	}
 	//virtual void ColorPrintf(Color &clr) = 0;	// Doesn't exist on GS
-	virtual void SetParent(int parent) {
+	virtual void SetParent(vgui::VPANEL parent) {
 		g_ConsoleDialog->SetParent(parent);
 	}
 };
@@ -63,21 +62,31 @@ static CGameConsole s_GameConsole;
 IGameConsole* gameconsolefuncs;
 void GameConsole_InstallHook(void){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
-	if (hGameUI) {
-		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
-		gameconsolefuncs = (IGameConsole*)fnCreateInterface(GAMECONSOLE_INTERFACE_VERSION_GS, NULL);
-		DWORD* pVFTable = *(DWORD**)&s_GameConsole;
-		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 1, (void*)pVFTable[1], (void**)&m_pfnCGameConsole_Activate));
-		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 2, (void*)pVFTable[2], (void**)&m_pfnCGameConsole_Initialize));
-		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 3, (void*)pVFTable[3], (void**)&m_pfnCGameConsole_Hide));
-		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 4, (void*)pVFTable[4], (void**)&m_pfnCGameConsole_Clear));
-		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 5, (void*)pVFTable[5], (void**)&m_pfnCGameConsole_IsConsoleVisible));
-		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 6, (void*)pVFTable[6], (void**)&m_pfnCGameConsole_Printf));
-		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 7, (void*)pVFTable[7], (void**)&m_pfnCGameConsole_DPrintf));
-		AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 8, (void*)pVFTable[8], (void**)&m_pfnCGameConsole_SetParent));
+	if (!hGameUI) {
+		SYS_ERROR("Failed to locate GameUI.dll");
+		return;
 	}
-	else
-		SysError("Can not create interface of gameconsole.");
+	CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
+	if (!fnCreateInterface)
+	{
+		SYS_ERROR("Failed to get factory from GameUI.dll");
+		return;
+	}
+	gameconsolefuncs = (IGameConsole*)fnCreateInterface(GAMECONSOLE_INTERFACE_VERSION_GS, NULL);
+	if (!gameconsolefuncs)
+	{
+		SYS_ERROR("Failed to get interface " GAMECONSOLE_INTERFACE_VERSION_GS " from GameUI.dll");
+		return;
+	}
+	DWORD* pVFTable = *(DWORD**)&s_GameConsole;
+	AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 1, (void*)pVFTable[1], (void**)&m_pfnCGameConsole_Activate));
+	AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 2, (void*)pVFTable[2], (void**)&m_pfnCGameConsole_Initialize));
+	AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 3, (void*)pVFTable[3], (void**)&m_pfnCGameConsole_Hide));
+	AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 4, (void*)pVFTable[4], (void**)&m_pfnCGameConsole_Clear));
+	AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 5, (void*)pVFTable[5], (void**)&m_pfnCGameConsole_IsConsoleVisible));
+	AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 6, (void*)pVFTable[6], (void**)&m_pfnCGameConsole_Printf));
+	AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 7, (void*)pVFTable[7], (void**)&m_pfnCGameConsole_DPrintf));
+	AddHook(g_pMetaHookAPI->VFTHook(gameconsolefuncs, 0, 8, (void*)pVFTable[8], (void**)&m_pfnCGameConsole_SetParent));
 }
 
 IGameConsole* GameConsole() {

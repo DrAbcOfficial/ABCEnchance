@@ -90,7 +90,7 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hGaussianBufferFBO);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hGaussianBufferTex, 0);
 	GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hGaussianBufferFBO, ScreenWidth() / 2, ScreenHeight(), ScreenWidth() / 2, ScreenHeight());
-	DrawGaussianBlur(m_hGaussianBufferTex, 2.0f * flAnimationRatio, ScreenWidth() / 2, ScreenHeight());
+	DrawKawaseBlur(m_hGaussianBufferTex, 30.0f * flAnimationRatio, 1, 1, ScreenWidth() / 2, ScreenHeight());
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
 	glEnable(GL_TEXTURE_2D);
 	glColor4ub(255, 255, 255, 255);

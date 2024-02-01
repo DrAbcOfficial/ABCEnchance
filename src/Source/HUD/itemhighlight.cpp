@@ -1,4 +1,5 @@
 #include <metahook.h>
+#include "plugins.h"
 #include <map>
 #include <vector>
 #include "pm_defs.h"
@@ -18,7 +19,6 @@
 #include "itemhighlight.h"
 
 #define ITEM_LIST_PATH "abcenchance/ItemHighLightList.txt"
-extern void SysError(const char* message ...);
 
 std::vector<cl_hightlight_s*> aryHighLightList;
 CHudItemHighLight g_HudItemHighLight;
@@ -39,7 +39,7 @@ void CHudItemHighLight::Reset(){
 		if (aryHighLightList[i]->Index > 0)
 			m_mapHighLightTable[aryHighLightList[i]->Index] = aryHighLightList[i];
 	}
-	m_iHighLightMdl = PrecacheExtraModel(const_cast<char*>("abcenchance/mdl/item_highlight.mdl"));
+	m_iHighLightMdl = PrecacheExtraModel("abcenchance/mdl/item_highlight.mdl");
 }
 void HighLightTentCallBack(TEMPENTITY* ent, float frametime, float currenttime) {
 	cl_entity_t* var = gEngfuncs.GetEntityByIndex(ent->clientIndex);
@@ -116,7 +116,7 @@ void CHudItemHighLight::LoadItemList() {
 	char* pfile = (char*)gEngfuncs.COM_LoadFile(const_cast<char*>(ITEM_LIST_PATH), 5, NULL);
 	int i = 0, index = 0;
 	if (!pfile){
-		gEngfuncs.Con_DPrintf(const_cast<char*>("CHudItemHighLight::LoadItemList: No item list file %s\n"), ITEM_LIST_PATH);
+		gEngfuncs.Con_DPrintf("CHudItemHighLight::LoadItemList: No item list file %s\n", ITEM_LIST_PATH);
 		return;
 	}
 	while (true){
@@ -137,6 +137,8 @@ void CHudItemHighLight::LoadItemList() {
 			i = 0;
 	}
 	if (i != 0)
-		SysError("Error in parsing file:%s\nLine:%d\nBuf is not end with even.", ITEM_LIST_PATH, index);
+	{
+		SYS_ERROR("Error in parsing file:%s\nLine:%d\nBuf is not end with even.", ITEM_LIST_PATH, index);
+	}
 	gEngfuncs.COM_FreeFile(pfile);
 }

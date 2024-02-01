@@ -1410,7 +1410,8 @@ void FileOpenDialog::OnOpen()
 	GetSelectedFileName(pFileName, sizeof(pFileName));
 
 	int nLen = Q_strlen(pFileName);
-	bool bSpecifiedDirectory = (pFileName[nLen - 1] == '/' || pFileName[nLen - 1] == '\\') && (!IsOSX() || (IsOSX() && !Q_stristr(pFileName, ".app")));
+	
+	bool bSpecifiedDirectory = nLen <= 0 ? true : (pFileName[nLen - 1] == '/' || pFileName[nLen - 1] == '\\') && (!IsOSX() || (IsOSX() && !Q_stristr(pFileName, ".app")));
 	Q_StripTrailingSlash(pFileName);
 
 	if (!stricmp(pFileName, ".."))

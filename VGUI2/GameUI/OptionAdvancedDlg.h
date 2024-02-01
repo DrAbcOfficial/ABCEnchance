@@ -33,7 +33,7 @@ class COptionsAdvanceSubMultiPlay : public PropertyPage{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceSubMultiPlay, PropertyPage);
 public:
 	COptionsAdvanceSubMultiPlay(Panel* parent);
-	~COptionsAdvanceSubMultiPlay();
+	virtual ~COptionsAdvanceSubMultiPlay();
 	void ResetModel();
 	void ChangeModel(const char* mdl);
 	void BuildModelList(const char* filter = nullptr);
@@ -183,13 +183,11 @@ private:
 	CCvarLabelSlider* m_pBloodSpriteCount;
 };
 
-
 class COptionsAdvanceDialog : public PropertyDialog{
 	DECLARE_CLASS_SIMPLE(COptionsAdvanceDialog, PropertyDialog);
 public:
 	COptionsAdvanceDialog(Panel* parent);
 protected:
-	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual void ApplySchemeSettings(IScheme* pScheme) override;
 private:
 

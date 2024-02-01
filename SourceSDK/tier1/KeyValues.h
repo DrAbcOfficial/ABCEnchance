@@ -105,6 +105,8 @@ public:
 	bool LoadFromBuffer(char const *resourceName, const char *pBuffer, IFileSystem *pFileSystem = NULL, const char *pPathID = NULL);
 	bool LoadFromBuffer(char const *resourceName, CUtlBuffer &buf, IFileSystem *pFileSystem = NULL, const char *pPathID = NULL);
 	void AddSubKey(KeyValues *pSubkey);
+	bool AddSubKeyAfter(KeyValues* pSubkey, KeyValues* pAfterKey);
+	bool AddSubKeyBefore(KeyValues* pSubkey, KeyValues* pBeforeKey);
 	void SetNextKey(KeyValues *pDat);
 	void ChainKeyValue(KeyValues *pChain);
 	void RecursiveSaveToFile(CUtlBuffer &buf, int indentLevel);

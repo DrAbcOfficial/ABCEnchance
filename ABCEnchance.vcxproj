@@ -38,27 +38,28 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\tools\global.props" Condition="exists('..\..\tools\global.props')" />
-    <Import Project="..\..\tools\global_template.props" Condition="!exists('..\..\tools\global.props') and exists('$(SolutionDir)tools\global_template.props')" />
-    <Import Project="..\..\tools\global_common.props" />
+    <Import Project="$(ProjectDir)..\..\tools\global.props" Condition="exists('$(ProjectDir)..\..\tools\global.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_template.props" Condition="!exists('$(ProjectDir)..\..\tools\global.props') and exists('$(ProjectDir)..\..\tools\global_template.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\tools\global.props" Condition="exists('..\..\tools\global.props')" />
-    <Import Project="..\..\tools\global_template.props" Condition="!exists('..\..\tools\global.props') and exists('$(SolutionDir)tools\global_template.props')" />
-    <Import Project="..\..\tools\global_common.props" />
+    <Import Project="$(ProjectDir)..\..\tools\global.props" Condition="exists('$(ProjectDir)..\..\tools\global.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_template.props" Condition="!exists('$(ProjectDir)..\..\tools\global.props') and exists('$(ProjectDir)..\..\tools\global_template.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\tools\global.props" Condition="exists('..\..\tools\global.props')" />
-    <Import Project="..\..\tools\global_template.props" Condition="!exists('..\..\tools\global.props') and exists('$(SolutionDir)tools\global_template.props')" />
-    <Import Project="..\..\tools\global_common.props" />
+    <Import Project="$(ProjectDir)..\..\tools\global.props" Condition="exists('$(ProjectDir)..\..\tools\global.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_template.props" Condition="!exists('$(ProjectDir)..\..\tools\global.props') and exists('$(ProjectDir)..\..\tools\global_template.props')" />
+    <Import Project="$(ProjectDir)..\..\tools\global_common.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -67,23 +68,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <LinkIncremental>true</LinkIncremental>
-    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Debug\include\GL;..\..\thirdparty\install\capstone\x86\Debug\include\capstone;..\..\thirdparty\install\FreeImage\x86\Debug\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Debug\include\GL;..\..\thirdparty\install\FreeImage\x86\Debug\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_ITERATOR_DEBUG_LEVEL=0;GLEW_STATIC;NO_MALLOC_OVERRIDE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader />
@@ -91,18 +88,23 @@
       <DisableSpecificWarnings>4311;4312;4819;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;..\..\thirdparty\install\glew\x86\Debug\lib\glewd.lib;..\..\thirdparty\install\FreeImage\x86\Debug\lib\FreeImaged.lib;../../include/SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>$(PluginPostBuildCommand)</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>$(GLEWCheckRequirements)
+$(FreeImageCheckRequirements)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -117,21 +119,25 @@
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Release\include\GL;..\..\thirdparty\install\capstone\x86\Release\include\capstone;..\..\thirdparty\install\FreeImage\x86\Release\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Release\include\GL;..\..\thirdparty\install\FreeImage\x86\Release\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\glew\build\lib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;..\..\thirdparty\install\glew\x86\Release\lib\glew.lib;..\..\thirdparty\install\FreeImage\x86\Release\lib\FreeImage.lib;../../include/SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>$(PluginPostBuildCommand)
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>$(GLEWCheckRequirements)
+$(FreeImageCheckRequirements)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
     <ClCompile>
@@ -147,26 +153,29 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Release_AVX2\include\GL;..\..\thirdparty\install\capstone\x86\Release\include\capstone;..\..\thirdparty\install\FreeImage\x86\Release\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Release_AVX2\include\GL;..\..\thirdparty\install\FreeImage\x86\Release\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\glew\build\lib\Release\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;..\..\thirdparty\install\glew\x86\Release\lib\glew.lib;..\..\thirdparty\install\FreeImage\x86\Release\lib\FreeImage.lib;../../include/SteamSDK/steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>$(PluginPostBuildCommand)
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$(TargetExt)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>$(GLEWCheckRequirements)
+$(FreeImageCheckRequirements)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\include\HLSDK\common\interface.cpp" />
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp" />
-    <ClCompile Include="SourceSDK\InputWin32.cpp" />
     <ClCompile Include="SourceSDK\mathlib\3dnow.cpp" />
     <ClCompile Include="SourceSDK\mathlib\mathlib_base.cpp" />
     <ClCompile Include="SourceSDK\mathlib\sse.cpp" />
@@ -231,7 +240,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\plugins.cpp" />
     <ClCompile Include="src\Source\soundengine.cpp" />
     <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
-    <ClCompile Include="src\Source\Utility\curl.cpp" />
+    <ClCompile Include="src\Source\Utility\httpclient.cpp" />
     <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
     <ClCompile Include="src\Source\Utility\NeteaseApi.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
@@ -253,16 +262,17 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="src\Source\viewmodellag.cpp" />
     <ClCompile Include="src\wadlib\texture.cpp" />
     <ClCompile Include="src\wadlib\wadfile.cpp" />
-    <ClCompile Include="VGUI2\BaseUI.cpp" />
+    <ClCompile Include="vgui2\BaseUI.cpp" />
     <ClCompile Include="VGUI2\Bitmap.cpp" />
     <ClCompile Include="VGUI2\Border.cpp" />
     <ClCompile Include="VGUI2\ClientVGUI.cpp" />
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp" />
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp" />
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp" />
+    <ClCompile Include="vgui2\GameUI\NeteaseMusicDialog.cpp" />
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp" />
+    <ClCompile Include="vgui2\VGUI2ExtensionImport.cpp" />
     <ClCompile Include="VGUI2\VPanel.cpp" />
-    <ClCompile Include="VGUI2\VPanelWrapper.cpp" />
     <ClCompile Include="vgui_controls\AnalogBar.cpp" />
     <ClCompile Include="vgui_controls\AnimatingImagePanel.cpp" />
     <ClCompile Include="vgui_controls\AnimationController.cpp" />
@@ -296,6 +306,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClCompile Include="vgui_controls\GroupBox.cpp" />
     <ClCompile Include="vgui_controls\HTML.cpp" />
     <ClCompile Include="vgui_controls\Image.cpp" />
+    <ClCompile Include="vgui_controls\ImageButton.cpp" />
     <ClCompile Include="vgui_controls\ImageClipPanel.cpp" />
     <ClCompile Include="vgui_controls\ImageList.cpp" />
     <ClCompile Include="vgui_controls\ImagePanel.cpp" />
@@ -373,7 +384,6 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="SourceSDK\mathlib\ssemath.h" />
     <ClInclude Include="SourceSDK\mathlib\ssequaternion.h" />
     <ClInclude Include="SourceSDK\mathlib\vector2d.h" />
-    <ClInclude Include="SourceSDK\OfflineMode.h" />
     <ClInclude Include="SourceSDK\tier0\basetypes.h" />
     <ClInclude Include="SourceSDK\tier0\commonmacros.h" />
     <ClInclude Include="SourceSDK\tier0\dbg.h" />
@@ -485,9 +495,9 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Header\soundengine.h" />
     <ClInclude Include="src\Header\Utility\client_steam_context.h" />
     <ClInclude Include="src\Header\Utility\crypto.h" />
-    <ClInclude Include="src\Header\Utility\curl.h" />
     <ClInclude Include="src\Header\Utility\CVector.h" />
     <ClInclude Include="src\Header\Utility\formatter.h" />
+    <ClInclude Include="src\Header\Utility\httpclient.h" />
     <ClInclude Include="src\Header\Utility\mymathlib.h" />
     <ClInclude Include="src\Header\Utility\NeteaseApi.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_def.h" />
@@ -523,18 +533,15 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="src\Particleman\pman_triangleffect.h" />
     <ClInclude Include="src\wadlib\texture.h" />
     <ClInclude Include="src\wadlib\wadfile.h" />
-    <ClInclude Include="VGUI2\BaseUI.h" />
     <ClInclude Include="VGUI2\Bitmap.h" />
     <ClInclude Include="VGUI2\Border.h" />
     <ClInclude Include="VGUI2\ClientVGUI.h" />
     <ClInclude Include="VGUI2\GameUI\BasePanel.h" />
     <ClInclude Include="VGUI2\GameUI\GameConsole.h" />
-    <ClInclude Include="VGUI2\GameUI\GameUI.h" />
+    <ClInclude Include="vgui2\GameUI\NeteaseMusicDialog.h" />
     <ClInclude Include="VGUI2\GameUI\OptionAdvancedDlg.h" />
-    <ClInclude Include="VGUI2\interface\IGameConsole.h" />
-    <ClInclude Include="VGUI2\interface\IVanilliaPanel.h" />
-    <ClInclude Include="VGUI2\interface\IViewportPanel.h" />
     <ClInclude Include="VGUI2\VGUI2.h" />
+    <ClInclude Include="vgui2\VGUI2ExtensionImport.h" />
     <ClInclude Include="VGUI2\VPanel.h" />
     <ClInclude Include="vgui_controls\AnalogBar.h" />
     <ClInclude Include="vgui_controls\AnimatingImagePanel.h" />
@@ -569,6 +576,7 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     <ClInclude Include="vgui_controls\GroupBox.h" />
     <ClInclude Include="vgui_controls\HTML.h" />
     <ClInclude Include="vgui_controls\Image.h" />
+    <ClInclude Include="vgui_controls\ImageButton.h" />
     <ClInclude Include="vgui_controls\ImageClipPanel.h" />
     <ClInclude Include="vgui_controls\ImageList.h" />
     <ClInclude Include="vgui_controls\ImagePanel.h" />

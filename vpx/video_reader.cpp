@@ -20,9 +20,12 @@ CIVFVideoReader::CIVFVideoReader(){
 CIVFVideoReader::CIVFVideoReader(const char* filename){
     Open(filename);
 }
+void CIVFVideoReader::Close() {
+    std::fclose(m_pFile);
+    free(m_pBuffer);
+}
 CIVFVideoReader::~CIVFVideoReader(){
-    Close();
-    delete this;
+    //Close();
 }
 bool CIVFVideoReader::Open(const char* filename){
     char header[32];
@@ -51,10 +54,6 @@ bool CIVFVideoReader::Open(const char* filename){
     m_pInfo.time_base.denominator = mem_get_le32<int>(header + 20);
     m_pInfo.frame_count = mem_get_le32<int>(header + 24);
     return true;
-}
-void CIVFVideoReader::Close(){
-    std::fclose(m_pFile);
-    free(m_pBuffer);
 }
 bool CIVFVideoReader::ReadFrame(){
     char raw_header[IVF_FRAME_HDR_SZ] = { 0 };

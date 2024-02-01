@@ -15,6 +15,7 @@
 #define SYSTEM_MAXCHANNEL 6
 
 namespace FModEngine {
+
 #ifdef __USE_FMOD_SYSTEM_H_
     class CFModSystem {
     public:
@@ -141,7 +142,7 @@ namespace FModEngine {
 
         operator FMOD_SYSTEM*();
     private:
-        FMOD_SYSTEM* m_pFModSystem;
+        FMOD_SYSTEM* m_pFModSystem{};
     };
     CFModSystem* GetSystem();
 #endif // __USE_FMOD_SYSTEM_H_
@@ -354,8 +355,8 @@ private:
         FMOD_CHANNEL* m_pFModChennel = nullptr;
     };
 #endif // __USE_FMOD_CHANNEL_H_
-    void InitFModLibrary();
-    void FreeFModLibrary();
+    void OnLoadFModLibrary(HMODULE hFMODEx);
+    void OnUnloadFModLibrary(HMODULE hFMODEx);
 }
 
 #define __FMOD_SOUNDEING_
