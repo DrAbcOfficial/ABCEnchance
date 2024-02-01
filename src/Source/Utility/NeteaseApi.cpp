@@ -575,7 +575,6 @@ namespace netease {
 		if(cookieJar.Size() == 0)
 			cookieJar.Load(COOKIE_PATH);
 		string json = post(action);
-		printf(json.c_str());
 		rapidjson::Document data;
 		data.Parse(json.c_str(), json.length());
 		if (data.IsObject() && data.HasMember("code") && data["code"].IsInt()){

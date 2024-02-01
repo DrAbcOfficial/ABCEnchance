@@ -18,7 +18,7 @@ namespace netease {
 	struct Action {
 		string url;
 		std::map<string, string> post;
-		Action(string u, std::map<string, string> p) : url("https://music.163.com/api" + u), post(p) {}
+		Action(string u, std::map<string, string> p) : url(u), post(p) {}
 	};
 
 	enum SearchType {
