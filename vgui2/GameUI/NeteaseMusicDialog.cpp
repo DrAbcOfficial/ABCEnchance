@@ -93,13 +93,13 @@ public:
 			FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
 			FIBITMAP* bitmap = FreeImage_LoadFromMemory(format, mem);
 			byte* pixels = (byte*)FreeImage_GetBits(bitmap);
-			auto width = FreeImage_GetWidth(bitmap);
-			auto height = FreeImage_GetHeight(bitmap);
-			auto pitch = FreeImage_GetPitch(bitmap);
-			auto bpp = FreeImage_GetBPP(bitmap);
-			auto bitnum = bpp / 8;
+			size_t width = FreeImage_GetWidth(bitmap);
+			size_t height = FreeImage_GetHeight(bitmap);
+			size_t pitch = FreeImage_GetPitch(bitmap);
+			size_t bpp = FreeImage_GetBPP(bitmap);
+			size_t bitnum = bpp / 8;
 			static byte* s_pBuf;
-			static int s_Size;
+			static size_t s_Size;
 			if (s_Size < width * height) {
 				if (s_pBuf)
 					delete[] s_pBuf;

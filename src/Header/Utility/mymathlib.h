@@ -26,6 +26,7 @@ struct mplane_s;
 #define AngleIVectors mathlib::AngleVectorsTranspose
 
 namespace mathlib {
+	const float F_PI = 3.14159265358979323846f;
 	const double Q_PI = 3.14159265358979323846;
 	constexpr double DOUBLE_PI = 2 * 3.14159265358979323846;
 	const float COLINEAR_EPSILON = 0.001f;

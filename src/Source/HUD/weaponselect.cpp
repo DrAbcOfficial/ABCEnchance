@@ -143,7 +143,7 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 	x = iXStart;
 	// Draw all of the buckets
 	for (int i = 0; i < MAX_WEAPON_SLOT; i++) {
-		y = SelectBucketHeight + (iYGap * 2 * flAnimationRatio);
+		y = SelectBucketHeight + static_cast<int>(iYGap * 2 * flAnimationRatio);
 		// If this is the active slot, draw the bigger pictures,
 		// otherwise just draw boxes
 		if (i == gWR.m_iNowSlot) {
@@ -161,7 +161,7 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 					RainbowColor(p, r, g, b);
 				// if active, then we must have ammo.
 				if (gWR.m_iNowSelected == p) {
-					a = 255 * flAlphaRatio;
+					a = static_cast<int>(255 * flAlphaRatio);
 					ScaleColors(r, g, b, a);
 					SPR_Set(p->hActive, r, g, b);
 					SPR_DrawAdditive(0, x, y, &p->rcActive);
@@ -171,14 +171,14 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 				else {
 					// Draw Weapon if Red if no ammo
 					if (gWR.HasAmmo(p)) {
-						a = 192 * flAlphaRatio;
+						a = static_cast<int>(192 * flAlphaRatio);
 						ScaleColors(r, g, b, a);
 					}
 					else {
 						SelectEmptyColor.GetColor(r, g, b, dummy);
 						if (gCVars.pAmmoMenuDrawRainbow->value > 0)
 							RainbowColor(p, r, g, b);
-						a = 128 * flAlphaRatio;
+						a = static_cast<int>(128 * flAlphaRatio);
 						ScaleColors(r, g, b, a);
 					}
 					SPR_Set(p->hInactive, r, g, b);
@@ -186,7 +186,7 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 				}
 				// Draw Ammo Bar
 				DrawAmmoBar(p, x + SelectABWidth / 2, y, SelectABWidth, SelectABHeight);
-				y += (p->rcActive.bottom - p->rcActive.top + iYGap) * flAnimationRatio;
+				y += static_cast<int>((p->rcActive.bottom - p->rcActive.top + iYGap) * flAnimationRatio);
 			}
 			x += iWidth + (iXGap);
 		}
@@ -196,16 +196,16 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 				WEAPON* p = iter->second;
 				if (gWR.HasAmmo(p)) {
 					SelectColor.GetColor(r, g, b, dummy);
-					a = 128 * flAlphaRatio;
+					a = static_cast<int>(128 * flAlphaRatio);
 				}
 				else {
 					SelectEmptyColor.GetColor(r, g, b, dummy);
-					a = 96 * flAlphaRatio;
+					a = static_cast<int>(96 * flAlphaRatio);
 				}
 				if (gCVars.pAmmoMenuDrawRainbow->value > 0)
 					RainbowColor(p, r, g, b);
 				FillRGBA(x, y, SelectBucketWidth, SelectBucketHeight, r, g, b, a);
-				y += (SelectBucketHeight + iYGap) * flAnimationRatio;
+				y += static_cast<int>((SelectBucketHeight + iYGap) * flAnimationRatio);
 			}
 			x += SelectBucketWidth + (iXGap);
 		}

@@ -92,7 +92,7 @@ void CSPRImage::Paint(){
 		float flBottom = static_cast<float>(rect.bottom) / h;
 		int r, g, b, a;
 		m_Color.GetColor(r, g, b, a);
-		gEngfuncs.pTriAPI->SpriteTexture(const_cast<struct model_s*>(gEngfuncs.GetSpritePointer(m_iTextureID)), m_flFrame);
+		gEngfuncs.pTriAPI->SpriteTexture(const_cast<struct model_s*>(gEngfuncs.GetSpritePointer(m_iTextureID)), static_cast<int>(m_flFrame));
 		gEngfuncs.pTriAPI->RenderMode(m_iRenderMode);
 		gEngfuncs.pTriAPI->CullFace(TRI_NONE);
 		gEngfuncs.pTriAPI->Begin(TRI_QUADS);
