@@ -260,15 +260,17 @@ void COptionsAdvanceSubMultiPlay::OnButtonChanged(){
 void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 	FIBITMAP* img = nullptr;
 	char ext[4];
-	std::strncpy(ext, std::filesystem::path(fullpath).extension().u8string().c_str(), 4);
-	if (!std::strncmp(ext, ".tga", 4))
-		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_TARGA, fullpath, 0);
-	else if(!std::strncmp(ext, ".bmp", 4))
-		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_BMP, fullpath, 0);
-	else if (!std::strncmp(ext, ".jpg", 4))
-		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_JPEG, fullpath, 0);
-	else if (!std::strncmp(ext, ".png", 4))
-		img = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_PNG, fullpath, 0);
+	wchar_t wpath[MAX_PATH];
+	Q_UTF8ToUnicode(fullpath, wpath, MAX_PATH);
+	std::strncpy(ext, std::filesystem::path(wpath).extension().u8string().c_str(), 4);
+	if (!strnicmp(ext, ".tga", 4))
+		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_TARGA, wpath, 0);
+	else if(!strnicmp(ext, ".bmp", 4))
+		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_BMP, wpath, 0);
+	else if (!strnicmp(ext, ".jpg", 4))
+		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_JPEG, wpath, 0);
+	else if (!strnicmp(ext, ".png", 4))
+		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_PNG, wpath, 0);
 	if (img) {
 		std::ofstream stream;
 		char wadpath[MAX_PATH];
@@ -285,8 +287,51 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		GetValidateSparySize(nw, nh);
 		FIBITMAP* nimg = FreeImage_Rescale(img, nw, nh);
 		FreeImage_Unload(img);
+		size_t bpp = FreeImage_GetBPP(nimg);
+		size_t pitch = FreeImage_GetPitch(nimg);
+		//Quantize Transparent Pixel
+		BYTE* bits = FreeImage_GetBits(nimg);
+		size_t bitnum = bpp / 8;
+		bits += pitch * (nh - 1);
+		for (size_t y = 0; y < nh; y++) {
+			BYTE* pixel = (BYTE*)bits;
+			for (size_t x = 0; x < nw; x++) {
+				switch (bitnum) {
+					case 1: //8bpp
+					case 2: //16bpp
+					case 3: break; //24bpp
+					  //32bpp
+					case 4: {
+						BYTE alpha = pixel[FI_RGBA_ALPHA];
+						if (alpha < 125) {
+							pixel[FI_RGBA_RED] = 0;
+							pixel[FI_RGBA_GREEN] = 0;
+							pixel[FI_RGBA_BLUE] = 255;
+						}
+						pixel[FI_RGBA_ALPHA] = 255;
+						break;
+					}
+					  //wtf
+				default: break;
+				}
+				pixel += bitnum;
+			}
+			bits -= pitch;
+		}
+
 		img = FreeImage_ColorQuantizeEx(nimg, FIQ_WUQUANT, 256);
 		FreeImage_Unload(nimg);
+		//swap pallete
+		RGBQUAD* palette = FreeImage_GetPalette(img);
+		for (size_t i = 0; i < 256; i++) {
+			RGBQUAD p = palette[i];
+			if (p.rgbRed == 0 && p.rgbGreen == 0 && p.rgbBlue == 255) {
+				auto tem = palette[255];
+				palette[255] = palette[i];
+				palette[i] = tem;
+				break;
+			}	
+		}
 		//header
 		stream.write("WAD3", 4);
 		unsigned int headerbuf = 1;
@@ -313,7 +358,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		header.offsets[2] = sizeof(BSPMipTexHeader_t) + size + (size / 4);
 		header.offsets[3] = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16);
 		stream.write((char*)&header, sizeof(BSPMipTexHeader_t));
-		BYTE* bits = FreeImage_GetBits(img);
+		bits = FreeImage_GetBits(img);
 		BYTE* flipped = new BYTE[size];
 		for (size_t i = 0; i < nh; i++) {
 			memcpy(flipped + i * nw, bits + (nh - i - 1) * nw, nw);
@@ -335,7 +380,6 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		short dummy = 0;
 		stream.write((char*)&dummy, sizeof(short));
 		//Palette
-		RGBQUAD* palette = FreeImage_GetPalette(img);
 		for (size_t i = 0; i < 256; i++) {
 			RGBQUAD p = palette[i];
 			stream.write((char*)&p.rgbRed, 1);
