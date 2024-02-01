@@ -1,3 +1,4 @@
+#include "metahook.h"
 #include <Panel.h>
 #include <KeyValues.h>
 #include "BasePanel.h"
@@ -166,6 +167,8 @@ class CVGUI2Extension_TaskBarCallbacks : public IVGUI2Extension_GameUITaskBarCal
 	}
 };
 static CVGUI2Extension_TaskBarCallbacks s_TaskBarCallbacks;
+
+static IGameUI* gameui = nullptr;
 /*
 =================================================================================================================
 GameUI init & shutdown
@@ -182,4 +185,16 @@ void GameUI_UninstallHooks(void){
 	VGUI2Extension()->UnregisterGameUICallbacks(&s_GameUICallbacks);
 	VGUI2Extension()->UnregisterGameUIKeyValuesCallbacks(&s_GameUIKeyValuesCallbacks);
 	VGUI2Extension()->UnregisterGameUITaskBarCallbacks(&s_TaskBarCallbacks);
+}
+
+void GameUI_GetInterface() {
+	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
+	if (hGameUI) {
+		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
+		gameui = static_cast<IGameUI*>(fnCreateInterface(GAMEUI_INTERFACE_VERSION, nullptr));
+	}
+}
+
+IGameUI* GameUI() {
+	return gameui;
 }

@@ -324,6 +324,7 @@ void GL_Init(void)
 	g_pViewPort->Init();
 	gCustomHud.GL_Init();
 }
+extern void GameUI_GetInterface();
 void HUD_Init(void){
 	//VGUI init
 	gCVars.pShellEfx = CREATE_CVAR("abc_shellefx", "1", FCVAR_VALUE, nullptr);
@@ -380,6 +381,7 @@ void HUD_Init(void){
 	GetClientVoiceMgr()->Init();
 	if (g_pParticleMan)
 		g_pParticleMan->ResetParticles();
+	GameUI_GetInterface();
 }
 
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){

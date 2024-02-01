@@ -13,6 +13,8 @@
 
 #include "vgui_controls/consoledialog.h"
 
+#include "vgui/IBaseUI.h"
+#include "vgui/IGameUI.h"
 #include "vgui/IInput.h"
 #include "vgui/IScheme.h"
 #include "vgui/IVGui.h"
@@ -1296,9 +1298,11 @@ void CConsoleDialog::OnCommandSubmitted(const char* pCommand)
 	gEngfuncs.pfnClientCmd(const_cast<char*>(pCommand));
 }
 
+extern IGameUI* GameUI();
+extern IBaseUI* BaseUI();
 void CConsoleDialog::ClosedByHittingTilde() {
-	//if (baseuifuncs->IsGameUIVisible())
-	//	baseuifuncs->HideGameUI();
+	if (GameUI()->IsGameUIActive())
+		BaseUI()->HideGameUI();
 	SetVisible(false);
 }
 
