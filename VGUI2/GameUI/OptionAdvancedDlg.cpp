@@ -323,12 +323,14 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		FreeImage_Unload(nimg);
 		//swap pallete
 		RGBQUAD* palette = FreeImage_GetPalette(img);
+		int bluindex = -1;
 		for (size_t i = 0; i < 256; i++) {
 			RGBQUAD p = palette[i];
 			if (p.rgbRed == 0 && p.rgbGreen == 0 && p.rgbBlue == 255) {
 				auto tem = palette[255];
 				palette[255] = palette[i];
 				palette[i] = tem;
+				bluindex = (int)i;
 				break;
 			}	
 		}
@@ -362,6 +364,12 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		BYTE* flipped = new BYTE[size];
 		for (size_t i = 0; i < nh; i++) {
 			memcpy(flipped + i * nw, bits + (nh - i - 1) * nw, nw);
+		}
+		for (size_t i = 0; i < size; i++) {
+			if (flipped[i] == bluindex)
+				flipped[i] = 255;
+			else if (flipped[i] == 255)
+				flipped[i] = (BYTE)bluindex;
 		}
 		//mips data
 		auto write_mips = [&](int mips_level) {
