@@ -8,6 +8,9 @@
 #include <rapidjson/stringbuffer.h>
 
 namespace netease {
+#define COOKIE_PATH "abcenchance/neteasecookie"
+	static CHttpCookieJar cookieJar;
+
 	static string buildparam(const std::map<string, string>& map) {
 		string paramStr;
 		auto iter = map.begin();
@@ -26,8 +29,12 @@ namespace netease {
 	}
 	static string post(const Action& action) {
 		string url = action.url + (action.post.size() > 0 ? ("?" + buildparam(action.post)) : "");
-		string retdata;
-		auto rep = GetHttpClient()->Fetch(url.c_str(), UtilHTTPMethod::Post)->
+		httpContext_t ctx{
+			url,
+			UtilHTTPMethod::Post,
+			&cookieJar
+		};
+		auto rep = GetHttpClient()->Fetch(&ctx)->
 			Create(false)->
 			SetFeild("Accept", "*/*")->
 			SetFeild("Accept-Language", "zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4")->
@@ -37,10 +44,7 @@ namespace netease {
 			SetFeild("Host", "music.163.com")->
 			SetFeild("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")->
 			StartSync();
-		auto paylod = rep->GetPayload();
-		auto size = paylod->GetLength();
-		retdata = paylod->GetBytes();
-		return retdata;
+		return rep->GetPayload()->GetBytes();
 	}
 	CBase163Object::CBase163Object(rapidjson::Value& json) {
 		if (json.HasMember("name") && json.HasMember("id")) {
@@ -568,16 +572,16 @@ namespace netease {
 		return out;
 	}
 	neteasecode_t CLocalUser::GetCookiePost(Action& action, int successcode){
+		if(cookieJar.Size() == 0)
+			cookieJar.Load(COOKIE_PATH);
 		string json = post(action);
-
+		printf(json.c_str());
 		rapidjson::Document data;
 		data.Parse(json.c_str(), json.length());
-
-		if (data.IsObject() && data.HasMember("code") && data["code"].IsInt())
-		{
+		if (data.IsObject() && data.HasMember("code") && data["code"].IsInt()){
+			cookieJar.Save();
 			return data["code"].GetInt();
 		}
-
 		return 0;
 	}
 }
