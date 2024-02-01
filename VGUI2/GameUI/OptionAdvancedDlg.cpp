@@ -365,11 +365,13 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		for (size_t i = 0; i < nh; i++) {
 			memcpy(flipped + i * nw, bits + (nh - i - 1) * nw, nw);
 		}
-		for (size_t i = 0; i < size; i++) {
-			if ((int)flipped[i] == bluindex)
-				flipped[i] = 255;
-			else if (flipped[i] == 255)
-				flipped[i] = (BYTE)bluindex;
+		if (bluindex >= 0) {
+			for (size_t i = 0; i < size; i++) {
+				if ((int)flipped[i] == bluindex)
+					flipped[i] = 255;
+				else if (flipped[i] == 255)
+					flipped[i] = (BYTE)bluindex;
+			}
 		}
 		//mips data
 		auto write_mips = [&](int mips_level) {
