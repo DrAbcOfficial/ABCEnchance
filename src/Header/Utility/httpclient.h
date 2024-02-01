@@ -17,9 +17,22 @@ enum class HTTPCLIENT_STATE {
 	EXCEPTIONED,
 	DESTORYED
 };
+
+class CHttpCookieJar {
+public:
+	CHttpCookieJar(const char* path);
+	void Save();
+	std::string Get();
+	void Set(const char* cookie);
+private:
+	std::string m_szPath;
+	std::string m_szCookie;
+};
+
 typedef struct httpContext_s {
 	std::string url;
 	UtilHTTPMethod method;
+	CHttpCookieJar* cookie;
 } httpContext_t;
 
 class CHttpClientItem : IUtilHTTPCallbacks {
@@ -71,6 +84,8 @@ private:
 	std::function<void()> m_pOnFinish = nullptr;
 	std::function<void()> m_pOnDestory = nullptr;
 	std::function<void(HTTPCLIENT_FAILED_CODE)> m_pOnFailed = nullptr;
+
+	CHttpCookieJar* m_pCookieJar = nullptr;
 
 	bool m_bAsync;
 	UtilHTTPRequestId_t m_pId;
