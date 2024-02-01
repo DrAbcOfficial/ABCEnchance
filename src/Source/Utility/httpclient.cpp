@@ -59,7 +59,7 @@ void CHttpClient::CheckAll(){
 	}
 }
 void CHttpClient::ClearAll(){
-	for (auto iter = m_aryItems.begin(); iter != m_aryItems.end();) {
+	for (auto iter = m_aryItems.begin(); iter != m_aryItems.end(); iter++) {
 		auto item = *iter;
 		delete item;
 	}
