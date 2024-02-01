@@ -6,6 +6,7 @@
 
 #include <GameUI/BasePanel.h>
 
+#include <IBaseUI.h>
 #include <IEngineSurface.h>
 #include <IKeyValuesSystem.h>
 #include <IGameUIFuncs.h>
@@ -18,6 +19,7 @@ namespace vgui
 }
 
 IGameUIFuncs* gameuifuncs = nullptr;
+IBaseUI* baseuifuncs = nullptr;
 
 extern IKeyValuesSystem* g_pKeyValuesSystem;
 extern IEngineSurface* staticSurface;
@@ -88,6 +90,11 @@ void BaseUI_InstallHooks(void){
 		SYS_ERROR("Failed to get interface \"" VENGINE_GAMEUIFUNCS_VERSION "\" from engine.");
 		return;
 	}
+	baseuifuncs = (IBaseUI*)fnCreateInterface(BASEUI_INTERFACE_VERSION, NULL);
+	if (!baseuifuncs){
+		SYS_ERROR("Failed to get interface \"" BASEUI_INTERFACE_VERSION "\" from engine.");
+		return;
+	}
 	VGUI2Extension()->RegisterBaseUICallbacks(&s_BaseUICallbacks);
 }
 void BaseUI_UninstallHooks(void){
@@ -96,4 +103,7 @@ void BaseUI_UninstallHooks(void){
 
 IGameUIFuncs* GameUIFuncs() {
 	return gameuifuncs;
+}
+IBaseUI* BaseUI() {
+	return baseuifuncs;
 }
