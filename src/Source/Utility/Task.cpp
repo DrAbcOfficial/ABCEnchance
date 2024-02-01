@@ -13,13 +13,13 @@ bool CTaskManager::Has(ITaskItem* check){
 	return false;
 }
 void CTaskManager::Shutdown() {
-	for (auto iter = m_aryList.begin(); iter != m_aryList.end();) {
+	for (auto iter = m_aryList.begin(); iter != m_aryList.end(); iter++) {
 		auto item = *iter;
 		delete item;
 	}
 	m_aryList.clear();
 
-	for (auto iter = m_aryPending.begin(); iter != m_aryPending.end();) {
+	for (auto iter = m_aryPending.begin(); iter != m_aryPending.end(); iter++) {
 		auto item = *iter;
 		delete item;
 	}

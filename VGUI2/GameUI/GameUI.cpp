@@ -116,22 +116,23 @@ public:
 	int GetAltitude() const override{
 		return 0;
 	}
-	void KeyValues_LoadFromFile(void*& pthis, IFileSystem*& pFileSystem, const char*& resourceName, const char*& pathId, VGUI2Extension_CallbackContext* CallbackContext){
-		if (CallbackContext->IsPost && !strcmp(resourceName, "resource/GameMenu.res")){
+
+	virtual void KeyValues_LoadFromFile(void*& pthis, IFileSystem*& pFileSystem, const char*& resourceName, const char*& pathId, const char* sourceModule, VGUI2Extension_CallbackContext* CallbackContext) {
+		if (CallbackContext->IsPost && !strcmp(resourceName, "resource/GameMenu.res")) {
 			bool* pRealReturnValue = (bool*)CallbackContext->pRealReturnValue;
-			if ((*pRealReturnValue) == true){
+			if ((*pRealReturnValue) == true) {
 				KeyValues* pKeyValues = (KeyValues*)pthis;
 				auto name = pKeyValues->GetName();
 				KeyValues* SectionQuit = nullptr;
-				for (auto p = pKeyValues->GetFirstSubKey(); p; p = p->GetNextKey()){
+				for (auto p = pKeyValues->GetFirstSubKey(); p; p = p->GetNextKey()) {
 					auto command = p->GetString("command");
 					if (!stricmp(command, "OpenOptionsDialog"))
 						SectionQuit = p;
 				}
-				if (SectionQuit){
+				if (SectionQuit) {
 					auto NameSectionQuit = SectionQuit->GetName();
 					int iNameSectionQuit = atoi(NameSectionQuit);
-					if (iNameSectionQuit > 0){
+					if (iNameSectionQuit > 0) {
 						char szNewNameSectionQuit[32];
 						snprintf(szNewNameSectionQuit, sizeof(szNewNameSectionQuit), "%d", iNameSectionQuit + 1);
 						SectionQuit->SetName(szNewNameSectionQuit);
