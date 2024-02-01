@@ -20,10 +20,13 @@ enum class HTTPCLIENT_STATE {
 
 class CHttpCookieJar {
 public:
+	CHttpCookieJar();
 	CHttpCookieJar(const char* path);
+	void Load(const char* path);
 	void Save();
 	std::string Get();
 	void Set(const char* cookie);
+	size_t Size();
 private:
 	std::string m_szPath;
 	std::string m_szCookie;
@@ -87,10 +90,10 @@ private:
 
 	CHttpCookieJar* m_pCookieJar = nullptr;
 
-	bool m_bAsync;
-	UtilHTTPRequestId_t m_pId;
+	bool m_bAsync = false;
+	UtilHTTPRequestId_t m_pId = 0;
 	//Only for sync
-	IUtilHTTPRequest* m_pSyncReq;
+	IUtilHTTPRequest* m_pSyncReq = nullptr;
 	
 	httpContext_s m_hContext;
 	HTTPCLIENT_STATE m_iStatue;
