@@ -1,17 +1,22 @@
 #include "NeteaseApi.h"
 #include "crypto.h"
+#include "curl.h"
 #include "qrcodegen.h"
-
-#include "httpclient.h"
 
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
 namespace netease {
-#define COOKIE_PATH "abcenchance/neteasecookie"
-	static CHttpCookieJar cookieJar;
-
-	static string buildparam(const std::map<string, string>& map) {
+	const std::map<char*, char*> header = {
+		{"Accept", "*/*"},
+		{"Accept-Language", "zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4"},
+		{"Connection", "keep-alive"},
+		{"Content-Type", "application/x-www-form-urlencoded"},
+		{"Referer", "http://music.163.com"},
+		{"Host", "music.163.com"},
+		{"User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36"}
+	};
+	string buildparam(const std::map<string, string>& map) {
 		string paramStr;
 		auto iter = map.begin();
 		while (iter != map.end()) {
@@ -27,24 +32,40 @@ namespace netease {
 		}
 		return paramStr;
 	}
-	static string post(const Action& action) {
-		string url = action.url + (action.post.size() > 0 ? ("?" + buildparam(action.post)) : "");
-		httpContext_t ctx{
-			url,
-			UtilHTTPMethod::Post,
-			&cookieJar
-		};
-		auto rep = GetHttpClient()->Fetch(&ctx)->
-			Create(false)->
-			SetFeild("Accept", "*/*")->
-			SetFeild("Accept-Language", "zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4")->
-			SetFeild("Connection", "keep-alive")->
-			SetFeild("Content-Type", "application/x-www-form-urlencoded")->
-			SetFeild("Referer", "http://music.163.com")->
-			SetFeild("Host", "music.163.com")->
-			SetFeild("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36")->
-			StartSync();
-		return rep->GetPayload()->GetBytes();
+	curl_slist* buildheader() {
+		curl_slist* header = nullptr;
+		for (auto iter = netease::header.begin(); iter != netease::header.end(); iter++) {
+			string h = string(iter->first) + ": " + string(iter->second);
+			header = curl_slist_append(header, h.c_str());
+		}
+		return header;
+	}
+	size_t append(void* ptr, size_t size, size_t nmemb, void* user) {
+		std::vector<char>* p = (std::vector<char>*)user;
+		auto cs = p->size();
+		p->resize(cs + size * nmemb);
+		memcpy(p->data() + cs, ptr, size * nmemb);
+		return size * nmemb;
+	}
+	string post(const Action& action) {
+		string postStr = buildparam(action.post);
+		std::vector<char> retdata;
+		void* curl = curl_easy_init();
+		curl_slist* header = buildheader();
+		curl_easy_setopt(curl, CURLOPT_POST, 1);
+		curl_easy_setopt(curl, CURLOPT_URL, action.url.c_str());
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &append);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retdata);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postStr.c_str());
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, postStr.length());
+		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, CNeteaseMusicAPI::CokkieInPath().c_str());
+		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, CNeteaseMusicAPI::CookieOutPath().c_str());
+		auto result = curl_easy_perform(curl);
+		curl_slist_free_all(header);
+		curl_easy_cleanup(curl);
+		retdata.push_back(0);
+		return retdata.data();
 	}
 	CBase163Object::CBase163Object(rapidjson::Value& json) {
 		if (json.HasMember("name") && json.HasMember("id")) {
@@ -65,7 +86,7 @@ namespace netease {
 		rapidjson::Value alias;
 		if (json.HasMember("alia"))
 			alias = json["alia"].GetArray();
-		else 
+		else
 			alias = json["alias"].GetArray();
 		if (alias.Size() > 0)
 			aliasName = alias.Begin()->GetString();
@@ -104,7 +125,7 @@ namespace netease {
 		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto arr = data["data"].GetArray();
 			if (arr.Size() > 0) {
-				if(!arr[0]["url"].IsNull())
+				if (!arr[0]["url"].IsNull())
 					return arr[0]["url"].GetString();
 				return std::nullopt;
 			}
@@ -113,7 +134,7 @@ namespace netease {
 	}
 	string CMusic::GetArtists() {
 		string str = "";
-		for(auto iter = ar.begin(); iter != ar.end();iter++){
+		for (auto iter = ar.begin(); iter != ar.end(); iter++) {
 			str += (*iter)->name;
 			if (iter != ar.end() - 1)
 				str += ", ";
@@ -160,12 +181,12 @@ namespace netease {
 				//fuck trim
 				raw.erase(raw.begin(), std::find_if(raw.begin(), raw.end(), [](unsigned char ch) {
 					return ch != '\n' && !std::isspace(ch);
-				}));
+					}));
 				raw.erase(std::find_if(raw.rbegin(), raw.rend(), [](unsigned char ch) {
 					return ch != '\n' && !std::isspace(ch);
-				}).base(), raw.end());
+					}).base(), raw.end());
 				return std::isdigit(raw[1]) == 0;
-			};
+				};
 			if (json.HasMember("lrc"))
 				lyric = json["lrc"]["lyric"].GetString();
 			if (json.HasMember("tlyric"))
@@ -185,7 +206,7 @@ namespace netease {
 				vip = profile["vipType"].GetUint();
 			if (profile.HasMember("playlistCount"))
 				playlistCount = profile["playlistCount"].GetUint();
-			if(profile.HasMember("avatarUrl"))
+			if (profile.HasMember("avatarUrl"))
 				avatarurl = profile["avatarUrl"].GetString();
 			if (profile.HasMember("backgroundUrl"))
 				backgroundurl = profile["backgroundUrl"].GetString();
@@ -216,7 +237,7 @@ namespace netease {
 		}
 		return ret;
 	}
-	std::vector<neteaseid_t> CMy::GetFM(){
+	std::vector<neteaseid_t> CMy::GetFM() {
 		std::map<string, string> p = {};
 		string json = post(Action("/v1/radio/get", p));
 		rapidjson::Document data;
@@ -323,7 +344,7 @@ namespace netease {
 		return artist;
 	}
 
-	std::vector<std::shared_ptr<CSearchResult>> CNeteaseMusicAPI::Search(const string& keyword, SearchType type ,int limit, int offset) {
+	std::vector<std::shared_ptr<CSearchResult>> CNeteaseMusicAPI::Search(const string& keyword, SearchType type, int limit, int offset) {
 		std::map<string, string> p = {
 			{"type", std::to_string(type)},
 			{"limit", std::to_string(limit)},
@@ -336,7 +357,7 @@ namespace netease {
 		std::vector<std::shared_ptr<CSearchResult>> ret;
 		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			size_t count = 0;
-			switch (type){
+			switch (type) {
 			case netease::ST_LYRIC:
 			case netease::ST_SONG: count = data["result"]["songCount"].GetUint(); break;
 			case netease::ST_ALBUM: count = data["result"]["albumCount"].GetUint(); break;
@@ -350,16 +371,16 @@ namespace netease {
 			if (count == 0)
 				return ret;
 			rapidjson::Value arr;
-			switch (type){
+			switch (type) {
 			case netease::ST_LYRIC:
-				case netease::ST_SONG: arr = data["result"]["songs"].GetArray(); break;
-				case netease::ST_ALBUM: arr = data["result"]["albums"].GetArray(); break;
-				case netease::ST_ARTIST: arr = data["result"]["artists"].GetArray(); break;
-				case netease::ST_PLAYLIST: arr = data["result"]["playlists"].GetArray(); break;
-				case netease::ST_USER: arr = data["result"]["userprofiles"].GetArray(); break;
-				case netease::ST_RADIO: arr = data["result"]["djRadios"].GetArray(); break;
-				case netease::ST_MV: count = data["result"]["mvs"].GetUint(); break;
-				case netease::ST_VIDEO: count = data["result"]["videos"].GetUint(); break;
+			case netease::ST_SONG: arr = data["result"]["songs"].GetArray(); break;
+			case netease::ST_ALBUM: arr = data["result"]["albums"].GetArray(); break;
+			case netease::ST_ARTIST: arr = data["result"]["artists"].GetArray(); break;
+			case netease::ST_PLAYLIST: arr = data["result"]["playlists"].GetArray(); break;
+			case netease::ST_USER: arr = data["result"]["userprofiles"].GetArray(); break;
+			case netease::ST_RADIO: arr = data["result"]["djRadios"].GetArray(); break;
+			case netease::ST_MV: count = data["result"]["mvs"].GetUint(); break;
+			case netease::ST_VIDEO: count = data["result"]["videos"].GetUint(); break;
 			}
 			if (!arr.IsNull()) {
 				for (auto iter = arr.Begin(); iter != arr.End(); iter++) {
@@ -425,9 +446,9 @@ namespace netease {
 		std::shared_ptr<CMusic> song = nullptr;
 		if (data.IsObject() && data.HasMember("code") && data["code"].GetInt() == 200) {
 			auto arr = data["songs"].GetArray();
-			if(arr.Size() > 0)
+			if (arr.Size() > 0)
 				song = std::make_shared<CMusic>(*(arr.Begin()));
-		}	
+		}
 		return song;
 	}
 	std::shared_ptr<CDjMusic> CNeteaseMusicAPI::GetDjSongDetail(neteaseid_t id) {
@@ -444,7 +465,7 @@ namespace netease {
 		}
 		return dj;
 	}
-	std::shared_ptr<CLyric> CNeteaseMusicAPI::GetLyric(neteaseid_t songid){
+	std::shared_ptr<CLyric> CNeteaseMusicAPI::GetLyric(neteaseid_t songid) {
 		std::map<string, string> p = {
 			{"id", std::to_string(songid)},
 			{"lv", "0"},
@@ -491,6 +512,17 @@ namespace netease {
 		}
 		return nullptr;
 	}
+
+	static string s_szCookie = "./neteaseapicookie";
+	const std::string CNeteaseMusicAPI::CookieOutPath() {
+		return s_szCookie;
+	}
+	const std::string CNeteaseMusicAPI::CokkieInPath() {
+		return s_szCookie;
+	}
+	void CNeteaseMusicAPI::SetCookie(const char* cookie) {
+		s_szCookie = cookie;
+	}
 	CLocalUser* CNeteaseMusicAPI::GetUser() {
 		return &m_pUser;
 	}
@@ -509,14 +541,14 @@ namespace netease {
 		return nullptr;
 	}
 
-	void CLocalUser::SendCaptcha(neteaseid_t phone, int country){
+	void CLocalUser::SendCaptcha(neteaseid_t phone, int country) {
 		std::map<string, string> p = {
 			{"ctcode", std::to_string(country)},
 			{"cellphone", std::to_string(phone)}
 		};
 		post(Action("/sms/captcha/sent", p));
 	}
-	neteasecode_t CLocalUser::CellPhone(neteaseid_t phone, int captcha, int country){
+	neteasecode_t CLocalUser::CellPhone(neteaseid_t phone, int captcha, int country) {
 		std::map<string, string> p = {
 			{"countrycode", std::to_string(country)},
 			{"captcha", std::to_string(captcha)},
@@ -525,7 +557,7 @@ namespace netease {
 		};
 		return GetCookiePost(Action("/login/cellphone", p));
 	}
-	neteasecode_t CLocalUser::CellPhone(neteaseid_t phone, string& passwd, int country){
+	neteasecode_t CLocalUser::CellPhone(neteaseid_t phone, string& passwd, int country) {
 		std::map<string, string> p = {
 			{"countrycode", std::to_string(country)},
 			{"phone", std::to_string(phone)},
@@ -534,7 +566,7 @@ namespace netease {
 		};
 		return GetCookiePost(Action("/login/cellphone", p));
 	}
-	neteasecode_t CLocalUser::EMail(string& mail, string& passwd){
+	neteasecode_t CLocalUser::EMail(string& mail, string& passwd) {
 		std::map<string, string> p = {
 			{"username",mail},
 			{"rememberLogin", "1"},
@@ -542,7 +574,7 @@ namespace netease {
 		};
 		return GetCookiePost(Action("/login", p));
 	}
-	string CLocalUser::RequestQRKey(){
+	string CLocalUser::RequestQRKey() {
 		std::map<string, string> p = {
 			{"type", "1"}
 		};
@@ -553,14 +585,14 @@ namespace netease {
 			return data["unikey"].GetString();
 		return "";
 	}
-	CLocalUser::QRStatue CLocalUser::QRCheck(string& qrKey){
+	CLocalUser::QRStatue CLocalUser::QRCheck(string& qrKey) {
 		std::map<string, string> p = {
 			{"type", "1"},
 			{"key", qrKey}
 		};
 		return QRStatue(GetCookiePost(Action("/login/qrcode/client/login", p), 803));
 	}
-	CLocalUser::QRCode CLocalUser::GetQRCode(string& qrKey){
+	CLocalUser::QRCode CLocalUser::GetQRCode(string& qrKey) {
 		QRCode out;
 		const qrcodegen::QrCode qr = qrcodegen::QrCode::encodeText(("https://music.163.com/login?codekey=" + qrKey).c_str(), qrcodegen::QrCode::Ecc::LOW);
 		for (int y = 0; y < qr.getSize(); y++) {
@@ -571,16 +603,17 @@ namespace netease {
 		out.size = qr.getSize();
 		return out;
 	}
-	neteasecode_t CLocalUser::GetCookiePost(Action& action, int successcode){
-		if(cookieJar.Size() == 0)
-			cookieJar.Load(COOKIE_PATH);
+	neteasecode_t CLocalUser::GetCookiePost(Action& action, int successcode) {
 		string json = post(action);
+
 		rapidjson::Document data;
 		data.Parse(json.c_str(), json.length());
-		if (data.IsObject() && data.HasMember("code") && data["code"].IsInt()){
-			cookieJar.Save();
+
+		if (data.IsObject() && data.HasMember("code") && data["code"].IsInt())
+		{
 			return data["code"].GetInt();
 		}
+
 		return 0;
 	}
 }

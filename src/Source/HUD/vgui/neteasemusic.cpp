@@ -372,6 +372,10 @@ CNeteasePanel::CNeteasePanel()
 	m_pSuppressMusic = CREATE_CVAR("cl_netease_suppressmusic", "1", FCVAR_VALUE, nullptr);
 
 	s_pNeteaseApi = new netease::CNeteaseMusicAPI();
+	char buf[MAX_PATH];
+	vgui::filesystem()->GetLocalPath("abcenchance/", buf, MAX_PATH);
+	V_snprintf(buf, "%sneteasecookie", buf);
+	netease::CNeteaseMusicAPI::SetCookie(buf);
 
 	LoadControlSettings(VGUI2_ROOT_DIR "NeteasePanel.res");
 	SetVisible(false);
