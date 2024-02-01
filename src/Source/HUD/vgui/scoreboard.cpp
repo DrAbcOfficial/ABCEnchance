@@ -881,7 +881,7 @@ int CScorePanel::GetNameColumnWidth()
 {
 	int w = m_iColumnWidthName;
 
-	if (hud_scoreboard_showsteamid->value > 0)
+	if (hud_scoreboard_showsteamid->value <= 0)
 		w += m_iColumnWidthSteamID;
 
 	return w;
