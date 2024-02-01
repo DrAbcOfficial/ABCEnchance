@@ -20,19 +20,20 @@ namespace vgui {
 }
 class CNeteasePanel;
 
-class CQRLoginPanel : public vgui::Frame {
-public:
-	DECLARE_CLASS_SIMPLE(CQRLoginPanel, vgui::Frame);
-	CQRLoginPanel(vgui::Panel* parent, char* name);
-	void Login();
-	void ResetText();
-	void SendMyInfo();
-private:
-	vgui::ImagePanel* m_pQRImagePanel = nullptr;
-	vgui::Label* m_pNotice = nullptr;
-	CNeteasePanel* m_pMusicPanel = nullptr;
-};
-
+namespace vgui {
+	class CQRLoginPanel : public vgui::Frame {
+	public:
+		DECLARE_CLASS_SIMPLE(CQRLoginPanel, vgui::Frame);
+		CQRLoginPanel(vgui::Panel* parent, char* name);
+		void Login();
+		void ResetText();
+		void SendMyInfo();
+	private:
+		vgui::ImagePanel* m_pQRImagePanel = nullptr;
+		vgui::Label* m_pNotice = nullptr;
+		CNeteasePanel* m_pMusicPanel = nullptr;
+	};
+}
 class CNeteasePanel : public vgui::EditablePanel, public IViewportPanel{
 public:
 	DECLARE_CLASS_SIMPLE(CNeteasePanel, vgui::EditablePanel);
@@ -123,7 +124,7 @@ private:
 
 	vgui::ImagePanel* m_pAlbumPanel = nullptr;
 
-	CQRLoginPanel* m_pLoginPanel = nullptr;
+	vgui::CQRLoginPanel* m_pLoginPanel = nullptr;
 
 	FModEngine::CFModSound m_pSound;
 	FModEngine::CFModChannel m_pChannel;
