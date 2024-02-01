@@ -356,7 +356,7 @@ CNeteasePanel::CNeteasePanel()
 	m_pProgressLable = new vgui::ImageClipPanel(this, "Progress");
 
 	m_pAlbumPanel = new vgui::ImagePanel(this, "Album");
-	m_pLoginPanel = new CQRLoginPanel(this->GetParent(), VIEWPORT_NETEASEMUSICQR_NAME);
+	m_pLoginPanel = new vgui::CQRLoginPanel(this->GetParent(), VIEWPORT_NETEASEMUSICQR_NAME);
 	s_pAlbumImage = new CAlbumImage();
 
 	m_pQuality = CREATE_CVAR("cl_netease_quality", "0", FCVAR_VALUE, [](cvar_t* cvar) {
@@ -415,7 +415,7 @@ void CNeteasePanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	m_pTranslatedLyricLable->SetFgColor(GetSchemeColor("Music.TransLyricFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
 	m_pLyricLableHighlight->SetFgColor(GetSchemeColor("Music.LyricHighLightFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
 	m_pTranslatedLyricLableHighlight->SetFgColor(GetSchemeColor("Music.TransLyricHighLightFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
-	m_pLoginPanel->SetBgColor(GetSchemeColor("Music.BackGoundColor", GetSchemeColor("Frame.BgColor", pScheme), pScheme));
+	m_pLoginPanel->SetBgColor(GetSchemeColor("Frame.BgColor", pScheme));
 }
 void CNeteasePanel::ShowPanel(bool state){
 	if (state == IsVisible())
@@ -942,7 +942,7 @@ public:
 	}
 };
 static CQRImage* s_pQRCodeImage;
-CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name) 
+vgui::CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name) 
 	: BaseClass(parent, name) {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
@@ -966,10 +966,10 @@ struct loginshare_obj {
 	size_t size;
 	std::string qrkey;
 };
-void QRCheck(CQRLoginPanel* panel, std::string& qrkey) {
+void QRCheck(vgui::CQRLoginPanel* panel, std::string& qrkey) {
 	GetTaskManager()->Add(std::async([](std::string unikey) {
 		return s_pNeteaseApi.load()->GetUser()->QRCheck(unikey);
-	}, qrkey))->ContinueWith([](netease::CLocalUser::QRStatue result, CQRLoginPanel* panel, std::string& qrkey) {
+	}, qrkey))->ContinueWith([](netease::CLocalUser::QRStatue result, vgui::CQRLoginPanel* panel, std::string& qrkey) {
 		switch (result) {
 			default:
 			case netease::CLocalUser::QRStatue::INVALID: {
@@ -990,7 +990,7 @@ void QRCheck(CQRLoginPanel* panel, std::string& qrkey) {
 		}
 	}, panel, qrkey)->Start();
 }
-void CQRLoginPanel::Login(){
+void vgui::CQRLoginPanel::Login(){
 	GetTaskManager()->Add(std::async([]() -> loginshare_obj*{
 		static loginshare_obj obj;
 		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
@@ -1026,10 +1026,10 @@ void CQRLoginPanel::Login(){
 		QRCheck(panel, obj->qrkey);
 	}, this)->Start();
 }
-void CQRLoginPanel::ResetText(){
+void vgui::CQRLoginPanel::ResetText(){
 	m_pNotice->SetText("#Netease_QRNoticeText");
 }
-void CQRLoginPanel::SendMyInfo(){
+void vgui::CQRLoginPanel::SendMyInfo(){
 	m_pMusicPanel->GetMyInfo();
 }
 
