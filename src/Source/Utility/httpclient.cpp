@@ -1,7 +1,9 @@
 #include <plugins.h>
 
 #include "httpclient.h"
+#include <Controls.h>
 
+#define MAX_COOKIE_LENGTH 2048
 
 static HINTERFACEMODULE g_hUtilHTTPClient;
 static IUtilHTTPClient* g_pUtilHTTPClient;
@@ -68,7 +70,8 @@ void CHttpClient::ClearAll(){
 CHttpClientItem* CHttpClient::Fetch(const char* url, UtilHTTPMethod method){
 	httpContext_t ctx = {
 		url,
-		method
+		method,
+		nullptr
 	};
 	CHttpClientItem* item = new CHttpClientItem(&ctx);
 	m_aryItems.push_back(item);
@@ -103,11 +106,17 @@ CHttpClientItem::CHttpClientItem(httpContext_s* ctx) : IUtilHTTPCallbacks(){
 }
 CHttpClientItem* CHttpClientItem::Create(bool async){
 	m_iStatue = HTTPCLIENT_STATE::PENDING;
-	if (async)
-		m_pId = g_pUtilHTTPClient->CreateAsyncRequest(m_hContext.url.c_str(), m_hContext.method, this)->GetRequestId();
-	else
+	if (async) {
+		auto req = g_pUtilHTTPClient->CreateAsyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
+		m_pId = req->GetRequestId();
+		if (m_pCookieJar)
+			req->SetField(UtilHTTPField::cookie, m_pCookieJar->Get().c_str());
+	}
+	else {
 		m_pSyncReq = g_pUtilHTTPClient->CreateSyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
-	m_bAsync = async;
+		if (m_pCookieJar)
+			m_pSyncReq->SetField(UtilHTTPField::cookie, m_pCookieJar->Get().c_str());
+	}
 	return this;
 }
 CHttpClientItem* CHttpClientItem::Start(){
@@ -161,8 +170,14 @@ void CHttpClientItem::OnResponseComplete(IUtilHTTPRequest* RequestInstance, IUti
 		return;
 	}
 	m_iStatue = HTTPCLIENT_STATE::RESPONDED;
-	if (m_pOnResponse)
+	if (m_pOnResponse) {
 		std::invoke(m_pOnResponse, ResponseInstance);
+		if (m_pCookieJar) {
+			char cookiebuf[MAX_COOKIE_LENGTH];
+			ResponseInstance->GetHeader("Set-Cookie", cookiebuf, MAX_COOKIE_LENGTH);
+			m_pCookieJar->Set(cookiebuf);
+		}
+	}
 }
 void CHttpClientItem::OnUpdateState(UtilHTTPRequestState NewState) {
 	switch (NewState)
@@ -186,4 +201,30 @@ void CHttpClientItem::OnUpdateState(UtilHTTPRequestState NewState) {
 
 CHttpClient* GetHttpClient(){
 	return &g_pHttpClient;
+}
+
+CHttpCookieJar::CHttpCookieJar(const char* path){
+	FileHandle_t file = vgui::filesystem()->Open(path, "r");
+	if (file) {
+		char buffer[MAX_COOKIE_LENGTH];
+		vgui::filesystem()->Read(buffer, MAX_COOKIE_LENGTH, file);
+		m_szCookie = buffer;
+		m_szCookie += '\0';
+		m_szPath = path;
+	}
+	vgui::filesystem()->Close(file);
+}
+void CHttpCookieJar::Save(){
+	if (m_szPath.empty())
+		return;
+	FileHandle_t file = vgui::filesystem()->Open(m_szPath.c_str(), "w");
+	if (file)
+		vgui::filesystem()->Write(m_szCookie.c_str(), m_szCookie.size(), file);
+	vgui::filesystem()->Close(file);
+}
+std::string CHttpCookieJar::Get(){
+	return m_szCookie;
+}
+void CHttpCookieJar::Set(const char* cookie){
+	m_szCookie = cookie;
 }
