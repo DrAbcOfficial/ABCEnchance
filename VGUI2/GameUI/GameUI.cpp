@@ -116,7 +116,7 @@ public:
 	int GetAltitude() const override{
 		return 0;
 	}
-	void KeyValues_LoadFromFile(void*& pthis, IFileSystem*& pFileSystem, const char*& resourceName, const char*& pathId, VGUI2Extension_CallbackContext* CallbackContext){
+	void KeyValues_LoadFromFile(void*& pthis, IFileSystem*& pFileSystem, const char*& resourceName, const char*& pathId, const char* sourceModule, VGUI2Extension_CallbackContext* CallbackContext){
 		if (CallbackContext->IsPost && !strcmp(resourceName, "resource/GameMenu.res")){
 			bool* pRealReturnValue = (bool*)CallbackContext->pRealReturnValue;
 			if ((*pRealReturnValue) == true){
