@@ -366,7 +366,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			memcpy(flipped + i * nw, bits + (nh - i - 1) * nw, nw);
 		}
 		for (size_t i = 0; i < size; i++) {
-			if (flipped[i] == bluindex)
+			if ((int)flipped[i] == bluindex)
 				flipped[i] = 255;
 			else if (flipped[i] == 255)
 				flipped[i] = (BYTE)bluindex;
