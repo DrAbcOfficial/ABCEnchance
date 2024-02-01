@@ -4,7 +4,6 @@
 #include <VGUI\ISurface.h>
 #include <VGUI\IInput.h>
 
-#include <GameUI/GameConsole.h>
 #include <GameUI/BasePanel.h>
 
 #include <IEngineSurface.h>
@@ -39,8 +38,6 @@ public:
 			g_pKeyValuesSystem = (IKeyValuesSystem*)fnVGUI2CreateInterface(KEYVALUESSYSTEM_INTERFACE_VERSION, NULL);
 		}
 		staticSurface = (IEngineSurface*)factories[0](ENGINE_SURFACE_VERSION, NULL);
-
-		GameConsole_InstallHook();
 		BasePanel_InstallHook();
 		BackGroundVideoInit();
 		CreateNeteaseMusicDialogCmd();
