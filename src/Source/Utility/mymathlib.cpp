@@ -6,10 +6,10 @@ bool mathlib::Q_IS_NAN(float x){
 	return ((*(int*)&x) & nanmask) == nanmask;
 }
 float mathlib::Q_DEG2RAD(float a) {
-	return (a * Q_PI) / 180.0F;
+	return (a * F_PI) / 180.0f;
 }
 float mathlib::Q_RAD2DEG(float r) {
-	return (r * 180.0F) / Q_PI;
+	return (r * 180.0f) / F_PI;
 }
 template<typename T>
 T mathlib::clamp(T num, T minn, T maxn) {
@@ -55,7 +55,9 @@ float mathlib::DotProduct(const vec3_t x, const vec3_t y) {
 	return ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2]);
 }
 void  mathlib::ColorCalcuAlpha(int& r, int& g, int& b, int a) {
-	(r) *= (float)(a) / 255; (g) *= (float)(a) / 255; (b) *= (float)(a) / 255;
+	r *= static_cast<int>((float)(a) / 255); 
+	g *= static_cast<int>((float)(a) / 255); 
+	b *= static_cast<int>((float)(a) / 255);
 }
 void mathlib::Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa) {
 	out[0] = x * ca - y * sa; out[1] = x * sa + y * ca;
@@ -73,7 +75,7 @@ void mathlib::CenterPos2OpenGLPos(vec2_t pos, int w, int h){
 	pos[1] = h / 2 - pos[1];
 }
 size_t mathlib::GetScreenPixel(int length, double percent) {
-	return (size_t)((float)length * clamp<float>(percent, 0.0f, 1.0f));
+	return (size_t)((float)length * clamp<float>(static_cast<float>(percent), 0.0f, 1.0f));
 }
 void mathlib::Vector2Rotate(vec2_t out, float x, float y, float rotate) {
 	out[0] = x * cos(rotate) - y * sin(rotate); out[1] = x * sin(rotate) + y * cos(rotate);
@@ -184,14 +186,14 @@ void mathlib::RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t
 #endif
 
 float mathlib::anglemod(float a){
-	a = (360.0 / 65536) * ((int)(a * (65536 / 360.0)) & 65535);
+	a = (360.0f / 65536) * ((int)(a * (65536 / 360.0f)) & 65535);
 	return a;
 }
 void mathlib::AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up){
 	float angle;
 	vec2_t cs[3];
 	for (int i = 0; i < 3; i++){
-		angle = angles[i] * (Q_PI / 180.0F);
+		angle = angles[i] * (F_PI / 180.0f);
 		cs[i][0] = sin(angle);
 		cs[i][1] = cos(angle);
 	}
@@ -215,7 +217,7 @@ void mathlib::AngleVectorsTranspose(const vec3_t angles, vec3_t *forward, vec3_t
 	float angle;
 	vec2_t cs[3];
 	for (int i = 0; i < 3; i++){
-		angle = angles[i] * (Q_PI / 180.0F);
+		angle = angles[i] * (F_PI / 180.0f);
 		cs[i][0] = sin(angle);
 		cs[i][1] = cos(angle);
 	}
@@ -247,13 +249,13 @@ void mathlib::VectorAngles(const vec3_t forward, vec3_t angles){
 			pitch = 270;
 	}
 	else{
-		yaw = (atan2((double)forward[1], (double)forward[0]) * 180 / Q_PI);
+		yaw = static_cast<float>((atan2((double)forward[1], (double)forward[0]) * 180 / Q_PI));
 
 		if (yaw < 0)
 			yaw += 360;
 
 		float tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
-		pitch = (atan2((double)forward[2], (double)tmp) * 180 / Q_PI);
+		pitch = static_cast<float>(atan2((double)forward[2], (double)tmp) * 180 / Q_PI);
 
 		if (pitch < 0)
 			pitch += 360;
@@ -266,7 +268,7 @@ void mathlib::VectorAngles(const vec3_t forward, vec3_t angles){
 float mathlib::FVectorLength(vec3_t v) {
 	float length = 0;
 	for (int i = 0; i < 3; i++)
-		length += pow(v[i], 2);
+		length += static_cast<float>(pow(v[i], 2));
 	return sqrt(length);
 }
 double mathlib::VectorLength(vec3_t v){
@@ -288,7 +290,7 @@ int mathlib::VectorCompare(const vec3_t v1, const vec3_t v2){
 	return 1;
 }
 vec_t mathlib::Q_rint(vec_t in){
-	return floor(in + 0.5);
+	return static_cast<float>(floor(in + 0.5f));
 }
 void mathlib::VectorMA(const vec3_t va, float scale, const vec3_t vb, vec3_t vc){
 	vc[0] = va[0] + scale * vb[0];
@@ -351,9 +353,9 @@ vec_t mathlib::VectorNormalize(vec3_t v){
 		return 0;
 
 	for (i = 0; i < 3; i++)
-		v[i] /= length;
+		v[i] /= static_cast<float>(length);
 
-	return length;
+	return static_cast<float>(length);
 }
 void mathlib::VectorInverse(vec3_t v){
 	v[0] = -v[0];
@@ -396,13 +398,13 @@ void mathlib::AngleMatrix(const vec3_t angles, float (*matrix)[4]){
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
 
-	angle = angles[2] * (Q_PI * 2 / 360);
+	angle = angles[2] * (F_PI * 2 / 360);
 	sy = sin(angle);
 	cy = cos(angle);
-	angle = angles[1] * (Q_PI * 2 / 360);
+	angle = angles[1] * (F_PI * 2 / 360);
 	sp = sin(angle);
 	cp = cos(angle);
-	angle = angles[0] * (Q_PI * 2 / 360);
+	angle = angles[0] * (F_PI * 2 / 360);
 	sr = sin(angle);
 	cr = cos(angle);
 
@@ -423,13 +425,13 @@ void mathlib::AngleIMatrix(const vec3_t angles, float matrix[3][4]){
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
 
-	angle = angles[2] * (Q_PI * 2 / 360);
+	angle = angles[2] * (F_PI * 2 / 360);
 	sy = sin(angle);
 	cy = cos(angle);
-	angle = angles[1] * (Q_PI * 2 / 360);
+	angle = angles[1] * (F_PI * 2 / 360);
 	sp = sin(angle);
 	cp = cos(angle);
-	angle = angles[0] * (Q_PI * 2 / 360);
+	angle = angles[0] * (F_PI * 2 / 360);
 	sr = sin(angle);
 	cr = cos(angle);
 
@@ -490,13 +492,13 @@ void mathlib::AngleQuaternion(const vec3_t angles, vec4_t quaternion){
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
 
-	angle = angles[2] * 0.5;
+	angle = angles[2] * 0.5f;
 	sy = sin(angle);
 	cy = cos(angle);
-	angle = angles[1] * 0.5;
+	angle = angles[1] * 0.5f;
 	sp = sin(angle);
 	cp = cos(angle);
-	angle = angles[0] * 0.5;
+	angle = angles[0] * 0.5f;
 	sr = sin(angle);
 	cr = cos(angle);
 
@@ -506,17 +508,17 @@ void mathlib::AngleQuaternion(const vec3_t angles, vec4_t quaternion){
 	quaternion[3] = cr * cp * cy + sr * sp * sy;
 }
 void mathlib::QuaternionMatrix(const vec4_t quaternion, float (*matrix)[4]){
-	matrix[0][0] = 1.0 - 2.0 * quaternion[1] * quaternion[1] - 2.0 * quaternion[2] * quaternion[2];
-	matrix[1][0] = 2.0 * quaternion[0] * quaternion[1] + 2.0 * quaternion[3] * quaternion[2];
-	matrix[2][0] = 2.0 * quaternion[0] * quaternion[2] - 2.0 * quaternion[3] * quaternion[1];
+	matrix[0][0] = 1.0f - 2.0f * quaternion[1] * quaternion[1] - 2.0f * quaternion[2] * quaternion[2];
+	matrix[1][0] = 2.0f * quaternion[0] * quaternion[1] + 2.0f * quaternion[3] * quaternion[2];
+	matrix[2][0] = 2.0f * quaternion[0] * quaternion[2] - 2.0f * quaternion[3] * quaternion[1];
 
-	matrix[0][1] = 2.0 * quaternion[0] * quaternion[1] - 2.0 * quaternion[3] * quaternion[2];
-	matrix[1][1] = 1.0 - 2.0 * quaternion[0] * quaternion[0] - 2.0 * quaternion[2] * quaternion[2];
-	matrix[2][1] = 2.0 * quaternion[1] * quaternion[2] + 2.0 * quaternion[3] * quaternion[0];
+	matrix[0][1] = 2.0f * quaternion[0] * quaternion[1] - 2.0f * quaternion[3] * quaternion[2];
+	matrix[1][1] = 1.0f - 2.0f * quaternion[0] * quaternion[0] - 2.0f * quaternion[2] * quaternion[2];
+	matrix[2][1] = 2.0f * quaternion[1] * quaternion[2] + 2.0f * quaternion[3] * quaternion[0];
 
-	matrix[0][2] = 2.0 * quaternion[0] * quaternion[2] + 2.0 * quaternion[3] * quaternion[1];
-	matrix[1][2] = 2.0 * quaternion[1] * quaternion[2] - 2.0 * quaternion[3] * quaternion[0];
-	matrix[2][2] = 1.0 - 2.0 * quaternion[0] * quaternion[0] - 2.0 * quaternion[1] * quaternion[1];
+	matrix[0][2] = 2.0f * quaternion[0] * quaternion[2] + 2.0f * quaternion[3] * quaternion[1];
+	matrix[1][2] = 2.0f * quaternion[1] * quaternion[2] - 2.0f * quaternion[3] * quaternion[0];
+	matrix[2][2] = 1.0f - 2.0f * quaternion[0] * quaternion[0] - 2.0f * quaternion[1] * quaternion[1];
 }
 void mathlib::QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt){
 	int i;
@@ -541,11 +543,11 @@ void mathlib::QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt){
 		if ((1.0 - cosom) > 0.00000001){
 			float omega = acos(cosom);
 			float sinom = sin(omega);
-			sclp = sin((1.0 - t)*omega) / sinom;
+			sclp = sin((1.0f - t)*omega) / sinom;
 			sclq = sin(t * omega) / sinom;
 		}
 		else{
-			sclp = 1.0 - t;
+			sclp = 1.0f - t;
 			sclq = t;
 		}
 
@@ -557,8 +559,8 @@ void mathlib::QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt){
 		qt[1] = p[0];
 		qt[2] = -p[3];
 		qt[3] = p[2];
-		sclp = sin((1.0 - t) * 0.5 * Q_PI);
-		sclq = sin(t * 0.5 * Q_PI);
+		sclp = sin((1.0f - t) * 0.5f * F_PI);
+		sclq = sin(t * 0.5f * F_PI);
 
 		for (i = 0; i < 3; i++)
 			qt[i] = sclp * p[i] + sclq * qt[i];
@@ -716,11 +718,11 @@ void mathlib::SinCos(float radians, float *sine, float *cosine){
 void mathlib::Matrix4x4_CreateFromEntity(float out[4][4], const vec3_t angles, const vec3_t origin, float scale){
 	float	angle, sr, sp, sy, cr, cp, cy;
 	if (angles[Q_ROLL]){
-		angle = angles[Q_YAW] * (Q_PI * 2 / 360.0f);
+		angle = angles[Q_YAW] * (F_PI * 2 / 360.0f);
 		SinCos(angle, &sy, &cy);
-		angle = angles[Q_PITCH] * (Q_PI * 2 / 360.0f);
+		angle = angles[Q_PITCH] * (F_PI * 2 / 360.0f);
 		SinCos(angle, &sp, &cp);
-		angle = angles[Q_ROLL] * (Q_PI * 2 / 360.0f);
+		angle = angles[Q_ROLL] * (F_PI * 2 / 360.0f);
 		SinCos(angle, &sr, &cr);
 
 		out[0][0] = (cp*cy) * scale;
@@ -737,9 +739,9 @@ void mathlib::Matrix4x4_CreateFromEntity(float out[4][4], const vec3_t angles, c
 		out[2][3] = origin[2];
 	}
 	else if (angles[Q_PITCH]){
-		angle = angles[Q_YAW] * (Q_PI * 2 / 360.0f);
+		angle = angles[Q_YAW] * (F_PI * 2 / 360.0f);
 		SinCos(angle, &sy, &cy);
-		angle = angles[Q_PITCH] * (Q_PI * 2 / 360.0f);
+		angle = angles[Q_PITCH] * (F_PI * 2 / 360.0f);
 		SinCos(angle, &sp, &cp);
 
 		out[0][0] = (cp*cy) * scale;
@@ -756,7 +758,7 @@ void mathlib::Matrix4x4_CreateFromEntity(float out[4][4], const vec3_t angles, c
 		out[2][3] = origin[2];
 	}
 	else if (angles[Q_YAW]){
-		angle = angles[Q_YAW] * (Q_PI * 2 / 360.0f);
+		angle = angles[Q_YAW] * (F_PI * 2 / 360.0f);
 		SinCos(angle, &sy, &cy);
 
 		out[0][0] = (cy)* scale;
@@ -828,7 +830,7 @@ void mathlib::ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]
 		in1[2][2] * in2[2][3] + in1[2][3];
 }
 void mathlib::RGBToHSV(int r, int g, int b, float& h, float& s, float& v) {
-	float fr = r / 255.0, fg = g / 255.0, fb = b / 255.0;
+	float fr = r / 255.0f, fg = g / 255.0f, fb = b / 255.0f;
 	float max = max3(fr, fg, fb);
 	float min = min3(fr, fg, fb);
 	float range = max - min;
@@ -842,7 +844,7 @@ void mathlib::RGBToHSV(int r, int g, int b, float& h, float& s, float& v) {
 	else
 		h = 60 * (fr - fg) / range + 240;
 	if (abs(h) >= 360)
-		h = fmod(h, 360);
+		h = static_cast<float>(fmod(h, 360));
 	//S
 	s = max <= 0 ? 0 : range / max;
 	//V
@@ -852,12 +854,12 @@ void mathlib::HSVToRGB(float h, float s, float v, int& r, int& g, int& b) {
 	//0<=h<360
 	//0<=s<=1
 	//0<=v<=1
-	h = fmod(h, 360);
+	h = static_cast<float>(fmod(h, 360));
 	s = clamp<float>(s, 0.0, 1.0);
 	v = clamp<float>(v, 0.0, 1.0);
 	float section = h / 60;
 	float c = v * s;
-	float x = c * (1 - abs(fmod(section, 2) - 1));
+	float x = static_cast<float>(c * (1 - abs(fmod(section, 2) - 1)));
 	float hr = 0, hg = 0, hb = 0;
 	switch ((int)section) {
 	case 0:hr = c, hg = x, hb = 0; break;
@@ -868,22 +870,10 @@ void mathlib::HSVToRGB(float h, float s, float v, int& r, int& g, int& b) {
 	case 5:hr = c; hg = 0; hb = x; break;
 	}
 	float m = v - c;
-	r = (hr + m) * 255;
-	g = (hg + m) * 255;
-	b = (hb + m) * 255;
+	r = static_cast<int>((hr + m) * 255);
+	g = static_cast<int>((hg + m) * 255);
+	b = static_cast<int>((hb + m) * 255);
 }
-//快速近似平方根 //undefined behavior
-#if 0
-float mathlib::fsqrt(float x){
-	float a = x;
-	unsigned int i = *(unsigned int*)&x;
-	i = (i + 0x3F76CF62) >> 1;
-	x = *(float*)&i;
-	x = (x + a / x) * 0.5f;
-	return x;
-}
-#endif
-//https://github.com/quiath/fast-atoi/blob/master/main.cpp#L22
 int mathlib::fatoi(const char* b){
 	int res = 0;
 	int sgn = 1;

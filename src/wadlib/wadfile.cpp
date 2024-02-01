@@ -46,7 +46,7 @@ bool WadFile::Load(const std::string &filePath){
     m_aryLumps = new WAD3Lump_t[header.lumpsCount];
     stream.seekg(header.lumpsOffset, std::ios::beg);
     stream.read((char *)m_aryLumps, header.lumpsCount * sizeof(WAD3Lump_t));
-    for (int i = 0; i < header.lumpsCount; i++){
+    for (size_t i = 0; i < header.lumpsCount; i++){
         unsigned char *lumpData = new unsigned char[m_aryLumps[i].size];
         stream.seekg(m_aryLumps[i].offset, std::ios::beg);
         stream.read((char *)lumpData, m_aryLumps[i].size);
