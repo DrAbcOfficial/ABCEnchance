@@ -3,6 +3,7 @@
 #include "exportfuncs.h"
 #include "ClientParticleMan.h"
 #include "httpclient.h"
+#include "curl.h"
 #include "soundengine.h"
 #include "VGUI2ExtensionImport.h"
 #include <vgui_controls/Controls.h>
@@ -62,7 +63,6 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	FillEngineAddress();
 	//SVC_FillAddress();
 	InstallEngineHook();
-
 	VGUI2Extension_Init();
 	ClientVGUI_InstallHooks();
 	BaseUI_InstallHooks();
@@ -98,6 +98,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_TxferPredictionData = HUD_TxferPredictionData;
 
 	FillAddress();
+	LoadLibcurl();
 	InstallClientHook();
 	FMOD_Init();
 	LoadParticleMan();
@@ -107,7 +108,6 @@ void IPluginsV4::Shutdown(void){
 	
 }
 void IPluginsV4::ExitGame(int iResult){
-
 	UninstallEngineHook();
 
 	GameConsole_UninstallHook();
