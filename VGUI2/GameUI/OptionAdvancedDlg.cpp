@@ -507,8 +507,8 @@ void COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t& oh){
 			h *= 0.95f;
 		}
 	}
-	w = static_cast<size_t>(w);
-	h = static_cast<size_t>(h);
+	w = static_cast<float>(static_cast<size_t>(w));
+	h = static_cast<float>(static_cast<size_t>(h));
 	float gap = 16.0f;
 	float dw = fmodf(w, gap);
 	if (dw > gap / 2.0f)
@@ -549,9 +549,8 @@ class KeyBindingButton : public Button {
 public:
 	KeyBindingButton(Panel* parent, const char* panelName, const char* text, Panel* pActionSignalTarget = NULL, const char* pCmd = NULL) :
 		Button(parent, panelName, text, pActionSignalTarget, pCmd){
-
 	}
-	int GetKeyCode() {
+	int GetKeyCode() const {
 		return m_iCode;
 	}
 	void SetKeyCode(int code) {
@@ -773,7 +772,6 @@ void COptionsAdvanceDialog::ApplySchemeSettings(IScheme* pScheme){
 
 	m_pMultiPlayPage->SetBgColor(GetSchemeColor("OptionsAdvanceDialog/SheetBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pMultiPlayPage->SetBorder(pScheme->GetBorder("SheetBorder"));
-	
 
 	//ofc
 	m_pBlur->SetBgColor(Color(255, 255, 255, 255));
