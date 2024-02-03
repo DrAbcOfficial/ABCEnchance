@@ -29,7 +29,6 @@ void InstallClientHook();
 void UninstallEngineHook();
 void UninstallClientHook();
 void CheckAsset();
-void DllLoadNotification(mh_load_dll_notification_context_t* ctx);
 
 void GL_Init(void);
 void HUD_Init(void);
@@ -40,7 +39,6 @@ int HUD_Redraw(float time, int intermission);
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);
 int HUD_UpdateClientData(struct client_data_s* c, float f);
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
-void HUD_Clear(void);
 void V_CalcRefdef(struct ref_params_s* pparams);
 void IN_MouseEvent(int mstate);
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
@@ -62,6 +60,7 @@ void R_NewMap(void);
 
 #define Sig_Length(a) (sizeof(a)-1)
 #define Search_Pattern(sig) g_pMetaHookAPI->SearchPattern((void *)g_dwEngineBase, g_dwEngineSize, sig, Sig_Length(sig));
+#define Search_Pattern_From_Size(fn, size, sig) g_pMetaHookAPI->SearchPattern((void *)(fn), size, sig, Sig_Length(sig))
 #define Search_Pattern_From(fn, sig) g_pMetaHookAPI->SearchPattern((void *)fn, ((PUCHAR)g_dwEngineTextBase + g_dwEngineTextSize) - (PUCHAR)fn, sig, Sig_Length(sig))
 #define Search_Pattern_Data(sig) g_pMetaHookAPI->SearchPattern(g_dwEngineDataBase, g_dwEngineDataSize, sig, Sig_Length(sig))
 #define Search_Pattern_Rdata(sig) g_pMetaHookAPI->SearchPattern(g_dwEngineRdataBase, g_dwEngineRdataSize, sig, Sig_Length(sig))
