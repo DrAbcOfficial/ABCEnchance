@@ -154,18 +154,16 @@ model_t* CL_GetModelByIndex (int index)
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
 
-void __fastcall CClient_SoundEngine_PlayFMODSound(void* pEngine, int dummy, int param_1, int param_2, float* param_3, int channel,
-	char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
-	float param_11) {
+void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin, 
+	int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength) {
 	if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
 		if (g_pViewPort->GetMusicPanel()->GetPlayListSize() > 0)
 			return;
 	}
-	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pEngine, dummy, param_1, param_2, param_3, channel, param_5, param_6, param_7, param_8, param_9, param_10, param_11);
+	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pSoundEngine, dummy, flags, entindex, origin, channel, name, fvol, attenuation, extraflags, pitch, sentenceIndex, soundLength);
 }
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
-
 	if (g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info)) {
 		memcpy(&g_metaplugins.renderer.info, &info, sizeof(info));
 		g_metaplugins.renderer.has = true;
@@ -173,15 +171,6 @@ void CheckOtherPlugin(){
 	else if(g_pMetaHookAPI->GetPluginInfo("Renderer_AVX2.dll", &info)) {
 		memcpy(&g_metaplugins.renderer.info, &info, sizeof(info));
 		g_metaplugins.renderer.has = true;
-	}
-
-	if (g_pMetaHookAPI->GetPluginInfo("CaptionMod.dll", &info)) {
-		memcpy(&g_metaplugins.captionmod.info, &info, sizeof(info));
-		g_metaplugins.captionmod.has = true;
-	}
-	else
-	{
-		SYS_ERROR("The \"CaptionMod.dll\" is required!\nPlease add CaptionMod.dll in your plugin.lst");
 	}
 }
 void FillEngineAddress() {
@@ -238,7 +227,7 @@ void FillAddress(){
 		Fill_Sig(TFV_SHOWVGUIMENU_SHIT_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowVGUIMenu);
 #define CStudioModelRenderer_Init_SIG "\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x24\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x38\xFF\x15\x2A\x2A\x2A\x2A\x89\x46\x3C\xFF\x15\x2A\x2A\x2A\x2A\x6A\x00"
 		Fill_Sig(CStudioModelRenderer_Init_SIG, g_dwClientBase, g_dwClientSize, CStudioModelRenderer_Init);
-#define CClient_SoundEngine_PlayFMODSound_SIG "\x55\x8B\xEC\x83\xE4\xF0\x81\xEC\xB8\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\xB4\x00\x00\x00\x8b\x45\x18"
+#define CClient_SoundEngine_PlayFMODSound_SIG "\x55\x8B\xEC\x83\xE4\xF0\x81\xEC\xB8\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\xB4\x00\x00\x00\x8B\x45\x18"
 		Fill_Sig(CClient_SoundEngine_PlayFMODSound_SIG, g_dwClientBase, g_dwClientSize, CClient_SoundEngine_PlayFMODSound);
 
 		DWORD addr;
