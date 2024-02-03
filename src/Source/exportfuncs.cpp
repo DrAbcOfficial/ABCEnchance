@@ -229,30 +229,29 @@ void FillAddress(){
 		Fill_Sig(CStudioModelRenderer_Init_SIG, g_dwClientBase, g_dwClientSize, CStudioModelRenderer_Init);
 		ULONG ClientTextSize = 0;
 		PVOID ClientTextBase = ClientTextBase = g_pMetaHookAPI->GetSectionByName(g_dwClientBase, ".text\0\0\0", &ClientTextSize);
-		if (1)
+		PUCHAR addr;
+#define Client_SoundEngine_PlayFMODSound_SIG "\x6A\x00\x50\x6A\xFF\x6A\x08\xE8\x2A\x2A\x2A\x2A\x2A\x2A\xE8"
 		{
-			char pattern[] = "\x6A\x00\x50\x6A\xFF\x6A\x08\xE8\x2A\x2A\x2A\x2A\x2A\x2A\xE8";
-			auto addr = (PUCHAR)Search_Pattern_From_Size(ClientTextBase, ClientTextSize, pattern);
-			Sig_VarNotFound("ScClient_SoundEngine_PlayFMODSound");
-
-			gHookFuncs.CClient_SoundEngine_PlayFMODSound = (decltype(gHookFuncs.CClient_SoundEngine_PlayFMODSound))GetCallAddress(addr + Sig_Length(pattern) - 1);
+			addr = (PUCHAR)Search_Pattern_From_Size(ClientTextBase, ClientTextSize, Client_SoundEngine_PlayFMODSound_SIG);
+			Sig_VarNotFound("Client_SoundEngine_PlayFMODSound");
+			gHookFuncs.CClient_SoundEngine_PlayFMODSound = (decltype(gHookFuncs.CClient_SoundEngine_PlayFMODSound))GetCallAddress(addr + Sig_Length(Client_SoundEngine_PlayFMODSound_SIG) - 1);
 		}
-		DWORD addr;
+		
 #define R_SETPUNCHANGLE_SIG "\x83\xC4\x04\xD9\x1C\x24\x6A\x00\xE8\x93\x56\x05\x00\x83\xC4\x08\xF3\x0F\x10\x74\x24\x34\xF3\x0F\x10\xAC\x24\x98\x00\x00\x00\xF3\x0F\x10\x25\x2A\x2A\x2A\x2A\xF3\x0F\x58\xEE\xF3\x0F\x10\x44\x24\x74"
 		{
-			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_SETPUNCHANGLE_SIG, sizeof(R_SETPUNCHANGLE_SIG) - 1);
+			addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_SETPUNCHANGLE_SIG, sizeof(R_SETPUNCHANGLE_SIG) - 1);
 			Sig_AddrNotFound(SetPunchAngle);
 			gHookFuncs.SetPunchAngle = (decltype(gHookFuncs.SetPunchAngle))GetCallAddress(addr + 8);
 		}
 #define SC_SLOTPOS_PUVAR_SIG "\x53\x8B\x5C\x24\x08\x55\x56\x57\x8B\xE9\x33\xFF\xBE"
 		{
-			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_SLOTPOS_PUVAR_SIG, Sig_Length(SC_SLOTPOS_PUVAR_SIG));
+			addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_SLOTPOS_PUVAR_SIG, Sig_Length(SC_SLOTPOS_PUVAR_SIG));
 			Sig_AddrNotFound(g_arySlotPuVar);
 			g_arySlotPuVar = *(decltype(g_arySlotPuVar)*)(addr + 13);
 		}
 		if (1)
 		{
-			addr = (DWORD)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
+			addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
 			g_dwHUDListAddr = *(DWORD*)(addr + 0x1);
 		}
 	}
