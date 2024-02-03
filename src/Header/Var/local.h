@@ -60,9 +60,8 @@ typedef struct{
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
 	void		(*R_ForceCVars)				(bool mp);
-	void(__fastcall* CClient_SoundEngine_PlayFMODSound)(void* pEngine, int dummy, int param_1, int channel, float* param_3, int param_4,
-		char* param_5, float param_6, float param_7, int param_8, int param_9, int param_10,
-		float param_11);
+	void(__fastcall* CClient_SoundEngine_PlayFMODSound)(void* pSoundEngine, int, int flags, int entindex, float* origin,
+		int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength);
 	void		(*SetPunchAngle)			(int y, float value);
 
 	void* (__fastcall* CBasePanel_ctor)(void* pthis, int dummy);

@@ -5,7 +5,6 @@ struct metaplugininfo {
 };
 typedef struct metaplugins_s{
 	metaplugininfo renderer;
-	metaplugininfo captionmod;
 }metaplugins_t;
 typedef struct refdef_s{
 	vec3_t vieworg;
