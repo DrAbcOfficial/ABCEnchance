@@ -75,6 +75,7 @@ if (result == 0)
 }
 CopyFolder("./svencoop", svenPath + "/svencoop");
 CopyFolder("./svencoop_addon", svenPath + "/svencoop_addon");
+CopyFolder("./svencoop_hidpi", svenPath + "/svencoop_hidpi");
 FileWriter(svenPath + "/svencoop/metahook/configs/dllpaths.lst", "vpx");
 FileWriter(svenPath + "/svencoop/metahook/configs/plugins.lst", "ABCEnchance.dll", "CommunicationDemo.dll");
 AnyKeyExit("Done!");
