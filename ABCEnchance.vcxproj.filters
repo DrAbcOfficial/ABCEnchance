@@ -692,6 +692,9 @@
     <ClCompile Include="src\Source\Utility\win32helper.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\Utility\config.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1520,6 +1523,9 @@
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\win32helper.h">
+      <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\config.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>

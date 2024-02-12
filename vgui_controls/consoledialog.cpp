@@ -901,8 +901,6 @@ void CConsolePanel::PerformLayout()
 		const int entryInset = 4;
 		const int submitWide = 64;
 		const int submitInset = 7; // x inset to pull the submit button away from the frame grab
-		const int imeWide = 48;
-		const int imeInset = 3;
 
 		m_pHistory->SetPos(inset, inset + topHeight);
 		m_pHistory->SetSize(wide - (inset * 2), tall - (entryInset * 2 + inset * 2 + topHeight + entryHeight));
