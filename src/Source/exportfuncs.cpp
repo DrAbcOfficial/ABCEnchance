@@ -24,6 +24,7 @@
 #include "usercmd.h"
 #include "StudioModelRenderer.h"
 #include "vgui_controls/Controls.h"
+#include "config.h"
 //GL
 #include "glew.h"
 #include "gl_def.h"
@@ -364,7 +365,7 @@ void HUD_Init(void){
 			} while ((pszFileName = vgui::filesystem()->FindNext(walk)) != nullptr);
 		}
 		else {
-			gEngfuncs.Con_Printf("!!!Noting!!!\n");
+			gEngfuncs.Con_Printf("!!!Nothing!!!\n");
 			gEngfuncs.Con_Printf("==============\n");
 			return;
 		}
@@ -378,6 +379,7 @@ void HUD_Init(void){
 	if (g_pParticleMan)
 		g_pParticleMan->ResetParticles();
 	GameUI_GetInterface();
+	CABCConfig::Init();
 }
 
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
@@ -402,6 +404,7 @@ void HUD_Shutdown(void){
 	FreeParticleMan();
 	UninstallClientHook();
 	CHttpClient::ShutDown();
+	CABCConfig::Close();
 }
 
 int HUD_VidInit(void){

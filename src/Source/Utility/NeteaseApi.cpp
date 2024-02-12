@@ -3,9 +3,6 @@
 #include "curl.h"
 #include "qrcodegen.h"
 
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
-
 namespace netease {
 	const std::map<char*, char*> header = {
 		{"Accept", "*/*"},
