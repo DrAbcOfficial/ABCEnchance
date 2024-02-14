@@ -410,21 +410,23 @@ void HUD_Shutdown(void){
 int HUD_VidInit(void){
 	//Search and destory vanillia HUDs
 	if (g_dwHUDListAddr) {
-		HUDLIST* pHudList = (HUDLIST*)(*(DWORD*)(g_dwHUDListAddr + 0x0));
-		size_t iter = 0;
-		while (pHudList) {
-			switch (iter) {
-			case 0: gHookHud.m_Health = (CHudHealth*)pHudList->p; break;
-			case 1: gHookHud.m_Battery = (CHudBattery*)pHudList->p; break;
-			case 2: gHookHud.m_Ammo = (CHudAmmo*)pHudList->p; break;
-			case 4: gHookHud.m_Flash = (CHudFlashlight*)pHudList->p; break;
-			}
-			pHudList = pHudList->pNext;
-			// Use RTTI to know which HUD
-			//if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr)
-			//	gHookHud.m_Battery = (dynamic_cast<CHudBattery*>(pHudList->p));
-			iter++;
-		}
+		HUDLIST* pHudList = reinterpret_cast<HUDLIST*>((*(DWORD*)(g_dwHUDListAddr)));
+		gHookHud.m_Health = reinterpret_cast<CHudHealth*>(pHudList->p + 0x0);
+		gHookHud.m_Battery = reinterpret_cast<CHudBattery*>(pHudList->p + 0x1);
+		gHookHud.m_Ammo = reinterpret_cast<CHudAmmo*>(pHudList->p + 0x2);
+		gHookHud.m_Flash = reinterpret_cast<CHudFlashlight*>(pHudList->p + 0x4);
+
+		//nah
+		//while (pHudList) {
+		//	// Use RTTI to know which HUD
+		//	//if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr)
+		//	//	gHookHud.m_Battery = (dynamic_cast<CHudBattery*>(pHudList->p));
+		//	pHudList = pHudList->pNext;
+		//}
+	}
+	else {
+		SYS_ERROR("Can not find vanillin HUDs");
+		return;
 	}
 	if (g_pViewPort)
 		g_pViewPort->VidInit();
