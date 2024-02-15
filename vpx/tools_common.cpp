@@ -8,38 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "metahook.h"
-#include <strtools.h>
-
 #include <algorithm>
-#include <corecrt_math.h>
-
 #include "tools_common.h"
 #include "vpx_decoder.h"
-#include "memle.h"
-
-
-void die(const char *fmt, ...) {
-    va_list marker;
-    va_start(marker, fmt);
-    fatal(fmt, marker);
-}
-void fatal(const char *fmt, ...) {
-    va_list marker;
-    char msg[2048];
-    va_start(marker, fmt);
-    Q_vsnprintf(msg, sizeof(msg), fmt, marker);
-    va_end(marker);
-    g_pMetaHookAPI->SysError("VPX Fatal Error: %s", msg);
-}
-void warn(const char *fmt, ...) { 
-    va_list marker;
-    char msg[2048];
-    va_start(marker, fmt);
-    Q_vsnprintf(msg, sizeof(msg), fmt, marker);
-    va_end(marker);
-    gEngfuncs.Con_Printf("VPX Warn: %s", msg);
-}
 
 int read_yuv_frame(struct VpxInputContext *input_ctx, vpx_image_t *yuv_frame) {
   FILE *f = input_ctx->file;

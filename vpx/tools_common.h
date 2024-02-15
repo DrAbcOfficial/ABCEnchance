@@ -61,11 +61,6 @@ struct VpxInputContext {
     uint32_t fourcc;
     struct VpxRational framerate;
 };
-
-void die(const char* fmt, ...);
-void fatal(const char* fmt, ...);
-void warn(const char* fmt, ...);
-
 int read_yuv_frame(struct VpxInputContext *input_ctx, vpx_image_t *yuv_frame);
 size_t get_vpx_decoder_count(void);
 

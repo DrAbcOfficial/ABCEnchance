@@ -4,12 +4,13 @@
 
 #include "config.h"
 
+extern void ConsoleWarnMessage(char* format, ...);
 constexpr char g_szConfigPath[] = "abcenchance/config.json";
 static CABCConfig s_cfg;
 void abcconfig::LoadJson(){
 	FileHandle_t file = vgui::filesystem()->Open(g_szConfigPath, "r");
 	if (!file) {
-		Warning("Couldn't open config file %s\n", g_szConfigPath);
+		ConsoleWarnMessage("Couldn't open config file %s\n", g_szConfigPath);
 		return;
 	}
 	int size = vgui::filesystem()->Size(file);
