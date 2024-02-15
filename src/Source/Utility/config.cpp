@@ -29,7 +29,8 @@ CABCConfig::CABCConfig(const char* path){
 	Load(path);
 }
 void CABCConfig::Load(const char* path){
-	FileHandle_t file = vgui::filesystem()->Open(path, "rb");
+	m_szSavePath = path;
+	FileHandle_t file = vgui::filesystem()->Open(path, "r");
 	if (!file) {
 		Warning("Couldn't open config file %s\n", path);
 		return;
@@ -50,21 +51,22 @@ void CABCConfig::Load(const char* path){
 	}
 	//end
 	free(pMem);
-	m_szSavePath = path;
 }
 void CABCConfig::Save(){
 	rapidjson::Document data;
+	data.SetObject();
 	rapidjson::Document::AllocatorType& allocator = data.GetAllocator();
-	data["favmodels"].SetArray();
-	auto arr = data["favmodels"].GetArray();
+	rapidjson::Value favmodels(rapidjson::kArrayType);
 	for (auto iter = m_aryFavModels.begin(); iter != m_aryFavModels.end(); iter++) {
 		rapidjson::Value val((*iter).c_str(), allocator);
-		arr.PushBack(val, allocator);
+		favmodels.PushBack(val, allocator);
 	}
+	data.AddMember("favmodels", favmodels, allocator);
+	
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	data.Accept(writer);
-	FileHandle_t file = vgui::filesystem()->Open(m_szSavePath.c_str(), "wb");
+	FileHandle_t file = vgui::filesystem()->Open(m_szSavePath.c_str(), "w");
 	vgui::filesystem()->Write(buffer.GetString(), buffer.GetSize(), file);
 	vgui::filesystem()->Close(file);
 }
