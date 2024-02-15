@@ -1,4 +1,5 @@
 #pragma once
+#include "aigcjson.hpp"
 #include <string>
 #include <vector>
 
