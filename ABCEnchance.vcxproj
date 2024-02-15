@@ -80,7 +80,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Debug\include\GL;..\..\thirdparty\install\FreeImage\x86\Debug\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Debug\include\GL;..\..\thirdparty\install\FreeImage\x86\Debug\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\thirdparty\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_ITERATOR_DEBUG_LEVEL=0;GLEW_STATIC;VGUI_USE_SURFACE2;VGUI_USE_SCHEME2;VGUI_USE_INPUT2;NO_MALLOC_OVERRIDE;NO_TIER0_MINIDUMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader />
@@ -119,7 +119,7 @@ $(FreeImageCheckRequirements)</Command>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Release\include\GL;..\..\thirdparty\install\FreeImage\x86\Release\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Release\include\GL;..\..\thirdparty\install\FreeImage\x86\Release\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\thirdparty\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,7 +153,7 @@ $(FreeImageCheckRequirements)</Command>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Release_AVX2\include\GL;..\..\thirdparty\install\FreeImage\x86\Release\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\Fmod\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;..\..\thirdparty\install\glew\x86\Release_AVX2\include\GL;..\..\thirdparty\install\FreeImage\x86\Release\include;..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\thirdparty\;.\src\Particleman\;.\src\;.\libvpx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -203,8 +203,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="SourceSDK\tier1\utlsymbol.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
-    <ClCompile Include="src\liblrc\lrc_parser.cpp" />
-    <ClCompile Include="src\liblrc\lyrics.cpp" />
     <ClCompile Include="src\Particleman\ClientParticleMan.cpp" />
     <ClCompile Include="src\Source\crypto.cpp" />
     <ClCompile Include="src\Source\efxenchance.cpp" />
@@ -262,8 +260,10 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\Var\voice_banmgr.cpp" />
     <ClCompile Include="src\Source\Var\voice_status.cpp" />
     <ClCompile Include="src\Source\viewmodellag.cpp" />
-    <ClCompile Include="src\wadlib\texture.cpp" />
-    <ClCompile Include="src\wadlib\wadfile.cpp" />
+    <ClCompile Include="src\thirdparty\liblrc\lrc_parser.cpp" />
+    <ClCompile Include="src\thirdparty\liblrc\lyrics.cpp" />
+    <ClCompile Include="src\thirdparty\wadlib\texture.cpp" />
+    <ClCompile Include="src\thirdparty\wadlib\wadfile.cpp" />
     <ClCompile Include="vgui2\BaseUI.cpp" />
     <ClCompile Include="VGUI2\Bitmap.cpp" />
     <ClCompile Include="VGUI2\Border.cpp" />
@@ -449,17 +449,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="SourceSDK\vstdlib\strtools.h" />
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
-    <ClInclude Include="src\Fmod\fmod.h" />
-    <ClInclude Include="src\Fmod\fmod.hpp" />
-    <ClInclude Include="src\Fmod\fmodiphone.h" />
-    <ClInclude Include="src\Fmod\fmodlinux.h" />
-    <ClInclude Include="src\Fmod\fmodwindowsphone.h" />
-    <ClInclude Include="src\Fmod\fmodwindowsstoreapp.h" />
-    <ClInclude Include="src\Fmod\fmod_codec.h" />
-    <ClInclude Include="src\Fmod\fmod_dsp.h" />
-    <ClInclude Include="src\Fmod\fmod_errors.h" />
-    <ClInclude Include="src\Fmod\fmod_memoryinfo.h" />
-    <ClInclude Include="src\Fmod\fmod_output.h" />
+    <ClInclude Include="src\aigcjson\aigcjson.hpp" />
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
     <ClInclude Include="src\Header\HUD\ammo.h" />
@@ -500,7 +490,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\Utility\crypto.h" />
     <ClInclude Include="src\Header\Utility\curl.h" />
     <ClInclude Include="src\Header\Utility\CVector.h" />
-    <ClInclude Include="src\Header\Utility\formatter.h" />
     <ClInclude Include="src\Header\Utility\httpclient.h" />
     <ClInclude Include="src\Header\Utility\mymathlib.h" />
     <ClInclude Include="src\Header\Utility\NeteaseApi.h" />
@@ -510,7 +499,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\Utility\opengl\gl_utility.h" />
     <ClInclude Include="src\Header\Utility\parsemsg.h" />
     <ClInclude Include="src\Header\Utility\player_info.h" />
-    <ClInclude Include="src\Header\Utility\qrcodegen.h" />
     <ClInclude Include="src\Header\Utility\svc_hook.h" />
     <ClInclude Include="src\Header\Utility\Task.h" />
     <ClInclude Include="src\Header\Utility\win32helper.h" />
@@ -529,14 +517,28 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\Var\weaponinfo_sven.h" />
     <ClInclude Include="src\Header\vgui_internal.h" />
     <ClInclude Include="src\Header\viewmodellag.h" />
-    <ClInclude Include="src\liblrc\lrc_parser.h" />
-    <ClInclude Include="src\liblrc\lyrics.h" />
     <ClInclude Include="src\Particleman\ClientParticleMan.h" />
     <ClInclude Include="src\Particleman\IParticleMan.h" />
     <ClInclude Include="src\Particleman\pman_particlemem.h" />
     <ClInclude Include="src\Particleman\pman_triangleffect.h" />
-    <ClInclude Include="src\wadlib\texture.h" />
-    <ClInclude Include="src\wadlib\wadfile.h" />
+    <ClInclude Include="src\thirdparty\aigcjson.hpp" />
+    <ClInclude Include="src\thirdparty\Fmod\fmod.h" />
+    <ClInclude Include="src\thirdparty\Fmod\fmod.hpp" />
+    <ClInclude Include="src\thirdparty\Fmod\fmodiphone.h" />
+    <ClInclude Include="src\thirdparty\Fmod\fmodlinux.h" />
+    <ClInclude Include="src\thirdparty\Fmod\fmodwindowsphone.h" />
+    <ClInclude Include="src\thirdparty\Fmod\fmodwindowsstoreapp.h" />
+    <ClInclude Include="src\thirdparty\Fmod\fmod_codec.h" />
+    <ClInclude Include="src\thirdparty\Fmod\fmod_dsp.h" />
+    <ClInclude Include="src\thirdparty\Fmod\fmod_errors.h" />
+    <ClInclude Include="src\thirdparty\Fmod\fmod_memoryinfo.h" />
+    <ClInclude Include="src\thirdparty\Fmod\fmod_output.h" />
+    <ClInclude Include="src\thirdparty\formatter.h" />
+    <ClInclude Include="src\thirdparty\liblrc\lrc_parser.h" />
+    <ClInclude Include="src\thirdparty\liblrc\lyrics.h" />
+    <ClInclude Include="src\thirdparty\qrcodegen.h" />
+    <ClInclude Include="src\thirdparty\wadlib\texture.h" />
+    <ClInclude Include="src\thirdparty\wadlib\wadfile.h" />
     <ClInclude Include="VGUI2\Bitmap.h" />
     <ClInclude Include="VGUI2\Border.h" />
     <ClInclude Include="VGUI2\ClientVGUI.h" />
@@ -647,6 +649,9 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="vpx\vpx_frame_buffer.h" />
     <ClInclude Include="vpx\vpx_image.h" />
     <ClInclude Include="vpx\vpx_integer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\thirdparty\liblrc\readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -72,17 +72,8 @@
     <Filter Include="vpx">
       <UniqueIdentifier>{a1f28372-aa4c-49ce-9f8e-6ee600e9caa4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Public\Fmod">
-      <UniqueIdentifier>{c5d8daf0-4fe0-4687-8d97-a6511c5c0de5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\liblrc">
-      <UniqueIdentifier>{26e8c825-2ed9-494b-804d-bf2859a5d597}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SourceSDK\tier2">
       <UniqueIdentifier>{f2925c2a-76db-4a76-90b0-7b9474710fa8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\wadlib">
-      <UniqueIdentifier>{52bb380f-22e4-4c21-bf2f-5a5631b74f09}</UniqueIdentifier>
     </Filter>
     <Filter Include="vgui_controls">
       <UniqueIdentifier>{7888dd84-dee7-4110-9bfe-431022c3f8c8}</UniqueIdentifier>
@@ -110,6 +101,18 @@
     </Filter>
     <Filter Include="Public\Source\LIb">
       <UniqueIdentifier>{e12ea5e1-0aa6-43da-a112-d3b27347411f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Thirdparty">
+      <UniqueIdentifier>{1652df7d-1a5f-42da-8c3e-7cbebd65bfe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Thirdparty\FMod">
+      <UniqueIdentifier>{e2d1923a-70a8-4c9d-b847-a7deee85c14b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Thirdparty\liblrc">
+      <UniqueIdentifier>{04d26f33-c396-4278-b88d-9b827331b2e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\Thirdparty\wadlib">
+      <UniqueIdentifier>{2ed9b323-3371-4758-883e-76bc89d24f96}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -368,12 +371,6 @@
     <ClCompile Include="src\Source\HUD\vgui\neteasemusic.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
-    <ClCompile Include="src\liblrc\lrc_parser.cpp">
-      <Filter>Public\liblrc</Filter>
-    </ClCompile>
-    <ClCompile Include="src\liblrc\lyrics.cpp">
-      <Filter>Public\liblrc</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\radar.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
@@ -382,12 +379,6 @@
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp">
       <Filter>vgui2\gameui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wadlib\wadfile.cpp">
-      <Filter>Public\wadlib</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wadlib\texture.cpp">
-      <Filter>Public\wadlib</Filter>
     </ClCompile>
     <ClCompile Include="vgui_controls\vgui_controls.cpp">
       <Filter>vgui_controls</Filter>
@@ -694,6 +685,18 @@
     </ClCompile>
     <ClCompile Include="src\Source\Utility\config.cpp">
       <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thirdparty\liblrc\lrc_parser.cpp">
+      <Filter>Public\Thirdparty\liblrc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thirdparty\liblrc\lyrics.cpp">
+      <Filter>Public\Thirdparty\liblrc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thirdparty\wadlib\texture.cpp">
+      <Filter>Public\Thirdparty\wadlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thirdparty\wadlib\wadfile.cpp">
+      <Filter>Public\Thirdparty\wadlib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1120,50 +1123,11 @@
     <ClInclude Include="VGUI2\GameUI\BasePanel.h">
       <Filter>vgui2\gameui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Fmod\fmod.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmod.hpp">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmod_codec.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmod_dsp.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmod_errors.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmod_memoryinfo.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmod_output.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmodiphone.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmodlinux.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmodwindowsphone.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Fmod\fmodwindowsstoreapp.h">
-      <Filter>Public\Fmod</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\soundengine.h">
       <Filter>Public\Header</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\neteasemusic.h">
       <Filter>Public\Header\HUD\vgui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\liblrc\lrc_parser.h">
-      <Filter>Public\liblrc</Filter>
-    </ClInclude>
-    <ClInclude Include="src\liblrc\lyrics.h">
-      <Filter>Public\liblrc</Filter>
     </ClInclude>
     <ClInclude Include="SourceSDK\tier2\tier2.h">
       <Filter>SourceSDK\tier2</Filter>
@@ -1176,12 +1140,6 @@
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\OptionAdvancedDlg.h">
       <Filter>vgui2\gameui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\wadlib\wadfile.h">
-      <Filter>Public\wadlib</Filter>
-    </ClInclude>
-    <ClInclude Include="src\wadlib\texture.h">
-      <Filter>Public\wadlib</Filter>
     </ClInclude>
     <ClInclude Include="vgui_controls\DialogManager.h">
       <Filter>vgui_controls</Filter>
@@ -1483,16 +1441,10 @@
     <ClInclude Include="src\Header\Utility\crypto.h">
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Utility\formatter.h">
-      <Filter>Public\Header\LIb</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Utility\mymathlib.h">
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\NeteaseApi.h">
-      <Filter>Public\Header\LIb</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\qrcodegen.h">
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\Task.h">
@@ -1528,5 +1480,67 @@
     <ClInclude Include="src\Header\Utility\config.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="src\aigcjson\aigcjson.hpp">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmod.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmod.hpp">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmod_codec.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmod_dsp.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmod_errors.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmod_memoryinfo.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmod_output.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmodiphone.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmodlinux.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmodwindowsphone.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\Fmod\fmodwindowsstoreapp.h">
+      <Filter>Public\Thirdparty\FMod</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\liblrc\lrc_parser.h">
+      <Filter>Public\Thirdparty\liblrc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\liblrc\lyrics.h">
+      <Filter>Public\Thirdparty\liblrc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\wadlib\texture.h">
+      <Filter>Public\Thirdparty\wadlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\wadlib\wadfile.h">
+      <Filter>Public\Thirdparty\wadlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\aigcjson.hpp">
+      <Filter>Public\Thirdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\formatter.h">
+      <Filter>Public\Thirdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thirdparty\qrcodegen.h">
+      <Filter>Public\Thirdparty</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\thirdparty\liblrc\readme.txt">
+      <Filter>Public\Thirdparty\liblrc</Filter>
+    </Text>
   </ItemGroup>
 </Project>

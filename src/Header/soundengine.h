@@ -5,8 +5,8 @@
 #undef PlaySound
 #endif
 
-#include <fmod.hpp>
-#include <fmod_errors.h>
+#include <fmod/fmod.hpp>
+#include <fmod/fmod_errors.h>
 
 #define __USE_FMOD_SYSTEM_H_
 #define __USE_FMOD_SOUND_H_
