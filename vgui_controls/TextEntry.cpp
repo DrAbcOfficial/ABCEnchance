@@ -38,11 +38,6 @@ enum
 	BUFFER_SIZE = 999999,
 };
 
-extern bool g_bIMEComposing;
-extern double g_flImeComposingTime;
-
-double GetAbsoluteTime();
-
 using namespace vgui;
 
 static const int DRAW_OFFSET_X = 3, DRAW_OFFSET_Y = 1;
@@ -1917,22 +1912,22 @@ void TextEntry::OnKeyCodeTyped(KeyCode code)
 				if (displayLines < 1)
 					displayLines = 1;
 				// move the cursor down
-				for (int i = 0; i < displayLines; i++)
-				{
-					GotoDown();
+					for (int i=0; i < displayLines; i++)
+					{
+						GotoDown();
+					}
 				}
+				
+				// if there is a scroll bar scroll down one rangewindow
+				if (_vertScrollBar)
+				{
+					int window = _vertScrollBar->GetRangeWindow();
+					int newval = _vertScrollBar->GetValue();
+					int linesToMove = window - (newval - val);
+					_vertScrollBar->SetValue(val + linesToMove + 1);
+				}
+				break;
 			}
-
-			// if there is a scroll bar scroll down one rangewindow
-			if (_vertScrollBar)
-			{
-				int window = _vertScrollBar->GetRangeWindow();
-				int newval = _vertScrollBar->GetValue();
-				int linesToMove = window - (newval - val);
-				_vertScrollBar->SetValue(val + linesToMove + 1);
-			}
-			break;
-		}
 
 		case KEY_F1:
 		case KEY_F2:
@@ -1946,33 +1941,33 @@ void TextEntry::OnKeyCodeTyped(KeyCode code)
 		case KEY_F10:
 		case KEY_F11:
 		case KEY_F12:
-		{
-			fallThrough = true;
-			break;
-		}
+			{
+				fallThrough = true;
+				break;
+			}
 
 		default:
-		{
-			// return if any other char is pressed.
-			// as it will be a unicode char.
-			// and we don't want select[1] changed unless a char was pressed that this fxn handles
-			return;
-		}
+			{
+				// return if any other char is pressed.
+				// as it will be a unicode char.
+				// and we don't want select[1] changed unless a char was pressed that this fxn handles
+				return;
+			}
 		}
 	}
-
+	
 	// select[1] is the location in the line where the blinking cursor started
 	_select[1] = _cursorPos;
-
+	
 	if (_dataChanged)
 	{
 		FireActionSignal();
 	}
-
+	
 	// chain back on some keys
 	if (fallThrough)
 	{
-		_putCursorAtEnd = _cursorIsAtEnd;	// keep state of cursor on fallthroughs
+		_putCursorAtEnd=_cursorIsAtEnd;	// keep state of cursor on fallthroughs
 		BaseClass::OnKeyCodeTyped(code);
 	}
 }
@@ -1985,40 +1980,40 @@ void TextEntry::OnKeyCodeTyped(KeyCode code)
 void TextEntry::OnKeyTyped(wchar_t unichar)
 {
 	_cursorIsAtEnd = _putCursorAtEnd;
-	_putCursorAtEnd = false;
-
+	_putCursorAtEnd=false;
+	
 	bool fallThrough = false;
-
+	
 	// KeyCodes handle all non printable chars
-	if (iswcntrl(unichar) || unichar == 9) // tab key (code 9) is printable but handled elsewhere
+	if (iswcntrl(unichar) || unichar == 9 ) // tab key (code 9) is printable but handled elsewhere
 		return;
-
+	
 	// do readonly keys
 	if (!IsEditable())
 	{
 		BaseClass::OnKeyTyped(unichar);
 		return;
 	}
-
+	
 	if (unichar != 0)
 	{
 		DeleteSelected();
 		SaveUndoState();
 		InsertChar(unichar);
 	}
-
+	
 	// select[1] is the location in the line where the blinking cursor started
 	_select[1] = _cursorPos;
-
+	
 	if (_dataChanged)
 	{
 		FireActionSignal();
 	}
-
+	
 	// chain back on some keys
 	if (fallThrough)
 	{
-		_putCursorAtEnd = _cursorIsAtEnd;	// keep state of cursor on fallthroughs
+		_putCursorAtEnd=_cursorIsAtEnd;	// keep state of cursor on fallthroughs
 		BaseClass::OnKeyTyped(unichar);
 	}
 }
@@ -2060,28 +2055,28 @@ void TextEntry::MoveScrollBar(int delta)
 //-----------------------------------------------------------------------------
 void TextEntry::OnKeyFocusTicked()
 {
-	int time = system()->GetTimeMillis();
-	if (time > _cursorNextBlinkTime)
+	int time=system()->GetTimeMillis();
+	if(time>_cursorNextBlinkTime)
 	{
-		_cursorBlink = !_cursorBlink;
-		_cursorNextBlinkTime = time + _cursorBlinkRate;
+		_cursorBlink=!_cursorBlink;
+		_cursorNextBlinkTime=time+_cursorBlinkRate;
 		Repaint();
 	}
 }
 
-Panel* TextEntry::GetDragPanel()
+Panel *TextEntry::GetDragPanel()
 {
-	if (input()->IsMouseDown(MOUSE_LEFT))
+	if ( input()->IsMouseDown( MOUSE_LEFT ) )
 	{
 		int x, y;
 		input()->GetCursorPos(x, y);
 		ScreenToLocal(x, y);
 		int cursor = PixelToCursorSpace(x, y);
-
+	
 		int cx0, cx1;
-		bool check = GetSelectedRange(cx0, cx1);
+		bool check = GetSelectedRange( cx0, cx1 );
 
-		if (check && cursor >= cx0 && cursor < cx1)
+		if ( check && cursor >= cx0 && cursor < cx1 )
 		{
 			// Don't deselect in this case!!!
 			return BaseClass::GetDragPanel();
@@ -2092,23 +2087,23 @@ Panel* TextEntry::GetDragPanel()
 	return BaseClass::GetDragPanel();
 }
 
-void TextEntry::OnCreateDragData(KeyValues* msg)
+void TextEntry::OnCreateDragData( KeyValues *msg )
 {
-	BaseClass::OnCreateDragData(msg);
+	BaseClass::OnCreateDragData( msg );
 
-	wchar_t txt[256];
-	GetText(txt, sizeof(txt));
+	wchar_t txt[ 256 ];
+	GetText( txt, sizeof( txt ) );
 
 	int r0, r1;
-	if (GetSelectedRange(r0, r1) && r0 != r1)
+	if ( GetSelectedRange( r0, r1 ) && r0 != r1 )
 	{
 		int len = r1 - r0;
-		if (len > 0 && r0 < 1024)
+		if ( len > 0 && r0 < 1024 )
 		{
-			wchar_t selection[512];
-			wcsncpy(selection, &txt[r0], len + 1);
-			selection[len] = 0;
-			msg->SetWString("text", selection);
+			wchar_t selection[ 512 ];
+			wcsncpy( selection, &txt[ r0 ], len + 1 );
+			selection[ len ] = 0;
+			msg->SetWString( "text", selection );
 		}
 	}
 }
@@ -2116,25 +2111,25 @@ void TextEntry::OnCreateDragData(KeyValues* msg)
 //-----------------------------------------------------------------------------
 // Purpose: Check if we are selecting text (so we can highlight it)
 //-----------------------------------------------------------------------------
-bool TextEntry::SelectCheck(bool fromMouse /*=false*/)
+bool TextEntry::SelectCheck( bool fromMouse /*=false*/ )
 {
 	bool bret = true;
 	if (!HasFocus() || !(input()->IsKeyDown(KEY_LSHIFT) || input()->IsKeyDown(KEY_RSHIFT)))
 	{
 		bool deselect = true;
 		int cx0, cx1;
-		if (fromMouse &&
-			GetDragPanel() != NULL)
+		if ( fromMouse && 
+			GetDragPanel() != NULL )
 		{
 			// move the cursor to where the mouse was pressed
 			int x, y;
 			input()->GetCursorPos(x, y);
 			ScreenToLocal(x, y);
 			int cursor = PixelToCursorSpace(x, y);
+		
+			bool check = GetSelectedRange( cx0, cx1 );
 
-			bool check = GetSelectedRange(cx0, cx1);
-
-			if (check && cursor >= cx0 && cursor < cx1)
+			if ( check && cursor >= cx0 && cursor < cx1 )
 			{
 				// Don't deselect in this case!!!
 				deselect = false;
@@ -2142,7 +2137,7 @@ bool TextEntry::SelectCheck(bool fromMouse /*=false*/)
 			}
 		}
 
-		if (deselect)
+		if ( deselect )
 		{
 			_select[0] = -1;
 		}
@@ -2199,9 +2194,9 @@ void TextEntry::SendNewLine(bool send)
 //-----------------------------------------------------------------------------
 bool TextEntry::IsLineBreak(int index)
 {
-	for (int i = 0; i < m_LineBreaks.Count(); ++i)
+	for (int i=0; i<m_LineBreaks.Count(); ++i)
 	{
-		if (index == m_LineBreaks[i])
+		if (index ==  m_LineBreaks[i])
 			return true;
 	}
 	return false;
@@ -2214,7 +2209,7 @@ bool TextEntry::IsLineBreak(int index)
 void TextEntry::GotoLeft()
 {
 	SelectCheck();
-
+	
 	// if we are on a line break just move the cursor to the prev line
 	if (IsLineBreak(_cursorPos))
 	{
@@ -2225,11 +2220,11 @@ void TextEntry::GotoLeft()
 	// if we are not at Start decrement cursor 
 	if (!_putCursorAtEnd && _cursorPos > 0)
 	{
-		_cursorPos--;
+		_cursorPos--;	
 	}
-
-	ScrollLeft();
-
+	
+    ScrollLeft();
+	
 	ResetCursorBlink();
 	Repaint();
 }
@@ -2241,7 +2236,7 @@ void TextEntry::GotoLeft()
 void TextEntry::GotoRight()
 {
 	SelectCheck();
-
+	
 	// if we are on a line break just move the cursor to the next line
 	if (IsLineBreak(_cursorPos))
 	{
@@ -2255,7 +2250,7 @@ void TextEntry::GotoRight()
 			if (_cursorPos < m_TextStream.Count())
 			{
 				_cursorPos++;
-			}
+			}	
 		}
 	}
 	else
@@ -2265,7 +2260,7 @@ void TextEntry::GotoRight()
 		{
 			_cursorPos++;
 		}
-
+		
 		// if we are on a line break move the cursor to end of line 
 		if (IsLineBreak(_cursorPos))
 		{
@@ -2275,7 +2270,7 @@ void TextEntry::GotoRight()
 	}
 	// scroll right if we need to
 	ScrollRight();
-
+	
 	ResetCursorBlink();
 	Repaint();
 }
@@ -2292,14 +2287,14 @@ int TextEntry::GetCursorLine()
 		if (_cursorPos < m_LineBreaks[cursorLine])
 			break;
 	}
-
+	
 	if (_putCursorAtEnd)  // correct for when cursor is at end of line rather than Start of next
 	{
 		// we are not at end of buffer, in which case there is no next line to be at the Start of
-		if (_cursorPos != m_TextStream.Count())
+		if (_cursorPos != m_TextStream.Count() ) 
 			cursorLine--;
 	}
-
+	
 	return cursorLine;
 }
 
@@ -2309,22 +2304,22 @@ int TextEntry::GetCursorLine()
 void TextEntry::GotoUp()
 {
 	SelectCheck();
-
+	
 	if (_cursorIsAtEnd)
 	{
-		if ((GetCursorLine() - 1) == 0) // we are on first line
+		if ( (GetCursorLine() - 1 ) == 0) // we are on first line
 		{
 			// stay at end of line
 			_putCursorAtEnd = true;
 			return;	 // dont move the cursor
 		}
 		else
-			_cursorPos--;
+			_cursorPos--;  
 	}
-
+	
 	int cx, cy;
 	CursorToPixelSpace(_cursorPos, cx, cy);
-
+	
 	// move the cursor to the previous line
 	MoveCursor(GetCursorLine() - 1, cx);
 }
@@ -2336,20 +2331,20 @@ void TextEntry::GotoUp()
 void TextEntry::GotoDown()
 {
 	SelectCheck();
-
+	
 	if (_cursorIsAtEnd)
 	{
 		_cursorPos--;
 		if (_cursorPos < 0)
 			_cursorPos = 0;
 	}
-
+	
 	int cx, cy;
 	CursorToPixelSpace(_cursorPos, cx, cy);
-
+	
 	// move the cursor to the next line
 	MoveCursor(GetCursorLine() + 1, cx);
-	if (!_putCursorAtEnd && _cursorIsAtEnd)
+	if (!_putCursorAtEnd && _cursorIsAtEnd )
 	{
 		_cursorPos++;
 		if (_cursorPos > m_TextStream.Count())
@@ -2357,7 +2352,7 @@ void TextEntry::GotoDown()
 			_cursorPos = m_TextStream.Count();
 		}
 	}
-	LayoutVerticalScrollBarSlider();
+	LayoutVerticalScrollBarSlider();	
 }
 
 //-----------------------------------------------------------------------------
@@ -2384,26 +2379,26 @@ void TextEntry::MoveCursor(int line, int pixelsAcross)
 	if (line < 0)
 		line = 0;
 	if (line >= m_LineBreaks.Count())
-		line = m_LineBreaks.Count() - 1;
-
+		line = m_LineBreaks.Count() -1;
+	
 	// walk the whole text set looking for our place
 	// work out where to Start checking
-
+	
 	int yStart = GetYStart();
-
+	
 	int x = DRAW_OFFSET_X, y = yStart;
 	int lineBreakIndexIndex = 0;
 	_pixelsIndent = 0;
 	int i;
-	for (i = 0; i < m_TextStream.Count(); i++)
+	for ( i = 0; i < m_TextStream.Count(); i++)
 	{
 		wchar_t ch = m_TextStream[i];
-
+		
 		if (_hideText)
 		{
 			ch = '*';
 		}
-
+		
 		// if we've passed a line break go to that
 		if (m_LineBreaks.Count() &&
 			lineBreakIndexIndex < m_LineBreaks.Count() &&
@@ -2415,16 +2410,16 @@ void TextEntry::MoveCursor(int line, int pixelsAcross)
 				_cursorPos = i;
 				break;
 			}
-
+			
 			// add another line
-			AddAnotherLine(x, y);
+			AddAnotherLine(x,y);
 			lineBreakIndexIndex++;
-
+			
 		}
-
+		
 		// add to the current position
-		int charWidth = getCharWidth(_font, ch);
-
+		int charWidth = getCharWidth(_font, ch);		
+		
 		if (line == lineBreakIndexIndex)
 		{
 			// check to see if we're in range
@@ -2435,17 +2430,17 @@ void TextEntry::MoveCursor(int line, int pixelsAcross)
 				break;
 			}
 		}
-
+		
 		x += charWidth;
 	}
-
+	
 	// if we never find the cursor it must be past the end
 	// of the text buffer, to let's just slap it on the end of the text buffer then.
-	if (i == m_TextStream.Count())
+	if (i ==  m_TextStream.Count())
 	{
 		GotoTextEnd();
 	}
-
+	
 	LayoutVerticalScrollBarSlider();
 	ResetCursorBlink();
 	Repaint();
@@ -2456,7 +2451,7 @@ void TextEntry::MoveCursor(int line, int pixelsAcross)
 //			Horizontal scrolling is disabled in multline windows. 
 //		    Toggling this will disable it in single line windows as well.
 //-----------------------------------------------------------------------------
-void TextEntry::SetHorizontalScrolling(bool status)
+void TextEntry::SetHorizontalScrolling(bool status) 
 {
 	_horizScrollingAllowed = status;
 }
@@ -2472,21 +2467,21 @@ void TextEntry::ScrollLeft()
 	{
 		return;
 	}
-
+	
 	if (!_horizScrollingAllowed)  //early out
 	{
 		return;
 	}
-
-	if (_cursorPos < _currentStartIndex)	 // scroll left if we need to
+	
+	if(_cursorPos < _currentStartIndex)	 // scroll left if we need to
 	{
 		if (_cursorPos < 0)// dont scroll past the Start of buffer
 		{
-			_cursorPos = 0;
+			_cursorPos=0;			
 		}
 		_currentStartIndex = _cursorPos;
 	}
-
+	
 	LayoutVerticalScrollBarSlider();
 }
 
@@ -2499,29 +2494,29 @@ void TextEntry::ScrollLeftForResize()
 	{
 		return;
 	}
-
+	
 	if (!_horizScrollingAllowed)  //early out
 	{
 		return;
 	}
 
-	while (_currentStartIndex > 0)     // go until we hit leftmost
-	{
-		_currentStartIndex--;
+    while (_currentStartIndex > 0)     // go until we hit leftmost
+    {
+        _currentStartIndex--;
 		int nVal = _currentStartIndex;
 
-		// check if the cursor is now off the screen
-		if (IsCursorOffRightSideOfWindow(_cursorPos))
-		{
-			_currentStartIndex++;   // we've gone too far, return it
-			break;
-		}
+        // check if the cursor is now off the screen
+        if (IsCursorOffRightSideOfWindow(_cursorPos))
+        {
+            _currentStartIndex++;   // we've gone too far, return it
+            break;
+        }
 
-		// IsCursorOffRightSideOfWindow actually fixes the _currentStartIndex, 
-		// so if our value changed that menas we really are off the screen
+        // IsCursorOffRightSideOfWindow actually fixes the _currentStartIndex, 
+        // so if our value changed that menas we really are off the screen
 		if (nVal != _currentStartIndex)
 			break;
-	}
+    }
 	LayoutVerticalScrollBarSlider();
 }
 
@@ -2535,7 +2530,7 @@ void TextEntry::ScrollRight()
 	if (!_horizScrollingAllowed)
 		return;
 
-	if (_multiline)
+	if (_multiline)	  
 	{
 	}
 	// check if cursor is off the right side of window
@@ -2544,7 +2539,7 @@ void TextEntry::ScrollRight()
 		_currentStartIndex++; //scroll over
 		ScrollRight(); // scroll again, check if cursor is in window yet 
 	}
-
+	
 	LayoutVerticalScrollBarSlider();
 }
 
@@ -2560,8 +2555,8 @@ bool TextEntry::IsCursorOffRightSideOfWindow(int cursorPos)
 {
 	int cx, cy;
 	CursorToPixelSpace(cursorPos, cx, cy);
-	int wx = GetWide() - 1;	//width of inside of window is GetWide()-1
-	if (wx <= 0)
+	int wx=GetWide()-1;	//width of inside of window is GetWide()-1
+	if ( wx <= 0 )
 		return false;
 
 	return (cx >= wx);
@@ -2588,29 +2583,29 @@ bool TextEntry::IsCursorOffLeftSideOfWindow(int cursorPos)
 void TextEntry::GotoWordRight()
 {
 	SelectCheck();
-
+	
 	// search right until we hit a whitespace character or a newline
 	while (++_cursorPos < m_TextStream.Count())
 	{
 		if (iswspace(m_TextStream[_cursorPos]))
 			break;
 	}
-
+	
 	// search right until we hit an nonspace character
 	while (++_cursorPos < m_TextStream.Count())
 	{
 		if (!iswspace(m_TextStream[_cursorPos]))
 			break;
 	}
-
+	
 	if (_cursorPos > m_TextStream.Count())
 		_cursorPos = m_TextStream.Count();
-
+	
 	// now we are at the start of the next word
-
+		
 	// scroll right if we need to
 	ScrollRight();
-
+	
 	LayoutVerticalScrollBarSlider();
 	ResetCursorBlink();
 	Repaint();
@@ -2622,17 +2617,17 @@ void TextEntry::GotoWordRight()
 void TextEntry::GotoWordLeft()
 {
 	SelectCheck();
-
+	
 	if (_cursorPos < 1)
 		return;
-
+	
 	// search left until we hit an nonspace character
 	while (--_cursorPos >= 0)
 	{
 		if (!iswspace(m_TextStream[_cursorPos]))
 			break;
 	}
-
+	
 	// search left until we hit a whitespace character
 	while (--_cursorPos >= 0)
 	{
@@ -2641,15 +2636,15 @@ void TextEntry::GotoWordLeft()
 			break;
 		}
 	}
-
+	
 	// we end one character off
 	_cursorPos++;
 	// now we are at the Start of the previous word
-
-
+	
+	
 	// scroll left if we need to
 	ScrollLeft();
-
+	
 	LayoutVerticalScrollBarSlider();
 	ResetCursorBlink();
 	Repaint();
@@ -2663,8 +2658,8 @@ void TextEntry::GotoTextStart()
 	SelectCheck();
 	_cursorPos = 0;		   // set cursor to Start
 	_putCursorAtEnd = false;
-	_currentStartIndex = 0;  // scroll over to Start
-
+	_currentStartIndex=0;  // scroll over to Start
+	
 	LayoutVerticalScrollBarSlider();
 	ResetCursorBlink();
 	Repaint();
@@ -2676,10 +2671,10 @@ void TextEntry::GotoTextStart()
 void TextEntry::GotoTextEnd()
 {
 	SelectCheck();
-	_cursorPos = m_TextStream.Count();	// set cursor to end of buffer
+	_cursorPos=m_TextStream.Count();	// set cursor to end of buffer
 	_putCursorAtEnd = true; // move cursor Start of next line
 	ScrollRight();				// scroll over until cursor is on screen
-
+	
 	LayoutVerticalScrollBarSlider();
 	ResetCursorBlink();
 	Repaint();
@@ -2698,9 +2693,9 @@ void TextEntry::GotoFirstOfLine()
 	//_cursorPos = 0; //TODO: this is wrong, should go to first non-whitespace first, then to zero
 	_cursorPos = GetCurrentLineStart();
 	_putCursorAtEnd = false;
-
-	_currentStartIndex = _cursorPos;
-
+	
+	_currentStartIndex=_cursorPos;
+	
 	LayoutVerticalScrollBarSlider();
 	ResetCursorBlink();
 	Repaint();
@@ -2713,11 +2708,11 @@ int TextEntry::GetCurrentLineStart()
 {
 	if (!_multiline)			// quick out for non multline buffers
 		return _currentStartIndex;
-
+	
 	int i;
 	if (IsLineBreak(_cursorPos))
 	{
-		for (i = 0; i < m_LineBreaks.Count(); ++i)
+		for (i = 0; i < m_LineBreaks.Count(); ++i )
 		{
 			if (_cursorPos == m_LineBreaks[i])
 				break;
@@ -2726,22 +2721,22 @@ int TextEntry::GetCurrentLineStart()
 		{
 			if (i > 0)
 			{
-				return m_LineBreaks[i - 1];
+				return m_LineBreaks[i-1];
 			}
 			return m_LineBreaks[0];
 		}
 		else
 			return _cursorPos; // we are already at Start
 	}
-
-	for (i = 0; i < m_LineBreaks.Count(); ++i)
+	
+	for ( i = 0; i < m_LineBreaks.Count(); ++i )
 	{
 		if (_cursorPos < m_LineBreaks[i])
 		{
 			if (i == 0)
 				return 0;
 			else
-				return m_LineBreaks[i - 1];
+				return m_LineBreaks[i-1];
 		}
 	}
 	// if there were no line breaks, the first char in the line is the Start of the buffer
@@ -2759,11 +2754,11 @@ void TextEntry::GotoEndOfLine()
 	// given the current cursor position, select[1], find the index that is the
 	// line end to the right of the cursor
 	//_cursorPos=m_TextStream.Count(); //TODO: this is wrong, should go to last non-whitespace, then to true EOL
-	_cursorPos = GetCurrentLineEnd();
+    _cursorPos = GetCurrentLineEnd();
 	_putCursorAtEnd = true;
-
+	
 	ScrollRight();
-
+	
 	LayoutVerticalScrollBarSlider();
 	ResetCursorBlink();
 	Repaint();
@@ -2775,27 +2770,27 @@ void TextEntry::GotoEndOfLine()
 int TextEntry::GetCurrentLineEnd()
 {
 	int i;
-	if (IsLineBreak(_cursorPos))
+	if (IsLineBreak(_cursorPos)	)
 	{
-		for (i = 0; i < m_LineBreaks.Count() - 1; ++i)
+		for ( i = 0; i < m_LineBreaks.Count()-1; ++i )
 		{
 			if (_cursorPos == m_LineBreaks[i])
 				break;
 		}
 		if (!_cursorIsAtEnd)
 		{
-			if (i == m_LineBreaks.Count() - 2)
-				m_TextStream.Count();
+			if (i == m_LineBreaks.Count()-2 )
+				m_TextStream.Count();		
 			else
-				return m_LineBreaks[i + 1];
+				return m_LineBreaks[i+1];
 		}
 		else
 			return _cursorPos; // we are already at end
 	}
-
-	for (i = 0; i < m_LineBreaks.Count() - 1; i++)
+	
+	for ( i = 0; i < m_LineBreaks.Count()-1; i++ )
 	{
-		if (_cursorPos < m_LineBreaks[i])
+		if ( _cursorPos < m_LineBreaks[i])
 		{
 			return m_LineBreaks[i];
 		}
@@ -2811,7 +2806,7 @@ void TextEntry::InsertChar(wchar_t ch)
 	// throw away redundant linefeed characters
 	if (ch == '\r')
 		return;
-
+	
 	// no newline characters in single-line dialogs
 	if (!_multiline && ch == '\n')
 		return;
@@ -2822,7 +2817,7 @@ void TextEntry::InsertChar(wchar_t ch)
 
 	if (m_bAllowNumericInputOnly)
 	{
-		if (!iswdigit(ch) && ((char)ch != '.'))
+		if (!iswdigit(ch) && (ch != L'.'))
 		{
 			surface()->PlaySound("Resource\\warning.wav");
 			return;
@@ -3037,10 +3032,10 @@ void TextEntry::Backspace()
 	if (!IsEditable())
 		return;
 
-	if (g_bIMEComposing)
+	if (input()->IsIMEComposing())
 		return;
 
-	if ( GetAbsoluteTime() < g_flImeComposingTime + 0.1)
+	if (surface()->GetAbsoluteTime() < input()->GetImeComposingTime() + 0.1f)
 		return;
 
 	//if you are at the first position don't do anything
