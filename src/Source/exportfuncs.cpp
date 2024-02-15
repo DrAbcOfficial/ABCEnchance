@@ -424,10 +424,8 @@ int HUD_VidInit(void){
 		//	pHudList = pHudList->pNext;
 		//}
 	}
-	else {
+	else
 		SYS_ERROR("Can not find vanillin HUDs");
-		return;
-	}
 	if (g_pViewPort)
 		g_pViewPort->VidInit();
 

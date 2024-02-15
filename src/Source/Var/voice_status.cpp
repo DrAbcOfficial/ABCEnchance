@@ -1,20 +1,4 @@
-﻿//========= Copyright � 1996-2001, Valve LLC, All rights reserved. ============
-//
-// Purpose: 
-//
-// $NoKeywords: $
-//=============================================================================
-
-// There are hud.h's coming out of the woodwork so this ensures that we get the right one.
-#if defined(THREEWAVE) || defined(DMC_BUILD)
-	#include "../dmc/cl_dll/hud.h"
-#elif defined(CSTRIKE)
-	#include "../cstrike/cl_dll/hud.h"
-#elif defined(DOD)
-	#include "../dod/cl_dll/hud.h"
-#else
-	#include "hud.h"
-#endif
+﻿#include "hud.h"
 
 #include <metahook.h>
 #include <assert.h>
@@ -28,8 +12,6 @@
 #include "cvardef.h"
 #include <local.h>
 
-extern int cam_thirdperson;
-
 #define VOICE_MODEL_INTERVAL		0.3
 #define SCOREBOARD_BLINK_FREQUENCY	0.3	// How often to blink the scoreboard icons.
 #define SQUELCHOSCILLATE_PER_SECOND	2.0f
@@ -37,10 +19,9 @@ extern int cam_thirdperson;
 // ---------------------------------------------------------------------- //
 // The voice manager for the client.
 // ---------------------------------------------------------------------- //
-CVoiceStatus g_VoiceStatus;
+static CVoiceStatus g_VoiceStatus;
 
-CVoiceStatus* GetClientVoiceMgr()
-{
+CVoiceStatus* GetClientVoiceMgr(){
 	return &g_VoiceStatus;
 }
 
@@ -52,24 +33,20 @@ static CVoiceStatus *g_pInternalVoiceStatus = NULL;
 
 pfnUserMsgHook pfnVoiceMask;
 pfnUserMsgHook pfnReqState;
-int __MsgFunc_VoiceMask(const char *pszName, int iSize, void *pbuf)
-{
+int __MsgFunc_VoiceMask(const char *pszName, int iSize, void *pbuf){
 	if(g_pInternalVoiceStatus)
 		g_pInternalVoiceStatus->HandleVoiceMaskMsg(iSize, pbuf);
 	return pfnVoiceMask(pszName, iSize, pbuf);
 }
 
-int __MsgFunc_ReqState(const char *pszName, int iSize, void *pbuf)
-{
+int __MsgFunc_ReqState(const char *pszName, int iSize, void *pbuf){
 	if(g_pInternalVoiceStatus)
 		g_pInternalVoiceStatus->HandleReqStateMsg(iSize, pbuf);
 	return pfnReqState(pszName, iSize, pbuf);
 }
 
-
 int g_BannedPlayerPrintCount;
-void ForEachBannedPlayer(char id[16])
-{
+void ForEachBannedPlayer(char id[16]){
 	char str[256];
 	sprintf(str, "Ban %d: %2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x\n",
 		g_BannedPlayerPrintCount++,
@@ -78,17 +55,13 @@ void ForEachBannedPlayer(char id[16])
 		id[8], id[9], id[10], id[11], 
 		id[12], id[13], id[14], id[15]
 		);
-#ifdef _WIN32
 	strupr(str);
-#endif
 	gEngfuncs.pfnConsolePrint(str);
 }
 
 
-void ShowBannedCallback()
-{
-	if(g_pInternalVoiceStatus)
-	{
+void ShowBannedCallback(){
+	if(g_pInternalVoiceStatus){
 		g_BannedPlayerPrintCount = 0;
 		gEngfuncs.pfnConsolePrint("------- BANNED PLAYERS -------\n");
 		g_pInternalVoiceStatus->m_BanMgr.ForEachBannedPlayer(ForEachBannedPlayer);
@@ -106,13 +79,12 @@ CVoiceStatus::CVoiceStatus(){
 	m_LastUpdateServerState = 0;
 	m_bTalking = m_bServerAcked = false;
 	m_bServerModEnable = -1;
-
 	m_pchGameDir = nullptr;
 }
 
 
 CVoiceStatus::~CVoiceStatus(){
-	g_pInternalVoiceStatus = NULL;
+	g_pInternalVoiceStatus = false;
 	if(m_pchGameDir){
 		if(m_bBanMgrInitialized)
 			m_BanMgr.SaveState(m_pchGameDir);
