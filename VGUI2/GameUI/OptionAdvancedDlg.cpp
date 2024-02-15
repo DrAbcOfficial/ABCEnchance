@@ -160,7 +160,7 @@ void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter){
 	}
 	filesystem()->FindClose(findHandle);
 
-	auto cfg = CABCConfig::GetConfig();
+	auto cfg = abcconfig::GetConfig();
 	for (auto iter = m_aryModelList.begin(); iter != m_aryModelList.end(); iter++) {
 		const std::string& name = iter->first;
 		if (std::find(cfg->m_aryFavModels.begin(), cfg->m_aryFavModels.end(), name) != cfg->m_aryFavModels.end())
@@ -198,10 +198,10 @@ void COptionsAdvanceSubMultiPlay::OnFavChange(int itemID, int add) {
 		if (it != m_aryModelList.end())
 			it->second = bIsAdd;
 
-		auto cfg = CABCConfig::GetConfig();
+		auto cfg = abcconfig::GetConfig();
 		auto cfgit = std::find(cfg->m_aryFavModels.begin(), cfg->m_aryFavModels.end(), name);
 		if (bIsAdd && cfgit == cfg->m_aryFavModels.end())
-			cfg->m_aryFavModels.push_back(name);
+			cfg->m_aryFavModels.insert(name);
 		else if (!bIsAdd && cfgit != cfg->m_aryFavModels.end())
 			cfg->m_aryFavModels.erase(cfgit);
 	}
