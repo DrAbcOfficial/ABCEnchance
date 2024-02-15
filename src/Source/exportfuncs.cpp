@@ -379,7 +379,7 @@ void HUD_Init(void){
 	if (g_pParticleMan)
 		g_pParticleMan->ResetParticles();
 	GameUI_GetInterface();
-	CABCConfig::Init();
+	abcconfig::LoadJson();
 }
 
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
@@ -404,7 +404,7 @@ void HUD_Shutdown(void){
 	FreeParticleMan();
 	UninstallClientHook();
 	CHttpClient::ShutDown();
-	CABCConfig::Close();
+	abcconfig::SaveJson();
 }
 
 int HUD_VidInit(void){

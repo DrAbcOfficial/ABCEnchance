@@ -1,20 +1,16 @@
 #pragma once
 #include "aigcjson.hpp"
-#include <string>
-#include <vector>
 
 class CABCConfig {
 public:
-	static void Init();
-	static CABCConfig* GetConfig();
-	static void Close();
-public:
-	CABCConfig();
-	CABCConfig(const char* path);
-	void Load(const char* path);
-	void Save();
-public:
-	std::vector<std::string> m_aryFavModels;
-private:
-	std::string m_szSavePath;
+	std::set<std::string> m_aryFavModels;
+
+	AIGC_JSON_HELPER(m_aryFavModels);
+	AIGC_JSON_HELPER_RENAME("favmodels");
 };
+
+namespace abcconfig {
+	void LoadJson();
+	void SaveJson();
+	CABCConfig* GetConfig();
+}

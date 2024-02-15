@@ -1,38 +1,15 @@
-#include "rapidjson/document.h"
-
-#include "rapidjson/stringbuffer.h"
-#include <rapidjson/writer.h>
-
 #include "interface.h"
 #include "IFileSystem.h"
 #include "Controls.h"
 
 #include "config.h"
 
-
-
-CABCConfig* g_pcfg;
-void CABCConfig::Init(){
-	g_pcfg = new CABCConfig();
-}
-CABCConfig* CABCConfig::GetConfig(){
-	return g_pcfg;
-}
-void CABCConfig::Close(){
-	g_pcfg->Save();
-	delete g_pcfg;
-}
-CABCConfig::CABCConfig(){
-	Load("abcenchance/config.json");
-}
-CABCConfig::CABCConfig(const char* path){
-	Load(path);
-}
-void CABCConfig::Load(const char* path){
-	m_szSavePath = path;
-	FileHandle_t file = vgui::filesystem()->Open(path, "r");
+constexpr char g_szConfigPath[] = "abcenchance/config.json";
+static CABCConfig s_cfg;
+void abcconfig::LoadJson(){
+	FileHandle_t file = vgui::filesystem()->Open(g_szConfigPath, "r");
 	if (!file) {
-		Warning("Couldn't open config file %s\n", path);
+		Warning("Couldn't open config file %s\n", g_szConfigPath);
 		return;
 	}
 	int size = vgui::filesystem()->Size(file);
@@ -40,33 +17,18 @@ void CABCConfig::Load(const char* path){
 	int bytesRead = vgui::filesystem()->Read(pMem, size, file);
 	pMem[bytesRead] = 0;
 	vgui::filesystem()->Close(file);
-	rapidjson::Document json;
-	json.Parse(pMem, bytesRead);
-	//Load from json
-	if (json.HasMember("favmodels")) {
-		auto arr = json["favmodels"].GetArray();
-		for (auto iter = arr.begin(); iter != arr.end(); iter++) {
-			m_aryFavModels.push_back((*iter).GetString());
-		}
-	}
-	//end
+	aigc::JsonHelper::JsonToObject(s_cfg, pMem);
 	free(pMem);
 }
-void CABCConfig::Save(){
-	rapidjson::Document data;
-	data.SetObject();
-	rapidjson::Document::AllocatorType& allocator = data.GetAllocator();
-	rapidjson::Value favmodels(rapidjson::kArrayType);
-	for (auto iter = m_aryFavModels.begin(); iter != m_aryFavModels.end(); iter++) {
-		rapidjson::Value val((*iter).c_str(), allocator);
-		favmodels.PushBack(val, allocator);
-	}
-	data.AddMember("favmodels", favmodels, allocator);
-	
-	rapidjson::StringBuffer buffer;
-	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-	data.Accept(writer);
-	FileHandle_t file = vgui::filesystem()->Open(m_szSavePath.c_str(), "w");
-	vgui::filesystem()->Write(buffer.GetString(), buffer.GetSize(), file);
+
+void abcconfig::SaveJson(){
+	FileHandle_t file = vgui::filesystem()->Open(g_szConfigPath, "w");
+	std::string json = "";
+	aigc::JsonHelper::ObjectToJson(s_cfg, json);
+	vgui::filesystem()->Write(json.c_str(), json.size(), file);
 	vgui::filesystem()->Close(file);
+}
+
+CABCConfig* abcconfig::GetConfig(){
+	return &s_cfg;
 }
