@@ -435,7 +435,7 @@ namespace aigc
         {
             std::vector<std::string> array = StringSplit(valueStr);
             std::map<std::string, std::string> ret;
-            for (int i = 0; i < array.size(); i++)
+            for (size_t i = 0; i < array.size(); i++)
             {
                 std::vector<std::string> keyValue = StringSplit(array[i], '=');
                 if (keyValue.size() != 2)
@@ -606,7 +606,7 @@ namespace aigc
 
         void StringToObject(float& obj, std::string& value)
         {
-            obj = atof(value.c_str());
+            obj = static_cast<float>(atof(value.c_str()));
         }
 
         void StringToObject(double& obj, std::string& value)

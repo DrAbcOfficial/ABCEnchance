@@ -20,7 +20,7 @@ public:
 		BackGroundInitMusic();
 	}
 
-	virtual virtual void Shutdown(void) override{
+	virtual void Shutdown(void) override{
 
 	}
 	virtual void ActivateGameUI(VGUI2Extension_CallbackContext* CallbackContext) override{
