@@ -12,8 +12,8 @@ public:
 	CABCConfig(const char* path);
 	void Load(const char* path);
 	void Save();
-private:
+public:
 	std::vector<std::string> m_aryFavModels;
-
+private:
 	std::string m_szSavePath;
 };

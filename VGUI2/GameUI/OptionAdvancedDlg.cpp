@@ -3,6 +3,7 @@
 #include <atomic>
 
 #include "Task.h"
+#include "config.h"
 
 #include "interface.h"
 #include "IFileSystem.h"
@@ -159,23 +160,11 @@ void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter){
 	}
 	filesystem()->FindClose(findHandle);
 
-	FileHandle_t file = filesystem()->Open("abcenchance/model_favlist.txt","r");
-	if (file) {
-		char buffer[MAX_PATH];
-		std::vector<std::string> favarray;
-		while (!filesystem()->EndOfFile(file)) {
-			filesystem()->ReadLine(buffer, MAX_PATH, file);
-			std::string str = buffer;
-			str.erase(str.end() - 1);
-			favarray.push_back(str.c_str());
-		}
-		for (auto iter = m_aryModelList.begin(); iter != m_aryModelList.end(); iter++) {
-			const std::string& name = iter->first;
-			if (std::find(favarray.begin(), favarray.end(), name) != favarray.end()) {
-				iter->second = true;
-			}
-		}
-		filesystem()->Close(file);
+	auto cfg = CABCConfig::GetConfig();
+	for (auto iter = m_aryModelList.begin(); iter != m_aryModelList.end(); iter++) {
+		const std::string& name = iter->first;
+		if (std::find(cfg->m_aryFavModels.begin(), cfg->m_aryFavModels.end(), name) != cfg->m_aryFavModels.end())
+			iter->second = true;
 	}
 	
 	size_t counter = 0;
@@ -202,20 +191,19 @@ void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter){
 void COptionsAdvanceSubMultiPlay::OnFavChange(int itemID, int add) {
 	auto item = m_pModelList->GetItem(itemID);
 	if (item) {
-		item->SetString("fav", add == 1 ? FAVMODEL_ICON : "");
-		auto it = m_aryModelList.find(std::string(item->GetName()));
+		bool bIsAdd = add == 1;
+		std::string name = std::string(item->GetName());
+		item->SetString("fav", bIsAdd ? FAVMODEL_ICON : "");
+		auto it = m_aryModelList.find(name);
 		if (it != m_aryModelList.end())
-			it->second = true;
-		FileHandle_t file = filesystem()->Open("abcenchance/model_favlist.txt", "w");
-		if (file) {
-			for(auto iter = m_aryModelList.begin(); iter != m_aryModelList.end();iter++){
-				if (iter->second) {
-					std::string buffer = iter->first + '\n';
-					filesystem()->Write(buffer.c_str(), buffer.size(), file);
-				}
-			}
-			filesystem()->Close(file);
-		}
+			it->second = bIsAdd;
+
+		auto cfg = CABCConfig::GetConfig();
+		auto cfgit = std::find(cfg->m_aryFavModels.begin(), cfg->m_aryFavModels.end(), name);
+		if (bIsAdd && cfgit == cfg->m_aryFavModels.end())
+			cfg->m_aryFavModels.push_back(name);
+		else if (!bIsAdd && cfgit != cfg->m_aryFavModels.end())
+			cfg->m_aryFavModels.erase(cfgit);
 	}
 }
 void COptionsAdvanceSubMultiPlay::OnOpenContextMenu(int itemID) {
