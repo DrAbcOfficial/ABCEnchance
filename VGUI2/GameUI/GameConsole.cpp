@@ -6,6 +6,37 @@
 
 vgui::CConsoleDialog* g_ConsoleDialog;
 
+void ConsoleGoodMessage(char* format, ...) {
+	va_list argptr;
+	char data[2048];
+	va_start(argptr, format);
+	Q_vsnprintf(data, sizeof(data), format, argptr);
+	va_end(argptr);
+	char result[2048] ;
+	std::snprintf(result, 2048, "[ABCEnchance] %s\n", data);
+	g_ConsoleDialog->ColorPrint(Color(0, 255, 0, 255), result);
+}
+void ConsoleWarnMessage(char* format, ...) {
+	va_list argptr;
+	char data[2048];
+	va_start(argptr, format);
+	Q_vsnprintf(data, sizeof(data), format, argptr);
+	va_end(argptr);
+	char result[2048];
+	std::snprintf(result, 2048, "[ABCEnchance] %s\n", data);
+	g_ConsoleDialog->ColorPrint(Color(255, 255, 0, 255), result);
+}
+void ConsoleErrorMessage(char* format, ...) {
+	va_list argptr;
+	char data[2048];
+	va_start(argptr, format);
+	Q_vsnprintf(data, sizeof(data), format, argptr);
+	va_end(argptr);
+	char result[2048];
+	std::snprintf(result, 2048, "[ABCEnchance] %s\n", data);
+	g_ConsoleDialog->ColorPrint(Color(255, 0, 0, 255), result);
+}
+
 class CVGUI2Extension_GameConsoleCallbacks : public IVGUI2Extension_GameConsoleCallbacks{
 public:
 	virtual int GetAltitude() const {
@@ -20,7 +51,7 @@ public:
 	virtual void Initialize(VGUI2Extension_CallbackContext* CallbackContext) {
 		if (!CallbackContext->IsPost) {
 			g_ConsoleDialog = new vgui::CConsoleDialog(nullptr, "Console", false);
-			g_ConsoleDialog->ColorPrint(Color(0, 255, 0, 200), "[ABCEnchance] ABCEnchance has run successfully!\n");
+			ConsoleGoodMessage("ABCEnchance has run successfully!");
 			CallbackContext->Result = VGUI2Extension_Result::SUPERCEDE;
 		}
 	}

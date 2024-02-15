@@ -26,10 +26,10 @@ public:
 	const uint8_t* GetFrame(size_t* size);
 	const VpxVideoInfo* GetInfo();
 private:
-	VpxVideoInfo m_pInfo;
+	VpxVideoInfo m_pInfo = {};
 	std::FILE* m_pFile = nullptr;
 	uint8_t* m_pBuffer = nullptr;
-	std::fpos_t m_pFpos;
+	std::fpos_t m_pFpos = 0;
 	size_t m_iBufferSize = 0;
 	size_t m_iFrameSize = 0;
 };

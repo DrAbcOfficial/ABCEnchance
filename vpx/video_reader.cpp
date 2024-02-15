@@ -13,6 +13,7 @@
 #include "video_reader.h"
 #include "memle.h"
 
+extern void ConsoleWarnMessage(char* format, ...);
 constexpr char *const kIVFSignature = "DKIF";
 
 CIVFVideoReader::CIVFVideoReader(){
@@ -61,12 +62,12 @@ bool CIVFVideoReader::ReadFrame(){
 
     if (std::fread(raw_header, IVF_FRAME_HDR_SZ, 1, m_pFile) != 1) {
         if (!std::feof(m_pFile))
-            warn("Failed to read frame size");
+            ConsoleWarnMessage("VPX: Failed to read frame size");
     }
     else {
         frame_size = mem_get_le32<size_t>(raw_header);
         if (frame_size > 256 * 1024 * 1024) {
-            warn("Read invalid frame size (%u)", (unsigned int)frame_size);
+            ConsoleWarnMessage("VPX: Read invalid frame size (%u)", (unsigned int)frame_size);
             frame_size = 0;
         }
         if (frame_size > m_iBufferSize) {
@@ -76,14 +77,14 @@ bool CIVFVideoReader::ReadFrame(){
                 m_iBufferSize = 2 * frame_size;
             }
             else {
-                warn("Failed to allocate compressed data buffer");
+                ConsoleWarnMessage("VPX: Failed to allocate compressed data buffer");
                 frame_size = 0;
             }
         }
     }
     if (!std::feof(m_pFile)) {
         if (std::fread(m_pBuffer, 1, frame_size, m_pFile) != frame_size) {
-            warn("Failed to read full frame");
+            ConsoleWarnMessage("VPX: Failed to read full frame");
             return false;
         }
         m_iFrameSize = frame_size;
