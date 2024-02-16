@@ -1480,9 +1480,6 @@
     <ClInclude Include="src\Header\Utility\config.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="src\aigcjson\aigcjson.hpp">
-      <Filter>Public</Filter>
-    </ClInclude>
     <ClInclude Include="src\thirdparty\Fmod\fmod.h">
       <Filter>Public\Thirdparty\FMod</Filter>
     </ClInclude>
