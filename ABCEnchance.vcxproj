@@ -449,7 +449,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="SourceSDK\vstdlib\strtools.h" />
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
-    <ClInclude Include="src\aigcjson\aigcjson.hpp" />
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
     <ClInclude Include="src\Header\HUD\ammo.h" />
