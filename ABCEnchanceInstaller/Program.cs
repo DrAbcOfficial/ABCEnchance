@@ -27,30 +27,43 @@ static void CopyFolder(string source, string destination)
 }
 static void FileWriter(string file, string add, string ignored = "")
 {
-    List<string> filelist = new();
-    using (StreamReader sr = new(file))
+    try
     {
-        while (!sr.EndOfStream)
+        List<string> filelist = new();
+        using (StreamReader sr = new(file))
         {
-            string? line = sr.ReadLine();
-            if (line == null)
-                continue;
-            line = line.Trim();
-            if (line == add || line == ignored)
+            while (!sr.EndOfStream)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Ignored {0}...", line);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                continue;
-            }  
-            filelist.Add(line);
+                string? line = sr.ReadLine();
+                if (line == null)
+                    continue;
+                line = line.Trim();
+                if (line == add || line == ignored)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Ignored {0}...", line);
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    continue;
+                }
+                filelist.Add(line);
+            }
+        }
+        filelist.Insert(0, add);
+        using StreamWriter sw = new(file);
+        foreach (string line in filelist)
+        {
+            sw.WriteLine(line);
         }
     }
-    filelist.Insert(0, add);
-    using StreamWriter sw = new(file);
-    foreach (string line in filelist)
+    catch (Exception ex)
     {
-        sw.WriteLine(line);
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Exception when write file: {0}", file);
+        Console.WriteLine(ex.Message);
+        Console.WriteLine("Please edit it manually");
+        Console.ForegroundColor = ConsoleColor.Gray;
+        System.Diagnostics.Process.Start("explorer.exe", file);
+
     }
 }
 static void AnyKeyExit(string msg)
