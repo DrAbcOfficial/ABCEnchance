@@ -874,26 +874,3 @@ void mathlib::HSVToRGB(float h, float s, float v, int& r, int& g, int& b) {
 	g = static_cast<int>((hg + m) * 255);
 	b = static_cast<int>((hb + m) * 255);
 }
-int mathlib::fatoi(const char* b){
-	int res = 0;
-	int sgn = 1;
-	for (; 
-		((*b) == ' ' || (*b) == '\t' || 
-		(*b) == '\n' || (*b) == '\v' || 
-		(*b) == '\f' || (*b) == '\r'); ++b);
-
-	if (*b == '-'){
-		sgn = -1;
-		++b;
-	}
-	else if (*b == '+')
-		++b;
-	// Iterate through all characters of input string and update result
-	for (; *b != 0; ++b){
-		if (*b < '0' || *b > '9')
-			return sgn * res;
-		res = res * 10 + *b - '0';
-	}
-	// return result.
-	return sgn * res;
-}
