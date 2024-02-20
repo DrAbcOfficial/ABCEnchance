@@ -113,7 +113,7 @@ void CHudItemHighLight::AddEntity(int type, cl_entity_s* ent, const char* modeln
 }
 void CHudItemHighLight::LoadItemList() {
 	char szItemPraseBuf[256];
-	char* pfile = (char*)gEngfuncs.COM_LoadFile(const_cast<char*>(ITEM_LIST_PATH), 5, NULL);
+	const char* pfile = const_cast<const char*>(reinterpret_cast<char*>(gEngfuncs.COM_LoadFile(ITEM_LIST_PATH, 5, nullptr)));
 	int i = 0, index = 0;
 	if (!pfile){
 		gEngfuncs.Con_DPrintf("CHudItemHighLight::LoadItemList: No item list file %s\n", ITEM_LIST_PATH);
@@ -137,8 +137,6 @@ void CHudItemHighLight::LoadItemList() {
 			i = 0;
 	}
 	if (i != 0)
-	{
 		SYS_ERROR("Error in parsing file:%s\nLine:%d\nBuf is not end with even.", ITEM_LIST_PATH, index);
-	}
-	gEngfuncs.COM_FreeFile(pfile);
+	gEngfuncs.COM_FreeFile(const_cast<void*>(reinterpret_cast<const void*>(pfile)));
 }
