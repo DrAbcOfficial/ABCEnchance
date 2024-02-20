@@ -120,7 +120,7 @@ void CHudItemHighLight::LoadItemList() {
 		return;
 	}
 	while (true){
-		pfile = gEngfuncs.COM_ParseFile(pfile, szItemPraseBuf);
+		pfile = (char*)gEngfuncs.COM_ParseFile(pfile, szItemPraseBuf);
 		if (!pfile)
 			break;
 		if (i == 0) {

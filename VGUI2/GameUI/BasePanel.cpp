@@ -59,7 +59,7 @@ void ReadBackGroundList() {
 	while (true) {
 		if (c >= 1)
 			strcpy(buffer1, buffer2);
-		pfile = gEngfuncs.COM_ParseFile(pfile, buffer2);
+		pfile = (char*)gEngfuncs.COM_ParseFile(pfile, buffer2);
 		if (!pfile)
 			break;
 		if (c >= 1) {
