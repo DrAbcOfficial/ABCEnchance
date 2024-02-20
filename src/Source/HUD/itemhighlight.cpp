@@ -129,7 +129,7 @@ void CHudItemHighLight::LoadItemList() {
 			aryHighLightList.push_back(item);
 		}
 		else {
-			aryHighLightList[index]->Type = mathlib::clamp(mathlib::fatoi(szItemPraseBuf), 0, 2);
+			aryHighLightList[index]->Type = mathlib::clamp(std::atoi(szItemPraseBuf), 0, 2);
 			index++;
 		}
 		i++;

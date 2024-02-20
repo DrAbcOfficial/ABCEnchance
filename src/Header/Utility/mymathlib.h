@@ -126,6 +126,4 @@ namespace mathlib {
 	void ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
 	void RGBToHSV(int r, int g, int b, float& h, float& s, float& v);
 	void HSVToRGB(float h, float s, float v, int& r, int& g, int& b);
-	float fsqrt(float x);
-	int fatoi(const char* src);
 };
