@@ -53,8 +53,7 @@ std::thread g_pDecodeThread;
 void ReadBackGroundList() {
 	char buffer2[MAX_PATH];
 	char buffer1[MAX_PATH];
-
-	char* pfile = (char*)gEngfuncs.COM_LoadFile(const_cast<char*>("abcenchance/scence/background.txt"), 5, nullptr);
+	const char* pfile = const_cast<const char*>(reinterpret_cast<char*>(gEngfuncs.COM_LoadFile("abcenchance/scence/background.txt", 5, nullptr)));
 	size_t c = 0;
 	while (true) {
 		if (c >= 1)
@@ -72,7 +71,7 @@ void ReadBackGroundList() {
 		else
 			c++;
 	}
-	gEngfuncs.COM_FreeFile(pfile);
+	gEngfuncs.COM_FreeFile(const_cast<void*>(reinterpret_cast<const void*>(pfile)));
 }
 void OpenVideo() {
 	static CIVFVideoReader pReader = CIVFVideoReader(g_pNowChose->video);
