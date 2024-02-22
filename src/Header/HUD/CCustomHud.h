@@ -60,7 +60,6 @@ public:
 	void HUD_Clear(void);
 	void HUD_BlitRadarFramebuffer();
 	void IN_MouseEvent(int mstate);
-	void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 	void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
 	bool IsInSpectate();
@@ -70,7 +69,6 @@ public:
 
 	bool IsSpectator(int client);
 	void SetSpectator(int client, bool value);
-	void CheckSpectator();
 
 	bool IsMouseVisible();
 	bool IsTextMenuOpening();
@@ -90,12 +88,11 @@ public:
 
 	bool IsInScore();
 
-	player_infosc_t* GetPlayerInfoEx(int index);
+	static player_infosc_t* GetPlayerInfoEx(int index);
 
 	~CCustomHud();			// destructor, frees allocated memory
 
 	int m_iPlayerHealth = 0;
-	bool m_bPlayerLongjump = false;
 	int m_iIsOverView = 0;
 	int m_iHideHUDDisplay = 0;
 	int m_iWeaponBits = 0;
@@ -127,7 +124,7 @@ public:
 	enum class ABCCustomMsg {
 		POPNUMBER = 0
 	};
-	void SetBaseHudActivity();
+	static void SetBaseHudActivity();
 private:
 	
 	int m_iMouseState = 0;

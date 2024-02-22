@@ -498,7 +498,6 @@ void CCustomHud::HUD_VidInit(void){
 	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
 }
 void CCustomHud::HUD_Draw(float flTime){
-	CheckSpectator();
 	m_HudEccoBuyMenu.Draw(flTime);
 
 #ifdef _DEBUG
@@ -528,16 +527,29 @@ void CCustomHud::HUD_Reset(void){
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
 }
 void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
+	//check spectate
+	float newuser = gEngfuncs.GetLocalPlayer()->curstate.iuser1;
+	static float iuser;
+	if (iuser != newuser) {
+		g_pViewPort->SetSpectate(newuser > 0);
+		iuser = newuser;
+	}
+
 	m_iWeaponBits = cdata->iWeaponBits;
-	m_bPlayerLongjump = std::atoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
-	g_pViewPort->LongjumpCallBack(m_bPlayerLongjump);
+
+	//check lj
+	static bool lj = false;
+	bool nlj = std::atoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
+	if (lj != nlj) {
+		g_pViewPort->LongjumpCallBack(nlj);
+		lj = nlj;
+	}	
 }
 void CCustomHud::HUD_Clear(void){
 	m_HudEccoBuyMenu.Clear();
 	m_HudIndicator.Clear();
 }
-void CCustomHud::HUD_BlitRadarFramebuffer()
-{
+void CCustomHud::HUD_BlitRadarFramebuffer(){
 	g_pViewPort->GetRadarPanel()->BlitFramebuffer();
 }
 void CCustomHud::IN_MouseEvent(int mstate){
@@ -587,8 +599,6 @@ int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname)
 void CCustomHud::HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
 	gWR.SyncWeapon(pwd);
 }
-void CCustomHud::CL_CreateMove(float frametime, usercmd_s* cmd, int active) {
-}
 bool CCustomHud::HasSuit() {
 	return (m_iWeaponBits & (1 << WEAPON_SUIT)) != 0;
 }
@@ -611,13 +621,6 @@ bool CCustomHud::IsSpectator(int client){
 }
 void CCustomHud::SetSpectator(int client, bool value){
 	m_SpectatePlayer[client] = value;
-}
-void CCustomHud::CheckSpectator(){
-	float newuser = gEngfuncs.GetLocalPlayer()->curstate.iuser1;
-	static float iuser;
-	if(iuser != newuser)
-		g_pViewPort->SetSpectate(newuser > 0);
-	iuser = newuser;
 }
 bool CCustomHud::IsMouseVisible(){
 	if(g_pViewPort)

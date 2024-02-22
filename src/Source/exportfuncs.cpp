@@ -464,7 +464,7 @@ void HUD_Frame(double frametime) {
 	CHttpClient::RunFrame();
 }
 int HUD_Redraw(float time, int intermission){
-	gCustomHud.SetBaseHudActivity();
+	CCustomHud::SetBaseHudActivity();
 	gCustomHud.HUD_Draw(time);
 	g_pViewPort->SetInterMission(intermission);
 	return gExportfuncs.HUD_Redraw(time, intermission);
@@ -588,12 +588,7 @@ void IN_MouseEvent(int mstate){
 	gExportfuncs.IN_MouseEvent(mstate);
 }
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
-	if (gCustomHud.IsMouseVisible()) {
-		gExportfuncs.CL_CreateMove(frametime, cmd, active);
-		gCustomHud.CL_CreateMove(frametime, cmd, active);
-	}
-	else
-		gExportfuncs.CL_CreateMove(frametime, cmd, active);
+	gExportfuncs.CL_CreateMove(frametime, cmd, active);
 	if (gCustomHud.IsInScore())
 		cmd->buttons |= IN_SCORE;
 	//Auto jump from openag

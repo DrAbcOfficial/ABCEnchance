@@ -125,12 +125,12 @@ bool CPlayerInfo::IsSpectator(){
 	return gCustomHud.IsSpectator(GetIndex());
 }
 void CPlayerInfo::UpdatePing() {
-	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(GetIndex());
+	player_infosc_t* info = CCustomHud::GetPlayerInfoEx(GetIndex());
 	m_iPing = info->ping;
 	m_iLoss = info->packet_loss;
 }
 CPlayerInfo *CPlayerInfo::Update(){
-	player_infosc_t* info = gCustomHud.GetPlayerInfoEx(GetIndex());
+	player_infosc_t* info = CCustomHud::GetPlayerInfoEx(GetIndex());
 	bool bWasConnected = m_bIsConnected;
 	bool bIsConnected = info != nullptr;
 	m_bIsConnected = bIsConnected;

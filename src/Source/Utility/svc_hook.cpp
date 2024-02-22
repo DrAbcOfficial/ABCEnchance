@@ -5,14 +5,6 @@
 
 int SVC_LASTMSG = 50;
 
-typedef struct svc_func_s
-{
-	unsigned char opcode;
-	char* pszname;
-	pfnSVCMsgHook pfnParse;
-}
-svc_func_t;
-
 static svc_func_t* cl_parsefuncs = nullptr;
 static byte* net_message_data = nullptr;
 static int* net_message_cursize = nullptr;
