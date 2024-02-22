@@ -90,17 +90,18 @@ void __fastcall TFV_ShowScoreBoard(void* pthis) {
 void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 	switch (iVguiMenu) {
 		//MissionBrief
-	case 4: return;
+	case 0x4: return;
 		//MOTD
-	case 5: {
+	case 0x5: {
 		if (gCVars.pMotd->value != 0) {
 			if (gCVars.pMotd->value >= 1)
 				g_pViewPort->ShowMOTD();
 			return;
 		}
+		break;
 	}
 		  //TeamMenu
-	case 2:
+	case 0x2:
 		//Vote
 	case 0x16:
 		//MapVote
