@@ -16,7 +16,7 @@
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/ImageClipPanel.h"
 #include "vgui_controls/Button.h"
-#include "vgui_controls/avatar_image.h"
+#include "vgui_controls/GaussianBlurPanel.h"
 
 #include "local.h"
 #include "vguilocal.h"
@@ -942,24 +942,27 @@ public:
 	}
 };
 static CQRImage* s_pQRCodeImage;
-vgui::CQRLoginPanel::CQRLoginPanel(vgui::Panel* parent, char* name) 
+vgui::CQRLoginPanel::CQRLoginPanel(Panel* parent, char* name) 
 	: BaseClass(parent, name) {
 	SetProportional(true);
+	SetScheme(g_pViewPort->GetBaseScheme());
+
+	m_pBlurPanel = new GaussianBlurPanel(this, "Blur");
+	m_pNotice = new Label(this, "QRNotice", "#Netease_QRNoticeText");
+	m_pQRImagePanel = new ImagePanel(this, "QRImage");
+	s_pQRCodeImage = new CQRImage();
+
+	LoadControlSettings(VGUI2_ROOT_DIR "NeteaseQRPanel.res");
+
+	int w, h;
+	GetSize(w, h);
+	m_pBlurPanel->SetSize(w, h);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 	SetTitleBarVisible(false);
 	SetCloseButtonVisible(false);
 	SetSizeable(false);
 	SetMoveable(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
-
-	m_pNotice = new vgui::Label(this, "QRNotice", "#Netease_QRNoticeText");
-	m_pNotice->SetMouseInputEnabled(true);
-	m_pQRImagePanel = new vgui::ImagePanel(this, "QRImage");
-	m_pQRImagePanel->SetMouseInputEnabled(true);
-	s_pQRCodeImage = new CQRImage();
-
-	LoadControlSettings(VGUI2_ROOT_DIR "NeteaseQRPanel.res");
 }
 struct loginshare_obj {
 	byte* qrimagebyte;

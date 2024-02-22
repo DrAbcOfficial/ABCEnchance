@@ -21,16 +21,17 @@ namespace vgui {
 class CNeteasePanel;
 
 namespace vgui {
-	class CQRLoginPanel : public vgui::Frame {
+	class CQRLoginPanel : public Frame {
 	public:
-		DECLARE_CLASS_SIMPLE(CQRLoginPanel, vgui::Frame);
-		CQRLoginPanel(vgui::Panel* parent, char* name);
+		DECLARE_CLASS_SIMPLE(CQRLoginPanel, Frame);
+		CQRLoginPanel(Panel* parent, char* name);
 		void Login();
 		void ResetText();
 		void SendMyInfo();
 	private:
-		vgui::ImagePanel* m_pQRImagePanel = nullptr;
-		vgui::Label* m_pNotice = nullptr;
+		ImagePanel* m_pQRImagePanel = nullptr;
+		Label* m_pNotice = nullptr;
+		Panel* m_pBlurPanel = nullptr;
 		CNeteasePanel* m_pMusicPanel = nullptr;
 	};
 }
