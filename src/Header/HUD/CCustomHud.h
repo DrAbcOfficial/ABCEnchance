@@ -58,7 +58,6 @@ public:
 	void HUD_Reset(void);
 	void HUD_UpdateClientData(client_data_t* cdata, float time);
 	void HUD_Clear(void);
-	void HUD_BlitRadarFramebuffer();
 	void IN_MouseEvent(int mstate);
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 	void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
@@ -88,12 +87,13 @@ public:
 
 	bool IsInScore();
 
+	void RenderRadar();
+
 	static player_infosc_t* GetPlayerInfoEx(int index);
 
 	~CCustomHud();			// destructor, frees allocated memory
 
 	int m_iPlayerHealth = 0;
-	int m_iIsOverView = 0;
 	int m_iHideHUDDisplay = 0;
 	int m_iWeaponBits = 0;
 	float m_flOverViewScale = 0;
@@ -110,8 +110,6 @@ public:
 	client_sprite_t* m_pSpriteList;
 
 	int m_iCursorTga = 0;
-
-	bool m_bRenderRadarView = false;
 	bool m_bInScore = false;
 
 	enum MetaHookMsgType {

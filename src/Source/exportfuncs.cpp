@@ -127,12 +127,13 @@ void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
 	mathlib::VectorCopy(punchangle1, g_pViewPort->m_vecClientEVPunch);
 }
+extern bool g_bInRenderRadar;
 int CL_IsDevOverview(void){
-	return gCustomHud.m_iIsOverView ? 1 : gHookFuncs.CL_IsDevOverview();
+	return g_bInRenderRadar ? 1 : gHookFuncs.CL_IsDevOverview();
 }
 void CL_SetDevOverView(int param1){
 	gHookFuncs.CL_SetDevOverView(param1);
-	if (gCustomHud.m_iIsOverView){
+	if (g_bInRenderRadar){
 		(*(vec3_t*)(param1 + 0x1C))[Q_YAW] = gCustomHud.m_flOverViewYaw;
 		*(float *)(param1 + 0x10) = gCustomHud.m_vecOverViewOrg[0];
 		*(float *)(param1 + 0x14) = gCustomHud.m_vecOverViewOrg[1];
@@ -141,21 +142,13 @@ void CL_SetDevOverView(int param1){
 		gDevOverview->zoom = gCustomHud.m_flOverViewScale;
 	}	
 }
-void R_ForceCVars(qboolean mp){
-	if (CL_IsDevOverview())
-		return;
-	gHookFuncs.R_ForceCVars(mp);
-}
-
-model_t* CL_GetModelByIndex (int index)
-{
+model_t* CL_GetModelByIndex (int index){
 	auto extra = GetExtraModelByModelIndex(index);
 	if (extra)
 		return extra;
 
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
-
 void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin, 
 	int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength) {
 	if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
@@ -186,8 +179,6 @@ void FillEngineAddress() {
 		Fill_Sig(GL_BIND_SIG, g_dwEngineBase, g_dwEngineSize, GL_Bind);
 #define CL_SETDEVOVERVIEW "\xD9\x05\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\xDC\xC9\xD9\x05\x2A\x2A\x2A\x2A\xDE\xE2\xD9\xC9\xD9\x1D\x2A\x2A\x2A\x2A\xD8\x0D\x2A\x2A\x2A\x2A\xD8\x2D\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\xEE\xD9\x05\x2A\x2A\x2A\x2A\xD8\xD1\xDF\xE0\xD9\xE8\xD9\x05\x2A\x2A\x2A\x2A\xF6\xC4\x41\x2A\x2A\xD8\xC1\xD9\x15"
 		Fill_Sig(CL_SETDEVOVERVIEW, g_dwEngineBase, g_dwEngineSize, CL_SetDevOverView);
-#define R_FORCECVAR_SIG "\x83\x7C\x24\x2A\x00\x2A\x2A\x2A\x2A\x00\x00\x81\x3D\x2A\x2A\x2A\x2A\xFF\x00\x00\x00"
-		Fill_Sig(R_FORCECVAR_SIG, g_dwEngineBase, g_dwEngineSize, R_ForceCVars);
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
 		DWORD addr;
@@ -205,6 +196,14 @@ void FillEngineAddress() {
 			addr = (DWORD)Search_Pattern_From(gHookFuncs.R_RenderView, R_RENDERSCENE_SIG_SVENGINE);
 			Sig_AddrNotFound(R_RenderScene);
 			gHookFuncs.R_RenderScene = (void(*)(void))(addr + 5 + 4 + *(int*)(addr + 5));
+
+			gHookFuncs.R_RenderView = (decltype(gHookFuncs.R_RenderView))Search_Pattern(R_RENDERVIEW_SIG_SVENGINE);
+			Sig_FuncNotFound(R_RenderView);
+
+			addr = (ULONG_PTR)Search_Pattern_From(gHookFuncs.R_RenderView, R_RENDERSCENE_SIG_SVENGINE);
+			Sig_AddrNotFound(R_RenderScene);
+			gHookFuncs.R_RenderScene = (decltype(gHookFuncs.R_RenderScene))GetCallAddress(addr + 4);
+			Sig_FuncNotFound(R_RenderScene);
 		}
 #define DEVOVERVIEW_SIG "\x83\xEC\x30\xDD\x5C\x24\x2A\xD9\x05"
 		{
@@ -214,9 +213,14 @@ void FillEngineAddress() {
 		}
 	}
 }
+
+extern void ClientDLLHook(void* interface_ptr);
 void FillAddress(){
-	auto pfnClientCreateInterface = Sys_GetFactory((HINTERFACEMODULE)g_dwClientBase);
-	if (pfnClientCreateInterface && pfnClientCreateInterface("SCClientDLL001", 0)){
+	auto pfnClientCreateInterface = g_pMetaHookAPI->GetClientFactory();
+	auto SCClient001 = pfnClientCreateInterface("SCClientDLL001", 0);
+	if (pfnClientCreateInterface && SCClient001){
+		ClientDLLHook(SCClient001);
+		//sig
 #define SC_GETCLIENTCOLOR_SIG "\x8B\x4C\x24\x04\x85\xC9\x2A\x2A\x6B\xC1\x58"
 		Fill_Sig(SC_GETCLIENTCOLOR_SIG, g_dwClientBase, g_dwClientSize, GetClientColor);
 #define R_EVVECTORSCALE_SIG "\x8B\x4C\x24\x04\xF3\x0F\x10\x4C\x24\x08\x8B\x44\x24\x0C\x0F\x28\xC1\xF3\x0F\x59\x01\xF3\x0F\x11\x00\x0F\x28\xC1\xF3\x0F\x59\x41\x04\xF3\x0F\x11\x40\x04\xF3\x0F\x59\x49\x08\xF3\x0F\x11\x48\x08"
@@ -274,7 +278,6 @@ void InstallEngineHook() {
 	Fill_EngFunc(pfnPlaybackEvent);
 	Install_InlineEngHook(pfnPlaybackEvent);
 	Install_InlineEngHook(R_NewMap);
-	Install_InlineEngHook(R_ForceCVars);
 	Install_InlineEngHook(CL_IsDevOverview);
 	Install_InlineEngHook(CL_SetDevOverView);
 	Install_InlineEngHook(CL_GetModelByIndex);
@@ -491,96 +494,32 @@ void HUD_TxferPredictionData (struct entity_state_s* ps, const struct entity_sta
 void V_CalcRefdef(struct ref_params_s* pparams){
 	//pparams->nextView will be zeroed by client dll
 	gExportfuncs.V_CalcRefdef(pparams);
-	if (gCVars.pRadar->value) {
-		if (!gCustomHud.m_bRenderRadarView) {
-			//Tell engine to render twice
-			pparams->nextView = 1;
-
-			gCustomHud.m_bRenderRadarView = true;
-
-			//设置到玩家脑袋上朝下看
-			gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
-			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-			gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
-			gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
-			gCustomHud.m_flOverViewYaw = local->curstate.angles[Q_YAW];
-
-			gCustomHud.m_iIsOverView = 1;
-
-			gCustomHud.m_flSavedCvars[0] = gCVars.pCVarDevOverview->value;
-			gCustomHud.m_flSavedCvars[1] = gCVars.pCVarDrawEntities->value;
-			gCustomHud.m_flSavedCvars[2] = gCVars.pCVarDrawViewModel->value;
-			gCustomHud.m_flSavedCvars[3] = gCVars.pCVarDrawDynamic->value;
-
-			if (gCVars.pCVarFXAA)
-				gCustomHud.m_flSavedCvars[4] = gCVars.pCVarFXAA->value;
-			if (gCVars.pCVarWater)
-				gCustomHud.m_flSavedCvars[5] = gCVars.pCVarWater->value;
-			if (gCVars.pCVarShadow)
-				gCustomHud.m_flSavedCvars[6] = gCVars.pCVarShadow->value;
-
-			gCVars.pCVarDevOverview->value = 2;
-			gCVars.pCVarDrawEntities->value = 0;
-			gCVars.pCVarDrawViewModel->value = 0;
-			gCVars.pCVarDrawDynamic->value = 0;
-			if (gCVars.pCVarFXAA)
-				gCVars.pCVarFXAA->value = 0;
-			if (gCVars.pCVarWater)
-				gCVars.pCVarWater->value = 0;
-			if (gCVars.pCVarShadow)
-				gCVars.pCVarShadow->value = 0;
-		}
-		else {
-			//The first render pass is done
-			//Now blit the radar overview from final buffer into radar texture
-
-			gCustomHud.HUD_BlitRadarFramebuffer();
-
-			gCustomHud.m_bRenderRadarView = false;
-
-			gCustomHud.m_iIsOverView = 0;
-
-			gCVars.pCVarDevOverview->value = gCustomHud.m_flSavedCvars[0];
-			gCVars.pCVarDrawEntities->value = gCustomHud.m_flSavedCvars[1];
-			gCVars.pCVarDrawViewModel->value = gCustomHud.m_flSavedCvars[2];
-			gCVars.pCVarDrawDynamic->value = gCustomHud.m_flSavedCvars[3];
-			if (gCVars.pCVarFXAA)
-				gCVars.pCVarFXAA->value = gCustomHud.m_flSavedCvars[4];
-			if (gCVars.pCVarWater)
-				gCVars.pCVarWater->value = gCustomHud.m_flSavedCvars[5];
-			if (gCVars.pCVarShadow)
-				gCVars.pCVarShadow->value = gCustomHud.m_flSavedCvars[6];
-		}
+	if (!gExportfuncs.CL_IsThirdPerson()) {
+		// fudge position around to keep amount of weapon visible
+		// roughly equal with different FOV
+		cl_entity_t* view = gEngfuncs.GetViewModel();
+		if (pparams->viewsize == 110)
+			view->origin[2] += 1;
+		else if (pparams->viewsize == 100)
+			view->origin[2] += 2;
+		else if (pparams->viewsize == 90)
+			view->origin[2] += 1;
+		else if (pparams->viewsize == 80)
+			view->origin[2] += 0.5;
+		CVector viewOrigin = view->origin;
+		CVector viewAngles = view->angles;
+		V_CalcViewModelLag(pparams, viewOrigin, viewAngles, pparams->cl_viewangles);
+		mathlib::VectorCopy(viewOrigin, view->origin);
+		mathlib::VectorCopy(viewAngles, view->angles);
+		V_CalcModelSlide(pparams);
 	}
-
-	if (!gCustomHud.m_bRenderRadarView) {
-		if (!gExportfuncs.CL_IsThirdPerson()) {
-			// fudge position around to keep amount of weapon visible
-			// roughly equal with different FOV
-			cl_entity_t* view = gEngfuncs.GetViewModel();
-			if (pparams->viewsize == 110)
-				view->origin[2] += 1;
-			else if (pparams->viewsize == 100)
-				view->origin[2] += 2;
-			else if (pparams->viewsize == 90)
-				view->origin[2] += 1;
-			else if (pparams->viewsize == 80)
-				view->origin[2] += 0.5;
-			CVector viewOrigin = view->origin;
-			CVector viewAngles = view->angles;
-			V_CalcViewModelLag(pparams, viewOrigin, viewAngles, pparams->cl_viewangles);
-			mathlib::VectorCopy(viewOrigin, view->origin);
-			mathlib::VectorCopy(viewAngles, view->angles);
-			V_CalcModelSlide(pparams);
-		}
-		else {
-			vec3_t vecRight;
-			mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
-			mathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
-			pparams->vieworg[0] += vecRight[0];
-			pparams->vieworg[1] += vecRight[1];
-			pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
-		}
+	else {
+		vec3_t vecRight;
+		mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
+		mathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
+		pparams->vieworg[0] += vecRight[0];
+		pparams->vieworg[1] += vecRight[1];
+		pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
 	}
 }
 void IN_MouseEvent(int mstate){

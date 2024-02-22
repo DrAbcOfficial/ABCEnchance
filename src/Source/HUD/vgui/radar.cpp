@@ -156,8 +156,10 @@ CRadarPanel::CRadarPanel()
 	gCVars.pRadarAvatar = CREATE_CVAR("cl_radar_avatar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->SetAvatarVisible(cvar->value);
 	});
-	gCVars.pRadarAvatarSize = CREATE_CVAR("cl_radar_avatarsize", "20", FCVAR_VALUE, NULL);
-	gCVars.pRadarAvatarScale = CREATE_CVAR("cl_radar_avatarscale", "0.2", FCVAR_VALUE, NULL);
+	gCVars.pRadarAvatarSize = CREATE_CVAR("cl_radar_avatarsize", "20", FCVAR_VALUE, nullptr);
+	gCVars.pRadarAvatarScale = CREATE_CVAR("cl_radar_avatarscale", "0.2", FCVAR_VALUE, nullptr);
+	gCVars.pRadarZMin = CREATE_CVAR("cl_radar_zmin", "256", FCVAR_VALUE, nullptr);
+	gCVars.pRadarZMax = CREATE_CVAR("cl_radar_zmax", "20", FCVAR_VALUE, nullptr);
 
 	m_pBackground = new vgui::ImagePanel(this, "Background");
 	m_pRoundBackground = new vgui::ImagePanel(this, "RoundBackground");
@@ -289,13 +291,13 @@ void CRadarPanel::OnThink(){
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
 	//16，去除大多数烦人的天花板灯泡
-	gCustomHud.m_flOverViewZmax = m_hRadarTr.endpos[2] - 16;
+	gCustomHud.m_flOverViewZmax = m_hRadarTr.endpos[2] - gCVars.pRadarZMax->value;
 	vecEndpos.z = -9999;
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
 	float flOldStart = m_hRadarTr.endpos[2] - 1;
-	//半双人高，可以满足大多数地图的需求
-	m_hRadarTr.endpos[2] -= 144;
+	//四人高，可以满足大多数地图的需求
+	m_hRadarTr.endpos[2] -= gCVars.pRadarZMin->value;
 	gEngfuncs.pEventAPI->EV_PlayerTrace(m_hRadarTr.endpos, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
 	gCustomHud.m_flOverViewZmin = m_hRadarTr.startsolid ? m_hRadarTr.endpos[2] : flOldStart;
 	flNextUpdateTrTime = flTime + 1.0f;
@@ -340,6 +342,51 @@ vgui::VPANEL CRadarPanel::GetVPanel() {
 void CRadarPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
+bool g_bInRenderRadar = false;
+void CRadarPanel::RenderRadar(){
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
+	//设置到玩家脑袋上朝下看
+	gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
+	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
+	gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
+	gCustomHud.m_flOverViewYaw = local->curstate.angles[Q_YAW];
+	gCustomHud.m_flSavedCvars[0] = gCVars.pCVarDevOverview->value;
+	gCustomHud.m_flSavedCvars[1] = gCVars.pCVarDrawEntities->value;
+	gCustomHud.m_flSavedCvars[2] = gCVars.pCVarDrawViewModel->value;
+	gCustomHud.m_flSavedCvars[3] = gCVars.pCVarDrawDynamic->value;
+	if (gCVars.pCVarFXAA)
+		gCustomHud.m_flSavedCvars[4] = gCVars.pCVarFXAA->value;
+	if (gCVars.pCVarWater)
+		gCustomHud.m_flSavedCvars[5] = gCVars.pCVarWater->value;
+	if (gCVars.pCVarShadow)
+		gCustomHud.m_flSavedCvars[6] = gCVars.pCVarShadow->value;
+	gCVars.pCVarDevOverview->value = 2;
+	gCVars.pCVarDrawEntities->value = 0;
+	gCVars.pCVarDrawViewModel->value = 0;
+	gCVars.pCVarDrawDynamic->value = 0;
+	if (gCVars.pCVarFXAA)
+		gCVars.pCVarFXAA->value = 0;
+	if (gCVars.pCVarWater)
+		gCVars.pCVarWater->value = 0;
+	if (gCVars.pCVarShadow)
+		gCVars.pCVarShadow->value = 0;
+	g_bInRenderRadar = true;
+	gHookFuncs.R_RenderScene();
+	g_bInRenderRadar = false;
+	gCVars.pCVarDevOverview->value = gCustomHud.m_flSavedCvars[0];
+	gCVars.pCVarDrawEntities->value = gCustomHud.m_flSavedCvars[1];
+	gCVars.pCVarDrawViewModel->value = gCustomHud.m_flSavedCvars[2];
+	gCVars.pCVarDrawDynamic->value = gCustomHud.m_flSavedCvars[3];
+	if (gCVars.pCVarFXAA)
+		gCVars.pCVarFXAA->value = gCustomHud.m_flSavedCvars[4];
+	if (gCVars.pCVarWater)
+		gCVars.pCVarWater->value = gCustomHud.m_flSavedCvars[5];
+	if (gCVars.pCVarShadow)
+		gCVars.pCVarShadow->value = gCustomHud.m_flSavedCvars[6];
+	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+}
 void CRadarPanel::SetScale(bool state){
 	m_bInScale = state;
 	if (state)
@@ -352,10 +399,4 @@ void CRadarPanel::SetAvatarVisible(bool state){
 	for (auto iter = m_aryPlayerAvatars.begin(); iter != m_aryPlayerAvatars.end(); iter++) {
 		(*iter)->SetVisible(state);
 	}
-}
-void CRadarPanel::BlitFramebuffer(){
-	//Blit color from current framebuffer into texture
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hRadarBufferFBO, gScreenInfo.iWidth, gScreenInfo.iHeight, gScreenInfo.iWidth, gScreenInfo.iHeight);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }

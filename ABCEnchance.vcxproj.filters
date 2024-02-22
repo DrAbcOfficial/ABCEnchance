@@ -114,6 +114,9 @@
     <Filter Include="Public\Thirdparty\wadlib">
       <UniqueIdentifier>{2ed9b323-3371-4758-883e-76bc89d24f96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Source\HUD\legacy">
+      <UniqueIdentifier>{642f09f6-101f-49f4-8f61-764b2fe93e80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
@@ -215,28 +218,7 @@
     <ClCompile Include="src\Source\HUD\vgui\scoreboard.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\ammo.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\HUD\cctv.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\HUD\eccobuymenu.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\HUD\indicator.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\HUD\historyresource.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\HUD\itemhighlight.cpp">
-      <Filter>Public\Source\HUD</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\HUD\weaponbank.cpp">
       <Filter>Public\Source\HUD</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\Viewport.cpp">
@@ -292,9 +274,6 @@
     </ClCompile>
     <ClCompile Include="src\Source\plugins.cpp">
       <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\HUD\weaponselect.cpp">
-      <Filter>Public\Source\HUD</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\playerboard.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
@@ -697,6 +676,33 @@
     </ClCompile>
     <ClCompile Include="src\thirdparty\wadlib\wadfile.cpp">
       <Filter>Public\Thirdparty\wadlib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\clientdll.cpp">
+      <Filter>Public\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\ammo.cpp">
+      <Filter>Public\Source\HUD\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\cctv.cpp">
+      <Filter>Public\Source\HUD\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\historyresource.cpp">
+      <Filter>Public\Source\HUD\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\indicator.cpp">
+      <Filter>Public\Source\HUD\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\itemhighlight.cpp">
+      <Filter>Public\Source\HUD\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\weaponbank.cpp">
+      <Filter>Public\Source\HUD\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\weaponselect.cpp">
+      <Filter>Public\Source\HUD\legacy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\eccobuymenu.cpp">
+      <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -59,7 +59,6 @@ typedef struct{
 	model_t*	(*CL_GetModelByIndex)		(int index);
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
-	void		(*R_ForceCVars)				(bool mp);
 	void(__fastcall* CClient_SoundEngine_PlayFMODSound)(void* pSoundEngine, int, int flags, int entindex, float* origin,
 		int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength);
 	void		(*SetPunchAngle)			(int y, float value);
@@ -123,11 +122,14 @@ typedef struct cl_cvars_s{
 	cvar_t* pGrenadeInicatorTime = nullptr;
 
 	cvar_t* pMotd = nullptr;
+
 	cvar_t* pRadar = nullptr;
 	cvar_t* pRadarZoom = nullptr;
 	cvar_t* pRadarAvatar = nullptr;
 	cvar_t* pRadarAvatarSize = nullptr;
 	cvar_t* pRadarAvatarScale = nullptr;
+	cvar_t* pRadarZMin = nullptr;
+	cvar_t* pRadarZMax = nullptr;
 
 	cvar_t* pCVarDevOverview = nullptr;
 	cvar_t* pCVarDrawEntities = nullptr;

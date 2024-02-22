@@ -518,7 +518,6 @@ void CCustomHud::HUD_Reset(void){
 #endif
 
 	m_bInScore = false;
-	m_bRenderRadarView = false;
 	m_iMouseState = 0;
 	m_iLastClick = 5;
 	m_iHideHUDDisplay = 0;
@@ -548,9 +547,6 @@ void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 void CCustomHud::HUD_Clear(void){
 	m_HudEccoBuyMenu.Clear();
 	m_HudIndicator.Clear();
-}
-void CCustomHud::HUD_BlitRadarFramebuffer(){
-	g_pViewPort->GetRadarPanel()->BlitFramebuffer();
 }
 void CCustomHud::IN_MouseEvent(int mstate){
 	auto MouseTest = [&](int mstate, int testBit, vgui::MouseCode enumMouse) {
@@ -689,6 +685,9 @@ hud_playerinfo_t* CCustomHud::GetPlayerHUDInfo(int index){
 }
 bool CCustomHud::IsInScore() {
 	return m_bInScore;
+}
+void CCustomHud::RenderRadar(){
+	g_pViewPort->GetRadarPanel()->RenderRadar();
 }
 player_infosc_t* CCustomHud::GetPlayerInfoEx(int index) {
 	return reinterpret_cast<player_infosc_t*>(IEngineStudio.PlayerInfo(index - 1));
