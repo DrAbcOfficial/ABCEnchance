@@ -204,6 +204,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
     <ClCompile Include="src\Particleman\ClientParticleMan.cpp" />
+    <ClCompile Include="src\Source\clientdll.cpp" />
     <ClCompile Include="src\Source\crypto.cpp" />
     <ClCompile Include="src\Source\efxenchance.cpp" />
     <ClCompile Include="src\Source\exportfuncs.cpp" />
