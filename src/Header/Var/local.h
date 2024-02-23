@@ -54,6 +54,7 @@ typedef struct{
 	void		(*EVVectorScale)			(float* pucnangle1, float scale, float* pucnangle2);
 	void		(*R_NewMap)					();
 	int			(*CL_IsDevOverview)			();
+	void		(*R_ForceCVars)				(int mp);
 	void		(*R_RenderView)				(int a1);
 	void		(*R_RenderScene)			();
 	model_t*	(*CL_GetModelByIndex)		(int index);
