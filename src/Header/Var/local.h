@@ -60,6 +60,7 @@ typedef struct{
 	model_t*	(*CL_GetModelByIndex)		(int index);
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);
+	void(__fastcall* CClient_SoundEngine_Initialize)(void* pSoundEngine, int);
 	void(__fastcall* CClient_SoundEngine_PlayFMODSound)(void* pSoundEngine, int, int flags, int entindex, float* origin,
 		int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength);
 	void		(*SetPunchAngle)			(int y, float value);
