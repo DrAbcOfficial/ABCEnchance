@@ -41,6 +41,7 @@
 #include "radar.h"
 #include "ammostack.h"
 #include "itemstack.h"
+#include "weaponstack.h"
 
 #include "CCustomHud.h"
 
@@ -108,6 +109,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pScorePanel = new vgui::CScorePanel());
 	AddNewPanel(m_pAmmoStack = new CAmmoStackPanel());
 	AddNewPanel(m_pItemStack = new CItemStackPanel());
+	AddNewPanel(m_pWeaponStack = new CWeaponStackPanel());
 	SetVisible(false);
 }
 
@@ -132,6 +134,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pRadar->SetParent(GetVPanel());
 	m_pAmmoStack->SetParent(GetVPanel());
 	m_pItemStack->SetParent(GetVPanel());
+	m_pWeaponStack->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -374,6 +377,9 @@ CAmmoStackPanel* CViewport::GetAmmoStackPanel(){
 }
 CItemStackPanel* CViewport::GetItemStackPanel(){
 	return m_pItemStack;
+}
+CWeaponStackPanel* CViewport::GetWeaponStackPanel(){
+	return m_pWeaponStack;
 }
 WEAPON* CViewport::GetCurWeapon(){
 	return gCustomHud.GetCurWeapon();

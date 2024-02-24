@@ -12,9 +12,7 @@ typedef int HSPRITE;
 #include "weaponbank.h"
 
 #include "vgui_controls/ImageSprPanel.h"
-#include "vgui_controls/spr_image.h"
 #include "vgui_controls/Label.h"
-#include "vgui_controls/AnimationController.h"
 
 #include "ammostack.h"
 
@@ -76,7 +74,7 @@ void CAmmoStackPanel::PaintBackground() {
 	for (auto iter = m_aryPanels.rbegin(); iter != m_aryPanels.rend(); iter++) {
 		auto item = *iter;
 		if (item->IsVisible()) {
-			y -= item->GetTall();
+			y -= item->GetTall() + m_iStackGap;
 			item->SetWide(w);
 			item->SetPos(0, y);
 		}
