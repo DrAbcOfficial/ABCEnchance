@@ -217,6 +217,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\ammobar.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\ammostack.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\basestackpanel.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\crosshair.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\deadmsg.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\dmgtiles.cpp" />
@@ -465,6 +466,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\radar.h" />
     <ClInclude Include="src\Header\HUD\vgui\ammobar.h" />
     <ClInclude Include="src\Header\HUD\vgui\ammostack.h" />
+    <ClInclude Include="src\Header\HUD\vgui\basestackpanel.h" />
     <ClInclude Include="src\Header\HUD\vgui\crosshair.h" />
     <ClInclude Include="src\Header\HUD\vgui\deadmsg.h" />
     <ClInclude Include="src\Header\HUD\vgui\dmgtiles.h" />
