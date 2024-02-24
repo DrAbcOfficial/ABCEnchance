@@ -366,6 +366,9 @@ void CViewport::ShowMusic(bool state){
 CNeteasePanel* CViewport::GetMusicPanel(){
 	return m_pNeteaseMusic;
 }
+CAmmoStackPanel* CViewport::GetAmmoStackPanel(){
+	return m_pAmmoStack;
+}
 WEAPON* CViewport::GetCurWeapon(){
 	return gCustomHud.GetCurWeapon();
 }

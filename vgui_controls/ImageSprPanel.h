@@ -31,6 +31,7 @@ namespace vgui
 
 		virtual void SetImage(CSPRImage* image);
 		virtual void SetImage(const char* imageName);
+		virtual void SetImage(int sprindex);
 		virtual CSPRImage* GetImage();
 		char* GetImageName();
 
