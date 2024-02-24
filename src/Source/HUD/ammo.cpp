@@ -27,7 +27,6 @@
 #include "ammobar.h"
 
 #include "weaponbank.h"
-#include "historyresource.h"
 #include "ammo.h"
 
 CHudCustomAmmo m_HudCustomAmmo;
@@ -181,7 +180,6 @@ int CHudCustomAmmo::Init(void){
 
 	Reset();
 	gWR.Init();
-	gHR.Init();
 	return 1;
 };
 void CHudCustomAmmo::Reset(void){
@@ -190,10 +188,8 @@ void CHudCustomAmmo::Reset(void){
 	m_HudWMenuSlot.Reset();
 
 	gWR.Reset();
-	gHR.Reset();
 }
 int CHudCustomAmmo::VidInit(void){
-	gHR.VidInit();
 	gWR.LoadAllWeaponSprites();
 	m_HudWMenuSlot.VidInit();
 	return 1;
@@ -236,7 +232,6 @@ int CHudCustomAmmo::Draw(float flTime){
 		return 1;
 	// Draw Weapon Menu
 	DrawWList(flTime);
-	gHR.DrawAmmoHistory(flTime);
 	return 1;
 }
 void CHudCustomAmmo::ChosePlayerWeapon(){

@@ -213,7 +213,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
     <ClCompile Include="src\Source\HUD\indicator.cpp" />
-    <ClCompile Include="src\Source\HUD\historyresource.cpp" />
     <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\ammobar.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\ammostack.cpp" />
@@ -462,7 +461,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />
     <ClInclude Include="src\Header\HUD\eccobuymenu.h" />
     <ClInclude Include="src\Header\HUD\indicator.h" />
-    <ClInclude Include="src\Header\HUD\historyresource.h" />
     <ClInclude Include="src\Header\HUD\itemhighlight.h" />
     <ClInclude Include="src\Header\HUD\numdisplay.h" />
     <ClInclude Include="src\Header\HUD\radar.h" />
