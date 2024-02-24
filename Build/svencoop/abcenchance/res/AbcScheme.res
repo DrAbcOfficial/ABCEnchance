@@ -272,6 +272,15 @@ Scheme
 		//次要弹药图标颜色
 		"AmmoBar.Ammo2IconColor"	"Default"
 		
+		//拾取子弹背景颜色
+		"AmmoStack.BgColor"			"Blank"
+		//拾取子弹行颜色
+		"AmmoStack.ListViewBgColor"			"Blank"
+		//拾取子弹图标颜色
+		"AmmoStack.IconColor"			"Default"
+		//拾取子弹文字颜色
+		"AmmoStack.TextColor"			"Default"
+		
 		Console.TextColor			"255 255 255 200"
 		Console.ErrorTextColor			"255 0 0 200"
 		Console.WarnColor			"255 255 0 200"
