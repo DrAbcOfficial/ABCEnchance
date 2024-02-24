@@ -37,6 +37,7 @@
 #include "vgui_controls/Controls.h"
 
 #include "ammostack.h"
+#include "itemstack.h"
 #include "scoreboard.h"
 #include "Viewport.h"
 
@@ -73,14 +74,18 @@ int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
-	//gHR.AddToHistory(HistoryResource::HISTSLOT_AMMO, iIndex, abs(iCount));
 	g_pViewPort->GetAmmoStackPanel()->AddAmmoPickup(iIndex, iCount);
 	return m_pfnAmmoPickup(pszName, iSize, pbuf);
 }
 int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	const char* szName = READ_STRING();
-	//gHR.AddToHistory(HistoryResource::HISTSLOT_ITEM, szName);
+	int index = gCustomHud.GetSpriteIndex(szName);
+	if(index < 0)
+		return m_pfnItemPickup(pszName, iSize, pbuf);
+	HSPRITE spr = gCustomHud.GetSprite(index);
+	wrect_t* rect = gCustomHud.GetSpriteRect(index);
+	g_pViewPort->GetItemStackPanel()->AddItemPickup(spr, rect->left, rect->right, rect->top, rect->bottom);
 	return m_pfnItemPickup(pszName, iSize, pbuf);
 }
 

@@ -20,7 +20,6 @@ CBaseSprStackItem::CBaseSprStackItem(Panel* parent, int iSpridx, int l, int r, i
 	iSprIdx = iSpridx;
 	fIn = fi;
 	fOut = fo;
-	SetTall(vgui::scheme()->GetProportionalScaledValue(b - t) * is);
 	Show(expire);
 }
 extern float ClientTime();
@@ -73,21 +72,6 @@ void CBaseStackPanel::OnThink() {
 		else
 			iter++;
 	}
-}
-void CBaseStackPanel::PaintBackground() {
-	if (m_aryPanels.size() == 0)
-		return;
-	int w = GetWide();
-	int y = GetTall();
-	for (auto iter = m_aryPanels.rbegin(); iter != m_aryPanels.rend(); iter++) {
-		auto item = *iter;
-		if (item->IsVisible()) {
-			y -= item->GetTall();
-			item->SetWide(w);
-			item->SetPos(0, y);
-		}
-	}
-	BaseClass::PaintBackground();
 }
 void CBaseStackPanel::ShowPanel(bool state) {
 	if (state == IsVisible())

@@ -33,6 +33,7 @@ class CDeathMsgPanel;
 class CNeteasePanel;
 class CRadarPanel;
 class CAmmoStackPanel;
+class CItemStackPanel;
 
 class WEAPON;
 namespace vgui {
@@ -123,6 +124,7 @@ public:
 	CNeteasePanel* GetMusicPanel();
 
 	CAmmoStackPanel* GetAmmoStackPanel();
+	CItemStackPanel* GetItemStackPanel();
 
 	WEAPON* GetCurWeapon();
 	void SetCurWeapon(WEAPON* weapon);
@@ -164,6 +166,7 @@ private:
 	CNeteasePanel* m_pNeteaseMusic = nullptr;
 	CRadarPanel* m_pRadar = nullptr;
 	CAmmoStackPanel* m_pAmmoStack = nullptr;
+	CItemStackPanel* m_pItemStack = nullptr;
 
 	vgui::HScheme m_hBaseScheme = 0;
 	int m_iInterMission = 0;

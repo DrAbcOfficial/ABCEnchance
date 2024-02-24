@@ -225,6 +225,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\gindicator.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\itemstack.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\neteasemusic.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\notice.cpp" />
@@ -474,6 +475,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\gindicator.h" />
     <ClInclude Include="src\Header\HUD\vgui\health.h" />
+    <ClInclude Include="src\Header\HUD\vgui\itemstack.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
     <ClInclude Include="src\Header\HUD\vgui\neteasemusic.h" />
     <ClInclude Include="src\Header\HUD\vgui\notice.h" />

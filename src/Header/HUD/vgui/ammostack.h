@@ -20,6 +20,7 @@ public:
 	DECLARE_CLASS_SIMPLE(CAmmoStackPanel, CBaseStackPanel);
 	CAmmoStackPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
+	virtual void PaintBackground() override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	void AddAmmoPickup(int id, int count);
