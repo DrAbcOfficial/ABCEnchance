@@ -11,11 +11,12 @@ namespace vgui {
 class CBaseSprStackItem : public vgui::EditablePanel {
 public:
 	DECLARE_CLASS_SIMPLE(CBaseSprStackItem, vgui::EditablePanel);
-	CBaseSprStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo, float is);
+	CBaseSprStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo);
 	void Show(float flTime);
 
 	void SetExpire(float f);
 	virtual void CheckExpire();
+	virtual void SetSize(int wide, int tall);
 protected:
 	vgui::ImageSprPanel* m_pPanel;
 
@@ -43,8 +44,9 @@ protected:
 	float m_flFadeinTime;
 	float m_flFadeoutTime;
 	float m_flKeepTime;
-	float m_flIconSize;
 	int m_iStackGap;
+	int m_iItemTall;
+	int m_iItemWide;
 	std::vector<CBaseSprStackItem*> m_aryPanels;
 };
 #endif

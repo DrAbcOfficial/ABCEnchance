@@ -9,7 +9,7 @@
 
 using namespace vgui;
 
-CBaseSprStackItem::CBaseSprStackItem(Panel* parent, int iSpridx, int l, int r, int t, int b, float expire, float fi, float fo, float is)
+CBaseSprStackItem::CBaseSprStackItem(Panel* parent, int iSpridx, int l, int r, int t, int b, float expire, float fi, float fo)
 	: BaseClass(parent, "item") {
 	m_pPanel = new vgui::ImageSprPanel(this, "Panel");
 	m_pPanel->SetShouldScaleImage(true);
@@ -43,6 +43,11 @@ void CBaseSprStackItem::CheckExpire() {
 	}
 }
 
+void CBaseSprStackItem::SetSize(int wide, int tall){
+	BaseClass::SetSize(wide, tall);
+	m_pPanel->SetSize(wide, tall);
+}
+
 CBaseStackPanel::CBaseStackPanel(vgui::Panel* parent, const char* name) : BaseClass(parent, name){
 }
 
@@ -59,7 +64,8 @@ void CBaseStackPanel::ApplySettings(KeyValues* inResourceData) {
 	m_flKeepTime = inResourceData->GetFloat("keep_time", 2.0f);
 	m_flFadeinTime = inResourceData->GetFloat("fadein_time", 0.1f);
 	m_flFadeoutTime = inResourceData->GetFloat("fadeout_time", 0.3f);
-	m_flIconSize = inResourceData->GetFloat("icon_scale", 1.0f);
+	m_iItemTall = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("item_tall", 16));
+	m_iItemWide = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("item_wide", 16));
 	m_iStackGap = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("stack_gap", 0));
 }
 void CBaseStackPanel::OnThink() {

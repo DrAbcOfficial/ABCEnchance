@@ -5,7 +5,7 @@
 class CWeaponStackItem : public CBaseSprStackItem {
 public:
 	DECLARE_CLASS_SIMPLE(CWeaponStackItem, CBaseSprStackItem);
-	CWeaponStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo, float is, size_t wi);
+	CWeaponStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo, size_t wi);
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void CheckExpire() override;
 private:

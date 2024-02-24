@@ -5,12 +5,8 @@
 
 #define VIEWPORT_ITEMSTACK_NAME "ItemStackPanel"
 
-CItemStackItem::CItemStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo, float is) :
-	BaseClass(parent, spridx, l, r, t, b, expire, fi, fo, is) {
-	int w = vgui::scheme()->GetProportionalScaledValue(r - l) * is;
-	int h = vgui::scheme()->GetProportionalScaledValue(b - t) * is;
-	SetSize(w, h);
-	m_pPanel->SetSize(w, h);
+CItemStackItem::CItemStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo) :
+	BaseClass(parent, spridx, l, r, t, b, expire, fi, fo) {
 }
 void CItemStackItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -45,7 +41,8 @@ const char* CItemStackPanel::GetName() {
 	return VIEWPORT_ITEMSTACK_NAME;
 }
 void CItemStackPanel::AddItemPickup(int sprindex, int l, int r, int t, int b){
-	CItemStackItem* item = new CItemStackItem(this, sprindex, l, r, t, b, m_flKeepTime, m_flFadeinTime, m_flFadeoutTime, m_flIconSize);
+	CItemStackItem* item = new CItemStackItem(this, sprindex, l, r, t, b, m_flKeepTime, m_flFadeinTime, m_flFadeoutTime);
+	item->SetSize(m_iItemWide, m_iItemTall);
 	m_aryPanels.push_back(item);
 }
 void CItemStackPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
