@@ -60,6 +60,7 @@ void CBaseStackPanel::ApplySettings(KeyValues* inResourceData) {
 	m_flFadeinTime = inResourceData->GetFloat("fadein_time", 0.1f);
 	m_flFadeoutTime = inResourceData->GetFloat("fadeout_time", 0.3f);
 	m_flIconSize = inResourceData->GetFloat("icon_scale", 1.0f);
+	m_iStackGap = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("stack_gap", 0));
 }
 void CBaseStackPanel::OnThink() {
 	for (auto iter = m_aryPanels.begin(); iter != m_aryPanels.end();) {

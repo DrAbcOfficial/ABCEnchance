@@ -15,7 +15,7 @@ public:
 	void Show(float flTime);
 
 	void SetExpire(float f);
-	void CheckExpire();
+	virtual void CheckExpire();
 protected:
 	vgui::ImageSprPanel* m_pPanel;
 
@@ -44,6 +44,7 @@ protected:
 	float m_flFadeoutTime;
 	float m_flKeepTime;
 	float m_flIconSize;
+	int m_iStackGap;
 	std::vector<CBaseSprStackItem*> m_aryPanels;
 };
 #endif

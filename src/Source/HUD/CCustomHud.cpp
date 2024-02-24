@@ -38,6 +38,7 @@
 
 #include "ammostack.h"
 #include "itemstack.h"
+#include "weaponstack.h"
 #include "scoreboard.h"
 #include "Viewport.h"
 
@@ -51,6 +52,7 @@
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
+pfnUserMsgHook m_pfnWeapPickup;
 pfnUserMsgHook m_pfnAmmoPickup;
 pfnUserMsgHook m_pfnItemPickup;
 pfnUserMsgHook m_pfnHealth;
@@ -70,6 +72,12 @@ pfnUserMsgHook m_pfnMetaHook;
 pfnUserMsgHook m_pfnDamage;
 pfnUserMsgHook m_pfnBattery;
 
+int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int iIndex = READ_SHORT();
+	g_pViewPort->GetWeaponStackPanel()->AddItemPickup(iIndex);
+	return m_pfnWeapPickup(pszName, iSize, pbuf);
+}
 int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
@@ -431,6 +439,7 @@ void CCustomHud::HUD_Init(void){
 	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
 	m_pfnItemPickup = HOOK_MESSAGE(ItemPickup);
 	m_pfnAmmoPickup = HOOK_MESSAGE(AmmoPickup);
+	m_pfnWeapPickup = HOOK_MESSAGE(WeapPickup);
 	m_pfnDamage = HOOK_MESSAGE(Damage);
 	m_pfnBattery = HOOK_MESSAGE(Battery);
 	m_pfnHealth = HOOK_MESSAGE(Health);

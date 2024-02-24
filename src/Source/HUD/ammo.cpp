@@ -35,7 +35,6 @@ CHudCustomAmmo m_HudCustomAmmo;
 pfnUserMsgHook m_pfnCurWeapon;
 pfnUserMsgHook m_pfnWeaponList;
 pfnUserMsgHook m_pfnCustWeapon;
-pfnUserMsgHook m_pfnWeapPickup;
 pfnUserMsgHook m_pfnAmmoX;
 pfnUserMsgHook m_pfnHideWeapon;
 pfnUserMsgHook m_pfnHideHUD;
@@ -48,12 +47,6 @@ int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf){
 	gWR.SetAmmo(iIndex, abs(iCount));
 	gCustomHud.SetCurWeapon(gCustomHud.GetCurWeapon());
 	return m_pfnAmmoX(pszName, iSize, pbuf);
-}
-int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf){
-	BEGIN_READ(pbuf, iSize);
-	int iIndex = READ_SHORT();
-	gHR.AddToHistory(HistoryResource::HISTSLOT_WEAP, iIndex);
-	return m_pfnWeapPickup(pszName, iSize, pbuf);
 }
 
 int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf){
@@ -179,7 +172,6 @@ int CHudCustomAmmo::Init(void){
 	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
 	m_pfnWeaponList = HOOK_MESSAGE(WeaponList);
 	m_pfnCustWeapon = HOOK_MESSAGE(CustWeapon);
-	m_pfnWeapPickup = HOOK_MESSAGE(WeapPickup);
 	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
 	m_pfnHideWeapon = HOOK_MESSAGE(HideWeapon);
 	m_pfnHideHUD = HOOK_MESSAGE(HideHUD);

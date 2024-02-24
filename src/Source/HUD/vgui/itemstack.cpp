@@ -1,12 +1,6 @@
 #include <metahook.h>
-
 #include <vguilocal.h>
-
 #include "vgui_controls/ImageSprPanel.h"
-#include "vgui_controls/spr_image.h"
-#include "vgui_controls/Label.h"
-#include "vgui_controls/AnimationController.h"
-
 #include "itemstack.h"
 
 #define VIEWPORT_ITEMSTACK_NAME "ItemStackPanel"
@@ -41,7 +35,7 @@ void CItemStackPanel::PaintBackground() {
 	for (auto iter = m_aryPanels.rbegin(); iter != m_aryPanels.rend(); iter++) {
 		auto item = *iter;
 		if (item->IsVisible()) {
-			y -= item->GetTall();
+			y -= item->GetTall() + m_iStackGap;
 			item->SetPos(0, y);
 		}
 	}
