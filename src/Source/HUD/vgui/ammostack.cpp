@@ -62,6 +62,8 @@ void CAmmoStackPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 void CAmmoStackPanel::AddAmmoPickup(int id, int count){
 	wrect_t rcPic;
 	HSPRITE* spr = gWR.GetAmmoPicFromWeapon(id, rcPic);
+	if (!spr)
+		return;
 	CAmmoStackItem* item = new CAmmoStackItem(this, *spr, count, rcPic.left, rcPic.right, rcPic.top, rcPic.bottom, 
 		m_flKeepTime, m_flFadeinTime, m_flFadeoutTime);
 	item->SetSize(m_iItemWide, m_iItemTall);
