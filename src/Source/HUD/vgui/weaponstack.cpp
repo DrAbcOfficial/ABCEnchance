@@ -14,13 +14,8 @@ typedef int HSPRITE;
 
 #define VIEWPORT_WEAPONSTACK_NAME "WeaponStackPanel"
 
-CWeaponStackItem::CWeaponStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo, float is, size_t wi) :
-	BaseClass(parent, spridx, l, r, t, b, expire, fi, fo, is) {
-	int w = vgui::scheme()->GetProportionalScaledValue(r - l) * is;
-	int h = vgui::scheme()->GetProportionalScaledValue(b - t) * is;
-	SetSize(w, h);
-	m_pPanel->SetSize(w, h);
-	m_iWeapon = wi;
+CWeaponStackItem::CWeaponStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo, size_t wi) :
+	BaseClass(parent, spridx, l, r, t, b, expire, fi, fo) {
 }
 void CWeaponStackItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -73,7 +68,8 @@ void CWeaponStackPanel::AddItemPickup(int wepindex){
 		return;
 	CWeaponStackItem* item = new CWeaponStackItem(this, weapon->hInactive, 
 		weapon->rcInactive.left, weapon->rcInactive.right, weapon->rcInactive.top, weapon->rcInactive.bottom, 
-		m_flKeepTime, m_flFadeinTime, m_flFadeoutTime, m_flIconSize, wepindex);
+		m_flKeepTime, m_flFadeinTime, m_flFadeoutTime, wepindex);
+	item->SetSize(m_iItemWide, m_iItemTall);
 	m_aryPanels.push_back(item);
 }
 void CWeaponStackPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {

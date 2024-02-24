@@ -18,11 +18,10 @@ typedef int HSPRITE;
 
 #define VIEWPORT_AMMOSTACK_NAME "AmmoStackPanel"
 
-CAmmoStackItem::CAmmoStackItem(Panel* parent, int iSpridx, int value, int l, int r, int t, int b, float expire, float fi, float fo, float is)
-	: BaseClass(parent, iSpridx, l, r, t, b, expire, fi, fo, is) {
+CAmmoStackItem::CAmmoStackItem(Panel* parent, int iSpridx, int value, int l, int r, int t, int b, float expire, float fi, float fo)
+	: BaseClass(parent, iSpridx, l, r, t, b, expire, fi, fo) {
 	m_pText = new vgui::Label(this, "Text", std::to_string(value).c_str());
 	iValue = value;
-	SetTall(vgui::scheme()->GetProportionalScaledValue(b - t) * is);
 }
 void CAmmoStackItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -63,7 +62,9 @@ void CAmmoStackPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 void CAmmoStackPanel::AddAmmoPickup(int id, int count){
 	wrect_t rcPic;
 	HSPRITE* spr = gWR.GetAmmoPicFromWeapon(id, rcPic);
-	CAmmoStackItem* item = new CAmmoStackItem(this, *spr, count, rcPic.left, rcPic.right, rcPic.top, rcPic.bottom, m_flKeepTime, m_flFadeinTime, m_flFadeoutTime, m_flIconSize);
+	CAmmoStackItem* item = new CAmmoStackItem(this, *spr, count, rcPic.left, rcPic.right, rcPic.top, rcPic.bottom, 
+		m_flKeepTime, m_flFadeinTime, m_flFadeoutTime);
+	item->SetSize(m_iItemWide, m_iItemTall);
 	m_aryPanels.push_back(item);
 }
 void CAmmoStackPanel::PaintBackground() {

@@ -5,7 +5,7 @@
 class CAmmoStackItem : public CBaseSprStackItem {
 public:
 	DECLARE_CLASS_SIMPLE(CAmmoStackItem, CBaseSprStackItem);
-	CAmmoStackItem(Panel* parent, int spridx, int value, int l, int r, int t, int b, float expire, float fi, float fo, float is);
+	CAmmoStackItem(Panel* parent, int spridx, int value, int l, int r, int t, int b, float expire, float fi, float fo);
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void PerformLayout() override;
 	int GetValue();
