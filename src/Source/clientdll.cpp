@@ -38,9 +38,9 @@ static CNewClientDLL s_newclientdll;
 
 void ClientDLLHook(void* interface_ptr) {
 	PVOID* ProxyVFTable = *(PVOID**)&s_newclientdll;
-	g_pMetaHookAPI->VFTHook(interface_ptr, 0, 1, ProxyVFTable[1], (void**)&m_pfnCClientDLL_Init);
-	g_pMetaHookAPI->VFTHook(interface_ptr, 0, 2, ProxyVFTable[2], (void**)&m_pfnCClientDLL_PlaySoundFX);
+	//g_pMetaHookAPI->VFTHook(interface_ptr, 0, 1, ProxyVFTable[1], (void**)&m_pfnCClientDLL_Init);
+	//g_pMetaHookAPI->VFTHook(interface_ptr, 0, 2, ProxyVFTable[2], (void**)&m_pfnCClientDLL_PlaySoundFX);
 	g_pMetaHookAPI->VFTHook(interface_ptr, 0, 3, ProxyVFTable[3], (void**)&m_pfnCClientDLL_RenderBegin);
-	g_pMetaHookAPI->VFTHook(interface_ptr, 0, 4, ProxyVFTable[4], (void**)&m_pfnCClientDLL_RenderEnd1);
-	g_pMetaHookAPI->VFTHook(interface_ptr, 0, 5, ProxyVFTable[5], (void**)&m_pfnCClientDLL_RenderEnd2);
+	//g_pMetaHookAPI->VFTHook(interface_ptr, 0, 4, ProxyVFTable[4], (void**)&m_pfnCClientDLL_RenderEnd1);
+	//g_pMetaHookAPI->VFTHook(interface_ptr, 0, 5, ProxyVFTable[5], (void**)&m_pfnCClientDLL_RenderEnd2);
 }
