@@ -2,7 +2,6 @@
 
 #include "vgui_controls/ImageSprPanel.h"
 #include "vgui_controls/spr_image.h"
-#include "vgui_controls/Label.h"
 #include "vgui_controls/AnimationController.h"
 
 #include "basestackpanel.h"
