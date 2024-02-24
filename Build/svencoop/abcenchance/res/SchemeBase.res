@@ -18,6 +18,8 @@ Scheme
 		"Black"				"0 0 0 255"
 
 		"Blank"				"0 0 0 0"
+
+		"Red"				"255 0 0 255"
 		
 		// Color code colors
 		"ColorCode1"		"255 0 0 255"
