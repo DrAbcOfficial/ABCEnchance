@@ -155,6 +155,11 @@ model_t* CL_GetModelByIndex (int index){
 
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
+void* g_pClientSoundEngine;
+void __fastcall CClient_SoundEngine_Initialize(void* pSoundEngine, int dummy) {
+	gHookFuncs.CClient_SoundEngine_Initialize(pSoundEngine, dummy);
+	g_pClientSoundEngine = pSoundEngine;
+}
 void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin, 
 	int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength) {
 	if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
@@ -241,6 +246,8 @@ void FillAddress(){
 		Fill_Sig(TFV_SHOWVGUIMENU_SHIT_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowVGUIMenu);
 #define CStudioModelRenderer_Init_SIG "\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x24\xFF\x15\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x89\x46\x38\xFF\x15\x2A\x2A\x2A\x2A\x89\x46\x3C\xFF\x15\x2A\x2A\x2A\x2A\x6A\x00"
 		Fill_Sig(CStudioModelRenderer_Init_SIG, g_dwClientBase, g_dwClientSize, CStudioModelRenderer_Init);
+#define Client_SoundEngine_Initialize_SIG "\x81\xEC\x8C\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\x88\x00\x00\x00\x53\x57\x6A\x00"
+		Fill_Sig(Client_SoundEngine_Initialize_SIG, g_dwClientBase, g_dwClientSize, CClient_SoundEngine_Initialize);
 		ULONG ClientTextSize = 0;
 		PVOID ClientTextBase = ClientTextBase = g_pMetaHookAPI->GetSectionByName(g_dwClientBase, ".text\0\0\0", &ClientTextSize);
 		PUCHAR addr;
@@ -294,6 +301,7 @@ void InstallEngineHook() {
 void InstallClientHook(){
 	Install_InlineHook(EVVectorScale);
 	Install_InlineHook(CClient_SoundEngine_PlayFMODSound);
+	Install_InlineHook(CClient_SoundEngine_Initialize);
 	Install_InlineHook(R_CrossHair_ReDraw);
 	Install_InlineHook(TFV_ShowScoreBoard);
 	Install_InlineHook(TFV_ShowVGUIMenu);

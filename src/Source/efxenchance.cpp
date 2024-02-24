@@ -22,11 +22,14 @@ struct EfxVarible{
 	int iGaussChargeSprite{};
 	int iGaussLoophole{};
 	float flGaussStartChargeTime{};
-	mstudioevent_t pGaussFireSoundEvent = { 0, 5004, 0, "weapons/gauss2.wav" };
 
 	int iGunSmoke;
 };
 EfxVarible gEfxVarible;
+extern void* g_pClientSoundEngine;
+extern void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin,
+	int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength);
+
 void EfxReset() {
 	gEfxVarible.iGaussBeam = PrecacheExtraModel("sprites/laserbeam.spr");
 	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel("abcenchance/spr/gauss_wave.spr");
@@ -281,11 +284,13 @@ void DoGaussFire(float fparam1, int bparam1) {
 		}
 	}
 }
+
 void EV_StopPreviousGauss(){
 	int idx = gEngfuncs.GetViewModel()->index;
 	// Make sure we don't have a gauss spin event in the queue for this guy
 	gEngfuncs.pEventAPI->EV_KillEvents(idx, "events/gaussspin.sc");
-	gEngfuncs.pEventAPI->EV_StopSound(idx, CHAN_WEAPON, "ambience/pulsemachine.wav");
+	//SND_STOP 32
+	CClient_SoundEngine_PlayFMODSound(g_pClientSoundEngine, 0, 32, idx, 0, CHAN_WEAPON, "ambience/pulsemachine.wav", 0.0f, 0.0f, 0, 0, -1, 0.0f);
 }
 void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short eventindex, 
 	float delay, float* origin, float* angles, 
@@ -297,7 +302,8 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 			if (gCVars.pGaussEfx->value > 0) {
 				EV_StopPreviousGauss();
 				gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
-				gExportfuncs.HUD_StudioEvent(&gEfxVarible.pGaussFireSoundEvent, gEngfuncs.GetViewModel());
+				auto view = gEngfuncs.GetViewModel();
+				CClient_SoundEngine_PlayFMODSound(g_pClientSoundEngine, 0, 0, view->index, view->origin, CHAN_WEAPON, "weapons/gauss2.wav", 1.0f, 1.0f, 0, 100, -1, 0.0f);
 				gHookFuncs.SetPunchAngle(0, -1.5f);
 				//f1 ÉËº¦
 				//b1 ÊÇ·ñ×ó¼ü
