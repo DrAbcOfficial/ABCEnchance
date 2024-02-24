@@ -10,15 +10,15 @@
 #include "vguilocal.h"
 
 #include "notice.h"
-#include "Viewport.h"
 
 #define VIEWPORT_NOTICETEXT_NAME "NoticePanel"
+extern vgui::HScheme GetViewPortBaseScheme();
 CNoticePanel::CNoticePanel(const char* szControlName)
 	: BaseClass(nullptr, VIEWPORT_NOTICETEXT_NAME) {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	m_pMessage = new vgui::Label(this, "Message", "");
 

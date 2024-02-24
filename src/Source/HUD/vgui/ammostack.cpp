@@ -69,13 +69,13 @@ void CAmmoStackItem::CheckExpire() {
 		vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 0, 0.0f, 0.3f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
 
-extern vgui::HScheme GetABCBaseScheme();
+extern vgui::HScheme GetViewPortBaseScheme();
 CAmmoStackPanel::CAmmoStackPanel()
 	: BaseClass(nullptr, VIEWPORT_AMMOSTACK_NAME) {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(GetABCBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 	LoadControlSettings(VGUI2_ROOT_DIR "AmmoStackPanel.res");
 	SetVisible(true);
 }

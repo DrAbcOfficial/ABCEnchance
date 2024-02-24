@@ -32,6 +32,8 @@
 #define VIEWPORT_NETEASEMUSIC_NAME "NeteasePanel"
 #define VIEWPORT_NETEASEMUSICQR_NAME "NeteaseQRPanel"
 
+extern vgui::HScheme GetViewPortBaseScheme();
+
 class CAlbumImage : public vgui::IImage {
 public:
 	CAlbumImage() {
@@ -341,7 +343,7 @@ CNeteasePanel::CNeteasePanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	m_pMusicNameLable = new vgui::Label(this, "MusicName", "");
 	m_pArtistNameLable = new vgui::Label(this, "ArtistName", "");
@@ -945,7 +947,7 @@ static CQRImage* s_pQRCodeImage;
 vgui::CQRLoginPanel::CQRLoginPanel(Panel* parent, char* name) 
 	: BaseClass(parent, name) {
 	SetProportional(true);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	m_pBlurPanel = new GaussianBlurPanel(this, "Blur");
 	m_pNotice = new Label(this, "QRNotice", "#Netease_QRNoticeText");

@@ -131,6 +131,7 @@ private:
 
 extern vgui::CViewport* g_pViewPort;
 #define VIEWPORT_RADAR_NAME "RadarPanel"
+extern vgui::HScheme GetViewPortBaseScheme();
 CRadarPanel::CRadarPanel()
 	: BaseClass(nullptr, VIEWPORT_RADAR_NAME) {
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
@@ -144,7 +145,7 @@ CRadarPanel::CRadarPanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	ADD_COMMAND("+scaleradar", [](){g_pViewPort->GetRadarPanel()->SetScale(true); });
 	ADD_COMMAND("-scaleradar", []() {g_pViewPort->GetRadarPanel()->SetScale(false); });

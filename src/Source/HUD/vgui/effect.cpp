@@ -22,13 +22,14 @@
 
 #define VIEWPORT_EFFECT_NAME "EffectPanel"
 
+extern vgui::HScheme GetViewPortBaseScheme();
 CEffectPanel::CEffectPanel()
 	: BaseClass(nullptr, VIEWPORT_EFFECT_NAME) {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 	// Header labels
 	m_pRightWater = new vgui::ImageSprPanel(this, "RightWater");
 	m_pLeftWater = new vgui::ImageSprPanel(this, "LeftWater");

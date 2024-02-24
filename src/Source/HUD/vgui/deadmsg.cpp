@@ -20,6 +20,7 @@
 #define VIEWPORT_DEATHMSGPANEL_NAME "DeathMsgPanel"
 
 using namespace vgui;
+extern vgui::HScheme GetViewPortBaseScheme();
 
 CDeathMsgItem::CDeathMsgItem(Panel* parent, const wchar_t* victim, const wchar_t* attacker, const wchar_t* inflictor, vgui::IScheme* scheme)
 	: BaseClass(parent, "Item") {
@@ -71,7 +72,7 @@ CDeathMsgPanel::CDeathMsgPanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	LoadControlSettings(VGUI2_ROOT_DIR "DeathMsgPanel.res");
 	SetVisible(false);

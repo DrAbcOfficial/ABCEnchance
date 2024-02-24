@@ -13,14 +13,14 @@
 #include <vgui_controls/AnimationController.h>
 
 #include "local.h"
-#include <vguilocal.h>
-#include "Viewport.h"
+#include "vguilocal.h"
 
 #include "dmgtiles.h"
 
 #define VIEWPORT_DMGTILES_NAME "DMGTilesPanel"
 
 using namespace vgui;
+extern vgui::HScheme GetViewPortBaseScheme();
 
 CTileIconItem::CTileIconItem(Panel* parent, const char* text, const char* icon, int dmg)
 	: BaseClass(parent, text) {
@@ -95,7 +95,7 @@ CDmgTilesPanel::CDmgTilesPanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 	m_aryDmg = {
 		new CTileIconItem(this, "#DMGTiles_Poison", "icon_poison", DMG_POISON),
 		new CTileIconItem(this, "#DMGTiles_Acid", "icon_acid", DMG_ACID),

@@ -16,8 +16,6 @@
 #include "triangleapi.h"
 
 #include "popnum.h"
-#include "Viewport.h"
-
 #include "plugins.h"
 
 #define VIEWPORT_POPNUMBER_NAME "PopNumberPanel"
@@ -30,12 +28,14 @@
 #define POPNUMBER_B_TOKEN "PopNumber_B"
 #define POPNUMBER_B 100000000
 
+extern vgui::HScheme GetViewPortBaseScheme();
+
 CPopNumberPanel::CPopNumberPanel(vec3_t vecOrigin, Color& pColor, int value)
 	: BaseClass(nullptr, VIEWPORT_POPNUMBER_NAME){
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 	// Header labels
 	m_pNumberLable = new vgui::Label(this, "PopNumber", "");
 	m_hColor = pColor;
