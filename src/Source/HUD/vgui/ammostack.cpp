@@ -24,6 +24,7 @@ CAmmoStackItem::CAmmoStackItem(Panel* parent, int iSpridx, int value, int l, int
 	: BaseClass(parent, iSpridx, l, r, t, b, expire, fi, fo, is) {
 	m_pText = new vgui::Label(this, "Text", std::to_string(value).c_str());
 	iValue = value;
+	SetTall(vgui::scheme()->GetProportionalScaledValue(b - t) * is);
 }
 void CAmmoStackItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -66,4 +67,19 @@ void CAmmoStackPanel::AddAmmoPickup(int id, int count){
 	HSPRITE* spr = gWR.GetAmmoPicFromWeapon(id, rcPic);
 	CAmmoStackItem* item = new CAmmoStackItem(this, *spr, count, rcPic.left, rcPic.right, rcPic.top, rcPic.bottom, m_flKeepTime, m_flFadeinTime, m_flFadeoutTime, m_flIconSize);
 	m_aryPanels.push_back(item);
+}
+void CAmmoStackPanel::PaintBackground() {
+	if (m_aryPanels.size() == 0)
+		return;
+	int w = GetWide();
+	int y = GetTall();
+	for (auto iter = m_aryPanels.rbegin(); iter != m_aryPanels.rend(); iter++) {
+		auto item = *iter;
+		if (item->IsVisible()) {
+			y -= item->GetTall();
+			item->SetWide(w);
+			item->SetPos(0, y);
+		}
+	}
+	BaseClass::PaintBackground();
 }

@@ -38,7 +38,6 @@ public:
 
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual void OnThink() override;
-	virtual void PaintBackground() override;
 
 protected:
 	float m_flFadeinTime;

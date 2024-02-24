@@ -40,6 +40,7 @@
 #include "neteasemusic.h"
 #include "radar.h"
 #include "ammostack.h"
+#include "itemstack.h"
 
 #include "CCustomHud.h"
 
@@ -106,6 +107,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pVotePanel = new vgui::CVotePanel());
 	AddNewPanel(m_pScorePanel = new vgui::CScorePanel());
 	AddNewPanel(m_pAmmoStack = new CAmmoStackPanel());
+	AddNewPanel(m_pItemStack = new CItemStackPanel());
 	SetVisible(false);
 }
 
@@ -129,6 +131,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pNeteaseMusic->SetParent(GetVPanel());
 	m_pRadar->SetParent(GetVPanel());
 	m_pAmmoStack->SetParent(GetVPanel());
+	m_pItemStack->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -368,6 +371,9 @@ CNeteasePanel* CViewport::GetMusicPanel(){
 }
 CAmmoStackPanel* CViewport::GetAmmoStackPanel(){
 	return m_pAmmoStack;
+}
+CItemStackPanel* CViewport::GetItemStackPanel(){
+	return m_pItemStack;
 }
 WEAPON* CViewport::GetCurWeapon(){
 	return gCustomHud.GetCurWeapon();
