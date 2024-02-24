@@ -704,6 +704,9 @@
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\ammostack.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\HLSDK\common\interface.h">
@@ -1539,6 +1542,9 @@
     </ClInclude>
     <ClInclude Include="src\thirdparty\qrcodegen.h">
       <Filter>Public\Thirdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\ammostack.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

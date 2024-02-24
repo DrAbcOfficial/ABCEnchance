@@ -419,3 +419,7 @@ bool CViewport::HasSuit() {
 bool CViewport::IsHudHide(int HideToken) {
 	return gCustomHud.IsHudHide(HideToken);
 }
+
+vgui::HScheme GetABCBaseScheme() {
+	return g_pViewPort->GetBaseScheme();
+}

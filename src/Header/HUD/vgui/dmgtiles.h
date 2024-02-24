@@ -1,6 +1,6 @@
 #ifndef CDMGTILESPANEL_H
 #define CDMGTILESPANEL_H
-#include <vector>
+#include <array>
 #include <vgui_controls/EditablePanel.h>
 #include "IViewportPanel.h"
 
@@ -99,6 +99,6 @@ public:
 	};
 private:
 	float m_flKeepTime;
-	std::vector<CTileIconItem*> m_aryDmg;
+	std::array<CTileIconItem*, 10> m_aryDmg;
 };
 #endif
