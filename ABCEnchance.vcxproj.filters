@@ -686,9 +686,6 @@
     <ClCompile Include="src\Source\HUD\cctv.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\historyresource.cpp">
-      <Filter>Public\Source\HUD\legacy</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\indicator.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
@@ -705,6 +702,15 @@
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\ammostack.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\weaponstack.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\itemstack.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\basestackpanel.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1426,9 +1432,6 @@
     <ClInclude Include="src\Header\HUD\eccobuymenu.h">
       <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\historyresource.h">
-      <Filter>Public\Header\HUD\legacy</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\indicator.h">
       <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>
@@ -1544,6 +1547,15 @@
       <Filter>Public\Thirdparty</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\ammostack.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\basestackpanel.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\weaponstack.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\itemstack.h">
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
