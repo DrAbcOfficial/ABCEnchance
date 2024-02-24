@@ -273,13 +273,29 @@ Scheme
 		"AmmoBar.Ammo2IconColor"	"SvenCoop"
 		
 		//拾取子弹背景颜色
-		"AmmoStack.BgColor"			"Blank"
+		"AmmoStack.BgColor"				"Blank"
 		//拾取子弹行颜色
-		"AmmoStack.ListViewBgColor"			"Blank"
+		"AmmoStack.ListViewBgColor"		"Blank"
 		//拾取子弹图标颜色
 		"AmmoStack.IconColor"			"SvenCoop"
 		//拾取子弹文字颜色
 		"AmmoStack.TextColor"			"SvenCoop"
+
+		//拾取物品背景颜色
+		"ItemStack.BgColor"				"Blank"
+		//拾取物品行颜色
+		"ItemStack.ListViewBgColor"		"Blank"
+		//拾取物品图标颜色
+		"ItemStack.IconColor"			"SvenCoop"
+
+		//拾取武器背景颜色
+		"WeaponStack.BgColor"			"Blank"
+		//拾取武器行颜色
+		"WeaponStack.ListViewBgColor"	"Blank"
+		//拾取武器图标颜色
+		"WeaponStack.IconColor"			"SvenCoop"
+		//拾取无子弹武器图标颜色
+		"WeaponStack.IconEmptyColor"			"Red"
 		
 		Console.TextColor			"SvenCoop"
 		Console.ErrorTextColor			"255 0 0 200"
