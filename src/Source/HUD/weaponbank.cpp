@@ -15,7 +15,6 @@
 #include "weaponselect.h"
 #include "ammo.h"
 #include "CCustomHud.h"
-#include "historyresource.h"
 #include "weaponbank.h"
 #include <weaponinfo_sven.h>
 
