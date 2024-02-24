@@ -39,6 +39,7 @@
 #include "deadmsg.h"
 #include "neteasemusic.h"
 #include "radar.h"
+#include "ammostack.h"
 
 #include "CCustomHud.h"
 
@@ -104,6 +105,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pNeteaseMusic = new CNeteasePanel());
 	AddNewPanel(m_pVotePanel = new vgui::CVotePanel());
 	AddNewPanel(m_pScorePanel = new vgui::CScorePanel());
+	AddNewPanel(m_pAmmoStack = new CAmmoStackPanel());
 	SetVisible(false);
 }
 
@@ -126,6 +128,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pDeahMsg->SetParent(GetVPanel());
 	m_pNeteaseMusic->SetParent(GetVPanel());
 	m_pRadar->SetParent(GetVPanel());
+	m_pAmmoStack->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -418,8 +421,4 @@ bool CViewport::HasSuit() {
 }
 bool CViewport::IsHudHide(int HideToken) {
 	return gCustomHud.IsHudHide(HideToken);
-}
-
-vgui::HScheme GetABCBaseScheme() {
-	return g_pViewPort->GetBaseScheme();
 }

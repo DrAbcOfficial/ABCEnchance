@@ -32,6 +32,7 @@ class CGenadeIndicatorPanel;
 class CDeathMsgPanel;
 class CNeteasePanel;
 class CRadarPanel;
+class CAmmoStackPanel;
 
 class WEAPON;
 namespace vgui {
@@ -160,6 +161,7 @@ private:
 	CDeathMsgPanel* m_pDeahMsg = nullptr;
 	CNeteasePanel* m_pNeteaseMusic = nullptr;
 	CRadarPanel* m_pRadar = nullptr;
+	CAmmoStackPanel* m_pAmmoStack = nullptr;
 
 	vgui::HScheme m_hBaseScheme = 0;
 	int m_iInterMission = 0;

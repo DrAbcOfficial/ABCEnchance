@@ -22,13 +22,15 @@
 #include "steamclientpublic.h"
 #include <player_info.h>
 
+extern vgui::HScheme GetViewPortBaseScheme();
+
 #define VIEWPORT_SIDETEXT_NAME "SidePanel"
 CSidePanel::CSidePanel()
 	: BaseClass(nullptr, VIEWPORT_SIDETEXT_NAME) {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 	// Header labels
 	m_pImage = new vgui::ImagePanel(this, "Image");
 	m_pMessage = new vgui::Label(this, "Message", "");

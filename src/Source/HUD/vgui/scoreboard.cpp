@@ -63,6 +63,8 @@
 
 using namespace vgui;
 
+extern vgui::HScheme GetViewPortBaseScheme();
+
 int s_iMutedIconTexture = -1;
 int s_iDefaultAvatarTexture = -1;
 class CPlayerImage : public IImage
@@ -230,7 +232,7 @@ CScorePanel::CScorePanel()
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	hud_scoreboard_showavatars = CREATE_CVAR("hud_scoreboard_showavatars", "1", FCVAR_ARCHIVE, nullptr);
 	hud_scoreboard_showloss = CREATE_CVAR("hud_scoreboard_showloss", "1", FCVAR_ARCHIVE, nullptr);

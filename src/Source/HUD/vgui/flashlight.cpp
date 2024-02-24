@@ -12,15 +12,15 @@
 #include "vguilocal.h"
 
 #include "flashlight.h"
-#include "Viewport.h"
 
 #define VIEWPORT_FLASHLIGHT_NAME "FlashLightPanel"
+extern vgui::HScheme GetViewPortBaseScheme();
 CFlashLightPanel::CFlashLightPanel()
 	: BaseClass(nullptr, VIEWPORT_FLASHLIGHT_NAME) {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 	// Header labels
 	m_pMessage = new vgui::Label(this, "Message", "");
 	m_pOffImage = new vgui::ImagePanel(this, "OffImage");

@@ -23,13 +23,14 @@
 #include <CVector.h>
 
 #define VIEWPORT_PLAYERBOARD_NAME "PlayerBoardPanel"
+extern vgui::HScheme GetViewPortBaseScheme();
 CPlayerInfoPanel::CPlayerInfoPanel()
 	: BaseClass(nullptr, VIEWPORT_PLAYERBOARD_NAME)
 {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	// Header labels
 	m_pNameLable = new vgui::Label(this, "PlayerName", "(Anon)");

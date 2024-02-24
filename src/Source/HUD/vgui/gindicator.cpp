@@ -1,4 +1,6 @@
 #pragma once
+#include <algorithm>
+
 #include <metahook.h>
 
 #include <vgui/ISurface.h>
@@ -15,8 +17,6 @@
 #include "mymathlib.h"
 
 #include "gindicator.h"
-#include "Viewport.h"
-#include <algorithm>
 
 #define GRENADE_MODEL_PATH "models/w_grenade.mdl"
 
@@ -35,12 +35,13 @@ void CGIndicatorItem::SetEnt(cl_entity_t* ent){
 }
 
 #define VIEWPORT_GINDICATOR_NAME "GrenadeIndicatorPanel"
+extern vgui::HScheme GetViewPortBaseScheme();
 CGenadeIndicatorPanel::CGenadeIndicatorPanel()
 	: BaseClass(nullptr, VIEWPORT_GINDICATOR_NAME) {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	gCVars.pGrenadeIndicator = CREATE_CVAR("cl_grenadeindicator", "1", FCVAR_VALUE, nullptr);
 	gCVars.pGrenadeIndicatorRange = CREATE_CVAR("cl_grenadeindicator_range", "256", FCVAR_VALUE, nullptr);

@@ -12,18 +12,18 @@
 #include "vguilocal.h"
 
 #include "textmenu.h"
-#include "Viewport.h"
 
 #include "plugins.h"
 #include <parsemsg.h>
 
 #define VIEWPORT_TEXTMENU_NAME "TextMenu"
+extern vgui::HScheme GetViewPortBaseScheme();
 CTextMenu::CTextMenu()
 	: BaseClass(nullptr, VIEWPORT_TEXTMENU_NAME) {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 	// Header labels
 	m_pMenu = new vgui::LabelEx(this, "Menu", "");
 

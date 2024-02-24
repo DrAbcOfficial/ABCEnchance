@@ -17,20 +17,20 @@
 #include "weapon.h"
 #include <weaponbank.h>
 
-#include "Viewport.h"
 #include "ammobar.h"
 
 #define VIEWPORT_AMMO_NAME "AmmoPanel"
 
 using namespace vgui;
 
+extern vgui::HScheme GetViewPortBaseScheme();
 CAmmoPanel::CAmmoPanel()
 	: BaseClass(nullptr, VIEWPORT_AMMO_NAME){
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 	m_pBackground = new ImagePanel(this, "Background");
 
 	m_Ammo1Icon = new ImageSprPanel(this, "Ammo1Icon");

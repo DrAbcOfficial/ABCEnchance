@@ -16,12 +16,13 @@
 #include "plugins.h"
 
 #define VIEWPORT_MOTD_NAME "MotdPanel"
+extern vgui::HScheme GetViewPortBaseScheme();
 CMotdPanel::CMotdPanel()
 	: BaseClass(nullptr, VIEWPORT_MOTD_NAME){
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	// Header labels
 	m_pMessage = new vgui::Label(this, "Message", "");

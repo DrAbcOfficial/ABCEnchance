@@ -15,7 +15,6 @@
 
 #include "local.h"
 #include <vguilocal.h>
-#include "Viewport.h"
 
 #include "health.h"
 #include <hud.h>
@@ -23,13 +22,13 @@
 #define VIEWPORT_HEALTH_NAME "HealthPanel"
 
 using namespace vgui;
-
+extern vgui::HScheme GetViewPortBaseScheme();
 CHealthPanel::CHealthPanel()
 	: BaseClass(nullptr, VIEWPORT_HEALTH_NAME){
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
-	SetScheme(g_pViewPort->GetBaseScheme());
+	SetScheme(GetViewPortBaseScheme());
 
 	m_Backround = new ImagePanel(this, "Background");
 
