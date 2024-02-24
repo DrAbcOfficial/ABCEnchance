@@ -1,6 +1,18 @@
+#include <metahook.h>
+
 #include <vguilocal.h>
+#include <wrect.h>
+
+#include <map>
+#include <string>
+#include "cvardef.h"
+#include "weaponinfo.h"
+class WEAPON;
+typedef int HSPRITE;
+#include "weaponbank.h"
 
 #include "vgui_controls/ImageSprPanel.h"
+#include "vgui_controls/spr_image.h"
 #include "vgui_controls/Label.h"
 #include "vgui_controls/AnimationController.h"
 
@@ -8,14 +20,28 @@
 
 #define VIEWPORT_AMMOSTACK_NAME "AmmoStackPanel"
 
-CAmmoStackItem::CAmmoStackItem(Panel* parent, const char* text, const char* icon, int value)
-	: BaseClass(parent, text) {
+CAmmoStackItem::CAmmoStackItem(Panel* parent, int iSpridx, int value, int l, int r, int t, int b, float expire, float fi, float fo, float is)
+	: BaseClass(parent, "item") {
 	m_pPanel = new vgui::ImageSprPanel(this, "Panel");
 	m_pPanel->SetShouldScaleImage(true);
-	m_pText = new vgui::Label(this, "Text", text);
+	m_pPanel->SetImage(iSpridx);
+	m_pPanel->SetRect(l, r, t, b);
+	m_pPanel->SetRenderMode(kRenderTransAdd);
+	m_pPanel->GetImage()->SetAlphaParent(this);
+	m_pText = new vgui::Label(this, "Text", std::to_string(value).c_str());
 
-	Q_strcpy(szIconKey, icon);
+	iSprIdx = iSpridx;
 	iValue = value;
+	fIn = fi;
+	fOut = fo;
+	SetTall(vgui::scheme()->GetProportionalScaledValue(b - t) * is);
+	Show(expire);
+}
+void CAmmoStackItem::ApplySchemeSettings(vgui::IScheme* pScheme){
+	BaseClass::ApplySchemeSettings(pScheme);
+	SetBgColor(GetSchemeColor("AmmoStack.ListViewBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pPanel->SetDrawColor(GetSchemeColor("AmmoStack.IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
+	m_pText->SetFgColor(GetSchemeColor("AmmoStack.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
 }
 void CAmmoStackItem::PerformLayout() {
 	BaseClass::PerformLayout();
@@ -26,17 +52,8 @@ void CAmmoStackItem::PerformLayout() {
 	m_pText->SetPos(w * 0.25, 0);
 	m_pText->SetSize(w * 0.75, h);
 }
-const char* CAmmoStackItem::GetIconKey() {
-	return szIconKey;
-}
 int CAmmoStackItem::GetValue() {
 	return iValue;
-}
-void CAmmoStackItem::SetIconColor(Color in) {
-	m_pPanel->SetDrawColor(in);
-}
-void CAmmoStackItem::SetTextColor(Color in) {
-	m_pText->SetFgColor(in);
 }
 void CAmmoStackItem::SetImage(const char* image) {
 	m_pPanel->SetImage(image);
@@ -44,29 +61,22 @@ void CAmmoStackItem::SetImage(const char* image) {
 extern float ClientTime();
 void CAmmoStackItem::Show(float flTime) {
 	float current = ClientTime();
-	fExpire = current + flTime;
+	SetExpire(current + flTime);
 	SetVisible(true);
-	SetAlpha(0);
-	vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 255, 0.0f, 0.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
-}
-void CAmmoStackItem::Reset() {
-	fExpire = 0;
-	SetVisible(false);
-	SetAlpha(255);
+	SetAlpha(1);
+	vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 255, 0.0f, fIn, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
 void CAmmoStackItem::SetExpire(float f) {
-	fExpire = f;
+	fKeepTime = f;
 }
 void CAmmoStackItem::CheckExpire() {
-	if (fExpire <= 0)
+	if (fKeepTime <= 0)
 		return;
 	float flTime = ClientTime();
-	if (fExpire + 0.3f <= flTime) {
-		fExpire = 0;
-		return;
+	if (fKeepTime <= flTime) {
+		fKeepTime = 0;
+		vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 0, 0.0f, fOut, vgui::AnimationController::INTERPOLATOR_LINEAR);
 	}
-	if (fExpire < flTime)
-		vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 0, 0.0f, 0.3f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
 
 extern vgui::HScheme GetViewPortBaseScheme();
@@ -86,37 +96,44 @@ void CAmmoStackPanel::Reset() {
 	if (!IsVisible())
 		ShowPanel(true);
 	for (auto iter = m_aryAmmos.begin(); iter != m_aryAmmos.end(); iter++) {
-		(*iter)->Reset();
+		(*iter)->DeletePanel();
 	}
+	m_aryAmmos.clear();
 }
 void CAmmoStackPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("AmmoStack.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
-	m_cItemBgColor = GetSchemeColor("AmmoStack.ListViewBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme);
-	m_cItemIconColor = GetSchemeColor("AmmoStack.IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
-	m_cItemTextColor = GetSchemeColor("AmmoStack.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme);
 }
 void CAmmoStackPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
-	m_flKeepTime = inResourceData->GetFloat("keep_time");
+	m_flKeepTime = inResourceData->GetFloat("keep_time", 2.0f);
+	m_flFadeinTime = inResourceData->GetFloat("fadein_time", 0.1f);
+	m_flFadeoutTime = inResourceData->GetFloat("fadeout_time", 0.3f);
+	m_flIconSize = inResourceData->GetFloat("icon_scale", 1.0f);
 }
 void CAmmoStackPanel::OnThink() {
-	for (auto iter = m_aryAmmos.begin(); iter != m_aryAmmos.end(); iter++) {
-		(*iter)->CheckExpire();
+	for (auto iter = m_aryAmmos.begin(); iter != m_aryAmmos.end();) {
+		auto item = (*iter);
+		item->CheckExpire();
+		if (item->GetAlpha() <= 0) {
+			item->DeletePanel();
+			iter = m_aryAmmos.erase(iter);
+		}
+		else
+			iter++;
 	}
 }
 void CAmmoStackPanel::PaintBackground() {
 	if (m_aryAmmos.size() == 0)
 		return;
-	int w, h;
-	GetSize(w, h);
-	int itemh = h / m_aryAmmos.size();
-	int y = h - itemh;
+	int w = GetWide();
+	int y = GetTall();
 	for (auto iter = m_aryAmmos.rbegin(); iter != m_aryAmmos.rend(); iter++) {
-		if ((*iter)->IsVisible()) {
-			(*iter)->SetSize(w, itemh);
-			(*iter)->SetPos(0, y);
-			y -= itemh;
+		auto item = *iter;
+		if (item->IsVisible()) {
+			y -= item->GetTall();
+			item->SetWide(w);
+			item->SetPos(0, y);
 		}
 	}
 	BaseClass::PaintBackground();
@@ -134,4 +151,11 @@ vgui::VPANEL CAmmoStackPanel::GetVPanel() {
 }
 void CAmmoStackPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
+}
+
+void CAmmoStackPanel::AddAmmoPickup(int id, int count){
+	wrect_t rcPic;
+	HSPRITE* spr = gWR.GetAmmoPicFromWeapon(id, rcPic);
+	CAmmoStackItem* item = new CAmmoStackItem(this, *spr, count, rcPic.left, rcPic.right, rcPic.top, rcPic.bottom, m_flKeepTime, m_flFadeinTime, m_flFadeoutTime, m_flIconSize);
+	m_aryAmmos.push_back(item);
 }

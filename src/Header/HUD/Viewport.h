@@ -122,6 +122,8 @@ public:
 	void ShowMusic(bool state);
 	CNeteasePanel* GetMusicPanel();
 
+	CAmmoStackPanel* GetAmmoStackPanel();
+
 	WEAPON* GetCurWeapon();
 	void SetCurWeapon(WEAPON* weapon);
 

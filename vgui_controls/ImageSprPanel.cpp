@@ -93,6 +93,12 @@ void ImageSprPanel::SetImage(const char* imageName)
 	InvalidateLayout(false, true); // force applyschemesettings to run
 }
 
+void ImageSprPanel::SetImage(int sprindex){
+	CSPRImage* spr = new CSPRImage();
+	spr->SetTextureID(sprindex);
+	m_pImage = spr;
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------

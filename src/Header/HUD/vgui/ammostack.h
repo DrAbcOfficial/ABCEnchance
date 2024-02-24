@@ -11,27 +11,25 @@ namespace vgui {
 class CAmmoStackItem : public vgui::EditablePanel {
 public:
 	DECLARE_CLASS_SIMPLE(CAmmoStackItem, vgui::EditablePanel);
-	CAmmoStackItem(Panel* parent, const char* text, const char* icon, int value);
+	CAmmoStackItem(Panel* parent, int spridx, int value, int l, int r, int t, int b, float expire, float fi, float fo, float is);
 
+	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void PerformLayout() override;
-	const char* GetIconKey();
 	int GetValue();
-
-	void SetIconColor(Color in);
-	void SetTextColor(Color in);
 	void SetImage(const char* image);
 	void Show(float flTime);
 
-	void Reset();
 	void SetExpire(float f);
 	void CheckExpire();
 private:
 	vgui::Label* m_pText;
 	vgui::ImageSprPanel* m_pPanel;
 
-	char szIconKey[32];
+	int iSprIdx;
 	int iValue;
-	float fExpire;
+	float fKeepTime;
+	float fIn;
+	float fOut;
 };
 
 class CAmmoStackPanel : public vgui::EditablePanel, public IViewportPanel
@@ -52,12 +50,13 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
-private:
-	float m_flKeepTime;
-	std::vector<CAmmoStackItem*> m_aryAmmos;
+	void AddAmmoPickup(int id, int count);
 
-	Color m_cItemBgColor;
-	Color m_cItemIconColor;
-	Color m_cItemTextColor;
+private:
+	float m_flFadeinTime;
+	float m_flFadeoutTime;
+	float m_flKeepTime;
+	float m_flIconSize;
+	std::vector<CAmmoStackItem*> m_aryAmmos;
 };
 #endif

@@ -36,6 +36,7 @@
 
 #include "vgui_controls/Controls.h"
 
+#include "ammostack.h"
 #include "scoreboard.h"
 #include "Viewport.h"
 
@@ -49,6 +50,8 @@
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
+pfnUserMsgHook m_pfnAmmoPickup;
+pfnUserMsgHook m_pfnItemPickup;
 pfnUserMsgHook m_pfnHealth;
 pfnUserMsgHook m_pfnScoreInfo;
 pfnUserMsgHook m_pfnSpectator;
@@ -65,6 +68,21 @@ pfnUserMsgHook m_pfnTextMsg;
 pfnUserMsgHook m_pfnMetaHook;
 pfnUserMsgHook m_pfnDamage;
 pfnUserMsgHook m_pfnBattery;
+
+int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int iIndex = READ_BYTE();
+	int iCount = READ_LONG();
+	//gHR.AddToHistory(HistoryResource::HISTSLOT_AMMO, iIndex, abs(iCount));
+	g_pViewPort->GetAmmoStackPanel()->AddAmmoPickup(iIndex, iCount);
+	return m_pfnAmmoPickup(pszName, iSize, pbuf);
+}
+int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	const char* szName = READ_STRING();
+	//gHR.AddToHistory(HistoryResource::HISTSLOT_ITEM, szName);
+	return m_pfnItemPickup(pszName, iSize, pbuf);
+}
 
 int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
@@ -406,6 +424,8 @@ void CCustomHud::GL_Init(void){
 }
 void CCustomHud::HUD_Init(void){
 	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
+	m_pfnItemPickup = HOOK_MESSAGE(ItemPickup);
+	m_pfnAmmoPickup = HOOK_MESSAGE(AmmoPickup);
 	m_pfnDamage = HOOK_MESSAGE(Damage);
 	m_pfnBattery = HOOK_MESSAGE(Battery);
 	m_pfnHealth = HOOK_MESSAGE(Health);

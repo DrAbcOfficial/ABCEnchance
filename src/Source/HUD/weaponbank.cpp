@@ -124,13 +124,13 @@ void WeaponsResource::Init(void) {
 }
 //重置武器仓库
 void WeaponsResource::Reset(void) {
-	this->m_iNowSlot = INVALID_WEAPON_SLOT;
-	this->m_pWeaponData.Clear();
+	m_iNowSlot = INVALID_WEAPON_SLOT;
+	m_pWeaponData.Clear();
 	//上面那个兄弟已经完全清理了，所以只需要解除链接即可
-	this->m_pOwnedWeaponData.RemoveAll();
-	this->m_pAviliableWeaponData.RemoveAll();
-	this->m_dicAmmos.clear();
-	this->m_iNowSelected = nullptr;
+	m_pOwnedWeaponData.RemoveAll();
+	m_pAviliableWeaponData.RemoveAll();
+	m_dicAmmos.clear();
+	m_iNowSelected = nullptr;
 }
 CWeaponData* WeaponsResource::GetOwnedData() {
 	return &this->m_pOwnedWeaponData;
@@ -280,11 +280,11 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust) {
 	fSetupSprInfo("ammo2", &pWeapon->hAmmo2, &pWeapon->rcAmmo2, &pWeapon->hAmmo, &pWeapon->rcAmmo);
 }
 void WeaponsResource::LoadWeaponSprites(size_t iId, char* cust) {
-	this->LoadWeaponSprites(this->GetWeapon(iId), cust);
+	LoadWeaponSprites(GetWeapon(iId), cust);
 }
 //从武器载入子弹Spr
 HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect) {
-	for (auto iter = this->m_pWeaponData.Begin(); iter != this->m_pWeaponData.End(); iter++) {
+	for (auto iter = m_pWeaponData.Begin(); iter != m_pWeaponData.End(); iter++) {
 		if (!iter->second)
 			continue;
 		if (iter->second->iAmmoType == iAmmoId) {

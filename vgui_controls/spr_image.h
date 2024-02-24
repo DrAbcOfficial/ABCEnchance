@@ -3,9 +3,11 @@
 
 #include <string>
 #include <vgui/IImage.h>
+#include "PHandle.h"
 #include <Color.h>
 
 namespace vgui {
+	class Panel;
 	class CSPRImage : public vgui::IImage
 	{
 	public:
@@ -55,7 +57,11 @@ namespace vgui {
 		virtual void SetSize(int wide, int tall);
 		virtual void SetColor(Color col);
 
+		//cus this shit not go surface, i need handle alpha manually
+		void SetAlphaParent(Panel* panel);
+
 	private:
+		PHandle m_pParent;
 		std::string m_szPath;
 		Color m_Color = Color(255, 255, 255, 255);
 		float m_flFrame = 0;

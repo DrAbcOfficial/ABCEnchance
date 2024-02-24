@@ -1,15 +1,19 @@
 #include <metahook.h>
 #include <triangleapi.h>
 
+#include "vgui_controls/Panel.h"
+
 #include "local.h"
 #include "spr_image.h"
 
 using namespace vgui;
 
 CSPRImage::CSPRImage() {
+	m_pParent = nullptr;
 }
 CSPRImage::CSPRImage(const char *pFilePath) : CSPRImage(){
 	LoadSprImage(pFilePath);
+	m_pParent = nullptr;
 }
 
 void CSPRImage::SetTextureID(int id) {
@@ -92,6 +96,8 @@ void CSPRImage::Paint(){
 		float flBottom = static_cast<float>(rect.bottom) / h;
 		int r, g, b, a;
 		m_Color.GetColor(r, g, b, a);
+		if (m_pParent)
+			a = m_pParent->GetAlpha();
 		gEngfuncs.pTriAPI->SpriteTexture(const_cast<struct model_s*>(gEngfuncs.GetSpritePointer(m_iTextureID)), static_cast<int>(m_flFrame));
 		gEngfuncs.pTriAPI->RenderMode(m_iRenderMode);
 		gEngfuncs.pTriAPI->CullFace(TRI_NONE);
@@ -138,4 +144,8 @@ void CSPRImage::SetSize(int wide, int tall){
 
 void CSPRImage::SetColor(Color col){
 	m_Color = col;
+}
+
+void CSPRImage::SetAlphaParent(Panel* panel){
+	m_pParent = panel;
 }
