@@ -4,10 +4,10 @@
 	{
 		"ControlName"		"CAmmoStackPanel"
 		"fieldName"		"AmmoStackPanel"
-		"xpos"		"c15"
+		"xpos"		"c45"
 		"ypos"		"c-128"
 		"wide"		"80"
-		"tall"		"196"
+		"tall"		"200"
 
 		"autoResize"		"1"
 		"visible"		"1"
@@ -16,6 +16,8 @@
 		"keep_time"		"5.0"
 		"fadein_time"	"0.1"
 		"fadeout_time"	"0.3"
-		"icon_scale"	"0.75"
+		"item_tall"		"20"
+		"item_wide"		"80"
+		"stack_gap"		"1"
 	}
 }
