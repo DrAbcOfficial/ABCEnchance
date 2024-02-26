@@ -14,7 +14,7 @@
 #include "sse.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
-//#include <tier0/memdbgon.h>
+#include <tier0/memdbgon.h>
 
 static const uint32 _sincos_masks[]	  = { (uint32)0x0,  (uint32)~0x0 };
 static const uint32 _sincos_inv_masks[] = { (uint32)~0x0, (uint32)0x0 };
@@ -59,11 +59,11 @@ _PS_EXTERN_CONST(am_pi_o_2, (float)(M_PI / 2.0));
 _PS_EXTERN_CONST(am_2_o_pi, (float)(2.0 / M_PI));
 _PS_EXTERN_CONST(am_pi_o_4, (float)(M_PI / 4.0));
 _PS_EXTERN_CONST(am_4_o_pi, (float)(4.0 / M_PI));
-_PS_EXTERN_CONST_TYPE(am_sign_mask, int32, 0x80000000);
-_PS_EXTERN_CONST_TYPE(am_inv_sign_mask, int32, ~0x80000000);
-_PS_EXTERN_CONST_TYPE(am_min_norm_pos,int32, 0x00800000);
-_PS_EXTERN_CONST_TYPE(am_mant_mask, int32, 0x7f800000);
-_PS_EXTERN_CONST_TYPE(am_inv_mant_mask, int32, ~0x7f800000);
+_PS_EXTERN_CONST_TYPE(am_sign_mask, uint32, 0x80000000ul);
+_PS_EXTERN_CONST_TYPE(am_inv_sign_mask, uint32, ~0x80000000ul);
+_PS_EXTERN_CONST_TYPE(am_min_norm_pos, uint32, 0x00800000ul);
+_PS_EXTERN_CONST_TYPE(am_mant_mask, uint32, 0x7f800000ul);
+_PS_EXTERN_CONST_TYPE(am_inv_mant_mask, uint32, ~0x7f800000ul);
 
 _EPI32_CONST(1, 1);
 _EPI32_CONST(2, 2);
@@ -819,9 +819,9 @@ float (__cdecl *pfVectorMA)(Vector& v) = _VectorMA;
 //   this, but when inlined, and instruction scheduled, the C version is faster.  
 //   Verified this via VTune
 /*
-v_vec_t DotProduct (const v_vec_t *a, const v_vec_t *c)
+vec_t DotProduct (const vec_t *a, const vec_t *c)
 {
-	v_vec_t temp;
+	vec_t temp;
 
 	__asm
 	{

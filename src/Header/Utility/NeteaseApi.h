@@ -70,7 +70,7 @@ namespace netease {
 		int copyright = 0;
 		unsigned long long duration = 0;
 		CMusic(rapidjson::Value& json);
-		virtual std::optional<string> GetPlayUrl(const char* quality, char* encode);
+		virtual std::optional<string> GetPlayUrl(const char* quality, const char* encode);
 		string GetArtists();
 	};
 	class CDjMusic : public CMusic {
@@ -81,7 +81,7 @@ namespace netease {
 		unsigned long long likedCount;
 		string description;
 		CDjMusic(rapidjson::Value& json);
-		std::optional<string> GetPlayUrl(const char* quality, char* encode) override;
+		virtual std::optional<string> GetPlayUrl(const char* quality, const char* encode) override;
 	};
 	class CLyric {
 	public:
@@ -151,7 +151,7 @@ namespace netease {
 		QRStatue QRCheck(string& qrKey);
 		QRCode GetQRCode(string& qrKey);
 	private:
-		neteasecode_t GetCookiePost(Action& action, int successcode = 200);
+		neteasecode_t GetCookiePost(const Action& action, int successcode = 200);
 	};
 
 	class CNeteaseMusicAPI {

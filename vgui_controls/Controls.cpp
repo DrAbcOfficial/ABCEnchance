@@ -1,8 +1,8 @@
+#include "plugins.h"
 #include "Controls.h"
+#include <IEngineSurface.h>
 #include <locale.h>
 #include <VGUI/IEngineVGui.h>
-#include <IEngineSurface.h>
-#include "plugins.h"
 
 vgui::ISystem *g_pVGuiSystem;
 vgui::IVGui *g_pVGui;

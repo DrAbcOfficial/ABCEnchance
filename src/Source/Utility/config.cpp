@@ -4,7 +4,7 @@
 
 #include "config.h"
 
-extern void ConsoleWarnMessage(char* format, ...);
+extern void ConsoleWarnMessage(const char* format, ...);
 constexpr char g_szConfigPath[] = "abcenchance/config.json";
 static CABCConfig s_cfg;
 void abcconfig::LoadJson(){

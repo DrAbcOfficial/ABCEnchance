@@ -1,4 +1,5 @@
 #pragma once
+#include <glew.h>
 typedef struct pp_texround_program_s {
 	GLuint program;
 	GLuint rad;

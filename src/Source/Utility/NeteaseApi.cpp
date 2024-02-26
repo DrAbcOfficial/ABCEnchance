@@ -4,7 +4,7 @@
 #include "qrcodegen.h"
 
 namespace netease {
-	const std::map<char*, char*> header = {
+	const std::map<const char*, const char*> header = {
 		{"Accept", "*/*"},
 		{"Accept-Language", "zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4"},
 		{"Connection", "keep-alive"},
@@ -108,7 +108,7 @@ namespace netease {
 		else
 			duration = json["duration"].GetUint64();
 	}
-	std::optional<string> CMusic::GetPlayUrl(const char* quality, char* encode) {
+	std::optional<string> CMusic::GetPlayUrl(const char* quality, const char* encode) {
 		std::map<string, string> p = {
 			{"ids", "[" + std::to_string(id) + "]"},
 			{"level", quality},
@@ -155,7 +155,7 @@ namespace netease {
 		if (json.HasMember("description"))
 			description = json["description"].GetString();
 	}
-	std::optional<string> CDjMusic::GetPlayUrl(const char* quality, char* encode) {
+	std::optional<string> CDjMusic::GetPlayUrl(const char* quality, const char* encode) {
 		std::map<string, string> p = {
 			{"ids", "[" + std::to_string(mainTrackId) + "]"},
 			{"level", quality},
@@ -192,7 +192,7 @@ namespace netease {
 	}
 	CUser::CUser(rapidjson::Value& json) : CBase163Object(json) {
 		if (json.HasMember("profile")) {
-			rapidjson::Value profile = json["profile"].GetObject();
+			rapidjson::GenericObject profile = json["profile"].GetObject();
 			if (profile.HasMember("userId"))
 				id = profile["userId"].GetUint64();
 			if (profile.HasMember("nickname"))
@@ -275,7 +275,8 @@ namespace netease {
 
 	std::vector<std::shared_ptr<CMusic>> CNeteaseMusicAPI::GetAlbumSongs(neteaseid_t id) {
 		std::map<string, string> p = {};
-		string json = post(Action("/v1/album/" + std::to_string(id), p));
+		string url = "/v1/album/" + std::to_string(id);
+		string json = post(Action(url, p));
 		rapidjson::Document data;
 		data.Parse(json.c_str(), json.length());
 		std::vector<std::shared_ptr<CMusic>> songs;
@@ -600,7 +601,7 @@ namespace netease {
 		out.size = qr.getSize();
 		return out;
 	}
-	neteasecode_t CLocalUser::GetCookiePost(Action& action, int successcode) {
+	neteasecode_t CLocalUser::GetCookiePost(const Action& action, int successcode) {
 		string json = post(action);
 
 		rapidjson::Document data;

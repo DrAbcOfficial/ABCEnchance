@@ -31,12 +31,17 @@ class ISoundEmitterSystemBase;
 namespace vgui
 {
 	class ISurface;
+	class ISurface2;
 	class IVGui;
 	class IInput;
+	class IInput2;
 	class IPanel;
 	class ILocalize;
 	class ISchemeManager;
+	class ISchemeManager_HL25;
+	class ISchemeManager2;
 	class ISystem;
+	class CSchemeManager;
 }
 
 
@@ -49,11 +54,13 @@ namespace vgui
 extern IStudioRender *g_pStudioRender;
 extern IStudioRender *studiorender;
 extern IMatSystemSurface *g_pMatSystemSurface;
-extern vgui::IInput *g_pVGuiInput;
+extern vgui::IInput*g_pVGuiInput;
+extern vgui::IInput2*g_pVGuiInput2;
 extern vgui::IVGui *g_pVGui;
 extern vgui::IPanel *g_pVGuiPanel;
 extern vgui::ILocalize *g_pVGuiLocalize;
-//extern vgui::ISchemeManager *g_pVGuiSchemeManager;
+extern vgui::ISchemeManager* g_pVGuiSchemeManager;
+extern vgui::ISchemeManager2*g_pVGuiSchemeManager2;
 extern vgui::ISystem *g_pVGuiSystem;
 extern IDataCache *g_pDataCache;	// FIXME: Should IDataCache be in tier2?
 extern IMDLCache *g_pMDLCache;
@@ -91,7 +98,7 @@ public:
 		if ( !BaseClass::Connect( factory ) )
 			return false;
 
-		if ( IsPrimaryAppSystem() )
+		if ( BaseClass::IsPrimaryAppSystem() )
 		{
 			ConnectTier3Libraries( &factory, 1 );
 		}
@@ -100,7 +107,7 @@ public:
 
 	virtual void Disconnect() 
 	{
-		if ( IsPrimaryAppSystem() )
+		if (BaseClass::IsPrimaryAppSystem() )
 		{
 			DisconnectTier3Libraries();
 		}

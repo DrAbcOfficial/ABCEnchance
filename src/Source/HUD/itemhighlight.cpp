@@ -26,7 +26,7 @@ CHudItemHighLight g_HudItemHighLight;
 int CHudItemHighLight::Init(){
 	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "1", FCVAR_VALUE, NULL);
 	gCVars.pItemHighLightRange = CREATE_CVAR("cl_itemhighlightrange", "344", FCVAR_VALUE, [](cvar_t* cvar) {
-		cvar->value = mathlib::clamp<float>(cvar->value, 0.0f, 344.0f);
+		cvar->value = CMathlib::clamp<float>(cvar->value, 0.0f, 344.0f);
 	});
 	LoadItemList();
 	return 0;
@@ -55,8 +55,8 @@ void HighLightTentCallBack(TEMPENTITY* ent, float frametime, float currenttime) 
 		erase();
 		return;
 	}
-	mathlib::VectorCopy(var->curstate.origin, ent->entity.origin);
-	mathlib::VectorAdd(ent->entity.origin, ent->tentOffset, ent->entity.origin);
+	CMathlib::VectorCopy(var->curstate.origin, ent->entity.origin);
+	CMathlib::VectorAdd(ent->entity.origin, ent->tentOffset, ent->entity.origin);
 	ent->entity.angles[0] = var->curstate.angles[0];
 	ent->entity.angles[2] = var->curstate.angles[2];
 }
@@ -75,19 +75,19 @@ void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	ent1->die = ent2->die = gEngfuncs.GetClientTime() + 999.0f;
 
 	CVector vecTemp;
-	if (mathlib::FVectorLength(var->curstate.mins) <= 3.2) {
+	if (CMathlib::FVectorLength(var->curstate.mins) <= 3.2) {
 		vecTemp.x = vecTemp.y = -16;
 		vecTemp.z = 0;
 	}
 	else
 		vecTemp = var->curstate.mins;
-	mathlib::VectorCopy(vecTemp, ent1->tentOffset);
+	CMathlib::VectorCopy(vecTemp, ent1->tentOffset);
 	
-	if (mathlib::FVectorLength(var->curstate.maxs) <= 3.2)
+	if (CMathlib::FVectorLength(var->curstate.maxs) <= 3.2)
 		vecTemp[0] = vecTemp[1] = vecTemp[2] = 16;
 	else
-		mathlib::VectorCopy(var->curstate.maxs, vecTemp);
-	mathlib::VectorCopy(vecTemp, ent2->tentOffset);
+		CMathlib::VectorCopy(var->curstate.maxs, vecTemp);
+	CMathlib::VectorCopy(vecTemp, ent2->tentOffset);
 
 	ent2->entity.angles[1] = 180;
 	ent1->entity.curstate.skin = ent2->entity.curstate.skin = m_mapHighLightTable[var->curstate.modelindex]->Type;
@@ -129,7 +129,7 @@ void CHudItemHighLight::LoadItemList() {
 			aryHighLightList.push_back(item);
 		}
 		else {
-			aryHighLightList[index]->Type = mathlib::clamp(std::atoi(szItemPraseBuf), 0, 2);
+			aryHighLightList[index]->Type = CMathlib::clamp<int>(std::atoi(szItemPraseBuf), 0, 2);
 			index++;
 		}
 		i++;

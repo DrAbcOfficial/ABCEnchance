@@ -2,6 +2,8 @@
 #include <metahook.h>
 #include <vector>
 #include <string>
+#include <regex>
+#include <bitset>
 
 #include <vgui/VGUI.h>
 #include <vgui/IScheme.h>
@@ -11,12 +13,14 @@
 #include <vgui_controls/Label.h>
 #include <vgui_controls/AnimationController.h>
 
-#include "mymathlib.h"
 #include "local.h"
 #include "vguilocal.h"
 #include "steam_api.h"
 #include "player_info.h"
 #include "hud.h"
+
+#include "parsemsg.h"
+#include "mymathlib.h"
 
 #include "motd.h"
 #include "popnum.h"
@@ -28,9 +32,6 @@
 #include "flashlight.h"
 #include "notice.h"
 #include "crosshair.h"
-#include <regex>
-#include <bitset>
-
 #include "effect.h"
 #include "health.h"
 #include "ammobar.h"
@@ -48,7 +49,6 @@
 #include "Viewport.h"
 #include "exportfuncs.h"
 #include "keydefs.h"
-#include <parsemsg.h>
 
 using namespace vgui;
 
@@ -420,7 +420,7 @@ CMotdPanel* CViewport::GetMotdPanel(){
 
 Color CViewport::GetPlayerColor(int index){
 	vec3_t color;
-	mathlib::VectorCopy(gHookFuncs.GetClientColor(index), color);
+	CMathlib::VectorCopy(gHookFuncs.GetClientColor(index), color);
 	return Color(color[0] * 255, color[1] * 255, color[2] * 255, 255);
 }
 

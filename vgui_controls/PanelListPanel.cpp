@@ -424,11 +424,11 @@ void PanelListPanel::SetSelectedPanel( Panel *panel )
 		// notify the panels of the selection change
 		if ( m_hSelectedItem )
 		{
-			PostMessage( m_hSelectedItem, new KeyValues("PanelSelected", "state", 0) );
+			PostMessage1( m_hSelectedItem, new KeyValues("PanelSelected", "state", 0) );
 		}
 		if ( panel )
 		{
-			PostMessage( panel, new KeyValues("PanelSelected", "state", 1) );
+			PostMessage1( panel, new KeyValues("PanelSelected", "state", 1) );
 		}
 		m_hSelectedItem = panel;
 	}

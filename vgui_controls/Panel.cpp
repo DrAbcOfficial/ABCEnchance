@@ -2899,7 +2899,7 @@ void Panel::OnThink()
 			return;
 		}
 
-		if (m_pDragDrop->m_hCurrentDrop != 0)
+		if (m_pDragDrop->m_hCurrentDrop != nullptr)
 		{
 			if (!input()->IsMouseDown(MOUSE_LEFT))
 			{
@@ -5073,7 +5073,7 @@ void Panel::OnMessage(const KeyValues* params, VPANEL ifromPanel)
 		// iterate all the entries in the panel map
 		for (int i = 0; i < panelMap->entries.Count(); i++)
 		{
-			MessageMapItem_t* pMap = &panelMap->entries[i];
+			const MessageMapItem_t* pMap = &panelMap->entries[i];
 
 			if (iMessageName == pMap->nameSymbol)
 			{
@@ -5089,7 +5089,7 @@ void Panel::OnMessage(const KeyValues* params, VPANEL ifromPanel)
 
 				case 1:
 				{
-					KeyValues* param1 = params->FindKey(pMap->firstParamSymbol);
+					KeyValues* param1 = params->FindKey2(pMap->firstParamSymbol);
 					if (!param1)
 					{
 						param1 = const_cast<KeyValues*>(params);
@@ -5157,12 +5157,12 @@ void Panel::OnMessage(const KeyValues* params, VPANEL ifromPanel)
 
 				case 2:
 				{
-					KeyValues* param1 = params->FindKey(pMap->firstParamSymbol);
+					KeyValues* param1 = params->FindKey2(pMap->firstParamSymbol);
 					if (!param1)
 					{
 						param1 = const_cast<KeyValues*>(params);
 					}
-					KeyValues* param2 = params->FindKey(pMap->secondParamSymbol);
+					KeyValues* param2 = params->FindKey2(pMap->secondParamSymbol);
 					if (!param2)
 					{
 						param2 = const_cast<KeyValues*>(params);
@@ -6849,7 +6849,7 @@ void Panel::OnFinishDragging(bool mousereleased, MouseCode code, bool abort /*= 
 		Q_strncpy(cmd, "default", sizeof(cmd));
 
 		if (mousereleased &&
-			m_pDragDrop->m_hCurrentDrop != 0 &&
+			m_pDragDrop->m_hCurrentDrop != nullptr &&
 			m_pDragDrop->m_hDropContextMenu.Get())
 		{
 			Menu* menu = m_pDragDrop->m_hDropContextMenu;
@@ -7108,7 +7108,7 @@ void Panel::OnContinueDragging()
 		}
 	}
 
-	if (m_pDragDrop->m_hCurrentDrop != 0 &&
+	if (m_pDragDrop->m_hCurrentDrop != nullptr &&
 		m_pDragDrop->m_hDropContextMenu.Get())
 	{
 		Menu* menu = m_pDragDrop->m_hDropContextMenu;

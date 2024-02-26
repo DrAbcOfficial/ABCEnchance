@@ -28,6 +28,7 @@
 #include "Viewport.h"
 #include "radar.h"
 
+#undef clamp
 
 CRadarAvatarPanel::CRadarAvatarPanel(vgui::Panel* parent, int index) : BaseClass(parent, "") {
 	m_iIndex = index + 1;
@@ -225,10 +226,10 @@ void CRadarPanel::Paint(){
 		int nw, nh;
 		m_pNorthground->GetSize(nw, nh);
 		int len = GetWide() - nw;
-		float rotate = mathlib::Q_DEG2RAD(local->curstate.angles[Q_YAW]);
+		float rotate = CMathlib::Q_DEG2RAD(local->curstate.angles[CMathlib::Q_YAW]);
 		int hh = gCVars.pRadar->value > 1 ? len / 2 : sqrt(2 * pow(len, 2)) / 2;
-		int stx = mathlib::clamp(((size / 2) + hh * cos(rotate)), 0.0f, (float)len);
-		int sty = mathlib::clamp(((size / 2) + hh * sin(rotate)), 0.0f, (float)len);
+		int stx = CMathlib::clamp(((size / 2) + hh * cos(rotate)), 0.0f, (float)len);
+		int sty = CMathlib::clamp(((size / 2) + hh * sin(rotate)), 0.0f, (float)len);
 		m_pNorthground->SetPos(stx, sty);
 
 		if (gCVars.pRadarAvatar->value > 0) {
@@ -257,10 +258,10 @@ void CRadarPanel::Paint(){
 				iter->SetVisible(true);
 				CVector vecLength;
 				//与目标距离
-				mathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
+				CMathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
 				CVector vecAngle;
-				mathlib::VectorAngles(vecLength, vecAngle);
-				float nyaw = mathlib::Q_DEG2RAD(vecAngle[Q_YAW] - local->curstate.angles[Q_YAW] + 90);
+				CMathlib::VectorAngles(vecLength, vecAngle);
+				float nyaw = CMathlib::Q_DEG2RAD(vecAngle[CMathlib::Q_YAW] - local->curstate.angles[CMathlib::Q_YAW] + 90);
 				//缩放比率暂定0.2，交换取反符合屏幕坐标系
 				swap(vecLength.x, vecLength.y);
 				vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
@@ -268,8 +269,8 @@ void CRadarPanel::Paint(){
 				float vlen = vecLength.Length();
 				int ale = GetWide() - ww;
 				int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : sqrt(2 * pow(vlen, 2)) / 2;
-				int atx = mathlib::clamp((Length - w + ahh * cos(nyaw)), 0.0f, static_cast<float>(ale));
-				int aty = mathlib::clamp((Length - w + ahh * sin(nyaw)), 0.0f, static_cast<float>(ale));
+				int atx = CMathlib::clamp((Length - w + ahh * cos(nyaw)), 0.0f, static_cast<float>(ale));
+				int aty = CMathlib::clamp((Length - w + ahh * sin(nyaw)), 0.0f, static_cast<float>(ale));
 				aty = ale - aty;
 				iter->SetPos(atx, aty);
 				iter->SetSize(ww, ww);
@@ -352,7 +353,7 @@ void CRadarPanel::RenderRadar(){
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
 	gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
-	gCustomHud.m_flOverViewYaw = local->curstate.angles[Q_YAW];
+	gCustomHud.m_flOverViewYaw = local->curstate.angles[CMathlib::Q_YAW];
 	gCustomHud.m_flSavedCvars[0] = gCVars.pCVarDevOverview->value;
 	gCustomHud.m_flSavedCvars[1] = gCVars.pCVarDrawEntities->value;
 	gCustomHud.m_flSavedCvars[2] = gCVars.pCVarDrawViewModel->value;

@@ -1,6 +1,6 @@
 #include "plugins.h"
-#include <vector>
 #include <string>
+#include <vector>
 //Lib
 #include "cl_entity.h"
 #include "mymathlib.h"
@@ -126,7 +126,7 @@ void __fastcall CStudioModelRenderer_Init(void* pthis, int dummy) {
 
 void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
-	mathlib::VectorCopy(punchangle1, g_pViewPort->m_vecClientEVPunch);
+	CMathlib::VectorCopy(punchangle1, g_pViewPort->m_vecClientEVPunch);
 }
 extern bool g_bInRenderRadar;
 int CL_IsDevOverview(void){
@@ -135,7 +135,7 @@ int CL_IsDevOverview(void){
 void CL_SetDevOverView(int param1){
 	gHookFuncs.CL_SetDevOverView(param1);
 	if (g_bInRenderRadar){
-		(*(vec3_t*)(param1 + 0x1C))[Q_YAW] = gCustomHud.m_flOverViewYaw;
+		(*(vec3_t*)(param1 + 0x1C))[CMathlib::Q_YAW] = gCustomHud.m_flOverViewYaw;
 		*(float *)(param1 + 0x10) = gCustomHud.m_vecOverViewOrg[0];
 		*(float *)(param1 + 0x14) = gCustomHud.m_vecOverViewOrg[1];
 		gDevOverview->z_max = gCustomHud.m_flOverViewZmax;
@@ -373,7 +373,6 @@ void HUD_Init(void){
 		if (gEngfuncs.Cmd_Argc() <= 1)
 			return;
 		std::string sz = gEngfuncs.Cmd_Argv(1);
-		std::transform(sz.begin(), sz.end(), sz.begin(), std::tolower);
 		sz = "models/player/" + sz + "*.*";
 		gEngfuncs.Con_Printf("Models\n==============\n");
 		FileFindHandle_t walk;
@@ -526,14 +525,14 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 		CVector viewOrigin = view->origin;
 		CVector viewAngles = view->angles;
 		V_CalcViewModelLag(pparams, viewOrigin, viewAngles, pparams->cl_viewangles);
-		mathlib::VectorCopy(viewOrigin, view->origin);
-		mathlib::VectorCopy(viewAngles, view->angles);
+		CMathlib::VectorCopy(viewOrigin, view->origin);
+		CMathlib::VectorCopy(viewAngles, view->angles);
 		V_CalcModelSlide(pparams);
 	}
 	else {
 		vec3_t vecRight;
-		mathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
-		mathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
+		CMathlib::AngleVectors(pparams->cl_viewangles, nullptr, vecRight, nullptr);
+		CMathlib::VectorMultipiler(vecRight, gCVars.pCamIdealRight->value);
 		pparams->vieworg[0] += vecRight[0];
 		pparams->vieworg[1] += vecRight[1];
 		pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];

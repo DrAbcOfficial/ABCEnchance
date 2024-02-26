@@ -45,7 +45,7 @@ extern size_t ScreenWidth();
 extern size_t ScreenHeight();
 extern std::atomic<netease::CNeteaseMusicAPI*> GetNeteaseApi();
 extern IGameUIFuncs* GameUIFuncs();
-constexpr char* FAVMODEL_ICON = "#GameUI_ABC_Favorite";
+const char* FAVMODEL_ICON = "#GameUI_ABC_Favorite";
 
 using namespace vgui;
 
@@ -53,7 +53,7 @@ class ModelListPanel : public ListPanel {
 public:
 	ModelListPanel(Panel* parent, const char* name): ListPanel(parent, name) {
 	}
-	void ModelListPanel::OnMouseDoublePressed(MouseCode code){
+	void OnMouseDoublePressed(MouseCode code){
 		if (GetItemCount() > 0) {
 			int itemID = GetSelectedItem(0);
 			PostActionSignal(new KeyValues("FavChange", "itemID", itemID, "add", !std::strcmp(GetItem(itemID)->GetString("fav"), FAVMODEL_ICON) ? 0 : 1));
@@ -250,7 +250,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 	char ext[4];
 	wchar_t wpath[MAX_PATH];
 	Q_UTF8ToUnicode(fullpath, wpath, MAX_PATH);
-	std::strncpy(ext, std::filesystem::path(wpath).extension().u8string().c_str(), 4);
+	std::strncpy(ext, std::filesystem::path(wpath).extension().string().c_str(), 4);
 	if (!strnicmp(ext, ".tga", 4))
 		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_TARGA, wpath, 0);
 	else if(!strnicmp(ext, ".bmp", 4))

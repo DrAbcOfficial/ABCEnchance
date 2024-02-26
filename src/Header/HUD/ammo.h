@@ -1,4 +1,5 @@
 #pragma once
+class WEAPON;
 class CHudCustomAmmo{
 public:
 	int Init(void);

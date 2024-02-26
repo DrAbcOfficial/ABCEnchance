@@ -88,6 +88,6 @@ private:
 	void BuildAviliableWeapons();
 	//选择选定的武器或菜单
 	void SetSelectWeapon(WEAPON* wp, bool bWheel);
-	client_sprite_t* WeaponsResource::GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount);
+	client_sprite_t* GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount);
 };
 extern WeaponsResource gWR;

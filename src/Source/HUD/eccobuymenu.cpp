@@ -137,16 +137,16 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	for (i = 0; i < 9; i++) {
 		//CABD
 		//¡ý¡ú¡ü
-		mathlib::Q_Vector2Copy(aryIn[i == 8 ? 0 : i + 1], vecA);
-		mathlib::Q_Vector2Copy(aryIn[i], vecB);
-		mathlib::Q_Vector2Copy(aryOut[i == 8 ? 0 : i + 1], vecC);
-		mathlib::Q_Vector2Copy(aryOut[i], vecD);
+		CMathlib::Q_Vector2Copy(aryIn[i == 8 ? 0 : i + 1], vecA);
+		CMathlib::Q_Vector2Copy(aryIn[i], vecB);
+		CMathlib::Q_Vector2Copy(aryOut[i == 8 ? 0 : i + 1], vecC);
+		CMathlib::Q_Vector2Copy(aryOut[i], vecD);
 		//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
-		mathlib::CenterPos2OpenGLPos(vecA, ScreenWidth(), ScreenHeight());
-		mathlib::CenterPos2OpenGLPos(vecB, ScreenWidth(), ScreenHeight());
-		mathlib::CenterPos2OpenGLPos(vecC, ScreenWidth(), ScreenHeight());
-		mathlib::CenterPos2OpenGLPos(vecD, ScreenWidth(), ScreenHeight());
-		bIsChosen = mathlib::PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
+		CMathlib::CenterPos2OpenGLPos(vecA, ScreenWidth(), ScreenHeight());
+		CMathlib::CenterPos2OpenGLPos(vecB, ScreenWidth(), ScreenHeight());
+		CMathlib::CenterPos2OpenGLPos(vecC, ScreenWidth(), ScreenHeight());
+		CMathlib::CenterPos2OpenGLPos(vecD, ScreenWidth(), ScreenHeight());
+		bIsChosen = CMathlib::PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
 		int realId = GetMenuId(i);
 		if (bIsChosen) {
 			iChosenSlot = i + 1;
@@ -187,7 +187,7 @@ int CHudEccoBuyMenu::Draw(float flTime){
 	vecB[0] = vecD[0] = BuyMenuCenterX + len;
 	vecC[1] = vecD[1] = BuyMenuCenterY - len;
 	vecA[1] = vecB[1] = BuyMenuCenterY + len;
-	bIsChosen = mathlib::PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
+	bIsChosen = CMathlib::PointInPolygen(vecC, vecA, vecB, vecD, mousex, mousey);
 	DrawSPRIconPos(iCenterSpr, kRenderTransAdd, vecC, vecA, vecB, vecD, r, g, b, bIsChosen ? a : a * 0.5);
 	wchar_t* buf = vgui::localize()->Find("BuyMenu_LastMenu");
 	GetStringSize(buf, &w, &h, hFont);
@@ -226,7 +226,7 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 		ClearTempEnt();
 		if (!pLight)
 			CreateLight();
-		mathlib::VectorCopy(ent->origin, pLight->origin);
+		CMathlib::VectorCopy(ent->origin, pLight->origin);
 		if (iNowSelectedId < 0)
 			return true;
 		buymenuitem_t* info = GetInfo(iNowSelectedId);
@@ -245,8 +245,8 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 				pShowEnt->entity.curstate.effects = EF_FULLBRIGHT;
 				pShowEnt->die = gEngfuncs.GetClientTime() + 99999.0f;
 			}
-			mathlib::VectorCopy(ent->origin, pShowEnt->entity.origin);
-			mathlib::VectorCopy(ent->angles, pShowEnt->entity.angles);
+			CMathlib::VectorCopy(ent->origin, pShowEnt->entity.origin);
+			CMathlib::VectorCopy(ent->angles, pShowEnt->entity.angles);
 			pShowEnt->entity.curstate.scale = BuyMenuModelSize;
 			pShowEnt->entity.angles[0] = 0;
 			break;
@@ -283,8 +283,8 @@ bool CHudEccoBuyMenu::AddEntity(int type, cl_entity_s* ent, const char* modelnam
 				pWeaponEnt->entity.curstate.movetype = MOVETYPE_FOLLOW;
 				pWeaponEnt->entity.curstate.aiment = ent->index;
 			}
-			mathlib::VectorCopy(ent->origin, pShowEnt->entity.origin);
-			mathlib::VectorCopy(ent->angles, pShowEnt->entity.angles);
+			CMathlib::VectorCopy(ent->origin, pShowEnt->entity.origin);
+			CMathlib::VectorCopy(ent->angles, pShowEnt->entity.angles);
 			pShowEnt->entity.angles[0] = 0;
 			return true;
 		}

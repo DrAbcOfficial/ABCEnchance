@@ -297,5 +297,4 @@ void CMemoryStack::PrintContents()
 }
 
 //-----------------------------------------------------------------------------
-
-#endif //NO_MALLOC_OVERRIDE
+#endif

@@ -22,6 +22,9 @@
 #include <mymathlib.h>
 #include <CVector.h>
 
+//thank you microsoft
+#undef clamp
+
 #define VIEWPORT_PLAYERBOARD_NAME "PlayerBoardPanel"
 extern vgui::HScheme GetViewPortBaseScheme();
 CPlayerInfoPanel::CPlayerInfoPanel()
@@ -72,7 +75,7 @@ void CPlayerInfoPanel::Think(){
 	CVector vecEntityOrigin;
 	CVector vecHUD;
 	gEngfuncs.GetViewAngles(vecView);
-	mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
+	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 	cl_entity_t* entity = gEngfuncs.GetEntityByIndex(m_iPlayerIndex);
 	if (!entity ||
 		entity->curstate.messagenum != local->curstate.messagenum ||
@@ -81,13 +84,13 @@ void CPlayerInfoPanel::Think(){
 		return;
 	}
 	//计算我和目标的相对偏移
-	mathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
+	CMathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
 	if (vecLength.FLength() >= 1024) {
 		SetVisible(false);
 		return;
 	}
 	vecLength = vecLength.Normalize();
-	angledotResult = mathlib::DotProduct(vecLength, vecView);
+	angledotResult = CMathlib::DotProduct(vecLength, vecView);
 	//cos 60
 	if (angledotResult > 0.5) {
 		vecEntityOrigin = entity->curstate.origin;
@@ -145,8 +148,8 @@ void CPlayerInfoPanel::UpdateClientInfo(){
 			return;
 		}	
 		int iHealth = pi->GetHealth();
-		float flArmorRatio = mathlib::clamp((float)pi->GetArmor() / 100.0f, 0.0f, 1.0f);
-		float flHealthRatio = mathlib::clamp((float)iHealth / 100.0f, 0.0f, 1.0f);
+		float flArmorRatio = CMathlib::clamp<float>((float)pi->GetArmor() / 100.0f, 0.0f, 1.0f);
+		float flHealthRatio = CMathlib::clamp((float)iHealth / 100.0f, 0.0f, 1.0f);
 		m_pNameLable->SetText(pi->GetName());
 		m_pNameLable->SetFgColor(g_pViewPort->GetPlayerColor(m_iPlayerIndex));
 		m_pArmorImagePanel->SetWide(m_pBackgroundImagePanel->GetWide() * flArmorRatio);

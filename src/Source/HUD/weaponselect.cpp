@@ -1,16 +1,16 @@
-﻿#include <metahook.h>
-#include <map>
+﻿#include <map>
+#include <metahook.h>
 #include <string>
 #include <vector>
 
-#include "mymathlib.h"
 #include "glew.h"
+#include "mymathlib.h"
 
-#include "hud.h"
-#include "weapon.h"
 #include "Color.h"
-#include "vguilocal.h"
+#include "hud.h"
 #include "local.h"
+#include "vguilocal.h"
+#include "weapon.h"
 
 #include "gl_def.h"
 #include "gl_draw.h"
@@ -56,7 +56,7 @@ void CWeaponMenuSlot::VidInit() {
 }
 int CWeaponMenuSlot::DrawBar(int x, int y, int width, int height, float f) {
 	int r = 0, g = 0, b = 0, a = 0;
-	f = mathlib::clamp(f, 0.0f, 1.0f);
+	f = CMathlib::clamp<float>(f, 0.0f, 1.0f);
 	if (f) {
 		int w = (int)(f * width);
 		if (w <= 0)
@@ -112,9 +112,9 @@ int CWeaponMenuSlot::DrawWList(float flTime) {
 		flAlphaRatio = flTimeDiffer / SelectFadeTime;
 	auto RainbowColor = [&](WEAPON* wp, int& r, int& g, int& b) {
 		float h, s, v;
-		mathlib::RGBToHSV(r, g, b, h, s, v);
+		CMathlib::RGBToHSV(r, g, b, h, s, v);
 		h += wp->iId * 15;
-		mathlib::HSVToRGB(h, s, v, r, g, b);
+		CMathlib::HSVToRGB(h, s, v, r, g, b);
 	};
 	x = iXStart;
 	y = iYStart;

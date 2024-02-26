@@ -69,7 +69,7 @@ public:
 	void ResetAll();
 
 	//static shit
-	static std::array<CPlayerInfo, SC_MAX_PLAYERS + 1>& CPlayerInfo::GetPlayerInfos();
+	static std::array<CPlayerInfo, SC_MAX_PLAYERS + 1>& GetPlayerInfos();
 	static void InitPlayerInfos();
 	static CPlayerInfo* GetPlayerInfo(int idx);
 	static CPlayerInfo* GetThisPlayerInfo();

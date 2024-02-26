@@ -1,12 +1,13 @@
 #include <vector>
 #include <string>
 
+#include "plugins.h"
+
 #include <VGUI_controls/Controls.h>
 #include <VGUI_controls/Panel.h>
 #include <VGUI_controls/Frame.h>
 
 #include <IClientVGUI.h>
-#include "plugins.h"
 #include "vguilocal.h"
 #include "steam_api.h"
 #include "player_info.h"

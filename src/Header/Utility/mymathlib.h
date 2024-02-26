@@ -1,4 +1,7 @@
+#pragma once
+#undef clamp
 typedef float vec_t;
+typedef vec_t vec2_t[2];
 typedef vec_t vec3_t[3];
 typedef vec_t vec4_t[4];
 typedef vec_t vec5_t[5];
@@ -7,28 +10,10 @@ typedef int fixed4_t;
 typedef int fixed8_t;
 typedef int fixed16_t;
 
-#define SIDE_FRONT 0
-#define SIDE_ON 2
-#define SIDE_BACK 1
-#define SIDE_CROSS -2
-
-#define RANDOM_LONG(a, b) gEngfuncs.pfnRandomLong(a, b)
-#define RANDOM_FLOAT(a, b) gEngfuncs.pfnRandomFloat(a, b)
-
-enum
-{
-	Q_PITCH = 0,	// up / down
-	Q_YAW,		// left / right
-	Q_ROLL		// fall over
-};
-
-struct mplane_s;
-#define AngleIVectors mathlib::AngleVectorsTranspose
-
 namespace mathlib {
 	const float F_PI = 3.14159265358979323846f;
 	const double Q_PI = 3.14159265358979323846;
-	constexpr double DOUBLE_PI = 2 * 3.14159265358979323846;
+	const double DOUBLE_PI = 2 * 3.14159265358979323846;
 	const float COLINEAR_EPSILON = 0.001f;
 	const int MAX_PLAYER_NAME_LENGTH = 128;
 	const double RADIAN_PER_DEGREE = 57.29577951308232087684;
@@ -39,91 +24,118 @@ namespace mathlib {
 	const float FLAT_ANGLE = 180.0;
 	const vec3_t vecZero = { 0, 0, 0 };
 	const float METERS_PER_INCH = 0.0254f;
-	constexpr int nanmask = 255 << 23;
+	const int nanmask = 255 << 23;
+}
 
-	bool Q_IS_NAN(float x);
-	float Q_DEG2RAD(float a);
-	float Q_RAD2DEG(float r);
+struct mplane_s;
+#define AngleIVectors CCMathlib::AngleVectorsTranspose
+
+class CMathlib {
+public:
+	static bool Q_IS_NAN(float x);
+	static float Q_DEG2RAD(float a);
+	static float Q_RAD2DEG(float r);
+
+	static float RANDOM_FLOAT(float low, float high);
+	static int RANDOM_LONG(int low, int high);
+
+	enum{
+		Q_PITCH = 0,	// up / down
+		Q_YAW,		// left / right
+		Q_ROLL		// fall over
+	};
+
 	template<typename T>
-	T clamp(T num, T minn, T maxn);
-	float METER2INCH(float x);
-	float INCH2METER(float x);
-	void VectorSubtract(vec3_t a, vec3_t b, vec3_t c);
-	void VectorAdd(vec3_t a, vec3_t b, vec3_t c);
-	void VectorAddFloat(vec3_t a, float f);
-	void VectorMultipiler(vec3_t a, float f);
-	void VectorCopy(vec3_t a, vec3_t b);
-	void VectorReverse(vec3_t a);
-	void Q_Vector2Copy(vec2_t a, vec2_t b);
-	void VectorClear(vec3_t a);
-	float DotProduct(vec3_t x, vec3_t y);
-	float DotProduct(const vec3_t x, const vec3_t y);
-	void ColorCalcuAlpha(int& r, int& g, int& b, int a);
-	void Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa);
+	static T clamp(T val, T minVal, T maxVal){
+		if (val < minVal)
+			return minVal;
+		else if (val > maxVal)
+			return maxVal;
+		else
+			return val;
+	}
+	static float METER2INCH(float x);
+	static float INCH2METER(float x);
+	static void VectorSubtract(vec3_t a, vec3_t b, vec3_t c);
+	static void VectorAdd(vec3_t a, vec3_t b, vec3_t c);
+	static void VectorAddFloat(vec3_t a, float f);
+	static void VectorMultipiler(vec3_t a, float f);
+	static void VectorCopy(vec3_t a, vec3_t b);
+	static void VectorReverse(vec3_t a);
+	static void Q_Vector2Copy(vec2_t a, vec2_t b);
+	static void VectorClear(vec3_t a);
+	static float DotProduct(vec3_t x, vec3_t y);
+	static float DotProduct(const vec3_t x, const vec3_t y);
+	static void ColorCalcuAlpha(int& r, int& g, int& b, int a);
+	static void Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa);
 	template<typename T>
-	T max3(T a, T b, T c);
+	static T max3(T a, T b, T c) {
+		return (((a) > ((((b) > (c)) ? (b) : (c)))) ? (a) : ((((b) > (c)) ? (b) : (c))));
+	}
 	template<typename T>
-	T min3(T a, T b, T c);
+	static T min3(T a, T b, T c) {
+		return (((a) < ((((b) < (c)) ? (b) : (c)))) ? (a) : ((((b) < (c)) ? (b) : (c))));
+	}
 
-	void CenterPos2OpenGLPos(vec2_t pos, int w, int h);
-	size_t GetScreenPixel(int length, double percent);
-	void Vector2Rotate(vec2_t out, float x, float y, float rotate);
+	static void CenterPos2OpenGLPos(vec2_t pos, int w, int h);
+	static size_t GetScreenPixel(int length, double percent);
+	static void Vector2Rotate(vec2_t out, float x, float y, float rotate);
 
-	void MatrixCopy(float in[4][3], float out[4][3]);
-	void VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc);
+	static void MatrixCopy(float in[4][3], float out[4][3]);
+	static void VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc);
 
-	vec_t _DotProduct(vec3_t v1, vec3_t v2);
-	void _VectorSubtract(vec3_t veca, vec3_t vecb, vec3_t out);
-	void _VectorAdd(vec3_t veca, vec3_t vecb, vec3_t out);
-	void _VectorCopy(vec3_t in, vec3_t out);
+	static vec_t _DotProduct(vec3_t v1, vec3_t v2);
+	static void _VectorSubtract(vec3_t veca, vec3_t vecb, vec3_t out);
+	static void _VectorAdd(vec3_t veca, vec3_t vecb, vec3_t out);
+	static void _VectorCopy(vec3_t in, vec3_t out);
 
-	int VectorCompare(const vec3_t v1, const vec3_t v2);
-	float FVectorLength(vec3_t v);
-	double VectorLength(vec3_t v);
-	void CrossProduct(const vec3_t v1, const vec3_t v2, vec3_t cross);
-	float VectorNormalize(vec3_t v);
-	void VectorInverse(vec3_t v);
-	void VectorScale(const vec3_t in, vec_t scale, vec3_t out);
-	int Q_log2(int val);
-	void ClearBounds(vec3_t mins, vec3_t maxs);
-	void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
-	void PerpendicularVector(vec3_t dst, const vec3_t src);
-	vec_t Q_rint(vec_t in);
-	void _VectorScale(vec3_t v, vec_t scale, vec3_t out);
-	vec_t Length(const vec3_t v);
-	void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs);
-	void AngleIMatrix(const vec3_t angles, float matrix[3][4]);
-	void AngleQuaternion(const vec3_t angles, vec4_t quaternion);
-	void QuaternionMatrix(const vec4_t quaternion, float(*matrix)[4]);
-	void QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt);
-	void SinCos(float radians, float* sine, float* cosine);
+	static int VectorCompare(const vec3_t v1, const vec3_t v2);
+	static float FVectorLength(vec3_t v);
+	static double VectorLength(vec3_t v);
+	static void CrossProduct(const vec3_t v1, const vec3_t v2, vec3_t cross);
+	static float VectorNormalize(vec3_t v);
+	static void VectorInverse(vec3_t v);
+	static void VectorScale(const vec3_t in, vec_t scale, vec3_t out);
+	static int Q_log2(int val);
+	static void ClearBounds(vec3_t mins, vec3_t maxs);
+	static void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
+	static void PerpendicularVector(vec3_t dst, const vec3_t src);
+	static vec_t Q_rint(vec_t in);
+	static void _VectorScale(vec3_t v, vec_t scale, vec3_t out);
+	static vec_t Length(const vec3_t v);
+	static void AddPointToBounds(vec3_t v, vec3_t mins, vec3_t maxs);
+	static void AngleIMatrix(const vec3_t angles, float matrix[3][4]);
+	static void AngleQuaternion(const vec3_t angles, vec4_t quaternion);
+	static void QuaternionMatrix(const vec4_t quaternion, float(*matrix)[4]);
+	static void QuaternionSlerp(const vec4_t p, vec4_t q, float t, vec4_t qt);
+	static void SinCos(float radians, float* sine, float* cosine);
 
-	void R_ConcatRotations(float in1[3][3], float in2[3][3], float out[3][3]);
-	void R_ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
-	void Matrix4x4_CreateFromEntity(float out[4][4], const vec3_t angles, const vec3_t origin, float scale);
+	static void R_ConcatRotations(float in1[3][3], float in2[3][3], float out[3][3]);
+	static void R_ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
+	static void Matrix4x4_CreateFromEntity(float out[4][4], const vec3_t angles, const vec3_t origin, float scale);
 
-	void FloorDivMod(double numer, double denom, int* quotient, int* rem);
-	int GreatestCommonDivisor(int i1, int i2);
-	void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, float degrees);
+	static void FloorDivMod(double numer, double denom, int* quotient, int* rem);
+	static int GreatestCommonDivisor(int i1, int i2);
+	static void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, float degrees);
 
-	void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
-	void AngleVectorsTranspose(const vec3_t angles, vec3_t* forward, vec3_t* right, vec3_t* up);
-	void AngleMatrix(const vec3_t angles, float(*matrix)[4]);
-	void VectorTransform(const vec3_t in1, float in2[3][4], vec3_t out);
+	static void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
+	static void AngleVectorsTranspose(const vec3_t angles, vec3_t* forward, vec3_t* right, vec3_t* up);
+	static void AngleMatrix(const vec3_t angles, float(*matrix)[4]);
+	static void VectorTransform(const vec3_t in1, float in2[3][4], vec3_t out);
 
-	void VectorAngles(const vec3_t forward, vec3_t angles);
+	static void VectorAngles(const vec3_t forward, vec3_t angles);
 
-	int InvertMatrix(const float* m, float* out);
+	static int InvertMatrix(const float* m, float* out);
 
-	void Matrix4x4_ConcatTransforms(float out[4][4], float in1[4][4], float in2[4][4]);
+	static void Matrix4x4_ConcatTransforms(float out[4][4], float in1[4][4], float in2[4][4]);
 
-	void VectorRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
-	void VectorIRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
+	static void VectorRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
+	static void VectorIRotate(const vec3_t in1, const float in2[3][4], vec3_t out);
 
-	bool PointInPolygen(vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int x, int y);
-	float anglemod(float a);
+	static bool PointInPolygen(vec2_t p1, vec2_t p2, vec2_t p3, vec2_t p4, int x, int y);
+	static float anglemod(float a);
 
-	void ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
-	void RGBToHSV(int r, int g, int b, float& h, float& s, float& v);
-	void HSVToRGB(float h, float s, float v, int& r, int& g, int& b);
+	static void ConcatTransforms(float in1[3][4], float in2[3][4], float out[3][4]);
+	static void RGBToHSV(int r, int g, int b, float& h, float& s, float& v);
+	static void HSVToRGB(float h, float s, float v, int& r, int& g, int& b);
 };

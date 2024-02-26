@@ -329,12 +329,12 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 			//视角角度
 			CVector vecView;
 			gEngfuncs.GetViewAngles(vecView);
-			mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
+			CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 			//计算我和目标的相对偏移
 			CVector vecLength;
-			mathlib::VectorSubtract(vecOrigin, local->curstate.origin, vecLength);
+			CMathlib::VectorSubtract(vecOrigin, local->curstate.origin, vecLength);
 			vecLength = vecLength.Normalize();
-			float angledotResult = mathlib::DotProduct(vecLength, vecView);
+			float angledotResult = CMathlib::DotProduct(vecLength, vecView);
 			//cos 60
 			if (angledotResult > 0.5)
 				g_pViewPort->AddPopNumber(vecOrigin, pColor, iValue);

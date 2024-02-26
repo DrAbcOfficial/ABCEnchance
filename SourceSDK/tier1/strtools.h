@@ -299,6 +299,9 @@ void V_FixDoubleSlashes( char *pStr );
 void V_strtowcs( const char *pString, int nInSize, wchar_t *pWString, int nOutSize );
 void V_wcstostr( const wchar_t *pWString, int nInSize, char *pString, int nOutSize );
 
+bool Q_StripPrecedingAndTrailingWhitespace(char* pch);
+bool Q_StripPrecedingAndTrailingWhitespace(wchar_t* pch);
+
 // buffer-safe strcat
 inline void V_strcat( char *dest, const char *src, int cchDest )
 {
@@ -377,30 +380,6 @@ bool V_GenerateUniqueName( char *name, int memsize, const char *prefix, const Na
 	V_snprintf( name, memsize, "%s%d", prefix, i );
 	return true;
 }
-
-//-----------------------------------------------------------------------------
-// Purpose: returns true if a wide character is a "mean" space; that is,
-//			if it is technically a space or punctuation, but causes disruptive
-//			behavior when used in names, web pages, chat windows, etc.
-//
-//			characters in this set are removed from the beginning and/or end of strings
-//			by Q_AggressiveStripPrecedingAndTrailingWhitespaceW() 
-//-----------------------------------------------------------------------------
-bool Q_IsMeanSpaceW(wchar_t wch);
-//-----------------------------------------------------------------------------
-// Purpose: strips trailing whitespace; returns pointer inside string just past
-// any leading whitespace.
-//
-// bAggresive = true causes this function to also check for "mean" spaces,
-// which we don't want in persona names or chat strings as they're disruptive
-// to the user experience.
-//-----------------------------------------------------------------------------
-static wchar_t* StripWhitespaceWorker(int cchLength, wchar_t* pwch, bool* pbStrippedWhitespace, bool bAggressive);
-//-----------------------------------------------------------------------------
-// Purpose: strips leading and trailing whitespace
-//-----------------------------------------------------------------------------
-bool Q_StripPrecedingAndTrailingWhitespace(char* pch);
-bool Q_StripPrecedingAndTrailingWhitespace(wchar_t* pch);
 
 
 

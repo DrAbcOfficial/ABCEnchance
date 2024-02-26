@@ -103,14 +103,14 @@ void CGenadeIndicatorPanel::PaintBackground(){
 	//视角角度
 	CVector vecView;
 	gEngfuncs.GetViewAngles(vecView);
-	mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
+	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 	for (auto it = m_aryImages.begin(); it != m_aryImages.end(); it++) {
 		CGIndicatorItem* img = (*it);
 		//计算我和目标的相对偏移
 		CVector vecLength;
-		mathlib::VectorSubtract(img->GetEnt()->curstate.origin, local->curstate.origin, vecLength);
+		CMathlib::VectorSubtract(img->GetEnt()->curstate.origin, local->curstate.origin, vecLength);
 		vecLength = vecLength.Normalize();
-		float angledotResult = mathlib::DotProduct(vecLength, vecView);
+		float angledotResult = CMathlib::DotProduct(vecLength, vecView);
 		//cos 60
 		if (angledotResult > 0.5) {
 			CVector vecHUD;
@@ -134,7 +134,7 @@ void CGenadeIndicatorPanel::AddEntity(cl_entity_s* ent, const char* modelname){
 	if (ent->curstate.messagenum != local->curstate.messagenum)
 		return;
 	CVector len;
-	mathlib::VectorSubtract(local->curstate.origin, ent->curstate.origin, len);
+	CMathlib::VectorSubtract(local->curstate.origin, ent->curstate.origin, len);
 	if (len.FLength() > gCVars.pGrenadeIndicatorRange->value)
 		return;
 	if (std::none_of(m_aryImages.begin(), m_aryImages.end(), [ent](CGIndicatorItem* v) {

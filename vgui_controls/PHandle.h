@@ -17,69 +17,75 @@
 namespace vgui
 {
 
-class Panel;
+	class Panel;
 
-//-----------------------------------------------------------------------------
-// Purpose: Safe pointer class for handling Panel or derived panel classes
-//-----------------------------------------------------------------------------
-class PHandle
-{
-public:
-	PHandle() : m_iPanelID(INVALID_PANEL) {} //m_iSerialNumber(0), m_pListEntry(0) {}
+	//-----------------------------------------------------------------------------
+	// Purpose: Safe pointer class for handling Panel or derived panel classes
+	//-----------------------------------------------------------------------------
+	class PHandle
+	{
+	public:
+		PHandle() : m_iPanelID(INVALID_PANEL) {} //m_iSerialNumber(0), m_pListEntry(0) {}
 
-	Panel *Get();
-	Panel *Set( Panel *pPanel );
-	Panel *Set( HPanel hPanel );
+		Panel* Get();
+		Panel* Set(Panel* pPanel);
+		Panel* Set(HPanel hPanel);
 
-	operator Panel *()						{ return Get(); }
-	Panel * operator ->()					{ return Get(); }
-	Panel * operator = (Panel *pPanel)		{ return Set(pPanel); }
+		//Added: inter-module operation
+		Panel* GetWithControlModuleName(const char* szControlModuleName);
 
-	bool operator == (Panel *pPanel)		{ return (Get() == pPanel); }
-	operator bool ()						{ return Get() != 0; }
+		operator Panel* () { return Get(); }
+		Panel* operator ->() { return Get(); }
+		Panel* operator = (Panel* pPanel) { return Set(pPanel); }
 
-private:
-	HPanel m_iPanelID;
-};
+		//remove any ambiguity
+		bool operator == (const PHandle& other) const { return m_iPanelID == other.m_iPanelID; }
 
-//-----------------------------------------------------------------------------
-// Purpose: Safe pointer class to just convert between VPANEL's and PHandle
-//-----------------------------------------------------------------------------
-class VPanelHandle
-{
-public:
-	VPanelHandle() : m_iPanelID(INVALID_PANEL) {}
+		//bool operator == (Panel *pPanel)		{ return (Get() == pPanel); }
+		operator bool() { return Get() != 0; }
 
-	VPANEL Get();
-	VPANEL Set( VPANEL pPanel );
+	private:
+		HPanel m_iPanelID;
+	};
 
-	operator VPANEL ()						{ return Get(); }
-	VPANEL operator = (VPANEL pPanel)		{ return Set(pPanel); }
+	//-----------------------------------------------------------------------------
+	// Purpose: Safe pointer class to just convert between VPANEL's and PHandle
+	//-----------------------------------------------------------------------------
+	class VPanelHandle
+	{
+	public:
+		VPanelHandle() : m_iPanelID(INVALID_PANEL) {}
 
-	bool operator == (VPANEL pPanel)		{ return (Get() == pPanel); }
-	operator bool ()						{ return Get() != 0; }
+		VPANEL Get();
+		VPANEL Set(VPANEL pPanel);
 
-private:
-	HPanel m_iPanelID;
-};
+		operator VPANEL () { return Get(); }
+		VPANEL operator = (VPANEL pPanel) { return Set(pPanel); }
 
-//-----------------------------------------------------------------------------
-// Purpose: DHANDLE is a templated version of PHandle
-//-----------------------------------------------------------------------------
-template< class PanelType >
-class DHANDLE : public PHandle
-{
-public:
-	PanelType *Get()					{ return (PanelType *)PHandle::Get(); }
-	PanelType *Set( PanelType *pPanel )	{ return (PanelType *)PHandle::Set(pPanel); }
-	PanelType *Set( HPanel hPanel )		{ return (PanelType *)PHandle::Set(hPanel); }
+		bool operator == (VPANEL pPanel) { return (Get() == pPanel); }
+		operator bool() { return Get() != 0; }
 
-	operator PanelType *()						{ return (PanelType *)PHandle::Get(); }
-	PanelType * operator ->()					{ return (PanelType *)PHandle::Get(); }
-	PanelType * operator = (PanelType *pPanel)	{ return (PanelType *)PHandle::Set(pPanel); }
-	bool operator == (Panel *pPanel)			{ return (PHandle::Get() == pPanel); }
-	operator bool ()							{ return PHandle::Get() != NULL; }
-};
+	private:
+		HPanel m_iPanelID;
+	};
+
+	//-----------------------------------------------------------------------------
+	// Purpose: DHANDLE is a templated version of PHandle
+	//-----------------------------------------------------------------------------
+	template< class PanelType >
+	class DHANDLE : public PHandle
+	{
+	public:
+		PanelType* Get() { return (PanelType*)PHandle::Get(); }
+		PanelType* Set(PanelType* pPanel) { return (PanelType*)PHandle::Set(pPanel); }
+		PanelType* Set(HPanel hPanel) { return (PanelType*)PHandle::Set(hPanel); }
+
+		operator PanelType* () { return (PanelType*)PHandle::Get(); }
+		PanelType* operator ->() { return (PanelType*)PHandle::Get(); }
+		PanelType* operator = (PanelType* pPanel) { return (PanelType*)PHandle::Set(pPanel); }
+		bool operator == (Panel* pPanel) { return (PHandle::Get() == pPanel); }
+		operator bool() { return PHandle::Get() != NULL; }
+	};
 
 };
 

@@ -8,7 +8,7 @@
 
 IVGUI2Extension* g_pVGUI2Extension = nullptr;
 IDpiManager* g_pDpiManager = nullptr;
-vgui::ISchemeManager2* g_pVGuiSchemeManager = nullptr;
+vgui::ISchemeManager2* g_pVGuiSchemeManager2 = nullptr;
 vgui::ISurface2* g_pVGuiSurface = nullptr;
 vgui::IInput2* g_pVGuiInput2 = nullptr;
 
@@ -32,7 +32,7 @@ void VGUI2Extension_Init()
 	LOAD_FROM_EXTENSION(g_pVGUI2Extension, VGUI2_EXTENSION_INTERFACE_VERSION);
 	LOAD_FROM_EXTENSION(g_pDpiManager, DPI_MANAGER_INTERFACE_VERSION);
 	LOAD_FROM_EXTENSION(g_pVGuiSurface, VGUI_SURFACE2_INTERFACE_VERSION);
-	LOAD_FROM_EXTENSION(g_pVGuiSchemeManager, VGUI_SCHEME2_INTERFACE_VERSION);
+	LOAD_FROM_EXTENSION(g_pVGuiSchemeManager2, VGUI_SCHEME2_INTERFACE_VERSION);
 	LOAD_FROM_EXTENSION(g_pVGuiInput2, VGUI_INPUT2_INTERFACE_VERSION);
 #undef LOAD_FROM_EXTENSION
 }

@@ -10,8 +10,6 @@
 #include "local.h"
 #include "vguilocal.h"
 
-#include "mymathlib.h"
-
 #include "sidetext.h"
 #include "Viewport.h"
 
