@@ -16,7 +16,7 @@
 		"keep_time"		"5.0"
 		"fadein_time"	"0.1"
 		"fadeout_time"	"0.3"
-		"item_tall"	"40"
+		"item_tall"	"30"
 		"item_wide"	"120"
 		"stack_gap"		"2"
 	}
