@@ -1,5 +1,4 @@
 ﻿#include <vector>
-#include <future>
 #include <atomic>
 
 #include "plugins.h"
