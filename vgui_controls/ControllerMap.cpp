@@ -24,7 +24,7 @@ struct keystring_t
 };
 
 static keystring_t s_ControllerButtons[] = {
-	{NULL, ""},
+	{NULL, (char*)""},
 };
 
 //static keystring_t s_ControllerButtons[] = {	{ KEY_XBUTTON_UP,				"KEY_XBUTTON_UP" },

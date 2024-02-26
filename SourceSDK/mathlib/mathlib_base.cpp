@@ -31,7 +31,7 @@
 #include "ssequaternion.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
-//#include <tier0/memdbgon.h>
+#include <tier0/memdbgon.h>
 
 bool s_bMathlibInitialized = false;
 
@@ -1044,7 +1044,7 @@ void MatrixBuildRotationAboutAxis( const Vector &vAxisOfRot, float angleDegrees,
 //-----------------------------------------------------------------------------
 void MatrixTranspose( matrix3x4_t& mat )
 {
-	v_vec_t tmp;
+	vec_t tmp;
 	tmp = mat[0][1]; mat[0][1] = mat[1][0]; mat[1][0] = tmp;
 	tmp = mat[0][2]; mat[0][2] = mat[2][0]; mat[2][0] = tmp;
 	tmp = mat[1][2]; mat[1][2] = mat[2][1]; mat[2][1] = tmp;
@@ -1190,7 +1190,7 @@ void AddPointToBounds (const Vector& v, Vector& mins, Vector& maxs)
 {
 	Assert( s_bMathlibInitialized );
 	int		i;
-	v_vec_t	val;
+	vec_t	val;
 
 	for (i=0 ; i<3 ; i++)
 	{
@@ -3023,7 +3023,7 @@ void CalcClosestPointOnLineSegment( const Vector &P, const Vector &vLineA, const
 {
 	Vector vDir;
 	float t = CalcClosestPointToLineT( P, vLineA, vLineB, vDir );
-	t = v_clamp( t, 0, 1 );
+	t = clamp( t, 0, 1 );
 	if ( outT ) 
 	{
 		*outT = t;
@@ -3095,7 +3095,7 @@ void CalcClosestPointOnLineSegment2D( const Vector2D &P, const Vector2D &vLineA,
 {
 	Vector2D vDir;
 	float t = CalcClosestPointToLineT2D( P, vLineA, vLineB, vDir );
-	t = v_clamp( t, 0, 1 );
+	t = clamp( t, 0, 1 );
 	if ( outT )
 	{
 		*outT = t;
@@ -3471,7 +3471,7 @@ void ComputeTrianglePlane( const Vector& v1, const Vector& v2, const Vector& v3,
 int PolyFromPlane( Vector *outVerts, const Vector& normal, float dist, float fHalfScale )
 {
 	int		i, x;
-	v_vec_t	max, v;
+	vec_t	max, v;
 	Vector	org, vright, vup;
 
 	// find the major axis
@@ -3548,10 +3548,10 @@ int PolyFromPlane( Vector *outVerts, const Vector& normal, float dist, float fHa
 
 int ClipPolyToPlane( Vector *inVerts, int vertCount, Vector *outVerts, const Vector& normal, float dist, float fOnPlaneEpsilon )
 {
-	v_vec_t	*dists = (v_vec_t *)stackalloc( sizeof(v_vec_t) * vertCount * 4 ); //4x vertcount should cover all cases
-	int		*sides = (int *)stackalloc( sizeof(v_vec_t) * vertCount * 4 );
+	vec_t	*dists = (vec_t *)stackalloc( sizeof(vec_t) * vertCount * 4 ); //4x vertcount should cover all cases
+	int		*sides = (int *)stackalloc( sizeof(vec_t) * vertCount * 4 );
 	int		counts[3];
-	v_vec_t	dot;
+	vec_t	dot;
 	int		i, j;
 	Vector	mid = vec3_origin;
 	int		outCount;

@@ -213,9 +213,9 @@ public:
 		GetNeteaseUserInfo();
 	}
 	void GetNeteaseUserInfo() {
-		GetTaskManager()->Add(std::async([]() {
+		GetTaskManager()->Add<std::shared_ptr<netease::CMy>>([](){
 			return GetNeteaseApi().load()->GetMyself();
-		}))->ContinueWith([](std::shared_ptr<netease::CMy> info, CNeteaseUserInfo* pInfoPanel, CNeteaseUserButton* pButton) {
+		})->ContinueWith([](std::shared_ptr<netease::CMy> info, CNeteaseUserInfo* pInfoPanel, CNeteaseUserButton* pButton) {
 			if (info)
 				pButton->SetText(info->name.c_str());
 			else

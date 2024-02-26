@@ -39,18 +39,18 @@ void CHudCCTV::GLInit() {
 int CHudCCTV::Init(){
 	gCVars.pCCTV = CREATE_CVAR("cl_cctvlogo", "0", FCVAR_VALUE, nullptr);
 
-	DownLogoStartX = mathlib::GetScreenPixel(ScreenWidth(), DOWN_LOGO_STARTX);
-	DownLogoStartY = mathlib::GetScreenPixel(ScreenHeight(), DOWN_LOGO_STARTY);
-	DownLogoSize = mathlib::GetScreenPixel(ScreenHeight(), DOWN_LOGO_SIZE);
+	DownLogoStartX = CMathlib::GetScreenPixel(ScreenWidth(), DOWN_LOGO_STARTX);
+	DownLogoStartY = CMathlib::GetScreenPixel(ScreenHeight(), DOWN_LOGO_STARTY);
+	DownLogoSize = CMathlib::GetScreenPixel(ScreenHeight(), DOWN_LOGO_SIZE);
 
-	LogoStartX = mathlib::GetScreenPixel(ScreenWidth(), LOGO_STARTX);
-	LogoStartY = mathlib::GetScreenPixel(ScreenHeight(), LOGO_STARTY);
-	LogoWidth = mathlib::GetScreenPixel(ScreenWidth(), LOGO_WIDTH);
-	LogoHeight = mathlib::GetScreenPixel(ScreenHeight(), LOGO_HEIGHT);
-	TileStartX = mathlib::GetScreenPixel(ScreenWidth(), TILE_STARTX);
-	TileStartY = mathlib::GetScreenPixel(ScreenHeight(), TILE_STARTY);
-	TileWidth = mathlib::GetScreenPixel(ScreenWidth(), TILE_WIDHT);
-	TileHeight = mathlib::GetScreenPixel(ScreenHeight(), TILE_HEIGHT);
+	LogoStartX = CMathlib::GetScreenPixel(ScreenWidth(), LOGO_STARTX);
+	LogoStartY = CMathlib::GetScreenPixel(ScreenHeight(), LOGO_STARTY);
+	LogoWidth = CMathlib::GetScreenPixel(ScreenWidth(), LOGO_WIDTH);
+	LogoHeight = CMathlib::GetScreenPixel(ScreenHeight(), LOGO_HEIGHT);
+	TileStartX = CMathlib::GetScreenPixel(ScreenWidth(), TILE_STARTX);
+	TileStartY = CMathlib::GetScreenPixel(ScreenHeight(), TILE_STARTY);
+	TileWidth = CMathlib::GetScreenPixel(ScreenWidth(), TILE_WIDHT);
+	TileHeight = CMathlib::GetScreenPixel(ScreenHeight(), TILE_HEIGHT);
 	Reset();
 	return 0;
 }

@@ -19,6 +19,8 @@
 
 #include "ModelViewPanel.h"
 
+#undef clamp
+
 using namespace vgui;
 
 class IStudioModel {
@@ -548,15 +550,15 @@ private:
 			}
 		}
 
-		if (!mathlib::VectorCompare(angle1, angle2))
+		if (!CMathlib::VectorCompare(angle1, angle2))
 		{
-			mathlib::AngleQuaternion(angle1, q1);
-			mathlib::AngleQuaternion(angle2, q2);
-			mathlib::QuaternionSlerp(q1, q2, s, q);
+			CMathlib::AngleQuaternion(angle1, q1);
+			CMathlib::AngleQuaternion(angle2, q2);
+			CMathlib::QuaternionSlerp(q1, q2, s, q);
 		}
 		else
 		{
-			mathlib::AngleQuaternion(angle1, q);
+			CMathlib::AngleQuaternion(angle1, q);
 		}
 	}
 	void CalcBonePosition(int frame, float s, mstudiobone_t* pbone, mstudioanim_t* panim, float* pos) {
@@ -667,7 +669,7 @@ private:
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		for (i = 0; i < hdr->numbones; i++)
 		{
-			mathlib::QuaternionSlerp(q1[i], q2[i], s, q3);
+			CMathlib::QuaternionSlerp(q1[i], q2[i], s, q3);
 			q1[i][0] = q3[0];
 			q1[i][1] = q3[1];
 			q1[i][2] = q3[2];
@@ -736,7 +738,7 @@ private:
 		pbones = (mstudiobone_t*)((byte*)hdr + hdr->boneindex);
 
 		for (i = 0; i < hdr->numbones; i++) {
-			mathlib::QuaternionMatrix(q[i], bonematrix);
+			CMathlib::QuaternionMatrix(q[i], bonematrix);
 
 			bonematrix[0][3] = pos[i][0];
 			bonematrix[1][3] = pos[i][1];
@@ -746,7 +748,7 @@ private:
 				memcpy(m_bonetransform[i], bonematrix, sizeof(float) * 12);
 			}
 			else {
-				mathlib::R_ConcatTransforms(m_bonetransform[pbones[i].parent], bonematrix, m_bonetransform[i]);
+				CMathlib::R_ConcatTransforms(m_bonetransform[pbones[i].parent], bonematrix, m_bonetransform[i]);
 			}
 		}
 	}
@@ -781,7 +783,7 @@ private:
 
 		for (i = 0; i < m_pmodel->numverts; i++)
 		{
-			mathlib::VectorTransform(pstudioverts[i], m_bonetransform[pvertbone[i]], m_pxformverts[i]);
+			CMathlib::VectorTransform(pstudioverts[i], m_bonetransform[pvertbone[i]], m_pxformverts[i]);
 		}
 
 		//
@@ -893,7 +895,7 @@ private:
 		else
 		{
 			float r;
-			lightcos = mathlib::DotProduct(normal, m_blightvec[bone]); // -1 colinear, 1 opposite
+			lightcos = CMathlib::DotProduct(normal, m_blightvec[bone]); // -1 colinear, 1 opposite
 
 			if (lightcos > 1.0)
 				lightcos = 1;
@@ -925,28 +927,28 @@ private:
 			vec3_t chromeupvec;		// g_chrome t vector in world reference frame
 			vec3_t chromerightvec;	// g_chrome s vector in world reference frame
 			vec3_t tmp;				// vector pointing at bone in world reference frame
-			mathlib::VectorScale(m_origin, -1, tmp);
+			CMathlib::VectorScale(m_origin, -1, tmp);
 			tmp[0] += m_bonetransform[bone][0][3];
 			tmp[1] += m_bonetransform[bone][1][3];
 			tmp[2] += m_bonetransform[bone][2][3];
-			mathlib::VectorNormalize(tmp);
-			mathlib::CrossProduct(tmp, m_vright, chromeupvec);
-			mathlib::VectorNormalize(chromeupvec);
-			mathlib::CrossProduct(tmp, chromeupvec, chromerightvec);
-			mathlib::VectorNormalize(chromerightvec);
+			CMathlib::VectorNormalize(tmp);
+			CMathlib::CrossProduct(tmp, m_vright, chromeupvec);
+			CMathlib::VectorNormalize(chromeupvec);
+			CMathlib::CrossProduct(tmp, chromeupvec, chromerightvec);
+			CMathlib::VectorNormalize(chromerightvec);
 
-			mathlib::VectorIRotate(chromeupvec, m_bonetransform[bone], m_chromeup[bone]);
-			mathlib::VectorIRotate(chromerightvec, m_bonetransform[bone], m_chromeright[bone]);
+			CMathlib::VectorIRotate(chromeupvec, m_bonetransform[bone], m_chromeup[bone]);
+			CMathlib::VectorIRotate(chromerightvec, m_bonetransform[bone], m_chromeright[bone]);
 
 			m_chromeage[bone] = m_smodels_total;
 		}
 
 		// calc s coord
-		n = mathlib::DotProduct(normal, m_chromeright[bone]);
+		n = CMathlib::DotProduct(normal, m_chromeright[bone]);
 		pchrome[0] = (n + 1.0) * 32; // FIX: make this a float
 
 		// calc t coord
-		n = mathlib::DotProduct(normal, m_chromeup[bone]);
+		n = CMathlib::DotProduct(normal, m_chromeup[bone]);
 		pchrome[1] = (n + 1.0) * 32; // FIX: make this a float
 	}
 	void SetupLighting(void) {
@@ -955,7 +957,7 @@ private:
 		auto hdr = GetStudioHdr(m_pstudiomdl);
 		// TODO: only do it for bones that actually have textures
 		for (int i = 0; i < hdr->numbones; i++){
-			mathlib::VectorIRotate(m_lightvec, m_bonetransform[i], m_blightvec[i]);
+			CMathlib::VectorIRotate(m_lightvec, m_bonetransform[i], m_blightvec[i]);
 		}
 	}
 	void SetupModel(int bodypart) {
@@ -1166,22 +1168,22 @@ void vgui::ModelViewPanel::SetBodygroup(int group, int body){
 	m_Renderer->SetBodygroup(group, body);
 }
 float vgui::ModelViewPanel::GetBlend(int blend){
-	int idx = mathlib::clamp(blend, 0, 1);
+	int idx = CMathlib::clamp(blend, 0, 1);
 	return m_aryBlend[idx].m_flValue;
 }
 void vgui::ModelViewPanel::SetBlend(int blend, float value){
-	int idx = mathlib::clamp(blend, 0, 1);
+	int idx = CMathlib::clamp(blend, 0, 1);
 	m_aryBlend[idx].m_iIdx = idx;
 	m_aryBlend[idx].m_flValue = value;
 	m_Renderer->SetBlending(idx, value);
 }
 float vgui::ModelViewPanel::GetController(int idx){
-	int i = mathlib::clamp(idx, 0, 3);
+	int i = CMathlib::clamp(idx, 0, 3);
 	return m_aryController[i].m_flValue;
 }
 
 void vgui::ModelViewPanel::SetController(int idx, float value){
-	int i = mathlib::clamp(idx, 0, 3);
+	int i = CMathlib::clamp(idx, 0, 3);
 	m_aryController[i].m_iIdx = idx;
 	m_aryController[i].m_flValue = value;
 	m_Renderer->SetController(i, value);

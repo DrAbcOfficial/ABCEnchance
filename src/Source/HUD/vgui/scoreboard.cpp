@@ -910,7 +910,7 @@ Color CScorePanel::GetPlayerBgColor(CPlayerInfo* pi)
 
 int CScorePanel::GetClientIconSize()
 {
-	return mathlib::clamp(m_pPlayerList->GetLineSpacing() - 2, 0, 32);
+	return CMathlib::clamp(m_pPlayerList->GetLineSpacing() - 2, 0, 32);
 }
 
 void CScorePanel::CreatePlayerMenu(){
@@ -1046,7 +1046,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 
 CScorePanel::SizeMode CScorePanel::GetSizeMode()
 {
-	return (SizeMode)mathlib::clamp((int)hud_scoreboard_size->value, 0, 2);
+	return (SizeMode)CMathlib::clamp((int)hud_scoreboard_size->value, 0, 2);
 }
 
 int CScorePanel::GetLineSpacingForHeight(int h)

@@ -210,11 +210,11 @@ std::time_t ToTimeT(TP tp){
 		+ system_clock::now());
 	return system_clock::to_time_t(sctp);
 }
-bool WildMatch(const std::string& str, const std::string& pat) {
-	const char* str_ptr = str.c_str();
-	const char* pat_ptr = pat.c_str();
-	const char* star_ptr = nullptr;
-	const char* match_ptr = nullptr;
+bool WildMatch(const std::u8string& str, const std::u8string& pat) {
+	const char8_t* str_ptr = str.c_str();
+	const char8_t* pat_ptr = pat.c_str();
+	const char8_t* star_ptr = nullptr;
+	const char8_t* match_ptr = nullptr;
 	while (*str_ptr) {
 		if (*pat_ptr == '?' || *str_ptr == *pat_ptr) {
 			str_ptr++;
@@ -1135,7 +1135,7 @@ void FileOpenDialog::PopulateFileList()
 		// add wildcard for search
 		Q_strncpy(filterList, "*\0", MAX_FILTER_LENGTH);
 
-	std::vector<std::string> aryFilters = {};
+	std::vector<std::u8string> aryFilters = {};
 	char* filterPtr = filterList;
 	if (m_DialogType != FOD_SELECT_DIRECTORY){
 		while ((filterPtr != NULL) && (*filterPtr != 0)){
@@ -1152,21 +1152,21 @@ void FileOpenDialog::PopulateFileList()
 			curFilter[i] = 0;
 			if (curFilter[0] == 0)
 				break;
-			aryFilters.push_back(curFilter);
+			aryFilters.push_back(std::u8string(reinterpret_cast<char8_t*>(curFilter), std::strlen(curFilter)));
 		}
 	}
 	// find all the directories
 	KeyValues* kv = new KeyValues("item");
 	for(auto& iter : dirIterator){
-		std::string dirname = iter.path().filename().u8string();
+		std::u8string dirname = iter.path().filename().u8string();
 		if (!iter.is_directory()) {
-			std::string extension = iter.path().extension().u8string();
+			std::u8string extension = iter.path().extension().u8string();
 			if (aryFilters.size() > 0) {
 				std::transform(extension.begin(), extension.end(), extension.begin(), static_cast<int(*)(int)>(std::tolower));
-				if (std::find_if(aryFilters.begin(), aryFilters.end(), [&extension](std::string& a) -> bool {return WildMatch(extension, a); }) == aryFilters.end())
+				if (std::find_if(aryFilters.begin(), aryFilters.end(), [&extension](std::u8string& a) -> bool {return WildMatch(extension, a); }) == aryFilters.end())
 					continue;
 			}
-			IImage* image = surface()->GetIconImageForFullPath(iter.path().u8string().c_str());
+			IImage* image = surface()->GetIconImageForFullPath(iter.path().string().c_str());
 			if (image)
 				kv->SetPtr("iconImage", (void*)image);
 			kv->SetInt("image", 1);
@@ -1174,7 +1174,7 @@ void FileOpenDialog::PopulateFileList()
 			kv->SetInt("directory", 0);
 			kv->SetString("filesize", Q_pretifymem(iter.file_size(), 0, true));
 			char icon[64];
-			GetFileDescriptionByExtension(extension.c_str(), icon);
+			GetFileDescriptionByExtension(reinterpret_cast<const char*>(extension.c_str()), icon);
 			kv->SetString("type", icon);
 		}
 		else {
@@ -1188,7 +1188,7 @@ void FileOpenDialog::PopulateFileList()
 				kv->SetString("type", "#FileOpenDialog_FileType_Folder");
 			}
 		}
-		kv->SetString("text", dirname.c_str());
+		kv->SetString("text", reinterpret_cast<const char*>(dirname.c_str()));
 		bool filewritable = (iter.status().permissions() & fs::perms::owner_write) == fs::perms::others_write;
 		kv->SetString("attributes", filewritable ? "WR" : "R");
 		std::time_t tt = ToTimeT(iter.last_write_time());

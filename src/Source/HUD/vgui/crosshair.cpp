@@ -5,22 +5,22 @@
 #include "triangleapi.h"
 #include <pm_defs.h>
 
+#include "ammobar.h"
+#include <vgui/ILocalize.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
-#include <vgui/ILocalize.h>
-#include <vgui_controls/spr_image.h>
-#include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/AnimationController.h>
-#include "ammobar.h"
+#include <vgui_controls/ImagePanel.h>
+#include <vgui_controls/spr_image.h>
 
+#include "CVector.h"
 #include "hud.h"
 #include "local.h"
 #include "vguilocal.h"
-#include <CVector.h>
 
 #include "mymathlib.h"
-#include <weapon.h>
 #include "Viewport.h"
+#include "weapon.h"
 
 #include "crosshair.h"
 #include <exportfuncs.h>
@@ -119,7 +119,7 @@ void CCrosshairPanel::OnThink() {
 		CVector vViewAngleForward;
 		gEngfuncs.GetViewAngles(vViewAngleForward);
 		cl_entity_s* local = gEngfuncs.GetLocalPlayer();
-		mathlib::AngleVectors(vViewAngleForward, vViewAngleForward, nullptr, nullptr);
+		CMathlib::AngleVectors(vViewAngleForward, vViewAngleForward, nullptr, nullptr);
 		CVector vecSrc = local->curstate.origin;
 		CVector viewOfs;
 		gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);

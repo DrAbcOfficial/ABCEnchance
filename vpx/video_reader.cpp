@@ -13,8 +13,8 @@
 #include "video_reader.h"
 #include "memle.h"
 
-extern void ConsoleWarnMessage(char* format, ...);
-constexpr char *const kIVFSignature = "DKIF";
+extern void ConsoleWarnMessage(const char* format, ...);
+const char const kIVFSignature[] = "DKIF";
 
 CIVFVideoReader::CIVFVideoReader(){
 }

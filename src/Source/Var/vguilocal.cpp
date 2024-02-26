@@ -26,7 +26,7 @@ void VGUI_CREATE_NEWTGA_TEXTURE(int tex, const char* path){
 }
 
 size_t GET_SCREEN_PIXEL(bool h, const char* str){
-	return  mathlib::GetScreenPixel(h ? ScreenHeight() : ScreenWidth(), atof(pSchemeData->GetResourceString(str)));
+	return  CMathlib::GetScreenPixel(h ? ScreenHeight() : ScreenWidth(), atof(pSchemeData->GetResourceString(str)));
 }
 
 size_t ScreenHeight(){

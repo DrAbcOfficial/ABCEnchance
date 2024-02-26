@@ -244,7 +244,7 @@ void CUtlSortVector<T, LessFunc, BaseVector>::QuickSort(LessFunc& less, int nLow
 		ctx.m_pLessContext = m_pLessContext;
 		ctx.m_pLessFunc = &less;
 
-		qsort_s(Base(), Count(), sizeof(T), (QSortCompareFunc_t)&CUtlSortVector<T, LessFunc>::CompareHelper, &ctx);
+		qsort_s(BaseClass::Base(), BaseClass::Count(), sizeof(T), (QSortCompareFunc_t)&CUtlSortVector<T, LessFunc>::CompareHelper, &ctx);
 	}
 #else
 	typedef int(__cdecl* QSortCompareFunc_t)(const void*, const void*);

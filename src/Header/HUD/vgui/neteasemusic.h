@@ -24,7 +24,7 @@ namespace vgui {
 	class CQRLoginPanel : public Frame {
 	public:
 		DECLARE_CLASS_SIMPLE(CQRLoginPanel, Frame);
-		CQRLoginPanel(Panel* parent, char* name);
+		CQRLoginPanel(Panel* parent, const char* name);
 		void Login();
 		void ResetText();
 		void SendMyInfo();

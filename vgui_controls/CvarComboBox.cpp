@@ -1,4 +1,5 @@
 #include "cvardef.h"
+#include <mymathlib.h>
 
 #include "CvarComboBox.h"
 
@@ -7,10 +8,6 @@ using namespace vgui;
 extern float CVAR_GET_FLOAT(const char* x);
 extern void CVAR_SET_FLOAT(const char* x, float v);
 extern cvar_t* CVAR_GET_POINTER(const char* x);
-namespace mathlib {
-	template<typename T>
-	extern T clamp(T num, T minn, T maxn);
-}
 
 CCvarComboBox::CCvarComboBox(Panel *parent, const char *panelName, const char *text, int maxitem, char const *cvarname) : BaseClass(parent, panelName){
 	SetMouseInputEnabled(true);
@@ -67,7 +64,7 @@ void CCvarComboBox::Reset(void){
 		}
 	}
 	if(index < 0)
-		index = mathlib::clamp<int>(value, 0, m_pComboBox->GetItemCount() - 1);
+		index = CMathlib::clamp<int>(value, 0, m_pComboBox->GetItemCount() - 1);
 	m_iStartValue = index;
 	m_pComboBox->ActivateItem(index);
 }
@@ -85,7 +82,7 @@ int CCvarComboBox::AddItem(const wchar_t* itemText, const KeyValues* userData){
 }
 
 void CCvarComboBox::SetSelected(int select){
-	m_iStartValue = mathlib::clamp<int>(CVAR_GET_FLOAT(m_szCvarName), 0, m_pComboBox->GetItemCount() - 1);
+	m_iStartValue = CMathlib::clamp<int>(CVAR_GET_FLOAT(m_szCvarName), 0, m_pComboBox->GetItemCount() - 1);
 	m_pComboBox->ActivateItem(m_iStartValue);
 	PostActionSignal(new KeyValues("SelectChange", "select", select));
 }

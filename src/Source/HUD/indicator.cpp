@@ -54,12 +54,12 @@ void CHudIndicator::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDif
 	vec3_t hsv,thsv;
 	int tr, tg, tb, ta;
 	c->GetColor(tr, tg, tb, ta);
-	mathlib::RGBToHSV(r, g, b, hsv[0], hsv[1], hsv[2]);
-	mathlib::RGBToHSV(tr, tg, tb, thsv[0], thsv[1], thsv[2]);
+	CMathlib::RGBToHSV(r, g, b, hsv[0], hsv[1], hsv[2]);
+	CMathlib::RGBToHSV(tr, tg, tb, thsv[0], thsv[1], thsv[2]);
 	for (size_t i = 0; i < 3; i++) {
 		thsv[i] -= (thsv[i] - hsv[i]) * timeDiffer / PainColorTime;
 	}
-	mathlib::HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
+	CMathlib::HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
 }
 int CHudIndicator::Draw(float flTime) {
 	if (gCustomHud.IsInSpectate())
@@ -73,7 +73,7 @@ void CHudIndicator::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
 	for (indicatorinfo_t& var : m_HudIndicator.aryIndicators) {
 		if (var.flKeepTime < flTime)
 			continue;
-		if (mathlib::VectorCompare(var.vecFrom, vecFrom)) {
+		if (CMathlib::VectorCompare(var.vecFrom, vecFrom)) {
 			var.flKeepTime = flTime + m_HudIndicator.PainColorTime;
 			return;
 		}
@@ -81,13 +81,13 @@ void CHudIndicator::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
 	if (gCVars.pDamageScreenFilter->value > 0) {
 		m_hScreenFilter.iDamage = dmg;
 		m_hScreenFilter.iArmor = armor;
-		mathlib::VectorCopy(vecFrom, m_hScreenFilter.vecFrom);
+		CMathlib::VectorCopy(vecFrom, m_hScreenFilter.vecFrom);
 		m_hScreenFilter.flKeepTime = gEngfuncs.GetClientTime() + ShockIndicatorTime;
 	}
 	indicatorinfo_t* pTarget = &aryIndicators[iNowSelectIndicator];
 	pTarget->iDamage = dmg;
 	pTarget->iArmor = armor;
-	mathlib::VectorCopy(vecFrom, pTarget->vecFrom);
+	CMathlib::VectorCopy(vecFrom, pTarget->vecFrom);
 	pTarget->flKeepTime = gEngfuncs.GetClientTime() + PainIndicatorTime;
 	iNowSelectIndicator++;
 	if (iNowSelectIndicator >= NUM_MAX_INDICATOR)
@@ -100,9 +100,9 @@ void CHudIndicator::CalcDamageDirection(indicatorinfo_s &var){
 	vecFinal[0] = var.vecFrom[0] - local->curstate.origin[0];
 	vecFinal[1] = var.vecFrom[1] - local->curstate.origin[1];
 	vecFinal[2] = var.vecFrom[2] - local->curstate.origin[2];
-	mathlib::VectorAngles(vecFinal, vecFinal);
-	vecFinal[Q_YAW] -= local->curstate.angles[Q_YAW];
-	float angle = mathlib::Q_DEG2RAD(vecFinal[Q_YAW]);
+	CMathlib::VectorAngles(vecFinal, vecFinal);
+	vecFinal[CMathlib::Q_YAW] -= local->curstate.angles[CMathlib::Q_YAW];
+	float angle = CMathlib::Q_DEG2RAD(vecFinal[CMathlib::Q_YAW]);
 	float ca = cos(angle);
 	float sa = sin(angle);
 	//以屏幕中心为坐标轴的坐标系
@@ -120,15 +120,15 @@ void CHudIndicator::CalcDamageDirection(indicatorinfo_s &var){
 	*/
 	//x2 = x1 * cos(alpha) - y1 * sin(alpha);
 	//y2 = x1 * sin(alpha) + y1 * cos(alpha);
-	mathlib::Vector2RotateCASA(var.vecHUDA, -sprWidth, y2, ca, sa);
-	mathlib::Vector2RotateCASA(var.vecHUDB, sprWidth, y2, ca, sa);
-	mathlib::Vector2RotateCASA(var.vecHUDC, -sprWidth, y1, ca, sa);
-	mathlib::Vector2RotateCASA(var.vecHUDD, sprWidth, y1, ca, sa);
+	CMathlib::Vector2RotateCASA(var.vecHUDA, -sprWidth, y2, ca, sa);
+	CMathlib::Vector2RotateCASA(var.vecHUDB, sprWidth, y2, ca, sa);
+	CMathlib::Vector2RotateCASA(var.vecHUDC, -sprWidth, y1, ca, sa);
+	CMathlib::Vector2RotateCASA(var.vecHUDD, sprWidth, y1, ca, sa);
 	//变换为OpenGL屏幕坐标
-	mathlib::CenterPos2OpenGLPos(var.vecHUDA, ScreenWidth(), ScreenHeight());
-	mathlib::CenterPos2OpenGLPos(var.vecHUDB, ScreenWidth(), ScreenHeight());
-	mathlib::CenterPos2OpenGLPos(var.vecHUDC, ScreenWidth(), ScreenHeight());
-	mathlib::CenterPos2OpenGLPos(var.vecHUDD, ScreenWidth(), ScreenHeight());
+	CMathlib::CenterPos2OpenGLPos(var.vecHUDA, ScreenWidth(), ScreenHeight());
+	CMathlib::CenterPos2OpenGLPos(var.vecHUDB, ScreenWidth(), ScreenHeight());
+	CMathlib::CenterPos2OpenGLPos(var.vecHUDC, ScreenWidth(), ScreenHeight());
+	CMathlib::CenterPos2OpenGLPos(var.vecHUDD, ScreenWidth(), ScreenHeight());
 }
 int CHudIndicator::DrawPain(float flTime){
 	int r, g, b, a;

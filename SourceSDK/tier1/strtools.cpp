@@ -73,7 +73,7 @@
 #if defined( _X360 )
 #include "xbox/xbox_win32stubs.h"
 #endif
-//#include <tier0/memdbgon.h>
+#include <tier0/memdbgon.h>
 
 void _V_memset (const char* file, int line, void *dest, int fill, int count)
 {
@@ -1441,94 +1441,6 @@ const char * V_GetFileExtension( const char * path )
 	return src;
 }
 
-
-bool V_RemoveDotSlashes(wchar_t* pFilename, wchar_t separator)
-{
-	// Remove '//' or '\\'
-	wchar_t* pIn = pFilename;
-	wchar_t* pOut = pFilename;
-	bool bPrevPathSep = false;
-	while (*pIn)
-	{
-		bool bIsPathSep = PATHSEPARATOR(*pIn);
-		if (!bIsPathSep || !bPrevPathSep)
-		{
-			*pOut++ = *pIn;
-		}
-		bPrevPathSep = bIsPathSep;
-		++pIn;
-	}
-	*pOut = 0;
-
-	// Get rid of "./"'s
-	pIn = pFilename;
-	pOut = pFilename;
-	while (*pIn)
-	{
-		// The logic on the second line is preventing it from screwing up "../"
-		if (pIn[0] == L'.' && PATHSEPARATOR(pIn[1]) &&
-			(pIn == pFilename || pIn[-1] != L'.'))
-		{
-			pIn += 2;
-		}
-		else
-		{
-			*pOut = *pIn;
-			++pIn;
-			++pOut;
-		}
-	}
-	*pOut = 0;
-
-	// Get rid of a trailing "/." (needless).
-	int len = wcslen(pFilename);
-	if (len > 2 && pFilename[len - 1] == L'.' && PATHSEPARATOR(pFilename[len - 2]))
-	{
-		pFilename[len - 2] = 0;
-	}
-
-	// Each time we encounter a "..", back up until we've read the previous directory name,
-	// then get rid of it.
-	pIn = pFilename;
-	while (*pIn)
-	{
-		if (pIn[0] == L'.' &&
-			pIn[1] == L'.' &&
-			(pIn == pFilename || PATHSEPARATOR(pIn[-1])) &&	// Preceding character must be a slash.
-			(pIn[2] == 0 || PATHSEPARATOR(pIn[2])))			// Following character must be a slash or the end of the string.
-		{
-			wchar_t* pEndOfDots = pIn + 2;
-			wchar_t* pStart = pIn - 2;
-
-			// Ok, now scan back for the path separator that starts the preceding directory.
-			while (1)
-			{
-				if (pStart < pFilename)
-					return false;
-
-				if (PATHSEPARATOR(*pStart))
-					break;
-
-				--pStart;
-			}
-
-			// Now slide the string down to get rid of the previous directory and the ".."
-			memmove(pStart, pEndOfDots, wcslen(pEndOfDots) + 1);
-
-			// Start over.
-			pIn = pFilename;
-		}
-		else
-		{
-			++pIn;
-		}
-	}
-
-	V_FixSlashes(pFilename, separator);
-	return true;
-}
-
-
 bool V_RemoveDotSlashes( char *pFilename, char separator )
 {
 	// Remove '//' or '\\'
@@ -1614,7 +1526,91 @@ bool V_RemoveDotSlashes( char *pFilename, char separator )
 	V_FixSlashes( pFilename, separator );	
 	return true;
 }
+bool V_RemoveDotSlashes(wchar_t* pFilename, wchar_t separator)
+{
+	// Remove '//' or '\\'
+	wchar_t* pIn = pFilename;
+	wchar_t* pOut = pFilename;
+	bool bPrevPathSep = false;
+	while (*pIn)
+	{
+		bool bIsPathSep = PATHSEPARATOR(*pIn);
+		if (!bIsPathSep || !bPrevPathSep)
+		{
+			*pOut++ = *pIn;
+		}
+		bPrevPathSep = bIsPathSep;
+		++pIn;
+	}
+	*pOut = 0;
 
+	// Get rid of "./"'s
+	pIn = pFilename;
+	pOut = pFilename;
+	while (*pIn)
+	{
+		// The logic on the second line is preventing it from screwing up "../"
+		if (pIn[0] == L'.' && PATHSEPARATOR(pIn[1]) &&
+			(pIn == pFilename || pIn[-1] != L'.'))
+		{
+			pIn += 2;
+		}
+		else
+		{
+			*pOut = *pIn;
+			++pIn;
+			++pOut;
+		}
+	}
+	*pOut = 0;
+
+	// Get rid of a trailing "/." (needless).
+	int len = wcslen(pFilename);
+	if (len > 2 && pFilename[len - 1] == L'.' && PATHSEPARATOR(pFilename[len - 2]))
+	{
+		pFilename[len - 2] = 0;
+	}
+
+	// Each time we encounter a "..", back up until we've read the previous directory name,
+	// then get rid of it.
+	pIn = pFilename;
+	while (*pIn)
+	{
+		if (pIn[0] == L'.' &&
+			pIn[1] == L'.' &&
+			(pIn == pFilename || PATHSEPARATOR(pIn[-1])) &&	// Preceding character must be a slash.
+			(pIn[2] == 0 || PATHSEPARATOR(pIn[2])))			// Following character must be a slash or the end of the string.
+		{
+			wchar_t* pEndOfDots = pIn + 2;
+			wchar_t* pStart = pIn - 2;
+
+			// Ok, now scan back for the path separator that starts the preceding directory.
+			while (1)
+			{
+				if (pStart < pFilename)
+					return false;
+
+				if (PATHSEPARATOR(*pStart))
+					break;
+
+				--pStart;
+			}
+
+			// Now slide the string down to get rid of the previous directory and the ".."
+			memmove(pStart, pEndOfDots, wcslen(pEndOfDots) + 1);
+
+			// Start over.
+			pIn = pFilename;
+		}
+		else
+		{
+			++pIn;
+		}
+	}
+
+	V_FixSlashes(pFilename, separator);
+	return true;
+}
 
 void V_AppendSlash( char *pStr, int strSize )
 {
@@ -2073,7 +2069,6 @@ char *V_AddBackSlashesToSpecialChars( char const *pSrc )
 	*( pOut++ ) = 0;
 	return pRet;
 }
-
 //-----------------------------------------------------------------------------
 // Purpose: returns true if a wide character is a "mean" space; that is,
 //			if it is technically a space or punctuation, but causes disruptive
@@ -2119,7 +2114,6 @@ bool Q_IsMeanSpaceW(wchar_t wch)
 
 	return bIsMean;
 }
-
 //-----------------------------------------------------------------------------
 // Purpose: strips trailing whitespace; returns pointer inside string just past
 // any leading whitespace.
@@ -2155,7 +2149,6 @@ static wchar_t* StripWhitespaceWorker(int cchLength, wchar_t* pwch, bool* pbStri
 
 	return pwch;
 }
-
 //-----------------------------------------------------------------------------
 // Purpose: strips leading and trailing whitespace
 //-----------------------------------------------------------------------------
@@ -2194,4 +2187,3 @@ bool Q_StripPrecedingAndTrailingWhitespace(wchar_t* pch)
 	pch = StripWhitespaceWorker(cch - 1, pch, &bStrippedWhitespace, false /* not aggressive */);
 	return bStrippedWhitespace;
 }
-

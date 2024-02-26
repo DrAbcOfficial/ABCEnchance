@@ -6,7 +6,7 @@
 
 vgui::CConsoleDialog* g_ConsoleDialog;
 
-void ConsoleGoodMessage(char* format, ...) {
+void ConsoleGoodMessage(const char* format, ...) {
 	va_list argptr;
 	char data[2048];
 	va_start(argptr, format);
@@ -16,7 +16,7 @@ void ConsoleGoodMessage(char* format, ...) {
 	std::snprintf(result, 2048, "[ABCEnchance] %s\n", data);
 	g_ConsoleDialog->ColorPrint(Color(0, 255, 0, 255), result);
 }
-void ConsoleWarnMessage(char* format, ...) {
+void ConsoleWarnMessage(const char* format, ...) {
 	va_list argptr;
 	char data[2048];
 	va_start(argptr, format);
@@ -26,7 +26,7 @@ void ConsoleWarnMessage(char* format, ...) {
 	std::snprintf(result, 2048, "[ABCEnchance] %s\n", data);
 	g_ConsoleDialog->ColorPrint(Color(255, 255, 0, 255), result);
 }
-void ConsoleErrorMessage(char* format, ...) {
+void ConsoleErrorMessage(const char* format, ...) {
 	va_list argptr;
 	char data[2048];
 	va_start(argptr, format);

@@ -6,8 +6,8 @@
 #endif
 
 #include "KeyValues.h"
+#include <filesystem.h>
 #include <vstdlib/IKeyValuesSystem.h>
-#include <IFileSystem.h>
 
 #include <vgui/ISystem.h>
 
@@ -597,7 +597,7 @@ void KeyValues::RecursiveSaveToFile(IFileSystem *filesystem, FileHandle_t f, CUt
 	INTERNALWRITE("}\r\n", 3);
 }
 
-KeyValues *KeyValues::FindKey(int keySymbol) const
+KeyValues *KeyValues::FindKey2(int keySymbol) const
 {
 	for (KeyValues *dat = m_pSub; dat != NULL; dat = dat->m_pPeer)
 	{

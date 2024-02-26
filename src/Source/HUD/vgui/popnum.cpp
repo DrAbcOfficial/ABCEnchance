@@ -1,22 +1,22 @@
 #pragma once
-#include <vector>
 #include <metahook.h>
+#include <vector>
 
 #include <vgui/IImage.h>
+#include <vgui/ILocalize.h>
 #include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
-#include <vgui/ILocalize.h>
-#include <vgui_controls/Label.h>
 #include <vgui_controls/AnimationController.h>
+#include <vgui_controls/Label.h>
 
+#include "CVector.h"
 #include "local.h"
-#include "vguilocal.h"
-#include <mymathlib.h>
-#include <CVector.h>
+#include "mymathlib.h"
 #include "triangleapi.h"
+#include "vguilocal.h"
 
-#include "popnum.h"
 #include "plugins.h"
+#include "popnum.h"
 
 #define VIEWPORT_POPNUMBER_NAME "PopNumberPanel"
 
@@ -105,12 +105,12 @@ void CPopNumberPanel::OnThink(){
 	//视角角度
 	CVector vecView;
 	gEngfuncs.GetViewAngles(vecView);
-	mathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
+	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 	//计算我和目标的相对偏移
 	CVector vecLength;
-	mathlib::VectorSubtract(*m_vecOrigin, local->curstate.origin, vecLength);
+	CMathlib::VectorSubtract(*m_vecOrigin, local->curstate.origin, vecLength);
 	vecLength = vecLength.Normalize();
-	float angledotResult = mathlib::DotProduct(vecLength, vecView);
+	float angledotResult = CMathlib::DotProduct(vecLength, vecView);
 	//cos 60
 	if (angledotResult > 0.5) {
 		float ratio = -sin(gEngfuncs.GetClientTime() - m_flCreateTime) / 2;

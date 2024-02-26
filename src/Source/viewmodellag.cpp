@@ -17,7 +17,7 @@ void V_CalcViewModelLag(ref_params_t* pparams, CVector& origin, CVector& angles,
 	if (gCVars.pModelLag->value <= 0)
 		return;
 	//¼¦ÃçÎäÆ÷
-	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != mathlib::clamp(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
+	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != CMathlib::clamp<float>(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
 		return;
 	static CVector m_vecLastFacing;
 	CVector vOriginalOrigin = origin;
@@ -26,7 +26,7 @@ void V_CalcViewModelLag(ref_params_t* pparams, CVector& origin, CVector& angles,
 	// Calculate our drift
 	CVector forward, right, up;
 
-	mathlib::AngleVectors(angles, forward, right, up);
+	CMathlib::AngleVectors(angles, forward, right, up);
 
 	if (pparams->frametime != 0.0f)	// not in paused
 	{
@@ -53,9 +53,9 @@ void V_CalcViewModelLag(ref_params_t* pparams, CVector& origin, CVector& angles,
 		origin = origin + (vDifference * -1.0f) * flSpeed;
 	}
 
-	mathlib::AngleVectors(original_angles, forward, right, up);
+	CMathlib::AngleVectors(original_angles, forward, right, up);
 
-	float pitch = original_angles[Q_PITCH];
+	float pitch = original_angles[CMathlib::Q_PITCH];
 
 	if (pitch > 180.0f)
 	{
@@ -90,15 +90,15 @@ void V_CalcModelSlide(ref_params_t* pparams) {
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEnd, PM_STUDIO_IGNORE, local->index, &tr);
 	if (tr.fraction >= 1)
 		return;
-	float flViewHeight = mathlib::clamp(pparams->viewheight[2], 12.0f, 28.0f);
+	float flViewHeight = CMathlib::clamp<float>(pparams->viewheight[2], 12.0f, 28.0f);
 	//12 Duck
 	//28 Stand
 	float flSlideRatio = 1 - ((flViewHeight - 12) / 16);
 	cl_entity_t* view = gEngfuncs.GetViewModel();
 	CVector vecRight;
-	mathlib::AngleVectors(view->angles, nullptr, vecRight, nullptr);
+	CMathlib::AngleVectors(view->angles, nullptr, vecRight, nullptr);
 	vecRight = -vecRight.Normalize() * gCVars.pModelSlideLength->value * flSlideRatio;
 	view->curstate.angles[2] = -gCVars.pModelSlideAngle->value * flSlideRatio;
-	mathlib::VectorAdd(view->origin, vecRight, view->origin);
+	CMathlib::VectorAdd(view->origin, vecRight, view->origin);
 	view->origin[2] -= gCVars.pModelSlideHeight->value * flSlideRatio;
 }

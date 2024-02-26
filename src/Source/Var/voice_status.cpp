@@ -84,7 +84,7 @@ CVoiceStatus::CVoiceStatus(){
 
 
 CVoiceStatus::~CVoiceStatus(){
-	g_pInternalVoiceStatus = false;
+	g_pInternalVoiceStatus = nullptr;
 	if(m_pchGameDir){
 		if(m_bBanMgrInitialized)
 			m_BanMgr.SaveState(m_pchGameDir);

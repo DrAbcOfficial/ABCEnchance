@@ -19,12 +19,12 @@ protected:
 template <typename Result>
 class CTaskItem : public ITaskItem {
 public:
-	CTaskItem(std::future<Result>& futrue) {
+	CTaskItem(std::function<Result()>& futrue) {
 		auto& refB = m_bReady;
 		auto& refV = m_pValue;
 		m_pThread = std::thread(
-			[&refB, &refV, futrue = std::move(futrue)]() mutable {
-				refV = futrue.get();
+			[&refB, &refV, ft = std::move(futrue)]() mutable {
+				refV = ft();
 				refB = true;
 			}
 		);
@@ -62,9 +62,10 @@ private:
 class CTaskManager {
 public:
 	//add a new async task
-	template <typename Result>
-	CTaskItem<Result>* Add(std::future<Result>& func) {
-		CTaskItem<Result>* item = new CTaskItem<Result>(func);
+	template <typename Result, typename F, typename... Args>
+	CTaskItem<Result>* Add(F&& func, Args&&... args) {
+		std::function<Result()> a = std::bind(std::forward<F>(func), std::forward<Args>(args)...);
+		CTaskItem<Result>* item = new CTaskItem<Result>(a);
 		m_aryPending.push_back(item);
 		return item;
 	}

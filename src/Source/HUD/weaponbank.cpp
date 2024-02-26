@@ -1,21 +1,21 @@
-﻿#include <metahook.h>
-#include <cmath>
-#include <string>
+﻿#include <cmath>
 #include <map>
+#include <metahook.h>
+#include <string>
 #include <vector>
 
-#include "mymathlib.h"
-#include "cvardef.h"
-#include "vguilocal.h"
-#include "local.h"
-#include "hud.h"
-#include "weapon.h"
-#include "glew.h"
-#include "gl_def.h"
-#include "weaponselect.h"
 #include "ammo.h"
 #include "CCustomHud.h"
+#include "cvardef.h"
+#include "gl_def.h"
+#include "glew.h"
+#include "hud.h"
+#include "local.h"
+#include "mymathlib.h"
+#include "vguilocal.h"
+#include "weapon.h"
 #include "weaponbank.h"
+#include "weaponselect.h"
 #include <weaponinfo_sven.h>
 
 WEAPON* CWeaponData::operator [](size_t iId) {
@@ -331,7 +331,7 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		SetSelectWeapon(m_iNowSelected, bWheel);
 		return;
 	}
-	iSlot = mathlib::clamp<size_t>(iSlot, 0, MAX_WEAPON_SLOT - 1);
+	iSlot = CMathlib::clamp<size_t>(iSlot, 0, MAX_WEAPON_SLOT - 1);
 	static auto getNext = [&](WEAPON* wp) {
 		size_t pos = wp->iSlotPos;
 		for (auto iter = m_pAviliableWeaponData.PosBegin(wp->iSlot); iter != m_pAviliableWeaponData.PosEnd(wp->iSlot); iter++) {

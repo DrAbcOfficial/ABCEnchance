@@ -137,7 +137,7 @@ unsigned FASTCALL HashStringCaselessConventional( const char *pszKey )
 //-----------------------------------------------------------------------------
 unsigned FASTCALL HashInt( const int n )
 {
-	unsigned		even, odd;
+	register unsigned		even, odd;
 	even  = g_nRandomValues[n & 0xff];
 	odd   = g_nRandomValues[((n >> 8) & 0xff)];
 
@@ -154,8 +154,8 @@ unsigned FASTCALL HashInt( const int n )
 //-----------------------------------------------------------------------------
 unsigned FASTCALL Hash4( const void *pKey )
 {
-	const uint32 *	p = (const uint32 *) pKey;
-	unsigned		even,
+	register const uint32 *	p = (const uint32 *) pKey;
+	register unsigned		even,
 							odd,
 							n;
 	n     = *p;
@@ -176,8 +176,8 @@ unsigned FASTCALL Hash4( const void *pKey )
 //-----------------------------------------------------------------------------
 unsigned FASTCALL Hash8( const void *pKey )
 {
-	const uint32 *	p = (const uint32 *) pKey;
-	unsigned		even,
+	register const uint32 *	p = (const uint32 *) pKey;
+	register unsigned		even,
 							odd,
 							n;
 	n     = *p;
@@ -204,8 +204,8 @@ unsigned FASTCALL Hash8( const void *pKey )
 //-----------------------------------------------------------------------------
 unsigned FASTCALL Hash12( const void *pKey )
 {
-	const uint32 *	p = (const uint32 *) pKey;
-	unsigned		even,
+	register const uint32 *	p = (const uint32 *) pKey;
+	register unsigned		even,
 							odd,
 							n;
 	n     = *p;
@@ -238,8 +238,8 @@ unsigned FASTCALL Hash12( const void *pKey )
 //-----------------------------------------------------------------------------
 unsigned FASTCALL Hash16( const void *pKey )
 {
-	const uint32 *	p = (const uint32 *) pKey;
-	unsigned		even,
+	register const uint32 *	p = (const uint32 *) pKey;
+	register unsigned		even,
 							odd,
 							n;
 	n     = *p;
