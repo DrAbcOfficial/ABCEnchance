@@ -1,6 +1,5 @@
 #pragma once
 #include <metahook.h>
-#include <future>
 #include <codecvt>
 #include <locale>
 #include "formatter.h"

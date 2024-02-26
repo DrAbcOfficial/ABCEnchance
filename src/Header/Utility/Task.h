@@ -1,6 +1,7 @@
 #pragma once
 
-#include <future>
+#include <thread>
+#include <functional>
 #include <list>
 
 class ITaskItem {
