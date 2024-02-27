@@ -153,6 +153,7 @@ void CWeaponChoosePanel::ApplySettings(KeyValues* inResourceData){
 	m_iItemWide = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("item_wide", 30));
 	m_iItemXGap = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("item_xgap", 1));
 	m_iItemYGap = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("item_ygap", 1));
+	m_flCloseTime = inResourceData->GetFloat("close_time", 5.0f);
 }
 void CWeaponChoosePanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -227,6 +228,11 @@ void CWeaponChoosePanel::PerformLayout(){
 		float xy[2] = { bx,by };
 		vgui::GetAnimationController()->RunAnimationCommandEx(m_pSelectBucket, "position", xy, 2, 0.0f, 0.1f, vgui::AnimationController::INTERPOLATOR_LINEAR, 0.0f);
 	}
+	m_flNextClosePanelTime = gEngfuncs.GetClientTime() + m_flCloseTime;
+}
+void CWeaponChoosePanel::OnThink(){
+	if (gEngfuncs.GetClientTime() >= m_flNextClosePanelTime)
+		ShowPanel(false);
 }
 bool CWeaponChoosePanel::ShouldDraw(){
 	if (gCustomHud.IsInSpectate())
