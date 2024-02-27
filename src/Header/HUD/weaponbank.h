@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <map>
+
 #define MAX_WEAPON_SLOT 10
 #define INVALID_WEAPON_SLOT MAX_WEAPON_SLOT + 1
 #define INVALID_WEAPON_POS -1
@@ -49,7 +51,7 @@ private:
 	cvar_t* pFastSwich = nullptr;
 
 public:
-	WEAPON* m_iNowSelected;
+	WEAPON* m_pNowSelected;
 	//目前选择的Slot
 	size_t m_iNowSlot;
 

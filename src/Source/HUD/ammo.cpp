@@ -23,7 +23,6 @@
 #include "enginedef.h"
 #include "exportfuncs.h"
 
-#include "weaponselect.h"
 #include "ammobar.h"
 
 #include "weaponbank.h"
@@ -185,17 +184,11 @@ int CHudCustomAmmo::Init(void){
 void CHudCustomAmmo::Reset(void){
 	m_bSelectBlock = false;
 	//所有选择菜单都要加载
-	m_HudWMenuSlot.Reset();
-
 	gWR.Reset();
 }
 int CHudCustomAmmo::VidInit(void){
 	gWR.LoadAllWeaponSprites();
-	m_HudWMenuSlot.VidInit();
 	return 1;
-}
-bool CHudCustomAmmo::IsVisible() {
-	return m_HudWMenuSlot.IsVisible();
 }
 bool CHudCustomAmmo::ShouldDraw() {
 	if (gCustomHud.IsInSpectate())
@@ -215,32 +208,12 @@ bool CHudCustomAmmo::BlockAttackOnce() {
 	}
 	return false;
 }
+extern void Viewport_SelectWeapon();
 void CHudCustomAmmo::Select() {
-	if (!IsVisible())
+	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
-	if (m_HudWMenuSlot.m_fFade > gEngfuncs.GetClientTime()) {
-		if (m_HudCustomAmmo.m_bAcceptDeadMessage)
-			return;
-		m_HudCustomAmmo.ChosePlayerWeapon();
-	}
-	m_HudWMenuSlot.Select();
-	gWR.m_iNowSlot = -1;
+	Viewport_SelectWeapon();
 	m_bSelectBlock = true;
-}
-int CHudCustomAmmo::Draw(float flTime){
-	if (!ShouldDraw())
-		return 1;
-	// Draw Weapon Menu
-	DrawWList(flTime);
-	return 1;
-}
-void CHudCustomAmmo::ChosePlayerWeapon(){
-	if (gWR.m_iNowSelected != nullptr) {
-		if (!(gWR.m_iNowSelected->iFlags & ITEM_FLAG_SELECTONEMPTY) && !gWR.HasAmmo(gWR.m_iNowSelected))
-			return;
-		ServerCmd(gWR.m_iNowSelected->szName);
-		PlaySoundByName("common/wpn_select.wav", 1);
-	}
 }
 void CHudCustomAmmo::SlotInput(int iSlot, int fAdvance, bool bWheel){
 	if (gCustomHud.SelectTextMenuItem(iSlot + 1))
@@ -254,7 +227,4 @@ WEAPON* CHudCustomAmmo::GetCurWeapon(){
 }
 void CHudCustomAmmo::SetCurWeapon(WEAPON* wp){
 	m_pWeapon = wp;
-}
-int CHudCustomAmmo::DrawWList(float flTime){
-	return m_HudWMenuSlot.DrawWList(flTime);
 }

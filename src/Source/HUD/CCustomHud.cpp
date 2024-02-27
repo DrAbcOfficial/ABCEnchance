@@ -32,10 +32,10 @@
 #include "indicator.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
-#include "radar.h"
 
 #include "vgui_controls/Controls.h"
 
+#include "radar.h"
 #include "ammostack.h"
 #include "itemstack.h"
 #include "weaponstack.h"
@@ -533,12 +533,10 @@ void CCustomHud::HUD_VidInit(void){
 }
 void CCustomHud::HUD_Draw(float flTime){
 	m_HudEccoBuyMenu.Draw(flTime);
-
 #ifdef _DEBUG
 	m_HudCCTV.Draw(flTime);
 #endif
 	m_HudIndicator.Draw(flTime);
-	m_HudCustomAmmo.Draw(flTime);
 }
 void CCustomHud::HUD_Reset(void){
 	m_iPlayerHealth = 100;

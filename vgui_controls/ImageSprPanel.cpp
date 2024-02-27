@@ -94,6 +94,8 @@ void ImageSprPanel::SetImage(const char* imageName)
 }
 
 void ImageSprPanel::SetImage(int sprindex){
+	if (m_pImage)
+		delete m_pImage;
 	CSPRImage* spr = new CSPRImage();
 	spr->SetTextureID(sprindex);
 	m_pImage = spr;

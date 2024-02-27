@@ -1,21 +1,11 @@
 #pragma once
 
-#ifdef GetCurrentTime
-#undef GetCurrentTime
-#endif
-
 #include <vector>
+#include "vgui_controls/Panel.h"
 
-#include <vgui/VGUI.h>
-#include <vgui/ISurface.h>
-#include <vgui/ILocalize.h>
-#include <vgui/IScheme.h>
-#include <vgui/IVGui.h>
-#include <vgui/IInput.h>
-#include <vgui/IViewportPanel.h>
-#include <VGUI_controls/Controls.h>
-#include <VGUI_controls/Panel.h>
-#include <VGUI_controls/Frame.h>
+#ifndef VGUI_IVIEWPORTPANEL_H
+class IViewportPanel;
+#endif
 
 class CPlayerInfoPanel;
 class CMotdPanel;
@@ -35,8 +25,12 @@ class CRadarPanel;
 class CAmmoStackPanel;
 class CItemStackPanel;
 class CWeaponStackPanel;
+class CWeaponChoosePanel;
 
+#ifndef __AMMO_H__
 class WEAPON;
+#endif
+
 namespace vgui {
 	class CScorePanel;
 	class CVotePanel;
@@ -128,6 +122,8 @@ public:
 	CItemStackPanel* GetItemStackPanel();
 	CWeaponStackPanel* GetWeaponStackPanel();
 
+	CWeaponChoosePanel* GetWeaponChoosePanel();
+
 	WEAPON* GetCurWeapon();
 	void SetCurWeapon(WEAPON* weapon);
 
@@ -170,6 +166,7 @@ private:
 	CAmmoStackPanel* m_pAmmoStack = nullptr;
 	CItemStackPanel* m_pItemStack = nullptr;
 	CWeaponStackPanel* m_pWeaponStack = nullptr;
+	CWeaponChoosePanel* m_pWeaponChoose = nullptr;
 
 	vgui::HScheme m_hBaseScheme = 0;
 	int m_iInterMission = 0;

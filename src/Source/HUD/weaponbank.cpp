@@ -1,5 +1,4 @@
 ﻿#include <cmath>
-#include <map>
 #include <metahook.h>
 #include <string>
 #include <vector>
@@ -15,7 +14,6 @@
 #include "vguilocal.h"
 #include "weapon.h"
 #include "weaponbank.h"
-#include "weaponselect.h"
 #include <weaponinfo_sven.h>
 
 WEAPON* CWeaponData::operator [](size_t iId) {
@@ -129,7 +127,7 @@ void WeaponsResource::Reset(void) {
 	m_pOwnedWeaponData.RemoveAll();
 	m_pAviliableWeaponData.RemoveAll();
 	m_dicAmmos.clear();
-	m_iNowSelected = nullptr;
+	m_pNowSelected = nullptr;
 }
 CWeaponData* WeaponsResource::GetOwnedData() {
 	return &this->m_pOwnedWeaponData;
@@ -174,18 +172,26 @@ void WeaponsResource::AddWeapon(WEAPON* wp) {
 	this->m_pWeaponData.Add(wp);
 	this->LoadWeaponSprites(wp);
 }
-
+extern void Viewport_PickupWeapon(WEAPON* wp);
+extern void Viewport_DropWeapon(WEAPON* wp);
+extern void Viewport_ChooseWeapon(WEAPON* wp);
+extern void Viewport_DropAllWeapon();
 //添加武器到菜单缓存
 void WeaponsResource::PickupWeapon(size_t id) {
-	this->m_pOwnedWeaponData.Add(this->GetWeapon(id));
+	WEAPON* wp = this->GetWeapon(id);
+	this->m_pOwnedWeaponData.Add(wp);
+	Viewport_PickupWeapon(wp);
 }
 //从武器菜单删除缓存
 void WeaponsResource::DropWeapon(size_t s, size_t p) {
-	this->m_pOwnedWeaponData.Remove(this->GetWeapon(s, p));
+	WEAPON* wp = this->GetWeapon(s, p);
+	this->m_pOwnedWeaponData.Remove(wp);
+	Viewport_DropWeapon(wp);
 }
 //删除所有缓存
 void WeaponsResource::DropAllWeapons(void) {
 	this->m_pOwnedWeaponData.RemoveAll();
+	Viewport_DropAllWeapon();
 }
 //载入所有武器图标
 void WeaponsResource::LoadAllWeaponSprites() {
@@ -205,7 +211,8 @@ void WeaponsResource::SetSelectWeapon(WEAPON* wp, bool bWheel) {
 	//if (pFastSwich->value > 0 && bWheel)
 	//	ServerCmd(wp->szName);
 	//else
-		m_iNowSelected = wp;
+	m_pNowSelected = wp;
+	Viewport_ChooseWeapon(wp);
 }
 
 //由txt获取图标信息
@@ -302,10 +309,7 @@ HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, wrect_t& rect) {
 void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 	if (m_HudCustomAmmo.m_bAcceptDeadMessage)
 		return;
-	m_HudWMenuSlot.m_fFade = gEngfuncs.GetClientTime() + m_HudWMenuSlot.SelectHoldTime;
-
 	BuildAviliableWeapons();
-
 	if (m_pAviliableWeaponData.Size() == 0)
 		return;
 	static auto getMinSlot = [&] {
@@ -326,9 +330,9 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		}
 		return slot;
 	};
-	if (!m_iNowSelected) {
-		m_iNowSelected = GetFirstPos(getMinSlot());
-		SetSelectWeapon(m_iNowSelected, bWheel);
+	if (!m_pNowSelected) {
+		m_pNowSelected = GetFirstPos(getMinSlot());
+		SetSelectWeapon(m_pNowSelected, bWheel);
 		return;
 	}
 	iSlot = CMathlib::clamp<size_t>(iSlot, 0, MAX_WEAPON_SLOT - 1);
@@ -361,7 +365,7 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 	if (bWheel) {
 		//如果是当前slot
 		if (iAdvance > 0) {
-			if (m_pAviliableWeaponData.GetMaxPos(iSlot) == m_iNowSelected->iSlotPos) {
+			if (m_pAviliableWeaponData.GetMaxPos(iSlot) == m_pNowSelected->iSlotPos) {
 				do {
 					iSlot++;
 					if (iSlot > getMaxSlot())
@@ -369,7 +373,7 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 				} while (m_pAviliableWeaponData.Size(iSlot) == 0);
 			}
 		}
-		else if (m_pAviliableWeaponData.GetMinPos(iSlot) == m_iNowSelected->iSlotPos) {
+		else if (m_pAviliableWeaponData.GetMinPos(iSlot) == m_pNowSelected->iSlotPos) {
 			do {
 				if (((int)iSlot) - 1 < (int)getMinSlot())
 					iSlot = getMaxSlot();
@@ -380,15 +384,15 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 	}
 
 	if (iSlot == m_iNowSlot) {
-		WEAPON* chose = GetWeapon(iSlot, iAdvance > 0 ? getNext(m_iNowSelected) : getLast(m_iNowSelected));
+		WEAPON* chose = GetWeapon(iSlot, iAdvance > 0 ? getNext(m_pNowSelected) : getLast(m_pNowSelected));
 		if (chose)
 			SetSelectWeapon(chose, bWheel);
 	}
 	//如果不是
 	else {
 		m_iNowSlot = iSlot;
-		m_iNowSelected = iAdvance > 0 ? GetFirstPos(iSlot) : GetLastPos(iSlot);
-		SetSelectWeapon(m_iNowSelected, bWheel);
+		m_pNowSelected = iAdvance > 0 ? GetFirstPos(iSlot) : GetLastPos(iSlot);
+		SetSelectWeapon(m_pNowSelected, bWheel);
 	}
 }
 WEAPON* WeaponsResource::GetFirstPos(size_t iSlot) {
