@@ -20,6 +20,7 @@
 		"item_wide"	"88"
 		"item_xgap"	"3"
 		"item_ygap"	"3"
+		"close_time"	"5.0"
 	}
 	"Slot1"
 	{
