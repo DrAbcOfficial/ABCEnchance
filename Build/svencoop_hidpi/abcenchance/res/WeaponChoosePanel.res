@@ -6,8 +6,8 @@
 		"fieldName"		"WeaponChoosePanel"
 		"xpos"		"20"
 		"ypos"		"20"
-		"wide"		"240"
-		"tall"		"400"
+		"wide"		"480"
+		"tall"		"640"
 
 		"autoResize"		"1"
 		"visible"		"1"
