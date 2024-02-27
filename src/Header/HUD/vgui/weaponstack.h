@@ -8,6 +8,8 @@ public:
 	CWeaponStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo, size_t wi);
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void CheckExpire() override;
+
+	void ReloadWeaponSpr();
 private:
 	size_t m_iWeapon;
 	Color m_cEmpty;

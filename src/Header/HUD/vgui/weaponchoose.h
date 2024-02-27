@@ -22,6 +22,7 @@ public:
 
 	void SetBounds(int x, int y, int w, int h);
 
+	void ReloadWeaponSpr();
 	void UpdateColor();
 	void SetActivate(bool state);
 	WEAPON* GetWeapon();
@@ -43,6 +44,8 @@ private:
 	Color m_cAmmoBarBgColor;
 	Color m_cAmmoBarColor;
 	Color m_cAmmoBarEmptyColor;
+
+	int m_iWeaponSpr;
 };
 
 class CWeaponChoosePanel : public vgui::EditablePanel, public IViewportPanel{
