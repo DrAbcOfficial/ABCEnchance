@@ -11,12 +11,17 @@ typedef int HSPRITE;
 #include "weapon.h"
 #include "weaponbank.h"
 
+#include "hud.h"
+
+#include "CCustomHud.h"
+
 #include "vgui_controls/spr_image.h"
 #include "vgui_controls/ImageSprPanel.h"
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/AnimationController.h"
 #include "weaponchoose.h"
 
+extern const clientdata_t* gClientData;
 
 CWeaponChooseItem::CWeaponChooseItem(vgui::Panel* parent, WEAPON* wep) : BaseClass(parent, "WeaponItem") {
 	m_pWeapon = wep;
@@ -165,7 +170,6 @@ void CWeaponChoosePanel::Reset() {
 	}
 	InvalidateLayout();
 }
-
 void CWeaponChoosePanel::ShowPanel(bool state) {
 	if (state == IsVisible())
 		return;
@@ -180,7 +184,6 @@ vgui::VPANEL CWeaponChoosePanel::GetVPanel() {
 void CWeaponChoosePanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
-
 void CWeaponChoosePanel::PerformLayout(){
 	BaseClass::PerformLayout();
 	WEAPON* select = gWR.m_pNowSelected;
@@ -215,8 +218,20 @@ void CWeaponChoosePanel::PerformLayout(){
 		vgui::GetAnimationController()->RunAnimationCommandEx(m_pSelectBucket, "position", xy, 2, 0.0f, 0.1f, vgui::AnimationController::INTERPOLATOR_LINEAR, 0.0f);
 	}
 }
-
+bool CWeaponChoosePanel::ShouldDraw(){
+	if (gCustomHud.IsInSpectate())
+		return false;
+	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
+		return false;
+	if (!gCustomHud.HasSuit())
+		return false;
+	if (gClientData->health <= 0)
+		return false;
+	return true;
+}
 void CWeaponChoosePanel::SelectWeapon(){
+	if (gWR.m_bAcceptDeadMessage)
+		return;
 	if (!IsVisible())
 		return;
 	if (m_pHandledWeapon) {
@@ -226,9 +241,9 @@ void CWeaponChoosePanel::SelectWeapon(){
 		ServerCmd(wep->szName);
 		PlaySoundByName("common/wpn_select.wav", 1);
 		ShowPanel(false);
+		m_bSelectBlock = true;
 	}
 }
-
 void CWeaponChoosePanel::ChooseWeapon(WEAPON* weapon){
 	ShowPanel(true);
 	for (auto iter1 = m_aryPanelList.begin(); iter1 != m_aryPanelList.end(); iter1++) {
@@ -246,7 +261,6 @@ void CWeaponChoosePanel::ChooseWeapon(WEAPON* weapon){
 		}
 	}
 }
-
 void CWeaponChoosePanel::InsertWeapon(WEAPON* weapon){
 	int slot = weapon->iSlot;
 	int pos = weapon->iSlotPos;
@@ -265,7 +279,6 @@ void CWeaponChoosePanel::InsertWeapon(WEAPON* weapon){
 	}
 	list.push_back(new CWeaponChooseItem(this, weapon));
 }
-
 void CWeaponChoosePanel::RemoveWeapon(WEAPON* weapon){
 	int slot = weapon->iSlot;
 	if (slot < 0 || slot > 9)
@@ -279,4 +292,11 @@ void CWeaponChoosePanel::RemoveWeapon(WEAPON* weapon){
 		}
 	}
 	InvalidateLayout();
+}
+bool CWeaponChoosePanel::BlockAttackOnce() {
+	if (m_bSelectBlock) {
+		m_bSelectBlock = false;
+		return true;
+	}
+	return false;
 }

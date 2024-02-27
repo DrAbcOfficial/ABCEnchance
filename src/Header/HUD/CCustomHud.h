@@ -48,7 +48,9 @@ enum SC_ADMIN_ICON {
 	ADMIN_SERVER_OWNER
 };
 
+#ifndef __AMMO_H__
 class WEAPON;
+#endif
 class CCustomHud{
 public:
 	void GL_Init(void);
@@ -74,7 +76,6 @@ public:
 	bool SelectTextMenuItem(int slot);
 	void SetMouseVisible(bool state);
 
-	WEAPON* GetCurWeapon();
 	void SetCurWeapon(WEAPON* weapon);
 
 	void OnMousePressed(int code);

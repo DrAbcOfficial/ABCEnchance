@@ -9,7 +9,9 @@
 #include "IViewportPanel.h"
 
 typedef struct cvar_s cvar_t;
+#ifndef __AMMO_H__
 class WEAPON;
+#endif
 
 namespace vgui {
 	class CSPRImage;

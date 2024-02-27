@@ -61,6 +61,8 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
+	bool ShouldDraw();
+	bool BlockAttackOnce();
 	void SelectWeapon();
 	void ChooseWeapon(WEAPON* weapon);
 	void InsertWeapon(WEAPON* weapon);
@@ -78,5 +80,7 @@ private:
 	int m_iItemHeight;
 	int m_iItemXGap;
 	int m_iItemYGap;
+
+	bool m_bSelectBlock = false;
 };
 #endif

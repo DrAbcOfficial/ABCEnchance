@@ -28,7 +28,6 @@
 
 #include "CCustomHud.h"
 
-#include "ammo.h"
 #include "indicator.h"
 #include "itemhighlight.h"
 #include "eccobuymenu.h"
@@ -40,6 +39,7 @@
 #include "itemstack.h"
 #include "weaponstack.h"
 #include "scoreboard.h"
+#include "weaponchoose.h"
 #include "Viewport.h"
 
 #ifdef _DEBUG
@@ -358,7 +358,7 @@ void(*UserCmd_MissionBrief)(void);
 
 void UserCmd_SlotInput(int i) {
 	bool bVisible = gCustomHud.IsTextMenuOpening();
-	m_HudCustomAmmo.SlotInput(i, 1);
+	gWR.SelectSlot(i, 1, false);
 	m_HudEccoBuyMenu.SlotCallBack(i);
 	if(!bVisible)
 		UserCmd_Slots[i]();
@@ -392,7 +392,7 @@ void __UserCmd_Slot9(void) {
 }
 void __UserCmd_Slot10(void) {
 	bool bVisible = gCustomHud.IsTextMenuOpening();
-	m_HudCustomAmmo.SlotInput(9, 1);
+	gWR.SelectSlot(9, 1, false);
 	m_HudEccoBuyMenu.SlotCallBack(9);
 	m_HudEccoBuyMenu.CloseMenu();
 	if (!bVisible)
@@ -402,11 +402,11 @@ void __UserCmd_MissionBrief(void) {
 	g_pViewPort->ShowMOTD();
 }
 void __UserCmd_NextWeapon(void) {
-	m_HudCustomAmmo.SlotInput(gWR.m_iNowSlot, 1, true);
+	gWR.SelectSlot(gWR.m_iNowSlot, 1, true);
 	return UserCmd_NextWeapon();
 }
 void __UserCmd_PrevWeapon(void) {
-	m_HudCustomAmmo.SlotInput(gWR.m_iNowSlot, -1, true);
+	gWR.SelectSlot(gWR.m_iNowSlot, -1, true);
 	return UserCmd_PrevWeapon();
 }
 void __UserCmd_OpenScoreboard(void) {
@@ -423,7 +423,7 @@ void __UserCmd_CloseScoreboard(void) {
 	//UserCmd_HideScores();
 }
 void __UserCmd_Attack1(void) {
-	if (m_HudCustomAmmo.BlockAttackOnce())
+	if (g_pViewPort->GetWeaponChoosePanel()->BlockAttackOnce())
 		return;
 	return UserCmd_Attack1();
 }
@@ -484,7 +484,7 @@ void CCustomHud::HUD_Init(void){
 	gCVars.pDangerArmor = CREATE_CVAR("cl_dangerarmor", "45", FCVAR_VALUE, nullptr);
 
 	m_HudIndicator.Init();
-	m_HudCustomAmmo.Init();
+	gWR.Init();
 	g_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
 #ifdef _DEBUG
@@ -526,7 +526,7 @@ void CCustomHud::HUD_VidInit(void){
 		}
 	}
 	m_HudIndicator.VidInit();
-	m_HudCustomAmmo.VidInit();
+	gWR.VidInit();
 	m_HudEccoBuyMenu.VidInit();
 
 	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
@@ -542,7 +542,7 @@ void CCustomHud::HUD_Reset(void){
 	m_iPlayerHealth = 100;
 	m_flOverViewScale = 0;
 	m_HudIndicator.Reset();
-	m_HudCustomAmmo.Reset();
+	gWR.Reset();
 	g_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
 #ifdef _DEBUG
@@ -670,16 +670,13 @@ void CCustomHud::SetMouseVisible(bool state) {
 	if(g_pViewPort)
 		g_pViewPort->SetMouseInputEnabled(state);
 }
-WEAPON* CCustomHud::GetCurWeapon(){
-	return m_HudCustomAmmo.GetCurWeapon();
-}
 void CCustomHud::SetCurWeapon(WEAPON* weapon){
 	g_pViewPort->SetCurWeapon(weapon);
 }
 void CCustomHud::OnMousePressed(int code) {
 	switch (code) {
 		case vgui::MouseCode::MOUSE_LEFT: {
-			m_HudCustomAmmo.Select();
+			g_pViewPort->GetWeaponChoosePanel()->SelectWeapon();
 			m_HudEccoBuyMenu.SelectMenu();
 			break;
 		}
