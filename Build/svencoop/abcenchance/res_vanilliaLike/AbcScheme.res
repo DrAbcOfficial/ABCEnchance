@@ -296,6 +296,25 @@ Scheme
 		"WeaponStack.IconColor"			"SvenCoop"
 		//拾取无子弹武器图标颜色
 		"WeaponStack.IconEmptyColor"			"Red"
+
+		//选择武器背景颜色
+		"WeaponChoose.BgColor"			"Blank"
+		//选择武器行颜色
+		"WeaponChoose.ItemBgColor"	"Blank"
+		//选择武器图标颜色
+		"WeaponChoose.ActiveColor"			"SvenCoop"
+		"WeaponChoose.InactiveColor"			"SvenCoopDark"
+		//选择无子弹武器图标颜色
+		"WeaponChoose.EmptyColor"			"Red"
+		"WeaponChoose.EmptyInactiveColor"			"125 0 0 80"
+		//选择武器子弹条背景颜色
+		"WeaponChoose.AmmoBarBgColor"			"80 80 80 125"
+		//选择武器子弹条颜色
+		"WeaponChoose.AmmoBarColor"			"255 255 0 125"
+		//选择武器子弹条颜色
+		"WeaponChoose.AmmoBarEmptyColor"			"Red"
+		"WeaponChoose.SlotColor"			"SvenCoopDark"
+		"WeaponChoose.BucketColor"			"Default"
 		
 		Console.TextColor			"SvenCoop"
 		Console.ErrorTextColor			"255 0 0 200"
