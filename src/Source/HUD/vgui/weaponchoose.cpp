@@ -12,7 +12,6 @@ typedef int HSPRITE;
 #include "weaponbank.h"
 
 #include "hud.h"
-
 #include "CCustomHud.h"
 
 #include "vgui_controls/spr_image.h"
@@ -31,16 +30,8 @@ CWeaponChooseItem::CWeaponChooseItem(vgui::Panel* parent, WEAPON* wep) : BaseCla
 	m_pAmmoBar1 = new vgui::Panel(this, "AmmoBar1");
 	m_pAmmoBarBg2 = new vgui::Panel(this, "AmmoBarBg2");
 	m_pAmmoBar2 = new vgui::Panel(this, "AmmoBar2");
-
-	m_pWeaponInactivePanel->SetImage(m_pWeapon->hInactive);
-	m_pWeaponInactivePanel->SetRect(m_pWeapon->rcInactive.left, m_pWeapon->rcInactive.right, m_pWeapon->rcInactive.top, m_pWeapon->rcInactive.bottom);
-	m_pWeaponInactivePanel->GetImage()->SetAlphaParent(parent);
-	m_pWeaponInactivePanel->SetRenderMode(kRenderTransAdd);
-	m_pWeaponPanel->SetImage(m_pWeapon->hActive);
-	m_pWeaponPanel->SetRect(m_pWeapon->rcActive.left, m_pWeapon->rcActive.right, m_pWeapon->rcActive.top, m_pWeapon->rcActive.bottom);
-	m_pWeaponPanel->GetImage()->SetAlphaParent(parent);
-	m_pWeaponPanel->SetRenderMode(kRenderTransAdd);
 	m_pWeaponPanel->SetVisible(false);
+	ReloadWeaponSpr();
 }
 void CWeaponChooseItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -84,7 +75,19 @@ void CWeaponChooseItem::SetBounds(int x, int y, int w, int h){
 	m_pWeaponPanel->SetSize(w, h);
 	m_pWeaponInactivePanel->SetSize(w, h);
 }
+void CWeaponChooseItem::ReloadWeaponSpr(){
+	if (m_pWeapon->hActive != m_iWeaponSpr) {
+		m_pWeaponInactivePanel->SetImage(m_pWeapon->hInactive);
+		m_pWeaponInactivePanel->SetRect(m_pWeapon->rcInactive.left, m_pWeapon->rcInactive.right, m_pWeapon->rcInactive.top, m_pWeapon->rcInactive.bottom);
+		m_pWeaponInactivePanel->SetRenderMode(kRenderTransAdd);
+		m_pWeaponPanel->SetImage(m_pWeapon->hActive);
+		m_pWeaponPanel->SetRect(m_pWeapon->rcActive.left, m_pWeapon->rcActive.right, m_pWeapon->rcActive.top, m_pWeapon->rcActive.bottom);
+		m_pWeaponPanel->SetRenderMode(kRenderTransAdd);
+		m_iWeaponSpr = m_pWeapon->hActive;
+	}
+}
 void CWeaponChooseItem::UpdateColor(){
+	ReloadWeaponSpr();
 	m_pWeaponPanel->SetDrawColor(gWR.HasAmmo(m_pWeapon) ? m_cFgColor : m_cEmptyColor);
 	m_pWeaponInactivePanel->SetDrawColor(gWR.HasAmmo(m_pWeapon) ? m_cInactiveColor : m_cEmptyInactiveColor);
 	if (m_pWeapon->iAmmoType < 0) {

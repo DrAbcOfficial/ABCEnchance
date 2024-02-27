@@ -30,10 +30,21 @@ void CWeaponStackItem::CheckExpire(){
 	WEAPON* weapon = gWR.GetWeapon(m_iWeapon);
 	if (weapon == nullptr)
 		return;
+	ReloadWeaponSpr();
 	if(gWR.HasAmmo(weapon))
 		m_pPanel->SetDrawColor(m_cDraw);
 	else
 		m_pPanel->SetDrawColor(m_cEmpty);
+}
+
+void CWeaponStackItem::ReloadWeaponSpr(){
+	WEAPON* weapon = gWR.GetWeapon(m_iWeapon);
+	if (iSprIdx != weapon->hInactive) {
+		m_pPanel->SetImage(weapon->hInactive);
+		m_pPanel->SetRect(weapon->rcInactive.left, weapon->rcInactive.right, weapon->rcInactive.top, weapon->rcInactive.bottom);
+		m_pPanel->SetRenderMode(kRenderTransAdd);
+		iSprIdx = weapon->hInactive;
+	}
 }
 
 extern vgui::HScheme GetViewPortBaseScheme();
