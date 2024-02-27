@@ -116,7 +116,6 @@ CWeaponData::CWeaponData() {
 //初始化武器仓库
 void WeaponsResource::Init(void) {
 	pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
-	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "0", FCVAR_VALUE, NULL);
 }
 //重置武器仓库
 void WeaponsResource::Reset(void) {

@@ -168,7 +168,7 @@ public:
 			FreeImage_Unload(bitmap);
 			FreeImage_CloseMemory(mem);
 
-			Vector crgb = Vector(ar, ag, ab);
+			Vector crgb = Vector((float)ar / 255.0f, (float)ag / 255.0f, (float)ab / 255.0f);
 			Vector chsv;
 			RGBtoHSV(crgb, chsv);
 			chsv.x = fmodf((chsv.x + 120), 360.0f);
