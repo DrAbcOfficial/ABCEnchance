@@ -35,6 +35,7 @@ MemoryBitmap::MemoryBitmap(unsigned char* texture, int wide, int tall)
 	_valid = true;
 	_w = wide;
 	_h = tall;
+	_bAdditive = false;
 	ForceUpload(texture, wide, tall);
 }
 
@@ -135,7 +136,10 @@ void MemoryBitmap::Paint()
 	if (_w == 0)
 		GetSize(_w, _h);
 
-	surface()->DrawTexturedRect(_pos[0], _pos[1], _pos[0] + _w, _pos[1] + _h);
+	if (_bAdditive)
+		surface()->DrawTexturedRectAdd(_pos[0], _pos[1], _pos[0] + _w, _pos[1] + _h);
+	else
+		surface()->DrawTexturedRect(_pos[0], _pos[1], _pos[0] + _w, _pos[1] + _h);
 
 }
 
@@ -176,6 +180,14 @@ void MemoryBitmap::ForceUpload(unsigned char* texture, int wide, int tall)
 HTexture MemoryBitmap::GetID()
 {
 	return _id;
+}
+
+void MemoryBitmap::Destroy(){
+	delete this;
+}
+
+void MemoryBitmap::SetAdditive(bool bIsAdditive){
+	_bAdditive = bIsAdditive;
 }
 
 #endif // _STATIC_LINKED && _VGUI_DLL

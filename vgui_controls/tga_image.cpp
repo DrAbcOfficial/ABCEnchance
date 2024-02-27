@@ -4,6 +4,7 @@
 
 CTGAImage::CTGAImage()
 {
+	_bAdditive = false;
 	m_iTextureID = vgui::surface()->CreateNewTextureID();
 }
 
@@ -24,7 +25,10 @@ void CTGAImage::Paint()
 	{
 		vgui::surface()->DrawSetTexture(m_iTextureID);
 		vgui::surface()->DrawSetColor(m_Color);
-		vgui::surface()->DrawTexturedRect(m_nX, m_nY, m_nX + m_wide, m_nY + m_tall);
+		if (_bAdditive)
+			vgui::surface()->DrawTexturedRectAdd(m_nX, m_nY, m_nX + m_wide, m_nY + m_tall);
+		else
+			vgui::surface()->DrawTexturedRect(m_nX, m_nY, m_nX + m_wide, m_nY + m_tall);
 	}
 }
 
@@ -54,6 +58,16 @@ void CTGAImage::SetSize(int wide, int tall)
 void CTGAImage::SetColor(Color col)
 {
 	m_Color = col;
+}
+
+void CTGAImage::Destroy(void)
+{
+	delete this;
+}
+
+void CTGAImage::SetAdditive(bool bIsAdditive)
+{
+	_bAdditive = bIsAdditive;
 }
 
 int CTGAImage::GetTextureId()

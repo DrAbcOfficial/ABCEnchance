@@ -3,7 +3,7 @@
 #include <vgui/IImage.h>
 #include <Color.h>
 
-class CTGAImage : public vgui::IImage
+class CTGAImage : public vgui::IImage_HL25
 {
 public:
 	/**
@@ -28,6 +28,8 @@ public:
 	virtual void GetSize(int &wide, int &tall);
 	virtual void SetSize(int wide, int tall);
 	virtual void SetColor(Color col);
+	void Destroy(void) override;
+	void SetAdditive(bool bIsAdditive) override;
 
 	int GetTextureId();
 
@@ -36,6 +38,7 @@ private:
 	int m_iTextureID = -1;
 	int m_nX = 0, m_nY = 0;
 	int m_wide = 64, m_tall = 64;
+	bool _bAdditive;
 };
 
 #endif
