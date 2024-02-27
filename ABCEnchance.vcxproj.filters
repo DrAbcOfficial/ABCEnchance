@@ -695,9 +695,6 @@
     <ClCompile Include="src\Source\HUD\weaponbank.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\weaponselect.cpp">
-      <Filter>Public\Source\HUD\legacy</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
@@ -713,14 +710,14 @@
     <ClCompile Include="src\Source\HUD\vgui\basestackpanel.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
+    <ClCompile Include="SourceSDK\filesystem.cpp">
+      <Filter>SourceSDK</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\weaponchoose.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\HLSDK\common\interface.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\metahook.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
     <ClInclude Include="SourceSDK\Color.h">
       <Filter>SourceSDK</Filter>
     </ClInclude>
@@ -1444,9 +1441,6 @@
     <ClInclude Include="src\Header\HUD\weaponbank.h">
       <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\weaponselect.h">
-      <Filter>Public\Header\HUD\legacy</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Utility\client_steam_context.h">
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
@@ -1556,6 +1550,12 @@
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\itemstack.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceSDK\filesystem.h">
+      <Filter>SourceSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\weaponchoose.h">
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>

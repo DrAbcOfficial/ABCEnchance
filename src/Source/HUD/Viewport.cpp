@@ -43,6 +43,7 @@
 #include "ammostack.h"
 #include "itemstack.h"
 #include "weaponstack.h"
+#include "weaponchoose.h"
 
 #include "CCustomHud.h"
 
@@ -110,6 +111,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pAmmoStack = new CAmmoStackPanel());
 	AddNewPanel(m_pItemStack = new CItemStackPanel());
 	AddNewPanel(m_pWeaponStack = new CWeaponStackPanel());
+	AddNewPanel(m_pWeaponChoose = new CWeaponChoosePanel());
 	SetVisible(false);
 }
 
@@ -135,6 +137,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pAmmoStack->SetParent(GetVPanel());
 	m_pItemStack->SetParent(GetVPanel());
 	m_pWeaponStack->SetParent(GetVPanel());
+	m_pWeaponChoose->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}
@@ -381,6 +384,9 @@ CItemStackPanel* CViewport::GetItemStackPanel(){
 CWeaponStackPanel* CViewport::GetWeaponStackPanel(){
 	return m_pWeaponStack;
 }
+CWeaponChoosePanel* CViewport::GetWeaponChoosePanel(){
+	return m_pWeaponChoose;
+}
 WEAPON* CViewport::GetCurWeapon(){
 	return gCustomHud.GetCurWeapon();
 }
@@ -436,4 +442,19 @@ bool CViewport::HasSuit() {
 }
 bool CViewport::IsHudHide(int HideToken) {
 	return gCustomHud.IsHudHide(HideToken);
+}
+void Viewport_PickupWeapon(WEAPON* wp) {
+	g_pViewPort->GetWeaponChoosePanel()->InsertWeapon(wp);
+}
+void Viewport_DropWeapon(WEAPON* wp) {
+	g_pViewPort->GetWeaponChoosePanel()->RemoveWeapon(wp);
+}
+void Viewport_ChooseWeapon(WEAPON* wp) {
+	g_pViewPort->GetWeaponChoosePanel()->ChooseWeapon(wp);
+}
+void Viewport_SelectWeapon() {
+	g_pViewPort->GetWeaponChoosePanel()->SelectWeapon();
+}
+void Viewport_DropAllWeapon() {
+	g_pViewPort->GetWeaponChoosePanel()->Reset();
 }

@@ -236,10 +236,10 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\HUD\vgui\sidetext.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\textmenu.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\vote.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\weaponchoose.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\weaponstack.cpp" />
     <ClCompile Include="src\Source\HUD\Viewport.cpp" />
     <ClCompile Include="src\Source\HUD\weaponbank.cpp" />
-    <ClCompile Include="src\Source\HUD\weaponselect.cpp" />
     <ClCompile Include="src\Source\plugins.cpp" />
     <ClCompile Include="src\Source\soundengine.cpp" />
     <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
@@ -375,8 +375,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="vpx\vpx_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\HLSDK\common\interface.h" />
-    <ClInclude Include="..\..\metahook.h" />
     <ClInclude Include="SourceSDK\appframework\IAppSystem.h" />
     <ClInclude Include="SourceSDK\Color.h" />
     <ClInclude Include="SourceSDK\common\xbox\xbox_console.h" />
@@ -486,10 +484,10 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\vgui\sidetext.h" />
     <ClInclude Include="src\Header\HUD\vgui\textmenu.h" />
     <ClInclude Include="src\Header\HUD\vgui\vote.h" />
+    <ClInclude Include="src\Header\HUD\vgui\weaponchoose.h" />
     <ClInclude Include="src\Header\HUD\vgui\weaponstack.h" />
     <ClInclude Include="src\Header\HUD\Viewport.h" />
     <ClInclude Include="src\Header\HUD\weaponbank.h" />
-    <ClInclude Include="src\Header\HUD\weaponselect.h" />
     <ClInclude Include="src\Header\IEngineSurface.h" />
     <ClInclude Include="src\Header\plugins.h" />
     <ClInclude Include="src\Header\soundengine.h" />
