@@ -9,13 +9,6 @@ Scheme
 		//伤害类型突变颜色
 		"HealthArmor.BitDamageColor"		"0 255 0 255"
 
-        //经典菜单颜色
-		"WMenuBucket.SelectColor"			"0 255 0 255"
-		//经典菜单图标颜色
-		"WMenuBucket.SelectIconColor"		"255 255 0 255"
-		//经典菜单空武器颜色
-		"WMenuBucket.SelectEmptyColor"		"255 0 0 255"
-
         //购买菜单文字颜色
 		"BuyMenu.TextColor"		"255 255 255 255"
 		//购买菜单背景颜色
@@ -36,21 +29,6 @@ Scheme
 		"HealthArmor.PainIndicatorTime"	"3"
 		//色差伤害指示器持续时间
 		"HealthArmor.ShockIndicatorTime""0.2"
-
-        //经典菜单起始宽
-		"WMenuBucket.SelectXOffset"	"0.005"
-		//经典菜单起始高
-		"WMenuBucket.SelectYOffset"	"0.01"
-		//经典菜单图标间隔宽
-		"WMenuBucket.SelectXGap"	"0.0025"
-		//经典菜单图标间隔高
-		"WMenuBucket.SelectYGap"	"0.005"
-		//经典菜单保持时间
-		"WMenuBucket.SelectHoldTime"	"5"
-		//经典菜单开启动画时间
-		"WMenuBucket.SelectAnimateTime"	"0.12"
-		//经典菜单消失动画时间
-		"WMenuBucket.SelectFadeTime"	"0.2"
 
         //购买菜单进入动画时间
 		"EccoBuyMenu.BuyMenuAnimateTime"		"0.1"
