@@ -35,7 +35,7 @@
 
 extern vgui::HScheme GetViewPortBaseScheme();
 
-class CAlbumImage : public vgui::IImage {
+class CAlbumImage : public vgui::IImage_HL25 {
 public:
 	CAlbumImage() {
 		m_nX = 0;
@@ -43,6 +43,13 @@ public:
 		m_wide = m_tall = 0;
 		m_Color = Color(255, 255, 255, 255);
 		m_iTextureID = -1;
+		m_bAddictive = false;
+	}
+	virtual void Destroy() {
+		delete this;
+	}
+	virtual void SetAdditive(bool bIsAdditive) {
+		m_bAddictive = bIsAdditive;
 	}
 	// Call to Paint the image
 	// Image will draw within the current panel context at the specified position
@@ -53,7 +60,10 @@ public:
 		{
 			vgui::surface()->DrawSetTexture(m_iTextureID);
 			vgui::surface()->DrawSetColor(m_Color);
-			vgui::surface()->DrawTexturedRect(posX, posY, posX + m_wide, posY + m_tall);
+			if(m_bAddictive)
+				vgui::surface()->DrawTexturedRectAdd(posX, posY, posX + m_wide, posY + m_tall);
+			else
+				vgui::surface()->DrawTexturedRect(posX, posY, posX + m_wide, posY + m_tall);
 		}
 	}
 	// Set the position of the image
@@ -106,6 +116,7 @@ protected:
 	bool m_bValid;
 	int m_nX, m_nY;
 	int m_offX = 0, m_offY = 0;
+	bool m_bAddictive;
 };
 static CAlbumImage* s_pAlbumImage;
 static std::atomic<netease::CNeteaseMusicAPI*> s_pNeteaseApi;

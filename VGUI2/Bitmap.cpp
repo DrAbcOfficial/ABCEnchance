@@ -1,26 +1,28 @@
 #include <vgui/ISurface.h>
 #include "bitmap.h"
 #include "vgui_internal.h"
+#include "FileSystem.h"
 #include "UtlBuffer.h"
 #include <tier0/dbg.h>
 
 #include <vgui_controls/Controls.h>
 
-////#include "tier0/memdbgon.h"
+#include "tier0/memdbgon.h"
 
 using namespace vgui;
 
-Bitmap::Bitmap(const char *filename, bool hardwareFiltered)
+Bitmap::Bitmap(const char* filename, bool hardwareFiltered)
 {
 	_filtered = hardwareFiltered;
 
 	int size = strlen(filename) + 1;
-	_filename = (char *)malloc(size);
+	_filename = (char*)malloc(size);
 	Assert(_filename);
 
 	Q_snprintf(_filename, size, "%s", filename);
 
 	_bProcedural = false;
+	_bAdditive = false;
 
 	if (Q_stristr(filename, ".pic"))
 		_bProcedural = true;
@@ -42,7 +44,7 @@ Bitmap::~Bitmap(void)
 		free(_filename);
 }
 
-void Bitmap::GetSize(int &wide, int &tall)
+void Bitmap::GetSize(int& wide, int& tall)
 {
 	wide = 0;
 	tall = 0;
@@ -57,7 +59,7 @@ void Bitmap::GetSize(int &wide, int &tall)
 	tall = _tall;
 }
 
-void Bitmap::GetContentSize(int &wide, int &tall)
+void Bitmap::GetContentSize(int& wide, int& tall)
 {
 	GetSize(wide, tall);
 }
@@ -79,7 +81,7 @@ void Bitmap::SetColor(Color col)
 	_color = col;
 }
 
-const char *Bitmap::GetName(void)
+const char* Bitmap::GetName(void)
 {
 	return _filename;
 }
@@ -101,7 +103,14 @@ void Bitmap::Paint(void)
 	if (_wide == 0)
 		GetSize(_wide, _tall);
 
-	surface()->DrawTexturedRect(_pos[0], _pos[1], _pos[0] + _wide, _pos[1] + _tall);
+	if (_bAdditive)
+	{
+		surface()->DrawTexturedRectAdd(_pos[0], _pos[1], _pos[0] + _wide, _pos[1] + _tall);
+	}
+	else
+	{
+		surface()->DrawTexturedRect(_pos[0], _pos[1], _pos[0] + _wide, _pos[1] + _tall);
+	}
 }
 
 void Bitmap::ForceUpload(void)
@@ -122,4 +131,14 @@ void Bitmap::ForceUpload(void)
 HTexture Bitmap::GetID(void)
 {
 	return _id;
+}
+
+void Bitmap::Destroy(void)
+{
+	delete this;
+}
+
+void Bitmap::SetAdditive(bool bIsAdditive)
+{
+	_bAdditive = bIsAdditive;
 }

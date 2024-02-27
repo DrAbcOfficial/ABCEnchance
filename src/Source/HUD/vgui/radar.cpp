@@ -46,8 +46,16 @@ void CRadarAvatarPanel::Paint(){
 	}
 }
 
-class CRadarMapImage : public vgui::IImage {
+class CRadarMapImage : public vgui::IImage_HL25 {
 public:
+	virtual void Destroy() {
+		delete this;
+	}
+
+	virtual void SetAdditive(bool bIsAdditive) {
+
+	}
+
 	virtual void Paint() override{
 		//¼ÆËãÆÁÄ»¾ø¶Ô×ø±ê
 		int x = m_iAbsX + m_iX;
