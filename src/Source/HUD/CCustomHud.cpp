@@ -40,6 +40,7 @@
 #include "weaponstack.h"
 #include "scoreboard.h"
 #include "weaponchoose.h"
+#include "ammobar.h"
 #include "Viewport.h"
 
 #ifdef _DEBUG
@@ -52,6 +53,13 @@
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
+pfnUserMsgHook m_pfnCurWeapon;
+pfnUserMsgHook m_pfnWeaponList;
+pfnUserMsgHook m_pfnCustWeapon;
+pfnUserMsgHook m_pfnAmmoX;
+pfnUserMsgHook m_pfnHideWeapon;
+pfnUserMsgHook m_pfnHideHUD;
+pfnUserMsgHook m_pfnWeaponSpr;
 pfnUserMsgHook m_pfnWeapPickup;
 pfnUserMsgHook m_pfnAmmoPickup;
 pfnUserMsgHook m_pfnItemPickup;
@@ -72,6 +80,130 @@ pfnUserMsgHook m_pfnMetaHook;
 pfnUserMsgHook m_pfnDamage;
 pfnUserMsgHook m_pfnBattery;
 
+int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int iIndex = READ_BYTE();
+	int iCount = READ_LONG();
+	gWR.SetAmmo(iIndex, abs(iCount));
+	gCustomHud.SetCurWeapon(gWR.m_pCurWeapon);
+	return m_pfnAmmoX(pszName, iSize, pbuf);
+}
+int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+
+	WEAPON* Weapon = new WEAPON();
+	strcpy_s(Weapon->szName, READ_STRING());
+	strcpy_s(Weapon->szSprName, Weapon->szName);
+	Weapon->iAmmoType = READ_CHAR();
+	Weapon->iMax1 = READ_LONG();
+	if (Weapon->iMax1 == 255)
+		Weapon->iMax1 = -1;
+
+	Weapon->iAmmo2Type = READ_CHAR();
+	Weapon->iMax2 = READ_LONG();
+	if (Weapon->iMax2 == 255)
+		Weapon->iMax2 = -1;
+
+	Weapon->iSlot = READ_CHAR();
+	Weapon->iSlotPos = READ_CHAR();
+	Weapon->iId = READ_SHORT();
+	Weapon->iFlags = READ_BYTE();
+	Weapon->iClip = 0;
+
+	WEAPON* wp = gWR.GetWeapon(Weapon->iId);
+	if (!wp)
+		gWR.AddWeapon(Weapon);
+	else {
+		strcpy_s(wp->szName, Weapon->szName);
+		strcpy_s(wp->szSprName, Weapon->szName);
+		wp->iAmmoType = Weapon->iAmmoType;
+		wp->iMax1 = Weapon->iMax1;
+		wp->iAmmo2Type = Weapon->iAmmo2Type;
+		wp->iMax2 = Weapon->iMax2;
+		wp->iSlot = Weapon->iSlot;
+		wp->iSlotPos = Weapon->iSlotPos;
+		wp->iFlags = Weapon->iFlags;
+		delete Weapon;
+	}
+	return m_pfnWeaponList(pszName, iSize, pbuf);
+}
+int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int id = READ_SHORT();
+	char name[128];
+	strcpy_s(name, READ_STRING());
+	if (name[0] != 0)
+		gWR.LoadWeaponSprites(id, name);;
+	return m_pfnCustWeapon(pszName, iSize, pbuf);
+
+}
+int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int iState = READ_BYTE();
+	if (iState & CAmmoPanel::WEAPONSTATE::VALID) {
+		int iId = READ_SHORT();
+		//sc反编汇后如此
+		if (iId == -1) {
+			gWR.DropAllWeapons();
+			return m_pfnCurWeapon(pszName, iSize, pbuf);
+		}
+		int iClip = READ_LONG();
+		int iClip2 = READ_LONG();
+		if (gCustomHud.m_iPlayerHealth > 0)
+			gWR.m_bAcceptDeadMessage = false;
+		WEAPON* pWeapon = gWR.GetWeapon(iId);
+		if (!pWeapon)
+			return m_pfnCurWeapon(pszName, iSize, pbuf);
+		//更新弹匣信息
+		pWeapon->iClip = iClip;
+		pWeapon->iClip2 = iClip2;
+		pWeapon->iState = iState;
+		gWR.m_pCurWeapon = pWeapon;
+		gCustomHud.SetCurWeapon(pWeapon);
+	}
+	else {
+		int iFlag1 = READ_BYTE();
+		int iFlag2 = READ_BYTE();
+		int iAll = iFlag1 + iFlag2;
+		switch (iAll) {
+		case 0X1FE: {
+			if (gWR.m_bAcceptDeadMessage)
+				gWR.DropAllWeapons();
+			if (gCustomHud.m_iPlayerHealth <= 0)
+				gWR.m_bAcceptDeadMessage = true;
+			break;
+		}
+		case 0:gWR.DropAllWeapons();
+		}
+	}
+	return m_pfnCurWeapon(pszName, iSize, pbuf);
+}
+int __MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf){
+	BEGIN_READ(pbuf, iSize);
+	gCustomHud.HudHideCallBack(READ_BYTE());
+	return m_pfnHideWeapon(pszName, iSize, pbuf);
+}
+int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf){
+	BEGIN_READ(pbuf, iSize);
+	gCustomHud.HudHideCallBack(READ_BYTE());
+	return m_pfnHideHUD(pszName, iSize, pbuf);
+}
+//uzi akimbo
+//shit uzi
+int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int id = READ_SHORT();
+	char name[128];
+	strcpy_s(name, READ_STRING());
+	if (name[0] != 0) {
+		WEAPON* wp = gWR.GetWeapon(id);
+		if (wp && wp->iId > 0) {
+			strcpy_s(wp->szSprName, name);
+			gWR.LoadWeaponSprites(wp);
+		}
+	}
+	return m_pfnWeaponSpr(pszName, iSize, pbuf);
+}
 int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_SHORT();
@@ -437,6 +569,13 @@ void CCustomHud::GL_Init(void){
 }
 void CCustomHud::HUD_Init(void){
 	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
+	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
+	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
+	m_pfnWeaponList = HOOK_MESSAGE(WeaponList);
+	m_pfnCustWeapon = HOOK_MESSAGE(CustWeapon);
+	m_pfnHideWeapon = HOOK_MESSAGE(HideWeapon);
+	m_pfnHideHUD = HOOK_MESSAGE(HideHUD);
+	m_pfnWeaponSpr = HOOK_MESSAGE(WeaponSpr);
 	m_pfnItemPickup = HOOK_MESSAGE(ItemPickup);
 	m_pfnAmmoPickup = HOOK_MESSAGE(AmmoPickup);
 	m_pfnWeapPickup = HOOK_MESSAGE(WeapPickup);
