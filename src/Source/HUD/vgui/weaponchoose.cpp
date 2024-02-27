@@ -197,10 +197,13 @@ void CWeaponChoosePanel::Reset() {
 void CWeaponChoosePanel::ShowPanel(bool state) {
 	if (state == IsVisible())
 		return;
+	if (state && !ShouldDraw())
+		return;
 	SetVisible(state);
 	if (state) {
 		SetAlpha(0);
 		vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 255, 0.0f, 0.1f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+		InvalidateLayout();
 	}
 }
 bool CWeaponChoosePanel::IsVisible() {
