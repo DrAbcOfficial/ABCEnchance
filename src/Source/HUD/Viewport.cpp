@@ -387,9 +387,6 @@ CWeaponStackPanel* CViewport::GetWeaponStackPanel(){
 CWeaponChoosePanel* CViewport::GetWeaponChoosePanel(){
 	return m_pWeaponChoose;
 }
-WEAPON* CViewport::GetCurWeapon(){
-	return gCustomHud.GetCurWeapon();
-}
 void CViewport::SetCurWeapon(WEAPON* weapon){
 	m_pAmmoPanel->SetWeapon(weapon);
 	m_pCrossHairPanel->SetWeapon(weapon);

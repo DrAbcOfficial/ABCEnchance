@@ -5,7 +5,9 @@ typedef struct {
 	int	x, y;
 } BASEDAMAGE_IMAGE;
 
+#ifndef __AMMO_H__
 class WEAPON;
+#endif
 
 class CHudAmmo : public CHudBase {
 public:

@@ -5,6 +5,7 @@
 #define INVALID_WEAPON_SLOT MAX_WEAPON_SLOT + 1
 #define INVALID_WEAPON_POS -1
 
+class WEAPON;
 class CWeaponData {
 public:
 	WEAPON* operator [](size_t iId);
@@ -51,12 +52,16 @@ private:
 	cvar_t* pFastSwich = nullptr;
 
 public:
+	WEAPON* m_pCurWeapon;
+	bool m_bAcceptDeadMessage = false;
+
 	WEAPON* m_pNowSelected;
 	//目前选择的Slot
 	size_t m_iNowSlot;
 
 	void Init();
 	void Reset();
+	void VidInit();
 
 	CWeaponData* GetOwnedData();
 

@@ -209,7 +209,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\crypto.cpp" />
     <ClCompile Include="src\Source\efxenchance.cpp" />
     <ClCompile Include="src\Source\exportfuncs.cpp" />
-    <ClCompile Include="src\Source\HUD\ammo.cpp" />
     <ClCompile Include="src\Source\HUD\cctv.cpp" />
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
@@ -455,7 +454,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="SourceSDK\winlite.h" />
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
-    <ClInclude Include="src\Header\HUD\ammo.h" />
     <ClInclude Include="src\Header\HUD\basehud.h" />
     <ClInclude Include="src\Header\HUD\cctv.h" />
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />

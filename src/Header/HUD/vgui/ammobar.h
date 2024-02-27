@@ -10,7 +10,9 @@ namespace vgui {
 	class CSPRImage;
 }
 
+#ifndef __AMMO_H__
 class WEAPON;
+#endif
 
 class CAmmoPanel : public vgui::EditablePanel, public IViewportPanel
 {
