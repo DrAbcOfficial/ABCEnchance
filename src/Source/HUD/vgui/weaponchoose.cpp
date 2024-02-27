@@ -21,7 +21,7 @@ typedef int HSPRITE;
 #include "weaponchoose.h"
 
 extern const clientdata_t* gClientData;
-
+static int g_iRainbowColorCounter = 0;
 CWeaponChooseItem::CWeaponChooseItem(vgui::Panel* parent, WEAPON* wep) : BaseClass(parent, "WeaponItem") {
 	m_pWeapon = wep;
 	m_pWeaponPanel = new vgui::ImageSprPanel(this, "Weapon");
@@ -91,8 +91,23 @@ void CWeaponChooseItem::ReloadWeaponSpr(){
 }
 void CWeaponChooseItem::UpdateColor(){
 	ReloadWeaponSpr();
-	m_pWeaponPanel->SetDrawColor(gWR.HasAmmo(m_pWeapon) ? m_cFgColor : m_cEmptyColor);
-	m_pWeaponInactivePanel->SetDrawColor(gWR.HasAmmo(m_pWeapon) ? m_cInactiveColor : m_cEmptyInactiveColor);
+	static auto rainbow = [](Color& c) {
+		if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
+			Vector temp = { (float)c.r() / 255.0f,(float)c.g() / 255.0f, (float)c.b() / 255.0f };
+			RGBtoHSV(temp, temp);
+			temp.x += g_iRainbowColorCounter * 20;
+			temp.x = fmodf(temp.x, 360.0f);
+			HSVtoRGB(temp, temp);
+			temp *= 255.0f;
+			c = Color(temp.x, temp.y, temp.z, c.a());
+		}
+	};
+	Color ac = gWR.HasAmmo(m_pWeapon) ? m_cFgColor : m_cEmptyColor;
+	rainbow(ac);
+	m_pWeaponPanel->SetDrawColor(ac);
+	Color ic = gWR.HasAmmo(m_pWeapon) ? m_cInactiveColor : m_cEmptyInactiveColor;
+	rainbow(ic);
+	m_pWeaponInactivePanel->SetDrawColor(ic);
 	if (m_pWeapon->iAmmoType < 0) {
 		m_pAmmoBarBg1->SetVisible(false);
 		m_pAmmoBar1->SetVisible(false);
@@ -124,6 +139,8 @@ WEAPON* CWeaponChooseItem::GetWeapon() {
 extern vgui::HScheme GetViewPortBaseScheme();
 CWeaponChoosePanel::CWeaponChoosePanel()
 	: BaseClass(nullptr, VIEWPORT_WEAPONCHOOSE_NAME) {
+
+	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "0", FCVAR_VALUE, NULL);
 
 	m_arySlotPanel = {
 		new vgui::ImagePanel(this,"Slot1"),
@@ -202,6 +219,7 @@ void CWeaponChoosePanel::PerformLayout(){
 	if (select)
 		sslot = select->iSlot;
 	int x = 0;
+	g_iRainbowColorCounter = 0;
 	for (size_t i = 0; i < m_aryPanelList.size(); i++) {
 		int y = 0;
 		//»æÖÆ¶¥¶ËÍ¼±ê
@@ -218,6 +236,8 @@ void CWeaponChoosePanel::PerformLayout(){
 				item->SetBounds(x, y, m_iItemInactiveWide, m_iItemInactiveHeight);
 			y += (ss ? m_iItemHeight : m_iItemInactiveHeight) + m_iItemYGap;
 			item->UpdateColor();
+			if (gCVars.pAmmoMenuDrawRainbow->value > 0)
+				g_iRainbowColorCounter++;
 		}
 		x += (ss ? m_iItemWide : m_iItemInactiveWide) + m_iItemXGap;
 	}
