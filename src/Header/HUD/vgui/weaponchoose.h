@@ -56,6 +56,7 @@ public:
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void PerformLayout() override;
+	virtual void OnThink() override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	virtual void Reset() override;
@@ -83,7 +84,9 @@ private:
 	int m_iItemHeight;
 	int m_iItemXGap;
 	int m_iItemYGap;
+	float m_flCloseTime = 0.0f;
 
 	bool m_bSelectBlock = false;
+	float m_flNextClosePanelTime = 0.0f;
 };
 #endif
