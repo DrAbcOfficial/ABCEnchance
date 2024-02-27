@@ -24,7 +24,7 @@ namespace vgui
 	//-----------------------------------------------------------------------------
 	// Purpose: Holds a single image created from a chunk of memory, internal to vgui only
 	//-----------------------------------------------------------------------------
-	class MemoryBitmap : public IImage
+	class MemoryBitmap : public IImage_HL25
 	{
 	public:
 		MemoryBitmap(unsigned char* texture, int wide, int tall);
@@ -44,6 +44,9 @@ namespace vgui
 		virtual HTexture GetID();		// returns the texture id
 		virtual void SetRotation(int iRotation) { return; };
 
+		virtual void Destroy();
+		virtual void SetAdditive(bool bIsAdditive);
+
 		// methods
 		void ForceUpload(unsigned char* texture, int wide, int tall);	// ensures the bitmap has been uploaded
 		const char* GetName();
@@ -60,6 +63,7 @@ namespace vgui
 		int			_pos[2];
 		Color		_color;
 		int			_w, _h; // size of the texture
+		bool _bAdditive;
 	};
 
 } // namespace vgui
