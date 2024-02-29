@@ -503,7 +503,7 @@ int HUD_UpdateClientData (struct client_data_s* c, float f){
 }
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	g_playerppmove.inwater = ppmove->waterlevel > 1;
-	g_playerppmove.onground = ppmove->onground != -1;
+	g_playerppmove.onground = ppmove->onground != 0;
 	g_playerppmove.walking = ppmove->movetype = MOVETYPE_WALK;
 	return gExportfuncs.HUD_PlayerMove(ppmove, server);
 }
