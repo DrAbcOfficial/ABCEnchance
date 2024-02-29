@@ -90,8 +90,10 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 # 📤 Command
 |Command|usage|
 |----|----|
-|+scaleradar|Start scale radar size|
-|-scaleradar|Stop scale radar size|
+|+scaleradar|Start scaling radar|
+|-scaleradar|Stop scaling radar|
+|+ducktap|Start ducktap|
+|-ducktap|Stop ducktap|
 |models|search player models|
 # 📊 CVars
 |CVar|uses|default|range|
@@ -116,9 +118,6 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |---|---|---|---|
 |cl_radar|Radar|1|0/1/2|
 |cl_radarzoom|Radar Zoom|2.5|0.0001~9999|
-|cl_radarsize|Radar Size|344|0-9999|
-|cl_radarsizetime|Radar Scale animation time|0.25|0~9999|
-|cl_radargap|Radar Gap|0.98|0-1|
 |cl_radarupdateint|Radar image update interval|1|0-9999|
 |---|---|---|---|
 |cl_playertitle|Show Player name|1|0/1/2|
