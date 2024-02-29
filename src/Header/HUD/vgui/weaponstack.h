@@ -9,7 +9,7 @@ public:
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void CheckExpire() override;
 
-	void ReloadWeaponSpr();
+	void ForceReload();
 private:
 	size_t m_iWeapon;
 	Color m_cEmpty;
@@ -25,5 +25,6 @@ public:
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	void AddItemPickup(int wepindex);
+	void ReloadWeaponSpr();
 };
 #endif

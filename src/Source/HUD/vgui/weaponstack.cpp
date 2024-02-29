@@ -16,6 +16,7 @@ typedef int HSPRITE;
 
 CWeaponStackItem::CWeaponStackItem(vgui::Panel* parent, int spridx, int l, int r, int t, int b, float expire, float fi, float fo, size_t wi) :
 	BaseClass(parent, spridx, l, r, t, b, expire, fi, fo) {
+	m_iWeapon = wi;
 }
 void CWeaponStackItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -30,21 +31,19 @@ void CWeaponStackItem::CheckExpire(){
 	WEAPON* weapon = gWR.GetWeapon(m_iWeapon);
 	if (weapon == nullptr)
 		return;
-	ReloadWeaponSpr();
 	if(gWR.HasAmmo(weapon))
 		m_pPanel->SetDrawColor(m_cDraw);
 	else
 		m_pPanel->SetDrawColor(m_cEmpty);
 }
-
-void CWeaponStackItem::ReloadWeaponSpr(){
+void CWeaponStackItem::ForceReload() {
 	WEAPON* weapon = gWR.GetWeapon(m_iWeapon);
-	if (iSprIdx != weapon->hInactive) {
-		m_pPanel->SetImage(weapon->hInactive);
-		m_pPanel->SetRect(weapon->rcInactive.left, weapon->rcInactive.right, weapon->rcInactive.top, weapon->rcInactive.bottom);
-		m_pPanel->SetRenderMode(kRenderTransAdd);
-		iSprIdx = weapon->hInactive;
-	}
+	if (weapon == nullptr)
+		return;
+	m_pPanel->SetImage(weapon->hInactive);
+	m_pPanel->SetRect(weapon->rcInactive.left, weapon->rcInactive.right, weapon->rcInactive.top, weapon->rcInactive.bottom);
+	m_pPanel->SetRenderMode(kRenderTransAdd);
+	iSprIdx = weapon->hInactive;
 }
 
 extern vgui::HScheme GetViewPortBaseScheme();
@@ -82,6 +81,12 @@ void CWeaponStackPanel::AddItemPickup(int wepindex){
 		m_flKeepTime, m_flFadeinTime, m_flFadeoutTime, wepindex);
 	item->SetSize(m_iItemWide, m_iItemTall);
 	m_aryPanels.push_back(item);
+}
+void CWeaponStackPanel::ReloadWeaponSpr(){
+	for (auto iter = m_aryPanels.begin(); iter != m_aryPanels.end(); iter++) {
+		auto item = reinterpret_cast<CWeaponStackItem*>(*iter);
+		item->ForceReload();
+	}
 }
 void CWeaponStackPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);

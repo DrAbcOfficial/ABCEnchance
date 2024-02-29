@@ -79,18 +79,14 @@ void CWeaponChooseItem::SetBounds(int x, int y, int w, int h){
 	m_pWeaponInactivePanel->SetSize(w, h);
 }
 void CWeaponChooseItem::ReloadWeaponSpr(){
-	if (m_pWeapon->hActive != m_iWeaponSpr) {
-		m_pWeaponInactivePanel->SetImage(m_pWeapon->hInactive);
-		m_pWeaponInactivePanel->SetRect(m_pWeapon->rcInactive.left, m_pWeapon->rcInactive.right, m_pWeapon->rcInactive.top, m_pWeapon->rcInactive.bottom);
-		m_pWeaponInactivePanel->SetRenderMode(kRenderTransAdd);
-		m_pWeaponPanel->SetImage(m_pWeapon->hActive);
-		m_pWeaponPanel->SetRect(m_pWeapon->rcActive.left, m_pWeapon->rcActive.right, m_pWeapon->rcActive.top, m_pWeapon->rcActive.bottom);
-		m_pWeaponPanel->SetRenderMode(kRenderTransAdd);
-		m_iWeaponSpr = m_pWeapon->hActive;
-	}
+	m_pWeaponInactivePanel->SetImage(m_pWeapon->hInactive);
+	m_pWeaponInactivePanel->SetRect(m_pWeapon->rcInactive.left, m_pWeapon->rcInactive.right, m_pWeapon->rcInactive.top, m_pWeapon->rcInactive.bottom);
+	m_pWeaponInactivePanel->SetRenderMode(kRenderTransAdd);
+	m_pWeaponPanel->SetImage(m_pWeapon->hActive);
+	m_pWeaponPanel->SetRect(m_pWeapon->rcActive.left, m_pWeapon->rcActive.right, m_pWeapon->rcActive.top, m_pWeapon->rcActive.bottom);
+	m_pWeaponPanel->SetRenderMode(kRenderTransAdd);
 }
 void CWeaponChooseItem::UpdateColor(){
-	ReloadWeaponSpr();
 	static auto rainbow = [](Color& c) {
 		if (gCVars.pAmmoMenuDrawRainbow->value > 0) {
 			Vector temp = { (float)c.r() / 255.0f,(float)c.g() / 255.0f, (float)c.b() / 255.0f };
@@ -256,6 +252,14 @@ void CWeaponChoosePanel::PerformLayout(){
 void CWeaponChoosePanel::OnThink(){
 	if (gEngfuncs.GetClientTime() >= m_flNextClosePanelTime)
 		ShowPanel(false);
+}
+void CWeaponChoosePanel::ReloadWeaponSpr(){
+	for (auto iter1 = m_aryPanelList.begin(); iter1 != m_aryPanelList.end(); iter1++) {
+		auto& list = *iter1;
+		for (auto iter2 = list.begin(); iter2 != list.end(); iter2++) {
+			(*iter2)->ReloadWeaponSpr();
+		}
+	}
 }
 bool CWeaponChoosePanel::ShouldDraw(){
 	if (gCustomHud.IsInSpectate())
