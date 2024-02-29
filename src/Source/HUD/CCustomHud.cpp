@@ -195,13 +195,15 @@ int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf){
 int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int id = READ_SHORT();
-	char name[128];
-	strcpy_s(name, READ_STRING());
-	if (name[0] != 0) {
+	std::string name = READ_STRING();
+	if (name.size() > 0) {
 		WEAPON* wp = gWR.GetWeapon(id);
 		if (wp && wp->iId > 0) {
-			strcpy_s(wp->szSprName, name);
+			std::strncpy(wp->szSprName, name.c_str(), name.size());
 			gWR.LoadWeaponSprites(wp);
+			g_pViewPort->GetWeaponChoosePanel()->ReloadWeaponSpr();
+			g_pViewPort->GetWeaponStackPanel()->ReloadWeaponSpr();
+
 		}
 	}
 	return m_pfnWeaponSpr(pszName, iSize, pbuf);
