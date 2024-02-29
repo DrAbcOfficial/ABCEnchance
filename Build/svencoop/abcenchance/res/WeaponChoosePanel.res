@@ -13,13 +13,13 @@
 		"visible"		"1"
 		"enabled"		"1"
 		
-		"item_inactive_height"	"30"
-		"item_inactive_wide"	"30"
+		"item_inactive_height"	"15"
+		"item_inactive_wide"	"15"
 
-		"item_height"		"30"
-		"item_wide"	"88"
-		"item_xgap"	"3"
-		"item_ygap"	"3"
+		"item_height"		"15"
+		"item_wide"	"44"
+		"item_xgap"	"1"
+		"item_ygap"	"1"
 		"close_time"	"5.0"
 	}
 	"Slot1"
@@ -35,8 +35,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot2"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot2_icon"
 	}
@@ -44,8 +44,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot3"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot3_icon"
 	}
@@ -53,8 +53,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot4"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot4_icon"
 	}
@@ -62,8 +62,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot5"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot5_icon"
 	}
@@ -71,8 +71,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot6"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot6_icon"
 	}
@@ -80,8 +80,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot7"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot7_icon"
 	}
@@ -89,8 +89,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot8"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot8_icon"
 	}
@@ -98,8 +98,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot9"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot9_icon"
 	}
@@ -107,8 +107,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot0"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot0_icon"
 	}
