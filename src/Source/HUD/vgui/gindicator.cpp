@@ -135,7 +135,7 @@ void CGenadeIndicatorPanel::AddEntity(cl_entity_s* ent, const char* modelname){
 		return;
 	CVector len;
 	CMathlib::VectorSubtract(local->curstate.origin, ent->curstate.origin, len);
-	if (len.FLength() > gCVars.pGrenadeIndicatorRange->value)
+	if (len.Length() > gCVars.pGrenadeIndicatorRange->value)
 		return;
 	if (std::none_of(m_aryImages.begin(), m_aryImages.end(), [ent](CGIndicatorItem* v) {
 		if (v->GetEnt() == ent)

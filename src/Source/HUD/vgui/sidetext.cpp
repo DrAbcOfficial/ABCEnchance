@@ -74,8 +74,8 @@ void CSidePanel::SetParent(vgui::VPANEL parent) {
 void CSidePanel::OnThink() {
 	if (!gClientData || !gEngfuncs.GetLocalPlayer())
 		return;
-	CVector vecSpeed = { gClientData->velocity[0] , gClientData->velocity[1] , gClientData->velocity[2] };
-	float flPlayerSpeed = vecSpeed.FLength();
+	CVector vecSpeed = { gClientData->velocity[0] , gClientData->velocity[1] , 0 };
+	float flPlayerSpeed = vecSpeed.Length();
 	if (m_flMaxSpeed < flPlayerSpeed)
 		m_flMaxSpeed = flPlayerSpeed;
 	const auto ReplaceAll = [](std::string subject, const char* search,

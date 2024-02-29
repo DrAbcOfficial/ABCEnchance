@@ -108,7 +108,6 @@ public:
 
 	[[nodiscard]] inline constexpr float LengthSquared() const { return x * x + y * y + z * z; }
 	[[nodiscard]] inline float Length() const { return static_cast<float>(sqrt(LengthSquared())); }
-	[[nodiscard]] inline float FLength() const { return static_cast<float>(sqrt(LengthSquared())); }
 	[[nodiscard]] inline constexpr operator float* () { return &x; }			 // CVectors will now automatically convert to float * when needed
 	[[nodiscard]] inline constexpr operator const float* () const { return &x; } // CVectors will now automatically convert to float * when needed
 
