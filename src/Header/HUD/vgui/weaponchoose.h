@@ -44,8 +44,6 @@ private:
 	Color m_cAmmoBarBgColor;
 	Color m_cAmmoBarColor;
 	Color m_cAmmoBarEmptyColor;
-
-	int m_iWeaponSpr;
 };
 
 class CWeaponChoosePanel : public vgui::EditablePanel, public IViewportPanel{
@@ -65,6 +63,7 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
+	void ReloadWeaponSpr();
 	bool ShouldDraw();
 	bool BlockAttackOnce();
 	void SelectWeapon();

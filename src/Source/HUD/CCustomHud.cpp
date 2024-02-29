@@ -134,6 +134,8 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf) {
 	strcpy_s(name, READ_STRING());
 	if (name[0] != 0)
 		gWR.LoadWeaponSprites(id, name);;
+	g_pViewPort->GetWeaponChoosePanel()->ReloadWeaponSpr();
+	g_pViewPort->GetWeaponStackPanel()->ReloadWeaponSpr();
 	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
 }
