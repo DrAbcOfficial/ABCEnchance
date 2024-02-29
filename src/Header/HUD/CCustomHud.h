@@ -100,7 +100,7 @@ public:
 
 	int m_iPlayerHealth = 0;
 	int m_iHideHUDDisplay = 0;
-	std::optional<size_t> m_iWeaponBits = 0;
+	std::optional<int> m_iWeaponBits = 0;
 	float m_flOverViewScale = 0;
 	float m_flOverViewYaw = 0;
 	float m_flOverViewZmax = 0;
