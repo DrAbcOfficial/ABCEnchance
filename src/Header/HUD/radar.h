@@ -60,9 +60,10 @@ private:
 
 	int m_iStartWidth;
 	int m_iStartTall;
+	int m_iScaledWidth;
+	int m_iScaledTall;
 
 	float flNextUpdateTrTime;
-	bool m_bInScale;
 
 	size_t iOverviewR = 0;
 	size_t iOverviewG = 0;

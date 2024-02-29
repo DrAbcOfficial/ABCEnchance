@@ -58,8 +58,8 @@ public:
 
 	virtual void Paint() override{
 		//¼ÆËãÆÁÄ»¾ø¶Ô×ø±ê
-		int x = m_iAbsX + m_iX;
-		int y = m_iAbsY + m_iY;
+		int x = m_iX;
+		int y = m_iY;
 		//shader
 		GL_UseProgram(pp_texround.program);
 		if (gCVars.pRadar->value > 1) {
@@ -117,10 +117,6 @@ public:
 	void SetTex(uint tex) {
 		m_hBufferTex = tex;
 	}
-	void SetAbsPos(int x, int y) {
-		m_iAbsX = x;
-		m_iAbsY = y;
-	}
 	void SetRadius(float r) {
 		m_flRoundRadius = r;
 	}
@@ -132,7 +128,6 @@ private:
 	float m_flRoundRadius = 0;
 	int m_iOffX = 0, m_iOffY = 0;
 	int m_iX = 0, m_iY = 0;
-	int m_iAbsX = 0, m_iAbsY;
 	int m_iWide = 0, m_iTall = 0;
 	uint m_hBufferTex;
 	Color m_DrawColor = Color(255, 255, 255, 255);
@@ -156,8 +151,8 @@ CRadarPanel::CRadarPanel()
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
 
-	ADD_COMMAND("+scaleradar", [](){g_pViewPort->GetRadarPanel()->SetScale(true); });
-	ADD_COMMAND("-scaleradar", []() {g_pViewPort->GetRadarPanel()->SetScale(false); });
+	ADD_COMMAND("+scale_radar", [](){g_pViewPort->GetRadarPanel()->SetScale(true); });
+	ADD_COMMAND("-scale_radar", []() {g_pViewPort->GetRadarPanel()->SetScale(false); });
 
 	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->ShowPanel(cvar->value);
@@ -185,9 +180,6 @@ CRadarPanel::CRadarPanel()
 	LoadControlSettings(VGUI2_ROOT_DIR "RadarPanel.res");
 	auto radarimg = new CRadarMapImage();
 	radarimg->SetTex(tex);
-	int x, y;
-	m_pMapground->GetPos(x, y);
-	radarimg->SetAbsPos(x, y);
 	int w, h;
 	m_pMapground->GetSize(w, h);
 	radarimg->SetSize(w, h);
@@ -199,8 +191,8 @@ CRadarPanel::~CRadarPanel(){
 	if (m_hRadarBufferFBO)
 		glDeleteFramebuffers(1, &m_hRadarBufferFBO);
 }
-
 void CRadarPanel::PerformLayout(){
+	BaseClass::PerformLayout();
 	int w, h;
 	GetSize(w, h);
 	m_pBackground->SetSize(w, h);
@@ -210,9 +202,7 @@ void CRadarPanel::PerformLayout(){
 	int vw, vh;
 	m_pViewangleground->GetSize(vw, vh);
 	m_pViewangleground->SetPos((w - vw) / 2, (h - vh) / 2);
-	BaseClass::PerformLayout();
 }
-
 void CRadarPanel::Paint(){
 	if (!g_pViewPort->HasSuit())
 		return;
@@ -287,7 +277,6 @@ void CRadarPanel::Paint(){
 	}
 	BaseClass::Paint();
 }
-
 void CRadarPanel::OnThink(){
 	float flTime = gEngfuncs.GetClientTime();
 	if (flTime < flNextUpdateTrTime)
@@ -314,8 +303,11 @@ void CRadarPanel::OnThink(){
 }
 void CRadarPanel::ApplySettings(KeyValues* inResourceData){
 	BaseClass::ApplySettings(inResourceData);
-	m_flRoundRadius = inResourceData->GetFloat("radar_roundradius", 344.0f);
 	GetSize(m_iStartWidth, m_iStartTall);
+
+	m_flRoundRadius = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetFloat("radar_roundradius", 100.0f));
+	m_iScaledWidth = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_wide", 300));
+	m_iScaledTall = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_tall", 300));
 }
 void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -398,12 +390,11 @@ void CRadarPanel::RenderRadar(){
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
 void CRadarPanel::SetScale(bool state){
-	m_bInScale = state;
 	if (state)
-		SetSize(m_iStartWidth * gCVars.pRadarZoom->value, m_iStartTall * gCVars.pRadarZoom->value);
+		SetSize(m_iScaledWidth, m_iScaledTall);
 	else
 		SetSize(m_iStartWidth, m_iStartTall);
-	PerformLayout();
+	InvalidateLayout();
 }
 void CRadarPanel::SetAvatarVisible(bool state){
 	for (auto iter = m_aryPlayerAvatars.begin(); iter != m_aryPlayerAvatars.end(); iter++) {
