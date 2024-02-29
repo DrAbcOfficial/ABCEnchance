@@ -150,7 +150,6 @@
 		"tabPosition"		"0"
 		"scaleImage"		"1"
 		"image"			"abcenchance/tga/musicprogress"
-		"drawColor"		"255 255 255 255"
 	}
 	"ProgressBackground"
 	{
@@ -164,7 +163,6 @@
 		"tabPosition"		"0"
 		"scaleImage"		"1"
 		"image"			"abcenchance/tga/musicprogress_bg"
-		"drawColor"		"255 255 255 255"
 	}
 	"Album"
 	{
@@ -178,6 +176,5 @@
 		"tabPosition"		"0"
 		"scaleImage"		"1"
 		"image"			""
-		"drawColor"		"255 255 255 255"
 	}
 }

@@ -40,7 +40,6 @@
 		"tabPosition"		"0"
 		"scaleImage"		"1"
 		"image"			"abcenchance/tga/flashlight_off"
-		"drawColor"		"255 255 255 255"
 		"zpos"			"998"
 	}
 	"OnImage"
@@ -54,7 +53,6 @@
 		"tabPosition"		"0"
 		"scaleImage"		"1"
 		"image"			"abcenchance/tga/flashlight_on"
-		"drawColor"		"255 255 255 255"
 		"zpos"			"999"
 	}
 	"PowerImage"

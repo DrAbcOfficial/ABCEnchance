@@ -430,6 +430,9 @@ void CNeteasePanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	m_pLyricLableHighlight->SetFgColor(GetSchemeColor("Music.LyricHighLightFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
 	m_pTranslatedLyricLableHighlight->SetFgColor(GetSchemeColor("Music.TransLyricHighLightFgColor", GetSchemeColor("Lable.FgColor", pScheme), pScheme));
 	m_pLoginPanel->SetBgColor(GetSchemeColor("Frame.BgColor", pScheme));
+	m_pProgressLable->SetDrawColor(GetSchemeColor("Music.ProgressFgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
+	m_pProgressBackgroundPanel->SetDrawColor(GetSchemeColor("Music.ProgressBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pAlbumPanel->SetDrawColor(GetSchemeColor("Music.AlbumImageColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
 }
 void CNeteasePanel::ShowPanel(bool state){
 	if (state == IsVisible())

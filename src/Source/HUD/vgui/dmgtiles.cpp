@@ -32,6 +32,14 @@ CTileIconItem::CTileIconItem(Panel* parent, const char* text, const char* icon, 
 	iDmg = dmg;
 }
 
+void CTileIconItem::ApplySchemeSettings(vgui::IScheme* pScheme) {
+	BaseClass::ApplySchemeSettings(pScheme);
+	SetBgColor(GetSchemeColor("DMGTiles.ListViewBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	SetIconColor(GetSchemeColor("DMGTiles.IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
+	SetTextColor(GetSchemeColor("DMGTiles.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
+	m_pText->SetFont(pScheme->GetFont("DMGTiles.Font", true));
+}
+
 void CTileIconItem::PerformLayout(){
 	BaseClass::PerformLayout();
 	int w, h;
@@ -125,14 +133,6 @@ void CDmgTilesPanel::Reset(){
 void CDmgTilesPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("DMGTiles.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
-	Color itemBg = GetSchemeColor("DMGTiles.ListViewBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme);
-	Color itemIcon = GetSchemeColor("DMGTiles.IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
-	Color itemText = GetSchemeColor("DMGTiles.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme);
-	for (auto iter = m_aryDmg.rbegin(); iter != m_aryDmg.rend(); iter++) {
-		(*iter)->SetBgColor(itemBg);
-		(*iter)->SetIconColor(itemIcon);
-		(*iter)->SetTextColor(itemText);
-	}
 }
 void CDmgTilesPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);

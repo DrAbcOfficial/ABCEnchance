@@ -6,7 +6,7 @@
 		"fieldName"		"WeaponChoosePanel"
 		"xpos"		"20"
 		"ypos"		"20"
-		"wide"		"240"
+		"wide"		"300"
 		"tall"		"400"
 
 		"autoResize"		"1"
@@ -16,7 +16,7 @@
 		"item_inactive_height"	"20"
 		"item_inactive_wide"	"20"
 		"item_height"		"20"
-		"item_wide"	"55"
+		"item_wide"	"60"
 		"item_xgap"	"1"
 		"item_ygap"	"1"
 		"close_time"	"5.0"

@@ -30,15 +30,15 @@ CHealthPanel::CHealthPanel()
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
 
-	m_Backround = new ImagePanel(this, "Background");
+	m_pBackgroundImage = new ImagePanel(this, "Background");
 
 	m_pHealthIcon = new ImagePanel(this, "HealthIcon");
-	m_pHealthLable = new Label(this, "Health", "0");
+	m_pHealthLabel = new Label(this, "Health", "0");
 	m_pHealthImagePanel = new ImageClipPanel(this, "HealthBar");
 	m_pHealthImageBackround = new ImagePanel(this, "HealthBackground");
 
 	m_pArmorIcon = new ImagePanel(this, "ArmorIcon");
-	m_pArmorLable = new Label(this, "Armor", "0");
+	m_pArmorLabel = new Label(this, "Armor", "0");
 	m_pArmorImagePanel = new ImageClipPanel(this, "ArmorBar");
 	m_pArmorImageBackround = new ImagePanel(this, "ArmorBackground");
 
@@ -49,10 +49,6 @@ CHealthPanel::CHealthPanel()
 
 	m_iRestoredHealWide = m_pHealthImagePanel->GetWide();
 	m_iRestoredArmorWide = m_pArmorImagePanel->GetWide();
-	m_cRestoredHealth = m_pHealthImagePanel->GetDrawColor();
-	m_cRestoredArmor = m_pArmorImagePanel->GetDrawColor();
-	m_cRestoredHealthIcon = m_pHealthIcon->GetDrawColor();
-	m_cRestoredArmorIcon = m_pArmorIcon->GetDrawColor();
 }
 const char* CHealthPanel::GetName(){
 	return VIEWPORT_HEALTH_NAME;
@@ -66,12 +62,28 @@ void CHealthPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("HealthBar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_cRestoredHealthLabel = GetSchemeColor("HealthBar.HealthFgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme);
-	m_pHealthLable->SetFgColor(m_cRestoredHealthLabel);
+	m_pHealthLabel->SetFgColor(m_cRestoredHealthLabel);
 	m_cRestoredArmorLabel = GetSchemeColor("HealthBar.ArmorFgColor", GetSchemeColor("Label.BgColor", pScheme), pScheme);
-	m_pArmorLable->SetFgColor(m_cRestoredArmorLabel);
+	m_pArmorLabel->SetFgColor(m_cRestoredArmorLabel);
 
 	m_cHealthDanger = GetSchemeColor("HealthBar.HealthDangerColor", pScheme);
 	m_cArmorDanger = GetSchemeColor("HealthBar.ArmorDangerColor", pScheme);
+
+	m_pBackgroundImage->SetDrawColor(GetSchemeColor("HealthBar.ImageBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+
+	m_cRestoredHealthIcon = GetSchemeColor("HealthBar.HealthIconFgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
+	m_cRestoredHealth = GetSchemeColor("HealthBar.HealthBarFgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
+	m_pHealthImageBackround->SetDrawColor(GetSchemeColor("HealthBar.HealthBarBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pHealthIcon->SetDrawColor(m_cRestoredHealthIcon);
+	m_pHealthImagePanel->SetDrawColor(m_cRestoredHealth);
+
+	m_cRestoredArmorIcon = GetSchemeColor("HealthBar.ArmorIconFgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
+	m_cRestoredArmor = GetSchemeColor("HealthBar.ArmorBarFgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
+	m_pArmorImageBackround->SetDrawColor(GetSchemeColor("HealthBar.ArmorBarBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pArmorIcon->SetDrawColor(m_cRestoredArmorIcon);
+	m_pArmorImagePanel->SetDrawColor(m_cRestoredArmor);
+
+	m_pLongJumpImagePanel->SetDrawColor(GetSchemeColor("HealthBar.LongJumpIconFgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
 }
 void CHealthPanel::ApplySettings(KeyValues* inResourceData) {
 	BaseClass::ApplySettings(inResourceData);
@@ -94,16 +106,16 @@ void CHealthPanel::SetParent(vgui::VPANEL parent){
 void CHealthPanel::SetHealth(int health){
 	static char buf[32];
 	Q_snprintf(buf, "%d", health);
-	m_pHealthLable->SetText(buf);
+	m_pHealthLabel->SetText(buf);
 
 	if (health < gCVars.pDangerHealth->value) {
 		float flRatio = (float)health / gCVars.pDangerHealth->value;
-		m_pHealthLable->SetFgColor(GetDifferColor(flRatio, m_pHealthLable->GetFgColor(), m_cHealthDanger));
+		m_pHealthLabel->SetFgColor(GetDifferColor(flRatio, m_pHealthLabel->GetFgColor(), m_cHealthDanger));
 		m_pHealthImagePanel->SetDrawColor(GetDifferColor(flRatio, m_pHealthImagePanel->GetDrawColor(), m_cHealthDanger));
 		m_pHealthIcon->SetDrawColor(GetDifferColor(flRatio, m_pHealthIcon->GetDrawColor(), m_cHealthDanger));
 	}
 	else {
-		m_pHealthLable->SetFgColor(m_cRestoredHealthLabel);
+		m_pHealthLabel->SetFgColor(m_cRestoredHealthLabel);
 		m_pHealthImagePanel->SetDrawColor(m_cRestoredHealth);
 		m_pHealthIcon->SetDrawColor(m_cRestoredHealthIcon);
 	}	
@@ -114,16 +126,16 @@ void CHealthPanel::SetHealth(int health){
 void CHealthPanel::SetArmor(int armor){
 	static char buf[32];
 	Q_snprintf(buf, "%d", armor);
-	m_pArmorLable->SetText(buf);
+	m_pArmorLabel->SetText(buf);
 
 	if (armor < gCVars.pDangerArmor->value) {
 		float flRatio = (float)armor / gCVars.pDangerHealth->value;
 		m_pArmorImagePanel->SetDrawColor(GetDifferColor(flRatio, m_pArmorImagePanel->GetDrawColor(), m_cArmorDanger));
-		m_pArmorLable->SetFgColor(GetDifferColor(flRatio, m_pArmorLable->GetFgColor(), m_cArmorDanger));
+		m_pArmorLabel->SetFgColor(GetDifferColor(flRatio, m_pArmorLabel->GetFgColor(), m_cArmorDanger));
 		m_pArmorIcon->SetDrawColor(GetDifferColor(flRatio, m_pArmorIcon->GetDrawColor(), m_cArmorDanger));
 	}
 	else {
-		m_pArmorLable->SetFgColor(m_cRestoredArmorLabel);
+		m_pArmorLabel->SetFgColor(m_cRestoredArmorLabel);
 		m_pArmorImagePanel->SetDrawColor(m_cRestoredArmor);
 		m_pArmorIcon->SetDrawColor(m_cRestoredArmorIcon);
 	}
@@ -136,13 +148,13 @@ void CHealthPanel::SetLongJump(bool lj){
 }
 void CHealthPanel::SetArmorVisible(bool state) {
 	m_pArmorImagePanel->SetVisible(state);
-	m_pArmorLable->SetVisible(state);
+	m_pArmorLabel->SetVisible(state);
 	m_pArmorImageBackround->SetVisible(state);
 	m_pArmorIcon->SetVisible(state);
 }
 void CHealthPanel::SetHealthVisible(bool state) {
 	m_pHealthImagePanel->SetVisible(state);
-	m_pHealthLable->SetVisible(state);
+	m_pHealthLabel->SetVisible(state);
 	m_pHealthImageBackround->SetVisible(state);
 	m_pHealthIcon->SetVisible(state);
 }

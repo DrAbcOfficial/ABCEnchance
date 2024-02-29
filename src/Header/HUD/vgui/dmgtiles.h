@@ -13,6 +13,7 @@ public:
 	DECLARE_CLASS_SIMPLE(CTileIconItem, vgui::EditablePanel);
 	CTileIconItem(Panel* parent, const char* text, const char* icon, int dmg);
 
+	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void PerformLayout() override;
 	const char* GetIconKey();
 	int GetDMG();

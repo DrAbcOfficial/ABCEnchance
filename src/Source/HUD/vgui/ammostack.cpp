@@ -28,6 +28,7 @@ void CAmmoStackItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	SetBgColor(GetSchemeColor("AmmoStack.ListViewBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pPanel->SetDrawColor(GetSchemeColor("AmmoStack.IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
 	m_pText->SetFgColor(GetSchemeColor("AmmoStack.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
+	m_pText->SetFont(pScheme->GetFont("AmmoStack.Font", true));
 }
 void CAmmoStackItem::PerformLayout() {
 	BaseClass::PerformLayout();

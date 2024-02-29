@@ -24,5 +24,7 @@ public:
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	void AddAmmoPickup(int id, int count);
+
+	vgui::HFont m_hFontOverrride;
 };
 #endif

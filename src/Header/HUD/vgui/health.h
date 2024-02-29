@@ -48,16 +48,16 @@ private:
 	Color m_cHealthDanger;
 	Color m_cArmorDanger;
 
-	vgui::ImagePanel* m_Backround = nullptr;
+	vgui::ImagePanel* m_pBackgroundImage = nullptr;
 
 	vgui::ImagePanel* m_pHealthIcon = nullptr;
-	vgui::Label* m_pHealthLable = nullptr;
+	vgui::Label* m_pHealthLabel = nullptr;
 	vgui::ImageClipPanel* m_pHealthImagePanel = nullptr;
 	vgui::ImagePanel* m_pHealthImageBackround = nullptr;
 
 	vgui::ImagePanel* m_pArmorIcon = nullptr;
 	vgui::ImageClipPanel* m_pArmorImagePanel = nullptr;
-	vgui::Label* m_pArmorLable = nullptr;
+	vgui::Label* m_pArmorLabel = nullptr;
 	vgui::ImagePanel* m_pArmorImageBackround = nullptr;
 
 	vgui::ImagePanel* m_pLongJumpImagePanel = nullptr;

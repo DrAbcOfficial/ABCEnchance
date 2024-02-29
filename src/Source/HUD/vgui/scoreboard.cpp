@@ -753,6 +753,7 @@ void CScorePanel::UpdateClientInfo(int client)
 		// Update player's row
 		m_pPlayerList->ModifyItem(pd.nItemID, pd.nTeamID, playerKv);
 	}
+	SectionColor = GetPlayerBgColor(pi);
 	SectionColor.SetColor(SectionColor.r(), SectionColor.g(), SectionColor.b(), 80);
 	m_pPlayerList->SetItemBgColor(pd.nItemID, SectionColor);
 

@@ -17,12 +17,11 @@
 		"title_font"		"Default"
 		"titletextinsetY"		"20"
 		"infocus_bgcolor_override"	"0 0 0 125"
-		"outoffocus_bgcolor_override"	"0 0 0 0"
-		"titlebarbgcolor_override"		"0 0 0 0"
+		"outoffocus_bgcolor_override"	"0 0 0 125"
+		"titlebarbgcolor_override"		"0 0 0 125"
 		"titlebardisabledbgcolor_override"	"0 0 0 195"
 		"titlebarfgcolor_override"		"255 255 255 255"
 		"titlebardisabledfgcolor_override"		"125 125 125 125"
-
 		"PaintBackgroundType"	"2"
 	}
 

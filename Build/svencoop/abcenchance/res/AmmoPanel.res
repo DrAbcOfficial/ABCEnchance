@@ -26,7 +26,6 @@
 		"scaleImage"		"1"
 		"proportionalToParent" "1"
 		"image"			"abcenchance/tga/ammobar_background"
-		"drawColor"		"255 255 255 125"
 	}
 
 	"Ammo1Icon"
@@ -40,7 +39,6 @@
 		"visible"		"1"
 		"proportionalToParent" "1"
 		"scaleImage"		"1"
-		"drawColor"		"0 255 0 255"
 	}
 
 	"Ammo1"
@@ -108,6 +106,5 @@
 		"visible"		"1"
 		"proportionalToParent" "1"
 		"scaleImage"		"1"
-		"drawColor"		"0 255 0 255"
 	}
 }
