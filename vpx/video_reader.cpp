@@ -14,7 +14,7 @@
 #include "memle.h"
 
 extern void ConsoleWarnMessage(const char* format, ...);
-const char const kIVFSignature[] = "DKIF";
+const char kIVFSignature[] = "DKIF";
 
 CIVFVideoReader::CIVFVideoReader(){
 }

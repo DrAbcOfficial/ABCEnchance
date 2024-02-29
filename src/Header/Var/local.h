@@ -142,7 +142,6 @@ typedef struct cl_cvars_s{
 	cvar_t* pCVarShadow = nullptr;
 
 	cvar_t* pCVarAutoBunnyJump = nullptr;
-
 #ifdef _DEBUG
 	cvar_t* pCCTV = nullptr;
 #endif
