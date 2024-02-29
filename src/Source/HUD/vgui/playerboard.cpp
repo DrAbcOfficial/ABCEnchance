@@ -85,7 +85,7 @@ void CPlayerInfoPanel::Think(){
 	}
 	//计算我和目标的相对偏移
 	CMathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
-	if (vecLength.FLength() >= 1024) {
+	if (vecLength.Length() >= 1024) {
 		SetVisible(false);
 		return;
 	}
