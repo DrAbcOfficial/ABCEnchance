@@ -8,6 +8,7 @@
 
 namespace vgui {
 	class Label;
+	class HTML;
 }
 
 class CMotdPanel : public vgui::EditablePanel, public IViewportPanel
@@ -17,7 +18,7 @@ public:
 
 	CMotdPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	void ApplySettings(KeyValues* inResourceData) override;
+	virtual void ApplySettings(KeyValues* inResourceData) override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	virtual void Reset() override;
@@ -33,6 +34,7 @@ public:
 	void ForceAddPage();
 private:
 	vgui::Label* m_pMessage = nullptr;
+	vgui::HTML* m_pHTML = nullptr;
 	vgui::Panel* m_pProgressBar = nullptr;
 	
 	std::string m_szBuffer;

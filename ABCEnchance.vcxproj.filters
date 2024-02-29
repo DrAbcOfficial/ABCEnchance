@@ -716,6 +716,9 @@
     <ClCompile Include="src\Source\autofunc.cpp">
       <Filter>Public\Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\htmlmotd.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceSDK\Color.h">
@@ -1557,6 +1560,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\autofunc.h">
       <Filter>Public\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\htmlmotd.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

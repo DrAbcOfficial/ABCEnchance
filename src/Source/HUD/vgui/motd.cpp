@@ -6,6 +6,7 @@
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
 #include <vgui_controls/Label.h>
+#include <vgui_controls/HTML.h>
 
 #include "local.h"
 #include "vguilocal.h"
@@ -27,6 +28,7 @@ CMotdPanel::CMotdPanel()
 	// Header labels
 	m_pMessage = new vgui::Label(this, "Message", "");
 	m_pProgressBar = new vgui::Panel(this, "Progress");
+	m_pHTML = new vgui::HTML(this, "HTML", false, false);
 
 	gCVars.pMotd = CREATE_CVAR("hud_motd", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		switch (static_cast<int>(cvar->value)){

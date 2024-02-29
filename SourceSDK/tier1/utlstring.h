@@ -126,6 +126,8 @@ public:
 	// Strips the trailing slash
 	void		StripTrailingSlash();
 
+	void Clear() { Set(NULL); }
+
 	CUtlString &operator=( const CUtlString &src );
 	CUtlString &operator=( const char *src );
 
