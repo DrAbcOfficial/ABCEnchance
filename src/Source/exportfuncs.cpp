@@ -502,10 +502,10 @@ int HUD_UpdateClientData (struct client_data_s* c, float f){
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
+	gExportfuncs.HUD_PlayerMove(ppmove, server);
 	g_playerppmove.inwater = ppmove->waterlevel > 1;
-	g_playerppmove.onground = ppmove->onground != 0;
+	g_playerppmove.onground = ppmove->onground != -1;
 	g_playerppmove.walking = ppmove->movetype = MOVETYPE_WALK;
-	return gExportfuncs.HUD_PlayerMove(ppmove, server);
 }
 void HUD_TxferPredictionData (struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
 	gCustomHud.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
