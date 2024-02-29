@@ -76,8 +76,8 @@ public:
 
 	bool HasWeapon(size_t s, size_t p);
 	bool HasWeapon(WEAPON* wp);
-	void LoadWeaponSprites(WEAPON* wp, char* cust = nullptr);
-	void LoadWeaponSprites(size_t iId, char* cust);
+	void LoadWeaponSprites(WEAPON* wp, const char* cust = nullptr);
+	void LoadWeaponSprites(size_t iId, const char* cust);
 	void LoadAllWeaponSprites();
 	void SelectSlot(size_t iSlot, int fAdvance, bool bWheel);
 	WEAPON* GetFirstPos(size_t iSlot);

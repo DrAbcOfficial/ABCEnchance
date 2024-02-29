@@ -713,6 +713,9 @@
     <ClCompile Include="src\Source\HUD\vgui\weaponchoose.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\autofunc.cpp">
+      <Filter>Public\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceSDK\Color.h">
@@ -1551,6 +1554,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\weaponchoose.h">
       <Filter>Public\Header\HUD\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\autofunc.h">
+      <Filter>Public\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
