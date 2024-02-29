@@ -14,8 +14,8 @@ extern struct playerppmoveinfo {
 static bool g_bAutoDucktap = false;
 void AutoFunc::Init(){
 	gCVars.pCVarAutoBunnyJump = CREATE_CVAR("cl_autojump", "0", FCVAR_VALUE, nullptr);
-	gEngfuncs.pfnAddCommand("+ducktap", []() {g_bAutoDucktap = true; });
-	gEngfuncs.pfnAddCommand("-ducktap", []() {g_bAutoDucktap = false; });
+	ADD_COMMAND("+ducktap", []() {g_bAutoDucktap = true; });
+	ADD_COMMAND("-ducktap", []() {g_bAutoDucktap = false; });
 }
 
 void AutoFunc::AutoJump(usercmd_s* cmd){

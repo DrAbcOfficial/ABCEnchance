@@ -280,9 +280,12 @@ vgui::CNeteaseMusicDialog::CNeteaseMusicDialog(Panel* parent) : BaseClass(parent
 vgui::CNeteaseMusicDialog::~CNeteaseMusicDialog(){
 }
 
+extern void ADD_COMMAND(const char* cmd, void (*pfnEngSrc_function)(void));
 static CNeteaseMusicDialog* s_pNeteaseDialog;
 void CreateNeteaseMusicDialogCmd() {
-	gEngfuncs.pfnAddCommand("open_neteasedialog", []() {
+	//TODO: not ready for everyone
+#ifdef _DEBUG
+	ADD_COMMAND("open_neteasedialog", []() {
 		if (!s_pNeteaseDialog)
 			s_pNeteaseDialog = new CNeteaseMusicDialog(reinterpret_cast<Panel*>(BasePanel()));
 		int w, h;
@@ -293,4 +296,5 @@ void CreateNeteaseMusicDialogCmd() {
 		s_pNeteaseDialog->MakePopup();
 		s_pNeteaseDialog->Activate();
 	});
+#endif // DEBUG
 }

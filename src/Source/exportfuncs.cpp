@@ -371,7 +371,7 @@ void HUD_Init(void){
 			gEngfuncs.Cvar_SetValue("abc_version", PLUGIN_VERSION);
 	});
 
-	gEngfuncs.pfnAddCommand("models", []() {
+	ADD_COMMAND("models", []() {
 		if (gEngfuncs.Cmd_Argc() <= 1)
 			return;
 		std::string sz = gEngfuncs.Cmd_Argv(1);
@@ -393,8 +393,6 @@ void HUD_Init(void){
 		vgui::filesystem()->FindClose(walk);
 		gEngfuncs.Con_Printf("==============\n");
 	});
-	
-
 
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();

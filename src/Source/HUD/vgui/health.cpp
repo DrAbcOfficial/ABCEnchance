@@ -14,10 +14,9 @@
 #include <vgui_controls/AnimationController.h>
 
 #include "local.h"
-#include <vguilocal.h>
+#include "vguilocal.h"
 
 #include "health.h"
-#include <hud.h>
 
 #define VIEWPORT_HEALTH_NAME "HealthPanel"
 
@@ -160,7 +159,6 @@ void CHealthPanel::SetHealthVisible(bool state) {
 }
 
 Color CHealthPanel::GetDifferColor(float flRatio, Color c1, Color c2){
-	Color color;
 	Vector v1 = { (float)c1.r() / 255.0f,(float)c1.g() / 255.0f ,(float)c1.b() / 255.0f };
 	Vector v2 = { (float)c2.r() / 255.0f,(float)c2.g() / 255.0f ,(float)c2.b() / 255.0f };
 	RGBtoHSV(v1, v1);
@@ -170,6 +168,6 @@ Color CHealthPanel::GetDifferColor(float flRatio, Color c1, Color c2){
 		v1.x += 360.0f;
 	HSVtoRGB(v1, v1);
 	v1 *= 255;
-	color.SetColor(v1.x, v1.y, v1.z, c1.a());
+	Color color = { (int)v1.x, (int)v1.y, (int)v1.z, c1.a() };
 	return color;
 }

@@ -63,12 +63,12 @@ void CWeaponChooseItem::PerformLayout(){
 
 	int x = abx;
 	int y = 0;
-	float ratio = static_cast<float>(gWR.CountAmmo(m_pWeapon->iAmmoType)) / m_pWeapon->iMax1;
+	float ratio = clamp<float>(static_cast<float>(gWR.CountAmmo(m_pWeapon->iAmmoType)) / m_pWeapon->iMax1, 0.0f, 1.0f);
 	m_pAmmoBarBg1->SetBounds(x, y, abw, abh);
 	m_pAmmoBar1->SetBounds(x, y, abw * ratio, abh);
 	
 	x += abw + abg;
-	ratio = static_cast<float>(gWR.CountAmmo(m_pWeapon->iAmmo2Type)) / m_pWeapon->iMax2;
+	ratio = clamp<float>(static_cast<float>(gWR.CountAmmo(m_pWeapon->iAmmo2Type)) / m_pWeapon->iMax2, 0.0f, 1.0f);;
 	m_pAmmoBarBg2->SetBounds(x, y, abw, abh);
 	m_pAmmoBar2->SetBounds(x, y, abw * ratio, abh);
 }
