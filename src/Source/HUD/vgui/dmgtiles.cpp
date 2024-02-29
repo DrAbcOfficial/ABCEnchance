@@ -123,9 +123,8 @@ const char* CDmgTilesPanel::GetName(){
 	return VIEWPORT_DMGTILES_NAME;
 }
 void CDmgTilesPanel::Reset(){
-	if (!IsVisible())
-		ShowPanel(true);
-
+	if (IsVisible())
+		ShowPanel(false);
 	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
 		(*iter)->Reset();
 	}

@@ -237,9 +237,11 @@ void CViewport::HudHideCallBack(int code){
 		SetVisible(true);
 	m_pHealthPanel->SetArmorVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)));
 	m_pHealthPanel->SetHealthVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
-	m_pHealthPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)) || !bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
-	m_pFlashLight->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEFLASHLIGHT)));
-	m_pAmmoPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEWEAPONS)));
+	if (HasSuit()) {
+		m_pHealthPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)) || !bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
+		m_pFlashLight->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEFLASHLIGHT)));
+		m_pAmmoPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEWEAPONS)));
+	}	
 }
 void CViewport::ShowScoreBoard(){
 	m_pScorePanel->ShowPanel(true);
@@ -436,6 +438,16 @@ bool CViewport::IsInSpectate() {
 }
 bool CViewport::HasSuit() {
 	return gCustomHud.HasSuit();
+}
+void CViewport::WeaponBitsChangeCallback(int bits){
+	bool hasSuit = (bits & (1 << WEAPON_SUIT)) != 0;
+	m_pSidePanel->ShowPanel(hasSuit);
+	m_pFlashLight->ShowPanel(hasSuit);
+	m_pCrossHairPanel->ShowPanel(hasSuit);
+	m_pHealthPanel->ShowPanel(hasSuit);
+	m_pAmmoPanel->ShowPanel(hasSuit);
+	m_pDmgTiles->ShowPanel(hasSuit);
+	m_pWeaponChoose->ShowPanel(hasSuit);
 }
 bool CViewport::IsHudHide(int HideToken) {
 	return gCustomHud.IsHudHide(HideToken);

@@ -33,6 +33,8 @@ const char* CFlashLightPanel::GetName() {
 	return VIEWPORT_FLASHLIGHT_NAME;
 }
 void CFlashLightPanel::Reset() {
+	if (IsVisible())
+		ShowPanel(false);
 	m_iBattery = 100;
 }
 void CFlashLightPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {

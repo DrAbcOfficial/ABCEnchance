@@ -696,6 +696,7 @@ void CCustomHud::HUD_Reset(void){
 	m_iMouseState = 0;
 	m_iLastClick = 5;
 	m_iHideHUDDisplay = 0;
+	m_iWeaponBits.reset();
 	memset(m_SpectatePlayer, 0, sizeof(m_SpectatePlayer));
 	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
@@ -708,7 +709,8 @@ void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 		g_pViewPort->SetSpectate(newuser > 0);
 		iuser = newuser;
 	}
-
+	if (!m_iWeaponBits.has_value() || m_iWeaponBits != cdata->iWeaponBits)
+		WeaponBitsChangeCallBack(cdata->iWeaponBits);
 	m_iWeaponBits = cdata->iWeaponBits;
 
 	//check lj
@@ -771,7 +773,12 @@ void CCustomHud::HUD_TxferPredictionData(struct entity_state_s* ps, const struct
 	gWR.SyncWeapon(pwd);
 }
 bool CCustomHud::HasSuit() {
-	return (m_iWeaponBits & (1 << WEAPON_SUIT)) != 0;
+	if (!m_iWeaponBits.has_value())
+		return false;
+	return (m_iWeaponBits.value() & (1 << WEAPON_SUIT)) != 0;
+}
+void CCustomHud::WeaponBitsChangeCallBack(int bits){
+	g_pViewPort->WeaponBitsChangeCallback(bits);
 }
 void CCustomHud::HudHideCallBack(int hidetoken){
 	m_iHideHUDDisplay = hidetoken;

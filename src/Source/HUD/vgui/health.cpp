@@ -53,8 +53,8 @@ const char* CHealthPanel::GetName(){
 	return VIEWPORT_HEALTH_NAME;
 }
 void CHealthPanel::Reset(){
-	if (!IsVisible())
-		ShowPanel(true);
+	if (IsVisible())
+		ShowPanel(false);
 	SetLongJump(false);
 }
 void CHealthPanel::ApplySchemeSettings(vgui::IScheme* pScheme){

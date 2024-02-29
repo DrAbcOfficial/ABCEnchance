@@ -1,6 +1,7 @@
 #pragma once
 #define MAX_SPRITE_NAME_LENGTH	24
 #include <vector>
+#include <optional>
 #include "player_infosc.h"
 
 typedef struct hud_playerinfo_s {
@@ -64,7 +65,10 @@ public:
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 	void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
 	bool IsInSpectate();
+
 	bool HasSuit();
+	void WeaponBitsChangeCallBack(int bits);
+
 	void HudHideCallBack(int hidetoken);
 	bool IsHudHide(int HideToken);
 
@@ -96,7 +100,7 @@ public:
 
 	int m_iPlayerHealth = 0;
 	int m_iHideHUDDisplay = 0;
-	int m_iWeaponBits = 0;
+	std::optional<size_t> m_iWeaponBits = 0;
 	float m_flOverViewScale = 0;
 	float m_flOverViewYaw = 0;
 	float m_flOverViewZmax = 0;

@@ -7,7 +7,6 @@
 #include <string>
 #include "cvardef.h"
 #include "weaponinfo.h"
-typedef int HSPRITE;
 #include "weapon.h"
 #include "weaponbank.h"
 
@@ -181,6 +180,8 @@ const char* CWeaponChoosePanel::GetName() {
 	return VIEWPORT_WEAPONCHOOSE_NAME;
 }
 void CWeaponChoosePanel::Reset() {
+	if (IsVisible())
+		ShowPanel(false);
 	for (auto iter1 = m_aryPanelList.begin(); iter1 != m_aryPanelList.end(); iter1++) {
 		auto& list = *iter1;
 		for (auto iter2 = list.begin(); iter2 != list.end(); iter2++) {

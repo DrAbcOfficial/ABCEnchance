@@ -66,6 +66,7 @@ public:
 
 	bool IsInSpectate();
 	bool HasSuit();
+	void WeaponBitsChangeCallback(int bits);
 	bool IsHudHide(int HideToken);
 	void HudHideCallBack(int token);
 	void LongjumpCallBack(bool state);

@@ -213,6 +213,8 @@ const char* CCrosshairPanel::GetName() {
 	return VIEWPORT_CROSSHAIR_NAME;
 }
 void CCrosshairPanel::Reset() {
+	if (IsVisible())
+		ShowPanel(false);
 	m_pSprImage->Reset();
 	m_pHandledWeapon = nullptr;
 }

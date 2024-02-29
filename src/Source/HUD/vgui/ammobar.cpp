@@ -11,11 +11,12 @@
 #include <vgui_controls/ImagePanel.h>
 #include "vgui_controls/ImageSprPanel.h"
 
-#include <hud.h>
 #include "local.h"
-#include <vguilocal.h>
+#include "vguilocal.h"
 #include "weapon.h"
-#include <weaponbank.h>
+#include "weaponbank.h"
+
+#include "Viewport.h"
 
 #include "ammobar.h"
 
@@ -64,6 +65,8 @@ void CAmmoPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 void CAmmoPanel::ShowPanel(bool state){
 	if (state == IsVisible())
 		return;
+	if (!m_pHandledWeapon)
+		state = false;
 	SetVisible(state);
 }
 bool CAmmoPanel::IsVisible(){
@@ -82,7 +85,8 @@ void CAmmoPanel::SetWeapon(WEAPON* weapon){
 		ShowPanel(false);
 		return;
 	}
-	ShowPanel(true);
+	if(g_pViewPort->HasSuit())
+		ShowPanel(true);
 	if (!(m_pHandledWeapon->iState & VALID))
 		return;
 	char buf[64];

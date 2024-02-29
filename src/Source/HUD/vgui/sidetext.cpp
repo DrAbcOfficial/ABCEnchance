@@ -44,8 +44,9 @@ const char* CSidePanel::GetName() {
 	return VIEWPORT_SIDETEXT_NAME;
 }
 void CSidePanel::Reset() {
+	if (IsVisible())
+		ShowPanel(false);
 	m_flMaxSpeed = 0;
-	SetVisible(gCVars.pEccoEnable->value > 0);
 }
 void CSidePanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);

@@ -2,6 +2,12 @@
 #ifndef __AMMO_H__
 #define __AMMO_H__
 
+#ifndef WRECTH
+#include "wrect.h"
+#endif // !WRECTH
+
+typedef int HSPRITE;
+
 #define MAX_WEAPON_NAME 128
 
 
