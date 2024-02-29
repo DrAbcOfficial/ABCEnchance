@@ -21,25 +21,23 @@ void AutoFunc::Init(){
 void AutoFunc::AutoJump(usercmd_s* cmd){
 	//Auto jump from openag
 	if (gCVars.pCVarAutoBunnyJump->value > 0) {
-		static bool s_jump_was_down_last_frame = false;
-		bool should_release_jump = (!g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking);
-		if (s_jump_was_down_last_frame && g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking)
-			should_release_jump = true;
-		if (should_release_jump)
+		static bool s_bJumpWasDownLastFrame = false;
+		bool shouldReleaseJump = (!g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking);
+		if (s_bJumpWasDownLastFrame && g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking)
+			shouldReleaseJump = true;
+		if (shouldReleaseJump)
 			cmd->buttons &= ~IN_JUMP;
-		s_jump_was_down_last_frame = ((cmd->buttons & IN_JUMP) != 0);
+		s_bJumpWasDownLastFrame = ((cmd->buttons & IN_JUMP) != 0);
 	}
 }
 
 void AutoFunc::DuckTap(usercmd_s* cmd){
+	//Ducktap from bfhl
 	if (g_bAutoDucktap) {
 		static bool s_bDuckWasDownLastFrame = false;
 		cmd->buttons |= IN_DUCK;
-		bool inWater = g_playerppmove.inwater;
-		bool isWalking = g_playerppmove.walking;
-		bool isOnground = g_playerppmove.onground;
-		bool shouldReleaseDuck = (!isOnground && !inWater && isWalking);
-		if (s_bDuckWasDownLastFrame && isOnground && !inWater && isWalking)
+		bool shouldReleaseDuck = (!g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking);
+		if (s_bDuckWasDownLastFrame && g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking)
 			shouldReleaseDuck = true;
 		if (shouldReleaseDuck)
 			cmd->buttons &= ~IN_DUCK;
