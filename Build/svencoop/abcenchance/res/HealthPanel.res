@@ -12,6 +12,7 @@
 		"autoResize"		"1"
 		"visible"		"1"
 		"enabled"		"1"
+		"proportionalToParent" "1"
 
 		"icon_poison"	"abcenchance/tga/icon_poison"
 		"icon_acid"	"abcenchance/tga/icon_acid"

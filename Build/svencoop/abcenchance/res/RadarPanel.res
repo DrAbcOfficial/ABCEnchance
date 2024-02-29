@@ -8,12 +8,13 @@
 		"ypos"		"5"
 		"wide"		"100"
 		"tall"		"100"
-
 		"visible"		"1"
 		"enabled"		"1"
-
-		"radar_scaletime"		"2"
-		"radar_roundradius"		"344"
+		"proportionalToParent" "1"
+		
+		"radar_roundradius"		"100.0"
+		"scaled_wide"	"300"
+		"scaled_tall"	"300"
 	}
 	
 	"Background"
@@ -48,11 +49,12 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Mapground"
-		"xpos"		"1"
-		"ypos"		"1"
-		"wide"		"96"
-		"tall"		"96"
+		"xpos"		"2"
+		"ypos"		"2"
+		"wide"		"94"
+		"tall"		"94"
 		"visible"		"1"
+		"scaleImage"		"1"
 		"drawColor"		"255 255 255 255"
 	}
 	
