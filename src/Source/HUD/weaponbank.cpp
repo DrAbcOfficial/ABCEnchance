@@ -237,7 +237,7 @@ void WeaponsResource::BuildAviliableWeapons(){
 	}
 }
 //载入武器图标
-void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust) {
+void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, const char* cust) {
 	if (!pWeapon)
 		return;
 	memset(&pWeapon->rcActive, 0, sizeof(wrect_t));
@@ -286,7 +286,7 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, char* cust) {
 	fSetupSprInfo("ammo", &pWeapon->hAmmo, &pWeapon->rcAmmo);
 	fSetupSprInfo("ammo2", &pWeapon->hAmmo2, &pWeapon->rcAmmo2, &pWeapon->hAmmo, &pWeapon->rcAmmo);
 }
-void WeaponsResource::LoadWeaponSprites(size_t iId, char* cust) {
+void WeaponsResource::LoadWeaponSprites(size_t iId, const char* cust) {
 	LoadWeaponSprites(GetWeapon(iId), cust);
 }
 //从武器载入子弹Spr

@@ -130,12 +130,12 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf) {
 int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int id = READ_SHORT();
-	char name[128];
-	strcpy_s(name, READ_STRING());
-	if (name[0] != 0)
-		gWR.LoadWeaponSprites(id, name);;
-	g_pViewPort->GetWeaponChoosePanel()->ReloadWeaponSpr();
-	g_pViewPort->GetWeaponStackPanel()->ReloadWeaponSpr();
+	std::string name = READ_STRING();
+	if (name.size() != 0) {
+		gWR.LoadWeaponSprites(id, name.c_str());
+		g_pViewPort->GetWeaponChoosePanel()->ReloadWeaponSpr();
+		g_pViewPort->GetWeaponStackPanel()->ReloadWeaponSpr();
+	}
 	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
 }

@@ -205,6 +205,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
     <ClCompile Include="src\Particleman\ClientParticleMan.cpp" />
+    <ClCompile Include="src\Source\autofunc.cpp" />
     <ClCompile Include="src\Source\clientdll.cpp" />
     <ClCompile Include="src\Source\crypto.cpp" />
     <ClCompile Include="src\Source\efxenchance.cpp" />
@@ -452,6 +453,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="SourceSDK\vstdlib\strtools.h" />
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
+    <ClInclude Include="src\Header\autofunc.h" />
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
     <ClInclude Include="src\Header\HUD\basehud.h" />
