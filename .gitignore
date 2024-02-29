@@ -34,6 +34,8 @@
 
 #Debug ang Release
 /.vs
+
+/Build/*.dll
 /Debug
 /Release
 /Release_AVX2
