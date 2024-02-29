@@ -23,6 +23,8 @@
 #include "pm_defs.h"
 #include "usercmd.h"
 #include "StudioModelRenderer.h"
+#include "autofunc.h"
+
 #include "vgui_controls/Controls.h"
 #include "config.h"
 //GL
@@ -342,7 +344,9 @@ void GL_Init(void)
 	gCustomHud.GL_Init();
 }
 extern void GameUI_GetInterface();
+
 void HUD_Init(void){
+	AutoFunc::Init();
 	//VGUI init
 	gCVars.pShellEfx = CREATE_CVAR("abc_shellefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);
@@ -362,8 +366,6 @@ void HUD_Init(void){
 	gCVars.pCamIdealHeight = CREATE_CVAR("cam_idealheight", "0", FCVAR_VALUE, nullptr);
 	gCVars.pCamIdealRight = CREATE_CVAR("cam_idealright", "0", FCVAR_VALUE, nullptr);
 
-	gCVars.pCVarAutoBunnyJump = CREATE_CVAR("cl_autojump", "0", FCVAR_VALUE, nullptr);
-  
 	CREATE_CVAR("abc_version", STR(PLUGIN_VERSION), FCVAR_EXTDLL | FCVAR_CLIENTDLL, [](cvar_t* cvar) {
 		if (cvar->value != PLUGIN_VERSION)
 			gEngfuncs.Cvar_SetValue("abc_version", PLUGIN_VERSION);
@@ -391,6 +393,8 @@ void HUD_Init(void){
 		vgui::filesystem()->FindClose(walk);
 		gEngfuncs.Con_Printf("==============\n");
 	});
+	
+
 
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
@@ -546,16 +550,8 @@ void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
 	gExportfuncs.CL_CreateMove(frametime, cmd, active);
 	if (gCustomHud.IsInScore())
 		cmd->buttons |= IN_SCORE;
-	//Auto jump from openag
-	static bool s_jump_was_down_last_frame = false;
-	if (gCVars.pCVarAutoBunnyJump->value != 0.0f) {
-		bool should_release_jump = (!g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking);
-		if (s_jump_was_down_last_frame && g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking)
-			should_release_jump = true;
-		if (should_release_jump)
-			cmd->buttons &= ~IN_JUMP;
-	}
-	s_jump_was_down_last_frame = ((cmd->buttons & IN_JUMP) != 0);
+	AutoFunc::AutoJump(cmd);
+	AutoFunc::DuckTap(cmd);
 }
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 	if (!gCustomHud.HUD_AddEntity(type, ent, modelname))
