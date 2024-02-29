@@ -13,11 +13,10 @@
 		"visible"		"1"
 		"enabled"		"1"
 		
-		"item_inactive_height"	"15"
-		"item_inactive_wide"	"15"
-
-		"item_height"		"15"
-		"item_wide"	"44"
+		"item_inactive_height"	"20"
+		"item_inactive_wide"	"20"
+		"item_height"		"20"
+		"item_wide"	"55"
 		"item_xgap"	"1"
 		"item_ygap"	"1"
 		"close_time"	"5.0"
@@ -26,8 +25,8 @@
 	{
 		"ControlName"		"ImagePanel"
 		"fieldName"		"Slot1"
-		"wide"		"25"
-		"tall"		"25"
+		"wide"		"15"
+		"tall"		"15"
 		"scaleImage"		"1"
 		"image"		"abcenchance/tga/weaponchoose/slot1_icon"
 	}
