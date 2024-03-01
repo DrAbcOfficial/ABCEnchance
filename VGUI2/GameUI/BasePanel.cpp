@@ -117,9 +117,12 @@ void DecodeVideo() {
 		vpx_codec_iter_t iter = nullptr;
 		vpx_image_t* img = vpx_codec_get_frame(g_pCodec.load(), &iter);
 		if (img) {
+			static asyncResult returnVal;
 			//wtf
-			if (img->fmt == VPX_IMG_FMT_NONE)
+			if ((img->fmt & VPX_IMG_FMT_PLANAR) == 0) {
+				SYS_ERROR("VPX: unsupported video pixel format.");
 				return;
+			}
 			static uint64_t s_iArea;
 			static byte* s_pBuf;
 			size_t imageWide = img->d_w;
@@ -134,8 +137,6 @@ void DecodeVideo() {
 			int u_stride = img->stride[VPX_PLANE_U];
 			int v_stride = img->stride[VPX_PLANE_V];
 			int a_stride = img->stride[VPX_PLANE_ALPHA];
-
-			asyncResult returnVal;
 			const static auto YUV2RGB = [](int Y, int U, int V, int& R, int& G, int& B) {
 				const static constexpr auto RoundShr = [](int d, int s) -> int {
 					return d >= 0 ?
