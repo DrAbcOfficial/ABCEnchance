@@ -15,7 +15,6 @@
 
 #include "plugins.h"
 #include <exportfuncs.h>
-#include <CVector.h>
 
 #include "steamclientpublic.h"
 #include <player_info.h>
@@ -75,7 +74,7 @@ void CSidePanel::SetParent(vgui::VPANEL parent) {
 void CSidePanel::OnThink() {
 	if (!gClientData || !gEngfuncs.GetLocalPlayer())
 		return;
-	CVector vecSpeed = { gClientData->velocity[0] , gClientData->velocity[1] , 0 };
+	Vector vecSpeed = { gClientData->velocity[0] , gClientData->velocity[1] , 0 };
 	float flPlayerSpeed = vecSpeed.Length();
 	if (m_flMaxSpeed < flPlayerSpeed)
 		m_flMaxSpeed = flPlayerSpeed;

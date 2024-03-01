@@ -495,7 +495,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\Utility\config.h" />
     <ClInclude Include="src\Header\Utility\crypto.h" />
     <ClInclude Include="src\Header\Utility\curl.h" />
-    <ClInclude Include="src\Header\Utility\CVector.h" />
     <ClInclude Include="src\Header\Utility\httpclient.h" />
     <ClInclude Include="src\Header\Utility\mymathlib.h" />
     <ClInclude Include="src\Header\Utility\NeteaseApi.h" />

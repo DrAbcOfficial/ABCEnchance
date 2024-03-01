@@ -68,6 +68,7 @@ public:
 	// Construction/destruction:
 	Vector(void); 
 	Vector(vec_t X, vec_t Y, vec_t Z);
+	Vector(vec_t xyz[3]): x(xyz[0]), y(xyz[1]), z(xyz[2]){}
 	
 	// Initialization
 	void Init(vec_t ix=0.0f, vec_t iy=0.0f, vec_t iz=0.0f);
@@ -112,6 +113,7 @@ public:
 	// Get the vector's magnitude.
 	inline vec_t	Length() const;
 
+	inline Vector Normalize() const;
 	// Get the vector's magnitude squared.
 	FORCEINLINE vec_t LengthSqr(void) const
 	{ 
@@ -185,6 +187,9 @@ public:
 	Vector	operator/(const Vector& v) const;	
 	Vector	operator*(float fl) const;
 	Vector	operator/(float fl) const;			
+
+	[[nodiscard]] inline constexpr operator float* () { return &x; }			 // CVectors will now automatically convert to float * when needed
+	[[nodiscard]] inline constexpr operator const float* () const { return &x; } // CVectors will now automatically convert to float * when needed
 	
 	// Cross product between two vectors.
 	Vector	Cross(const Vector &vOther) const;		
@@ -1196,6 +1201,21 @@ inline vec_t Vector::Length(void) const
 {
 	CHECK_VALID(*this);
 	return VectorLength( *this );
+}
+
+inline Vector Vector::Normalize() const
+{
+	CHECK_VALID(*this);
+	float flLen = Length();
+	if (flLen == 0)
+	{
+		return Vector(0, 0, 0);
+	}
+	else
+	{
+		flLen = 1 / flLen;
+		return Vector(x * flLen, y * flLen, z * flLen);;
+	}
 }
 
 

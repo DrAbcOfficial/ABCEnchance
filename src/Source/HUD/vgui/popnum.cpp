@@ -9,7 +9,6 @@
 #include <vgui_controls/AnimationController.h>
 #include <vgui_controls/Label.h>
 
-#include "CVector.h"
 #include "local.h"
 #include "mymathlib.h"
 #include "triangleapi.h"
@@ -58,7 +57,7 @@ CPopNumberPanel::CPopNumberPanel(vec3_t vecOrigin, Color& pColor, int value)
 	wchar_t wszContent[32] = { 0 };
 	vgui::localize()->ConstructString(wszContent, sizeof(wszContent), vgui::localize()->Find(token.c_str()), 1, std::to_wstring(m_iValue).c_str());
 	m_pNumberLable->SetText(wszContent);
-	m_vecOrigin = new CVector(vecOrigin);
+	m_vecOrigin = vecOrigin;
 	m_flCreateTime = gEngfuncs.GetClientTime();
 
 	LoadControlSettings(VGUI2_ROOT_DIR "PopNumber.res");
@@ -103,19 +102,19 @@ void CPopNumberPanel::OnThink(){
 	if (!local)
 		return;
 	//视角角度
-	CVector vecView;
+	Vector vecView;
 	gEngfuncs.GetViewAngles(vecView);
 	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 	//计算我和目标的相对偏移
-	CVector vecLength;
-	CMathlib::VectorSubtract(*m_vecOrigin, local->curstate.origin, vecLength);
+	Vector vecLength;
+	CMathlib::VectorSubtract(m_vecOrigin, local->curstate.origin, vecLength);
 	vecLength = vecLength.Normalize();
 	float angledotResult = CMathlib::DotProduct(vecLength, vecView);
 	//cos 60
 	if (angledotResult > 0.5) {
 		float ratio = -sin(gEngfuncs.GetClientTime() - m_flCreateTime) / 2;
-		CVector vecHUD;
-		VEC_WorldToScreen(*m_vecOrigin, vecHUD);
+		Vector vecHUD;
+		VEC_WorldToScreen(m_vecOrigin, vecHUD);
 		SetPos(vecHUD.x - GetWide() / 2, (vecHUD.y - GetTall() * ratio));
 	}
 	int a = m_pNumberLable->GetAlpha();

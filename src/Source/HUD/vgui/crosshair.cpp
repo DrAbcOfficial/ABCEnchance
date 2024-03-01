@@ -13,7 +13,6 @@
 #include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/spr_image.h>
 
-#include "CVector.h"
 #include "hud.h"
 #include "local.h"
 #include "vguilocal.h"
@@ -116,19 +115,19 @@ void CCrosshairPanel::OnThink() {
 
 	if (gExportfuncs.CL_IsThirdPerson()) {
 		pmtrace_t tr;
-		CVector vViewAngleForward;
+		Vector vViewAngleForward;
 		gEngfuncs.GetViewAngles(vViewAngleForward);
 		cl_entity_s* local = gEngfuncs.GetLocalPlayer();
 		CMathlib::AngleVectors(vViewAngleForward, vViewAngleForward, nullptr, nullptr);
-		CVector vecSrc = local->curstate.origin;
-		CVector viewOfs;
+		Vector vecSrc = local->curstate.origin;
+		Vector viewOfs;
 		gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
 		vecSrc += viewOfs;
 		vViewAngleForward *= 8192;
-		CVector vecEnd = vecSrc + vViewAngleForward;
+		Vector vecEnd = vecSrc + vViewAngleForward;
 		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_NORMAL, local->index, &tr);
-		CVector vecHUD;
+		Vector vecHUD;
 		gEngfuncs.pTriAPI->WorldToScreen(tr.endpos, vecHUD);
 		m_iCenterX = (1.0f + vecHUD[0]) * ScreenWidth() / 2;
 		m_iCenterY = (1.0f - vecHUD[1]) * ScreenHeight() / 2;

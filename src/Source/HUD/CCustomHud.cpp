@@ -37,7 +37,6 @@
 #endif
 
 #include "weaponbank.h"
-#include <CVector.h>
 
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
@@ -438,18 +437,18 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 		case CCustomHud::ABCCustomMsg::POPNUMBER: {
 			if (g_pViewPort->m_pPopNumber->value <= 0)
 				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
-			CVector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
+			Vector vecOrigin = { READ_COORD(), READ_COORD(), READ_COORD() };
 			int iValue = READ_LONG();
 			Color pColor = { READ_BYTE(), READ_BYTE() , READ_BYTE() ,READ_BYTE() };
 			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 			if (!local)
 				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 			//视角角度
-			CVector vecView;
+			Vector vecView;
 			gEngfuncs.GetViewAngles(vecView);
 			CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 			//计算我和目标的相对偏移
-			CVector vecLength;
+			Vector vecLength;
 			CMathlib::VectorSubtract(vecOrigin, local->curstate.origin, vecLength);
 			vecLength = vecLength.Normalize();
 			float angledotResult = CMathlib::DotProduct(vecLength, vecView);

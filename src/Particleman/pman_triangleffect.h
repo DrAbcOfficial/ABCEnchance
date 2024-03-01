@@ -66,9 +66,9 @@ public:
 	virtual void Spin( float time ) = 0;
 	virtual void CalculateVelocity( float time ) = 0;
 	virtual void CheckCollision( float time ) = 0;
-	virtual void Touch(CVector pos, CVector normal, int index) = 0;
+	virtual void Touch(vec3_t pos, vec3_t normal, int index) = 0;
 	virtual void Die ( void ) = 0;
-	virtual void InitializeSprite( CVector org, CVector normal, model_s * sprite, float size, float brightness ) = 0;
+	virtual void InitializeSprite(vec3_t org, vec3_t normal, model_s * sprite, float size, float brightness ) = 0;
 	virtual void Force ( void ) = 0;
 
 	float m_flSize; //scale of object
@@ -94,18 +94,18 @@ public:
 	int	  m_iFrame;
 	int	  m_iRendermode;
 
-	CVector m_vOrigin; //object's position
-	CVector m_vAngles; //normal angles of object
+	vec3_t m_vOrigin; //object's position
+	vec3_t m_vAngles; //normal angles of object
 	
-	CVector m_vAVelocity;
+	vec3_t m_vAVelocity;
 
-	CVector m_vVelocity;
+	vec3_t m_vVelocity;
 	
-	CVector m_vLowLeft;
-	CVector m_vLowRight; 
-	CVector m_vTopLeft; 
+	vec3_t m_vLowLeft;
+	vec3_t m_vLowRight;
+	vec3_t m_vTopLeft;
 
-	CVector m_vColor;
+	vec3_t m_vColor;
 	float  m_flMass;
 
 	model_s * m_pTexture;
@@ -181,9 +181,9 @@ public:
 
 protected:
 	float  m_flOriginalSize;
-	CVector m_vOriginalAngles;
+	vec3_t m_vOriginalAngles;
 	float  m_flOriginalBrightness;
-	CVector m_vPrevOrigin;
+	vec3_t m_vPrevOrigin;
 
 	float m_flNextCollisionTime;
 

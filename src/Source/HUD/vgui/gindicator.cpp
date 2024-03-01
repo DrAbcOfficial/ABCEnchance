@@ -12,7 +12,6 @@
 #include "local.h"
 #include "vguilocal.h"
 
-#include <CVector.h>
 #include "triangleapi.h"
 #include "mymathlib.h"
 
@@ -101,19 +100,19 @@ void CGenadeIndicatorPanel::PaintBackground(){
 	if (!local)
 		return;
 	//视角角度
-	CVector vecView;
+	Vector vecView;
 	gEngfuncs.GetViewAngles(vecView);
 	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 	for (auto it = m_aryImages.begin(); it != m_aryImages.end(); it++) {
 		CGIndicatorItem* img = (*it);
 		//计算我和目标的相对偏移
-		CVector vecLength;
+		Vector vecLength;
 		CMathlib::VectorSubtract(img->GetEnt()->curstate.origin, local->curstate.origin, vecLength);
 		vecLength = vecLength.Normalize();
 		float angledotResult = CMathlib::DotProduct(vecLength, vecView);
 		//cos 60
 		if (angledotResult > 0.5) {
-			CVector vecHUD;
+			Vector vecHUD;
 			VEC_WorldToScreen(img->GetEnt()->curstate.origin, vecHUD);
 			int x1 = vecHUD.x - m_iImageWide / 2;
 			int y1 = vecHUD.y - m_iImageTall / 2;
@@ -133,7 +132,7 @@ void CGenadeIndicatorPanel::AddEntity(cl_entity_s* ent, const char* modelname){
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	if (ent->curstate.messagenum != local->curstate.messagenum)
 		return;
-	CVector len;
+	Vector len;
 	CMathlib::VectorSubtract(local->curstate.origin, ent->curstate.origin, len);
 	if (len.Length() > gCVars.pGrenadeIndicatorRange->value)
 		return;

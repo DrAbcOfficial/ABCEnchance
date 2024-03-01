@@ -32,7 +32,7 @@ private:
 	float m_flCreateTime = 0;
 	int m_iValue = 0;
 	vgui::Label* m_pNumberLable = nullptr;
-	CVector* m_vecOrigin = nullptr;
+	Vector m_vecOrigin;
 	Color m_hColor;
 };
 #endif

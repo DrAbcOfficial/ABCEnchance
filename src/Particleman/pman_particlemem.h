@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <metahook.h>
-#include <CVector.h>
 
 class CCoreTriangleEffect;
 
@@ -179,7 +178,7 @@ public:
 
 	void Reset( void ); //clears memory, setting all particles to not used.
 
-	static int ApplyForce( CVector vOrigin, CVector vDirection, float flRadius, float flStrength );
+	static int ApplyForce( vec3_t vOrigin, vec3_t vDirection, float flRadius, float flStrength );
 
     static CMiniMem *Instance(void);
     static long MaxBlockSize(void);

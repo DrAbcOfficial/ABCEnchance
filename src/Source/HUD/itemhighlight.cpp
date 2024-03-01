@@ -2,13 +2,14 @@
 #include "plugins.h"
 #include <map>
 #include <vector>
-#include "pm_defs.h"
+
+#include "mathlib/vector.h"
+
 #include "com_model.h"
 #include "cl_entity.h"
 #include "event_api.h"
-#include "triangleapi.h"
+
 #include "mymathlib.h"
-#include "CVector.h"
 #include "cvardef.h"
 #include "extraprecache.h"
 #include "exportfuncs.h"
@@ -74,7 +75,7 @@ void CHudItemHighLight::CreateHighLight(cl_entity_t* var) {
 	ent1->clientIndex = ent2->clientIndex = var->index;
 	ent1->die = ent2->die = gEngfuncs.GetClientTime() + 999.0f;
 
-	CVector vecTemp;
+	Vector vecTemp;
 	if (CMathlib::FVectorLength(var->curstate.mins) <= 3.2) {
 		vecTemp.x = vecTemp.y = -16;
 		vecTemp.z = 0;
