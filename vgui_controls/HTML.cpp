@@ -1268,7 +1268,7 @@ void HTML::BrowserNeedsPaint(HTML_NeedsPaint_t* pCallback)
 		// if the dimensions changed we also need to re-create the texture ID to support the overlay properly (it won't resize a texture on the fly, this is the only control that needs
 		//   to so lets have a tiny bit more code here to support that)
 		m_iHTMLTextureID = surface()->CreateNewTextureID(true);
-		surface()->DrawSetTextureRGBA(m_iHTMLTextureID, (const unsigned char*)pCallback->pBGRA, pCallback->unWide, pCallback->unTall, true, true);// BR FIXME - this call seems to shift by some number of pixels?
+		surface()->DrawSetTextureBGRA(m_iHTMLTextureID, (const unsigned char*)pCallback->pBGRA, pCallback->unWide, pCallback->unTall, true, true);// BR FIXME - this call seems to shift by some number of pixels?
 		m_allocedTextureWidth = pCallback->unWide;
 		m_allocedTextureHeight = pCallback->unTall;
 	}
@@ -1279,7 +1279,7 @@ void HTML::BrowserNeedsPaint(HTML_NeedsPaint_t* pCallback)
 	}
 	else
 	{
-		surface()->DrawSetTextureRGBA(m_iHTMLTextureID, (const unsigned char*)pCallback->pBGRA, pCallback->unWide, pCallback->unTall, true, true);
+		surface()->DrawSetTextureBGRA(m_iHTMLTextureID, (const unsigned char*)pCallback->pBGRA, pCallback->unWide, pCallback->unTall, true, true);
 	}
 
 	// need a paint next time
