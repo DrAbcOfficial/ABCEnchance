@@ -117,57 +117,59 @@ void DecodeVideo() {
 		vpx_codec_iter_t iter = nullptr;
 		vpx_image_t* img = vpx_codec_get_frame(g_pCodec.load(), &iter);
 		if (img) {
-			//not 444, fuck it
-			if ((img->fmt != VPX_IMG_FMT_I444) && (img->fmt != VPX_IMG_FMT_I44416))
+			//wtf
+			if (img->fmt == VPX_IMG_FMT_NONE)
 				return;
-			static size_t s_iArea;
+			static uint64_t s_iArea;
 			static byte* s_pBuf;
-			if (s_iArea < img->d_w * img->d_h) {
-				s_iArea = img->d_w * img->d_h;
+			size_t imageWide = img->d_w;
+			size_t imageHeight = img->d_h;
+			if (s_iArea < imageWide * imageHeight) {
+				s_iArea = imageWide * imageHeight;
 				delete[] s_pBuf;
-				s_pBuf = new byte[img->d_w * img->d_h * 4];
+				s_pBuf = new byte[imageWide * imageHeight * 4];
 			}
 			size_t c = 0;
-			size_t enumW = img->stride[VPX_PLANE_Y];
-			size_t enumH = img->h;
-			asyncResult returnVal;
-			const static auto YUV2RGB = [](int Y, int U, int V, int* R, int* G, int* B) {
-				int iTmpR = 0;
-				int iTmpG = 0;
-				int iTmpB = 0;
+			int y_stride = img->stride[VPX_PLANE_Y];
+			int u_stride = img->stride[VPX_PLANE_U];
+			int v_stride = img->stride[VPX_PLANE_V];
+			int a_stride = img->stride[VPX_PLANE_ALPHA];
 
-				iTmpR = (((int)Y) << 14) + 22970 * (((int)V) - 128);
-				iTmpG = (((int)Y) << 14) - 5638 * (((int)U) - 128) - 11700 * (((int)V) - 128);
-				iTmpB = (((int)Y) << 14) + 29032 * (((int)U) - 128);
+			asyncResult returnVal;
+			const static auto YUV2RGB = [](int Y, int U, int V, int& R, int& G, int& B) {
 				const static constexpr auto RoundShr = [](int d, int s) -> int {
 					return d >= 0 ?
 						-((-d & (1 << (s - 1))) ? ((-(d)) >> (s)) + 1 : ((-(d)) >> (s))) :
 						d & (1 << ((s)-1)) ? (d >> s) + 1 : (d >> s);
-					};
-				iTmpR = RoundShr(iTmpR, 14);
-				iTmpG = RoundShr(iTmpG, 14);
-				iTmpB = RoundShr(iTmpB, 14);
-
-				*R = clamp<int>(iTmpR, 0, 255);
-				*G = clamp<int>(iTmpG, 0, 255);
-				*B = clamp<int>(iTmpB, 0, 255);
 				};
-			for (size_t h = 0; h < enumH; h++) {
-				if (h >= img->d_h)
-					continue;
-				for (size_t w = 0; w < enumW; w++) {
-					if (w >= img->d_w)
-						break;
-					size_t i = w + (h * enumW);
-					//use int damit!
+				R = clamp<int>(RoundShr((((int)Y) << 14) + 22970 * (((int)V) - 128), 14), 0, 255);
+				G = clamp<int>(RoundShr((((int)Y) << 14) - 5638 * (((int)U) - 128) - 11700 * (((int)V) - 128), 14), 0, 255);
+				B = clamp<int>(RoundShr((((int)Y) << 14) + 29032 * (((int)U) - 128), 14), 0, 255);
+				};
+			for (size_t h = 0; h < imageHeight; h++) {
+				for (size_t w = 0; w < imageWide; w++) {
+					int y, u, v;
 					int r, g, b, a;
-					YUV2RGB(
-						img->planes[VPX_PLANE_Y][i],
-						img->planes[VPX_PLANE_U][i],
-						img->planes[VPX_PLANE_V][i],
-						&r, &g, &b
-					);
-					a = img->planes[VPX_PLANE_ALPHA] ? img->planes[VPX_PLANE_ALPHA][i] : 255;
+					y = img->planes[VPX_PLANE_Y][h * y_stride + w];
+					if ((img->fmt == VPX_IMG_FMT_I420) || (img->fmt == VPX_IMG_FMT_I42016) || 
+						(img->fmt == VPX_IMG_FMT_NV12) || (img->fmt == VPX_IMG_FMT_YV12)) {
+						u = img->planes[VPX_PLANE_U][h / 2 * u_stride + w / 2];
+						v = img->planes[VPX_PLANE_V][h / 2 * v_stride + w / 2];
+					}
+					else if((img->fmt == VPX_IMG_FMT_I422) || (img->fmt == VPX_IMG_FMT_I42216)) {
+						u = img->planes[VPX_PLANE_U][h * u_stride + w / 2];
+						v = img->planes[VPX_PLANE_V][h * v_stride + w / 2];
+					}
+					else if ((img->fmt == VPX_IMG_FMT_I440) || (img->fmt == VPX_IMG_FMT_I44016)) {
+						u = img->planes[VPX_PLANE_U][h / 2 * u_stride + w];
+						v = img->planes[VPX_PLANE_V][h / 2 * v_stride + w];
+					}
+					else if ((img->fmt == VPX_IMG_FMT_I444) || (img->fmt == VPX_IMG_FMT_I44416)) {
+						u = img->planes[VPX_PLANE_U][h * u_stride + w];
+						v = img->planes[VPX_PLANE_V][h * v_stride + w];
+					}
+					YUV2RGB(y, u, v, r, g, b);
+					a = img->planes[VPX_PLANE_ALPHA] ? img->planes[VPX_PLANE_ALPHA][h * a_stride + w] : 255;
 					s_pBuf[c * 4 + 0] = r;
 					s_pBuf[c * 4 + 1] = g;
 					s_pBuf[c * 4 + 2] = b;
@@ -176,12 +178,12 @@ void DecodeVideo() {
 				}
 			}
 			returnVal.data = s_pBuf;
-			returnVal.wide = img->d_w;
-			returnVal.tall = img->d_h;
+			returnVal.wide = imageWide;
+			returnVal.tall = imageHeight;
 			g_pVideoResult = &returnVal;
 		};
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start);
-		auto tbr = std::chrono::microseconds(static_cast<int>(static_cast<float>(g_pInfo.load()->time_base.numerator) / static_cast<float >(g_pInfo.load()->time_base.denominator) * 1000));
+		auto tbr = std::chrono::microseconds(static_cast<int>(static_cast<float>(g_pInfo.load()->time_base.numerator) / static_cast<float>(g_pInfo.load()->time_base.denominator) * 1000));
 		std::this_thread::sleep_for(std::chrono::microseconds(duration > tbr ? std::chrono::microseconds(0) : tbr - duration));
 	} while (!g_pThreadStop);
 	CloseVideo();
@@ -190,11 +192,11 @@ void BackGroundVideoInit() {
 	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "0", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (g_bInitialized)
 			ConsoleWriteline("Background will changed in next lauch.\n");
-	});
+		});
 	ReadBackGroundList();
-	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size()-1)];
+	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size() - 1)];
 }
-void BackGroundVideoPostInit(){
+void BackGroundVideoPostInit() {
 	if (gCVars.pDynamicBackground->value > 0) {
 		OpenVideo();
 		PlayMp3();
@@ -229,7 +231,7 @@ void BackGroundInitMusic() {
 	if (!g_pThreadStop)
 		PlayMp3();
 }
-IVanilliaPanel* BasePanel(){
+IVanilliaPanel* BasePanel() {
 	return g_pBasePanel;
 }
 
@@ -297,20 +299,20 @@ void BasePanel_InstallHook(void)
 		return;
 	}
 #define GetFuncVPX(name) name = (decltype(name))(GetProcAddress(hVPX, #name))
-		GetFuncVPX(vpx_codec_dec_init_ver);
-		GetFuncVPX(vpx_codec_peek_stream_info);
-		GetFuncVPX(vpx_codec_get_stream_info);
-		GetFuncVPX(vpx_codec_decode);
-		GetFuncVPX(vpx_codec_get_frame);
-		GetFuncVPX(vpx_codec_register_put_frame_cb);
-		GetFuncVPX(vpx_codec_register_put_slice_cb);
-		GetFuncVPX(vpx_codec_set_frame_buffer_functions);
-		GetFuncVPX(vpx_codec_vp8_dx);
-		GetFuncVPX(vpx_codec_vp9_dx);
-		GetFuncVPX(vpx_codec_destroy);
-		GetFuncVPX(vpx_codec_error);
-		GetFuncVPX(vpx_codec_error_detail);
-		GetFuncVPX(vpx_img_wrap);
-		GetFuncVPX(vpx_img_free);
+	GetFuncVPX(vpx_codec_dec_init_ver);
+	GetFuncVPX(vpx_codec_peek_stream_info);
+	GetFuncVPX(vpx_codec_get_stream_info);
+	GetFuncVPX(vpx_codec_decode);
+	GetFuncVPX(vpx_codec_get_frame);
+	GetFuncVPX(vpx_codec_register_put_frame_cb);
+	GetFuncVPX(vpx_codec_register_put_slice_cb);
+	GetFuncVPX(vpx_codec_set_frame_buffer_functions);
+	GetFuncVPX(vpx_codec_vp8_dx);
+	GetFuncVPX(vpx_codec_vp9_dx);
+	GetFuncVPX(vpx_codec_destroy);
+	GetFuncVPX(vpx_codec_error);
+	GetFuncVPX(vpx_codec_error_detail);
+	GetFuncVPX(vpx_img_wrap);
+	GetFuncVPX(vpx_img_free);
 #undef GetFuncVPX
 }
