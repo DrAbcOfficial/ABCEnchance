@@ -2164,7 +2164,7 @@ void KeyValues::UnpackIntoStructure(KeyValuesUnpackStructure const *pUnpackTable
 			case UNPACK_TYPE_STRING:
 			{
 				char *dest_s = (char *)dest_field;
-				strncpy(dest_s, GetString(pUnpackTable->m_pKeyName, pUnpackTable->m_pKeyDefault), pUnpackTable->m_nFieldSize);
+				Q_strncpy(dest_s, GetString(pUnpackTable->m_pKeyName, pUnpackTable->m_pKeyDefault), pUnpackTable->m_nFieldSize);
 				break;
 			}
 

@@ -52,10 +52,9 @@ private:
 	cvar_t* pFastSwich = nullptr;
 
 public:
-	WEAPON* m_pCurWeapon;
-	bool m_bAcceptDeadMessage = false;
-
 	WEAPON* m_pNowSelected;
+
+	WEAPON* m_pCurWeapon;
 	//目前选择的Slot
 	size_t m_iNowSlot;
 

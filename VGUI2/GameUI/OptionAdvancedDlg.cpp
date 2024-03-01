@@ -250,7 +250,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 	char ext[4];
 	wchar_t wpath[MAX_PATH];
 	Q_UTF8ToUnicode(fullpath, wpath, MAX_PATH);
-	std::strncpy(ext, std::filesystem::path(wpath).extension().string().c_str(), 4);
+	Q_strncpy(ext, std::filesystem::path(wpath).extension().string().c_str(), 4);
 	if (!strnicmp(ext, ".tga", 4))
 		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_TARGA, wpath, 0);
 	else if(!strnicmp(ext, ".bmp", 4))
@@ -334,13 +334,13 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		lump.compression = 0;
 		lump.dummy = 0;
 		lump.type = 0x43; //miptex
-		std::strncpy(lump.name, "{LOGO", 16);
+		Q_strncpy(lump.name, "{LOGO", 16);
 		lump.offset = sizeof(WAD3Header_t) + sizeof(WAD3Lump_t);
 		lump.size = lump.sizeOnDisk = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3;
 		stream.write((char*)&lump, sizeof(WAD3Lump_t));
 		//mips header
 		BSPMipTexHeader_t header;
-		std::strncpy(header.name, "{LOGO", 16);
+		Q_strncpy(header.name, "{LOGO", 16);
 		header.width = nw;
 		header.height = nh;
 		header.offsets[0] = sizeof(BSPMipTexHeader_t);

@@ -27,7 +27,7 @@ void WadTexture::GetRawData(std::ofstream& stream) {
     FreeImage_Unload(img);
     size_t size = m_iWidth * m_iHeight;
     BSPMipTexHeader_t header;
-    std::strncpy(header.name, m_szName.c_str(), 16);
+    strncpy_s(header.name, m_szName.c_str(), 16);
     header.width = m_iWidth;
     header.height = m_iHeight;
     header.offsets[0] = sizeof(BSPMipTexHeader_t);

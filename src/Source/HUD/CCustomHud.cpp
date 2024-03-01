@@ -1,29 +1,18 @@
 #include <metahook.h>
 #include <string>
-#include <map>
 #include <vector>
 #include <algorithm>
 
-#include "glew.h"
-#include "gl_shader.h"
-#include "gl_def.h"
-
-#include "pmtrace.h"
 #include "vguilocal.h"
+#include "local.h"
 #include "hud.h"
 #include "weapon.h"
-#include "pm_defs.h"
+
 #include "parsemsg.h"
 #include "mymathlib.h"
 #include "exportfuncs.h"
-#include "keydefs.h"
 
-#include "local.h"
-#include "gl_draw.h"
-#include "steam_api.h"
 #include "player_info.h"
-#include "svc_hook.h"
-
 #include "basehud.h"
 
 #include "CCustomHud.h"
@@ -123,6 +112,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf) {
 		wp->iSlot = Weapon->iSlot;
 		wp->iSlotPos = Weapon->iSlotPos;
 		wp->iFlags = Weapon->iFlags;
+		gWR.LoadWeaponSprites(wp);
 		delete Weapon;
 	}
 	return m_pfnWeaponList(pszName, iSize, pbuf);
@@ -151,8 +141,6 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
 		}
 		int iClip = READ_LONG();
 		int iClip2 = READ_LONG();
-		if (gCustomHud.m_iPlayerHealth > 0)
-			gWR.m_bAcceptDeadMessage = false;
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
 		if (!pWeapon)
 			return m_pfnCurWeapon(pszName, iSize, pbuf);
@@ -164,18 +152,12 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
 		gCustomHud.SetCurWeapon(pWeapon);
 	}
 	else {
-		int iFlag1 = READ_BYTE();
-		int iFlag2 = READ_BYTE();
-		int iAll = iFlag1 + iFlag2;
-		switch (iAll) {
-		case 0X1FE: {
-			if (gWR.m_bAcceptDeadMessage)
-				gWR.DropAllWeapons();
-			if (gCustomHud.m_iPlayerHealth <= 0)
-				gWR.m_bAcceptDeadMessage = true;
+		int iFlag = READ_SHORT();
+		switch (iFlag) {
+		case -1:
+		case 0:
+			gWR.DropAllWeapons();
 			break;
-		}
-		case 0:gWR.DropAllWeapons();
 		}
 	}
 	return m_pfnCurWeapon(pszName, iSize, pbuf);
@@ -199,7 +181,7 @@ int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf) {
 	if (name.size() > 0) {
 		WEAPON* wp = gWR.GetWeapon(id);
 		if (wp && wp->iId > 0) {
-			std::strncpy(wp->szSprName, name.c_str(), name.size());
+			strncpy_s(wp->szSprName, name.c_str(), name.size());
 			gWR.LoadWeaponSprites(wp);
 			g_pViewPort->GetWeaponChoosePanel()->ReloadWeaponSpr();
 			g_pViewPort->GetWeaponStackPanel()->ReloadWeaponSpr();
@@ -224,11 +206,11 @@ int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf) {
 int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	const char* szName = READ_STRING();
-	int index = gCustomHud.GetSpriteIndex(szName);
-	if(index < 0)
+	auto index = gCustomHud.GetSpriteIndex(szName);
+	if(!index.has_value())
 		return m_pfnItemPickup(pszName, iSize, pbuf);
-	HSPRITE spr = gCustomHud.GetSprite(index);
-	wrect_t* rect = gCustomHud.GetSpriteRect(index);
+	HSPRITE spr = gCustomHud.GetSprite(index.value());
+	wrect_t* rect = gCustomHud.GetSpriteRect(index.value());
 	g_pViewPort->GetItemStackPanel()->AddItemPickup(spr, rect->left, rect->right, rect->top, rect->bottom);
 	return m_pfnItemPickup(pszName, iSize, pbuf);
 }
@@ -636,19 +618,18 @@ void CCustomHud::HUD_Init(void){
 }
 void CCustomHud::HUD_VidInit(void){
 	int iRes = ScreenWidth() < 640 ? 320 : 640;
-	if (!m_pSpriteList){
-		m_pSpriteList = SPR_GetList("sprites/hud.txt", &m_iSpriteCountAllRes);
-
-		if (m_pSpriteList){
-			client_sprite_t* p = m_pSpriteList;
-			for (int j = 0; j < m_iSpriteCountAllRes; j++){
+	if (m_arySprites.size() == 0){
+		int size;
+		client_sprite_t* arySpritelist = SPR_GetList("sprites/hud.txt", &size);
+		if (arySpritelist){
+			client_sprite_t* p = arySpritelist;
+			for (int i = 0; i < size; i++){
 				if (p->iRes == iRes){
-					char sz[256];
-					sprintf(sz, "sprites/%s.spr", p->szSprite);
-					cl_spritem_s* item = new cl_spritem_s();
-					item->spr = SPR_Load(sz);
-					item->rect = p->rc;
-					strncpy_s(item->name, p->szName, MAX_SPRITE_NAME_LENGTH);
+					char sz[MAX_PATH];
+					std::sprintf(sz, "sprites/%s.spr", p->szSprite);
+					client_sprite_t* item = new client_sprite_t();
+					std::memcpy(item, p, sizeof(client_sprite_t));
+					item->hspr = SPR_Load(sz);
 					m_arySprites.push_back(item);
 				}
 				p++;
@@ -656,16 +637,13 @@ void CCustomHud::HUD_VidInit(void){
 		}
 	}
 	else{
-		client_sprite_t* p = m_pSpriteList;
-		int index = 0;
-		for (int j = 0; j < m_iSpriteCountAllRes; j++){
-			if (p->iRes == iRes){
-				char sz[256];
-				sprintf(sz, "sprites/%s.spr", p->szSprite);
-				m_arySprites[index]->spr = SPR_Load(sz);
-				index++;
+		for (auto iter = m_arySprites.begin(); iter != m_arySprites.end(); iter++) {
+			client_sprite_t* item = *iter;
+			if (item->iRes == iRes) {
+				char sz[MAX_PATH];
+				std::sprintf(sz, "sprites/%s.spr", item->szSprite);
+				item->hspr = SPR_Load(sz);
 			}
-			p++;
 		}
 	}
 	m_HudIndicator.VidInit();
@@ -682,8 +660,6 @@ void CCustomHud::HUD_Draw(float flTime){
 	m_HudIndicator.Draw(flTime);
 }
 void CCustomHud::HUD_Reset(void){
-	m_iPlayerHealth = 100;
-	m_flOverViewScale = 0;
 	m_HudIndicator.Reset();
 	gWR.Reset();
 	g_HudItemHighLight.Reset();
@@ -693,12 +669,9 @@ void CCustomHud::HUD_Reset(void){
 #endif
 
 	m_bInScore = false;
-	m_iMouseState = 0;
-	m_iLastClick = 5;
-	m_iHideHUDDisplay = 0;
-	m_iWeaponBits.reset();
-	memset(m_SpectatePlayer, 0, sizeof(m_SpectatePlayer));
-	memset(m_Playerinfo, 0, sizeof(m_Playerinfo));
+	m_bitsHideHUDDisplay = 0;
+	m_bitsWeaponBits.reset();
+	std::fill(m_aryPlayerInfos.begin(), m_aryPlayerInfos.end(), hud_playerinfo_t{});
 	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
 }
 void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
@@ -709,9 +682,9 @@ void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 		g_pViewPort->SetSpectate(newuser > 0);
 		iuser = newuser;
 	}
-	if (!m_iWeaponBits.has_value() || m_iWeaponBits != cdata->iWeaponBits)
+	if (!m_bitsWeaponBits.has_value() || m_bitsWeaponBits != cdata->iWeaponBits)
 		WeaponBitsChangeCallBack(cdata->iWeaponBits);
-	m_iWeaponBits = cdata->iWeaponBits;
+	m_bitsWeaponBits = cdata->iWeaponBits;
 
 	//check lj
 	static bool lj = false;
@@ -727,27 +700,29 @@ void CCustomHud::HUD_Clear(void){
 }
 void CCustomHud::IN_MouseEvent(int mstate){
 	auto MouseTest = [&](int mstate, int testBit, vgui::MouseCode enumMouse) {
+		static int s_mousebits = 0;
+		static int s_lastclick = 5;
 		//现在有
 		if ((mstate & testBit) != 0) {
 			//之前没有
-			if ((m_iMouseState & testBit) == 0) {
+			if ((s_mousebits & testBit) == 0) {
 				//Press
-				this->OnMousePressed(enumMouse);
+				OnMousePressed(enumMouse);
 				//g_pViewPort->OnMousePressed(enumMouse);
 				//加上Bit
-				m_iMouseState += testBit;
-				if (m_iLastClick == enumMouse) {
+				s_mousebits += testBit;
+				if (s_lastclick == enumMouse) {
 					//g_pViewPort->OnMouseDoublePressed(enumMouse);
-					m_iLastClick = vgui::MouseCode::MOUSE_LAST;
+					s_lastclick = vgui::MouseCode::MOUSE_LAST;
 				}
 				else
-					m_iLastClick = enumMouse;
+					s_lastclick = enumMouse;
 			}
 		}
 		//现在没有之前有
-		else if ((m_iMouseState & testBit) != 0) {
+		else if ((s_mousebits & testBit) != 0) {
 			//触发Release
-			m_iMouseState -= testBit;
+			s_mousebits -= testBit;
 			//g_pViewPort->OnMouseReleased(enumMouse);
 		}
 	};
@@ -773,19 +748,19 @@ void CCustomHud::HUD_TxferPredictionData(struct entity_state_s* ps, const struct
 	gWR.SyncWeapon(pwd);
 }
 bool CCustomHud::HasSuit() {
-	if (!m_iWeaponBits.has_value())
+	if (!m_bitsWeaponBits.has_value())
 		return false;
-	return (m_iWeaponBits.value() & (1 << WEAPON_SUIT)) != 0;
+	return (m_bitsWeaponBits.value() & (1 << WEAPON_SUIT)) != 0;
 }
 void CCustomHud::WeaponBitsChangeCallBack(int bits){
 	g_pViewPort->WeaponBitsChangeCallback(bits);
 }
 void CCustomHud::HudHideCallBack(int hidetoken){
-	m_iHideHUDDisplay = hidetoken;
+	m_bitsHideHUDDisplay = hidetoken;
 	g_pViewPort->HudHideCallBack(hidetoken);
 }
 bool CCustomHud::IsHudHide(int HideToken) {
-	return (m_iHideHUDDisplay & HideToken) != 0;
+	return (m_bitsHideHUDDisplay & HideToken) != 0;
 }
 bool CCustomHud::IsInSpectate() {
 	auto local = gEngfuncs.GetLocalPlayer();
@@ -794,11 +769,11 @@ bool CCustomHud::IsInSpectate() {
 	else
 		return false;
 }
-bool CCustomHud::IsSpectator(int client){
-	return m_SpectatePlayer[client];
+bool CCustomHud::IsSpectator(int cliententindex){
+	return m_aryPlayerInfos[cliententindex-1].spectate;
 }
-void CCustomHud::SetSpectator(int client, bool value){
-	m_SpectatePlayer[client] = value;
+void CCustomHud::SetSpectator(int cliententindex, bool value){
+	m_aryPlayerInfos[cliententindex-1].spectate = value;
 }
 bool CCustomHud::IsMouseVisible(){
 	if(g_pViewPort)
@@ -832,7 +807,7 @@ void CCustomHud::OnMousePressed(int code) {
 		}
 	}
 }
-void CCustomHud::SetBaseHudActivity() {
+void CCustomHud::HideOriginalHud() {
 	if (gHookHud.m_Ammo)
 		gHookHud.m_Ammo->m_iFlags &= ~HUD_ACTIVE;
 	if (gHookHud.m_Battery)
@@ -843,23 +818,23 @@ void CCustomHud::SetBaseHudActivity() {
 		gHookHud.m_Flash->m_iFlags &= ~HUD_ACTIVE;
 }
 HSPRITE CCustomHud::GetSprite(size_t index) {
-	return (index < 0) ? 0 : m_arySprites[index]->spr;
+	return (index < 0) ? 0 : m_arySprites[index]->hspr;
 }
 wrect_t* CCustomHud::GetSpriteRect(size_t index) {
 	if(index >= 0 && index < m_arySprites.size())
-		return &m_arySprites[index]->rect;
+		return &m_arySprites[index]->rc;
 	return nullptr;
 }
-int CCustomHud::GetSpriteIndex(const char* SpriteName){
-	for (size_t i = 0; i < m_arySprites.size(); i++){
-		if (strncmp(SpriteName, m_arySprites[i]->name, MAX_SPRITE_NAME_LENGTH) == 0)
+std::optional<int> CCustomHud::GetSpriteIndex(const char* SpriteName){
+	for (size_t i = 0; i < m_arySprites.size(); i++) {
+		if(!std::strncmp(SpriteName, m_arySprites[i]->szName, 64))
 			return i;
 	}
-	return -1; // invalid sprite
+	return std::nullopt;
 }
 hud_playerinfo_t* CCustomHud::GetPlayerHUDInfo(int index){
 	if (index > 0 && index <= 33)
-		return &m_Playerinfo[index];
+		return &m_aryPlayerInfos[index-1];
 	return nullptr;
 }
 bool CCustomHud::IsInScore() {

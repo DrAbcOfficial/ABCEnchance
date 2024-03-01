@@ -202,6 +202,8 @@ void CWeaponChoosePanel::ShowPanel(bool state) {
 		vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 255, 0.0f, 0.1f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 		InvalidateLayout();
 	}
+	else
+		gWR.m_pNowSelected = nullptr;
 }
 bool CWeaponChoosePanel::IsVisible() {
 	return BaseClass::IsVisible();
@@ -274,8 +276,6 @@ bool CWeaponChoosePanel::ShouldDraw(){
 	return true;
 }
 void CWeaponChoosePanel::SelectWeapon(){
-	if (gWR.m_bAcceptDeadMessage)
-		return;
 	if (!IsVisible())
 		return;
 	if (m_pHandledWeapon) {

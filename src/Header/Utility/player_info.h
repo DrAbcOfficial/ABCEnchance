@@ -16,6 +16,7 @@
 #define PLAYER_INFO_H
 #include <array>
 #include <string>
+#include "steam_api.h"
 
 typedef struct player_info_s player_info_t;
 

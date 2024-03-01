@@ -15,87 +15,87 @@
 #include "weaponbank.h"
 
 WEAPON* CWeaponData::operator [](size_t iId) {
-	return this->m_dicWeaponIds.find(iId) != this->m_dicWeaponIds.end() ? this->m_dicWeaponIds[iId] : nullptr;
+	return m_dicWeaponIds.find(iId) != m_dicWeaponIds.end() ? m_dicWeaponIds[iId] : nullptr;
 }
 WEAPON* CWeaponData::operator [](std::pair<size_t, size_t> pair) {
-	auto iter = this->m_dicWeaponSlots.find(pair.first);
-	if (iter != this->m_dicWeaponSlots.end() && iter->second.find(pair.second) != iter->second.end())
+	auto iter = m_dicWeaponSlots.find(pair.first);
+	if (iter != m_dicWeaponSlots.end() && iter->second.find(pair.second) != iter->second.end())
 		return iter->second[pair.second];
 	return nullptr;
 }
 WEAPON* CWeaponData::operator [](std::string szName) {
-	return this->m_dicWeaponNames.find(szName) != this->m_dicWeaponNames.end() ? this->m_dicWeaponNames[szName] : nullptr;
+	return m_dicWeaponNames.find(szName) != m_dicWeaponNames.end() ? m_dicWeaponNames[szName] : nullptr;
 }
 //删除所有链接，并且清理指向的对象内存
 void CWeaponData::Clear() {
 	//这个表包含十个std::map栈对象，所以需要手动清理每张表
-	for (auto iter = this->m_dicWeaponSlots.begin(); iter != this->m_dicWeaponSlots.end(); iter++) {
+	for (auto iter = m_dicWeaponSlots.begin(); iter != m_dicWeaponSlots.end(); iter++) {
 		iter->second.clear();
 	}
-	this->m_dicWeaponSlots.clear();
-	this->m_dicWeaponNames.clear();
+	m_dicWeaponSlots.clear();
+	m_dicWeaponNames.clear();
 	//所有map指向同一个对象，所以只需要第一张map释放WEAPON内存即可
-	for (auto iter = this->m_dicWeaponIds.begin(); iter != this->m_dicWeaponIds.end(); iter++) {
+	for (auto iter = m_dicWeaponIds.begin(); iter != m_dicWeaponIds.end(); iter++) {
 		delete iter->second;
 		iter->second = nullptr;
 	}
-	this->m_dicWeaponIds.clear();
+	m_dicWeaponIds.clear();
 }
 bool CWeaponData::Has(size_t iSlot, size_t iPos) {
-	if (!this->m_dicWeaponSlots[iSlot].count(iPos))
+	if (!m_dicWeaponSlots[iSlot].count(iPos))
 		return false;
-	auto mapPos = this->m_dicWeaponSlots.find(iSlot)->second;
+	auto mapPos = m_dicWeaponSlots.find(iSlot)->second;
 	return mapPos.find(iPos) != mapPos.end();
 }
 size_t CWeaponData::Size() {
 	return m_dicWeaponIds.size();
 }
 size_t CWeaponData::Size(size_t iSlot) {
-	return this->m_dicWeaponSlots[iSlot].size();
+	return m_dicWeaponSlots[iSlot].size();
 }
 void CWeaponData::Add(WEAPON* wp) {
-	this->m_dicWeaponIds.emplace(std::make_pair(wp->iId, wp));
-	this->m_dicWeaponNames.emplace(std::make_pair(wp->szName, wp));
-	this->m_dicWeaponSlots[wp->iSlot].emplace(std::make_pair(wp->iSlotPos, wp));
+	m_dicWeaponIds.emplace(std::make_pair(wp->iId, wp));
+	m_dicWeaponNames.emplace(std::make_pair(wp->szName, wp));
+	m_dicWeaponSlots[wp->iSlot].emplace(std::make_pair(wp->iSlotPos, wp));
 }
 void CWeaponData::Remove(WEAPON* wp) {
-	this->m_dicWeaponIds.erase(wp->iId);
-	this->m_dicWeaponNames.erase(wp->szName);
-	this->m_dicWeaponSlots[wp->iSlot].erase(wp->iSlotPos);
+	m_dicWeaponIds.erase(wp->iId);
+	m_dicWeaponNames.erase(wp->szName);
+	m_dicWeaponSlots[wp->iSlot].erase(wp->iSlotPos);
 }
 std::map<size_t, WEAPON*>::iterator CWeaponData::Begin() {
-	return this->m_dicWeaponIds.begin();
+	return m_dicWeaponIds.begin();
 }
 std::map<size_t, WEAPON*>::iterator CWeaponData::End() {
-	return this->m_dicWeaponIds.end();
+	return m_dicWeaponIds.end();
 }
 std::map<size_t, WEAPON*>::iterator CWeaponData::PosBegin(size_t iSlot) {
-	return this->m_dicWeaponSlots[iSlot].begin();
+	return m_dicWeaponSlots[iSlot].begin();
 }
 std::map<size_t, WEAPON*>::iterator CWeaponData::PosEnd(size_t iSlot) {
-	return this->m_dicWeaponSlots[iSlot].end();
+	return m_dicWeaponSlots[iSlot].end();
 }
 std::map<size_t, WEAPON*>::reverse_iterator CWeaponData::RPosBegin(size_t iSlot) {
-	return this->m_dicWeaponSlots[iSlot].rbegin();
+	return m_dicWeaponSlots[iSlot].rbegin();
 }
 std::map<size_t, WEAPON*>::reverse_iterator CWeaponData::RPosEnd(size_t iSlot) {
-	return this->m_dicWeaponSlots[iSlot].rend();
+	return m_dicWeaponSlots[iSlot].rend();
 }
 size_t CWeaponData::GetMaxPos(size_t iSlot) {
-	if (this->m_dicWeaponSlots[iSlot].size() <= 0)
+	if (m_dicWeaponSlots[iSlot].size() <= 0)
 		return 0;
 	size_t maxPos = 0;
-	for (auto iter = this->m_dicWeaponSlots[iSlot].begin(); iter != this->m_dicWeaponSlots[iSlot].end(); iter++) {
+	for (auto iter = m_dicWeaponSlots[iSlot].begin(); iter != m_dicWeaponSlots[iSlot].end(); iter++) {
 		if (maxPos < iter->second->iSlotPos)
 			maxPos = iter->second->iSlotPos;
 	}
 	return maxPos;
 }
 size_t CWeaponData::GetMinPos(size_t iSlot) {
-	if (this->m_dicWeaponSlots[iSlot].size() <= 0)
+	if (m_dicWeaponSlots[iSlot].size() <= 0)
 		return 0;
-	size_t minPos = this->m_dicWeaponSlots[iSlot].begin()->second->iSlotPos;
-	for (auto iter = this->m_dicWeaponSlots[iSlot].begin(); iter != this->m_dicWeaponSlots[iSlot].end(); iter++) {
+	size_t minPos = m_dicWeaponSlots[iSlot].begin()->second->iSlotPos;
+	for (auto iter = m_dicWeaponSlots[iSlot].begin(); iter != m_dicWeaponSlots[iSlot].end(); iter++) {
 		if (minPos > iter->second->iSlotPos)
 			minPos = iter->second->iSlotPos;
 	}
@@ -103,9 +103,9 @@ size_t CWeaponData::GetMinPos(size_t iSlot) {
 }
 //删除所有链接，但是不清理内存
 void CWeaponData::RemoveAll() {
-	this->m_dicWeaponIds.clear();
-	this->m_dicWeaponNames.clear();
-	this->m_dicWeaponSlots.clear();
+	m_dicWeaponIds.clear();
+	m_dicWeaponNames.clear();
+	m_dicWeaponSlots.clear();
 }
 CWeaponData::CWeaponData() {
 	for (size_t i = 0; i < MAX_WEAPON_SLOT; i++) {
@@ -131,21 +131,21 @@ void WeaponsResource::VidInit(){
 	LoadAllWeaponSprites();
 }
 CWeaponData* WeaponsResource::GetOwnedData() {
-	return &this->m_pOwnedWeaponData;
+	return &m_pOwnedWeaponData;
 }
 //由武器ID获取武器数据
 WEAPON* WeaponsResource::GetWeapon(size_t iId) {
-	return this->m_pWeaponData[iId];
+	return m_pWeaponData[iId];
 }
 WEAPON* WeaponsResource::GetWeapon(char* szName) {
-	return this->m_pWeaponData[szName];
+	return m_pWeaponData[szName];
 }
 WEAPON* WeaponsResource::GetWeapon(size_t slot, size_t pos) {
-	return this->m_pWeaponData[std::make_pair(slot, pos)];
+	return m_pWeaponData[std::make_pair(slot, pos)];
 }
 //从本地武器预测数组同步武器到菜单缓存
 void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
-	for (auto iter = this->m_pWeaponData.Begin(); iter != this->m_pWeaponData.End(); iter++) {
+	for (auto iter = m_pWeaponData.Begin(); iter != m_pWeaponData.End(); iter++) {
 		WEAPON* weapon = iter->second;
 		if (!weapon)
 			continue;
@@ -167,11 +167,11 @@ void WeaponsResource::SyncWeapon(const weapon_data_t* wd) {
 //添加新的武器数据到武器仓库
 void WeaponsResource::AddWeapon(WEAPON* wp) {
 	//防冲突
-	while (this->m_pWeaponData.Has(wp->iSlot, wp->iSlotPos)) {
+	while (m_pWeaponData.Has(wp->iSlot, wp->iSlotPos)) {
 		wp->iSlotPos++;
 	}
-	this->m_pWeaponData.Add(wp);
-	this->LoadWeaponSprites(wp);
+	m_pWeaponData.Add(wp);
+	LoadWeaponSprites(wp);
 }
 extern void Viewport_PickupWeapon(WEAPON* wp);
 extern void Viewport_DropWeapon(WEAPON* wp);
@@ -179,33 +179,33 @@ extern void Viewport_ChooseWeapon(WEAPON* wp);
 extern void Viewport_DropAllWeapon();
 //添加武器到菜单缓存
 void WeaponsResource::PickupWeapon(size_t id) {
-	WEAPON* wp = this->GetWeapon(id);
-	this->m_pOwnedWeaponData.Add(wp);
+	WEAPON* wp = GetWeapon(id);
+	m_pOwnedWeaponData.Add(wp);
 	Viewport_PickupWeapon(wp);
 }
 //从武器菜单删除缓存
 void WeaponsResource::DropWeapon(size_t s, size_t p) {
-	WEAPON* wp = this->GetWeapon(s, p);
-	this->m_pOwnedWeaponData.Remove(wp);
+	WEAPON* wp = GetWeapon(s, p);
+	m_pOwnedWeaponData.Remove(wp);
 	Viewport_DropWeapon(wp);
 }
 //删除所有缓存
 void WeaponsResource::DropAllWeapons(void) {
-	this->m_pOwnedWeaponData.RemoveAll();
+	m_pOwnedWeaponData.RemoveAll();
 	Viewport_DropAllWeapon();
 }
 //载入所有武器图标
 void WeaponsResource::LoadAllWeaponSprites() {
-	for (auto iter = this->m_pWeaponData.Begin(); iter != this->m_pWeaponData.End(); iter++) {
+	for (auto iter = m_pWeaponData.Begin(); iter != m_pWeaponData.End(); iter++) {
 		LoadWeaponSprites(iter->second);
 	}
 }
 //菜单缓存是否有这把武器(玩家是否拥有这把武器)
 bool WeaponsResource::HasWeapon(size_t s, size_t p) {
-	return this->m_pOwnedWeaponData.Has(s, p);
+	return m_pOwnedWeaponData.Has(s, p);
 }
 bool WeaponsResource::HasWeapon(WEAPON* wp) {
-	return this->m_pOwnedWeaponData.Has(wp->iSlot, wp->iSlotPos);
+	return m_pOwnedWeaponData.Has(wp->iSlot, wp->iSlotPos);
 }
 //玩家选择武器
 void WeaponsResource::SetSelectWeapon(WEAPON* wp, bool bWheel) {
@@ -264,7 +264,7 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon, const char* cust) {
 	}
 	auto fSetupSprInfo = [&](const char* szType, HSPRITE* spr, wrect_t* rc, HSPRITE* dspr = nullptr, wrect_t* drc = nullptr) {
 		int iRes = ScreenWidth() < 640 ? 320 : 640;
-		client_sprite_t* p = this->GetSpriteList(pList, szType, iRes, i);
+		client_sprite_t* p = GetSpriteList(pList, szType, iRes, i);
 		if (p != nullptr) {
 			sprintf_s(sz, "sprites/%s.spr", p->szSprite);
 			*spr = SPR_Load(sz);
@@ -311,8 +311,6 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 	if (gCustomHud.SelectTextMenuItem(iSlot + 1))
 		return;
 	if (!gCustomHud.HasSuit())
-		return;
-	if (gWR.m_bAcceptDeadMessage)
 		return;
 	BuildAviliableWeapons();
 	if (m_pAviliableWeaponData.Size() == 0)
@@ -404,7 +402,7 @@ WEAPON* WeaponsResource::GetFirstPos(size_t iSlot) {
 	return GetWeapon(iSlot, m_pAviliableWeaponData.GetMinPos(iSlot));
 }
 WEAPON* WeaponsResource::GetLastPos(size_t iSlot) {
-	return GetWeapon(iSlot, this->m_pAviliableWeaponData.GetMaxPos(iSlot));
+	return GetWeapon(iSlot, m_pAviliableWeaponData.GetMaxPos(iSlot));
 }
 bool WeaponsResource::HasUsableWeaponSize(){
 	for (auto iter = m_pOwnedWeaponData.Begin(); iter != m_pOwnedWeaponData.End(); iter++) {
@@ -430,10 +428,10 @@ bool WeaponsResource::HasAmmo(WEAPON* p) {
 int WeaponsResource::CountAmmo(size_t iId) {
 	if (iId < 0)
 		return 0;
-	return this->m_dicAmmos[iId];
+	return m_dicAmmos[iId];
 }
 void WeaponsResource::SetAmmo(size_t iId, int iCount) {
-	this->m_dicAmmos[iId] = iCount;
+	m_dicAmmos[iId] = iCount;
 }
 
 WeaponsResource gWR;

@@ -27,7 +27,7 @@ public:
 
 	
 	int iNowSelectIndicator = 0;
-	GLint iPainIndicator;
+	int iPainIndicator;
 
 	float flPainColorKeepTime = 0;
 
@@ -39,9 +39,9 @@ private:
 	
 	indicatorinfo_t m_hScreenFilter;
 
-	GLint m_hOldBuffer;
-	GLuint m_hFilterFBO;
-	GLuint m_hFilterTex;
+	int m_hOldBuffer;
+	size_t m_hFilterFBO;
+	size_t m_hFilterTex;
 
 	Color PainIndicatorColor;
 	Color PainIndicatorColorA;

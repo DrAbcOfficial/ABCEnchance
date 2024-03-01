@@ -277,8 +277,7 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	vgui::surface()->DrawTexturedRect(0, 0, ScreenWidth(), ScreenHeight());
 }
 
-void BasePanel_InstallHook(void)
-{
+void BasePanel_InstallHook(void){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
 	if (!hGameUI) {
 		SYS_ERROR("Failed to locate GameUI.dll");

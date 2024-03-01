@@ -1,6 +1,6 @@
 #pragma once
-#define MAX_SPRITE_NAME_LENGTH	24
 #include <vector>
+#include <array>
 #include <optional>
 #include "player_infosc.h"
 
@@ -13,13 +13,13 @@ typedef struct hud_playerinfo_s {
 	int team;
 	int donors;
 	int admin;
+	bool spectate;
 }hud_playerinfo_t;
 
 class CHudBattery;
 class CHudHealth;
 class CHudAmmo;
 class CHudFlashlight;
-
 typedef struct {
 	CHudBattery* m_Battery;
 	CHudHealth* m_Health;
@@ -28,12 +28,6 @@ typedef struct {
 } cl_hookedHud;
 
 typedef int HSPRITE;
-
-typedef struct cl_spritem_s {
-	HSPRITE spr;
-	wrect_t rect;
-	char name[MAX_SPRITE_NAME_LENGTH];
-}cl_spritem_t;
 
 enum SC_DONER_ICON {
 	DONER_NONE = 0,
@@ -64,13 +58,14 @@ public:
 	void IN_MouseEvent(int mstate);
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 	void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
+
 	bool IsInSpectate();
 
 	bool HasSuit();
 	void WeaponBitsChangeCallBack(int bits);
 
-	void HudHideCallBack(int hidetoken);
 	bool IsHudHide(int HideToken);
+	void HudHideCallBack(int hidetoken);
 
 	bool IsSpectator(int client);
 	void SetSpectator(int client, bool value);
@@ -86,35 +81,27 @@ public:
 
 	HSPRITE GetSprite(size_t index);
 	wrect_t* GetSpriteRect(size_t index);
-	int GetSpriteIndex(const char* SpriteName);
+	std::optional<int> GetSpriteIndex(const char* SpriteName);
 
 	hud_playerinfo_t* GetPlayerHUDInfo(int index);
 
 	bool IsInScore();
 
 	void RenderRadar();
-
-	static player_infosc_t* GetPlayerInfoEx(int index);
-
 	~CCustomHud();			// destructor, frees allocated memory
 
-	int m_iPlayerHealth = 0;
-	int m_iHideHUDDisplay = 0;
-	std::optional<int> m_iWeaponBits = 0;
-	float m_flOverViewScale = 0;
-	float m_flOverViewYaw = 0;
-	float m_flOverViewZmax = 0;
-	float m_flOverViewZmin = 0;
+	int m_bitsHideHUDDisplay = 0;
+	std::optional<int> m_bitsWeaponBits = 0;
 
-	float m_flSavedCvars[16] = {0};
-
-	size_t m_flCursorSize = 0;
-
+	float m_flOverViewScale = 0.0f;
+	float m_flOverViewYaw = 0.0f;
+	float m_flOverViewZmax = 0.0f;
+	float m_flOverViewZmin = 0.0f;
 	vec3_t m_vecOverViewOrg;
 
-	client_sprite_t* m_pSpriteList;
-
+	size_t m_flCursorSize = 0;
 	int m_iCursorTga = 0;
+
 	bool m_bInScore = false;
 
 	enum MetaHookMsgType {
@@ -127,16 +114,12 @@ public:
 	enum class ABCCustomMsg {
 		POPNUMBER = 0
 	};
-	static void SetBaseHudActivity();
-private:
-	
-	int m_iMouseState = 0;
-	int m_iLastClick = 5;
 
-	bool m_SpectatePlayer[33] = { 0 };
-	hud_playerinfo_t m_Playerinfo[33] = { 0 };
-	int m_iSpriteCountAllRes;
-	std::vector<cl_spritem_s*> m_arySprites; // the sprites loaded from hud.txt
+	static player_infosc_t* GetPlayerInfoEx(int index);
+	static void HideOriginalHud();
+private:
+	std::array<hud_playerinfo_t, 32> m_aryPlayerInfos;
+	std::vector<client_sprite_t*> m_arySprites; // the sprites loaded from hud.txt
 };
 extern CCustomHud gCustomHud;
 extern cl_hookedHud gHookHud;

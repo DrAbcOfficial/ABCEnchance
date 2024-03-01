@@ -354,16 +354,19 @@ void CRadarPanel::RenderRadar(){
 	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
 	gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
 	gCustomHud.m_flOverViewYaw = local->curstate.angles[CMathlib::Q_YAW];
-	gCustomHud.m_flSavedCvars[0] = gCVars.pCVarDevOverview->value;
-	gCustomHud.m_flSavedCvars[1] = gCVars.pCVarDrawEntities->value;
-	gCustomHud.m_flSavedCvars[2] = gCVars.pCVarDrawViewModel->value;
-	gCustomHud.m_flSavedCvars[3] = gCVars.pCVarDrawDynamic->value;
-	if (gCVars.pCVarFXAA)
-		gCustomHud.m_flSavedCvars[4] = gCVars.pCVarFXAA->value;
-	if (gCVars.pCVarWater)
-		gCustomHud.m_flSavedCvars[5] = gCVars.pCVarWater->value;
-	if (gCVars.pCVarShadow)
-		gCustomHud.m_flSavedCvars[6] = gCVars.pCVarShadow->value;
+	std::vector<std::pair<cvar_t*, float>> arySaveCvars = {
+		{gCVars.pCVarDevOverview, 0.0f},
+		{gCVars.pCVarDrawEntities, 0.0f},
+		{gCVars.pCVarDrawViewModel, 0.0f},
+		{gCVars.pCVarDrawDynamic, 0.0f},
+		{gCVars.pCVarFXAA, 0.0f},
+		{gCVars.pCVarWater, 0.0f},
+		{gCVars.pCVarShadow, 0.0f}
+	};
+	for (auto iter = arySaveCvars.begin(); iter != arySaveCvars.end(); iter++) {
+		if ((*iter).first)
+			(*iter).second = (*iter).first->value;
+	}
 	gCVars.pCVarDevOverview->value = 2;
 	gCVars.pCVarDrawEntities->value = 0;
 	gCVars.pCVarDrawViewModel->value = 0;
@@ -377,16 +380,10 @@ void CRadarPanel::RenderRadar(){
 	g_bInRenderRadar = true;
 	gHookFuncs.R_RenderScene();
 	g_bInRenderRadar = false;
-	gCVars.pCVarDevOverview->value = gCustomHud.m_flSavedCvars[0];
-	gCVars.pCVarDrawEntities->value = gCustomHud.m_flSavedCvars[1];
-	gCVars.pCVarDrawViewModel->value = gCustomHud.m_flSavedCvars[2];
-	gCVars.pCVarDrawDynamic->value = gCustomHud.m_flSavedCvars[3];
-	if (gCVars.pCVarFXAA)
-		gCVars.pCVarFXAA->value = gCustomHud.m_flSavedCvars[4];
-	if (gCVars.pCVarWater)
-		gCVars.pCVarWater->value = gCustomHud.m_flSavedCvars[5];
-	if (gCVars.pCVarShadow)
-		gCVars.pCVarShadow->value = gCustomHud.m_flSavedCvars[6];
+	for (auto iter = arySaveCvars.begin(); iter != arySaveCvars.end(); iter++) {
+		if ((*iter).first)
+			(*iter).first->value = (*iter).second;
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
 void CRadarPanel::SetScale(bool state){

@@ -23,7 +23,7 @@ typedef int HSPRITE;
 class WEAPON{
 public:
 	char	szName[MAX_WEAPON_NAME];
-	char	szSprName[MAX_WEAPON_NAME];
+	char	szSprName[MAX_WEAPON_NAME]; //256
 	int		iAmmoType;
 	int		iAmmo2Type;
 	int		iMax1;
@@ -33,16 +33,16 @@ public:
 	int		iFlags;
 	size_t	iId = 0;
 	int		iClip;
-	int		iClip2;
+	int		iClip2; //416
 
-	int		iCount;
+	int		iCount; //420
 
-	int iState;
+	int iState;//424
 
-	HSPRITE hActive;
-	wrect_t rcActive;
-	HSPRITE hInactive;
-	wrect_t rcInactive;
+	HSPRITE hActive;//428
+	wrect_t rcActive;//432
+	HSPRITE hInactive;//436
+	wrect_t rcInactive;//440
 	HSPRITE	hAmmo;
 	wrect_t rcAmmo;
 	HSPRITE hAmmo2;

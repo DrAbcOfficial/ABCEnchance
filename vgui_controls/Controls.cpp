@@ -21,10 +21,8 @@ static char g_szControlsModuleName[256];
 
 bool (__fastcall *g_pfnCWin32Input_PostKeyMessage)(void *pthis, int, KeyValues *message);
 
-bool VGui_InitInterfacesList(const char *moduleName, CreateInterfaceFn *factoryList, int numFactories)
-{
-	strncpy(g_szControlsModuleName, moduleName, sizeof(g_szControlsModuleName));
-	g_szControlsModuleName[sizeof(g_szControlsModuleName) - 1] = 0;
+bool VGui_InitInterfacesList(const char *moduleName, CreateInterfaceFn *factoryList, int numFactories){
+	strncpy_s(g_szControlsModuleName, moduleName, sizeof(g_szControlsModuleName));
 
 	setlocale(LC_CTYPE, "");
 	setlocale(LC_TIME, "");

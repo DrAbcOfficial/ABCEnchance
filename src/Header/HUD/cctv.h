@@ -7,9 +7,9 @@ public:
 	int Draw(float flTime);
 	void Reset();
 private:
-	GLint CCTVDownTga;
-	GLint CCTVLogoTga;
-	GLint CCTVTileTga;
+	int CCTVDownTga;
+	int CCTVLogoTga;
+	int CCTVTileTga;
 
 	size_t DownLogoStartX = 0;
 	size_t DownLogoStartY = 0;

@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 typedef struct cl_hightlight_s {
 	char Name[64];
 	//0 Item 1 Ammo 2 Weapon

@@ -1050,13 +1050,7 @@ void CConsolePanel::AddToHistory(const char* commandText, const char* extraText)
 	if (command)
 	{
 		memset(command, 0x0, strlen(commandText) + 1);
-		strncpy(command, commandText, strlen(commandText));
-		// There is no actual bug here, just some sloppy/odd code.
-		// src\vgui2\vgui_controls\consoledialog.cpp(974): warning C6053: The prior call to 'strncpy' might not zero-terminate string 'command'
-			if (command[strlen(command) - 1] == ' ')
-			{
-				command[strlen(command) - 1] = '\0';
-			}
+		Q_strncpy(command, commandText, strlen(commandText));
 	}
 
 	// strip the quotes off the extra text
@@ -1068,7 +1062,7 @@ void CConsolePanel::AddToHistory(const char* commandText, const char* extraText)
 		if (extra)
 		{
 			memset(extra, 0x0, strlen(extraText) + 1);
-			strncpy(extra, extraText, strlen(extraText)); // +1 to dodge the starting quote
+			Q_strncpy(extra, extraText, strlen(extraText)); // +1 to dodge the starting quote
 
 			// Strip trailing spaces
 			int i = strlen(extra) - 1;

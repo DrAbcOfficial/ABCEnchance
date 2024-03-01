@@ -68,9 +68,9 @@ private:
 	float flOldFollowAim = 0;
 	bool bOldCamThirdperson = false;
 
-	GLuint iBackgroundSpr = 0;
-	GLuint iCenterSpr = 0;
-	GLuint iBackgroundTga = 0;
+	size_t iBackgroundSpr = 0;
+	size_t iCenterSpr = 0;
+	size_t iBackgroundTga = 0;
 
 	float BuyMenuAnimateTime = 0;
 	float BuyMenuModelSize = 0;
@@ -85,8 +85,8 @@ private:
 
 	vgui::HFont hFont = 0;
 
-	GLint m_hOldBuffer = 0;
-	GLuint m_hGaussianBufferFBO = 0;
-	GLuint m_hGaussianBufferTex = 0;
+	int m_hOldBuffer = 0;
+	size_t m_hGaussianBufferFBO = 0;
+	size_t m_hGaussianBufferTex = 0;
 };
 extern CHudEccoBuyMenu m_HudEccoBuyMenu;
