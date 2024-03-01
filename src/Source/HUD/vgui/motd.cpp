@@ -28,7 +28,7 @@ CMotdPanel::CMotdPanel()
 	// Header labels
 	m_pMessage = new vgui::Label(this, "Message", "");
 	m_pProgressBar = new vgui::Panel(this, "Progress");
-	m_pHTML = new vgui::HTML(this, "HTML", false, false);
+	m_pHTML = new vgui::HTML(this, "HTMLMessage");
 
 	gCVars.pMotd = CREATE_CVAR("hud_motd", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		switch (static_cast<int>(cvar->value)){
@@ -41,15 +41,21 @@ CMotdPanel::CMotdPanel()
 	LoadControlSettings(VGUI2_ROOT_DIR "MotdPanel.res");
 	SetVisible(false);
 }
+CMotdPanel::~CMotdPanel(){
+	RemoveTempHTML();
+}
 const char* CMotdPanel::GetName(){
 	return VIEWPORT_MOTD_NAME;
 }
 void CMotdPanel::Reset(){
 	if (IsVisible())
 		ShowPanel(false);
+	RemoveTempHTML();
+	//m_pHTML->OpenURL("", nullptr);
 	m_aryClipedPage.clear();
 	m_szBuffer.clear();
 	m_bLoadedMissionBrief = false;
+	m_bInHTML = false;
 	m_bBuiledPages = false;
 	m_iNowPage = 0;
 }
@@ -137,6 +143,12 @@ void CMotdPanel::ChangePage(size_t iNewPage){;
 void CMotdPanel::ShowMotd(){
 	if (gCVars.pMotd->value < 1)
 		return;
+	if (m_bInHTML) {
+		m_pHTML->Refresh();
+		m_flShowTime = gEngfuncs.GetClientTime() + m_flKeepTime;
+		ShowPanel(true);
+		return;
+	}
 	LoadMissionBrief();
 	BuildPage();
 	if (m_aryClipedPage.size() > 0) {
@@ -144,30 +156,55 @@ void CMotdPanel::ShowMotd(){
 		ShowPanel(true);
 	}	
 }
-void CMotdPanel::ForceAddPage(){
-	BuildPageInternal();
+void CMotdPanel::FinishSendMOTD(){
+	//check html
+	if (m_szBuffer.starts_with("<!DOCTYPE html>")) {
+		FileHandle_t file =  vgui::filesystem()->Open("abcenchance/motd_cache.html", "w+");
+		if (file) 
+			vgui::filesystem()->Write(m_szBuffer.c_str(), m_szBuffer.size(), file);
+		vgui::filesystem()->Close(file);
+		char local[MAX_PATH] = "file:///";
+		const size_t uiURLLength = 8;
+		vgui::filesystem()->GetLocalPath("abcenchance/motd_cache.html", local + uiURLLength, 252);
+		m_pHTML->OpenURL(local, nullptr);
+		m_pMessage->SetVisible(false);
+		m_pHTML->SetVisible(true);
+		m_bInHTML = true;
+	}
+	else if (m_szBuffer.starts_with("http://") || m_szBuffer.starts_with("https://")) {
+		m_pHTML->OpenURL(m_szBuffer.c_str(), nullptr);
+		m_pMessage->SetVisible(false);
+		m_pHTML->SetVisible(true);
+		m_bInHTML = true;
+	}
+	else {
+		BuildPageInternal();
+		m_pMessage->SetVisible(true);
+		m_pHTML->SetVisible(false);
+		m_bInHTML = false;
+	}
 	m_szBuffer.clear();
+}
+void CMotdPanel::RemoveTempHTML(){
+	if (vgui::filesystem()->FileExists("abcenchance/motd_cache.html"))
+		vgui::filesystem()->RemoveFile("abcenchance/motd_cache.html");
 }
 void CMotdPanel::LoadMissionBrief(){
 	if (!m_bLoadedMissionBrief) {
 		m_bLoadedMissionBrief = true;
-		char mappath[260];
 		char buf[1024];
-		sprintf(mappath, "%s", gEngfuncs.pfnGetLevelName());
-		int len = strlen(mappath);
-		mappath[len - 3] = 't';
-		mappath[len - 2] = 'x';
-		mappath[len - 1] = 't';
-		if (!g_pFileSystem->FileExists(mappath))
+		std::string mappath = gEngfuncs.pfnGetLevelName();
+		mappath += ".txt";
+		if (!vgui::filesystem()->FileExists(mappath.c_str()))
 			return;
-		FileHandle_t file = g_pFileSystem->Open(mappath, "r");
+		FileHandle_t file = vgui::filesystem()->Open(mappath.c_str(), "r");
 		char* p = buf;
 		std::string buffer;
 		while (p && *p){
-			p = g_pFileSystem->ReadLine(buf, 1023, file);
+			p = vgui::filesystem()->ReadLine(buf, 1023, file);
 			buffer += buf;
 		}
 		AddBuffer(buffer);
-		g_pFileSystem->Close(file);
+		vgui::filesystem()->Close(file);
 	}
 }

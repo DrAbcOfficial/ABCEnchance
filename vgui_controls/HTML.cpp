@@ -7,6 +7,7 @@
 //
 // $NoKeywords: $
 //=============================================================================//
+#include <winuser.rh>
 
 #include "vgui_controls/pch_vgui_controls.h"
 #include <vgui_controls/EditablePanel.h>
@@ -753,6 +754,20 @@ bool HTML::FindDialogVisible()
 }
 
 
+vgui::KeyCode KeyCode_VirtualKeyToVGUI(int key){
+	// Some tools load vgui for localization and never use input
+	if (!g_pVGuiSystemABC)
+		return vgui::KEY_NONE;
+	return vgui::system()->KeyCode_VirtualKeyToVGUI(key);
+}
+
+int KeyCode_VGUIToVirtualKey(vgui::KeyCode code){
+	// Some tools load vgui for localization and never use input
+	if (!g_pVGuiSystemABC)
+		return VK_RETURN;
+	return vgui::system()->KeyCode_VirtualKeyToVGUI(code);
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: passes key presses to the browser 
 //-----------------------------------------------------------------------------
@@ -816,8 +831,8 @@ void HTML::OnKeyCodeTyped(KeyCode code)
 	}
 	}
 
-	//if (m_SteamAPIContext.SteamHTMLSurface())
-	//	m_SteamAPIContext.SteamHTMLSurface()->KeyDown(m_unBrowserHandle, KeyCode_VGUIToVirtualKey(code), (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
+	if (m_SteamAPIContext.SteamHTMLSurface())
+		m_SteamAPIContext.SteamHTMLSurface()->KeyDown(m_unBrowserHandle, KeyCode_VGUIToVirtualKey(code), (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
 }
 
 
@@ -826,8 +841,8 @@ void HTML::OnKeyCodeTyped(KeyCode code)
 //-----------------------------------------------------------------------------
 void HTML::OnKeyCodeReleased(KeyCode code)
 {
-	//if (m_SteamAPIContext.SteamHTMLSurface())
-	//	m_SteamAPIContext.SteamHTMLSurface()->KeyUp(m_unBrowserHandle, KeyCode_VGUIToVirtualKey(code), (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
+	if (m_SteamAPIContext.SteamHTMLSurface())
+		m_SteamAPIContext.SteamHTMLSurface()->KeyUp(m_unBrowserHandle, KeyCode_VGUIToVirtualKey(code), (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
 }
 
 
@@ -1253,18 +1268,18 @@ void HTML::BrowserNeedsPaint(HTML_NeedsPaint_t* pCallback)
 		// if the dimensions changed we also need to re-create the texture ID to support the overlay properly (it won't resize a texture on the fly, this is the only control that needs
 		//   to so lets have a tiny bit more code here to support that)
 		m_iHTMLTextureID = surface()->CreateNewTextureID(true);
-		surface()->DrawSetTextureRGBA(m_iHTMLTextureID, (const unsigned char*)pCallback->pBGRA, pCallback->unWide, pCallback->unTall, false, false);// BR FIXME - this call seems to shift by some number of pixels?
+		surface()->DrawSetTextureRGBA(m_iHTMLTextureID, (const unsigned char*)pCallback->pBGRA, pCallback->unWide, pCallback->unTall, true, true);// BR FIXME - this call seems to shift by some number of pixels?
 		m_allocedTextureWidth = pCallback->unWide;
 		m_allocedTextureHeight = pCallback->unTall;
 	}
 	else if ((int)pCallback->unUpdateWide > 0 && (int)pCallback->unUpdateTall > 0)
 	{
 		// same size texture, just bits changing in it, lets twiddle
-		//surface()->DrawUpdateRegionTextureRGBA(m_iHTMLTextureID, pCallback->unUpdateX, pCallback->unUpdateY, (const unsigned char*)pCallback->pBGRA, pCallback->unUpdateWide, pCallback->unUpdateTall);
+		surface()->DrawUpdateRegionTextureBGRA(m_iHTMLTextureID, pCallback->unUpdateX, pCallback->unUpdateY, (const unsigned char*)pCallback->pBGRA, pCallback->unUpdateWide, pCallback->unUpdateTall);
 	}
 	else
 	{
-		surface()->DrawSetTextureRGBA(m_iHTMLTextureID, (const unsigned char*)pCallback->pBGRA, pCallback->unWide, pCallback->unTall, false, false);
+		surface()->DrawSetTextureRGBA(m_iHTMLTextureID, (const unsigned char*)pCallback->pBGRA, pCallback->unWide, pCallback->unTall, true, true);
 	}
 
 	// need a paint next time
@@ -1751,7 +1766,6 @@ void HTML::BrowserJSConfirm(HTML_JSConfirm_t* pCmd)
 	pDlg->SetCancelCommand(new KeyValues("DismissJSDialog", "result", false));
 	pDlg->DoModal();
 }
-
 //-----------------------------------------------------------------------------
 // Purpose: got an answer from the dialog, tell cef
 //-----------------------------------------------------------------------------

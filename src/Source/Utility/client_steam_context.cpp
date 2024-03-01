@@ -32,20 +32,16 @@ void CClientSteamContext::Shutdown()
 	if (!m_bActive)
 		return;
 
-#if !defined(NO_STEAM)
 	if (m_bCallbacksRegistered)
 	{
 		m_CallbackSteamServersDisconnected.Unregister();
 		m_CallbackSteamServerConnectFailure.Unregister();
 		m_CallbackSteamServersConnected.Unregister();
 	}
-#endif
 
 	m_bActive = false;
 	m_bLoggedOn = false;
-#if !defined(NO_STEAM)
 	Clear(); // Steam API context shutdown
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -58,9 +54,8 @@ void CClientSteamContext::Activate()
 
 	m_bActive = true;
 
-#if !defined(NO_STEAM)
-	SteamAPI_InitSafe(); // ignore failure, that will fall out later when they don't get a valid logon cookie
-	Init(); // Steam API context init
+	//SteamAPI_InitSafe(); // ignore failure, that will fall out later when they don't get a valid logon cookie
+	//Init(); // Steam API context init
 
 	m_CallbackSteamServersDisconnected.Register(this, &CClientSteamContext::OnSteamServersDisconnected);
 	m_CallbackSteamServerConnectFailure.Register(this, &CClientSteamContext::OnSteamServerConnectFailure);
@@ -70,7 +65,6 @@ void CClientSteamContext::Activate()
 
 	UpdateLoggedOnState();
 	Msg("CClientSteamContext logged on = %d\n", m_bLoggedOn);
-#endif
 }
 
 void CClientSteamContext::UpdateLoggedOnState()
@@ -96,7 +90,6 @@ void CClientSteamContext::UpdateLoggedOnState()
 	}
 }
 
-#if !defined(NO_STEAM)
 void CClientSteamContext::OnSteamServersDisconnected(SteamServersDisconnected_t *pDisconnected)
 {
 	UpdateLoggedOnState();
@@ -115,14 +108,11 @@ void CClientSteamContext::OnSteamServersConnected(SteamServersConnected_t *pConn
 	Msg("CClientSteamContext OnSteamServersConnected logged on = %d\n", m_bLoggedOn);
 }
 
-void IN_SteamOverlayHidden();
-
 void CClientSteamContext::OnGameOverlayActivated(GameOverlayActivated_t *pCallback)
 {
-	if (!pCallback->m_bActive)
-		IN_SteamOverlayHidden();
+	//if (!pCallback->m_bActive)
+	//	IN_SteamOverlayHidden();
 }
-#endif // !defined(NO_STEAM)
 
 void CClientSteamContext::InstallCallback(CUtlDelegate<void(const SteamLoggedOnChange_t &)> delegate)
 {

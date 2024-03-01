@@ -93,7 +93,7 @@ public:
 	void AppendMOTD(char* szMessage);
 	void ShowMOTD();
 	void CloseMOTD();
-	void ForeceBuildPage();
+	void FinishSendMOTD();
 	
 	void ShowSideText(bool state);
 

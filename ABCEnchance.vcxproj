@@ -225,7 +225,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\gindicator.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
-    <ClCompile Include="src\Source\HUD\vgui\htmlmotd.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\itemstack.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\neteasemusic.cpp" />
@@ -475,7 +474,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\gindicator.h" />
     <ClInclude Include="src\Header\HUD\vgui\health.h" />
-    <ClInclude Include="src\Header\HUD\vgui\htmlmotd.h" />
     <ClInclude Include="src\Header\HUD\vgui\itemstack.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
     <ClInclude Include="src\Header\HUD\vgui\neteasemusic.h" />
@@ -553,6 +551,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="VGUI2\GameUI\BasePanel.h" />
     <ClInclude Include="vgui2\GameUI\NeteaseMusicDialog.h" />
     <ClInclude Include="VGUI2\GameUI\OptionAdvancedDlg.h" />
+    <ClInclude Include="vgui2\interface\ISystemABC.h" />
     <ClInclude Include="VGUI2\VGUI2.h" />
     <ClInclude Include="vgui2\VGUI2ExtensionImport.h" />
     <ClInclude Include="VGUI2\VPanel.h" />

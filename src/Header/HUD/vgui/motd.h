@@ -17,6 +17,7 @@ public:
 	DECLARE_CLASS_SIMPLE(CMotdPanel, vgui::EditablePanel);
 
 	CMotdPanel();
+	virtual ~CMotdPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	// IViewportPanel overrides
@@ -31,7 +32,9 @@ public:
 	void AppendMotd(char* message);
 	void ShowMotd();
 
-	void ForceAddPage();
+	void FinishSendMOTD();
+
+	void RemoveTempHTML();
 private:
 	vgui::Label* m_pMessage = nullptr;
 	vgui::HTML* m_pHTML = nullptr;
@@ -46,6 +49,7 @@ private:
 	void BuildPage();
 	void ChangePage(size_t iNewPage);
 
+	bool m_bInHTML = false;
 	bool m_bLoadedMissionBrief = false;
 	bool m_bBuiledPages = false;
 	float m_flShowTime = 0;

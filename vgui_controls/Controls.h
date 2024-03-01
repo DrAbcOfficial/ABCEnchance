@@ -17,12 +17,13 @@
 #include <tier0/dbg.h>
 #include <tier1/strtools.h>
 
+#include <interface/ISystemABC.h>
+
 #include <vgui/VGUI.h>
 #include <vgui/IInput2.h>
 #include <vgui/IInputInternal.h>
 #include <vgui/IScheme2.h>
 #include <vgui/ISurface2.h>
-#include <vgui/ISystem.h>
 #include <vgui/IVGUI.h>
 #include <vgui/IPanel.h>
 #include <vgui/ILocalize.h>
@@ -34,7 +35,7 @@ extern IFileSystem *g_pFullFileSystem;
 extern vgui::IInput2 *g_pVGuiInput2;
 extern vgui::ISchemeManager2 * g_pVGuiSchemeManager2;
 extern vgui::ISurface2 *g_pVGuiSurface;
-extern vgui::ISystem *g_pVGuiSystem;
+extern vgui::ISystemABC* g_pVGuiSystemABC;
 extern vgui::IVGui *g_pVGui;
 extern vgui::IPanel *g_pVGuiPanel;
 extern vgui::ILocalize *g_pVGuiLocalize;
@@ -54,7 +55,7 @@ class IPanel;
 class IInput2;
 class ISchemeManager;
 class ISurface;
-class ISystem;
+class ISystemABC;
 class IVGui;
 
 //-----------------------------------------------------------------------------
@@ -87,9 +88,9 @@ inline vgui::ISurface2 *surface()
 }
 
 // #include <vgui/ISystem.h>
-inline vgui::ISystem *system()
+inline vgui::ISystemABC *system()
 {
-	return g_pVGuiSystem;
+	return g_pVGuiSystemABC;
 }
 
 // #include <vgui/IVGui.h>

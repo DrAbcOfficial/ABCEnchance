@@ -288,8 +288,8 @@ void CViewport::ShowMOTD(){
 void CViewport::CloseMOTD(){
 	m_pMOTDPanel->ShowPanel(false);
 }
-void CViewport::ForeceBuildPage() {
-	m_pMOTDPanel->ForceAddPage();
+void CViewport::FinishSendMOTD() {
+	m_pMOTDPanel->FinishSendMOTD();
 }
 void CViewport::ShowSideText(bool state){
 	m_pSidePanel->ShowPanel(state);

@@ -189,10 +189,7 @@ namespace vgui {
 
 		static CUtlMap<AvatarImagePair_t, int> s_AvatarImageCache;
 		static bool m_sbInitializedAvatarCache;
-
-#ifndef NO_STEAM
 		CCallback<CAvatarImage, PersonaStateChange_t, false> m_sPersonaStateChangedCallback;
-#endif
 
 		void OnPersonaStateChanged(PersonaStateChange_t* info);
 	};

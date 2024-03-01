@@ -18,8 +18,8 @@
 #include <vgui_controls/PHandle.h>
 #include <vgui_controls/FileOpenDialog.h>
 #include <vgui_controls/TextEntry.h>
-#include <tier1/utlstring.h>
 #include <tier1/utlmap.h>
+#include <tier1/utlstring.h>
 #ifndef VERSION_SAFE_STEAM_API_INTERFACES
 #define VERSION_SAFE_STEAM_API_INTERFACES
 #endif
@@ -27,6 +27,7 @@
 
 namespace vgui
 {
+
 	//-----------------------------------------------------------------------------
 	// Purpose: Control to display HTML content
 	//			This control utilises a hidden IE window to render a HTML page for you.
@@ -75,7 +76,7 @@ namespace vgui
 		// url handlers, lets you have web page links fire vgui events
 		// use to have custom web page links, eg. "steam://open/subscriptionpage"
 		// message contains "CustomURL", "url"
-		virtual void AddCustomURLHandler(const char* customProtocolName, vgui::Panel* target);
+		virtual void AddCustomURLHandler(const char* customProtocolName, Panel* target);
 
 		// overridden to paint our special web browser texture
 		virtual void Paint();
@@ -157,7 +158,7 @@ namespace vgui
 	protected:
 		virtual void ApplySchemeSettings(IScheme* pScheme);
 
-		vgui::Menu* m_pContextMenu;
+		Menu* m_pContextMenu;
 
 	private:
 		STEAM_CALLBACK(HTML, BrowserNeedsPaint, HTML_NeedsPaint_t, m_NeedsPaint);
@@ -194,10 +195,10 @@ namespace vgui
 		MESSAGE_FUNC_PTR(OnEditNewLine, "TextNewLine", panel);
 		MESSAGE_FUNC_INT(DismissJSDialog, "DismissJSDialog", result);
 
-		vgui::Panel* m_pInteriorPanel;
-		vgui::ScrollBar* _hbar, * _vbar;
-		vgui::DHANDLE<vgui::FileOpenDialog> m_hFileOpenDialog;
-		class CHTMLFindBar : public vgui::EditablePanel
+		Panel* m_pInteriorPanel;
+		ScrollBar* _hbar, * _vbar;
+		DHANDLE<FileOpenDialog> m_hFileOpenDialog;
+		class CHTMLFindBar : public EditablePanel
 		{
 			DECLARE_CLASS_SIMPLE(CHTMLFindBar, EditablePanel);
 		public:
@@ -211,9 +212,9 @@ namespace vgui
 			bool BIsHidden() { return m_bHidden; }
 
 		private:
-			vgui::TextEntry* m_pFindBar;
-			vgui::HTML* m_pParent;
-			vgui::Label* m_pFindCountLabel;
+			TextEntry* m_pFindBar;
+			HTML* m_pParent;
+			Label* m_pFindCountLabel;
 			bool m_bHidden;
 		};
 
@@ -315,6 +316,7 @@ namespace vgui
 
 		CSteamAPIContext m_SteamAPIContext;
 		HHTMLBrowser m_unBrowserHandle;
+
 		CCallResult< HTML, HTML_BrowserReady_t > m_SteamCallResultBrowserReady;
 	};
 

@@ -350,7 +350,7 @@ int __MsgFunc_MOTD(const char* pszName, int iSize, void* pbuf) {
 	else
 		g_pViewPort->CloseMOTD();
 	if (code > 0)
-		g_pViewPort->ForeceBuildPage();
+		g_pViewPort->FinishSendMOTD();
 	return m_pfnMOTD(pszName, iSize, pbuf);
 }
 int __MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf) {

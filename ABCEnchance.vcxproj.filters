@@ -117,6 +117,9 @@
     <Filter Include="Public\Source\HUD\legacy">
       <UniqueIdentifier>{642f09f6-101f-49f4-8f61-764b2fe93e80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vgui2\interface">
+      <UniqueIdentifier>{31c8abc4-ccdf-48c3-9926-a4c81fec055b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
@@ -715,9 +718,6 @@
     </ClCompile>
     <ClCompile Include="src\Source\autofunc.cpp">
       <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\HUD\vgui\htmlmotd.cpp">
-      <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1561,8 +1561,8 @@
     <ClInclude Include="src\Header\autofunc.h">
       <Filter>Public\Header</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\vgui\htmlmotd.h">
-      <Filter>Public\Header\HUD\vgui</Filter>
+    <ClInclude Include="vgui2\interface\ISystemABC.h">
+      <Filter>vgui2\interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
