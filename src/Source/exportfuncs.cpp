@@ -569,13 +569,11 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 				int beamflags = (ent->curstate.rendermode & 0xF0);
 				int noise = ent->curstate.body;
 				float scrollrate = ent->curstate.animtime;
-				int renderamt = ent->curstate.renderamt;
-				float scale = ent->curstate.scale;
-				if ((scale >= 2.0f && beamflags == 16 && scrollrate == 5.0f && noise == 20) ||
-					(scale == 5.5f && beamflags == 0 && renderamt == 160 && scrollrate == 2.5f && noise == 8)) {
+				if ((beamflags == 16 && scrollrate == 5.0f && noise == 20) ||
+					(beamflags == 0 && scrollrate == 2.5f && noise == 8)) {
 					extern void DoEgonParticle(float* vecStart, float* vecEnd, int owner, unsigned char r, unsigned char g, unsigned char b);
-					int index = endent - 4096;
-					if (index <= 33 && index <= 1) {
+					int index = endent & 0xFFF;
+					if (index <= 33 && index >= 1) {
 						cl_entity_t* end = gEngfuncs.GetEntityByIndex(index);
 						if (end) {
 							DoEgonParticle(end->origin, ent->curstate.origin, index,

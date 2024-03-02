@@ -441,9 +441,9 @@ bool CViewport::HasSuit() {
 }
 void CViewport::WeaponBitsChangeCallback(int bits){
 	bool hasSuit = (bits & (1 << WEAPON_SUIT)) != 0;
-	m_pSidePanel->ShowPanel(hasSuit);
+	m_pSidePanel->ShowPanel(hasSuit && (gCVars.pEccoEnable->value > 0));
 	m_pFlashLight->ShowPanel(hasSuit);
-	m_pCrossHairPanel->ShowPanel(hasSuit);
+	m_pCrossHairPanel->ShowPanel(hasSuit && (gCVars.pDynamicCrossHair->value > 0));
 	m_pHealthPanel->ShowPanel(hasSuit);
 	m_pAmmoPanel->ShowPanel(hasSuit);
 	m_pDmgTiles->ShowPanel(hasSuit);
