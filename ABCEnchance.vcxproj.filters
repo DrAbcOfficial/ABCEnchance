@@ -1015,9 +1015,6 @@
     <ClInclude Include="src\Header\Var\voice_banmgr.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Var\voice_common.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Var\weaponinfo_sven.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>

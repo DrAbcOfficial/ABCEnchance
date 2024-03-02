@@ -515,7 +515,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\Var\StudioModelRenderer.h" />
     <ClInclude Include="src\Header\Var\vguilocal.h" />
     <ClInclude Include="src\Header\Var\voice_banmgr.h" />
-    <ClInclude Include="src\Header\Var\voice_common.h" />
     <ClInclude Include="src\Header\Var\voice_status.h" />
     <ClInclude Include="src\Header\Var\weapon.h" />
     <ClInclude Include="src\Header\Var\weaponinfo_sven.h" />

@@ -10,12 +10,13 @@
 #define VOICE_STATUS_H
 #pragma once
 
-
-#include "voice_common.h"
+#include <bitset>
 #include "voice_banmgr.h"
 
-class CVoiceStatus
-{
+#define VOICE_MAX_PLAYERS		32
+
+class CVoiceStatus{
+	typedef std::bitset<VOICE_MAX_PLAYERS> CPlayerBitVec;
 public:
 	CVoiceStatus();
 	virtual		~CVoiceStatus();
