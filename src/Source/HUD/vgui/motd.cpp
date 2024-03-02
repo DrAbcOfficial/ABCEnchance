@@ -28,7 +28,7 @@ CMotdPanel::CMotdPanel()
 	// Header labels
 	m_pMessage = new vgui::Label(this, "Message", "");
 	m_pProgressBar = new vgui::Panel(this, "Progress");
-	m_pHTML = new vgui::HTML(this, "HTMLMessage");
+	m_pHTML = new vgui::HTML(this, "HTMLMessage", false, false);
 
 	gCVars.pMotd = CREATE_CVAR("hud_motd", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		switch (static_cast<int>(cvar->value)){
@@ -144,7 +144,6 @@ void CMotdPanel::ShowMotd(){
 	if (gCVars.pMotd->value < 1)
 		return;
 	if (m_bInHTML) {
-		m_pHTML->Refresh();
 		m_flShowTime = gEngfuncs.GetClientTime() + m_flKeepTime;
 		ShowPanel(true);
 		return;
@@ -166,13 +165,13 @@ void CMotdPanel::FinishSendMOTD(){
 		char local[MAX_PATH] = "file:///";
 		const size_t uiURLLength = 8;
 		vgui::filesystem()->GetLocalPath("abcenchance/motd_cache.html", local + uiURLLength, 252);
-		m_pHTML->OpenURL(local, nullptr);
+		m_pHTML->OpenURL(local, nullptr, true);
 		m_pMessage->SetVisible(false);
 		m_pHTML->SetVisible(true);
 		m_bInHTML = true;
 	}
 	else if (m_szBuffer.starts_with("http://") || m_szBuffer.starts_with("https://")) {
-		m_pHTML->OpenURL(m_szBuffer.c_str(), nullptr);
+		m_pHTML->OpenURL(m_szBuffer.c_str(), nullptr, true);
 		m_pMessage->SetVisible(false);
 		m_pHTML->SetVisible(true);
 		m_bInHTML = true;
