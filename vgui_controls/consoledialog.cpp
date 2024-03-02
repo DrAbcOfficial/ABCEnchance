@@ -1053,8 +1053,16 @@ void CConsolePanel::AddToHistory(const char* commandText, const char* extraText)
 	std::string extra;
 	if (extraText)
 		extra = extraText;
-	command.erase(std::remove(command.begin(), command.end(), ' '), command.end());
-	extra.erase(std::remove(extra.begin(), extra.end(), ' '), extra.end());
+
+	auto static trim = [](const std::string& s) ->std::string {
+		size_t start = s.find_first_not_of(' ');
+		if (start == std::string::npos)
+			return "";
+		size_t end = s.find_last_not_of(' ');
+		return s.substr(start, end - start + 1);
+	};
+	command = trim(command);
+	extra = trim(extra);
 
 	// If it's already there, then remove since we'll add it to the end instead
 	CHistoryItem* item = nullptr;
