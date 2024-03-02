@@ -1046,66 +1046,38 @@ void CConsolePanel::AddToHistory(const char* commandText, const char* extraText)
 	// If this code gets cleaned up then we should remove the redundant calls to strlen,
 	// the check for whether _alloca succeeded, and should use V_strncpy instead of the
 	// error prone memset/strncpy sequence.
-	char* command = static_cast<char*>(_alloca((strlen(commandText) + 1) * sizeof(char)));
-	if (command)
-	{
-		memset(command, 0x0, strlen(commandText) + 1);
-		Q_strncpy(command, commandText, strlen(commandText));
-	}
-
+	
+	//fku c code imma gonna use stl haha
+	std::string command = commandText;
 	// strip the quotes off the extra text
-	char* extra = NULL;
-
+	std::string extra;
 	if (extraText)
-	{
-		extra = static_cast<char*>(malloc((strlen(extraText) + 1) * sizeof(char)));
-		if (extra)
-		{
-			memset(extra, 0x0, strlen(extraText) + 1);
-			Q_strncpy(extra, extraText, strlen(extraText)); // +1 to dodge the starting quote
-
-			// Strip trailing spaces
-			int i = strlen(extra) - 1;
-			while (i >= 0 &&  // Check I before referencing i == -1 into the extra array!
-				extra[i] == ' ')
-			{
-				extra[i] = '\0';
-				i--;
-			}
-		}
-	}
+		extra = extraText;
+	command.erase(std::remove(command.begin(), command.end(), ' '), command.end());
+	extra.erase(std::remove(extra.begin(), extra.end(), ' '), extra.end());
 
 	// If it's already there, then remove since we'll add it to the end instead
-	CHistoryItem* item = NULL;
-	for (int i = m_CommandHistory.Count() - 1; i >= 0; i--)
-	{
+	CHistoryItem* item = nullptr;
+	for (int i = m_CommandHistory.Count() - 1; i >= 0; i--){
 		item = &m_CommandHistory[i];
 		if (!item)
 			continue;
-
-		if (stricmp(item->GetText(), command))
+		if (stricmp(item->GetText(), command.c_str()))
 			continue;
-
-		if (extra || item->GetExtra())
-		{
-			if (!extra || !item->GetExtra())
+		if (extra.size() != 0 || item->GetExtra()){
+			if (extra.size() == 0 || !item->GetExtra())
 				continue;
-
 			// stricmp so two commands with the same starting text get added
-			if (stricmp(item->GetExtra(), extra))
+			if (stricmp(item->GetExtra(), extra.c_str()))
 				continue;
 		}
 		m_CommandHistory.Remove(i);
 	}
-
 	item = &m_CommandHistory[m_CommandHistory.AddToTail()];
 	Assert(item);
-	item->SetText(command, extra);
-
+	item->SetText(command.c_str(), extra.c_str());
 	m_iNextCompletion = 0;
 	RebuildCompletionList(m_szPartialText);
-
-	free(extra);
 }
 
 void CConsolePanel::GetConsoleText(char* pchText, size_t bufSize) const
