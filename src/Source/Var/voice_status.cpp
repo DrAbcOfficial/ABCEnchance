@@ -71,7 +71,7 @@ void CVoiceStatus::HUD_Init(){
 			gEngfuncs.pfnConsolePrint("------- BANNED PLAYERS -------\n");
 			g_pInternalVoiceStatus->m_BanMgr.ForEachBannedPlayer([](uint64 steamid) {
 				char str[70];
-				sprintf_s(str, "%llu\n", steamid);
+				sprintf_s(str, " - %llu\n", steamid);
 				gEngfuncs.pfnConsolePrint(str);
 				});
 			gEngfuncs.pfnConsolePrint("------------------------------\n");
