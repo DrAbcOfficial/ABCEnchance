@@ -60,7 +60,7 @@ public:
 	static void VectorAdd(vec3_t a, vec3_t b, vec3_t c);
 	static void VectorAddFloat(vec3_t a, float f);
 	static void VectorMultipiler(vec3_t a, float f);
-	static void VectorCopy(vec3_t a, vec3_t b);
+	static void VectorCopy(const vec3_t a, vec3_t b);
 	static void VectorReverse(vec3_t a);
 	static void Q_Vector2Copy(vec2_t a, vec2_t b);
 	static void VectorClear(vec3_t a);

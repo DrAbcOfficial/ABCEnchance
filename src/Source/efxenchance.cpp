@@ -4,6 +4,7 @@
 #include "event_api.h"
 #include "cl_entity.h"
 #include "mymathlib.h"
+#include "mathlib/vector.h"
 #include "com_model.h"
 #include "palette.h"
 #include "extraprecache.h"
@@ -16,13 +17,15 @@
 #define GAUSS_LASER_S_WIDTH 4
 
 struct EfxVarible{
-	int iGaussBeam{};
-	int iGaussWaveBeam{};
-	int iGaussChargeSprite{};
-	int iGaussLoophole{};
-	float flGaussStartChargeTime{};
+	int iGaussBeam;
+	int iGaussWaveBeam;
+	int iGaussChargeSprite;
+	int iGaussLoophole;
+	float flGaussStartChargeTime;
 
 	int iGunSmoke;
+
+	int iEgonBeam;
 };
 EfxVarible gEfxVarible;
 extern void* g_pClientSoundEngine;
@@ -35,6 +38,7 @@ void EfxReset() {
 	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel("abcenchance/spr/gauss_spark.spr");
 	gEfxVarible.iGaussLoophole = PrecacheExtraModel("abcenchance/mdl/gauss_loophole.mdl");
 	gEfxVarible.iGunSmoke = PrecacheExtraModel("sprites/Puff1.spr");
+	gEfxVarible.iEgonBeam = PrecacheExtraModel("abcenchance/spr/egon_ball.spr");
 }
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size){
 	if(gCVars.pBloodEfx->value > 0){
@@ -312,4 +316,40 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 		}
 	}
 	gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2);
+}
+
+void DoEgonParticle(float* vecStart, float* vecEnd, int owner, unsigned char r, unsigned char g, unsigned char b) {
+	model_t* pModel = gEngfuncs.hudGetModelByIndex(gEfxVarible.iEgonBeam);
+	if (!pModel)
+		return;
+	TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(vecStart, pModel);
+	if (tent) {
+		Vector vecLength = vecEnd;
+		vecLength -= vecStart;
+		float flSpeed = 3600;
+		Vector vecVelocity = vecLength.Normalize() * flSpeed;
+		CMathlib::VectorCopy(vecVelocity, tent->entity.baseline.origin);
+		tent->flags = FTENT_SPRANIMATELOOP | FTENT_COLLIDEALL | FTENT_FADEOUT;
+		tent->clientIndex = owner;
+		tent->bounceFactor = 0;
+		tent->entity.baseline.renderamt = 80;
+		tent->entity.curstate.movetype = MOVETYPE_FLY;
+		tent->entity.curstate.solid = SOLID_SLIDEBOX;
+		tent->entity.curstate.owner = owner;
+		tent->entity.curstate.scale = CMathlib::RANDOM_FLOAT(0.2f, 0.4f);
+		tent->entity.curstate.renderamt = 255;
+		tent->entity.curstate.rendercolor = { r, g, b };
+		tent->entity.curstate.rendermode = kRenderTransAdd;
+		tent->entity.curstate.frame = 0;
+		tent->entity.curstate.framerate = 10.0f * pModel->numframes; //1s
+		tent->hitcallback = [](struct tempent_s* ent, struct pmtrace_s* ptr) {
+			if (ent->entity.curstate.iuser1 != 1) {
+				gEngfuncs.pEfxAPI->R_DecalShoot(
+					gEngfuncs.pEfxAPI->Draw_DecalIndex(gEngfuncs.pEfxAPI->Draw_DecalIndexFromName(const_cast<char*>("{smscorch2"))),
+					gEngfuncs.pEventAPI->EV_IndexFromTrace(ptr), 0, ptr->endpos, 0);
+				ent->entity.curstate.iuser1 = 1;
+			}
+		};
+		tent->die = gEngfuncs.GetClientTime() + vecLength.Length() / flSpeed;
+	}
 }

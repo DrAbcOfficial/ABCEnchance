@@ -36,7 +36,7 @@ void CMathlib::VectorAddFloat(vec3_t a, float f) {
 void CMathlib::VectorMultipiler(vec3_t a, float f) {
 	a[0] *= f; a[1] *= f; a[2] *= f;
 }
-void CMathlib::VectorCopy(vec3_t a, vec3_t b) {
+void CMathlib::VectorCopy(const vec3_t a, vec3_t b) {
 	(b)[0] = (a)[0]; (b)[1] = (a)[1]; (b)[2] = (a)[2];
 }
 void CMathlib::VectorReverse(vec3_t a) {

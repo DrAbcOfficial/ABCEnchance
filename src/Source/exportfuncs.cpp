@@ -21,6 +21,7 @@
 #include "extraprecache.h"
 #include "pm_defs.h"
 #include "usercmd.h"
+#include "entity_types.h"
 #include "StudioModelRenderer.h"
 #include "autofunc.h"
 
@@ -555,6 +556,46 @@ void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 	if (!gCustomHud.HUD_AddEntity(type, ent, modelname))
 		return 0;
+	//hook for engon beam
+	if (type == ET_BEAM) {
+		int beamtype = ent->curstate.rendermode & 0x0F;
+		if (beamtype == 1) {
+			Vector vecEnd = ent->curstate.angles;
+			int startent = ent->curstate.sequence;
+			int endent = ent->curstate.skin;
+			int etype = ent->curstate.entityType;
+			if (vecEnd.x == 0 && vecEnd.y == 0 && vecEnd.z == 0 && startent == 0 && endent > 4096 && etype == 2 &&
+				!strncmp(gEngfuncs.hudGetModelByIndex(ent->curstate.modelindex)->name, "sprites/xbeam1.spr", 19)) {
+				int beamflags = (ent->curstate.rendermode & 0xF0);
+				int noise = ent->curstate.body;
+				float scrollrate = ent->curstate.animtime;
+				int renderamt = ent->curstate.renderamt;
+				float scale = ent->curstate.scale;
+				if ((scale >= 2.0f && beamflags == 16 && scrollrate == 5.0f && noise == 20) ||
+					(scale == 5.5f && beamflags == 0 && renderamt == 160 && scrollrate == 2.5f && noise == 8)) {
+					extern void DoEgonParticle(float* vecStart, float* vecEnd, int owner, unsigned char r, unsigned char g, unsigned char b);
+					int index = endent - 4096;
+					if (index <= 33 && index <= 1) {
+						cl_entity_t* end = gEngfuncs.GetEntityByIndex(index);
+						if (end) {
+							DoEgonParticle(end->origin, ent->curstate.origin, index,
+								ent->curstate.rendercolor.r, ent->curstate.rendercolor.g, ent->curstate.rendercolor.b);
+							ent->curstate.rendercolor = { 0,0,0 };
+						}
+					}					
+				}
+			}
+		}
+	}
+	else if (type == ET_NORMAL) {
+		if (ent->curstate.modelindex > 0 && 
+			!strncmp(gEngfuncs.hudGetModelByIndex(ent->curstate.modelindex)->name, "sprites/XSpark1.spr", 19) && 
+			ent->curstate.entityType == 1 && ent->curstate.scale == 1.0f && ent->curstate.rendermode == 3 && ent->curstate.renderamt == 255 && 
+			ent->curstate.rendercolor.r == 255 && ent->curstate.rendercolor.g == 255 && ent->curstate.rendercolor.b == 255 &&
+			ent->curstate.renderfx == 14 && ent->curstate.movetype == 8) {
+			return 0;
+		}
+	}
 	return gExportfuncs.HUD_AddEntity(type, ent, modelname);
 }
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
