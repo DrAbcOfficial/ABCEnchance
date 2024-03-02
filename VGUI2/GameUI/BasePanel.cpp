@@ -203,7 +203,7 @@ void BackGroundVideoInit() {
 		if (g_pLogoImage)
 			g_pLogoImage.Get()->SetVisible(cvar->value > 0);
 	});
-	gCVars.pDynamicBackgroundLogoXPos = CREATE_CVAR("hud_mainmenu_logo_xpos", "0.03", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pDynamicBackgroundLogoXPos = CREATE_CVAR("hud_mainmenu_logo_xpos", "0", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (g_pLogoImage) {
 			int w, h;
 			auto panel = g_pLogoImage.Get();
@@ -219,7 +219,7 @@ void BackGroundVideoInit() {
 			panel->SetPos(panel->GetXPos(), h * cvar->value);
 		}
 	});
-	gCVars.pDynamicBackgroundLogoWide = CREATE_CVAR("hud_mainmenu_logo_wide", "0.4", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pDynamicBackgroundLogoWide = CREATE_CVAR("hud_mainmenu_logo_wide", "0.5", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (g_pLogoImage) {
 			int w, h;
 			auto panel = g_pLogoImage.Get();
@@ -227,7 +227,7 @@ void BackGroundVideoInit() {
 			panel->SetWide(w * cvar->value);
 		}
 	});
-	gCVars.pDynamicBackgroundLogoTall = CREATE_CVAR("hud_mainmenu_logo_tall", "0.2", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pDynamicBackgroundLogoTall = CREATE_CVAR("hud_mainmenu_logo_tall", "0.25", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (g_pLogoImage) {
 			int w, h;
 			auto panel = g_pLogoImage.Get();
