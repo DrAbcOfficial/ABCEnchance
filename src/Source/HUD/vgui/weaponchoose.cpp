@@ -202,8 +202,6 @@ void CWeaponChoosePanel::ShowPanel(bool state) {
 		vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", 255, 0.0f, 0.1f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 		InvalidateLayout();
 	}
-	else
-		gWR.m_pNowSelected = nullptr;
 }
 bool CWeaponChoosePanel::IsVisible() {
 	return BaseClass::IsVisible();
@@ -277,6 +275,8 @@ bool CWeaponChoosePanel::ShouldDraw(){
 }
 void CWeaponChoosePanel::SelectWeapon(){
 	if (!IsVisible())
+		return;
+	if (CVAR_GET_FLOAT("hud_fastswitch") > 0)
 		return;
 	if (m_pHandledWeapon) {
 		auto wep = reinterpret_cast<CWeaponChooseItem*>(m_pHandledWeapon.Get())->GetWeapon();

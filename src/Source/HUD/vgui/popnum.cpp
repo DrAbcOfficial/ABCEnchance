@@ -63,10 +63,6 @@ CPopNumberPanel::CPopNumberPanel(vec3_t vecOrigin, Color& pColor, int value)
 	LoadControlSettings(VGUI2_ROOT_DIR "PopNumber.res");
 	SetVisible(false);
 }
-CPopNumberPanel::~CPopNumberPanel(){
-	delete m_vecOrigin;
-	m_pNumberLable->DeletePanel();
-}
 const char* CPopNumberPanel::GetName(){
 	return VIEWPORT_POPNUMBER_NAME;
 }

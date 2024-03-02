@@ -209,10 +209,10 @@ bool WeaponsResource::HasWeapon(WEAPON* wp) {
 }
 //玩家选择武器
 void WeaponsResource::SetSelectWeapon(WEAPON* wp, bool bWheel) {
-	if (pFastSwich->value > 0 && bWheel)
+	if (pFastSwich->value > 0)
 		ServerCmd(wp->szName);
-	else
-		Viewport_ChooseWeapon(wp);
+
+	Viewport_ChooseWeapon(wp);
 	m_pNowSelected = wp;
 }
 

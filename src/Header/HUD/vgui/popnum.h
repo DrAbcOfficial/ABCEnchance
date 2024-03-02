@@ -16,7 +16,6 @@ public:
 	DECLARE_CLASS_SIMPLE(CPopNumberPanel, vgui::EditablePanel);
 
 	CPopNumberPanel(vec3_t vecOrigin, Color& pColor, int value);
-	~CPopNumberPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
