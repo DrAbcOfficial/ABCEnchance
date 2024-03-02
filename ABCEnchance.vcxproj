@@ -507,7 +507,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\Utility\svc_hook.h" />
     <ClInclude Include="src\Header\Utility\Task.h" />
     <ClInclude Include="src\Header\Utility\win32helper.h" />
-    <ClInclude Include="src\Header\Var\bitvec.h" />
     <ClInclude Include="src\Header\Var\enginedef.h" />
     <ClInclude Include="src\Header\Var\extraprecache.h" />
     <ClInclude Include="src\Header\Var\local.h" />

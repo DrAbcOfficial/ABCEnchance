@@ -1,3 +1,5 @@
 #pragma once
-void V_CalcViewModelLag(ref_params_t* pparams, CVector& origin, CVector& angles, const CVector& original_angles);
+#include "mathlib/vector.h"
+
+void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, const Vector& original_angles);
 void V_CalcModelSlide(ref_params_t* pparams);

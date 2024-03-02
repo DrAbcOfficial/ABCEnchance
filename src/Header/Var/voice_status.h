@@ -19,25 +19,19 @@ class CVoiceStatus
 public:
 	CVoiceStatus();
 	virtual		~CVoiceStatus();
-
-	// CHudBase overrides.
 public:
-
 	// Initialize the cl_dll's voice manager.
-	virtual int Init();
+	virtual void HUD_Init();
 	// ackPosition is the bottom position of where CVoiceStatus will draw the voice acknowledgement labels.
-
-
 public:
 
 	// Call from HUD_Frame each frame.
-	void	Frame(double frametime);
-
+	void HUD_Frame(double frametime);
 	// Called when a player starts or stops talking.
 	// entindex is -1 to represent the local client talking (before the data comes back from the server). 
 	// When the server acknowledges that the local client is talking, then entindex will be gEngfuncs.GetLocalPlayer().
 	// entindex is -2 to represent the local client's voice being acked by the server.
-	void	UpdateSpeakerStatus(int entindex, qboolean bTalking);
+	void	UpdateSpeakerStatus(int entindex, bool bTalking);
 	// Called when the server registers a change to who this client can hear.
 	void	HandleVoiceMaskMsg(int iSize, void* pbuf);
 	// The server sends this message initially to tell the client to send their state.
@@ -67,7 +61,7 @@ public:
 	enum { MAX_VOICE_SPEAKERS = 7 };
 
 	float			m_LastUpdateServerState;		// Last time we called this function.
-	int				m_bServerModEnable;				// What we've sent to the server about our "voice_modenable" cvar.
+	int m_bServerModEnable;				// What we've sent to the server about our "voice_modenable" cvar.
 	CPlayerBitVec	m_VoicePlayers;		// Who is currently talking. Indexed by client index.
 
 	// This is the gamerules-defined list of players that you can hear. It is based on what teams people are on 
@@ -90,10 +84,6 @@ public:
 	bool				m_bServerAcked;			// Set to true when the server knows the client is talking.
 public:
 	CVoiceBanMgr		m_BanMgr;				// Tracks which users we have squelched and don't want to hear.
-public:
-	bool				m_bBanMgrInitialized;
-	// Cache the game directory for use when we shut down
-	char* m_pchGameDir;
 };
 
 

@@ -1,4 +1,7 @@
 #pragma once
+#ifndef VGUICUSTOMLOCAL_H
+#define VGUICUSTOMLOCAL_H
+
 #include "Color.h" 
 #include <vgui/IScheme.h>
 void VGUI_CREATE_NEWTGA_TEXTURE(int tex, const char* path);
@@ -44,3 +47,4 @@ enum {
 	COLOR_BLUE,
 	COLOR_PURPLE
 };
+#endif // !VGUICUSTOMLOCAL_H

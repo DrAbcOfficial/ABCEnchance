@@ -967,9 +967,6 @@
     <ClInclude Include="src\Header\HUD\Viewport.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Utility\CVector.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Utility\parsemsg.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
@@ -990,9 +987,6 @@
     </ClInclude>
     <ClInclude Include="src\Header\Utility\opengl\gl_utility.h">
       <Filter>Public\Header\Utility\opengl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\bitvec.h">
-      <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\weapon.h">
       <Filter>Public\Header\Var</Filter>

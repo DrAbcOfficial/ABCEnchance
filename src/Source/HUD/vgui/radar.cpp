@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include "mymathlib.h"
-#include <CVector.h>
 
 #include "local.h"
 #include "pm_defs.h"
@@ -254,10 +253,10 @@ void CRadarPanel::Paint(){
 					continue;
 				}
 				iter->SetVisible(true);
-				CVector vecLength;
+				Vector vecLength;
 				//与目标距离
 				CMathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
-				CVector vecAngle;
+				Vector vecAngle;
 				CMathlib::VectorAngles(vecLength, vecAngle);
 				float nyaw = CMathlib::Q_DEG2RAD(vecAngle[CMathlib::Q_YAW] - local->curstate.angles[CMathlib::Q_YAW] + 90);
 				//缩放比率暂定0.2，交换取反符合屏幕坐标系
@@ -285,7 +284,7 @@ void CRadarPanel::OnThink(){
 	if (local == nullptr)
 		return;
 	pmtrace_t m_hRadarTr;
-	CVector vecEndpos = local->curstate.origin;
+	Vector vecEndpos = local->curstate.origin;
 	vecEndpos.z = 9999;
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);

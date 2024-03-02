@@ -1,7 +1,6 @@
 #include <metahook.h>
 #include <cmath>
 #include "mymathlib.h"
-#include "CVector.h"
 
 #include "pm_defs.h"
 #include "pmtrace.h"
@@ -12,25 +11,25 @@
 #include "viewmodellag.h"
 
 //copied and edited from here: https://github.com/SNMetamorph/PrimeXT/blob/master/client/r_view.cpp#L266
-void V_CalcViewModelLag(ref_params_t* pparams, CVector& origin, CVector& angles, const CVector& original_angles)
+void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, const Vector& original_angles)
 {
 	if (gCVars.pModelLag->value <= 0)
 		return;
 	//¼¦ÃçÎäÆ÷
 	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != CMathlib::clamp<float>(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
 		return;
-	static CVector m_vecLastFacing;
-	CVector vOriginalOrigin = origin;
-	CVector vOriginalAngles = angles;
+	static Vector m_vecLastFacing;
+	Vector vOriginalOrigin = origin;
+	Vector vOriginalAngles = angles;
 
 	// Calculate our drift
-	CVector forward, right, up;
+	Vector forward, right, up;
 
 	CMathlib::AngleVectors(angles, forward, right, up);
 
 	if (pparams->frametime != 0.0f)	// not in paused
 	{
-		CVector vDifference;
+		Vector vDifference;
 
 		vDifference = forward - m_vecLastFacing;
 
@@ -84,7 +83,7 @@ void V_CalcModelSlide(ref_params_t* pparams) {
 		return;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	pmtrace_t tr{};
-	CVector vecEnd = local->curstate.origin;
+	Vector vecEnd = local->curstate.origin;
 	vecEnd.z += -4;
 	gEngfuncs.pEventAPI->EV_SetTraceHull(0);
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEnd, PM_STUDIO_IGNORE, local->index, &tr);
@@ -95,7 +94,7 @@ void V_CalcModelSlide(ref_params_t* pparams) {
 	//28 Stand
 	float flSlideRatio = 1 - ((flViewHeight - 12) / 16);
 	cl_entity_t* view = gEngfuncs.GetViewModel();
-	CVector vecRight;
+	Vector vecRight;
 	CMathlib::AngleVectors(view->angles, nullptr, vecRight, nullptr);
 	vecRight = -vecRight.Normalize() * gCVars.pModelSlideLength->value * flSlideRatio;
 	view->curstate.angles[2] = -gCVars.pModelSlideAngle->value * flSlideRatio;

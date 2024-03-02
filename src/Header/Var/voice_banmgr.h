@@ -12,46 +12,25 @@
 #pragma once
 #endif
 
+#include <vector>
 
 // This class manages the (persistent) list of squelched players.
-class CVoiceBanMgr
-{
+class CVoiceBanMgr{
 public:
-
 	CVoiceBanMgr();
-	~CVoiceBanMgr();
-
 	// Init loads the list of squelched players from disk.
-	bool Init(char const* pGameDir);
-	void Term();
-
+	bool Init();
 	// Saves the state into voice_squelch.dt.
-	void SaveState(char const* pGameDir);
+	void Save();
 
-	bool GetPlayerBan(char const playerID[16]);
-	void SetPlayerBan(char const playerID[16], bool bSquelch);
+	bool GetPlayerBan(uint64 steamid64);
+	void SetPlayerBan(uint64 steamid64, bool bSquelch);
 
 	// Call your callback for each banned player.
-	void ForEachBannedPlayer(void (*callback)(char id[16]));
-
-
+	void ForEachBannedPlayer(void (*callback)(uint64 steamid64));
 protected:
-
-	class BannedPlayer
-	{
-	public:
-		char			m_PlayerID[16];
-		BannedPlayer* m_pPrev, * m_pNext;
-	};
-
 	void				Clear();
-	BannedPlayer* InternalFindPlayerSquelch(char const playerID[16]);
-	BannedPlayer* AddBannedPlayer(char const playerID[16]);
-
-
-protected:
-
-	BannedPlayer	m_PlayerHash[256];
+	std::vector<uint64> m_aryBannedPlayer;
 };
 
 

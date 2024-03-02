@@ -10,7 +10,6 @@
 #include "cvardef.h"
 #include "httpclient.h"
 
-#include "CVector.h"
 #include "Task.h"
 //Def
 #include "hud.h"
@@ -397,7 +396,7 @@ void HUD_Init(void){
 
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
-	GetClientVoiceMgr()->Init();
+	GetClientVoiceMgr()->HUD_Init();
 	if (g_pParticleMan)
 		g_pParticleMan->ResetParticles();
 	GameUI_GetInterface();
@@ -479,7 +478,7 @@ void HUD_VoiceStatus(int entindex, qboolean talking) {
 	gExportfuncs.HUD_VoiceStatus(entindex, talking);
 }
 void HUD_Frame(double frametime) {
-	GetClientVoiceMgr()->Frame(frametime);
+	GetClientVoiceMgr()->HUD_Frame(frametime);
 	gExportfuncs.HUD_Frame(frametime);
 	//task
 	GetTaskManager()->CheckAll();
@@ -525,8 +524,8 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 			view->origin[2] += 1;
 		else if (pparams->viewsize == 80)
 			view->origin[2] += 0.5;
-		CVector viewOrigin = view->origin;
-		CVector viewAngles = view->angles;
+		Vector viewOrigin = view->origin;
+		Vector viewAngles = view->angles;
 		V_CalcViewModelLag(pparams, viewOrigin, viewAngles, pparams->cl_viewangles);
 		CMathlib::VectorCopy(viewOrigin, view->origin);
 		CMathlib::VectorCopy(viewAngles, view->angles);
