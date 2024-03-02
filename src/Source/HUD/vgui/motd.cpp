@@ -51,7 +51,6 @@ void CMotdPanel::Reset(){
 	if (IsVisible())
 		ShowPanel(false);
 	RemoveTempHTML();
-	//m_pHTML->OpenURL("", nullptr);
 	m_aryClipedPage.clear();
 	m_szBuffer.clear();
 	m_bLoadedMissionBrief = false;
@@ -158,14 +157,8 @@ void CMotdPanel::ShowMotd(){
 void CMotdPanel::FinishSendMOTD(){
 	//check html
 	if (m_szBuffer.starts_with("<!DOCTYPE html>")) {
-		FileHandle_t file =  vgui::filesystem()->Open("abcenchance/motd_cache.html", "w+");
-		if (file) 
-			vgui::filesystem()->Write(m_szBuffer.c_str(), m_szBuffer.size(), file);
-		vgui::filesystem()->Close(file);
-		char local[MAX_PATH] = "file:///";
-		const size_t uiURLLength = 8;
-		vgui::filesystem()->GetLocalPath("abcenchance/motd_cache.html", local + uiURLLength, 252);
-		m_pHTML->OpenURL(local, nullptr, true);
+		m_szBuffer = "data:text/html," + m_szBuffer;
+		m_pHTML->OpenURL(m_szBuffer.c_str(), nullptr, true);
 		m_pMessage->SetVisible(false);
 		m_pHTML->SetVisible(true);
 		m_bInHTML = true;
@@ -185,8 +178,6 @@ void CMotdPanel::FinishSendMOTD(){
 	m_szBuffer.clear();
 }
 void CMotdPanel::RemoveTempHTML(){
-	if (vgui::filesystem()->FileExists("abcenchance/motd_cache.html"))
-		vgui::filesystem()->RemoveFile("abcenchance/motd_cache.html");
 }
 void CMotdPanel::LoadMissionBrief(){
 	if (!m_bLoadedMissionBrief) {

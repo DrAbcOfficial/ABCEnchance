@@ -34,6 +34,18 @@
 		"textAlignment" "north-west"
 		"font"			"DefaultSmall"
 	}
+	"HTMLMessage"
+	{
+		"ControlName"		"HTML"
+		"fieldName"		"HTMLMessage"
+		"xpos"		"0"
+		"ypos"		"2"
+		"wide"		"122"
+		"tall"		"181"
+		"pinCorner"		"0"
+		"visible"		"1"
+		"enabled"		"1"
+	}
 	"Progress"
 	{
 		"ControlName"		"Panel"

@@ -146,10 +146,13 @@ namespace vgui
 			BaseClass::Validate(validator, pchName);
 		}
 #endif // DBGFLAG_VALIDATE
+
+		ISteamHTMLSurface* SteamHTMLSurface() { return m_SteamAPIContext.SteamHTMLSurface(); }
+
 		void OnHTMLMouseMoved(int x, int y)
 		{
-			if (SteamHTMLSurface())
-				SteamHTMLSurface()->MouseMove(m_unBrowserHandle, x, y);
+			if (m_SteamAPIContext.SteamHTMLSurface())
+				m_SteamAPIContext.SteamHTMLSurface()->MouseMove(m_unBrowserHandle, x, y);
 		}
 
 	protected:
@@ -311,7 +314,9 @@ namespace vgui
 		};
 		CUtlVector<CustomCursorCache_t> m_vecHCursor;
 
+		CSteamAPIContext m_SteamAPIContext;
 		HHTMLBrowser m_unBrowserHandle;
+
 		CCallResult< HTML, HTML_BrowserReady_t > m_SteamCallResultBrowserReady;
 	};
 
