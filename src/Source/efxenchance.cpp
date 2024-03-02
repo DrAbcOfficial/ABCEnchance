@@ -153,7 +153,7 @@ void DoGaussFire(float fparam1, int bparam1) {
 		nMaxHits--;
 		//做忽略玩家的射线
 		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecDest, PM_NORMAL, entignore, &tr);
+		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecDest, PM_STUDIO_BOX, entignore, &tr);
 		//高斯直击
 		if (tr.allsolid != 0)
 			break;
@@ -226,12 +226,12 @@ void DoGaussFire(float fparam1, int bparam1) {
 					vecSrc[2] = tr.endpos[2] + vecDir[2] * 8;
 					//以第一次直击的入射点为起点，向玩家的前方8单位做穿透激光起点，以玩家的鼠标所指方向为终点
 					gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-					gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecDest, PM_NORMAL, entignore, &beam_tr);
+					gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecDest, PM_STUDIO_BOX, entignore, &beam_tr);
 					//反射激光落点是固体
 					if (beam_tr.allsolid == 0) {
 						//以第一次穿透的入口点为重点重置穿透激光
 						gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-						gEngfuncs.pEventAPI->EV_PlayerTrace(beam_tr.endpos, tr.endpos, PM_NORMAL, entignore, &beam_tr);
+						gEngfuncs.pEventAPI->EV_PlayerTrace(beam_tr.endpos, tr.endpos, PM_STUDIO_BOX, entignore, &beam_tr);
 						//求该射线长度为n
 						CMathlib::VectorSubtract(beam_tr.endpos, tr.endpos, vecLength);
 						n = (float)CMathlib::VectorLength(vecLength);
@@ -312,8 +312,6 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 }
 
 static color24 s_egonParticleColor;
-static Vector s_egonStartPos;
-static Vector s_egonEndPos;
 static int s_egonMessageNum;
 static bool s_egonShooter = false;
 
@@ -321,10 +319,22 @@ void ShootEgonParticle() {
 	model_t* pModel = gEngfuncs.hudGetModelByIndex(gEfxVarible.iEgonBeam);
 	if (!pModel)
 		return;
-	TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(s_egonStartPos, pModel);
+	auto local = gEngfuncs.GetLocalPlayer();
+	Vector vecAngles;
+	gEngfuncs.GetViewAngles(vecAngles);
+	Vector vecForward;
+	CMathlib::AngleVectors(vecAngles, vecForward, nullptr, nullptr);
+	Vector vecEnd;
+	VectorMA(local->origin, 4096, vecForward, vecEnd);
+	pmtrace_t tr;
+	gEngfuncs.pEventAPI->EV_SetSolidPlayers(local->index - 1);
+	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(local->origin, vecEnd, PM_STUDIO_BOX, -1, &tr);
+	Vector vecSrc = local->attachment[0];
+	TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(vecSrc, pModel);
 	if (tent) {
-		Vector vecLength = s_egonEndPos;
-		vecLength -= s_egonStartPos;
+		Vector vecLength = tr.endpos;
+		vecLength -= vecSrc;
 		float flSpeed = 3600;
 		Vector vecVelocity = vecLength.Normalize() * flSpeed;
 		CMathlib::VectorCopy(vecVelocity, tent->entity.baseline.origin);
@@ -352,9 +362,7 @@ void ShootEgonParticle() {
 		tent->die = gEngfuncs.GetClientTime() + vecLength.Length() / flSpeed;
 	}
 }
-void StartEgonParticle(float* vecStart, float* vecEnd, unsigned char r, unsigned char g, unsigned char b, struct cl_entity_s* ent) {
-	s_egonStartPos = vecStart;
-	s_egonEndPos = vecEnd;
+void StartEgonParticle(unsigned char r, unsigned char g, unsigned char b, struct cl_entity_s* ent) {
 	s_egonParticleColor = { r,g,b };
 	s_egonMessageNum = ent->curstate.messagenum;
 	s_egonShooter = true;

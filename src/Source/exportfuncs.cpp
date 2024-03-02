@@ -572,16 +572,15 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 				float scrollrate = ent->curstate.animtime;
 				if ((beamflags == 16 && scrollrate == 5.0f && noise == 20) ||
 					(beamflags == 0 && scrollrate == 2.5f && noise == 8)) {
-					extern void StartEgonParticle(float* vecStart, float* vecEnd, unsigned char r, unsigned char g, unsigned char b, struct cl_entity_s* ent);
+					extern void StartEgonParticle(unsigned char r, unsigned char g, unsigned char b, struct cl_entity_s* ent);
 					int index = endent & 0xFFF;
 					if (index <= 33 && index >= 1) {
 						cl_entity_t* end = gEngfuncs.GetEntityByIndex(index);
 						if (end && end == gEngfuncs.GetLocalPlayer()) {
-							StartEgonParticle(end->origin, ent->curstate.origin, 
-								ent->curstate.rendercolor.r, ent->curstate.rendercolor.g, ent->curstate.rendercolor.b, ent);
+							StartEgonParticle(ent->curstate.rendercolor.r, ent->curstate.rendercolor.g, ent->curstate.rendercolor.b, ent);
 							ent->curstate.rendercolor = { 0,0,0 };
 						}
-					}					
+					}
 				}
 			}
 		}

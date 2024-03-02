@@ -126,7 +126,7 @@ void CCrosshairPanel::OnThink() {
 		vViewAngleForward *= 8192;
 		Vector vecEnd = vecSrc + vViewAngleForward;
 		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_NORMAL, local->index, &tr);
+		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_STUDIO_BOX, local->index, &tr);
 		Vector vecHUD;
 		gEngfuncs.pTriAPI->WorldToScreen(tr.endpos, vecHUD);
 		m_iCenterX = (1.0f + vecHUD[0]) * ScreenWidth() / 2;

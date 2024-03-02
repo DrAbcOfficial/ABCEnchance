@@ -82,7 +82,7 @@ void V_CalcModelSlide(ref_params_t* pparams) {
 	if (gCVars.pModelSlide->value <= 0)
 		return;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	pmtrace_t tr{};
+	pmtrace_t tr;
 	Vector vecEnd = local->curstate.origin;
 	vecEnd.z += -4;
 	gEngfuncs.pEventAPI->EV_SetTraceHull(0);
