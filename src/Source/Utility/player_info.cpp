@@ -44,38 +44,30 @@ bool CPlayerInfo::IsValid() {
 	return m_bIsConnected && m_szName.size() > 0;
 }
 const char *CPlayerInfo::GetName(){
-	Assert(m_bIsConnected);
 	return m_szName.c_str();
 }
 const char* CPlayerInfo::GetRealName() {
 	return m_szRealName.c_str();
 }
 int CPlayerInfo::GetPing(){
-	Assert(m_bIsConnected);
 	return m_iPing;
 }
 int CPlayerInfo::GetPacketLoss(){
-	Assert(m_bIsConnected);
 	return m_iLoss;
 }
 bool CPlayerInfo::IsThisPlayer(){
-	Assert(m_bIsConnected);
 	return GetIndex() == gEngfuncs.GetLocalPlayer()->index;
 }
 const char *CPlayerInfo::GetModel(){
-	Assert(m_bIsConnected);
 	return m_szModel.c_str();
 }
 int CPlayerInfo::GetTopColor(){
-	Assert(m_bIsConnected);
 	return m_iTopColor;
 }
 int CPlayerInfo::GetBottomColor(){
-	Assert(m_bIsConnected);
 	return m_iBottomColor;
 }
 uint64 CPlayerInfo::GetSteamID64(){
-	Assert(m_bIsConnected);
 	return m_pSteamId.ConvertToUint64();
 }
 CSteamID* CPlayerInfo::GetSteamID() {
@@ -90,35 +82,27 @@ const char* CPlayerInfo::GetSteamIDString64() {
 	return buffer;
 }
 int CPlayerInfo::GetFrags(){
-	Assert(m_bIsConnected);
 	return m_ExtraInfo.frags;
 }
 int CPlayerInfo::GetDonor() {
-	Assert(m_bIsConnected);
 	return m_ExtraInfo.donor;
 }
 int CPlayerInfo::GetAdmin() {
-	Assert(m_bIsConnected);
 	return m_ExtraInfo.admin;
 }
 int CPlayerInfo::GetDeaths(){
-	Assert(m_bIsConnected);
 	return m_ExtraInfo.deaths;
 }
 int CPlayerInfo::GetHealth(){
-	Assert(m_bIsConnected);
 	return m_ExtraInfo.health;
 }
 int CPlayerInfo::GetArmor(){
-	Assert(m_bIsConnected);
 	return m_ExtraInfo.armor;
 }
 int CPlayerInfo::GetTeamNumber(){
-	Assert(m_bIsConnected);
 	return m_ExtraInfo.teamnumber;
 }
 const char *CPlayerInfo::GetTeamName(){
-	Assert(m_bIsConnected);
 	return m_ExtraInfo.teamname;
 }
 bool CPlayerInfo::IsSpectator(){

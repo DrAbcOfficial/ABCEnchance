@@ -347,6 +347,7 @@ extern void GameUI_GetInterface();
 
 void HUD_Init(void){
 	AutoFunc::Init();
+	MathLib_Init();
 	//VGUI init
 	gCVars.pShellEfx = CREATE_CVAR("abc_shellefx", "1", FCVAR_VALUE, nullptr);
 	gCVars.pBloodEfx = CREATE_CVAR("abc_bloodefx", "1", FCVAR_VALUE, nullptr);

@@ -25,7 +25,7 @@
 #include <XMAHardwareAbstraction.h>
 #undef _XBOX
 #endif
-#define NO_STEAM
+//#define NO_STEAM
 
 #include "wchartypes.h"
 #include "basetypes.h"
