@@ -15,5 +15,7 @@ void BackGroundVideoClose();
 void BackGroundSetDecodeState(bool state);
 void BackGroundInitMusic();
 
-class IVanilliaPanel;
-IVanilliaPanel* BasePanel();
+namespace vgui {
+	class IClientPanel;
+}
+vgui::IClientPanel* BasePanel();

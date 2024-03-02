@@ -14,6 +14,7 @@
 #include "vpx/tools_common.h"
 
 #include "Controls.h"
+#include "vgui_controls/ImagePanel.h"
 
 #include "GameUI/BasePanel.h"
 
@@ -26,7 +27,7 @@ extern IFileSystem* g_pFileSystem;
 bool g_bInitialized = false;
 int g_iTextureID;
 
-IVanilliaPanel* g_pBasePanel;
+vgui::IClientPanel* g_pBasePanel;
 
 struct backgroundinfo_t {
 	char video[MAX_PATH];
@@ -49,6 +50,10 @@ std::atomic_bool g_pThreadStop(false);
 std::atomic_bool g_bPauseDecode;
 
 std::thread g_pDecodeThread;
+
+
+static vgui::DHANDLE<vgui::COptionsAdvanceDialog>g_pAdvanceOptPanel;
+static vgui::PHandle g_pLogoImage;
 
 void ReadBackGroundList() {
 	char buffer2[MAX_PATH];
@@ -190,10 +195,46 @@ void DecodeVideo() {
 	CloseVideo();
 }
 void BackGroundVideoInit() {
-	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "0", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (g_bInitialized)
 			ConsoleWriteline("Background will changed in next lauch.\n");
 		});
+	gCVars.pDynamicBackgroundLogo = CREATE_CVAR("hud_mainmenu_logo", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+		if (g_pLogoImage)
+			g_pLogoImage.Get()->SetVisible(cvar->value > 0);
+	});
+	gCVars.pDynamicBackgroundLogoXPos = CREATE_CVAR("hud_mainmenu_logo_xpos", "0.03", FCVAR_VALUE, [](cvar_t* cvar) {
+		if (g_pLogoImage) {
+			int w, h;
+			auto panel = g_pLogoImage.Get();
+			vgui::ipanel()->GetSize(panel->GetVParent(), w, h);
+			panel->SetPos(w * cvar->value, panel->GetYPos());
+		}
+	});
+	gCVars.pDynamicBackgroundLogoYPos = CREATE_CVAR("hud_mainmenu_logo_ypos", "0.3", FCVAR_VALUE, [](cvar_t* cvar) {
+		if (g_pLogoImage) {
+			int w, h;
+			auto panel = g_pLogoImage.Get();
+			vgui::ipanel()->GetSize(panel->GetVParent(), w, h);
+			panel->SetPos(panel->GetXPos(), h * cvar->value);
+		}
+	});
+	gCVars.pDynamicBackgroundLogoWide = CREATE_CVAR("hud_mainmenu_logo_wide", "0.333", FCVAR_VALUE, [](cvar_t* cvar) {
+		if (g_pLogoImage) {
+			int w, h;
+			auto panel = g_pLogoImage.Get();
+			vgui::ipanel()->GetSize(panel->GetVParent(), w, h);
+			panel->SetWide(w * cvar->value);
+		}
+	});
+	gCVars.pDynamicBackgroundLogoTall = CREATE_CVAR("hud_mainmenu_logo_tall", "0.2", FCVAR_VALUE, [](cvar_t* cvar) {
+		if (g_pLogoImage) {
+			int w, h;
+			auto panel = g_pLogoImage.Get();
+			vgui::ipanel()->GetSize(panel->GetVParent(), w, h);
+			panel->SetTall(h * cvar->value);
+		}
+	});
 	ReadBackGroundList();
 	g_pNowChose = g_aryBackGrounds[gEngfuncs.pfnRandomLong(0, g_aryBackGrounds.size() - 1)];
 }
@@ -232,11 +273,9 @@ void BackGroundInitMusic() {
 	if (!g_pThreadStop)
 		PlayMp3();
 }
-IVanilliaPanel* BasePanel() {
+vgui::IClientPanel* BasePanel() {
 	return g_pBasePanel;
 }
-
-static vgui::DHANDLE<vgui::COptionsAdvanceDialog>g_pAdvanceOptPanel;
 
 void SetAdvanceOptPanelVisible(bool state) {
 	if (g_pAdvanceOptPanel) {
@@ -253,7 +292,7 @@ void OpenAdvanceOptPanel(vgui::Panel* pthis) {
 	g_pAdvanceOptPanel->Activate();
 }
 void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
-	g_pBasePanel = static_cast<IVanilliaPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
+	g_pBasePanel = static_cast<vgui::IClientPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
 	g_iTextureID = vgui::surface()->CreateNewTextureID(true);
 	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/OptionsAdvanceDialogScheme.res", "OptionsAdvanceDialogScheme");
 	return g_pBasePanel;
@@ -261,6 +300,18 @@ void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 	if (!g_bInitialized) {
 		BackGroundVideoPostInit();
+		vgui::ImagePanel* img = new vgui::ImagePanel(g_pBasePanel->GetPanel(), "Logo");
+		img->SetShouldScaleImage(true);
+		img->SetImage("abcenchance/tga/sven_logo");
+		img->SetVisible(gCVars.pDynamicBackgroundLogo->value > 0);
+		int x, y, w, h;
+		vgui::ipanel()->GetSize(g_pBasePanel->GetVPanel(), w, h);
+		x = w * gCVars.pDynamicBackgroundLogoXPos->value;
+		y = h * gCVars.pDynamicBackgroundLogoYPos->value;
+		int nw = w * gCVars.pDynamicBackgroundLogoWide->value;
+		int nh = h * gCVars.pDynamicBackgroundLogoTall->value;
+		img->SetBounds(x, y, nw, nh);
+		g_pLogoImage = img;
 		g_bInitialized = true;
 	}
 	if (g_pThreadStop) {
