@@ -197,7 +197,7 @@ void DecodeVideo() {
 void BackGroundVideoInit() {
 	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (g_bInitialized)
-			ConsoleWriteline("Background will changed in next lauch.\n");
+			ConsoleWriteline("Background will changed in next start game.\n");
 		});
 	gCVars.pDynamicBackgroundLogo = CREATE_CVAR("hud_mainmenu_logo", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (g_pLogoImage)
@@ -219,7 +219,7 @@ void BackGroundVideoInit() {
 			panel->SetPos(panel->GetXPos(), h * cvar->value);
 		}
 	});
-	gCVars.pDynamicBackgroundLogoWide = CREATE_CVAR("hud_mainmenu_logo_wide", "0.333", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pDynamicBackgroundLogoWide = CREATE_CVAR("hud_mainmenu_logo_wide", "0.4", FCVAR_VALUE, [](cvar_t* cvar) {
 		if (g_pLogoImage) {
 			int w, h;
 			auto panel = g_pLogoImage.Get();
