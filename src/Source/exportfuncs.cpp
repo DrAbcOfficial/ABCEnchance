@@ -77,7 +77,7 @@ void R_NewMap(void){
 	ClearExtraPrecache();
 
 	gCustomHud.HUD_Reset();
-	EfxReset();
+	EFX_Reset();
 	gHookFuncs.R_NewMap();
 }
 int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1){
@@ -484,6 +484,7 @@ void HUD_Frame(double frametime) {
 	gExportfuncs.HUD_Frame(frametime);
 	//task
 	GetTaskManager()->CheckAll();
+	EFX_Frame();
 	CHttpClient::RunFrame();
 }
 int HUD_Redraw(float time, int intermission){
@@ -571,13 +572,13 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 				float scrollrate = ent->curstate.animtime;
 				if ((beamflags == 16 && scrollrate == 5.0f && noise == 20) ||
 					(beamflags == 0 && scrollrate == 2.5f && noise == 8)) {
-					extern void DoEgonParticle(float* vecStart, float* vecEnd, int owner, unsigned char r, unsigned char g, unsigned char b);
+					extern void StartEgonParticle(float* vecStart, float* vecEnd, unsigned char r, unsigned char g, unsigned char b, struct cl_entity_s* ent);
 					int index = endent & 0xFFF;
 					if (index <= 33 && index >= 1) {
 						cl_entity_t* end = gEngfuncs.GetEntityByIndex(index);
-						if (end) {
-							DoEgonParticle(end->origin, ent->curstate.origin, index,
-								ent->curstate.rendercolor.r, ent->curstate.rendercolor.g, ent->curstate.rendercolor.b);
+						if (end && end == gEngfuncs.GetLocalPlayer()) {
+							StartEgonParticle(end->origin, ent->curstate.origin, 
+								ent->curstate.rendercolor.r, ent->curstate.rendercolor.g, ent->curstate.rendercolor.b, ent);
 							ent->curstate.rendercolor = { 0,0,0 };
 						}
 					}					

@@ -1,4 +1,5 @@
 #include <metahook.h>
+
 #include "pm_defs.h"
 #include "pmtrace.h"
 #include "event_api.h"
@@ -32,14 +33,6 @@ extern void* g_pClientSoundEngine;
 extern void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin,
 	int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength);
 
-void EfxReset() {
-	gEfxVarible.iGaussBeam = PrecacheExtraModel("sprites/laserbeam.spr");
-	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel("abcenchance/spr/gauss_wave.spr");
-	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel("abcenchance/spr/gauss_spark.spr");
-	gEfxVarible.iGaussLoophole = PrecacheExtraModel("abcenchance/mdl/gauss_loophole.mdl");
-	gEfxVarible.iGunSmoke = PrecacheExtraModel("sprites/Puff1.spr");
-	gEfxVarible.iEgonBeam = PrecacheExtraModel("abcenchance/spr/egon_ball.spr");
-}
 void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, float size){
 	if(gCVars.pBloodEfx->value > 0){
 		model_t* pModel = gEngfuncs.hudGetModelByIndex(modelIndex);
@@ -318,27 +311,33 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 	gHookFuncs.pfnPlaybackEvent(flags, pInvoker, eventindex, delay, origin, angles, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2);
 }
 
-void DoEgonParticle(float* vecStart, float* vecEnd, int owner, unsigned char r, unsigned char g, unsigned char b) {
+static color24 s_egonParticleColor;
+static Vector s_egonStartPos;
+static Vector s_egonEndPos;
+static int s_egonMessageNum;
+static bool s_egonShooter = false;
+
+void ShootEgonParticle() {
 	model_t* pModel = gEngfuncs.hudGetModelByIndex(gEfxVarible.iEgonBeam);
 	if (!pModel)
 		return;
-	TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(vecStart, pModel);
+	TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(s_egonStartPos, pModel);
 	if (tent) {
-		Vector vecLength = vecEnd;
-		vecLength -= vecStart;
+		Vector vecLength = s_egonEndPos;
+		vecLength -= s_egonStartPos;
 		float flSpeed = 3600;
 		Vector vecVelocity = vecLength.Normalize() * flSpeed;
 		CMathlib::VectorCopy(vecVelocity, tent->entity.baseline.origin);
 		tent->flags = FTENT_SPRANIMATELOOP | FTENT_COLLIDEALL | FTENT_FADEOUT;
-		tent->clientIndex = owner;
+		tent->clientIndex = gEngfuncs.GetLocalPlayer()->index;
 		tent->bounceFactor = 0;
 		tent->entity.baseline.renderamt = 80;
 		tent->entity.curstate.movetype = MOVETYPE_FLY;
 		tent->entity.curstate.solid = SOLID_SLIDEBOX;
-		tent->entity.curstate.owner = owner;
+		tent->entity.curstate.owner = gEngfuncs.GetLocalPlayer()->index;
 		tent->entity.curstate.scale = CMathlib::RANDOM_FLOAT(0.2f, 0.4f);
 		tent->entity.curstate.renderamt = 255;
-		tent->entity.curstate.rendercolor = { r, g, b };
+		tent->entity.curstate.rendercolor = s_egonParticleColor;
 		tent->entity.curstate.rendermode = kRenderTransAdd;
 		tent->entity.curstate.frame = 0;
 		tent->entity.curstate.framerate = 10.0f * pModel->numframes; //1s
@@ -349,7 +348,31 @@ void DoEgonParticle(float* vecStart, float* vecEnd, int owner, unsigned char r, 
 					gEngfuncs.pEventAPI->EV_IndexFromTrace(ptr), 0, ptr->endpos, 0);
 				ent->entity.curstate.iuser1 = 1;
 			}
-		};
+			};
 		tent->die = gEngfuncs.GetClientTime() + vecLength.Length() / flSpeed;
 	}
+}
+void StartEgonParticle(float* vecStart, float* vecEnd, unsigned char r, unsigned char g, unsigned char b, struct cl_entity_s* ent) {
+	s_egonStartPos = vecStart;
+	s_egonEndPos = vecEnd;
+	s_egonParticleColor = { r,g,b };
+	s_egonMessageNum = ent->curstate.messagenum;
+	s_egonShooter = true;
+}
+
+void EFX_Reset() {
+	s_egonMessageNum = 0;
+	gEfxVarible.iGaussBeam = PrecacheExtraModel("sprites/laserbeam.spr");
+	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel("abcenchance/spr/gauss_wave.spr");
+	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel("abcenchance/spr/gauss_spark.spr");
+	gEfxVarible.iGaussLoophole = PrecacheExtraModel("abcenchance/mdl/gauss_loophole.mdl");
+	gEfxVarible.iGunSmoke = PrecacheExtraModel("sprites/Puff1.spr");
+	gEfxVarible.iEgonBeam = PrecacheExtraModel("abcenchance/spr/egon_ball.spr");
+}
+void EFX_Frame() {
+	auto local = gEngfuncs.GetLocalPlayer();
+	if (local && s_egonMessageNum != local->curstate.messagenum)
+		s_egonShooter = false;
+	if (s_egonShooter)
+		ShootEgonParticle();
 }
