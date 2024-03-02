@@ -56,13 +56,10 @@ public:
 	void	SetPlayerBlockedState(int iPlayerIndex, bool blocked);
 
 public:
-	void			UpdateServerState(bool bForce);
+	void	UpdateServerState(bool bForce);
 public:
-
-	enum { MAX_VOICE_SPEAKERS = 7 };
-
 	float			m_LastUpdateServerState;		// Last time we called this function.
-	int m_bServerModEnable;				// What we've sent to the server about our "voice_modenable" cvar.
+	int				m_bServerModEnable;				// What we've sent to the server about our "voice_modenable" cvar.
 	CPlayerBitVec	m_VoicePlayers;		// Who is currently talking. Indexed by client index.
 
 	// This is the gamerules-defined list of players that you can hear. It is based on what teams people are on 
