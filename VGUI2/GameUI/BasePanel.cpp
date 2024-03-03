@@ -302,7 +302,10 @@ void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
 		BackGroundVideoPostInit();
 		vgui::ImagePanel* img = new vgui::ImagePanel(g_pBasePanel->GetPanel(), "Logo");
 		img->SetShouldScaleImage(true);
-		img->SetImage("abcenchance/tga/sven_logo");
+		if (g_metaplugins.renderer.has)
+			img->SetImage("abcenchance/tga/sven_logo");
+		else
+			img->SetImage("abcenchance/tga/sven_logo_small");
 		img->SetVisible(gCVars.pDynamicBackgroundLogo->value > 0);
 		int x, y, w, h;
 		vgui::ipanel()->GetSize(g_pBasePanel->GetVPanel(), w, h);
