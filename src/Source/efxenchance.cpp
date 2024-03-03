@@ -314,6 +314,7 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 static color24 s_egonParticleColor;
 static int s_egonMessageNum;
 static bool s_egonShooter = false;
+static float s_egonNextShoot = 0.0f;
 
 void ShootEgonParticle() {
 	model_t* pModel = gEngfuncs.hudGetModelByIndex(gEfxVarible.iEgonBeam);
@@ -327,23 +328,24 @@ void ShootEgonParticle() {
 	Vector vecEnd;
 	VectorMA(local->origin, 4096, vecForward, vecEnd);
 	pmtrace_t tr;
-	gEngfuncs.pEventAPI->EV_SetSolidPlayers(local->index - 1);
+	Vector vecSrc = local->origin;
+	Vector vecOfs;
+	gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(vecOfs);
+	vecSrc += vecOfs;
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-	gEngfuncs.pEventAPI->EV_PlayerTrace(local->origin, vecEnd, PM_STUDIO_BOX, -1, &tr);
-	Vector vecSrc = local->attachment[0];
+	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_STUDIO_BOX, local->index, &tr);
+	vecSrc = local->attachment[0];
 	TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(vecSrc, pModel);
 	if (tent) {
 		Vector vecLength = tr.endpos;
 		vecLength -= vecSrc;
-		float flSpeed = 3600;
+		float flSpeed = 4096;
 		Vector vecVelocity = vecLength.Normalize() * flSpeed;
 		CMathlib::VectorCopy(vecVelocity, tent->entity.baseline.origin);
 		tent->flags = FTENT_SPRANIMATELOOP | FTENT_COLLIDEALL | FTENT_FADEOUT;
 		tent->clientIndex = gEngfuncs.GetLocalPlayer()->index;
 		tent->bounceFactor = 0;
 		tent->entity.baseline.renderamt = 80;
-		tent->entity.curstate.movetype = MOVETYPE_FLY;
-		tent->entity.curstate.solid = SOLID_SLIDEBOX;
 		tent->entity.curstate.owner = gEngfuncs.GetLocalPlayer()->index;
 		tent->entity.curstate.scale = CMathlib::RANDOM_FLOAT(0.2f, 0.4f);
 		tent->entity.curstate.renderamt = 255;
@@ -360,6 +362,8 @@ void ShootEgonParticle() {
 			}
 			};
 		tent->die = gEngfuncs.GetClientTime() + vecLength.Length() / flSpeed;
+
+		s_egonNextShoot = gEngfuncs.GetClientTime() + 0.005f;
 	}
 }
 
@@ -438,6 +442,7 @@ void StartEgonParticle(unsigned char r, unsigned char g, unsigned char b, struct
 
 void EFX_Reset() {
 	s_egonMessageNum = 0;
+	s_egonNextShoot = 0;
 	gEfxVarible.iGaussBeam = PrecacheExtraModel("sprites/laserbeam.spr");
 	gEfxVarible.iGaussWaveBeam = PrecacheExtraModel("abcenchance/spr/gauss_wave.spr");
 	gEfxVarible.iGaussChargeSprite = PrecacheExtraModel("abcenchance/spr/gauss_spark.spr");
@@ -449,6 +454,6 @@ void EFX_Frame() {
 	auto local = gEngfuncs.GetLocalPlayer();
 	if (local && s_egonMessageNum != local->curstate.messagenum)
 		s_egonShooter = false;
-	if (s_egonShooter)
+	if (s_egonShooter && gEngfuncs.GetClientTime() >= s_egonNextShoot)
 		ShootEgonParticle();
 }
