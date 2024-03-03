@@ -38,43 +38,43 @@ private:
 
 	int    m_iCollisionFlags;
 	float  m_flPlayerDistance; //Used for sorting the particles, DO NOT TOUCH.
-	
+
 public:
 
-	void * operator new(size_t size)
+	void* operator new(size_t size)
 	{
 		// Requested size should match size of class.
-        if ( size != sizeof( CCoreTriangleEffect ) )
+		if (size != sizeof(CCoreTriangleEffect))
 #ifdef _WIN32
-             throw "Error in requested size of new particle class instance.";
+			throw "Error in requested size of new particle class instance.";
 #else
 			return NULL;
 #endif
-		
-      return((CCoreTriangleEffect *) CMiniMem::Instance()->newBlock());
+
+		return((CCoreTriangleEffect*)CMiniMem::Instance()->newBlock());
 
 	}//this asks for a new block of memory from the MiniMen class
-		
-	virtual void Think( float time ) = 0;
-	virtual bool CheckVisibility ( void ) = 0;
-	virtual void Draw( void ) = 0;
-	virtual void Animate( float time ) = 0;
-	virtual void AnimateAndDie( float time ) = 0;
-	virtual void Expand( float time ) = 0;
-	virtual void Contract( float time ) = 0;
-	virtual void Fade( float time ) = 0;
-	virtual void Spin( float time ) = 0;
-	virtual void CalculateVelocity( float time ) = 0;
-	virtual void CheckCollision( float time ) = 0;
-	virtual void Touch(vec3_t pos, vec3_t normal, int index) = 0;
-	virtual void Die ( void ) = 0;
-	virtual void InitializeSprite(vec3_t org, vec3_t normal, model_s * sprite, float size, float brightness ) = 0;
-	virtual void Force ( void ) = 0;
+
+	virtual void Think(float time) = 0;
+	virtual bool CheckVisibility(void) = 0;
+	virtual void Draw(void) = 0;
+	virtual void Animate(float time) = 0;
+	virtual void AnimateAndDie(float time) = 0;
+	virtual void Expand(float time) = 0;
+	virtual void Contract(float time) = 0;
+	virtual void Fade(float time) = 0;
+	virtual void Spin(float time) = 0;
+	virtual void CalculateVelocity(float time) = 0;
+	virtual void CheckCollision(float time) = 0;
+	virtual void Touch(Vector pos, Vector normal, int index) = 0;
+	virtual void Die(void) = 0;
+	virtual void InitializeSprite(Vector org, Vector normal, model_s* sprite, float size, float brightness) = 0;
+	virtual void Force(void) = 0;
 
 	float m_flSize; //scale of object
 	float m_flScaleSpeed; //speed at which object expands
 	float m_flContractSpeed; //speed at which object expands
-	
+
 	float m_flStretchX;
 	float m_flStretchY;
 
@@ -94,21 +94,21 @@ public:
 	int	  m_iFrame;
 	int	  m_iRendermode;
 
-	vec3_t m_vOrigin; //object's position
-	vec3_t m_vAngles; //normal angles of object
-	
-	vec3_t m_vAVelocity;
+	Vector m_vOrigin; //object's position
+	Vector m_vAngles; //normal angles of object
 
-	vec3_t m_vVelocity;
-	
-	vec3_t m_vLowLeft;
-	vec3_t m_vLowRight;
-	vec3_t m_vTopLeft;
+	Vector m_vAVelocity;
 
-	vec3_t m_vColor;
+	Vector m_vVelocity;
+
+	Vector m_vLowLeft;
+	Vector m_vLowRight;
+	Vector m_vTopLeft;
+
+	Vector m_vColor;
 	float  m_flMass;
 
-	model_s * m_pTexture;
+	model_s* m_pTexture;
 
 	float  m_flBounceFactor;
 
@@ -119,84 +119,84 @@ public:
 
 	int   m_iAfterDampFlags;
 
-	void   SetLightFlag ( int iFlag )
+	void   SetLightFlag(int iFlag)
 	{
-		m_iRenderFlags &= ~( LIGHT_NONE | LIGHT_INTENSITY | LIGHT_COLOR );
+		m_iRenderFlags &= ~(LIGHT_NONE | LIGHT_INTENSITY | LIGHT_COLOR);
 		m_iRenderFlags |= iFlag;
 	}
 
-	void   SetCullFlag( int iFlag )
+	void   SetCullFlag(int iFlag)
 	{
-		m_iRenderFlags &= ~( CULL_PVS | CULL_FRUSTUM_POINT | CULL_FRUSTUM_PLANE | CULL_FRUSTUM_SPHERE );
+		m_iRenderFlags &= ~(CULL_PVS | CULL_FRUSTUM_POINT | CULL_FRUSTUM_PLANE | CULL_FRUSTUM_SPHERE);
 		m_iRenderFlags |= iFlag;
 	}
 
-	int    GetRenderFlags( void )
+	int    GetRenderFlags(void)
 	{
-		 return m_iRenderFlags;
+		return m_iRenderFlags;
 	}
 
-	bool   GetParticlePVS ( void )
+	bool   GetParticlePVS(void)
 	{
 		return m_bInPVS;
 	}
 
-	void   SetParticlePVS ( bool bPVSStat )
+	void   SetParticlePVS(bool bPVSStat)
 	{
 		m_bInPVS = bPVSStat;
 	}
-	
-	float GetNextPVSCheck( void )
+
+	float GetNextPVSCheck(void)
 	{
-		 return m_flNextPVSCheck;
+		return m_flNextPVSCheck;
 	}
 
-	void SetNextPVSCheck( float flTime )
+	void SetNextPVSCheck(float flTime)
 	{
-		 m_flNextPVSCheck = flTime;
-	}
-	
-	void SetCollisionFlags ( int iFlag )
-	{
-		 m_iCollisionFlags |= iFlag;
+		m_flNextPVSCheck = flTime;
 	}
 
-	void ClearCollisionFlags ( int iFlag )
+	void SetCollisionFlags(int iFlag)
 	{
-		 m_iCollisionFlags &= ~iFlag;
+		m_iCollisionFlags |= iFlag;
 	}
-	
-	int  GetCollisionFlags ( void )
+
+	void ClearCollisionFlags(int iFlag)
+	{
+		m_iCollisionFlags &= ~iFlag;
+	}
+
+	int  GetCollisionFlags(void)
 	{
 		return m_iCollisionFlags;
 	}
 
-	void SetRenderFlag( int iFlag )
+	void SetRenderFlag(int iFlag)
 	{
 		m_iRenderFlags |= iFlag;
 	}
 
-	float GetPlayerDistance ( void ) {	return m_flPlayerDistance; 	}
-	void  SetPlayerDistance ( float flDistance ) {	m_flPlayerDistance = flDistance; 	}
+	float GetPlayerDistance(void) { return m_flPlayerDistance; }
+	void  SetPlayerDistance(float flDistance) { m_flPlayerDistance = flDistance; }
 
 protected:
 	float  m_flOriginalSize;
-	vec3_t m_vOriginalAngles;
+	Vector m_vOriginalAngles;
 	float  m_flOriginalBrightness;
-	vec3_t m_vPrevOrigin;
+	Vector m_vPrevOrigin;
 
 	float m_flNextCollisionTime;
 
 protected:
-	static bool CheckSize(size_t size)
+	static bool CheckSize(int size)
 	{
 		// This check will help prevent a class frome being defined later,
-        //  that is larger than the max size MemoryPool is expecting,
-        //  from being successfully allocated.
-        if (size > (unsigned long) CMiniMem::Instance()->MaxBlockSize())
+		//  that is larger than the max size MemoryPool is expecting,
+		//  from being successfully allocated.
+		if (size > (unsigned long)CMiniMem::Instance()->MaxBlockSize())
 		{
 #ifdef _WIN32
-            throw "New particle class is larger than memory pool max size, update lMaxParticleClassSize() function.";
+			throw "New particle class is larger than memory pool max size, update lMaxParticleClassSize() function.";
 #endif
 			return(false);
 		}

@@ -132,7 +132,7 @@ void CVoiceStatus::UpdateServerState(bool bForce){
 			gEngfuncs.pfnConsolePrint( "CVoiceStatus::UpdateServerState: pLevelName[0]==0\n" );
 		return;
 	}
-	bool bCVarModEnable = CVAR_GET_FLOAT("voice_modenable");
+	int bCVarModEnable = CVAR_GET_FLOAT("voice_modenable");
 	if(bForce || m_bServerModEnable != bCVarModEnable){
 		m_bServerModEnable = bCVarModEnable;
 		char str[256];

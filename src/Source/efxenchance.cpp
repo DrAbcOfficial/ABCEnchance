@@ -362,6 +362,74 @@ void ShootEgonParticle() {
 		tent->die = gEngfuncs.GetClientTime() + vecLength.Length() / flSpeed;
 	}
 }
+
+//class CEgonParticle : public CBaseParticle {
+//public:
+//	CEgonParticle() = default;
+//
+//	virtual void Touch(Vector pos, Vector normal, int index) override {
+//		auto local = gEngfuncs.GetLocalPlayer();
+//		if (local)
+//			gEngfuncs.pEfxAPI->R_DecalShoot(gEngfuncs.pEfxAPI->Draw_DecalIndex(gEngfuncs.pEfxAPI->Draw_DecalIndexFromName(const_cast<char*>("{smscorch2"))), local->index, 0, pos, 0);
+//		CBaseParticle::Touch(pos, normal, index);
+//	}
+//};
+//
+//void ShootEgonParticle() {
+//	model_t* pModel = gEngfuncs.hudGetModelByIndex(gEfxVarible.iEgonBeam);
+//	if (!pModel)
+//		return;
+//
+//	auto local = gEngfuncs.GetLocalPlayer();
+//	Vector vecAngles;
+//	gEngfuncs.GetViewAngles(vecAngles);
+//	Vector vecForward;
+//	CMathlib::AngleVectors(vecAngles, vecForward, nullptr, nullptr);
+//	Vector vecEnd;
+//	VectorMA(local->origin, 4096, vecForward, vecEnd);
+//	pmtrace_t tr;
+//	gEngfuncs.pEventAPI->EV_SetSolidPlayers(local->index - 1);
+//	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+//	gEngfuncs.pEventAPI->EV_PlayerTrace(local->origin, vecEnd, PM_STUDIO_BOX, -1, &tr);
+//
+//	CEgonParticle* pParticle = new CEgonParticle();
+//	Vector vecPartOrigin = local->attachment[0];
+//	Vector vecNormal = { 0,0,0 };
+//	Vector vecLength = tr.endpos;
+//	vecLength -= vecPartOrigin;
+//	float flSpeed = 3600;
+//	Vector vecVelocity = vecLength.Normalize() * flSpeed;
+//
+//	float flSize = CMathlib::RANDOM_FLOAT(0.2f, 0.4f);
+//	pParticle->InitializeSprite(vecPartOrigin, vecNormal, pModel, flSize, 1.0);
+//
+//	strcpy(pParticle->m_szClassname, "particle_egon");
+//
+//	pParticle->m_iAfterDampFlags = 32;
+//	pParticle->m_iRendermode = kRenderTransAlpha;
+//
+//	pParticle->SetCullFlag(RENDER_FACEPLAYER | LIGHT_NONE | CULL_PVS | CULL_FRUSTUM_SPHERE);
+//	pParticle->SetCollisionFlags(TRI_COLLIDEWORLD);
+//
+//	pParticle->m_vVelocity = vecVelocity;
+//	pParticle->m_vAVelocity = { 32,0,0 };
+//	pParticle->m_vAngles = vecNormal;
+//	pParticle->m_flFadeSpeed = 0;
+//	pParticle->m_flScaleSpeed = 0;
+//	pParticle->m_flDampingTime = 0;
+//	pParticle->m_iFrame = 0;
+//	pParticle->m_flMass = 0;
+//	pParticle->m_flGravity = 0;
+//	pParticle->m_flBounceFactor = 0;
+//
+//	pParticle->m_vColor = { (vec_t)s_egonParticleColor.r, (vec_t)s_egonParticleColor.g, (vec_t)s_egonParticleColor.b };
+//
+//	pParticle->m_iFrame = 0;
+//	pParticle->m_iFramerate = 10.0f * pModel->numframes; //1s
+//	pParticle->m_iNumFrames = pModel->numframes;
+//
+//	pParticle->m_flDieTime = gEngfuncs.GetClientTime() + vecLength.Length() / flSpeed;
+//}
 void StartEgonParticle(unsigned char r, unsigned char g, unsigned char b, struct cl_entity_s* ent) {
 	s_egonParticleColor = { r,g,b };
 	s_egonMessageNum = ent->curstate.messagenum;

@@ -11,6 +11,7 @@
 #include "parsemsg.h"
 #include "mymathlib.h"
 #include "exportfuncs.h"
+#include "ClientParticleMan.h"
 
 #include "player_info.h"
 #include "basehud.h"
@@ -22,6 +23,8 @@
 #include "eccobuymenu.h"
 
 #include "vgui_controls/Controls.h"
+
+#include "weaponbank.h"
 
 #include "radar.h"
 #include "ammostack.h"
@@ -36,11 +39,10 @@
 #include "cctv.h"
 #endif
 
-#include "weaponbank.h"
-
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
+pfnUserMsgHook m_pfnInitHUD;
 pfnUserMsgHook m_pfnCurWeapon;
 pfnUserMsgHook m_pfnWeaponList;
 pfnUserMsgHook m_pfnCustWeapon;
@@ -68,6 +70,11 @@ pfnUserMsgHook m_pfnMetaHook;
 pfnUserMsgHook m_pfnDamage;
 pfnUserMsgHook m_pfnBattery;
 
+int __MsgFunc_InitHUD(const char* pszName, int iSize, void* pbuf) {
+	if (g_pParticleMan)
+		g_pParticleMan->ResetParticles();
+	return m_pfnInitHUD(pszName, iSize, pbuf);
+}
 int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
@@ -554,6 +561,7 @@ void CCustomHud::GL_Init(void){
 }
 void CCustomHud::HUD_Init(void){
 	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
+	m_pfnInitHUD = HOOK_MESSAGE(InitHUD);
 	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
 	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
 	m_pfnWeaponList = HOOK_MESSAGE(WeaponList);

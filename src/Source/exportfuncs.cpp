@@ -399,8 +399,6 @@ void HUD_Init(void){
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
 	GetClientVoiceMgr()->HUD_Init();
-	if (g_pParticleMan)
-		g_pParticleMan->ResetParticles();
 	GameUI_GetInterface();
 	abcconfig::LoadJson();
 }
@@ -599,4 +597,24 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
 	return g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding) ? 
 		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
+}
+
+void HUD_TempEntUpdate(
+	double frametime,   // Simulation time
+	double client_time, // Absolute time on client
+	double cl_gravity,  // True gravity on client
+	TEMPENTITY** ppTempEntFree,   // List of freed temporary ents
+	TEMPENTITY** ppTempEntActive, // List 
+	int		(*Callback_AddVisibleEntity)(cl_entity_t* pEntity),
+	void	(*Callback_TempEntPlaySound)(TEMPENTITY* pTemp, float damp)) {
+	Vector		vAngles;
+	gEngfuncs.GetViewAngles((float*)vAngles);
+	if (g_pParticleMan)
+		g_pParticleMan->SetVariables(cl_gravity, vAngles);
+	gExportfuncs.HUD_TempEntUpdate(frametime, client_time, cl_gravity, ppTempEntFree, ppTempEntActive, Callback_AddVisibleEntity, Callback_TempEntPlaySound);
+}
+void HUD_DrawTransparentTriangles() {
+	if (g_pParticleMan)
+		g_pParticleMan->Update();
+	gExportfuncs.HUD_DrawTransparentTriangles();
 }

@@ -96,6 +96,8 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_VoiceStatus = HUD_VoiceStatus;
 	pExportFunc->HUD_Frame = HUD_Frame;
 	pExportFunc->HUD_TxferPredictionData = HUD_TxferPredictionData;
+	pExportFunc->HUD_TempEntUpdate = HUD_TempEntUpdate;
+	pExportFunc->HUD_DrawTransparentTriangles = HUD_DrawTransparentTriangles;
 
 	FillAddress();
 	LoadLibcurl();

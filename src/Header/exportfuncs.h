@@ -47,6 +47,15 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 void HUD_VoiceStatus(int entindex, qboolean talking);
 void HUD_Frame(double frametime);
 void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
+void HUD_TempEntUpdate(
+	double frametime,   // Simulation time
+	double client_time, // Absolute time on client
+	double cl_gravity,  // True gravity on client
+	TEMPENTITY** ppTempEntFree,   // List of freed temporary ents
+	TEMPENTITY** ppTempEntActive, // List 
+	int		(*Callback_AddVisibleEntity)(cl_entity_t* pEntity),
+	void	(*Callback_TempEntPlaySound)(TEMPENTITY* pTemp, float damp));
+void HUD_DrawTransparentTriangles();
 
 void R_NewMap(void);
 

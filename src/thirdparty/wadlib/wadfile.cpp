@@ -90,6 +90,7 @@ bool WadFile::SaveToFile(std::string const& filePath){
         (*iter)->GetRawData(stream);
     }
     stream.close();
+    return true;
 }
 
 void WadFile::Clear(){
