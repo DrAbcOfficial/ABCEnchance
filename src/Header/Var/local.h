@@ -89,6 +89,7 @@ typedef struct cl_cvars_s{
 	cvar_t* pBloodSpriteSpeed = nullptr;
 	cvar_t* pBloodSpriteNumber = nullptr;
 	cvar_t* pGaussEfx = nullptr;
+	cvar_t* pEgonEfx = nullptr;
 
 	cvar_t* pDangerHealth = nullptr;
 	cvar_t* pDangerArmor = nullptr;
