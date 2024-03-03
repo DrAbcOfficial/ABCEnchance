@@ -37,7 +37,7 @@ void CTileIconItem::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	SetBgColor(GetSchemeColor("DMGTiles.ListViewBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	SetIconColor(GetSchemeColor("DMGTiles.IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
 	SetTextColor(GetSchemeColor("DMGTiles.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
-	m_pText->SetFont(pScheme->GetFont("DMGTiles.Font", true));
+	m_pText->SetFont(pScheme->GetFont(pScheme->GetResourceString("DMGTiles.Font"), IsProportional()));
 }
 
 void CTileIconItem::PerformLayout(){

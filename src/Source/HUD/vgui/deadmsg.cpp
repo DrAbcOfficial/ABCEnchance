@@ -44,9 +44,10 @@ void CDeathMsgItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	m_pInflictor->SetContentAlignment(vgui::Label::a_center);
 	m_pVictim->SetContentAlignment(vgui::Label::a_center);
 
-	m_pAttacker->SetFont(pScheme->GetFont("DeathMsgPanel.Font", true));
-	m_pInflictor->SetFont(pScheme->GetFont("DeathMsgPanel.Font", true));
-	m_pVictim->SetFont(pScheme->GetFont("DeathMsgPanel.Font", true));
+	const char* font = pScheme->GetResourceString("DeathMsgPanel.Font");
+	m_pAttacker->SetFont(pScheme->GetFont(font, IsProportional()));
+	m_pInflictor->SetFont(pScheme->GetFont(font, IsProportional()));
+	m_pVictim->SetFont(pScheme->GetFont(font, IsProportional()));
 
 	m_pBackGround->SetRoundedCorners(PANEL_ROUND_CORNER_ALL);
 }
