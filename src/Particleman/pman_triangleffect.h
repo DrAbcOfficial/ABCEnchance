@@ -188,7 +188,7 @@ protected:
 	float m_flNextCollisionTime;
 
 protected:
-	static bool CheckSize(int size)
+	static bool CheckSize(unsigned long size)
 	{
 		// This check will help prevent a class frome being defined later,
 		//  that is larger than the max size MemoryPool is expecting,

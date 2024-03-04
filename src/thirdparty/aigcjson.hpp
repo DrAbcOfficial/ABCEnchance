@@ -792,7 +792,7 @@ namespace aigc
             }
 
             auto array = jsonValue.GetArray();
-            for (int i = 0; i < array.Size(); i++)
+            for (size_t i = 0; i < array.Size(); i++)
             {
                 TYPE item;
                 if (!JsonToObject(item, array[i]))

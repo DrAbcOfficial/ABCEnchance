@@ -245,7 +245,7 @@ void CWeaponChoosePanel::PerformLayout(){
 		int bx, by, bw, bh;
 		m_pHandledWeapon.Get()->GetBounds(bx, by, bw, bh);
 		m_pSelectBucket->SetSize(bw, bh);
-		float xy[2] = { bx,by };
+		static float xy[2] = { (float)bx,(float)by };
 		vgui::GetAnimationController()->RunAnimationCommandEx(m_pSelectBucket, "position", xy, 2, 0.0f, 0.1f, vgui::AnimationController::INTERPOLATOR_LINEAR, 0.0f);
 	}
 	m_flNextClosePanelTime = gEngfuncs.GetClientTime() + m_flCloseTime;
@@ -306,8 +306,8 @@ void CWeaponChoosePanel::ChooseWeapon(WEAPON* weapon){
 	}
 }
 void CWeaponChoosePanel::InsertWeapon(WEAPON* weapon){
-	int slot = weapon->iSlot;
-	int pos = weapon->iSlotPos;
+	size_t slot = weapon->iSlot;
+	size_t pos = weapon->iSlotPos;
 	if (slot < 0 || slot > 9)
 		return;
 	auto& list = m_aryPanelList[slot];
