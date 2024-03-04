@@ -45,13 +45,13 @@ public:
 	// When you enter squelch mode, pass in 
 	void	StartSquelchMode();
 	void	StopSquelchMode();
-	bool	IsInSquelchMode();
+	bool	IsInSquelchMode() const;
 
 	// returns true if the target client has been banned
 	// playerIndex is of range 1..maxplayers
 	bool	IsPlayerBlocked(int iPlayerIndex);
 	// returns false if the player can't hear the other client due to game rules (eg. the other team)
-	bool    IsPlayerAudible(int iPlayerIndex);
+	bool    IsPlayerAudible(int iPlayerIndex) const;
 	// blocks the target client from being heard
 	void	SetPlayerBlockedState(int iPlayerIndex, bool blocked);
 

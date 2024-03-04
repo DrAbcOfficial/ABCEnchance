@@ -39,7 +39,7 @@ void CAmmoStackItem::PerformLayout() {
 	m_pText->SetPos(w * 0.25, 0);
 	m_pText->SetSize(w * 0.75, h);
 }
-int CAmmoStackItem::GetValue() {
+int CAmmoStackItem::GetValue() const {
 	return iValue;
 }
 

@@ -4,7 +4,7 @@
 //
 // $NoKeywords: $
 //===========================================================================//
-
+#include <vector>
 #include <vgui/IScheme.h>
 #include <vgui/Cursor.h>
 #include <vgui/IInput.h>
@@ -663,14 +663,14 @@ void Splitter::ApplyUserConfigSettings(KeyValues* userConfig)
 
 	// read the splitter sizes
 	int c = m_Splitters.Count();
-	float* pFractions = (float*)_alloca(c * sizeof(float));
+	std::vector<float> aryFractions = {};
 	float flTotalSize = 0.0f;
 	for (int i = 0; i < c; i++)
 	{
 		char name[128];
 		_snprintf(name, sizeof(name), "%d_splitter_pos", i);
-		pFractions[i] = userConfig->GetFloat(name, flTotalSize + SPLITTER_HANDLE_WIDTH + 1);
-		flTotalSize = pFractions[i];
+		flTotalSize = userConfig->GetFloat(name, flTotalSize + SPLITTER_HANDLE_WIDTH + 1);
+		aryFractions.push_back(flTotalSize);
 	}
 
 	if (flTotalSize != 0.0f)
@@ -678,8 +678,8 @@ void Splitter::ApplyUserConfigSettings(KeyValues* userConfig)
 		int nPosRange = GetPosRange();
 		for (int i = 0; i < c; ++i)
 		{
-			pFractions[i] /= flTotalSize;
-			m_Splitters[i].m_flPos = pFractions[i] * nPosRange;
+			aryFractions[i] /= flTotalSize;
+			m_Splitters[i].m_flPos = aryFractions[i] * nPosRange;
 		}
 	}
 }

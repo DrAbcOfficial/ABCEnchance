@@ -131,12 +131,12 @@ public:
 		m_iRenderFlags |= iFlag;
 	}
 
-	int    GetRenderFlags(void)
+	int    GetRenderFlags(void) const
 	{
 		return m_iRenderFlags;
 	}
 
-	bool   GetParticlePVS(void)
+	bool   GetParticlePVS(void) const
 	{
 		return m_bInPVS;
 	}
@@ -146,7 +146,7 @@ public:
 		m_bInPVS = bPVSStat;
 	}
 
-	float GetNextPVSCheck(void)
+	float GetNextPVSCheck(void) const
 	{
 		return m_flNextPVSCheck;
 	}
@@ -166,7 +166,7 @@ public:
 		m_iCollisionFlags &= ~iFlag;
 	}
 
-	int  GetCollisionFlags(void)
+	int  GetCollisionFlags(void) const
 	{
 		return m_iCollisionFlags;
 	}
@@ -176,7 +176,7 @@ public:
 		m_iRenderFlags |= iFlag;
 	}
 
-	float GetPlayerDistance(void) { return m_flPlayerDistance; }
+	float GetPlayerDistance(void) const { return m_flPlayerDistance; }
 	void  SetPlayerDistance(float flDistance) { m_flPlayerDistance = flDistance; }
 
 protected:

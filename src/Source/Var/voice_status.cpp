@@ -210,7 +210,7 @@ void CVoiceStatus::StopSquelchMode(){
 	m_bInSquelchMode = false;
 }
 
-bool CVoiceStatus::IsInSquelchMode(){
+bool CVoiceStatus::IsInSquelchMode() const{
 	return m_bInSquelchMode;
 }
 
@@ -231,7 +231,7 @@ bool CVoiceStatus::IsPlayerBlocked(int iPlayer){
 // Input  : playerID - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
-bool CVoiceStatus::IsPlayerAudible(int iPlayer){
+bool CVoiceStatus::IsPlayerAudible(int iPlayer) const{
 	return m_AudiblePlayers.test(iPlayer - 1);
 }
 
