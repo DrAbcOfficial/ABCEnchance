@@ -342,10 +342,11 @@ void ShootEgonParticle() {
 		float flSpeed = 4096;
 		Vector vecVelocity = vecLength.Normalize() * flSpeed;
 		CMathlib::VectorCopy(vecVelocity, tent->entity.baseline.origin);
-		tent->flags = FTENT_SPRANIMATELOOP | FTENT_COLLIDEALL | FTENT_FADEOUT;
+		tent->flags = FTENT_SPRANIMATELOOP | FTENT_CLIENTCUSTOM;
 		tent->clientIndex = gEngfuncs.GetLocalPlayer()->index;
 		tent->bounceFactor = 0;
 		tent->entity.baseline.renderamt = 80;
+		tent->entity.curstate.solid = SOLID_NOT;
 		tent->entity.curstate.owner = gEngfuncs.GetLocalPlayer()->index;
 		tent->entity.curstate.scale = CMathlib::RANDOM_FLOAT(0.2f, 0.4f);
 		tent->entity.curstate.renderamt = 255;
@@ -353,17 +354,35 @@ void ShootEgonParticle() {
 		tent->entity.curstate.rendermode = kRenderTransAdd;
 		tent->entity.curstate.frame = 0;
 		tent->entity.curstate.framerate = 10.0f * pModel->numframes; //1s
-		tent->hitcallback = [](struct tempent_s* ent, struct pmtrace_s* ptr) {
-			if (ent->entity.curstate.iuser1 != 1) {
-				gEngfuncs.pEfxAPI->R_DecalShoot(
-					gEngfuncs.pEfxAPI->Draw_DecalIndex(gEngfuncs.pEfxAPI->Draw_DecalIndexFromName(const_cast<char*>("{smscorch2"))),
-					gEngfuncs.pEventAPI->EV_IndexFromTrace(ptr), 0, ptr->endpos, 0);
-				ent->entity.curstate.iuser1 = 1;
+		tent->callback = [](struct tempent_s* ent, float frametime, float currenttime) {
+			if (currenttime >= ent->entity.curstate.fuser1) {
+				ent->die = 0;
+				TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(ent->entity.prevstate.origin, ent->entity.model);
+				CMathlib::VectorCopy(ent->entity.baseline.origin, tent->entity.baseline.origin);
+				tent->flags = FTENT_SPRANIMATELOOP | FTENT_COLLIDEWORLD | FTENT_FADEOUT;
+				tent->clientIndex = ent->clientIndex;
+				tent->bounceFactor = ent->bounceFactor;
+				tent->entity.baseline.renderamt = ent->entity.baseline.renderamt;
+				tent->entity.curstate.scale = ent->entity.curstate.scale;
+				tent->entity.curstate.renderamt = ent->entity.curstate.renderamt;
+				tent->entity.curstate.rendercolor = ent->entity.curstate.rendercolor;
+				tent->entity.curstate.rendermode = ent->entity.curstate.rendermode;
+				tent->entity.curstate.frame = tent->entity.curstate.frame;
+				tent->entity.curstate.framerate = tent->entity.curstate.framerate;
+				tent->entity.curstate.owner = ent->entity.curstate.owner;
+				tent->hitcallback = [](struct tempent_s* ent, struct pmtrace_s* ptr) {
+					if (ent->entity.curstate.iuser1 != 1) {
+						gEngfuncs.pEfxAPI->R_DecalShoot(
+							gEngfuncs.pEfxAPI->Draw_DecalIndex(gEngfuncs.pEfxAPI->Draw_DecalIndexFromName(const_cast<char*>("{smscorch2"))),
+							gEngfuncs.pEventAPI->EV_IndexFromTrace(ptr), 0, ptr->endpos, 0);
+						ent->entity.curstate.iuser1 = 1;
+					}
+				};
+				tent->die = currenttime + frametime;
 			}
-			};
-		tent->die = gEngfuncs.GetClientTime() + vecLength.Length() / flSpeed;
-
-		s_egonNextShoot = gEngfuncs.GetClientTime() + 0.005f;
+		};
+		tent->entity.curstate.fuser1 = gEngfuncs.GetClientTime() + vecLength.Length() / flSpeed - 0.007f;
+		s_egonNextShoot = gEngfuncs.GetClientTime() + 0.007f;
 	}
 }
 
