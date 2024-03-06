@@ -109,7 +109,7 @@ void BackGroundOnCommand(void*& pPanel, const char*& cmd) {
 	if (s_hHTMLBackground) {
 		int x, y;
 		vgui::input()->GetCursorPos(x, y);
-		std::string js = std::format("OnVGUICommand(\"{}\", {}, {});", cmd, x, y);
+		std::string js = std::format("let event = new CustomEvent(\"vgui-command\", {{command:\"{}\",cursor:{{x: {}, y:{}}}}});window.dispatchEvent(event);", cmd, x, y);
 		s_hHTMLBackground.Get()->RunJavascript(js.c_str());
 	}
 }

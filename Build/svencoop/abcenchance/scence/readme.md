@@ -2,10 +2,16 @@
 
 # Attention:
 
-1. When the main menu command is called, a function will be requested on the web page with the following signature:
+1. When the main menu command is called, a event will dispatch to the web page `window` with the following event:
 
-``` typescript
-function OnVGUICommand( command : string, cursorPosX : number, cursorPosY : number) : void
+``` javascript
+{
+    command : "MenuCommand",
+    cursor : {
+        x : 1,
+        y : 2
+    }
+}
 ```
 
 2. After the web page is loaded, button 0 will be pressed to interact with the web page (useful when playing video or audio automatically)
