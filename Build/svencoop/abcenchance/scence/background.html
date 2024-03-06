@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    .background-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        object-fit: cover;
+    }
+    .background-logo{
+        position: fixed;
+        top: 35%;
+        width: 40%;
+        height: auto;
+    }
+    </style>
+    <script>
+        function LoadVideo(){
+            let videos = ["./movie/blastpit.mp4", "./movie/reception.mp4", "./movie/testchamber.mp4", "./movie/trainstation.mp4", "./movie/viewport.mp4", "./movie/wastebin.mp4", "./movie/xen.mp4", "./movie/xencave.mp4"];
+            let audios = ["./sound/blastpit.mp3", "./sound/reception.mp3", "./sound/testchamber.mp3", "./sound/trainstation.mp3", "./sound/viewport.mp3", "./sound/wastebin.mp3", "./sound/xen.mp3", "./sound/xencave.mp3"]
+            let index = Math.floor(Math.random() * videos.length);
+            let video = videos[index];
+            let audio = audios[index];
+            let videoElements = document.getElementsByClassName("background-video");
+            videoElements[0].setAttribute("src", video);
+            let audioElemets = document.getElementsByClassName("background-audio");
+            audioElemets[0].setAttribute("src", audio);
+        }
+        window.onload = ()=>{
+            LoadVideo();
+        }
+        window.onkeydown = (ev)=>{
+            if(ev.keyCode == 0){
+                let audioElemets = document.getElementsByClassName("background-audio");
+                audioElemets[0].play();
+            }
+        }
+      </script>
+</head>
+<body>
+    <img src="./sven_logo.png" class="background-logo">
+    <video autoplay muted loop class="background-video" type="video/mp4"></video>
+    <audio autoplay loop class="background-audio" type="audio/mp3"></audio>
+</body>
+</html>

@@ -1,8 +1,0 @@
-"abcenchance/scence/movie/blastpit.ivf" "abcenchance/scence/sound/blastpit.mp3"
-"abcenchance/scence/movie/reception.ivf" "abcenchance/scence/sound/reception.mp3"
-"abcenchance/scence/movie/testchamber.ivf" "abcenchance/scence/sound/testchamber.mp3"
-"abcenchance/scence/movie/trainstation.ivf" "abcenchance/scence/sound/trainstation.mp3"
-"abcenchance/scence/movie/viewport.ivf" "abcenchance/scence/sound/viewport.mp3"
-"abcenchance/scence/movie/wastebin.ivf" "abcenchance/scence/sound/wastebin.mp3"
-"abcenchance/scence/movie/xen.ivf" "abcenchance/scence/sound/xen.mp3"
-"abcenchance/scence/movie/xencave.ivf" "abcenchance/scence/sound/xencave.mp3"
