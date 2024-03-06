@@ -16,61 +16,12 @@
 #include "exportfuncs.h"
 #include "OptionAdvancedDlg.h"
 
-extern DWORD g_dwEngineBuildnum;
-extern IFileSystem* g_pFileSystem;
+static vgui::IClientPanel* s_pBasePanel;
+static vgui::DHANDLE<vgui::COptionsAdvanceDialog>s_hAdvanceOptPanel;
 
-bool g_bInitialized = false;
+static vgui::PHandle s_hBasePanelWarpper;
+static vgui::DHANDLE<vgui::HTML>s_hHTMLBackground;
 
-vgui::IClientPanel* g_pBasePanel;
-
-static vgui::DHANDLE<vgui::COptionsAdvanceDialog>g_pAdvanceOptPanel;
-static vgui::DHANDLE<vgui::HTML>g_pHTML;
-
-void BackGroundVideoInit() {
-	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
-		if (g_bInitialized)
-			ConsoleWriteline("Background will changed in next start game.\n");
-		});
-}
-void BackGroundVideoPostInit() {
-	if (gCVars.pDynamicBackground->value > 0) {
-
-	}
-}
-void BackGroundInitMusic() {
-	EngineClientCmd("mp3 stop");
-}
-vgui::IClientPanel* BasePanel() {
-	return g_pBasePanel;
-}
-
-void SetAdvanceOptPanelVisible(bool state) {
-	if (g_pAdvanceOptPanel) {
-		if (state)
-			g_pAdvanceOptPanel->Activate();
-		else
-			g_pAdvanceOptPanel->Close();
-	}
-}
-void BackGroundOnCommand(void*& pPanel, const char*& cmd) {
-	if (!std::strcmp(cmd, "OpenOptionsABCEnchanceDialog")) {
-		if (g_pAdvanceOptPanel == nullptr) {
-			g_pAdvanceOptPanel = new vgui::COptionsAdvanceDialog(reinterpret_cast<vgui::Panel*>(pPanel));
-		}
-		g_pAdvanceOptPanel->Activate();
-	}
-	if (g_pHTML) {
-		int x, y;
-		vgui::input()->GetCursorPos(x, y);
-		std::string js = std::format("OnVGUICommand(\"{}\", {}, {});", cmd, x, y);
-		g_pHTML.Get()->RunJavascript(js.c_str());
-	}
-}
-void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
-	g_pBasePanel = static_cast<vgui::IClientPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/OptionsAdvanceDialogScheme.res", "OptionsAdvanceDialogScheme");
-	return g_pBasePanel;
-}
 class BackGroundHTML : public vgui::HTML {
 public:
 	BackGroundHTML(vgui::Panel* parent) : HTML(parent, "HTML", true, false) {
@@ -100,15 +51,72 @@ public:
 private:
 	bool m_bInit = false;
 };
-void __fastcall CBasePanel_PaintBackground(void* pthis, int dummy) {
-	if (!g_bInitialized) {
-		int w, h;
-		vgui::ipanel()->GetSize(g_pBasePanel->GetVPanel(), w, h);
-		static vgui::Panel* warpper = new vgui::Panel(g_pBasePanel->GetPanel(), "Warpper");
-		warpper->SetSize(w, h);
-		g_pHTML = new BackGroundHTML(warpper);
-		g_bInitialized = true;
+
+static bool s_bInited = false;
+static void SetBasePanelState(bool state) {
+	if (state) {
+		if (!s_bInited) {
+			int w = ScreenWidth();
+			int h = ScreenHeight();
+			if (!s_hBasePanelWarpper) {
+				s_hBasePanelWarpper = new vgui::Panel(s_pBasePanel->GetPanel(), "Warpper");
+				s_hBasePanelWarpper->SetSize(w, h);
+			}
+			if (!s_hHTMLBackground)
+				s_hHTMLBackground = new BackGroundHTML(s_hBasePanelWarpper);
+			s_bInited = true;
+		}
+		EngineClientCmd("mp3 stop");
 	}
+	else {
+		if (s_bInited) {
+			if (s_hBasePanelWarpper)
+				s_hBasePanelWarpper.Get()->DeletePanel();
+			if (s_hHTMLBackground)
+				s_hHTMLBackground.Get()->DeletePanel();
+			s_bInited = false;
+		}
+		EngineClientCmd("mp3 loop media/gamestartup.mp3 ui");
+	}
+}
+void BasePanelInit() {
+	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+		SetBasePanelState(cvar->value > 0);
+	});
+}
+void BasePanelPostInit() {
+	SetBasePanelState(gCVars.pDynamicBackground->value > 0);
+}
+void BackGroundOnCommand(void*& pPanel, const char*& cmd) {
+	if (!std::strcmp(cmd, "OpenOptionsABCEnchanceDialog")) {
+		if (s_hAdvanceOptPanel == nullptr) {
+			s_hAdvanceOptPanel = new vgui::COptionsAdvanceDialog(reinterpret_cast<vgui::Panel*>(pPanel));
+		}
+		s_hAdvanceOptPanel->Activate();
+	}
+	if (s_hHTMLBackground) {
+		int x, y;
+		vgui::input()->GetCursorPos(x, y);
+		std::string js = std::format("OnVGUICommand(\"{}\", {}, {});", cmd, x, y);
+		s_hHTMLBackground.Get()->RunJavascript(js.c_str());
+	}
+}
+
+vgui::IClientPanel* BasePanel() {
+	return s_pBasePanel;
+}
+void SetAdvanceOptPanelVisible(bool state) {
+	if (s_hAdvanceOptPanel) {
+		if (state)
+			s_hAdvanceOptPanel->Activate();
+		else
+			s_hAdvanceOptPanel->Close();
+	}
+}
+void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
+	s_pBasePanel = static_cast<vgui::IClientPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
+	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/OptionsAdvanceDialogScheme.res", "OptionsAdvanceDialogScheme");
+	return s_pBasePanel;
 }
 void BasePanel_InstallHook(void){
 	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
@@ -123,6 +131,6 @@ void BasePanel_InstallHook(void){
 	Fill_Sig(SC_CBASEPANEL_CTOR_SIG, GameUIBase, GameUISize, CBasePanel_ctor);
 	Install_InlineHook(CBasePanel_ctor);
 #define SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG "\x55\x8B\xEC\x83\xEC\x38\x53\x8D\x45\xCC\x8B\xD9\x50\x8D\x45\xC8\x89\x5D\xD0\x50\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8D\x4D\xD4\x51"
-	Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, GameUIBase, GameUISize, CBasePanel_PaintBackground);
-	Install_InlineHook(CBasePanel_PaintBackground);
+	//Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, GameUIBase, GameUISize, CBasePanel_PaintBackground);
+	//Install_InlineHook(CBasePanel_PaintBackground);
 }

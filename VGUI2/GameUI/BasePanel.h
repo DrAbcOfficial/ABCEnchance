@@ -11,8 +11,8 @@ enum EBackgroundState{
 
 void BasePanel_InstallHook();
 void BackGroundOnCommand(void*& pPanel, const char*& cmd);
-void BackGroundVideoInit();
-void BackGroundInitMusic();
+void BasePanelInit();
+void BasePanelPostInit();
 
 namespace vgui {
 	class IClientPanel;

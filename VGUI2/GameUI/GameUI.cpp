@@ -15,9 +15,10 @@ public:
 		return "ABCEnchance";
 	}
 	virtual void Initialize(CreateInterfaceFn* factories, int count) override{
+		
 	}
 	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system) override{
-		BackGroundInitMusic();
+		BasePanelPostInit();
 	}
 
 	virtual void Shutdown(void) override{

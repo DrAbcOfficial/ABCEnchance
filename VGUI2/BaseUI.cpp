@@ -41,7 +41,7 @@ public:
 		}
 		staticSurface = (IEngineSurface*)factories[0](ENGINE_SURFACE_VERSION, NULL);
 		BasePanel_InstallHook();
-		BackGroundVideoInit();
+		BasePanelInit();
 		CreateNeteaseMusicDialogCmd();
 	}
 	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion) override{
