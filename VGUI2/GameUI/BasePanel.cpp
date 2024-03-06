@@ -99,6 +99,14 @@ void BasePanelInit() {
 void BasePanelPostInit() {
 	SetBasePanelState(gCVars.pDynamicBackground->value > 0);
 }
+static void BasePanelSendJSEvent(const char* cmd) {
+	if (s_hHTMLBackground) {
+		int x, y;
+		vgui::input()->GetCursorPos(x, y);
+		std::string js = std::format("window.dispatchEvent(new CustomEvent(\"vgui-command\", {{command:\"{}\",cursor:{{x: {}, y:{}}}}}));", cmd, x, y);
+		s_hHTMLBackground.Get()->RunJavascript(js.c_str());
+	}
+}
 void BackGroundOnCommand(void*& pPanel, const char*& cmd) {
 	if (!std::strcmp(cmd, "OpenOptionsABCEnchanceDialog")) {
 		if (s_hAdvanceOptPanel == nullptr) {
@@ -106,18 +114,15 @@ void BackGroundOnCommand(void*& pPanel, const char*& cmd) {
 		}
 		s_hAdvanceOptPanel->Activate();
 	}
-	if (s_hHTMLBackground) {
-		int x, y;
-		vgui::input()->GetCursorPos(x, y);
-		std::string js = std::format("let event = new CustomEvent(\"vgui-command\", {{command:\"{}\",cursor:{{x: {}, y:{}}}}});window.dispatchEvent(event);", cmd, x, y);
-		s_hHTMLBackground.Get()->RunJavascript(js.c_str());
-	}
+	BasePanelSendJSEvent(cmd);
 }
 void BasePanelConnectServer() {
+	BasePanelSendJSEvent("ConnectedServer");
 	if (s_hHTMLBackground)
 		s_hHTMLBackground.Get()->SetVisible(false);
 }
 void BasePanelDiconnectServer() {
+	BasePanelSendJSEvent("DisconnectedServer");
 	if (s_hHTMLBackground)
 		s_hHTMLBackground.Get()->SetVisible(true);
 }
