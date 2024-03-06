@@ -69,9 +69,6 @@
     <Filter Include="Public\Particleman">
       <UniqueIdentifier>{022c55ca-987d-47f3-bc42-d90dcab1b592}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vpx">
-      <UniqueIdentifier>{a1f28372-aa4c-49ce-9f8e-6ee600e9caa4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SourceSDK\tier2">
       <UniqueIdentifier>{f2925c2a-76db-4a76-90b0-7b9474710fa8}</UniqueIdentifier>
     </Filter>
@@ -325,21 +322,6 @@
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\deadmsg.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
-    </ClCompile>
-    <ClCompile Include="vpx\vpx_decoder.cpp">
-      <Filter>vpx</Filter>
-    </ClCompile>
-    <ClCompile Include="vpx\vpx_codec.cpp">
-      <Filter>vpx</Filter>
-    </ClCompile>
-    <ClCompile Include="vpx\tools_common.cpp">
-      <Filter>vpx</Filter>
-    </ClCompile>
-    <ClCompile Include="vpx\video_reader.cpp">
-      <Filter>vpx</Filter>
-    </ClCompile>
-    <ClCompile Include="vpx\vpx_image.cpp">
-      <Filter>vpx</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp">
       <Filter>vgui2\gameui</Filter>
@@ -1098,33 +1080,6 @@
     </ClInclude>
     <ClInclude Include="src\Header\HUD\vgui\deadmsg.h">
       <Filter>Public\Header\HUD\vgui</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\tools_common.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\video_reader.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\video_common.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\vpx_codec.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\vpx_image.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\vpx_integer.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\vpx_decoder.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\vpx_frame_buffer.h">
-      <Filter>vpx</Filter>
-    </ClInclude>
-    <ClInclude Include="vpx\memle.h">
-      <Filter>vpx</Filter>
     </ClInclude>
     <ClInclude Include="VGUI2\GameUI\BasePanel.h">
       <Filter>vgui2\gameui</Filter>

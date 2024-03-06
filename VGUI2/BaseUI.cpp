@@ -45,10 +45,10 @@ public:
 		CreateNeteaseMusicDialogCmd();
 	}
 	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion) override{
-
+		
 	}
 	virtual void Shutdown(void){
-		BackGroundVideoClose();
+
 	}
 	virtual void Key_Event(int& down, int& keynum, const char*& pszCurrentBinding, VGUI2Extension_CallbackContext* CallbackContext) override{
 

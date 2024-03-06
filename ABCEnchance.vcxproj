@@ -368,11 +368,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="vgui_controls\vgui_controls.cpp" />
     <ClCompile Include="vgui_controls\WizardPanel.cpp" />
     <ClCompile Include="vgui_controls\WizardSubPanel.cpp" />
-    <ClCompile Include="vpx\tools_common.cpp" />
-    <ClCompile Include="vpx\video_reader.cpp" />
-    <ClCompile Include="vpx\vpx_codec.cpp" />
-    <ClCompile Include="vpx\vpx_decoder.cpp" />
-    <ClCompile Include="vpx\vpx_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceSDK\appframework\IAppSystem.h" />
@@ -644,15 +639,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="vgui_controls\URLLabel.h" />
     <ClInclude Include="vgui_controls\WizardPanel.h" />
     <ClInclude Include="vgui_controls\WizardSubPanel.h" />
-    <ClInclude Include="vpx\memle.h" />
-    <ClInclude Include="vpx\tools_common.h" />
-    <ClInclude Include="vpx\video_common.h" />
-    <ClInclude Include="vpx\video_reader.h" />
-    <ClInclude Include="vpx\vpx_codec.h" />
-    <ClInclude Include="vpx\vpx_decoder.h" />
-    <ClInclude Include="vpx\vpx_frame_buffer.h" />
-    <ClInclude Include="vpx\vpx_image.h" />
-    <ClInclude Include="vpx\vpx_integer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\thirdparty\liblrc\readme.txt" />

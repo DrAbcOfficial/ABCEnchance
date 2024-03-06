@@ -36,10 +36,10 @@ public:
 
 	}
 	void ConnectToServer(const char*& game, int& IP, int& port, VGUI2Extension_CallbackContext* CallbackContext) override{
-		BackGroundSetDecodeState(false);
+
 	}
 	virtual void DisconnectFromServer(VGUI2Extension_CallbackContext* CallbackContext) override{
-		BackGroundSetDecodeState(true);
+
 	}
 	virtual void HideGameUI(VGUI2Extension_CallbackContext* CallbackContext) override{
 		SetAdvanceOptPanelVisible(false);
@@ -120,9 +120,7 @@ class CVGUI2Extension_TaskBarCallbacks : public IVGUI2Extension_GameUITaskBarCal
 	virtual void CTaskBar_ctor(IGameUITaskBarCtorCallbackContext* CallbackContext) override {
 	}
 	virtual void CTaskBar_OnCommand(void*& pPanel, const char*& command, VGUI2Extension_CallbackContext* CallbackContext) override {
-		if (!std::strcmp(command, "OpenOptionsABCEnchanceDialog")) {
-			OpenAdvanceOptPanel(reinterpret_cast<vgui::Panel*>(pPanel));
-		}
+		BackGroundOnCommand(pPanel, command);
 	}
 };
 static CVGUI2Extension_TaskBarCallbacks s_TaskBarCallbacks;

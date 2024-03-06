@@ -10,9 +10,8 @@ enum EBackgroundState{
 };
 
 void BasePanel_InstallHook();
+void BackGroundOnCommand(void*& pPanel, const char*& cmd);
 void BackGroundVideoInit();
-void BackGroundVideoClose();
-void BackGroundSetDecodeState(bool state);
 void BackGroundInitMusic();
 
 namespace vgui {

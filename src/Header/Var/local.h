@@ -78,11 +78,6 @@ typedef struct{
 //CVars
 typedef struct cl_cvars_s{
 	cvar_t* pDynamicBackground = nullptr;
-	cvar_t* pDynamicBackgroundLogo = nullptr;
-	cvar_t* pDynamicBackgroundLogoXPos = nullptr;
-	cvar_t* pDynamicBackgroundLogoYPos = nullptr;
-	cvar_t* pDynamicBackgroundLogoWide = nullptr;
-	cvar_t* pDynamicBackgroundLogoTall = nullptr;
 
 	cvar_t* pShellEfx = nullptr;
 	cvar_t* pBloodEfx = nullptr;
