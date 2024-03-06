@@ -13,8 +13,8 @@ static void CopyFolder(string source, string destination)
             Console.WriteLine("Copied {0} ===> {1}", fileName, destFile);
             Console.ForegroundColor = ConsoleColor.Gray;
         }
-        catch(Exception ex) 
-        { 
+        catch (Exception ex)
+        {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(ex.Message);
             Console.ForegroundColor = ConsoleColor.Gray;
@@ -86,9 +86,15 @@ if (result == 0)
     AnyKeyExit("Steamworks.NET could not init game.");
     return;
 }
+
+if (!Path.Exists(svenPath + "/svencoop/metahook/configs/plugins.lst"))
+{
+    AnyKeyExit("It looks like your metahook is not installed correctly, please make sure the metahook is installed in the right place!");
+    return;
+}
+
 CopyFolder("./svencoop", svenPath + "/svencoop");
 CopyFolder("./svencoop_addon", svenPath + "/svencoop_addon");
 CopyFolder("./svencoop_hidpi", svenPath + "/svencoop_hidpi");
-FileWriter(svenPath + "/svencoop/metahook/configs/dllpaths.lst", "vpx");
 FileWriter(svenPath + "/svencoop/metahook/configs/plugins.lst", "ABCEnchance.dll", "CommunicationDemo.dll");
 AnyKeyExit("Done!");
