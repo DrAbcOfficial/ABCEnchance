@@ -22,6 +22,11 @@ static vgui::DHANDLE<vgui::COptionsAdvanceDialog>s_hAdvanceOptPanel;
 static vgui::PHandle s_hBasePanelWarpper;
 static vgui::DHANDLE<vgui::HTML>s_hHTMLBackground;
 
+class TransWarpper : public vgui::Panel {
+	using Panel::Panel;
+public:
+	virtual void PaintBackground() override {}
+};
 class BackGroundHTML : public vgui::HTML {
 public:
 	BackGroundHTML(vgui::Panel* parent) : HTML(parent, "HTML", true, false) {
@@ -44,12 +49,17 @@ public:
 			const size_t uiURLLength = 8;
 			vgui::filesystem()->GetLocalPath("abcenchance/scence/background.html", local + uiURLLength, 252);
 			OpenURL(local, nullptr, true);
+			return;
 		}
-		RequestFocus();
-		OnKeyCodeTyped(vgui::KEY_ENTER);
+		if (m_bInit && !m_bInteractive) {
+			RequestFocus();
+			OnKeyCodeTyped(vgui::KEY_NONE);
+			m_bInteractive = true;
+		}
 	}
 private:
 	bool m_bInit = false;
+	bool m_bInteractive = false;
 };
 
 static bool s_bInited = false;
@@ -59,11 +69,13 @@ static void SetBasePanelState(bool state) {
 			int w = ScreenWidth();
 			int h = ScreenHeight();
 			if (!s_hBasePanelWarpper) {
-				s_hBasePanelWarpper = new vgui::Panel(s_pBasePanel->GetPanel(), "Warpper");
+				s_hBasePanelWarpper = new TransWarpper(s_pBasePanel->GetPanel(), "Warpper");
 				s_hBasePanelWarpper->SetSize(w, h);
 			}
-			if (!s_hHTMLBackground)
+			if (!s_hHTMLBackground) {
 				s_hHTMLBackground = new BackGroundHTML(s_hBasePanelWarpper);
+				s_hHTMLBackground->SetBgColor(Color(0, 0, 0, 0));
+			}
 			s_bInited = true;
 		}
 		EngineClientCmd("mp3 stop");
@@ -100,6 +112,14 @@ void BackGroundOnCommand(void*& pPanel, const char*& cmd) {
 		std::string js = std::format("OnVGUICommand(\"{}\", {}, {});", cmd, x, y);
 		s_hHTMLBackground.Get()->RunJavascript(js.c_str());
 	}
+}
+void BasePanelConnectServer() {
+	if (s_hHTMLBackground)
+		s_hHTMLBackground.Get()->SetVisible(false);
+}
+void BasePanelDiconnectServer() {
+	if (s_hHTMLBackground)
+		s_hHTMLBackground.Get()->SetVisible(true);
 }
 
 vgui::IClientPanel* BasePanel() {

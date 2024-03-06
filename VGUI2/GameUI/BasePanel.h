@@ -13,6 +13,8 @@ void BasePanel_InstallHook();
 void BackGroundOnCommand(void*& pPanel, const char*& cmd);
 void BasePanelInit();
 void BasePanelPostInit();
+void BasePanelConnectServer();
+void BasePanelDiconnectServer();
 
 namespace vgui {
 	class IClientPanel;

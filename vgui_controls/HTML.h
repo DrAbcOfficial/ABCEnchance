@@ -95,7 +95,6 @@ namespace vgui
 		virtual void PerformLayout();
 		virtual void OnMouseWheeled(int delta);
 		virtual void PostChildPaint();
-
 		/* message posting:
 
 			"HTMLSliderMoved"	- indicates the scrollbar has moved
@@ -120,6 +119,8 @@ namespace vgui
 		MESSAGE_FUNC_INT(OnSetCursorVGUI, "SetCursor", cursor);
 
 		virtual void OnCommand(const char* pchCommand);
+
+		virtual void SetVisible(bool state) override;
 
 		void AddHeader(const char* pchHeader, const char* pchValue);
 		void OnKillFocus();
@@ -146,13 +147,10 @@ namespace vgui
 			BaseClass::Validate(validator, pchName);
 		}
 #endif // DBGFLAG_VALIDATE
-
-		ISteamHTMLSurface* SteamHTMLSurface() { return m_SteamAPIContext.SteamHTMLSurface(); }
-
 		void OnHTMLMouseMoved(int x, int y)
 		{
-			if (m_SteamAPIContext.SteamHTMLSurface())
-				m_SteamAPIContext.SteamHTMLSurface()->MouseMove(m_unBrowserHandle, x, y);
+			if (SteamHTMLSurface())
+				SteamHTMLSurface()->MouseMove(m_unBrowserHandle, x, y);
 		}
 
 	protected:
@@ -314,7 +312,6 @@ namespace vgui
 		};
 		CUtlVector<CustomCursorCache_t> m_vecHCursor;
 
-		CSteamAPIContext m_SteamAPIContext;
 		HHTMLBrowser m_unBrowserHandle;
 
 		CCallResult< HTML, HTML_BrowserReady_t > m_SteamCallResultBrowserReady;

@@ -150,11 +150,10 @@ HTML::HTML(Panel* parent, const char* name, bool allowJavaScript, bool bPopupWin
 
 	m_unBrowserHandle = INVALID_HTMLBROWSER;
 
-	m_SteamAPIContext.Init();
-	if (this->SteamHTMLSurface())
+	if (SteamHTMLSurface())
 	{
-		this->SteamHTMLSurface()->Init();
-		SteamAPICall_t hSteamAPICall = this->SteamHTMLSurface()->CreateBrowser(HL1_USER_AGENT, NULL);
+		SteamHTMLSurface()->Init();
+		SteamAPICall_t hSteamAPICall = SteamHTMLSurface()->CreateBrowser(HL1_USER_AGENT, NULL);
 		m_SteamCallResultBrowserReady.Set(hSteamAPICall, this, &HTML::OnBrowserReady);
 	}
 	else
@@ -221,9 +220,9 @@ HTML::~HTML()
 {
 	m_pContextMenu->MarkForDeletion();
 
-	if (this->SteamHTMLSurface())
+	if (SteamHTMLSurface())
 	{
-		this->SteamHTMLSurface()->RemoveBrowser(m_unBrowserHandle);
+		SteamHTMLSurface()->RemoveBrowser(m_unBrowserHandle);
 	}
 
 	FOR_EACH_VEC(m_vecHCursor, i)
@@ -389,27 +388,27 @@ void HTML::PostURL(const char* URL, const char* pchPostData, bool force)
 			g_pFullFileSystem->GetLocalPath(baseDir, fileLocation, sizeof(fileLocation));
 			Q_snprintf(htmlLocation, sizeof(htmlLocation), "file://%s", fileLocation);
 
-			if (this->SteamHTMLSurface())
-				this->SteamHTMLSurface()->LoadURL(m_unBrowserHandle, htmlLocation, NULL);
+			if (SteamHTMLSurface())
+				SteamHTMLSurface()->LoadURL(m_unBrowserHandle, htmlLocation, NULL);
 		}
 		else
 		{
-			if (this->SteamHTMLSurface())
-				this->SteamHTMLSurface()->LoadURL(m_unBrowserHandle, URL, NULL);
+			if (SteamHTMLSurface())
+				SteamHTMLSurface()->LoadURL(m_unBrowserHandle, URL, NULL);
 		}
 	}
 	else
 	{
 		if (pchPostData && Q_strlen(pchPostData) > 0)
 		{
-			if (this->SteamHTMLSurface())
-				this->SteamHTMLSurface()->LoadURL(m_unBrowserHandle, URL, pchPostData);
+			if (SteamHTMLSurface())
+				SteamHTMLSurface()->LoadURL(m_unBrowserHandle, URL, pchPostData);
 
 		}
 		else
 		{
-			if (this->SteamHTMLSurface())
-				this->SteamHTMLSurface()->LoadURL(m_unBrowserHandle, URL, NULL);
+			if (SteamHTMLSurface())
+				SteamHTMLSurface()->LoadURL(m_unBrowserHandle, URL, NULL);
 		}
 	}
 }
@@ -420,8 +419,8 @@ void HTML::PostURL(const char* URL, const char* pchPostData, bool force)
 //-----------------------------------------------------------------------------
 bool HTML::StopLoading()
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->StopLoad(m_unBrowserHandle);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->StopLoad(m_unBrowserHandle);
 	return true;
 }
 
@@ -431,8 +430,8 @@ bool HTML::StopLoading()
 //-----------------------------------------------------------------------------
 bool HTML::Refresh()
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->Reload(m_unBrowserHandle);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->Reload(m_unBrowserHandle);
 	return true;
 }
 
@@ -442,8 +441,8 @@ bool HTML::Refresh()
 //-----------------------------------------------------------------------------
 void HTML::GoBack()
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->GoBack(m_unBrowserHandle);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->GoBack(m_unBrowserHandle);
 }
 
 
@@ -452,8 +451,8 @@ void HTML::GoBack()
 //-----------------------------------------------------------------------------
 void HTML::GoForward()
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->GoForward(m_unBrowserHandle);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->GoForward(m_unBrowserHandle);
 }
 
 
@@ -490,8 +489,8 @@ void HTML::OnSizeChanged(int wide, int tall)
 //-----------------------------------------------------------------------------
 void HTML::RunJavascript(const char* pchScript)
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->ExecuteJavascript(m_unBrowserHandle, pchScript);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->ExecuteJavascript(m_unBrowserHandle, pchScript);
 }
 
 
@@ -552,8 +551,8 @@ void HTML::OnMousePressed(MouseCode code)
 	// ignore right clicks if context menu has been disabled
 	if (code != MOUSE_RIGHT)
 	{
-		if (this->SteamHTMLSurface())
-			this->SteamHTMLSurface()->MouseDown(m_unBrowserHandle, ConvertMouseCodeToCEFCode(code));
+		if (SteamHTMLSurface())
+			SteamHTMLSurface()->MouseDown(m_unBrowserHandle, ConvertMouseCodeToCEFCode(code));
 	}
 
 	if (code == MOUSE_LEFT)
@@ -598,8 +597,8 @@ void HTML::OnMouseReleased(MouseCode code)
 		m_sDragURL = NULL;
 	}
 
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->MouseUp(m_unBrowserHandle, ConvertMouseCodeToCEFCode(code));
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->MouseUp(m_unBrowserHandle, ConvertMouseCodeToCEFCode(code));
 }
 
 
@@ -614,8 +613,8 @@ void HTML::OnCursorMoved(int x, int y)
 		m_iMouseX = x;
 		m_iMouseY = y;
 
-		if (this->SteamHTMLSurface())
-			this->SteamHTMLSurface()->MouseMove(m_unBrowserHandle, m_iMouseX, m_iMouseY);
+		if (SteamHTMLSurface())
+			SteamHTMLSurface()->MouseMove(m_unBrowserHandle, m_iMouseX, m_iMouseY);
 	}
 	else if (!m_sDragURL.IsEmpty())
 	{
@@ -646,8 +645,8 @@ void HTML::OnCursorMoved(int x, int y)
 //-----------------------------------------------------------------------------
 void HTML::OnMouseDoublePressed(MouseCode code)
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->MouseDoubleClick(m_unBrowserHandle, ConvertMouseCodeToCEFCode(code));
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->MouseDoubleClick(m_unBrowserHandle, ConvertMouseCodeToCEFCode(code));
 }
 
 
@@ -682,8 +681,8 @@ int GetKeyModifiers()
 //-----------------------------------------------------------------------------
 void HTML::OnKeyTyped(wchar_t unichar)
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->KeyChar(m_unBrowserHandle, unichar, (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->KeyChar(m_unBrowserHandle, unichar, (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
 }
 
 
@@ -830,9 +829,8 @@ void HTML::OnKeyCodeTyped(KeyCode code)
 		break;
 	}
 	}
-
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->KeyDown(m_unBrowserHandle, KeyCode_VGUIToVirtualKey(code), (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->KeyDown(m_unBrowserHandle, KeyCode_VGUIToVirtualKey(code), (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
 }
 
 
@@ -841,8 +839,8 @@ void HTML::OnKeyCodeTyped(KeyCode code)
 //-----------------------------------------------------------------------------
 void HTML::OnKeyCodeReleased(KeyCode code)
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->KeyUp(m_unBrowserHandle, KeyCode_VGUIToVirtualKey(code), (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->KeyUp(m_unBrowserHandle, KeyCode_VGUIToVirtualKey(code), (ISteamHTMLSurface::EHTMLKeyModifiers)GetKeyModifiers());
 }
 
 
@@ -858,8 +856,8 @@ void HTML::OnMouseWheeled(int delta)
 		_vbar->SetValue(val);
 	}
 
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->MouseWheel(m_unBrowserHandle, delta * 100.0 / 3.0);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->MouseWheel(m_unBrowserHandle, delta * 100.0 / 3.0);
 }
 
 
@@ -907,8 +905,8 @@ void HTML::BrowserResize()
 		}
 
 		{
-			if (this->SteamHTMLSurface())
-				this->SteamHTMLSurface()->SetSize(m_unBrowserHandle, m_iWideLastHTMLSize, m_iTalLastHTMLSize);
+			if (SteamHTMLSurface())
+				SteamHTMLSurface()->SetSize(m_unBrowserHandle, m_iWideLastHTMLSize, m_iTalLastHTMLSize);
 		}
 
 
@@ -917,10 +915,10 @@ void HTML::BrowserResize()
 		int scrollV = _vbar->GetValue();
 		int scrollH = _hbar->GetValue();
 
-		if (this->SteamHTMLSurface())
-			this->SteamHTMLSurface()->SetHorizontalScroll(m_unBrowserHandle, scrollH);
-		if (this->SteamHTMLSurface())
-			this->SteamHTMLSurface()->SetVerticalScroll(m_unBrowserHandle, scrollV);
+		if (SteamHTMLSurface())
+			SteamHTMLSurface()->SetHorizontalScroll(m_unBrowserHandle, scrollH);
+		if (SteamHTMLSurface())
+			SteamHTMLSurface()->SetVerticalScroll(m_unBrowserHandle, scrollV);
 	}
 
 }
@@ -934,15 +932,15 @@ void HTML::OnSliderMoved()
 	if (_hbar->IsVisible())
 	{
 		int scrollX = _hbar->GetValue();
-		if (this->SteamHTMLSurface())
-			this->SteamHTMLSurface()->SetHorizontalScroll(m_unBrowserHandle, scrollX);
+		if (SteamHTMLSurface())
+			SteamHTMLSurface()->SetHorizontalScroll(m_unBrowserHandle, scrollX);
 	}
 
 	if (_vbar->IsVisible())
 	{
 		int scrollY = _vbar->GetValue();
-		if (this->SteamHTMLSurface())
-			this->SteamHTMLSurface()->SetVerticalScroll(m_unBrowserHandle, scrollY);
+		if (SteamHTMLSurface())
+			SteamHTMLSurface()->SetVerticalScroll(m_unBrowserHandle, scrollY);
 	}
 
 	// post a message that the slider has moved
@@ -1023,8 +1021,8 @@ void HTML::PostChildPaint()
 //-----------------------------------------------------------------------------
 void HTML::AddHeader(const char* pchHeader, const char* pchValue)
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->AddHeader(m_unBrowserHandle, pchHeader, pchValue);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->AddHeader(m_unBrowserHandle, pchHeader, pchValue);
 }
 
 
@@ -1033,8 +1031,8 @@ void HTML::AddHeader(const char* pchHeader, const char* pchValue)
 //-----------------------------------------------------------------------------
 void HTML::OnSetFocus()
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->SetKeyFocus(m_unBrowserHandle, true);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->SetKeyFocus(m_unBrowserHandle, true);
 
 	BaseClass::OnSetFocus();
 }
@@ -1051,8 +1049,8 @@ void HTML::OnKillFocus()
 	if (m_pContextMenu->HasFocus())
 		return;
 
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->SetKeyFocus(m_unBrowserHandle, false);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->SetKeyFocus(m_unBrowserHandle, false);
 }
 
 
@@ -1079,18 +1077,18 @@ void HTML::OnCommand(const char* pchCommand)
 	}
 	else if (!Q_stricmp(pchCommand, "viewsource"))
 	{
-		if (this->SteamHTMLSurface())
-			this->SteamHTMLSurface()->ViewSource(m_unBrowserHandle);
+		if (SteamHTMLSurface())
+			SteamHTMLSurface()->ViewSource(m_unBrowserHandle);
 	}
 	else if (!Q_stricmp(pchCommand, "copy"))
 	{
-		if (this->SteamHTMLSurface())
-			this->SteamHTMLSurface()->CopyToClipboard(m_unBrowserHandle);
+		if (SteamHTMLSurface())
+			SteamHTMLSurface()->CopyToClipboard(m_unBrowserHandle);
 	}
 	else if (!Q_stricmp(pchCommand, "paste"))
 	{
-		if (this->SteamHTMLSurface())
-			this->SteamHTMLSurface()->PasteFromClipboard(m_unBrowserHandle);
+		if (SteamHTMLSurface())
+			SteamHTMLSurface()->PasteFromClipboard(m_unBrowserHandle);
 	}
 	else if (!Q_stricmp(pchCommand, "copyurl"))
 	{
@@ -1111,6 +1109,12 @@ void HTML::OnCommand(const char* pchCommand)
 
 }
 
+void HTML::SetVisible(bool state)
+{
+	BaseClass::SetVisible(state);
+	SteamHTMLSurface()->SetBackgroundMode(m_unBrowserHandle, !state);
+}
+
 
 //-----------------------------------------------------------------------------
 // Purpose: the control wants us to ask the user what file to load
@@ -1118,8 +1122,8 @@ void HTML::OnCommand(const char* pchCommand)
 void HTML::OnFileSelected(const char* pchSelectedFile)
 {
 	const char* ppchSelectedFiles[] = { pchSelectedFile, NULL };
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->FileLoadDialogResponse(m_unBrowserHandle, ppchSelectedFiles);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->FileLoadDialogResponse(m_unBrowserHandle, ppchSelectedFiles);
 
 	m_hFileOpenDialog->Close();
 }
@@ -1129,8 +1133,8 @@ void HTML::OnFileSelected(const char* pchSelectedFile)
 //-----------------------------------------------------------------------------
 void HTML::OnFileSelectionCancelled()
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->FileLoadDialogResponse(m_unBrowserHandle, NULL);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->FileLoadDialogResponse(m_unBrowserHandle, NULL);
 
 	m_hFileOpenDialog->Close();
 }
@@ -1146,8 +1150,8 @@ void HTML::Find(const char* pchSubStr)
 
 	m_sLastSearchString = pchSubStr;
 
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->Find(m_unBrowserHandle, pchSubStr, m_bInFind, false);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->Find(m_unBrowserHandle, pchSubStr, m_bInFind, false);
 }
 
 
@@ -1156,8 +1160,8 @@ void HTML::Find(const char* pchSubStr)
 //-----------------------------------------------------------------------------
 void HTML::FindPrevious()
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->Find(m_unBrowserHandle, m_sLastSearchString, m_bInFind, true);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->Find(m_unBrowserHandle, m_sLastSearchString, m_bInFind, true);
 }
 
 
@@ -1175,8 +1179,8 @@ void HTML::FindNext()
 //-----------------------------------------------------------------------------
 void HTML::StopFind()
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->StopFind(m_unBrowserHandle);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->StopFind(m_unBrowserHandle);
 	m_bInFind = false;
 }
 
@@ -1245,6 +1249,8 @@ void HTML::CHTMLFindBar::OnCommand(const char* pchCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserNeedsPaint(HTML_NeedsPaint_t* pCallback)
 {
+	if (pCallback->unBrowserHandle != m_unBrowserHandle)
+		return;
 	int tw = 0, tt = 0;
 	if (m_iHTMLTextureID != 0)
 	{
@@ -1346,10 +1352,12 @@ bool HTML::OnStartRequest(const char* url, const char* target, const char* pchPo
 //-----------------------------------------------------------------------------
 void HTML::BrowserStartRequest(HTML_StartRequest_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	bool bRes = OnStartRequest(pCmd->pchURL, pCmd->pchTarget, pCmd->pchPostData, pCmd->bIsRedirect);
 
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->AllowStartRequest(m_unBrowserHandle, bRes);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->AllowStartRequest(m_unBrowserHandle, bRes);
 }
 
 
@@ -1358,6 +1366,8 @@ void HTML::BrowserStartRequest(HTML_StartRequest_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserURLChanged(HTML_URLChanged_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	m_sCurrentURL = pCmd->pchURL;
 
 	KeyValues* pMessage = new KeyValues("OnURLChanged");
@@ -1376,6 +1386,9 @@ void HTML::BrowserURLChanged(HTML_URLChanged_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserFinishedRequest(HTML_FinishedRequest_t* pCmd)
 {
+	//not mine
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	PostActionSignal(new KeyValues("OnFinishRequest", "url", pCmd->pchURL));
 	if (pCmd->pchPageTitle && pCmd->pchPageTitle[0])
 		PostActionSignal(new KeyValues("PageTitleChange", "title", pCmd->pchPageTitle));
@@ -1392,7 +1405,8 @@ void HTML::BrowserFinishedRequest(HTML_FinishedRequest_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserOpenNewTab(HTML_OpenLinkInNewTab_t* pCmd)
 {
-	(pCmd);
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	// Not suppored by default, if a child class overrides us and knows how to handle tabs, then it can do this.
 }
 
@@ -1401,6 +1415,8 @@ void HTML::BrowserOpenNewTab(HTML_OpenLinkInNewTab_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserPopupHTMLWindow(HTML_NewWindow_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	HTMLPopup* p = new HTMLPopup(this, pCmd->pchURL, "");
 	int wide = pCmd->unWide;
 	int tall = pCmd->unTall;
@@ -1424,6 +1440,8 @@ void HTML::BrowserPopupHTMLWindow(HTML_NewWindow_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserSetHTMLTitle(HTML_ChangedTitle_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	PostMessage(GetParent(), new KeyValues("OnSetHTMLTitle", "title", pCmd->pchTitle));
 	OnSetHTMLTitle(pCmd->pchTitle);
 }
@@ -1434,6 +1452,8 @@ void HTML::BrowserSetHTMLTitle(HTML_ChangedTitle_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserStatusText(HTML_StatusText_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	PostActionSignal(new KeyValues("OnSetStatusText", "status", pCmd->pchMsg));
 }
 
@@ -1443,6 +1463,8 @@ void HTML::BrowserStatusText(HTML_StatusText_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserSetCursor(HTML_SetCursor_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	vgui::CursorCode cursor = dc_last;
 
 	switch (pCmd->eMouseCursor)
@@ -1587,6 +1609,8 @@ void HTML::BrowserSetCursor(HTML_SetCursor_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserFileLoadDialog(HTML_FileOpenDialog_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	// couldn't access an OS-specific dialog, use the internal one
 	if (m_hFileOpenDialog.Get())
 	{
@@ -1606,6 +1630,8 @@ void HTML::BrowserFileLoadDialog(HTML_FileOpenDialog_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserShowToolTip(HTML_ShowToolTip_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	/*
 		BR FIXME
 		Tooltip *tip = GetTooltip();
@@ -1624,6 +1650,8 @@ void HTML::BrowserShowToolTip(HTML_ShowToolTip_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserUpdateToolTip(HTML_UpdateToolTip_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	//	GetTooltip()->SetText( pCmd->text().c_str() );
 }
 
@@ -1633,6 +1661,8 @@ void HTML::BrowserUpdateToolTip(HTML_UpdateToolTip_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserHideToolTip(HTML_HideToolTip_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	//	GetTooltip()->HideTooltip();
 	//	DeleteToolTip();
 }
@@ -1643,6 +1673,8 @@ void HTML::BrowserHideToolTip(HTML_HideToolTip_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserSearchResults(HTML_SearchResults_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	if (pCmd->unResults == 0)
 		m_pFindBar->HideCountLabel();
 	else
@@ -1661,6 +1693,8 @@ void HTML::BrowserSearchResults(HTML_SearchResults_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserClose(HTML_CloseBrowser_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	PostActionSignal(new KeyValues("OnCloseWindow"));
 }
 
@@ -1670,6 +1704,8 @@ void HTML::BrowserClose(HTML_CloseBrowser_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserHorizontalScrollBarSizeResponse(HTML_HorizontalScroll_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	ScrollData_t scrollHorizontal;
 	scrollHorizontal.m_nScroll = pCmd->unScrollCurrent;
 	scrollHorizontal.m_nMax = pCmd->unScrollMax;
@@ -1692,6 +1728,8 @@ void HTML::BrowserHorizontalScrollBarSizeResponse(HTML_HorizontalScroll_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserVerticalScrollBarSizeResponse(HTML_VerticalScroll_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	ScrollData_t scrollVertical;
 	scrollVertical.m_nScroll = pCmd->unScrollCurrent;
 	scrollVertical.m_nMax = pCmd->unScrollMax;
@@ -1714,6 +1752,8 @@ void HTML::BrowserVerticalScrollBarSizeResponse(HTML_VerticalScroll_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserLinkAtPositionResponse(HTML_LinkAtPosition_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	m_LinkAtPos.m_sURL = pCmd->pchURL;
 	m_LinkAtPos.m_nX = pCmd->x;
 	m_LinkAtPos.m_nY = pCmd->y;
@@ -1748,6 +1788,8 @@ void HTML::BrowserLinkAtPositionResponse(HTML_LinkAtPosition_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserJSAlert(HTML_JSAlert_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	MessageBox* pDlg = new MessageBox(m_sCurrentURL, (const char*)pCmd->pchMessage, this);
 	pDlg->AddActionSignalTarget(this);
 	pDlg->SetCommand(new KeyValues("DismissJSDialog", "result", false));
@@ -1760,6 +1802,8 @@ void HTML::BrowserJSAlert(HTML_JSAlert_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::BrowserJSConfirm(HTML_JSConfirm_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	QueryBox* pDlg = new QueryBox(m_sCurrentURL, (const char*)pCmd->pchMessage, this);
 	pDlg->AddActionSignalTarget(this);
 	pDlg->SetOKCommand(new KeyValues("DismissJSDialog", "result", true));
@@ -1771,8 +1815,8 @@ void HTML::BrowserJSConfirm(HTML_JSConfirm_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::DismissJSDialog(int bResult)
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->JSDialogResponse(m_unBrowserHandle, bResult);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->JSDialogResponse(m_unBrowserHandle, bResult);
 };
 
 //-----------------------------------------------------------------------------
@@ -1780,6 +1824,8 @@ void HTML::DismissJSDialog(int bResult)
 //-----------------------------------------------------------------------------
 void HTML::BrowserCanGoBackandForward(HTML_CanGoBackAndForward_t* pCmd)
 {
+	if (pCmd->unBrowserHandle != m_unBrowserHandle)
+		return;
 	m_bCanGoBack = pCmd->bCanGoBack;
 	m_bCanGoForward = pCmd->bCanGoForward;
 }
@@ -1789,8 +1835,8 @@ void HTML::BrowserCanGoBackandForward(HTML_CanGoBackAndForward_t* pCmd)
 //-----------------------------------------------------------------------------
 void HTML::GetLinkAtPosition(int x, int y)
 {
-	if (this->SteamHTMLSurface())
-		this->SteamHTMLSurface()->GetLinkAtPosition(m_unBrowserHandle, x, y);
+	if (SteamHTMLSurface())
+		SteamHTMLSurface()->GetLinkAtPosition(m_unBrowserHandle, x, y);
 }
 
 

@@ -37,10 +37,10 @@ public:
 
 	}
 	void ConnectToServer(const char*& game, int& IP, int& port, VGUI2Extension_CallbackContext* CallbackContext) override{
-
+		BasePanelConnectServer();
 	}
 	virtual void DisconnectFromServer(VGUI2Extension_CallbackContext* CallbackContext) override{
-
+		BasePanelDiconnectServer();
 	}
 	virtual void HideGameUI(VGUI2Extension_CallbackContext* CallbackContext) override{
 		SetAdvanceOptPanelVisible(false);
