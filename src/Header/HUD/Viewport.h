@@ -20,7 +20,7 @@ class CAmmoPanel;
 class CDmgTilesPanel;
 class CGenadeIndicatorPanel;
 class CDeathMsgPanel;
-class CNeteasePanel;
+//class CNeteasePanel;
 class CRadarPanel;
 class CAmmoStackPanel;
 class CItemStackPanel;
@@ -117,7 +117,7 @@ public:
 	void ShowDeathMsg(bool state);
 
 	void ShowMusic(bool state);
-	CNeteasePanel* GetMusicPanel();
+	//CNeteasePanel* GetMusicPanel();
 
 	CAmmoStackPanel* GetAmmoStackPanel();
 	CItemStackPanel* GetItemStackPanel();
@@ -162,7 +162,7 @@ private:
 	CDmgTilesPanel* m_pDmgTiles = nullptr;
 	CGenadeIndicatorPanel* m_pGIndicator = nullptr;
 	CDeathMsgPanel* m_pDeahMsg = nullptr;
-	CNeteasePanel* m_pNeteaseMusic = nullptr;
+	//CNeteasePanel* m_pNeteaseMusic = nullptr;
 	CRadarPanel* m_pRadar = nullptr;
 	CAmmoStackPanel* m_pAmmoStack = nullptr;
 	CItemStackPanel* m_pItemStack = nullptr;

@@ -165,10 +165,10 @@ void __fastcall CClient_SoundEngine_Initialize(void* pSoundEngine, int dummy) {
 }
 void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin, 
 	int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength) {
-	if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
+	/*if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
 		if (g_pViewPort->GetMusicPanel()->GetPlayListSize() > 0)
 			return;
-	}
+	}*/
 	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pSoundEngine, dummy, flags, entindex, origin, channel, name, fvol, attenuation, extraflags, pitch, sentenceIndex, soundLength);
 }
 void CheckOtherPlugin(){
@@ -260,7 +260,6 @@ void FillAddress(){
 			Sig_VarNotFound("Client_SoundEngine_PlayFMODSound");
 			gHookFuncs.CClient_SoundEngine_PlayFMODSound = (decltype(gHookFuncs.CClient_SoundEngine_PlayFMODSound))GetCallAddress(addr + Sig_Length(Client_SoundEngine_PlayFMODSound_SIG) - 1);
 		}
-		
 #define R_SETPUNCHANGLE_SIG "\x83\xC4\x04\xD9\x1C\x24\x6A\x00\xE8\x93\x56\x05\x00\x83\xC4\x08\xF3\x0F\x10\x74\x24\x34\xF3\x0F\x10\xAC\x24\x98\x00\x00\x00\xF3\x0F\x10\x25\x2A\x2A\x2A\x2A\xF3\x0F\x58\xEE\xF3\x0F\x10\x44\x24\x74"
 		{
 			addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, R_SETPUNCHANGLE_SIG, sizeof(R_SETPUNCHANGLE_SIG) - 1);

@@ -1,4 +1,5 @@
-﻿#include <vector>
+﻿#if 0
+#include <vector>
 #include <atomic>
 
 #include "plugins.h"
@@ -298,3 +299,4 @@ void CreateNeteaseMusicDialogCmd() {
 	});
 #endif // DEBUG
 }
+#endif

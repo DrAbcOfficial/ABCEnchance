@@ -1,3 +1,4 @@
+#define CNETEASEMUSIC_H
 #ifndef CNETEASEMUSIC_H
 #define CNETEASEMUSIC_H
 
