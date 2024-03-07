@@ -328,7 +328,8 @@ void ShootEgonParticle() {
 	Vector vecSrc = local->attachment[0];
 	TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(vecSrc, pModel);
 	if (tent) {
-		Vector vecLength = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::VIEW)->endpos;
+		pmtrace_t* tr = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::VIEW);
+		Vector vecLength = tr->endpos;
 		vecLength -= vecSrc;
 		float flSpeed = 4096;
 		Vector vecVelocity = vecLength.Normalize() * flSpeed;
@@ -350,7 +351,7 @@ void ShootEgonParticle() {
 				ent->die = 0;
 				TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(ent->entity.prevstate.origin, ent->entity.model);
 				CMathlib::VectorCopy(ent->entity.baseline.origin, tent->entity.baseline.origin);
-				tent->flags = FTENT_SPRANIMATELOOP | FTENT_COLLIDEWORLD | FTENT_FADEOUT;
+				tent->flags = FTENT_SPRANIMATELOOP | FTENT_COLLIDEWORLD | FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
 				tent->clientIndex = ent->clientIndex;
 				tent->bounceFactor = ent->bounceFactor;
 				tent->entity.baseline.renderamt = ent->entity.baseline.renderamt;
@@ -358,8 +359,8 @@ void ShootEgonParticle() {
 				tent->entity.curstate.renderamt = ent->entity.curstate.renderamt;
 				tent->entity.curstate.rendercolor = ent->entity.curstate.rendercolor;
 				tent->entity.curstate.rendermode = ent->entity.curstate.rendermode;
-				tent->entity.curstate.frame = tent->entity.curstate.frame;
-				tent->entity.curstate.framerate = tent->entity.curstate.framerate;
+				tent->entity.curstate.frame = ent->entity.curstate.frame;
+				tent->entity.curstate.framerate = ent->entity.curstate.framerate;
 				tent->entity.curstate.owner = ent->entity.curstate.owner;
 				tent->hitcallback = [](struct tempent_s* ent, struct pmtrace_s* ptr) {
 					if (ent->entity.curstate.iuser1 != 1) {
@@ -369,7 +370,14 @@ void ShootEgonParticle() {
 						ent->entity.curstate.iuser1 = 1;
 					}
 				};
-				tent->die = currenttime + frametime;
+				tent->callback = [](struct tempent_s* ent, float frametime, float currenttime) {
+					if (currenttime >= ent->die) {
+						ent->entity.baseline.origin[0] = 0;
+						ent->entity.baseline.origin[1] = 0;
+						ent->entity.baseline.origin[2] = 0;
+					}
+				};
+				tent->die = currenttime + 0.007;
 			}
 		};
 		tent->entity.curstate.fuser1 = gEngfuncs.GetClientTime() + vecLength.Length() / flSpeed - 0.007f;
