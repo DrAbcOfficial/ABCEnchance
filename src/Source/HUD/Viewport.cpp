@@ -44,6 +44,7 @@
 #include "itemstack.h"
 #include "weaponstack.h"
 #include "weaponchoose.h"
+#include "itemhighlight.h"
 
 #include "CCustomHud.h"
 
@@ -114,6 +115,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pItemStack = new CItemStackPanel());
 	AddNewPanel(m_pWeaponStack = new CWeaponStackPanel());
 	AddNewPanel(m_pWeaponChoose = new CWeaponChoosePanel());
+	AddNewPanel(m_pItemHighLightPanel = new CItemHighLightPanel());
 	SetVisible(false);
 }
 
@@ -207,6 +209,7 @@ bool CViewport::KeyInput(int down, int keynum, const char* pszCurrentBinding){
 }
 void CViewport::AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	m_pGIndicator->AddEntity(ent, modelname);
+	m_pItemHighLightPanel->AddEntity(type, ent, modelname);
 }
 
 void CViewport::SetInterMission(int intermission) {
@@ -376,6 +379,14 @@ bool CViewport::TextMsg(const char* pszName, int iSize, void* pbuf){
 }
 void CViewport::ShowDeathMsg(bool state){
 	m_pDeahMsg->ShowPanel(state);
+}
+void vgui::CViewport::ItemHighLightReset()
+{
+	m_pItemHighLightPanel->ItemHighLightReset();
+}
+void CViewport::EraseHighLight(cl_entity_t* var, int modelindex)
+{
+	m_pItemHighLightPanel->EraseHighLight(var, modelindex);
 }
 #ifdef __HAS_NETEASE_API
 void CViewport::ShowMusic(bool state){

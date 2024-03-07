@@ -28,6 +28,7 @@ class CAmmoStackPanel;
 class CItemStackPanel;
 class CWeaponStackPanel;
 class CWeaponChoosePanel;
+class CItemHighLightPanel;
 
 #ifndef __AMMO_H__
 class WEAPON;
@@ -118,6 +119,9 @@ public:
 	bool TextMsg(const char* pszName, int iSize, void* pbuf);
 	void ShowDeathMsg(bool state);
 
+	void ItemHighLightReset();
+	void EraseHighLight(cl_entity_t* var, int modelindex);
+
 	void ShowMusic(bool state);
 #ifdef __HAS_NETEASE_API
 	CNeteasePanel* GetMusicPanel();
@@ -174,6 +178,7 @@ private:
 	CItemStackPanel* m_pItemStack = nullptr;
 	CWeaponStackPanel* m_pWeaponStack = nullptr;
 	CWeaponChoosePanel* m_pWeaponChoose = nullptr;
+	CItemHighLightPanel* m_pItemHighLightPanel = nullptr;
 
 	vgui::HScheme m_hBaseScheme = 0;
 	int m_iInterMission = 0;
