@@ -2,7 +2,7 @@
 
 # Attention:
 
-1. When the main menu command is called, a event will dispatch to the web page `window` with the following event:
+1. When the main menu command is called ,connected server or disconnected server, a event named `vgui-command` will dispatch to the web page `window` with the following arg:
 
 ``` javascript
 {

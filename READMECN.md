@@ -35,7 +35,7 @@
 
     手动:
 
-    3. 从release或者action下载压缩包，将`svencoop`文件夹与`svencoop_addon`文件夹解压至游戏根目录, 然后在`metahook/configs/dllpaths.lst`中另起一行添加`vpx`，最终看起来像是这样👇
+    3. 从release或者action下载压缩包，将`svencoop`文件夹与`svencoop_addon`文件夹解压至游戏根目录，最终看起来像是这样👇
    
     ```
         Sven Coop
@@ -49,13 +49,8 @@
         │  │  ├─....
         │  │  ABCEnchance.res
         │  └─metahook
-        │     ├─plugins
-        │     │  └─ABCEnchance.dll
-        │     └─dlls
-        │        ├─FreeImage
-        │        │  └─FreeIamge.dll
-        │        └─vpx
-        │           └─vpx.dll
+        │     └─plugins
+        │       └─ABCEnchance.dll
         ├─svencoop_addon
         │  └─resource
         │     └─.....
