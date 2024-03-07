@@ -53,7 +53,7 @@ void CItemHighLightPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 
 void CItemHighLightPanel::Think()
 {
-	if (!gCVars.pItemHighLightName->value)
+	if (gCVars.pItemHighLightName->value <= 0)
 		return;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	if (!local)
@@ -67,25 +67,28 @@ void CItemHighLightPanel::Think()
 	gEngfuncs.GetViewAngles(vecView);
 	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 	//计算我和目标的相对偏移
-	for (auto &iter : m_aryHighLightPanel) {
-		vecLength = *(iter.second->origin);
+	for (auto iter = m_aryHighLightPanel.begin(); iter != m_aryHighLightPanel.end();iter++) {
+		auto& item = *iter;
+		if (!item.second)
+			continue;
+		vecLength = *(item.second->origin);
 		vecLength -= local->curstate.origin;
 		if (vecLength.Length() >= gCVars.pItemHighLightRange->value) {
-			iter.second->ShowPanel(false);
+			item.second->ShowPanel(false);
 			continue;
 		}
 		vecLength = vecLength.Normalize();
 		angledotResult = vecLength.Dot(vecView);;
 		//cos 60
 		if (angledotResult > 0.5) {
-			vecEntityOrigin = *(iter.second->origin);
+			vecEntityOrigin = *(item.second->origin);
 			vecEntityOrigin.z += 2;
 			VEC_WorldToScreen(vecEntityOrigin, vecHUD);
-			iter.second->SetPos(vecHUD.x - iter.second->GetWide() / 2, vecHUD.y);
-			iter.second->ShowPanel(true);
+			item.second->SetPos(vecHUD.x - item.second->GetWide() / 2, vecHUD.y);
+			item.second->ShowPanel(true);
 		}
 		else {
-			iter.second->ShowPanel(false);
+			item.second->ShowPanel(false);
 			continue;
 		}
 	}
@@ -151,7 +154,7 @@ void CItemHighLightPanel::CreateHighLight(cl_entity_t* var) {
 	ent1->callback = ent2->callback = HighLightTentCallBack;
 	m_mapRestoredTent[var->index] = std::make_pair(ent1, ent2);
 
-	if (!gCVars.pItemHighLightName->value) {
+	if (gCVars.pItemHighLightName->value >= 0) {
 		m_aryHighLightPanel[var->curstate.modelindex] = new CItemNamePanel(GetVPanel());
 		//坐标数据的地址
 		m_aryHighLightPanel[var->curstate.modelindex]->origin = &var->curstate.origin;
