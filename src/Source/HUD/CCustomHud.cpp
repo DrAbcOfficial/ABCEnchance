@@ -617,7 +617,6 @@ void CCustomHud::HUD_Init(void){
 
 	m_HudIndicator.Init();
 	gWR.Init();
-	g_HudItemHighLight.Init();
 	m_HudEccoBuyMenu.Init();
 #ifdef _DEBUG
 	m_HudCCTV.Init();
@@ -669,8 +668,8 @@ void CCustomHud::HUD_Draw(float flTime){
 void CCustomHud::HUD_Reset(void){
 	m_HudIndicator.Reset();
 	gWR.Reset();
-	g_HudItemHighLight.Reset();
 	m_HudEccoBuyMenu.Reset();
+	g_pViewPort->ItemHighLightReset();
 #ifdef _DEBUG
 	m_HudCCTV.Reset();
 #endif
@@ -747,7 +746,6 @@ void CCustomHud::IN_MouseEvent(int mstate){
 int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	bool result = true;
 	result = result && m_HudEccoBuyMenu.AddEntity(type, ent, modelname);
-	g_HudItemHighLight.AddEntity(type, ent, modelname);
 	g_pViewPort->AddEntity(type, ent, modelname);
 	return result;
 }

@@ -32,7 +32,7 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 
 private:
-	vgui::Label* m_pNameLable = nullptr;
+	vgui::Label* m_pNameLabel = nullptr;
 	vgui::ImagePanel* m_pBackgroundImagePanel = nullptr;
 	vgui::ImagePanel* m_pHealthImagePanel = nullptr;
 	vgui::ImagePanel* m_pArmorImagePanel = nullptr;

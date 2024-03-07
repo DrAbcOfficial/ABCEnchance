@@ -34,7 +34,7 @@ CPlayerInfoPanel::CPlayerInfoPanel()
 	SetScheme(GetViewPortBaseScheme());
 
 	// Header labels
-	m_pNameLable = new vgui::Label(this, "PlayerName", "(Anon)");
+	m_pNameLabel = new vgui::Label(this, "PlayerName", "(Anon)");
 	m_pBackgroundImagePanel = new vgui::ImagePanel(this, "BackGroundImage");
 	m_pHealthImagePanel = new vgui::ImagePanel(this, "HealthImage");
 	m_pArmorImagePanel = new vgui::ImagePanel(this, "ArmorImage");
@@ -149,8 +149,8 @@ void CPlayerInfoPanel::UpdateClientInfo(){
 		int iHealth = pi->GetHealth();
 		float flArmorRatio = clamp<float>((float)pi->GetArmor() / 100.0f, 0.0f, 1.0f);
 		float flHealthRatio = clamp((float)iHealth / 100.0f, 0.0f, 1.0f);
-		m_pNameLable->SetText(pi->GetName());
-		m_pNameLable->SetFgColor(g_pViewPort->GetPlayerColor(m_iPlayerIndex));
+		m_pNameLabel->SetText(pi->GetName());
+		m_pNameLabel->SetFgColor(g_pViewPort->GetPlayerColor(m_iPlayerIndex));
 		m_pArmorImagePanel->SetWide(m_pBackgroundImagePanel->GetWide() * flArmorRatio);
 		m_pHealthImagePanel->SetWide(m_pBackgroundImagePanel->GetWide() * flHealthRatio);
 		cl_entity_t* ent = gEngfuncs.GetEntityByIndex(m_iPlayerIndex);
