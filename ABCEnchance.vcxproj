@@ -240,6 +240,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\HUD\vgui\weaponstack.cpp" />
     <ClCompile Include="src\Source\HUD\Viewport.cpp" />
     <ClCompile Include="src\Source\HUD\weaponbank.cpp" />
+    <ClCompile Include="src\Source\playertrace.cpp" />
     <ClCompile Include="src\Source\plugins.cpp" />
     <ClCompile Include="src\Source\soundengine.cpp" />
     <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
@@ -484,6 +485,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\Viewport.h" />
     <ClInclude Include="src\Header\HUD\weaponbank.h" />
     <ClInclude Include="src\Header\IEngineSurface.h" />
+    <ClInclude Include="src\Header\playertrace.h" />
     <ClInclude Include="src\Header\plugins.h" />
     <ClInclude Include="src\Header\soundengine.h" />
     <ClInclude Include="src\Header\Utility\client_steam_context.h" />

@@ -701,6 +701,9 @@
     <ClCompile Include="src\Source\autofunc.cpp">
       <Filter>Public\Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\playertrace.cpp">
+      <Filter>Public\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceSDK\Color.h">
@@ -1509,6 +1512,9 @@
     </ClInclude>
     <ClInclude Include="vgui2\interface\ISystemABC.h">
       <Filter>vgui2\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\playertrace.h">
+      <Filter>Public\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -27,6 +27,7 @@
 
 #include "vgui_controls/Controls.h"
 #include "config.h"
+#include "playertrace.h"
 //GL
 #include "glew.h"
 #include "gl_def.h"
@@ -484,6 +485,7 @@ void HUD_Frame(double frametime) {
 	gExportfuncs.HUD_Frame(frametime);
 	//task
 	GetTaskManager()->CheckAll();
+	GetPlayerTrace()->Update();
 	EFX_Frame();
 	CHttpClient::RunFrame();
 }

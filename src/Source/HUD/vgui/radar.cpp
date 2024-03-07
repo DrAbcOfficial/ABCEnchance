@@ -4,14 +4,13 @@
 #include "mymathlib.h"
 
 #include "local.h"
-#include "pm_defs.h"
-#include "event_api.h"
 #include "steamclientpublic.h"
 
 #include "exportfuncs.h"
 
 #include "hud.h"
 #include "vguilocal.h"
+#include "playertrace.h"
 
 #include "glew.h"
 #include "gl_utility.h"
@@ -283,21 +282,9 @@ void CRadarPanel::OnThink(){
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	if (local == nullptr)
 		return;
-	pmtrace_t m_hRadarTr;
-	Vector vecEndpos = local->curstate.origin;
-	vecEndpos.z = 9999;
-	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
-	//16，去除大多数烦人的天花板灯泡
-	gCustomHud.m_flOverViewZmax = m_hRadarTr.endpos[2] - gCVars.pRadarZMax->value;
-	vecEndpos.z = -9999;
-	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
-	float flOldStart = m_hRadarTr.endpos[2] - 1;
-	//四人高，可以满足大多数地图的需求
-	m_hRadarTr.endpos[2] -= gCVars.pRadarZMin->value;
-	gEngfuncs.pEventAPI->EV_PlayerTrace(m_hRadarTr.endpos, vecEndpos, -1, PM_WORLD_ONLY, &m_hRadarTr);
-	gCustomHud.m_flOverViewZmin = m_hRadarTr.startsolid ? m_hRadarTr.endpos[2] : flOldStart;
+
+	gCustomHud.m_flOverViewZmax = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::HEAD)->endpos[2] - gCVars.pRadarZMax->value;
+	gCustomHud.m_flOverViewZmin = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::FOOT)->endpos[2] - gCVars.pRadarZMin->value;
 	flNextUpdateTrTime = flTime + 1.0f;
 }
 void CRadarPanel::ApplySettings(KeyValues* inResourceData){

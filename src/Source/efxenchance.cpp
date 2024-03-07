@@ -4,13 +4,17 @@
 #include "pmtrace.h"
 #include "event_api.h"
 #include "cl_entity.h"
-#include "mymathlib.h"
-#include "mathlib/vector.h"
 #include "com_model.h"
 #include "palette.h"
-#include "extraprecache.h"
-#include "exportfuncs.h"
 #include "local.h"
+
+#include "mymathlib.h"
+#include "extraprecache.h"
+#include "mathlib/vector.h"
+
+#include "playertrace.h"
+
+#include "exportfuncs.h"
 #include "efxenchance.h"
 
 #define GAUSS_WAVE_LENGTH 48
@@ -321,23 +325,10 @@ void ShootEgonParticle() {
 	if (!pModel)
 		return;
 	auto local = gEngfuncs.GetLocalPlayer();
-	Vector vecAngles;
-	gEngfuncs.GetViewAngles(vecAngles);
-	Vector vecForward;
-	CMathlib::AngleVectors(vecAngles, vecForward, nullptr, nullptr);
-	Vector vecEnd;
-	VectorMA(local->origin, 4096, vecForward, vecEnd);
-	pmtrace_t tr;
-	Vector vecSrc = local->origin;
-	Vector vecOfs;
-	gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(vecOfs);
-	vecSrc += vecOfs;
-	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_STUDIO_BOX, local->index, &tr);
-	vecSrc = local->attachment[0];
+	Vector vecSrc = local->attachment[0];
 	TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(vecSrc, pModel);
 	if (tent) {
-		Vector vecLength = tr.endpos;
+		Vector vecLength = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::VIEW)->endpos;
 		vecLength -= vecSrc;
 		float flSpeed = 4096;
 		Vector vecVelocity = vecLength.Normalize() * flSpeed;

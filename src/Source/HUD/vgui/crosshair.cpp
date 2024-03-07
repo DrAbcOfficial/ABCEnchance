@@ -19,6 +19,7 @@
 
 #include "mymathlib.h"
 #include "Viewport.h"
+#include "playertrace.h"
 #include "weapon.h"
 
 #include "crosshair.h"
@@ -114,21 +115,8 @@ void CCrosshairPanel::OnThink() {
 	}
 
 	if (gExportfuncs.CL_IsThirdPerson()) {
-		pmtrace_t tr;
-		Vector vViewAngleForward;
-		gEngfuncs.GetViewAngles(vViewAngleForward);
-		cl_entity_s* local = gEngfuncs.GetLocalPlayer();
-		CMathlib::AngleVectors(vViewAngleForward, vViewAngleForward, nullptr, nullptr);
-		Vector vecSrc = local->curstate.origin;
-		Vector viewOfs;
-		gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOfs);
-		vecSrc += viewOfs;
-		vViewAngleForward *= 8192;
-		Vector vecEnd = vecSrc + vViewAngleForward;
-		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecEnd, PM_STUDIO_BOX, local->index, &tr);
 		Vector vecHUD;
-		gEngfuncs.pTriAPI->WorldToScreen(tr.endpos, vecHUD);
+		gEngfuncs.pTriAPI->WorldToScreen(GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::VIEW)->endpos, vecHUD);
 		m_iCenterX = (1.0f + vecHUD[0]) * ScreenWidth() / 2;
 		m_iCenterY = (1.0f - vecHUD[1]) * ScreenHeight() / 2;
 	}
