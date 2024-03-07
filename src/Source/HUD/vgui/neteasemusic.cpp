@@ -1,4 +1,4 @@
-#if 0
+#ifdef __HAS_NETEASE_API
 #pragma once
 #include <metahook.h>
 #include <codecvt>

@@ -165,10 +165,12 @@ void __fastcall CClient_SoundEngine_Initialize(void* pSoundEngine, int dummy) {
 }
 void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin, 
 	int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength) {
-	/*if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
+#ifdef __HAS_NETEASE_API
+	if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
 		if (g_pViewPort->GetMusicPanel()->GetPlayListSize() > 0)
 			return;
-	}*/
+	}
+#endif
 	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pSoundEngine, dummy, flags, entindex, origin, channel, name, fvol, attenuation, extraflags, pitch, sentenceIndex, soundLength);
 }
 void CheckOtherPlugin(){

@@ -1,4 +1,4 @@
-#define CNETEASEMUSIC_H
+#ifdef __HAS_NETEASE_API
 #ifndef CNETEASEMUSIC_H
 #define CNETEASEMUSIC_H
 
@@ -153,3 +153,4 @@ private:
 	byte* s_pBuf = nullptr;
 };
 #endif
+#endif // __HAS_NETEASE_API

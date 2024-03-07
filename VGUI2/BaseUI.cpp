@@ -23,7 +23,10 @@ IBaseUI* baseuifuncs = nullptr;
 
 extern IKeyValuesSystem* g_pKeyValuesSystem;
 extern IEngineSurface* staticSurface;
-//extern void CreateNeteaseMusicDialogCmd();
+
+#ifdef  __HAS_NETEASE_API
+extern void CreateNeteaseMusicDialogCmd();
+#endif //  __HAS_NETEASE_API
 
 class CVGUI2Extension_BaseUICallbacks : public IVGUI2Extension_BaseUICallbacks
 {
@@ -42,7 +45,9 @@ public:
 		staticSurface = (IEngineSurface*)factories[0](ENGINE_SURFACE_VERSION, NULL);
 		BasePanel_InstallHook();
 		BasePanelInit();
-		//CreateNeteaseMusicDialogCmd();
+#ifdef __HAS_NETEASE_API
+		CreateNeteaseMusicDialogCmd();
+#endif // __HAS_NETEASE_API
 	}
 	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion) override{
 		

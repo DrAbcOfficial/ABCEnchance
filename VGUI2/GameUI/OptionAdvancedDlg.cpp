@@ -43,7 +43,6 @@ extern float CVAR_GET_FLOAT(const char* x);
 extern void CVAR_SET_FLOAT(const char* x, float v);
 extern size_t ScreenWidth();
 extern size_t ScreenHeight();
-//extern std::atomic<netease::CNeteaseMusicAPI*> GetNeteaseApi();
 extern IGameUIFuncs* GameUIFuncs();
 const char* FAVMODEL_ICON = "#GameUI_ABC_Favorite";
 

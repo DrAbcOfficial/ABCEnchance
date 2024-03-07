@@ -1,4 +1,4 @@
-#define NETEASEMUSICDIALOG_H
+#ifdef __HAS_NETEASE_API
 #ifndef NETEASEMUSICDIALOG_H
 #define NETEASEMUSICDIALOG_H
 
@@ -40,3 +40,4 @@ namespace vgui {
 }
 
 #endif // !NETEASEMUSICDIALOG_H
+#endif // __HAS_NETEASE_API

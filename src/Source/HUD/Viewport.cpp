@@ -105,7 +105,9 @@ void CViewport::Start(void){
 	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
 	AddNewPanel(m_pTextMenu = new CTextMenu()); 
 	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
-	//AddNewPanel(m_pNeteaseMusic = new CNeteasePanel());
+#ifdef __HAS_NETEASE_API
+	AddNewPanel(m_pNeteaseMusic = new CNeteasePanel());
+#endif
 	AddNewPanel(m_pVotePanel = new vgui::CVotePanel());
 	AddNewPanel(m_pScorePanel = new vgui::CScorePanel());
 	AddNewPanel(m_pAmmoStack = new CAmmoStackPanel());
@@ -132,7 +134,9 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pDmgTiles->SetParent(GetVPanel());
 	m_pGIndicator->SetParent(GetVPanel());
 	m_pDeahMsg->SetParent(GetVPanel());
-	//m_pNeteaseMusic->SetParent(GetVPanel());
+#ifdef __HAS_NETEASE_API
+	m_pNeteaseMusic->SetParent(GetVPanel());
+#endif
 	m_pRadar->SetParent(GetVPanel());
 	m_pAmmoStack->SetParent(GetVPanel());
 	m_pItemStack->SetParent(GetVPanel());
@@ -151,7 +155,9 @@ void CViewport::AddNewPanel(IViewportPanel* panel){
 
 void CViewport::Think(void){
 	vgui::GetAnimationController()->UpdateAnimations(gEngfuncs.GetClientTime());
-	//m_pNeteaseMusic->Think();
+#ifdef __HAS_NETEASE_API
+	m_pNeteaseMusic->Think();
+#endif
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->Think();
 	}
@@ -371,12 +377,14 @@ bool CViewport::TextMsg(const char* pszName, int iSize, void* pbuf){
 void CViewport::ShowDeathMsg(bool state){
 	m_pDeahMsg->ShowPanel(state);
 }
-//void CViewport::ShowMusic(bool state){
-//	m_pNeteaseMusic->ShowPanel(state);
-//}
-//CNeteasePanel* CViewport::GetMusicPanel(){
-//	return m_pNeteaseMusic;
-//}
+#ifdef __HAS_NETEASE_API
+void CViewport::ShowMusic(bool state){
+	m_pNeteaseMusic->ShowPanel(state);
+}
+CNeteasePanel* CViewport::GetMusicPanel(){
+	return m_pNeteaseMusic;
+}
+#endif
 CAmmoStackPanel* CViewport::GetAmmoStackPanel(){
 	return m_pAmmoStack;
 }
