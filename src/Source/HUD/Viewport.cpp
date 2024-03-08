@@ -380,10 +380,6 @@ bool CViewport::TextMsg(const char* pszName, int iSize, void* pbuf){
 void CViewport::ShowDeathMsg(bool state){
 	m_pDeahMsg->ShowPanel(state);
 }
-void vgui::CViewport::ItemHighLightReset()
-{
-	m_pItemHighLightPanel->ItemHighLightReset();
-}
 void CViewport::EraseHighLight(cl_entity_t* var, int modelindex)
 {
 	m_pItemHighLightPanel->EraseHighLight(var, modelindex);

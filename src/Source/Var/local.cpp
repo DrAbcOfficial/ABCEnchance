@@ -1,7 +1,10 @@
 #include <metahook.h>
+
+#include <utility>
+
 #include "local.h"
-#include <vguilocal.h>
-#include <triangleapi.h>
+#include "vguilocal.h"
+#include "triangleapi.h"
 
 cl_refHookfunc_t gHookFuncs;
 cl_cvars_t gCVars;
@@ -48,8 +51,8 @@ void PlaySoundByName(const char* x, float volum) {
 }
 void VEC_WorldToScreen(vec3_t world, vec3_t screen ) {
 	(*gEngfuncs.pTriAPI->WorldToScreen)(world, screen);
-	screen[0] = (1.0f + screen[0]) * ScreenWidth() / 2; 
-	screen[1] = (1.0f - screen[1]) * ScreenHeight() / 2;
+	screen[0] = std::max<float>(0, (1.0f + screen[0]) * ScreenWidth() / 2); 
+	screen[1] = std::max<float>(0, (1.0f - screen[1]) * ScreenHeight() / 2);
 }
 float ClientTime() {
 	return gEngfuncs.GetClientTime();

@@ -116,9 +116,9 @@ void CCrosshairPanel::OnThink() {
 
 	if (gExportfuncs.CL_IsThirdPerson()) {
 		Vector vecHUD;
-		gEngfuncs.pTriAPI->WorldToScreen(GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::VIEW)->endpos, vecHUD);
-		m_iCenterX = (1.0f + vecHUD[0]) * ScreenWidth() / 2;
-		m_iCenterY = (1.0f - vecHUD[1]) * ScreenHeight() / 2;
+		VEC_WorldToScreen(GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::VIEW)->endpos, vecHUD);
+		m_iCenterX = vecHUD.x;
+		m_iCenterY = vecHUD.y;
 	}
 	else {
 		m_iCenterX = ScreenWidth() / 2;

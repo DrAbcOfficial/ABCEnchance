@@ -669,7 +669,6 @@ void CCustomHud::HUD_Reset(void){
 	m_HudIndicator.Reset();
 	gWR.Reset();
 	m_HudEccoBuyMenu.Reset();
-	g_pViewPort->ItemHighLightReset();
 #ifdef _DEBUG
 	m_HudCCTV.Reset();
 #endif

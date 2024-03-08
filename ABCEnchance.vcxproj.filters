@@ -671,9 +671,6 @@
     <ClCompile Include="src\Source\HUD\indicator.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\itemhighlight.cpp">
-      <Filter>Public\Source\HUD\legacy</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\weaponbank.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
@@ -703,6 +700,9 @@
     </ClCompile>
     <ClCompile Include="src\Source\playertrace.cpp">
       <Filter>Public\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\HUD\vgui\itemhighlight.cpp">
+      <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1381,9 +1381,6 @@
     <ClInclude Include="src\Header\HUD\indicator.h">
       <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\itemhighlight.h">
-      <Filter>Public\Header\HUD\legacy</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\numdisplay.h">
       <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>
@@ -1515,6 +1512,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\playertrace.h">
       <Filter>Public\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\HUD\vgui\itemhighlight.h">
+      <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

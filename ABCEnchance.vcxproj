@@ -214,7 +214,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
     <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
     <ClCompile Include="src\Source\HUD\indicator.cpp" />
-    <ClCompile Include="src\Source\HUD\itemhighlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\ammobar.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\ammostack.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\basestackpanel.cpp" />
@@ -225,6 +224,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\HUD\vgui\flashlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\gindicator.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\health.cpp" />
+    <ClCompile Include="src\Source\HUD\vgui\itemhighlight.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\itemstack.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\motd.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\neteasemusic.cpp" />
@@ -457,7 +457,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />
     <ClInclude Include="src\Header\HUD\eccobuymenu.h" />
     <ClInclude Include="src\Header\HUD\indicator.h" />
-    <ClInclude Include="src\Header\HUD\itemhighlight.h" />
     <ClInclude Include="src\Header\HUD\numdisplay.h" />
     <ClInclude Include="src\Header\HUD\radar.h" />
     <ClInclude Include="src\Header\HUD\vgui\ammobar.h" />
@@ -470,6 +469,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\vgui\flashlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\gindicator.h" />
     <ClInclude Include="src\Header\HUD\vgui\health.h" />
+    <ClInclude Include="src\Header\HUD\vgui\itemhighlight.h" />
     <ClInclude Include="src\Header\HUD\vgui\itemstack.h" />
     <ClInclude Include="src\Header\HUD\vgui\motd.h" />
     <ClInclude Include="src\Header\HUD\vgui\neteasemusic.h" />
