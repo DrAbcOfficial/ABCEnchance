@@ -911,10 +911,7 @@ void CNeteasePanel::SendSMS(const char* phone, int country){
 void CNeteasePanel::SMSLogin(const char* phone, const char* captcha, int country){
 	char* end;
 	GetTaskManager()->Add<netease::neteasecode_t>([](netease::neteaseid_t phone, int captcha, int country){
-		int result = s_pNeteaseApi.load()->GetUser()->VerifyCaptcha(phone, captcha, country);
-		if(result == 200)
-			return s_pNeteaseApi.load()->GetUser()->CellPhone(phone, captcha, country);
-		return result;
+		return s_pNeteaseApi.load()->GetUser()->CellPhone(phone, captcha, country);
 	}, std::strtoull(phone, &end, 10), std::strtoull(captcha, &end, 10), country)->ContinueWith([](netease::neteasecode_t code, CNeteasePanel* panel) {
 		if (code == 200)
 			panel->GetMyInfo(false);
