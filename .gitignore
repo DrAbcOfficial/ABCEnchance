@@ -32,14 +32,16 @@
 # VC user file
 *.vcxproj.user
 
+#Netease Api
+/src/Source/Utility/NeteaseApi.cpp
+/src/Header/Utility/NeteaseApi.h
+
 #Debug ang Release
 /.vs
-
 /Build/*.dll
 /Debug
 /Release
 /Release_AVX2
-/Release_AVX512
 /ABCEnchanceInstaller/.vs
 /ABCEnchanceInstaller/bin
 /ABCEnchanceInstaller/obj
