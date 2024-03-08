@@ -309,7 +309,7 @@ void CItemHighLightPanel::AddEntity(int type, cl_entity_s* ent, const char* mode
 	if (gCVars.pItemHighLight->value <= 0)
 		return;
 	//mdlÄ£ÐÍ
-	if ((ent) && (ent->model) && (ent->model->type == mod_studio))
+	if ((ent) && (ent->model) && (ent->model->type == mod_studio) && ent->baseline.movetype != MOVETYPE_FOLLOW)
 		CreateHighLight(ent);
 }
 void CItemHighLightPanel::LoadItemList() {
