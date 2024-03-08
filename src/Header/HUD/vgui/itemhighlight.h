@@ -15,6 +15,7 @@ namespace vgui {
 class CItemHighLightPanel : public vgui::EditablePanel, public IViewportPanel{
 public:
 	using cl_highlight_t = struct cl_highlight_s {
+		std::string Path;
 		std::string Name;
 		//0 Item 1 Ammo 2 Weapon
 		int Type = 0;
@@ -23,7 +24,6 @@ public:
 
 	DECLARE_CLASS_SIMPLE(CItemHighLightPanel, vgui::EditablePanel);
 	CItemHighLightPanel();
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void OnThink() override;
 
 	// IViewportPanel overrides
@@ -42,6 +42,7 @@ private:
 	std::optional<int> m_iHighLightMdl;
 
 	vgui::Panel* m_pLookatPanel;
+	vgui::Panel* m_pPickupPanel;
 	//temp entity
 	std::unordered_map<int, std::pair<TEMPENTITY*, TEMPENTITY*>> m_mapEntityRestored;
 	//perm list

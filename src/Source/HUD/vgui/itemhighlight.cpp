@@ -18,28 +18,22 @@
 #include "local.h"
 
 #include "vgui_controls/Label.h"
+#include "vgui_controls/GaussianBlurPanel.h"
+#include "vgui_controls/AnimationController.h"
 
 #include "Viewport.h"
 #include "itemhighlight.h"
 
 #define ITEM_LIST_PATH "abcenchance/ItemHighLightList.txt"
 #define VIEWPORT_ITEMHIGHLIGHT_NAME "ItemHighLightPanel"
+extern vgui::HScheme GetViewPortBaseScheme();
 
 class CItemNamePanel : public vgui::Label {
 public:
 	using vgui::Label::Label;
 	DECLARE_CLASS_SIMPLE(CItemNamePanel, vgui::Label);
 	void Update(CItemHighLightPanel::cl_highlight_t* item, int ent) {
-		std::filesystem::path ph(item->Name);
-		std::string phname = ph.filename().replace_extension().string();
-		size_t pos = phname.rfind("_");
-		if (pos != std::string::npos && pos + 1 < phname.size())
-			phname = phname.substr(pos + 1);
-		else {
-			SetVisible(false);
-			return;
-		}	
-		SetText(phname.c_str());
+		SetText(item->Name.c_str());
 		m_pItem = item;
 		m_iEnt = ent;
 	}
@@ -51,10 +45,11 @@ public:
 			SetVisible(false);
 			return;
 		}
-	}
-	virtual void ApplySchemeSettings(vgui::IScheme* pScheme)override {
-		BaseClass::ApplySchemeSettings(pScheme);
-		SetBgColor(Color(0, 0, 0, 0));
+		Vector vecHUD;
+		VEC_WorldToScreen(ent->curstate.origin, vecHUD);
+		int w, h;
+		GetSize(w, h);
+		SetPos(static_cast<int>(vecHUD.x) - w / 2, static_cast<int>(vecHUD.y) - h / 2);
 	}
 	virtual void Reset() {
 		m_pItem = nullptr;
@@ -64,8 +59,94 @@ private:
 	CItemHighLightPanel::cl_highlight_t* m_pItem = nullptr;
 	int m_iEnt;
 };
-
-extern vgui::HScheme GetViewPortBaseScheme();
+class CItemPickupPanel : public vgui::Panel {
+	using Panel::Panel;
+	DECLARE_CLASS_SIMPLE(CItemPickupPanel, vgui::Panel);
+public:
+	CItemPickupPanel(vgui::Panel* parent, const char* name) : BaseClass(parent, name) {
+		m_pGaussian = new vgui::GaussianBlurPanel(this, "Gaussian");
+		m_pText = new vgui::Label(this, "Text", "#GameUI_ABC_ItemPickupNotice");
+	}
+	virtual void SetVisible(bool state) override {
+		if (state && !IsVisible()) {
+			SetWide(0);
+			vgui::GetAnimationController()->RunAnimationCommand(this, "wide", m_iOldWide, 0.0f, 0.2f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+		}
+		BaseClass::SetVisible(state);
+	}
+	virtual void PerformLayout() override {
+		BaseClass::PerformLayout();
+		int w, h;
+		GetSize(w, h);
+		m_pGaussian->SetSize(w, h);
+		m_pText->SetSize(w, h);
+	}
+	virtual void ApplySettings(KeyValues* inResourceData) override {
+		BaseClass::ApplySettings(inResourceData);
+		const char* overrideFont = inResourceData->GetString("font", "");
+		vgui::IScheme* pScheme = vgui::scheme()->GetIScheme(GetScheme());
+		if (*overrideFont)
+			m_pText->SetFont(pScheme->GetFont(overrideFont, IsProportional()));
+		if (inResourceData->GetInt("dulltext", 0) == 1)
+			m_pText->SetTextColorState(vgui::Label::CS_DULL);
+		else if (inResourceData->GetInt("brighttext", 0) == 1)
+			m_pText->SetTextColorState(vgui::Label::CS_BRIGHT);
+		else
+			m_pText->SetTextColorState(vgui::Label::CS_NORMAL);
+		const char* alignmentString = inResourceData->GetString("textAlignment", "");
+		int align = -1;
+		if (!stricmp(alignmentString, "north-west"))
+			align = vgui::Label::a_northwest;
+		else if (!stricmp(alignmentString, "north"))
+			align = vgui::Label::a_north;
+		else if (!stricmp(alignmentString, "north-east"))
+			align = vgui::Label::a_northeast;
+		else if (!stricmp(alignmentString, "west"))
+			align = vgui::Label::a_west;
+		else if (!stricmp(alignmentString, "center"))
+			align = vgui::Label::a_center;
+		else if (!stricmp(alignmentString, "east"))
+			align = vgui::Label::a_east;
+		else if (!stricmp(alignmentString, "south-west"))
+			align = vgui::Label::a_southwest;
+		else if (!stricmp(alignmentString, "south"))
+			align = vgui::Label::a_south;
+		else if (!stricmp(alignmentString, "south-east"))
+			align = vgui::Label::a_southeast;
+		if (align != -1)
+			m_pText->SetContentAlignment((vgui::Label::Alignment)align);
+		m_pGaussian->SetBlurness(inResourceData->GetInt("blur", 3));
+	}
+	void UpdateName(const char* name) {
+		std::string sz = m_szTemplate;
+		const char* tkey = gEngfuncs.Key_LookupBinding("use");
+		if (tkey != nullptr) {
+			std::string key;
+			std::transform(tkey, tkey + std::strlen(tkey), std::back_inserter(key), [](char c) {
+				return std::toupper(c);
+				});
+			size_t pos = sz.find("%%USE_BINDKEY%%");
+			if (pos != std::string::npos)
+				sz = sz.replace(pos, std::strlen("%%USE_BINDKEY%%"), key);
+			pos = sz.find("%%PICKUP_ITEM%%");
+			if (pos != std::string::npos)
+				sz = sz.replace(pos, std::strlen("%%PICKUP_ITEM%%"), name);
+		}
+		m_pText->SetText(sz.c_str());
+	}
+	void SetOldValue() {
+		m_iOldWide = GetWide();
+		char temp[256];
+		m_pText->GetText(temp, 256);
+		m_szTemplate = temp;
+		
+	}
+private:
+	vgui::GaussianBlurPanel* m_pGaussian = nullptr;
+	vgui::Label* m_pText = nullptr;
+	std::string m_szTemplate;
+	size_t m_iOldWide = 0;
+};
 CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIGHLIGHT_NAME){
 	SetMouseInputEnabled(false);
 	SetKeyBoardInputEnabled(false);
@@ -80,24 +161,26 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 	gCVars.pItemHighLightNameFOV = CREATE_CVAR("cl_itemhighlightfov", "20", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = fmodf(cvar->value, 360);
 	});
+	m_pPickupPanel = new CItemPickupPanel(this, "Pickup");
 	m_pLookatPanel = new CItemNamePanel(this, "ItemNamePanel", "");
 	LoadControlSettings(VGUI2_ROOT_DIR "ItemHighLightPanel.res");
+
+	reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->SetOldValue();
 	LoadItemList();
-}
-void CItemHighLightPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
-	BaseClass::ApplySchemeSettings(pScheme);
-	SetBgColor(Color(0, 0, 0, 0));
 }
 void CItemHighLightPanel::OnThink(){
 	if (gCVars.pItemHighLightName->value <= 0)
 		return;
 	//check
 	float maxdot = 0.0f;
-	int entindex = -1;
+	cl_entity_t* maxdotent = nullptr;
+
+	auto local = gEngfuncs.GetLocalPlayer();
 	Vector vecView;
 	gEngfuncs.GetViewAngles(vecView);
 	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
-
+	Vector vecViewOfs;
+	gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(vecViewOfs);
 	for (auto iter = m_mapEntityRestored.begin(); iter != m_mapEntityRestored.end();) {
 		auto& item = *iter;
 		cl_entity_t* ent = gEngfuncs.GetEntityByIndex(item.first);
@@ -106,9 +189,9 @@ void CItemHighLightPanel::OnThink(){
 			iter = m_mapEntityRestored.erase(iter);
 			continue;
 		}
-		auto local = gEngfuncs.GetLocalPlayer();
 		Vector vecLength = ent->curstate.origin;
 		vecLength -= local->curstate.origin;
+		vecLength -= vecViewOfs;
 		if (vecLength.Length() >= gCVars.pItemHighLightRange->value) {
 			item.second.first->die = item.second.second->die = 0;
 			iter = m_mapEntityRestored.erase(iter);
@@ -117,25 +200,27 @@ void CItemHighLightPanel::OnThink(){
 		float dot = vecLength.Normalize().Dot(vecView.Normalize());
 		if (dot > maxdot) {
 			maxdot = dot;
-			entindex = item.first;
+			maxdotent = ent;
 		}
 		iter++;
 	}
 	float needdot = cos(gCVars.pItemHighLightNameFOV->value * M_PI / 180);
-	if (entindex > -1 && maxdot >= needdot) {
+	if (maxdotent != nullptr && maxdot >= needdot) {
 		m_pLookatPanel->SetVisible(true);
-		auto ent = gEngfuncs.GetEntityByIndex(entindex);
-		auto item = m_mapHighLightTable[ent->curstate.modelindex];
-		reinterpret_cast<CItemNamePanel*>(m_pLookatPanel)->Update(item, entindex);
-
-		Vector vecHUD;
-		VEC_WorldToScreen(ent->curstate.origin, vecHUD);
-		int w, h;
-		GetSize(w, h);
-		SetPos(static_cast<int>(vecHUD.x) - w / 2, static_cast<int>(vecHUD.y) - h / 2);
+		auto item = m_mapHighLightTable[maxdotent->curstate.modelindex];
+		reinterpret_cast<CItemNamePanel*>(m_pLookatPanel)->Update(item, maxdotent->index);
+		Vector vecLength = maxdotent->curstate.origin;
+		vecLength -= local->curstate.origin;
+		float len = vecLength.Length();
+		if (vecLength.Length() <= 86) {
+			reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->UpdateName(item->Name.c_str());
+			m_pPickupPanel->SetVisible(true);
+		}
 	}
-	else
+	else {
 		m_pLookatPanel->SetVisible(false);
+		m_pPickupPanel->SetVisible(false);
+	}
 }
 void CItemHighLightPanel::Reset() {
 	m_iHighLightMdl.reset();
@@ -146,7 +231,7 @@ void CItemHighLightPanel::CreateHighLight(cl_entity_t* var) {
 		std::unordered_map<int, cl_highlight_t*> temp = {};
 		for (auto iter = m_mapHighLightTable.begin(); iter != m_mapHighLightTable.end(); iter++) {
 			auto& item = (*iter).second;
-			item->Index = gEngfuncs.pEventAPI->EV_FindModelIndex(item->Name.c_str());
+			item->Index = gEngfuncs.pEventAPI->EV_FindModelIndex(item->Path.c_str());
 			if (item->Index > -1)
 				temp[item->Index] = item;
 		}
@@ -221,9 +306,8 @@ void CItemHighLightPanel::AddEntity(int type, cl_entity_s* ent, const char* mode
 	if (gCVars.pItemHighLight->value <= 0)
 		return;
 	//mdlÄ£ÐÍ
-	if ((ent) && (ent->model) && (ent->model->type == mod_studio)) {
+	if ((ent) && (ent->model) && (ent->model->type == mod_studio))
 		CreateHighLight(ent);
-	}
 }
 void CItemHighLightPanel::LoadItemList() {
 	char szItemPraseBuf[256];
@@ -239,7 +323,13 @@ void CItemHighLightPanel::LoadItemList() {
 			break;
 		if (i == 0) {
 			cl_highlight_s* item = new cl_highlight_s();
-			item->Name = szItemPraseBuf;
+			item->Path = szItemPraseBuf;
+			std::filesystem::path ph(item->Path);
+			std::string phname = ph.filename().replace_extension().string();
+			size_t pos = phname.find_first_of("_");
+			if (pos != std::string::npos && pos + 1 < phname.size())
+				phname = phname.substr(pos + 1);
+			item->Name = phname;
 			m_mapHighLightTable.emplace(std::make_pair(index, item));
 		}
 		else {
