@@ -161,6 +161,7 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 	gCVars.pItemHighLightNameFOV = CREATE_CVAR("cl_itemhighlightfov", "20", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = fmodf(cvar->value, 360);
 	});
+	gCVars.pItemHighLightPickup = CREATE_CVAR("cl_itemhighlightpickup", "1", FCVAR_VALUE, NULL);
 	m_pPickupPanel = new CItemPickupPanel(this, "Pickup");
 	m_pLookatPanel = new CItemNamePanel(this, "ItemNamePanel", "");
 	LoadControlSettings(VGUI2_ROOT_DIR "ItemHighLightPanel.res");
@@ -169,12 +170,11 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 	LoadItemList();
 }
 void CItemHighLightPanel::OnThink(){
-	if (gCVars.pItemHighLightName->value <= 0)
+	if (gCVars.pItemHighLightName->value <= 0 && gCVars.pItemHighLightPickup->value <= 0)
 		return;
 	//check
 	float maxdot = 0.0f;
 	cl_entity_t* maxdotent = nullptr;
-
 	auto local = gEngfuncs.GetLocalPlayer();
 	Vector vecView;
 	gEngfuncs.GetViewAngles(vecView);
@@ -206,15 +206,18 @@ void CItemHighLightPanel::OnThink(){
 	}
 	float needdot = cos(gCVars.pItemHighLightNameFOV->value * M_PI / 180);
 	if (maxdotent != nullptr && maxdot >= needdot) {
-		m_pLookatPanel->SetVisible(true);
 		auto item = m_mapHighLightTable[maxdotent->curstate.modelindex];
-		reinterpret_cast<CItemNamePanel*>(m_pLookatPanel)->Update(item, maxdotent->index);
-		Vector vecLength = maxdotent->curstate.origin;
-		vecLength -= local->curstate.origin;
-		float len = vecLength.Length();
-		if (vecLength.Length() <= 86) {
-			reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->UpdateName(item->Name.c_str());
-			m_pPickupPanel->SetVisible(true);
+		if (gCVars.pItemHighLightName->value > 0) {
+			m_pLookatPanel->SetVisible(true);
+			reinterpret_cast<CItemNamePanel*>(m_pLookatPanel)->Update(item, maxdotent->index);
+		}
+		if (gCVars.pItemHighLightPickup->value > 0) {
+			Vector vecLength = maxdotent->curstate.origin;
+			vecLength -= local->curstate.origin;
+			if (vecLength.Length() <= 86) {
+				reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->UpdateName(item->Name.c_str());
+				m_pPickupPanel->SetVisible(true);
+			}
 		}
 	}
 	else {

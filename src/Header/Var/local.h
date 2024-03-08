@@ -118,6 +118,7 @@ typedef struct cl_cvars_s{
 	cvar_t* pItemHighLight = nullptr;
 	cvar_t* pItemHighLightRange = nullptr;
 	cvar_t* pItemHighLightNameFOV = nullptr;
+	cvar_t* pItemHighLightPickup = nullptr;
 	cvar_t* pItemHighLightName = nullptr;
 
 	cvar_t* pEccoBuyMenu = nullptr;
