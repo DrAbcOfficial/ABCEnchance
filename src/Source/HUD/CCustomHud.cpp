@@ -80,7 +80,6 @@ int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf) {
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
 	gWR.SetAmmo(iIndex, abs(iCount));
-	gCustomHud.SetCurWeapon(gWR.m_pCurWeapon);
 	return m_pfnAmmoX(pszName, iSize, pbuf);
 }
 int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf) {
@@ -148,14 +147,14 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
 		int iClip = READ_LONG();
 		int iClip2 = READ_LONG();
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
+		gWR.m_pCurWeapon = pWeapon;
+		gCustomHud.SetCurWeapon(pWeapon);
 		if (!pWeapon)
 			return m_pfnCurWeapon(pszName, iSize, pbuf);
 		//更新弹匣信息
 		pWeapon->iClip = iClip;
 		pWeapon->iClip2 = iClip2;
 		pWeapon->iState = iState;
-		gWR.m_pCurWeapon = pWeapon;
-		gCustomHud.SetCurWeapon(pWeapon);
 	}
 	else {
 		int iFlag = READ_SHORT();

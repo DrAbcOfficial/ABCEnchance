@@ -239,8 +239,7 @@ void CItemHighLightPanel::CreateHighLight(cl_entity_t* var) {
 				temp[item->Index] = item;
 		}
 		m_mapHighLightTable.clear();
-		//use std::swap, but first i need fuck sourcesdk
-		m_mapHighLightTable = temp;
+		m_mapHighLightTable.swap(temp);
 		m_iHighLightMdl = PrecacheExtraModel("abcenchance/mdl/item_highlight.mdl");
 	}
 	if (m_mapHighLightTable.find(var->curstate.modelindex) == m_mapHighLightTable.end())
