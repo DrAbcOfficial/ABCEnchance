@@ -162,8 +162,8 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 		cvar->value = fmodf(cvar->value, 360);
 	});
 	gCVars.pItemHighLightPickup = CREATE_CVAR("cl_itemhighlightpickup", "1", FCVAR_VALUE, NULL);
-	m_pPickupPanel = new CItemPickupPanel(this, "Pickup");
 	m_pLookatPanel = new CItemNamePanel(this, "ItemNamePanel", "");
+	m_pPickupPanel = new CItemPickupPanel(this, "Pickup");
 	LoadControlSettings(VGUI2_ROOT_DIR "ItemHighLightPanel.res");
 
 	reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->SetOldValue();

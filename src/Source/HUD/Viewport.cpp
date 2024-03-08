@@ -91,6 +91,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pRadar = new CRadarPanel());
 	AddNewPanel(m_pEffectPanel = new CEffectPanel());
 	AddNewPanel(m_pSidePanel = new CSidePanel());
+	AddNewPanel(m_pItemHighLightPanel = new CItemHighLightPanel());
 	AddNewPanel(m_pGIndicator = new CGenadeIndicatorPanel());
 	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
 	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
@@ -115,7 +116,6 @@ void CViewport::Start(void){
 	AddNewPanel(m_pItemStack = new CItemStackPanel());
 	AddNewPanel(m_pWeaponStack = new CWeaponStackPanel());
 	AddNewPanel(m_pWeaponChoose = new CWeaponChoosePanel());
-	AddNewPanel(m_pItemHighLightPanel = new CItemHighLightPanel());
 	SetVisible(false);
 }
 
