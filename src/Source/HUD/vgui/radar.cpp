@@ -259,7 +259,7 @@ void CRadarPanel::Paint(){
 				CMathlib::VectorAngles(vecLength, vecAngle);
 				float nyaw = CMathlib::Q_DEG2RAD(vecAngle[CMathlib::Q_YAW] - local->curstate.angles[CMathlib::Q_YAW] + 90);
 				//缩放比率暂定0.2，交换取反符合屏幕坐标系
-				swap(vecLength.x, vecLength.y);
+				std::swap(vecLength.x, vecLength.y);
 				vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
 				vecLength.z = 0;
 				float vlen = vecLength.Length();
