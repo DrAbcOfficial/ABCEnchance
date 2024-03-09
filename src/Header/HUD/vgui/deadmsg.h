@@ -13,7 +13,7 @@ public:
 	CDeathMsgItem(Panel* parent, const wchar_t* victim, const wchar_t* attacker, const wchar_t* inflictor, vgui::IScheme* scheme);
 
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	virtual void PaintBackground() override;
+	virtual void PerformLayout() override;
 private:
 	vgui::Label* m_pAttacker;
 	vgui::Label* m_pInflictor;
@@ -27,7 +27,7 @@ public:
 
 	CDeathMsgPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	virtual void PaintBackground() override;
+	virtual void PerformLayout() override;
 	void AddItem(const wchar_t* victim, const wchar_t* attacker, const wchar_t* inflictor);
 	// IViewportPanel overrides
 	virtual const char* GetName() override;

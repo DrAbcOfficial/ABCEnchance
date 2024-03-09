@@ -31,6 +31,11 @@ CDeathMsgItem::CDeathMsgItem(Panel* parent, const wchar_t* victim, const wchar_t
 	inf += L"]";
 	m_pInflictor = new Label(this, "Inflictor", inf.c_str());
 	m_pVictim = new Label(this, "Victim", victim);
+
+	m_pAttacker->SetContentAlignment(vgui::Label::a_east);
+	m_pInflictor->SetContentAlignment(vgui::Label::a_center);
+	m_pVictim->SetContentAlignment(vgui::Label::a_west);
+	m_pBackGround->SetRoundedCorners(PANEL_ROUND_CORNER_ALL);
 }
 void CDeathMsgItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
@@ -40,18 +45,13 @@ void CDeathMsgItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 	m_pInflictor->SetFgColor(GetSchemeColor("DeathMsgPanel.ItemInflictorColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
 	m_pVictim->SetFgColor(GetSchemeColor("DeathMsgPanel.ItemVictimColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
 
-	m_pAttacker->SetContentAlignment(vgui::Label::a_center);
-	m_pInflictor->SetContentAlignment(vgui::Label::a_center);
-	m_pVictim->SetContentAlignment(vgui::Label::a_center);
-
 	const char* font = pScheme->GetResourceString("DeathMsgPanel.Font");
 	m_pAttacker->SetFont(pScheme->GetFont(font, IsProportional()));
 	m_pInflictor->SetFont(pScheme->GetFont(font, IsProportional()));
 	m_pVictim->SetFont(pScheme->GetFont(font, IsProportional()));
-
-	m_pBackGround->SetRoundedCorners(PANEL_ROUND_CORNER_ALL);
 }
-void CDeathMsgItem::PaintBackground(){
+void CDeathMsgItem::PerformLayout() {
+	BaseClass::PerformLayout();
 	int wv, hv;
 	m_pVictim->GetTextImage()->GetContentSize(wv, hv);
 	m_pVictim->SetSize(wv, hv);
@@ -69,9 +69,7 @@ void CDeathMsgItem::PaintBackground(){
 
 	m_pBackGround->SetSize(wv + wi + wa + 2, h);
 	m_pBackGround->SetPos(w - wv - wi - wa - 2, 0);
-	BaseClass::PaintBackground();
 }
-
 CDeathMsgPanel::CDeathMsgPanel()
 	: BaseClass(nullptr, VIEWPORT_DEATHMSGPANEL_NAME){
 	SetProportional(true);
@@ -104,7 +102,8 @@ void CDeathMsgPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	SetBgColor(GetSchemeColor("DeathMsgPanel.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pScheme = pScheme;
 }
-void CDeathMsgPanel::PaintBackground(){
+void CDeathMsgPanel::PerformLayout(){
+	BaseClass::PerformLayout();
 	if (m_aryDeath.size() == 0)
 		return;
 	int w, h;
@@ -115,10 +114,9 @@ void CDeathMsgPanel::PaintBackground(){
 		if ((*iter)->IsVisible()) {
 			(*iter)->SetSize(w, itemh);
 			(*iter)->SetPos(0, y);
-			y -= itemh - 1;
+			y -= itemh + vgui::scheme()->GetProportionalScaledValue(1);
 		}
 	}
-	BaseClass::PaintBackground();
 }
 void CDeathMsgPanel::AddItem(const wchar_t* victim, const wchar_t* attacker, const wchar_t* inflictor){
 	ShowPanel(true);
@@ -137,6 +135,7 @@ void CDeathMsgPanel::AddItem(const wchar_t* victim, const wchar_t* attacker, con
 	char buffer[256 * 4];
 	Q_snprintf(buffer, cl, cv, ck[0] == '\0' ? "Something" : ck, ce);
 	gEngfuncs.Con_Printf(buffer);
+	InvalidateLayout();
 }
 void CDeathMsgPanel::ShowPanel(bool state){
 	if (state == IsVisible())
