@@ -80,6 +80,7 @@ int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf) {
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
 	gWR.SetAmmo(iIndex, abs(iCount));
+	g_pViewPort->GetAmmoPanel()->RefreshAmmo();
 	return m_pfnAmmoX(pszName, iSize, pbuf);
 }
 int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf) {

@@ -81,11 +81,15 @@ void CAmmoPanel::SetParent(vgui::VPANEL parent){
 
 void CAmmoPanel::SetWeapon(WEAPON* weapon){
 	m_pHandledWeapon = weapon;
+	RefreshAmmo();
+}
+
+void CAmmoPanel::RefreshAmmo(){
 	if (!m_pHandledWeapon) {
 		ShowPanel(false);
 		return;
 	}
-	if(g_pViewPort->HasSuit())
+	if (g_pViewPort->HasSuit())
 		ShowPanel(true);
 	if (!(m_pHandledWeapon->iState & VALID))
 		return;
@@ -97,10 +101,10 @@ void CAmmoPanel::SetWeapon(WEAPON* weapon){
 		m_pSpr1->SetRect(m_pHandledWeapon->rcAmmo.left, m_pHandledWeapon->rcAmmo.right, m_pHandledWeapon->rcAmmo.top, m_pHandledWeapon->rcAmmo.bottom);
 		m_pSpr1->SetRenderMode(kRenderTransAdd);
 		m_Ammo1Icon->SetImage(m_pSpr1);
-		int iAmmoLeft = gWR.CountAmmo(weapon->iAmmoType);
+		int iAmmoLeft = gWR.CountAmmo(m_pHandledWeapon->iAmmoType);
 		if (m_pHandledWeapon->iClip >= 0) {
-			if (m_pHandledWeapon->iState & UZI && 
-				m_pHandledWeapon->iFlags & 32 && 
+			if (m_pHandledWeapon->iState & UZI &&
+				m_pHandledWeapon->iFlags & 32 &&
 				m_pHandledWeapon->iClip2 >= 0)
 				Q_snprintf(buf, "%dx%d/%d", m_pHandledWeapon->iClip2, m_pHandledWeapon->iClip, iAmmoLeft);
 			else

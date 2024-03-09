@@ -437,6 +437,10 @@ CMotdPanel* CViewport::GetMotdPanel(){
 	return m_pMOTDPanel;
 }
 
+CAmmoPanel* CViewport::GetAmmoPanel(){
+	return m_pAmmoPanel;
+}
+
 Color CViewport::GetPlayerColor(int index){
 	vec3_t color;
 	CMathlib::VectorCopy(gHookFuncs.GetClientColor(index), color);

@@ -84,6 +84,7 @@ public:
 	CScorePanel* GetScoreBoard();
 	CVotePanel* GetVotePanel();
 	CMotdPanel* GetMotdPanel();
+	CAmmoPanel* GetAmmoPanel();
 	Color GetPlayerColor(int index);
 	bool IsPlayerTileEnable();
 
