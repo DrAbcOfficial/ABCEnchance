@@ -1233,7 +1233,19 @@ void ModelViewPanel::Paint(){
 
 	float flNear = 4.0f;
 	float flFar = 1024.0f;
-	gluPerspective(m_flFov, (float)m_iFboWidth /(float)m_iFboHeight, flNear, flFar);
+	float flAspect = (float)m_iFboWidth / (float)m_iFboHeight;
+	float f = 1.0f / tanf(m_flFov * 0.5f * M_PI / 180.0f); // 视场角的余切值
+	float a = (flFar + flNear) / (flNear - flFar); // 近远平面的比值
+	float b = (2.0f * flFar * flNear) / (flNear - flFar); // 近远平面的乘积
+	vec_t matrix[16];
+	// 填充矩阵
+	matrix[0] = f / flAspect;	matrix[4] = 0.0f;	matrix[8] = 0.0f;	matrix[12] = 0.0f;
+	matrix[1] = 0.0f;			matrix[5] = f;		matrix[9] = 0.0f;	matrix[13] = 0.0f;
+	matrix[2] = 0.0f;			matrix[6] = 0.0f;	matrix[10] = a;		matrix[14] = b;
+	matrix[3] = 0.0f;			matrix[7] = 0.0f;	matrix[11] = -1.0f; matrix[15] = 0.0f;
+
+	glLoadMatrixf(matrix);
+
 	glTranslatef(m_aryOrigin[0], m_aryOrigin[1], m_aryOrigin[2]);
 
 	glPushMatrix();

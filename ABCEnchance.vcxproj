@@ -95,7 +95,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
@@ -127,7 +127,7 @@ $(FreeImageCheckRequirements)</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
@@ -161,7 +161,7 @@ $(FreeImageCheckRequirements)</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;GlU32.Lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
