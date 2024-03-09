@@ -19,7 +19,7 @@
 #include "gl_draw.h"
 
 #include "vgui_controls/ImagePanel.h"
-#include "avatar_image.h"
+#include "vgui_controls/avatar_image.h"
 
 #include "player_info.h"
 #include <CCustomHud.h>
@@ -27,22 +27,6 @@
 #include "radar.h"
 
 #undef clamp
-
-CRadarAvatarPanel::CRadarAvatarPanel(vgui::Panel* parent, int index) : BaseClass(parent, "") {
-	m_iIndex = index + 1;
-	m_pAvatar = new vgui::CAvatarImage();
-	SetImage(m_pAvatar);
-}
-void CRadarAvatarPanel::Paint(){
-	CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(m_iIndex);
-	if (pi->IsValid()) {
-		m_pAvatar->SetAvatarSteamID(*pi->GetSteamID());
-		m_pAvatar->SetDrawFriend(true);
-		m_pAvatar->SetPos(GetXPos(), GetYPos());
-		m_pAvatar->SetSize(GetWide(), GetTall());
-		m_pAvatar->Paint();
-	}
-}
 
 class CRadarMapImage : public vgui::IImage_HL25 {
 public:
@@ -155,15 +139,16 @@ CRadarPanel::CRadarPanel()
 	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->ShowPanel(cvar->value);
 	});
-	gCVars.pRadarZoom = CREATE_CVAR("cl_radarzoom", "2.5", FCVAR_VALUE, nullptr);
+	gCVars.pRadarZMin = CREATE_CVAR("cl_radar_zmin", "256", FCVAR_VALUE, nullptr);
+	gCVars.pRadarZMax = CREATE_CVAR("cl_radar_zmax", "20", FCVAR_VALUE, nullptr);
+	gCVars.pRadarZoom = CREATE_CVAR("cl_radar_zoom", "2.5", FCVAR_VALUE, nullptr);
+
 	gCVars.pRadarAvatar = CREATE_CVAR("cl_radar_avatar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->SetAvatarVisible(cvar->value);
 	});
 	gCVars.pRadarAvatarSize = CREATE_CVAR("cl_radar_avatarsize", "20", FCVAR_VALUE, nullptr);
 	gCVars.pRadarAvatarScale = CREATE_CVAR("cl_radar_avatarscale", "0.2", FCVAR_VALUE, nullptr);
-	gCVars.pRadarZMin = CREATE_CVAR("cl_radar_zmin", "256", FCVAR_VALUE, nullptr);
-	gCVars.pRadarZMax = CREATE_CVAR("cl_radar_zmax", "20", FCVAR_VALUE, nullptr);
-
+	
 	m_pBackground = new vgui::ImagePanel(this, "Background");
 	m_pRoundBackground = new vgui::ImagePanel(this, "RoundBackground");
 	m_pMapground = new vgui::ImagePanel(this, "Mapground");
@@ -171,7 +156,7 @@ CRadarPanel::CRadarPanel()
 	m_pNorthground = new vgui::ImagePanel(this, "Northground");
 	m_pViewangleground = new vgui::ImagePanel(this, "Viewangleground");
 	for (size_t i = 0; i < 32; i++){
-		m_aryPlayerAvatars[i] = new CRadarAvatarPanel(this, i);
+		m_aryPlayerAvatars[i] = new vgui::CAvatarImagePanel(this, "Avatar");
 		m_aryPlayerAvatars[i]->SetVisible(true);
 		m_aryPlayerAvatars[i]->SetShouldScaleImage(true);
 	}
@@ -252,9 +237,9 @@ void CRadarPanel::Paint(){
 					continue;
 				}
 				iter->SetVisible(true);
-				Vector vecLength;
 				//与目标距离
-				CMathlib::VectorSubtract(entity->curstate.origin, local->curstate.origin, vecLength);
+				Vector vecLength = entity->curstate.origin;
+				vecLength -= local->curstate.origin;
 				Vector vecAngle;
 				CMathlib::VectorAngles(vecLength, vecAngle);
 				float nyaw = CMathlib::Q_DEG2RAD(vecAngle[CMathlib::Q_YAW] - local->curstate.angles[CMathlib::Q_YAW] + 90);
@@ -275,18 +260,6 @@ void CRadarPanel::Paint(){
 	}
 	BaseClass::Paint();
 }
-void CRadarPanel::OnThink(){
-	float flTime = gEngfuncs.GetClientTime();
-	if (flTime < flNextUpdateTrTime)
-		return;
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	if (local == nullptr)
-		return;
-
-	gCustomHud.m_flOverViewZmax = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::HEAD)->endpos[2] - gCVars.pRadarZMax->value;
-	gCustomHud.m_flOverViewZmin = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::FOOT)->endpos[2] - gCVars.pRadarZMin->value;
-	flNextUpdateTrTime = flTime + 1.0f;
-}
 void CRadarPanel::ApplySettings(KeyValues* inResourceData){
 	BaseClass::ApplySettings(inResourceData);
 	GetSize(m_iStartWidth, m_iStartTall);
@@ -306,7 +279,6 @@ const char* CRadarPanel::GetName(){
 	return VIEWPORT_RADAR_NAME;
 }
 void CRadarPanel::Reset(){
-	flNextUpdateTrTime = 0;
 	SetScale(false);
 	cvar_t* pCvarDevC = CVAR_GET_POINTER("dev_overview_color");
 	if (pCvarDevC && g_metaplugins.renderer.has) {
@@ -332,6 +304,9 @@ void CRadarPanel::SetParent(vgui::VPANEL parent) {
 }
 bool g_bInRenderRadar = false;
 void CRadarPanel::RenderRadar(){
+	gCustomHud.m_flOverViewZmax = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::HEAD)->endpos[2] - gCVars.pRadarZMax->value;
+	gCustomHud.m_flOverViewZmin = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::FOOT)->endpos[2] - gCVars.pRadarZMin->value;
+
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
 	//设置到玩家脑袋上朝下看

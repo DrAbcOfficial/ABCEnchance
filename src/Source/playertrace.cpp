@@ -30,10 +30,10 @@ void CPlayerTrace::Update(){
 	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc + vecOfs, vecEnd, PM_STUDIO_BOX, local->index, &tr);
 	memcpy_s(&m_trViewpoint, sizeof(m_trViewpoint), &tr, sizeof(tr));
 	//head
-	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecSrc + Vector(0, 0, 8192), PM_STUDIO_BOX, local->index, &tr);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecSrc + Vector(0, 0, 8192), PM_WORLD_ONLY, local->index, &tr);
 	memcpy_s(&m_trHead, sizeof(m_trHead), &tr, sizeof(tr));
 	//foot
-	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecSrc + Vector(0, 0, -8192), PM_STUDIO_BOX, local->index, &tr);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecSrc + Vector(0, 0, -8192), PM_WORLD_ONLY, local->index, &tr);
 	memcpy_s(&m_trFoot, sizeof(m_trFoot), &tr, sizeof(tr));
 }
 

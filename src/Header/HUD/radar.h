@@ -7,18 +7,8 @@
 #include <vgui_controls/ImagePanel.h>
 #include "IViewportPanel.h"
 namespace vgui {
-	class CAvatarImage;
+	class CAvatarImagePanel;
 }
-
-class CRadarAvatarPanel : public vgui::ImagePanel {
-	DECLARE_CLASS_SIMPLE(CRadarAvatarPanel, ImagePanel);
-public:
-	CRadarAvatarPanel(vgui::Panel* parent, int index);
-	virtual void Paint() override;
-private:
-	vgui::CAvatarImage* m_pAvatar;
-	int m_iIndex;
-};
 
 class CRadarPanel : public vgui::EditablePanel, public IViewportPanel {
 public:
@@ -28,7 +18,6 @@ public:
 	~CRadarPanel();
 	virtual void PerformLayout() override;
 	virtual void Paint() override;
-	virtual void OnThink() override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	// IViewportPanel overrides
@@ -50,7 +39,7 @@ private:
 	vgui::ImagePanel* m_pNorthground;
 	vgui::ImagePanel* m_pViewangleground;
 
-	std::array<CRadarAvatarPanel*, 32> m_aryPlayerAvatars;
+	std::array<vgui::CAvatarImagePanel*, 32> m_aryPlayerAvatars;
 
 	float m_flRoundRadius;
 	Color m_cOutline;
@@ -62,8 +51,6 @@ private:
 	int m_iStartTall;
 	int m_iScaledWidth;
 	int m_iScaledTall;
-
-	float flNextUpdateTrTime;
 
 	size_t iOverviewR = 0;
 	size_t iOverviewG = 0;
