@@ -62,7 +62,6 @@ const clientdata_t* gClientData;
 float m_hfov;
 
 overviewInfo_t* gDevOverview;
-uint* g_arySlotPuVar = nullptr;
 refdef_t* g_refdef = nullptr;
 
 struct playerppmoveinfo {
@@ -213,12 +212,8 @@ void FillEngineAddress() {
 		{
 			Fill_Sig(R_RENDERVIEW_SIG_SVENGINE, g_dwEngineBase, g_dwEngineSize, R_RenderView);
 			addr = (DWORD)Search_Pattern_From(gHookFuncs.R_RenderView, R_RENDERSCENE_SIG_SVENGINE);
-			Sig_AddrNotFound(R_RenderScene);
-			gHookFuncs.R_RenderScene = (void(*)(void))(addr + 5 + 4 + *(int*)(addr + 5));
-
 			gHookFuncs.R_RenderView = (decltype(gHookFuncs.R_RenderView))Search_Pattern(R_RENDERVIEW_SIG_SVENGINE);
 			Sig_FuncNotFound(R_RenderView);
-
 			addr = (ULONG_PTR)Search_Pattern_From(gHookFuncs.R_RenderView, R_RENDERSCENE_SIG_SVENGINE);
 			Sig_AddrNotFound(R_RenderScene);
 			gHookFuncs.R_RenderScene = (decltype(gHookFuncs.R_RenderScene))GetCallAddress(addr + 4);
@@ -269,12 +264,6 @@ void FillAddress(){
 			Sig_AddrNotFound(SetPunchAngle);
 			gHookFuncs.SetPunchAngle = (decltype(gHookFuncs.SetPunchAngle))GetCallAddress(addr + 8);
 		}
-#define SC_SLOTPOS_PUVAR_SIG "\x53\x8B\x5C\x24\x08\x55\x56\x57\x8B\xE9\x33\xFF\xBE"
-		{
-			addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_dwClientBase, g_dwClientSize, SC_SLOTPOS_PUVAR_SIG, Sig_Length(SC_SLOTPOS_PUVAR_SIG));
-			Sig_AddrNotFound(g_arySlotPuVar);
-			g_arySlotPuVar = *(decltype(g_arySlotPuVar)*)(addr + 13);
-		}
 		if (1)
 		{
 			addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
@@ -283,14 +272,14 @@ void FillAddress(){
 	}
 }
 
-std::vector<hook_t*> aryEngineHook = {};
-std::vector<hook_t*> aryClientHook = {};
+static std::vector<hook_t*> s_aryEngineHook = {};
+static std::vector<hook_t*> s_aryClientHook = {};
 
 void AddHook(hook_t* h) {
-	aryClientHook.push_back(h);
+	s_aryClientHook.push_back(h);
 }
 void AddEngineHook(hook_t* h) {
-	aryEngineHook.push_back(h);
+	s_aryEngineHook.push_back(h);
 }
 void InstallEngineHook() {
 	Fill_InlineEfxHook(R_BloodSprite);
@@ -313,37 +302,30 @@ void InstallClientHook(){
 	Install_InlineHook(CStudioModelRenderer_Init);
 }
 void UninstallEngineHook() {
-	for (hook_t* h : aryEngineHook) {
+	for (hook_t* h : s_aryEngineHook) {
 		Uninstall_Hook(h);
 	}
-	aryEngineHook.clear();
+	s_aryEngineHook.clear();
 }
 void UninstallClientHook() {
-	for (hook_t* h : aryClientHook) {
+	for (hook_t* h : s_aryClientHook) {
 		Uninstall_Hook(h);
 	}
-	aryClientHook.clear();
+	s_aryClientHook.clear();
 }
-void CheckAsset()
-{
+void CheckAsset(){
 	if (!g_pFileSystem->FileExists("abcenchance/ABCEnchance.res"))
-	{
 		SYS_ERROR("Missing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
-		return;
-	}
 }
 
-void GL_Init(void)
-{
+void GL_Init(void){
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
-
 	auto err = glewInit();
 	if (GLEW_OK != err){
 		SYS_ERROR("glewInit failed, %s", glewGetErrorString(err));
 		return;
 	}
 	GL_ShaderInit();
-	g_pViewPort->Init();
 	gCustomHud.GL_Init();
 }
 extern void GameUI_GetInterface();
@@ -401,6 +383,7 @@ void HUD_Init(void){
 
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
+	g_pViewPort->Init();
 	GetClientVoiceMgr()->HUD_Init();
 	GameUI_GetInterface();
 	abcconfig::LoadJson();
@@ -457,7 +440,7 @@ int HUD_VidInit(void){
 	else
 		SYS_ERROR("Can not find vanillin HUDs");
 	if (g_pViewPort)
-		g_pViewPort->VidInit();
+		
 
 	//Fillup Default CVars
 	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
@@ -471,6 +454,7 @@ int HUD_VidInit(void){
 
 	int result = gExportfuncs.HUD_VidInit();
 	gCustomHud.HUD_VidInit();
+	g_pViewPort->VidInit();
 	return result;
 }
 void HUD_VoiceStatus(int entindex, qboolean talking) {

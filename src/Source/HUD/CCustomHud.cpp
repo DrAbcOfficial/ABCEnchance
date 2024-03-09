@@ -147,14 +147,16 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
 		int iClip = READ_LONG();
 		int iClip2 = READ_LONG();
 		WEAPON* pWeapon = gWR.GetWeapon(iId);
-		gWR.m_pCurWeapon = pWeapon;
-		gCustomHud.SetCurWeapon(pWeapon);
-		if (!pWeapon)
+		gWR.m_pCurWeapon = pWeapon;		
+		if (!pWeapon) {
+			gCustomHud.SetCurWeapon(nullptr);
 			return m_pfnCurWeapon(pszName, iSize, pbuf);
+		}	
 		//更新弹匣信息
 		pWeapon->iClip = iClip;
 		pWeapon->iClip2 = iClip2;
 		pWeapon->iState = iState;
+		gCustomHud.SetCurWeapon(pWeapon);
 	}
 	else {
 		int iFlag = READ_SHORT();
