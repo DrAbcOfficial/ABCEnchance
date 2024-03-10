@@ -47,3 +47,5 @@
 /ABCEnchanceInstaller/obj
 /ABCEnchanceInstaller/ABCEnchanceInstaller.csproj.user
 /ABCEnchanceInstaller/Properties/PublishProfiles/FolderProfile.pubxml.user
+/src/Header/Utility/NeteaseApi.h
+/src/Source/Utility/NeteaseApi.cpp
