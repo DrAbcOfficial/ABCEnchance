@@ -78,7 +78,9 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 
     1. build `glew` or `glew-debug`
    
-    2. build repository
+    2. Create `NeteaseApi.h` and `NeteaseApi.cpp`
+   
+    3. build repository
  
  ----
 

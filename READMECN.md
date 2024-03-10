@@ -76,7 +76,9 @@
 
     1. 按metahooksv里的指示构建 `glew` 或 `glew-debug`
    
-    2. 打开sln按f5
+    2. 添加缺失的`NeteaseApi.h`和`NeteaseApi.cpp`
+   
+    3. 打开sln按f5
  
  ----
 

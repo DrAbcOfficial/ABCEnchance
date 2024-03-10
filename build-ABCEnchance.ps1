@@ -1,3 +1,5 @@
+param([int]$netease)
+
 Write-Output "[Chose your building target]"
 Write-Output "#1 Release"
 Write-Output "#2 Release_AVX2"
@@ -22,6 +24,14 @@ function TestOrBuild($test, $build, $msg){
         $cmd = ("../../scripts/" + $build)
         &$cmd
     }
+}
+if($netease -eq 0){
+	if(!(Test-Path("./src/Source/Utility/NeteaseApi.cpp"))){
+		New-Item "./src/Source/Utility/NeteaseApi.cpp"
+	}
+	if(!(Test-Path("./src/Header/Utility/NeteaseApi.h"))){
+		New-Item "./src/Header/Utility/NeteaseApi.h"
+	}
 }
 if($BuildTarget -eq "Debug"){
     TestOrBuild "glew/x86/Debug/lib/glewd.lib" "build-glew-x86-Debug.bat" "glew"
