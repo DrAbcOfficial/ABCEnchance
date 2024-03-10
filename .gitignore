@@ -49,3 +49,4 @@
 /ABCEnchanceInstaller/Properties/PublishProfiles/FolderProfile.pubxml.user
 /src/Header/Utility/NeteaseApi.h
 /src/Source/Utility/NeteaseApi.cpp
+/src/Header/NeteaseApi.h
