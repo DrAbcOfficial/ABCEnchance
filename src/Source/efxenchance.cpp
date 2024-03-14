@@ -350,6 +350,8 @@ void ShootEgonParticle() {
 			if (currenttime >= ent->entity.curstate.fuser1) {
 				ent->die = 0;
 				TEMPENTITY* tent = gEngfuncs.pEfxAPI->CL_TempEntAlloc(ent->entity.prevstate.origin, ent->entity.model);
+				if (!tent)
+					return;
 				CMathlib::VectorCopy(ent->entity.baseline.origin, tent->entity.baseline.origin);
 				tent->flags = FTENT_SPRANIMATELOOP | FTENT_COLLIDEWORLD | FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
 				tent->clientIndex = ent->clientIndex;
