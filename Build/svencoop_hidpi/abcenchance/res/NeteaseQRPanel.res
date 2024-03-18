@@ -1,0 +1,46 @@
+"abcenchance/res/NeteaseQRPanel.res"
+{
+"NeteaseQRPanel"
+{
+	"ControlName"		"CQRLoginPanel"
+	"fieldName"		"NeteaseQRPanel"
+	"xpos"	"c-111"
+	"ypos"	"c-170"
+	"wide"	"223"
+	"tall"	"311"
+	"autoResize"		"0"
+	"pinCorner"		"0"
+	"visible"		"0"
+	"enabled"		"1"
+	"tabPosition"		"0"
+}
+"QRImage"
+{
+	"ControlName"		"ImagePanel"
+	"fieldName"		"QRImage"
+	"xpos"	"27"
+	"ypos"	"17"
+	"wide"	"170"
+	"tall"	"170"
+	"visible"		"1"
+	"tabPosition"		"0"
+	"scaleImage"		"1"
+	"tileImage"			"1"
+	"drawColor"		"255 255 255 255"
+}
+"QRNotice"
+{
+	"ControlName"		"Label"
+	"fieldName"		"QRNotice"
+	"xpos"	"27"
+	"ypos"	"198"
+	"wide"	"170"
+	"tall"	"85"
+	"visible"		"1"
+	"enabled"		"1"
+	"textAlignment"		"west"
+	"brighttext"		"1"
+	"font"		"Default"
+	"wrap"		"0"
+}
+}
