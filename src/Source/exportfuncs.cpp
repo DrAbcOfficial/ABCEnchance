@@ -137,10 +137,9 @@ int CL_IsDevOverview(void){
 void CL_SetDevOverView(int param1){
 	gHookFuncs.CL_SetDevOverView(param1);
 	if (g_bInRenderRadar){
+		(*(vec3_t*)(param1 + 0x1C))[CMathlib::Q_YAW] = gCustomHud.m_flOverViewYaw;
 		*(float*)(param1 + 0x10) = gCustomHud.m_vecOverViewOrg[0];
 		*(float*)(param1 + 0x14) = gCustomHud.m_vecOverViewOrg[1];
-		*(float*)(param1 + 0x18) = gCustomHud.m_vecOverViewOrg[2];
-		(*(vec3_t*)(param1 + 0x1C))[CMathlib::Q_YAW] = gCustomHud.m_flOverViewYaw;
 		gDevOverview->z_max = gCustomHud.m_flOverViewZmax;
 		gDevOverview->z_min = gCustomHud.m_flOverViewZmin;
 		gDevOverview->zoom = gCustomHud.m_flOverViewScale;
