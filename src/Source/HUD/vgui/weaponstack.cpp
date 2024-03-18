@@ -54,20 +54,7 @@ CWeaponStackPanel::CWeaponStackPanel()
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
 	LoadControlSettings(VGUI2_ROOT_DIR "WeaponStackPanel.res");
-	SetVisible(true);
-}
-void CWeaponStackPanel::PaintBackground() {
-	if (m_aryPanels.size() == 0)
-		return;
-	int y = GetTall();
-	for (auto iter = m_aryPanels.rbegin(); iter != m_aryPanels.rend(); iter++) {
-		auto item = *iter;
-		if (item->IsVisible()) {
-			y -= item->GetTall() + m_iStackGap;
-			item->SetPos(0, y);
-		}
-	}
-	BaseClass::PaintBackground();
+	CalculateMaxItemCount();
 }
 const char* CWeaponStackPanel::GetName() {
 	return VIEWPORT_WEAPONSTACK_NAME;
@@ -81,6 +68,11 @@ void CWeaponStackPanel::AddItemPickup(int wepindex){
 		m_flKeepTime, m_flFadeinTime, m_flFadeoutTime, wepindex);
 	item->SetSize(m_iItemWide, m_iItemTall);
 	m_aryPanels.push_back(item);
+	if (m_aryPanels.size() > m_iMaxItem) {
+		m_aryPanels.front()->DeletePanel();
+		m_aryPanels.pop_front();
+	}
+	InvalidateLayout();
 }
 void CWeaponStackPanel::ReloadWeaponSpr(){
 	for (auto iter = m_aryPanels.begin(); iter != m_aryPanels.end(); iter++) {

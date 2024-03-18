@@ -14,7 +14,6 @@ public:
 	DECLARE_CLASS_SIMPLE(CItemStackPanel, CBaseStackPanel);
 	CItemStackPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	virtual void PaintBackground() override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	void AddItemPickup(int sprindex, int l, int r, int t, int b);

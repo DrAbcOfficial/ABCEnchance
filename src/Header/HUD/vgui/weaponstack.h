@@ -21,7 +21,6 @@ public:
 	DECLARE_CLASS_SIMPLE(CWeaponStackPanel, CBaseStackPanel);
 	CWeaponStackPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	virtual void PaintBackground() override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	void AddItemPickup(int wepindex);

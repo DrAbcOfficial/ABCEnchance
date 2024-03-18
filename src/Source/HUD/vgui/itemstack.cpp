@@ -22,20 +22,7 @@ CItemStackPanel::CItemStackPanel()
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
 	LoadControlSettings(VGUI2_ROOT_DIR "ItemStackPanel.res");
-	SetVisible(true);
-}
-void CItemStackPanel::PaintBackground() {
-	if (m_aryPanels.size() == 0)
-		return;
-	int y = GetTall();
-	for (auto iter = m_aryPanels.rbegin(); iter != m_aryPanels.rend(); iter++) {
-		auto item = *iter;
-		if (item->IsVisible()) {
-			y -= item->GetTall() + m_iStackGap;
-			item->SetPos(0, y);
-		}
-	}
-	BaseClass::PaintBackground();
+	CalculateMaxItemCount();
 }
 const char* CItemStackPanel::GetName() {
 	return VIEWPORT_ITEMSTACK_NAME;
@@ -44,6 +31,12 @@ void CItemStackPanel::AddItemPickup(int sprindex, int l, int r, int t, int b){
 	CItemStackItem* item = new CItemStackItem(this, sprindex, l, r, t, b, m_flKeepTime, m_flFadeinTime, m_flFadeoutTime);
 	item->SetSize(m_iItemWide, m_iItemTall);
 	m_aryPanels.push_back(item);
+	if (m_aryPanels.size() > m_iMaxItem) {
+		m_aryPanels.front()->DeletePanel();
+		m_aryPanels.pop_front();
+	}
+	InvalidateLayout();
+		
 }
 void CItemStackPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);

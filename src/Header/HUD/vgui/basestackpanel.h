@@ -1,6 +1,6 @@
 #ifndef CBASESTACKPANEL_H
 #define CBASESTACKPANEL_H
-#include <vector>
+#include <list>
 #include <vgui_controls/EditablePanel.h>
 #include "IViewportPanel.h"
 
@@ -31,14 +31,18 @@ public:
 	DECLARE_CLASS_SIMPLE(CBaseStackPanel, vgui::EditablePanel);
 	CBaseStackPanel(vgui::Panel* parent, const char* name);
 	virtual const char* GetName() = 0;
-	virtual void Reset();
-	virtual void ShowPanel(bool state);
-	virtual bool IsVisible();
-	virtual vgui::VPANEL GetVPanel();
-	virtual void SetParent(vgui::VPANEL parent);
+	virtual void Reset() override;
+	virtual void ShowPanel(bool state) override;
+	virtual bool IsVisible() override;
+	virtual vgui::VPANEL GetVPanel() override;
+	virtual void SetParent(vgui::VPANEL parent) override;
+	virtual void PerformLayout() override;
+	virtual void PaintBackground() override;
 
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	virtual void OnThink() override;
+
+	void CalculateMaxItemCount();
 
 protected:
 	float m_flFadeinTime;
@@ -47,6 +51,8 @@ protected:
 	int m_iStackGap;
 	int m_iItemTall;
 	int m_iItemWide;
-	std::vector<CBaseSprStackItem*> m_aryPanels;
+
+	size_t m_iMaxItem;
+	std::list<CBaseSprStackItem*> m_aryPanels;
 };
 #endif

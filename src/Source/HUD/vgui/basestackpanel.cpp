@@ -68,6 +68,8 @@ void CBaseStackPanel::ApplySettings(KeyValues* inResourceData) {
 	m_iStackGap = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("stack_gap", 0));
 }
 void CBaseStackPanel::OnThink() {
+	if (m_aryPanels.size() == 0)
+		return;
 	for (auto iter = m_aryPanels.begin(); iter != m_aryPanels.end();) {
 		auto item = (*iter);
 		item->CheckExpire();
@@ -78,6 +80,24 @@ void CBaseStackPanel::OnThink() {
 		else
 			iter++;
 	}
+}
+void CBaseStackPanel::PerformLayout() {
+	int y = GetTall();
+	for (auto iter = m_aryPanels.rbegin(); iter != m_aryPanels.rend(); iter++) {
+		auto item = *iter;
+		if (item->IsVisible()) {
+			y -= item->GetTall() + m_iStackGap;
+			item->SetPos(0, y);
+		}
+	}
+}
+void CBaseStackPanel::PaintBackground(){
+	if (m_aryPanels.size() == 0)
+		return;
+	BaseClass::PaintBackground();
+}
+void CBaseStackPanel::CalculateMaxItemCount(){
+	m_iMaxItem = GetTall() / max(1, m_iItemTall);
 }
 void CBaseStackPanel::ShowPanel(bool state) {
 	if (state == IsVisible())

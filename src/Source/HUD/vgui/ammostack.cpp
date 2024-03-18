@@ -51,7 +51,7 @@ CAmmoStackPanel::CAmmoStackPanel()
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
 	LoadControlSettings(VGUI2_ROOT_DIR "AmmoStackPanel.res");
-	SetVisible(true);
+	CalculateMaxItemCount();
 }
 const char* CAmmoStackPanel::GetName() {
 	return VIEWPORT_AMMOSTACK_NAME;
@@ -60,19 +60,7 @@ void CAmmoStackPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("AmmoStack.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
-void CAmmoStackPanel::AddAmmoPickup(int id, int count){
-	wrect_t rcPic;
-	HSPRITE* spr = gWR.GetAmmoPicFromWeapon(id, rcPic);
-	if (!spr)
-		return;
-	CAmmoStackItem* item = new CAmmoStackItem(this, *spr, count, rcPic.left, rcPic.right, rcPic.top, rcPic.bottom, 
-		m_flKeepTime, m_flFadeinTime, m_flFadeoutTime);
-	item->SetSize(m_iItemWide, m_iItemTall);
-	m_aryPanels.push_back(item);
-}
-void CAmmoStackPanel::PaintBackground() {
-	if (m_aryPanels.size() == 0)
-		return;
+void CAmmoStackPanel::PerformLayout(){
 	int w = GetWide();
 	int y = GetTall();
 	for (auto iter = m_aryPanels.rbegin(); iter != m_aryPanels.rend(); iter++) {
@@ -83,5 +71,19 @@ void CAmmoStackPanel::PaintBackground() {
 			item->SetPos(0, y);
 		}
 	}
-	BaseClass::PaintBackground();
+}
+void CAmmoStackPanel::AddAmmoPickup(int id, int count){
+	wrect_t rcPic;
+	HSPRITE* spr = gWR.GetAmmoPicFromWeapon(id, rcPic);
+	if (!spr)
+		return;
+	CAmmoStackItem* item = new CAmmoStackItem(this, *spr, count, rcPic.left, rcPic.right, rcPic.top, rcPic.bottom, 
+		m_flKeepTime, m_flFadeinTime, m_flFadeoutTime);
+	item->SetSize(m_iItemWide, m_iItemTall);
+	m_aryPanels.push_back(item);
+	if (m_aryPanels.size() > m_iMaxItem) {
+		m_aryPanels.front()->DeletePanel();
+		m_aryPanels.pop_front();
+	}
+	InvalidateLayout();
 }
