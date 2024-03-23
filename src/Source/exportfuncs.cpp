@@ -178,10 +178,6 @@ void CheckOtherPlugin(){
 		memcpy(&g_metaplugins.renderer.info, &info, sizeof(info));
 		g_metaplugins.renderer.has = true;
 	}
-	else if(g_pMetaHookAPI->GetPluginInfo("Renderer_AVX2.dll", &info)) {
-		memcpy(&g_metaplugins.renderer.info, &info, sizeof(info));
-		g_metaplugins.renderer.has = true;
-	}
 }
 void FillEngineAddress() {
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
