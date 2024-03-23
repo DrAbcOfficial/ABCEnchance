@@ -141,7 +141,13 @@ void AnimationController::ReloadScriptFile()
 //-----------------------------------------------------------------------------
 bool AnimationController::LoadScriptFile(const char* fileName)
 {
-	FileHandle_t f = g_pFullFileSystem->Open(fileName, "rt");
+	FileHandle_t f = g_pFullFileSystem->Open(fileName, "rt", "SKIN");
+	if (!f)
+	{
+		Warning("Couldn't find hidpi script file %s\n", fileName);
+		f = g_pFullFileSystem->Open(fileName, "rt");
+	}
+
 	if (!f)
 	{
 		Warning("Couldn't find script file %s\n", fileName);
