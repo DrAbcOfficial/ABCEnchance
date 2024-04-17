@@ -18,15 +18,15 @@
 
 	// Column widths
 	// Sum of these must equal width of PlayerList
-	"column_avatar"		"24"
-	"column_donor"		"18"
-	"column_name"		"164"
-	"column_steamid"	"92"
-	"column_health"		"47"
-	"column_armor"		"47"
-	"column_frags"		"47"
-	"column_deaths"		"47"
-	"column_ping"		"80"
+	"column_avatar"		"48"
+	"column_donor"		"36"
+	"column_name"		"160"
+	"column_steamid"	"150"
+	"column_health"		"60"
+	"column_armor"		"60"
+	"column_frags"		"60"
+	"column_deaths"		"60"
+	"column_ping"		"100"
 
 	// Icon of muted players (without .tga)
 	"muted_icon"		"abcenchance/tga/muted_icon32"
