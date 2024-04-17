@@ -25,7 +25,7 @@ using namespace vgui;
 // Purpose: Constructor
 // Input  : *filename - image file to load 
 //-----------------------------------------------------------------------------
-MemoryBitmap::MemoryBitmap(unsigned char* texture, int wide, int tall)
+MemoryBitmap::MemoryBitmap(unsigned char* texture, int wide, int tall, bool bgra)
 {
 	_texture = texture;
 	_id = 0;
@@ -36,7 +36,7 @@ MemoryBitmap::MemoryBitmap(unsigned char* texture, int wide, int tall)
 	_w = wide;
 	_h = tall;
 	_bAdditive = false;
-	ForceUpload(texture, wide, tall);
+	ForceUpload(texture, wide, tall, bgra);
 }
 
 //-----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ void MemoryBitmap::Paint()
 //-----------------------------------------------------------------------------
 // Purpose: ensures the bitmap has been uploaded
 //-----------------------------------------------------------------------------
-void MemoryBitmap::ForceUpload(unsigned char* texture, int wide, int tall)
+void MemoryBitmap::ForceUpload(unsigned char* texture, int wide, int tall, bool bgra)
 {
 	_texture = texture;
 	_w = wide;
@@ -168,7 +168,10 @@ void MemoryBitmap::ForceUpload(unsigned char* texture, int wide, int tall)
 	}
 	/*	drawSetTextureRGBA(IE->textureID,static_cast<const char *>(lpvBits), w, h);
 	*/
-	surface()->DrawSetTextureRGBA(_id, _texture, _w, _h, false, true);
+	if(bgra)
+		surface()->DrawSetTextureBGRA(_id, _texture, _w, _h);
+	else
+		surface()->DrawSetTextureRGBA(_id, _texture, _w, _h, false, true);;
 	_uploaded = true;
 
 	_valid = surface()->IsTextureIDValid(_id);

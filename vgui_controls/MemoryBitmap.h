@@ -27,7 +27,7 @@ namespace vgui
 	class MemoryBitmap : public IImage_HL25
 	{
 	public:
-		MemoryBitmap(unsigned char* texture, int wide, int tall);
+		MemoryBitmap(unsigned char* texture, int wide, int tall, bool bgra = false);
 		~MemoryBitmap();
 
 		// IImage implementation
@@ -48,7 +48,7 @@ namespace vgui
 		virtual void SetAdditive(bool bIsAdditive);
 
 		// methods
-		void ForceUpload(unsigned char* texture, int wide, int tall);	// ensures the bitmap has been uploaded
+		void ForceUpload(unsigned char* texture, int wide, int tall, bool bgra = false);	// ensures the bitmap has been uploaded
 		const char* GetName();
 		bool IsValid()
 		{
