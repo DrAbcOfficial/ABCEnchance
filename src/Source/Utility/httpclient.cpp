@@ -118,6 +118,7 @@ CHttpClientItem* CHttpClientItem::Create(bool async){
 		if (m_pCookieJar)
 			m_pSyncReq->SetField(UtilHTTPField::cookie, m_pCookieJar->Get().c_str());
 	}
+	m_bAsync = async;
 	return this;
 }
 CHttpClientItem* CHttpClientItem::Start(){

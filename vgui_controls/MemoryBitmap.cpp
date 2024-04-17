@@ -171,7 +171,7 @@ void MemoryBitmap::ForceUpload(unsigned char* texture, int wide, int tall, bool 
 	if(bgra)
 		surface()->DrawSetTextureBGRA(_id, _texture, _w, _h);
 	else
-		surface()->DrawSetTextureRGBA(_id, _texture, _w, _h, false, true);;
+		surface()->DrawSetTextureRGBA(_id, _texture, _w, _h, true, true);
 	_uploaded = true;
 
 	_valid = surface()->IsTextureIDValid(_id);
