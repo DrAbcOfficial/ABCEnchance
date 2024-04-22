@@ -13,7 +13,7 @@ static CPlayerTrace s_PlayerTrace;
 
 void CPlayerTrace::Update(){
 	auto local = gEngfuncs.GetLocalPlayer();
-	if (!local)
+	if (!local || local->origin[0] == local->origin[1] == local->origin[2] == 0)
 		return;
 	//vp
 	Vector vecAngles;
