@@ -244,6 +244,8 @@ void CItemHighLightPanel::CreateHighLight(cl_entity_t* var) {
 		m_mapHighLightTable.swap(temp);
 		m_iHighLightMdl = PrecacheExtraModel("abcenchance/mdl/item_highlight.mdl");
 	}
+	if (m_mapHighLightTable[var->curstate.modelindex] == nullptr)
+		return;
 	if (m_mapHighLightTable.find(var->curstate.modelindex) == m_mapHighLightTable.end())
 		return;
 	if (m_mapEntityRestored.find(var->index) != m_mapEntityRestored.end())
