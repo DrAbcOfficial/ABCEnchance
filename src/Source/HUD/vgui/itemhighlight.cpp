@@ -236,6 +236,8 @@ void CItemHighLightPanel::CreateHighLight(cl_entity_t* var) {
 		std::unordered_map<int, cl_highlight_t*> temp = {};
 		for (auto iter = m_mapHighLightTable.begin(); iter != m_mapHighLightTable.end(); iter++) {
 			auto& item = (*iter).second;
+			if (item == nullptr)
+				continue;
 			item->Index = gEngfuncs.pEventAPI->EV_FindModelIndex(item->Path.c_str());
 			if (item->Index > -1)
 				temp[item->Index] = item;
