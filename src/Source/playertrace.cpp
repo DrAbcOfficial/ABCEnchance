@@ -11,10 +11,15 @@ extern cl_enginefunc_t gEngfuncs;
 
 static CPlayerTrace s_PlayerTrace;
 
+static int iHasPlayerTraced = false;
+
 void CPlayerTrace::Update(){
 	auto local = gEngfuncs.GetLocalPlayer();
-	if (!local || local->origin[0] == local->origin[1] == local->origin[2] == 0)
+	if (!local)
 		return;
+	if (iHasPlayerTraced && (local->origin[0] == local->origin[1] == local->origin[2] == 0))
+		return;
+	iHasPlayerTraced = true;
 	//vp
 	Vector vecAngles;
 	gEngfuncs.GetViewAngles(vecAngles);

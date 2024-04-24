@@ -207,16 +207,18 @@ void CItemHighLightPanel::OnThink(){
 	float needdot = cos(gCVars.pItemHighLightNameFOV->value * M_PI / 180);
 	if (maxdotent != nullptr && maxdot >= needdot) {
 		auto item = m_mapHighLightTable[maxdotent->curstate.modelindex];
-		if (gCVars.pItemHighLightName->value > 0) {
-			m_pLookatPanel->SetVisible(true);
-			reinterpret_cast<CItemNamePanel*>(m_pLookatPanel)->Update(item, maxdotent->index);
-		}
-		if (gCVars.pItemHighLightPickup->value > 0) {
-			Vector vecLength = maxdotent->curstate.origin;
-			vecLength -= local->curstate.origin;
-			if (vecLength.Length() <= 86) {
-				reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->UpdateName(item->Name.c_str());
-				m_pPickupPanel->SetVisible(true);
+		if (item != nullptr) {
+			if (gCVars.pItemHighLightName->value > 0) {
+				m_pLookatPanel->SetVisible(true);
+				reinterpret_cast<CItemNamePanel*>(m_pLookatPanel)->Update(item, maxdotent->index);
+			}
+			if (gCVars.pItemHighLightPickup->value > 0) {
+				Vector vecLength = maxdotent->curstate.origin;
+				vecLength -= local->curstate.origin;
+				if (vecLength.Length() <= 86) {
+					reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->UpdateName(item->Name.c_str());
+					m_pPickupPanel->SetVisible(true);
+				}
 			}
 		}
 	}
