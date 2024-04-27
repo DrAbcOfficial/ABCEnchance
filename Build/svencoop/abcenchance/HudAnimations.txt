@@ -1,0 +1,107 @@
+event #DMGTiles_Poison
+{
+	Animate "#DMGTiles_Poison"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Poison"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Poison"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event #DMGTiles_Acid
+{
+	Animate "#DMGTiles_Acid"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Acid"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Acid"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event #DMGTiles_Freeze
+{
+	Animate "#DMGTiles_Freeze"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Freeze"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Freeze"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event #DMGTiles_Drown
+{
+	Animate "#DMGTiles_Drown"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Drown"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Drown"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event #DMGTiles_Burn
+{
+	Animate "#DMGTiles_Burn"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Burn"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Burn"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event #DMGTiles_Gas
+{
+	Animate "#DMGTiles_Gas"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Gas"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Gas"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event #DMGTiles_Radiation
+{
+	Animate "#DMGTiles_Radiation"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Radiation"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Radiation"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event #DMGTiles_Shock
+{
+	Animate "#DMGTiles_Shock"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Shock"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Shock"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event #DMGTiles_Energybeam
+{
+	Animate "#DMGTiles_Energybeam"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Energybeam"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Energybeam"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event #DMGTiles_Sonic
+{
+	Animate "#DMGTiles_Sonic"	Alpha	"0"		Linear 0.0 0.0
+	Animate "#DMGTiles_Sonic"	Alpha	"255"	Linear 0.0 0.1
+	Animate "#DMGTiles_Sonic"	Alpha	"0"		Linear 3.0 0.1
+}
+
+event FlashLightOn
+{
+	Animate "OnImage"	Alpha	255 Linear 0.0 0.1
+}
+
+event FlashLightOff
+{
+	Animate "OffImage"	Alpha	255 Linear 0.0 0.1
+}
+
+event ItemPickupNoticePopUp
+{
+	Animate "Pickup"	Alpha	0 Linear 0.0 0.0
+	Animate "Pickup"	Alpha	1255 Linear 0.0 0.13
+	Animate "Pickup"	Wide	0 Linear 0.0 0.0
+	Animate "Pickup"	Wide	100 Linear 0.0 0.2
+}
+
+event TextMenuIn
+{
+	StopEvent TextMenuOut 0.0
+	SetVisible "TextMenu" 1 0.0
+	Animate "TextMenu"	Alpha	255 Linear 0.0 0.2
+}
+
+event TextMenuOut
+{
+	StopEvent TextMenuIn 0.0
+	Animate "TextMenu"	Alpha	0 Linear 0.0 0.2
+	SetVisible "TextMenu" 0 0.2
+}
+
+event WeaponChooseIn
+{
+	Animate	"WeaponChoosePanel"	Alpha	0 Linear 0.0 0.0
+	Animate	"WeaponChoosePanel"	Alpha	255 Linear 0.0 0.13
+}
