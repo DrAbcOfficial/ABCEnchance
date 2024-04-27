@@ -75,6 +75,8 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	SetProportional(true);
 
 	m_hBaseScheme = vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "AbcScheme.res", "AbcScheme");
+	vgui::GetAnimationController()->SetScriptFile(GetVPanel(), "abcenchance/HudAnimations.txt", true);
+
 	//for popnumber
 	m_pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, nullptr);
 	m_pPlayerTitleDanger = CREATE_CVAR("cl_playertitle_danger", "30", FCVAR_VALUE, nullptr);
