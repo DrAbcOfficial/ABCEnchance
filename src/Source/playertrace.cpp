@@ -15,9 +15,7 @@ void CPlayerTrace::Update(){
 	auto local = gEngfuncs.GetLocalPlayer();
 	if (!local)
 		return;
-	if (local->curstate.msg_time > gEngfuncs.GetClientTime()) //此时在changelevel，停止Update()
-		return;
-	if (local->player == FALSE) //玩家不存在
+	if (local->player == false) //玩家不存在
 		return;
 	//vp
 	Vector vecAngles;
