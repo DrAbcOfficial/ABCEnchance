@@ -5,6 +5,9 @@
 #include "mathlib/vector.h"
 #include "mymathlib.h"
 
+#include "vguilocal.h"
+#include "Viewport.h"
+
 #include "playertrace.h"
 
 extern cl_enginefunc_t gEngfuncs;
@@ -12,10 +15,10 @@ extern cl_enginefunc_t gEngfuncs;
 static CPlayerTrace s_PlayerTrace;
 
 void CPlayerTrace::Update(){
+	if (!g_pViewPort->IsVisible())
+		return;
 	auto local = gEngfuncs.GetLocalPlayer();
 	if (!local)
-		return;
-	if (local->player == false) //Íæ¼Ò²»´æÔÚ
 		return;
 	//vp
 	Vector vecAngles;
@@ -23,9 +26,9 @@ void CPlayerTrace::Update(){
 	Vector vecForward;
 	CMathlib::AngleVectors(vecAngles, vecForward, nullptr, nullptr);
 	Vector vecEnd;
-	VectorMA(local->origin, 8192, vecForward, vecEnd);
-	pmtrace_t tr;
 	Vector vecSrc = local->origin;
+	VectorMA(vecSrc, 8192, vecForward, vecEnd);
+	pmtrace_t tr;
 	Vector vecOfs;
 	gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(vecOfs);
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);

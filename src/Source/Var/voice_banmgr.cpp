@@ -22,7 +22,7 @@ bool CVoiceBanMgr::Init(){
 	std::ifstream ifs(filename, std::ios::binary);
 	if (ifs.is_open()) {
 		while (!ifs.eof()) {
-			uint64 steamid;
+			uint64 steamid = 0;
 			ifs.read(reinterpret_cast<char*>(&steamid), sizeof(uint64));
 			m_aryBannedPlayer.push_back(steamid);
 		}
