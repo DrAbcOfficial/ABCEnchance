@@ -42,23 +42,13 @@ public:
 	}
 	virtual void OnFinishRequest(const char* url, const char* pageTitle, const CUtlMap < CUtlString, CUtlString >& headers) override {
 		HTML::OnFinishRequest(url, pageTitle, headers);
-		//steam初始化时默认打开一个空白页面，需要在该页面之后再打开其他页面以避免竞争者错误
-		if (!m_bInit) {
-			m_bInit = true;
-			char local[MAX_PATH] = "file:///";
-			const size_t uiURLLength = 8;
-			vgui::filesystem()->GetLocalPath("abcenchance/scence/background.html", local + uiURLLength, 252);
-			OpenURL(local, nullptr, true);
-			return;
-		}
-		if (m_bInit && !m_bInteractive) {
+		if (!m_bInteractive) {
 			RequestFocus();
 			OnKeyCodeTyped(vgui::KEY_NONE);
 			m_bInteractive = true;
 		}
 	}
 private:
-	bool m_bInit = false;
 	bool m_bInteractive = false;
 };
 
@@ -75,6 +65,10 @@ static void SetBasePanelState(bool state) {
 			if (!s_hHTMLBackground) {
 				s_hHTMLBackground = new BackGroundHTML(s_hBasePanelWarpper);
 				s_hHTMLBackground->SetBgColor(Color(0, 0, 0, 0));
+				char local[MAX_PATH] = "file:///";
+				const size_t uiURLLength = 8;
+				vgui::filesystem()->GetLocalPath("abcenchance/scence/background.html", local + uiURLLength, 252);
+				s_hHTMLBackground->OpenURL(local, nullptr, true);
 			}
 			s_bInited = true;
 		}
