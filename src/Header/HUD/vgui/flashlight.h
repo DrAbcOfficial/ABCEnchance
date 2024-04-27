@@ -18,7 +18,6 @@ public:
 
 	CFlashLightPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	virtual void ApplySettings(KeyValues* inResourceData) override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	virtual void Reset() override;
@@ -39,6 +38,5 @@ private:
 	Color m_cIconColor;
 
 	int m_iBattery = 0;
-	float m_flFadeAnimateTime = 0;
 };
 #endif

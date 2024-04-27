@@ -45,10 +45,6 @@ void CFlashLightPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	m_pMessage->SetFgColor(GetSchemeColor("FlashLight.TextFgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
 	m_cIconColor = GetSchemeColor("FlashLight.IconFgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
 }
-void CFlashLightPanel::ApplySettings(KeyValues* inResourceData) {
-	BaseClass::ApplySettings(inResourceData);
-	m_flFadeAnimateTime = inResourceData->GetFloat("fade_time");
-}
 void CFlashLightPanel::ShowPanel(bool state) {
 	if (state == IsVisible())
 		return;
@@ -65,15 +61,7 @@ void CFlashLightPanel::SetParent(vgui::VPANEL parent) {
 }
 
 void CFlashLightPanel::SetFlashLight(bool on, int battery){
-	if (on) {
-		m_pOnImage->SetAlpha(1);
-		vgui::GetAnimationController()->RunAnimationCommand(m_pOnImage, "alpha", 255, 0.0f, m_flFadeAnimateTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
-	}
-	else {
-		m_pOffImage->SetAlpha(1);
-		vgui::GetAnimationController()->RunAnimationCommand(m_pOffImage, "alpha", 255, 0.0f, m_flFadeAnimateTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
-
-	}
+	vgui::GetAnimationController()->StartAnimationSequence(this, on ? "FlashLightOn" : "FlashLightOff");
 	m_pOnImage->SetVisible(on);
 	m_pOffImage->SetVisible(!on);
 	SetFlashBattery(battery);

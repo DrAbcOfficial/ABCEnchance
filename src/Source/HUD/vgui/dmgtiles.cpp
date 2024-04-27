@@ -70,32 +70,13 @@ void CTileIconItem::SetImage(const char* image){
 	m_pPanel->SetImage(image);
 }
 
-void CTileIconItem::Show(float flTime){
-	float current = ClientTime();
-	fExpire = current + flTime;
+void CTileIconItem::Show(){
 	SetVisible(true);
-	SetAlpha(0);
-	GetAnimationController()->RunAnimationCommand(this, "alpha", 255, 0.0f, 0.5f, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	GetAnimationController()->StartAnimationSequence(GetParent(), GetName());
 }
 
 void CTileIconItem::Reset(){
-	fExpire = 0;
 	SetVisible(false);
-	SetAlpha(255);
-}
-void CTileIconItem::SetExpire(float f){
-	fExpire = f;
-}
-void CTileIconItem::CheckExpire(){
-	if (fExpire <= 0)
-		return;
-	float flTime = ClientTime();
-	if (fExpire + 0.3f <= flTime) {
-		fExpire = 0;
-		return;
-	}
-	if (fExpire < flTime)
-		GetAnimationController()->RunAnimationCommand(this, "alpha", 0, 0.0f, 0.3f, vgui::AnimationController::INTERPOLATOR_LINEAR);
 }
 
 CDmgTilesPanel::CDmgTilesPanel()
@@ -141,12 +122,6 @@ void CDmgTilesPanel::ApplySettings(KeyValues* inResourceData) {
 		if(icon)
 			(*iter)->SetImage(icon);
 	}
-	m_flKeepTime = inResourceData->GetFloat("keep_time");
-}
-void CDmgTilesPanel::OnThink(){
-	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
-		(*iter)->CheckExpire();
-	}
 }
 void CDmgTilesPanel::PaintBackground(){
 	if (m_aryDmg.size() == 0)
@@ -181,6 +156,6 @@ void CDmgTilesPanel::SetParent(vgui::VPANEL parent){
 void CDmgTilesPanel::UpdateTiles(long bitsDamage) {
 	for (auto iter = m_aryDmg.begin(); iter != m_aryDmg.end(); iter++) {
 		if ((*iter)->GetDMG() & bitsDamage)
-			(*iter)->Show(m_flKeepTime);
+			(*iter)->Show();
 	}
 }

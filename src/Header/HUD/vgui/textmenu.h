@@ -16,7 +16,6 @@ public:
 
 	CTextMenu();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
-	void ApplySettings(KeyValues* inResourceData) override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
 	virtual void Reset() override;
@@ -42,7 +41,5 @@ private:
 	std::string m_szMenuString;
 
 	float m_flShutoffTime;
-
-	float m_flFadeAnimateTime;
 };
 #endif

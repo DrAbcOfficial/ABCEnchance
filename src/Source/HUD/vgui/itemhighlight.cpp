@@ -68,10 +68,8 @@ public:
 		m_pText = new vgui::Label(this, "Text", "#GameUI_ABC_ItemPickupNotice");
 	}
 	virtual void SetVisible(bool state) override {
-		if (state && !IsVisible()) {
-			SetWide(0);
-			vgui::GetAnimationController()->RunAnimationCommand(this, "wide", m_iOldWide, 0.0f, 0.2f, vgui::AnimationController::INTERPOLATOR_LINEAR);
-		}
+		if (state && !IsVisible()) 
+			vgui::GetAnimationController()->StartAnimationSequence(GetParent(), "ItemPickupNoticePopUp");
 		BaseClass::SetVisible(state);
 	}
 	virtual void PerformLayout() override {
@@ -134,8 +132,7 @@ public:
 		}
 		m_pText->SetText(sz.c_str());
 	}
-	void SetOldValue() {
-		m_iOldWide = GetWide();
+	void GetTemplateText() {
 		char temp[256];
 		m_pText->GetText(temp, 256);
 		m_szTemplate = temp;
@@ -145,7 +142,6 @@ private:
 	vgui::GaussianBlurPanel* m_pGaussian = nullptr;
 	vgui::Label* m_pText = nullptr;
 	std::string m_szTemplate;
-	size_t m_iOldWide = 0;
 };
 CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIGHLIGHT_NAME){
 	SetMouseInputEnabled(false);
@@ -166,7 +162,7 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 	m_pPickupPanel = new CItemPickupPanel(this, "Pickup");
 	LoadControlSettings(VGUI2_ROOT_DIR "ItemHighLightPanel.res");
 
-	reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->SetOldValue();
+	reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->GetTemplateText();
 	LoadItemList();
 }
 void CItemHighLightPanel::OnThink(){

@@ -46,10 +46,6 @@ void CTextMenu::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	SetBgColor(GetSchemeColor("TextMenu.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pMenu->SetFgColor(GetSchemeColor("TextMenu.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
 }
-void CTextMenu::ApplySettings(KeyValues* inResourceData) {
-	BaseClass::ApplySettings(inResourceData);
-	m_flFadeAnimateTime = inResourceData->GetFloat("fade_time");
-}
 void CTextMenu::ShowPanel(bool state) {
 	if (state == IsVisible())
 		return;
@@ -76,16 +72,10 @@ void CTextMenu::SetContent(const char* szMenu){
 
 
 void CTextMenu::StartFade(bool state){
-	SetAlpha(state ? 0 : 255);
-	ShowPanel(true);
-	vgui::GetAnimationController()->RunAnimationCommand(this, "alpha", state ? 255 : 0, 0.0f, m_flFadeAnimateTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
+	vgui::GetAnimationController()->StartAnimationSequence(GetParent(), state ? "TextMenuIn" : "TextMenuOut");
 }
 
 void CTextMenu::OnThink(){
-	if (GetAlpha() <= 0) {
-		ShowPanel(false);
-		return;
-	}
 	if (m_flShutoffTime >= 0 && gEngfuncs.GetClientTime() >= m_flShutoffTime) {
 		StartFade(false);
 		m_flShutoffTime = -1;

@@ -21,18 +21,15 @@ public:
 	void SetIconColor(Color in);
 	void SetTextColor(Color in);
 	void SetImage(const char* image);
-	void Show(float flTime);
+	void Show();
 
 	void Reset();
-	void SetExpire(float f);
-	void CheckExpire();
 private:
 	vgui::Label* m_pText;
 	vgui::ImagePanel* m_pPanel;
 
 	char szIconKey[32];
 	int iDmg;
-	float fExpire;
 };
 class CDmgTilesPanel : public vgui::EditablePanel, public IViewportPanel
 {
@@ -42,7 +39,6 @@ public:
 	CDmgTilesPanel();
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
-	virtual void OnThink() override;
 	virtual void PaintBackground() override;
 	// IViewportPanel overrides
 	virtual const char* GetName() override;
@@ -99,7 +95,6 @@ public:
 		DMG_SHOWNHUD = 7815448 // Shown on HUD.These are the damage types that have clien hud art.
 	};
 private:
-	float m_flKeepTime;
 	std::array<CTileIconItem*, 10> m_aryDmg;
 };
 #endif
