@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <memory>
 #include <metahook.h>
 
 #include <vgui/IImage.h>
@@ -112,90 +113,98 @@ public:
 			m_pAvatar.SetSize(m_iWide, m_iTall);
 			m_pAvatar.SetColor(m_DrawColor);
 		}
+		m_bRequsetedAnimatedAvatars = false;
 	}
 	void SetAdminTexture(int tex) {
 		iAdminTexture = tex;
 	}
-	void SetAvatar(CSteamID* pSteamID)
-	{
-		if (!pSteamID)
-			return;
 
-		const char* url = SteamFriends()->GetProfileItemPropertyString(*pSteamID, k_ECommunityProfileItemType_AnimatedAvatar, k_ECommunityProfileItemProperty_ImageSmall);
-		if (url && V_strlen(url) > 0) {
-			if (m_bRequestId == 0) {
-				ClearFrame();
-				m_bRequestId = GetHttpClient()->Fetch(url, UtilHTTPMethod::Get)->OnRespond([](IUtilHTTPResponse* rep, CPlayerImage* pthis) {
-					using gif = struct {
-						byte* bgra;
-						size_t w;
-						size_t h;
-						size_t frametime;
-					};
-					GetTaskManager()->Add<std::vector<gif*>>([](const char* data, size_t length) {
-						static std::vector<gif*> s_gif;
-						s_gif.clear();
-						FIMEMORY* mem = FreeImage_OpenMemory(reinterpret_cast<BYTE*>(const_cast<char*>(data)), length);
-						FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
-						if (format == FIF_GIF) {
-							FIMULTIBITMAP* multiBitmap = FreeImage_LoadMultiBitmapFromMemory(format, mem);
-							size_t pageCount = FreeImage_GetPageCount(multiBitmap);
-							for (size_t i = 0; i < pageCount; i++) {
-								FIBITMAP* dib = FreeImage_LockPage(multiBitmap, i);
-								if (dib) {
-									BYTE* bits = FreeImage_GetBits(dib);
-									size_t width = FreeImage_GetWidth(dib);
-									size_t height = FreeImage_GetHeight(dib);
-									FITAG* tag = nullptr;
+	void RequestAnimateAvatarCallback(EquippedProfileItems_t* arg, bool s) {
+		if (arg->m_eResult == EResult::k_EResultOK && arg->m_bHasAnimatedAvatar) {
+			const char* url = SteamFriends()->GetProfileItemPropertyString(arg->m_steamID, k_ECommunityProfileItemType_AnimatedAvatar, k_ECommunityProfileItemProperty_ImageSmall);
+			if (url && V_strlen(url) > 0) {
+				if (m_bRequestId == 0) {
+					ClearFrame();
+					m_bRequestId = GetHttpClient()->Fetch(url, UtilHTTPMethod::Get)->OnRespond([](IUtilHTTPResponse* rep, CPlayerImage* pthis) {
+						using gif = struct {
+							byte* bgra;
+							size_t w;
+							size_t h;
+							size_t frametime;
+						};
+						GetTaskManager()->Add<std::shared_ptr<std::vector<gif*>>>([](const char* data, size_t length) {
+							std::shared_ptr<std::vector<gif*>> pgif = std::make_shared<std::vector<gif*>>();
+							FIMEMORY* mem = FreeImage_OpenMemory(reinterpret_cast<BYTE*>(const_cast<char*>(data)), length);
+							FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
+							if (format == FIF_GIF) {
+								FIMULTIBITMAP* multiBitmap = FreeImage_LoadMultiBitmapFromMemory(format, mem);
+								size_t pageCount = FreeImage_GetPageCount(multiBitmap);
+								for (size_t i = 0; i < pageCount; i++) {
+									FIBITMAP* dib = FreeImage_LockPage(multiBitmap, i);
+									if (dib) {
+										BYTE* bits = FreeImage_GetBits(dib);
+										size_t width = FreeImage_GetWidth(dib);
+										size_t height = FreeImage_GetHeight(dib);
+										FITAG* tag = nullptr;
 
-									gif* image = new gif();
-									image->bgra = new byte[width * height * 4];
+										gif* image = new gif();
+										image->bgra = new byte[width * height * 4];
 
-									byte* head = image->bgra;
-									// 遍历每个像素
-									for (int y = height - 1; y >= 0; y--) {
-										for (size_t x = 0; x < width; x++) {
-											BYTE index;
-											FreeImage_GetPixelIndex(dib, x, y, &index);
-											RGBQUAD color = FreeImage_GetPalette(dib)[index];
-											head[0] = color.rgbRed;
-											head[1] = color.rgbGreen;
-											head[2] = color.rgbBlue;
-											head[3] = 255;
-											head += 4;
+										byte* head = image->bgra;
+										// 遍历每个像素
+										for (int y = height - 1; y >= 0; y--) {
+											for (size_t x = 0; x < width; x++) {
+												BYTE index;
+												FreeImage_GetPixelIndex(dib, x, y, &index);
+												RGBQUAD color = FreeImage_GetPalette(dib)[index];
+												head[0] = color.rgbRed;
+												head[1] = color.rgbGreen;
+												head[2] = color.rgbBlue;
+												head[3] = 255;
+												head += 4;
+											}
 										}
+										image->w = width;
+										image->h = height;
+										if (FreeImage_GetMetadata(FIMD_ANIMATION, dib, "FrameTime", &tag))
+											image->frametime = *(unsigned int*)FreeImage_GetTagValue(tag);
+										pgif->push_back(image);
+										FreeImage_UnlockPage(multiBitmap, dib, false);
 									}
-									image->w = width;
-									image->h = height;
-									if (FreeImage_GetMetadata(FIMD_ANIMATION, dib, "FrameTime", &tag))
-										image->frametime = *(unsigned int*)FreeImage_GetTagValue(tag);
-									s_gif.push_back(image);
-									FreeImage_UnlockPage(multiBitmap, dib, false);
 								}
+								FreeImage_CloseMultiBitmap(multiBitmap);
 							}
-							FreeImage_CloseMultiBitmap(multiBitmap);
-						}
-						FreeImage_CloseMemory(mem);
-						return s_gif;
-						}, rep->GetPayload()->GetBytes(), rep->GetPayload()->GetLength())->ContinueWith([](std::vector<gif*> gifdata, CPlayerImage* pthis) {
-							for (size_t i = 0; i < gifdata.size(); i++) {
-								gif* image = gifdata[i];
+							FreeImage_CloseMemory(mem);
+							return pgif;
+						}, rep->GetPayload()->GetBytes(), rep->GetPayload()->GetLength())->ContinueWith([](std::shared_ptr<std::vector<gif*>> gifdata, CPlayerImage* pthis) {
+							for (size_t i = 0; i < gifdata->size(); i++) {
+								gif* image = gifdata->at(i);
 								pthis->SetFrameTime(image->frametime);
 								pthis->AddFrame(image->bgra, image->w, image->h);
 								delete[] image->bgra;
 								delete image;
 							}
-							gifdata.clear();
-							}, pthis)->Start();
-					pthis->m_bRequestId = -1;
-				}, this)->Create(true)->Start()->GetId();
-				m_bIsAnimate = true;
+							gifdata.reset();
+						}, pthis)->Start();
+							pthis->m_bRequestId = -1;
+						}, this)->Create(true)->Start()->GetId();
+						m_bIsAnimate = true;
+				}
+				m_bRequsetedAnimatedAvatars = true;
 			}
 		}
-		else {
-			m_pAvatar.SetAvatarSteamID(*pSteamID);
-			m_pAvatar.SetDrawFriend(false);
-		}
+	}
+
+	CCallResult< CPlayerImage, EquippedProfileItems_t > m_RTestCallResult;
+	void SetAvatar(CSteamID* pSteamID)
+	{
+		if (!pSteamID)
+			return;
+
+		if (!m_bRequsetedAnimatedAvatars) 
+			m_RTestCallResult.Set(SteamFriends()->RequestEquippedProfileItems(*pSteamID), this, &CPlayerImage::RequestAnimateAvatarCallback);
+		m_pAvatar.SetAvatarSteamID(*pSteamID);
+		m_pAvatar.SetDrawFriend(SteamFriends()->GetFriendRelationship(*pSteamID) == k_EFriendRelationshipFriend);
 		ResetAvatarInfo();
 	}
 
@@ -298,6 +307,7 @@ private:
 
 	bool m_bIsAnimate = false;
 	int m_bRequestId = 0;
+	bool m_bRequsetedAnimatedAvatars = false;
 	std::vector<IImage_HL25*> m_aryAnimatedAvatars;
 	size_t m_iCurrentImage;
 	float m_flAnimateTime;

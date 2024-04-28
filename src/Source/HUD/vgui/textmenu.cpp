@@ -20,7 +20,6 @@
 extern vgui::HScheme GetViewPortBaseScheme();
 CTextMenu::CTextMenu()
 	: BaseClass(nullptr, VIEWPORT_TEXTMENU_NAME) {
-	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
@@ -105,7 +104,6 @@ bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
 	if (m_bitsValidSlots){
 		m_szMenuString += READ_STRING();
 		if (!iNeedMore) {
-
 			//Remove all \n from begin and end
 			//someone will send a bunch of \n\n\n\n\n\n\n\n\n\n\n\n\n\n in the beginning, wtf?????
 			const static auto searchFunc = [](char ch) {return ch != '\n';};
