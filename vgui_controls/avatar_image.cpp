@@ -48,8 +48,6 @@ CAvatarImage::CAvatarImage(void)
 	//=============================================================================
 	// HPE_BEGIN:
 	//=============================================================================
-	// [tj] Default to drawing the friend icon for avatars
-	m_bDrawFriend = true;
 
 	// [menglish] Default icon for avatar icons if there is no avatar icon for the player
 	m_iTextureID = -1;
@@ -215,12 +213,6 @@ void CAvatarImage::Paint(void)
 	int posX = m_nX + m_offX;
 	int posY = m_nY + m_offY;
 
-	if (m_bDrawFriend)
-	{
-		posX += FRIEND_ICON_AVATAR_INDENT_X * m_avatarWide / DEFAULT_AVATAR_SIZE;
-		posY += FRIEND_ICON_AVATAR_INDENT_Y * m_avatarTall / DEFAULT_AVATAR_SIZE;
-	}
-
 	if (m_bLoadPending)
 	{
 		LoadAvatarImage();
@@ -255,17 +247,8 @@ void CAvatarImage::SetAvatarSize(int wide, int tall)
 	m_avatarWide = wide;
 	m_avatarTall = tall;
 
-	if (m_bDrawFriend)
-	{
-		// scale the size of the friend background frame icon
-		m_wide = FRIEND_ICON_SIZE_X * m_avatarWide / DEFAULT_AVATAR_SIZE;
-		m_tall = FRIEND_ICON_SIZE_Y * m_avatarTall / DEFAULT_AVATAR_SIZE;
-	}
-	else
-	{
-		m_wide = m_avatarWide;
-		m_tall = m_avatarTall;
-	}
+	m_wide = m_avatarWide;
+	m_tall = m_avatarTall;
 }
 
 //-----------------------------------------------------------------------------
@@ -276,17 +259,8 @@ void CAvatarImage::SetSize(int wide, int tall)
 	m_wide = wide;
 	m_tall = tall;
 
-	if (m_bDrawFriend)
-	{
-		// scale the size of the avatar portion based on the total image size
-		m_avatarWide = DEFAULT_AVATAR_SIZE * m_wide / FRIEND_ICON_SIZE_X;
-		m_avatarTall = DEFAULT_AVATAR_SIZE * m_tall / FRIEND_ICON_SIZE_Y;
-	}
-	else
-	{
-		m_avatarWide = m_wide;
-		m_avatarTall = m_tall;
-	}
+	m_avatarWide = m_wide;
+	m_avatarTall = m_tall;
 }
 
 bool CAvatarImage::Evict()
@@ -410,12 +384,6 @@ void CAvatarImagePanel::OnMousePressed(vgui::MouseCode code)
 void CAvatarImagePanel::SetShouldScaleImage(bool bScaleImage)
 {
 	m_bScaleImage = bScaleImage;
-	m_bSizeDirty = true;
-}
-
-void CAvatarImagePanel::SetShouldDrawFriendIcon(bool bDrawFriend)
-{
-	m_pImage->SetDrawFriend(bDrawFriend);
 	m_bSizeDirty = true;
 }
 

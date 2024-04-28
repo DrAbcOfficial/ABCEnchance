@@ -16,14 +16,6 @@
 #include "tier1/utlmap.h"
 
 namespace vgui {
-	// size of the friend background frame (see texture ico_friend_indicator_avatar)
-#define FRIEND_ICON_SIZE_X (55)
-#define FRIEND_ICON_SIZE_Y (34)
-
-// offset of avatar within the friend icon
-#define FRIEND_ICON_AVATAR_INDENT_X (22)
-#define FRIEND_ICON_AVATAR_INDENT_Y (1)
-
 // size of the standard avatar icon (unless override by SetAvatarSize)
 #define DEFAULT_AVATAR_SIZE (32)
 
@@ -132,11 +124,6 @@ namespace vgui {
 		// HPE_BEGIN:
 		//=============================================================================
 
-		// [tj] simple setter for drawing friend icon
-		void SetDrawFriend(bool drawFriend) { m_bDrawFriend = drawFriend; }
-
-		bool GetDrawFriend() { return m_bDrawFriend; }
-
 		// [pmf] specify the default (fallback) image
 		void SetDefaultImage(vgui::IImage* pImage) { m_pDefaultImage = pImage; }
 
@@ -176,9 +163,6 @@ namespace vgui {
 		//=============================================================================
 		// HPE_BEGIN:
 		//=============================================================================
-
-		// [tj] Whether or not we should draw the friend icon
-		bool m_bDrawFriend;
 
 		// [pmf] image to use as a fallback when get from steam fails (or not called)
 		vgui::IImage* m_pDefaultImage;
@@ -224,9 +208,6 @@ namespace vgui {
 
 		// sets whether or not the image should scale to fit the size of the ImagePanel (defaults to false)
 		void SetShouldScaleImage(bool bScaleImage);
-
-		// sets whether to automatically draw the friend icon behind the avatar for Steam friends
-		void SetShouldDrawFriendIcon(bool bDrawFriend);
 
 		// specify the size of the avatar portion of the image (the actual image may be larger than this
 		// when it incorporates the friend icon)

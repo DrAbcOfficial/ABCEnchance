@@ -70,8 +70,9 @@ using namespace vgui;
 
 extern vgui::HScheme GetViewPortBaseScheme();
 
-int s_iMutedIconTexture = -1;
-int s_iDefaultAvatarTexture = -1;
+static int s_iMutedIconTexture = -1;
+static int s_iFriendTexture = -1;
+static int s_iDefaultAvatarTexture = -1;
 class CPlayerImage : public IImage
 {
 public:
@@ -82,6 +83,8 @@ public:
 		if (m_bRequestId > 0)
 			GetHttpClient()->Interrupt(m_bRequestId);
 		m_bRequestId = 0;
+		m_bRequsetedAnimatedAvatars = false;
+		m_bDrawFriend = false;
 		ClearFrame();
 	}
 	void ClearFrame() {
@@ -113,7 +116,6 @@ public:
 			m_pAvatar.SetSize(m_iWide, m_iTall);
 			m_pAvatar.SetColor(m_DrawColor);
 		}
-		m_bRequsetedAnimatedAvatars = false;
 	}
 	void SetAdminTexture(int tex) {
 		iAdminTexture = tex;
@@ -204,13 +206,17 @@ public:
 		if (!m_bRequsetedAnimatedAvatars) 
 			m_RTestCallResult.Set(SteamFriends()->RequestEquippedProfileItems(*pSteamID), this, &CPlayerImage::RequestAnimateAvatarCallback);
 		m_pAvatar.SetAvatarSteamID(*pSteamID);
-		m_pAvatar.SetDrawFriend(SteamFriends()->GetFriendRelationship(*pSteamID) == k_EFriendRelationshipFriend);
+		SetFriend(SteamFriends()->GetFriendRelationship(*pSteamID) == k_EFriendRelationshipFriend);
 		ResetAvatarInfo();
 	}
 
 	void SetMuted(bool state)
 	{
 		m_bIsMuted = state;
+	}
+
+	void SetFriend(bool state) {
+		m_bDrawFriend = state;
 	}
 
 	void OnTick()
@@ -242,17 +248,27 @@ public:
 			}
 		}
 
+		int x0 = m_iX + m_iOffX;
+		int y0 = m_iY + m_iOffY;
+		int x1 = m_iX + m_iOffX + m_iWide;
+		int y1 = m_iY + m_iOffY + m_iTall;
+
 		if (m_bIsMuted && s_iMutedIconTexture >= 0){
 			surface()->DrawSetTexture(s_iMutedIconTexture);
 			surface()->DrawSetColor(m_DrawColor);
-			surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
-				m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
+			surface()->DrawTexturedRect(x0, y0, x1, y1);
 		}
+
 		if (iAdminTexture >= 0) {
 			surface()->DrawSetTexture(iAdminTexture);
 			surface()->DrawSetColor(m_DrawColor);
-			surface()->DrawTexturedRect(m_iX + m_iOffX, m_iY + m_iOffY,
-				m_iX + m_iOffX + m_iWide, m_iY + m_iOffY + m_iTall);
+			surface()->DrawTexturedRect(x0, y0, x1, y1);
+		}
+
+		if (m_bDrawFriend) {
+			surface()->DrawSetTexture(s_iFriendTexture);
+			surface()->DrawSetColor(m_DrawColor);
+			surface()->DrawTexturedRect(x0 - m_iWide / 4, y0, x0, y1);
 		}
 	}
 
@@ -304,6 +320,8 @@ private:
 	int m_iOffX = 0, m_iOffY = 0;
 	int m_iWide = 0, m_iTall = 0;
 	Color m_DrawColor = Color(255, 255, 255, 255);
+
+	bool m_bDrawFriend;
 
 	bool m_bIsAnimate = false;
 	int m_bRequestId = 0;
@@ -422,6 +440,7 @@ CScorePanel::CScorePanel()
 	}
 
 	m_iMutedIconTexture = -1;
+	m_iFriendTexture = -1;
 
 	CreatePlayerMenu();
 
@@ -508,6 +527,7 @@ void CScorePanel::ApplySchemeSettings(IScheme* pScheme)
 	SetBgColor(GetSchemeColor("ScorePanel.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 
 	s_iMutedIconTexture = m_iMutedIconTexture;
+	s_iFriendTexture = m_iFriendTexture;
 	s_iDefaultAvatarTexture = m_iDefaultAvatarTexture;
 }
 
