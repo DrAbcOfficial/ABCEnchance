@@ -63,12 +63,16 @@ vgui::HScheme GetViewPortBaseScheme() {
 CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	int swide, stall;
 	surface()->GetScreenSize(swide, stall);
+
+	MakePopup(false, true);
+
 	SetScheme("ABCEnchanceScheme");
 	SetBounds(0, 0, swide, stall);
 	SetPaintBorderEnabled(false);
 	SetPaintBackgroundEnabled(false);
 	SetMouseInputEnabled(false);
 	SetKeyBoardInputEnabled(false);
+	SetProportional(true);
 
 	m_hBaseScheme = vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "AbcScheme.res", "AbcScheme");
 	vgui::GetAnimationController()->SetScriptFile(GetVPanel(), "abcenchance/HudAnimations.txt", true);
@@ -114,6 +118,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pItemStack = new CItemStackPanel());
 	AddNewPanel(m_pWeaponStack = new CWeaponStackPanel());
 	AddNewPanel(m_pWeaponChoose = new CWeaponChoosePanel());
+	SetVisible(false);
 }
 
 void CViewport::SetParent(VPANEL vPanel){
