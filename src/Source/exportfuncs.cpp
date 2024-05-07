@@ -172,6 +172,13 @@ void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy,
 #endif
 	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pSoundEngine, dummy, flags, entindex, origin, channel, name, fvol, attenuation, extraflags, pitch, sentenceIndex, soundLength);
 }
+int	pfnClientCmd (const char* cmd) {
+	return gHookFuncs.pfnClientCmd(cmd);
+}
+void Key_Event(int key, int down) {
+	gHookFuncs.Key_Event(key, down);
+}
+
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 	if (g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info)) {
@@ -280,7 +287,12 @@ void InstallEngineHook() {
 	Fill_InlineEfxHook(R_BloodSprite);
 	Fill_InlineEfxHook(R_TempModel);
 	Fill_EngFunc(pfnPlaybackEvent);
+	Fill_EngFunc(pfnClientCmd);
+	Fill_EngFunc(Key_Event);
+
 	Install_InlineEngHook(pfnPlaybackEvent);
+	Install_InlineEngHook(pfnClientCmd);
+	Install_InlineEngHook(Key_Event);
 	Install_InlineEngHook(R_NewMap);
 	Install_InlineEngHook(CL_IsDevOverview);
 	Install_InlineEngHook(CL_SetDevOverView);

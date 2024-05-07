@@ -71,6 +71,8 @@ typedef struct{
 	void(__fastcall* CGameUI_Start)(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem);
 
 	void		(*pfnPlaybackEvent)			(int flags, const struct edict_s* pInvoker, unsigned short eventindex, float delay, float* origin, float* angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2);
+	int	(*pfnClientCmd)			(const char* cmd);
+	void(*Key_Event) (int key, int down);
 	//VGUI2
 	char* (*V_strncpy)(char* a1, const char* a2, size_t a3);
 }cl_refHookfunc_t;
