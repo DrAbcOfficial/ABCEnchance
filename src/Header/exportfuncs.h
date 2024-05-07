@@ -11,7 +11,6 @@ extern engine_studio_api_t IEngineStudio;
 extern CGameStudioModelRenderer* g_StudioRenderer;
 
 extern const clientdata_t* gClientData;
-extern float m_hfov;
 
 extern overviewInfo_t* gDevOverview;
 extern refdef_t* g_refdef;

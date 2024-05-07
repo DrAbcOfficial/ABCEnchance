@@ -26,6 +26,9 @@
 #include <exportfuncs.h>
 
 #define VIEWPORT_CROSSHAIR_NAME "CrosshairPanel"
+
+extern float GetCurrentFOV();
+
 CCrosshairPanel::CCrosshairPanel()
 	: BaseClass(nullptr, VIEWPORT_CROSSHAIR_NAME) {
 	SetProportional(true);
@@ -109,7 +112,7 @@ void CCrosshairPanel::OnThink() {
 	}
 	//防止关闭默认准星后开镜没准星
 	if (pCvarDefaultCrosshair->value != 0 && pDynamicCrossHairAH->value > 0 
-		&& gCVars.pCvarDefaultFOV->value != m_hfov) {
+		&& gCVars.pCvarDefaultFOV->value != GetCurrentFOV()) {
 		HideDynamicCrossHair();
 		return;
 	}
@@ -258,7 +261,7 @@ void CCrosshairPanel::DrawDefaultCrosshair(int x, int y) {
 	if (!m_pHandledWeapon)
 		return;
 	bool bOnTarget = m_pHandledWeapon->iState & CAmmoPanel::WEAPONSTATE::ONTARGET;
-	if (m_hfov >= gCVars.pCvarDefaultFOV->value) {
+	if (GetCurrentFOV() >= gCVars.pCvarDefaultFOV->value) {
 		if (bOnTarget && m_pHandledWeapon->hAutoaim)
 			SetCrosshairSPR(x, y, m_pHandledWeapon->hAutoaim, &m_pHandledWeapon->rcAutoaim);
 		else

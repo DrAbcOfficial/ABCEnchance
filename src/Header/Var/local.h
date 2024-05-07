@@ -41,7 +41,7 @@ float ClientTime();
 #define GetScreenInfo (*gEngfuncs.pfnGetScreenInfo)
 
 //Hooked Address
-typedef struct{
+using cl_refHookfunc_t = struct{
 	void		(*R_BloodSprite)			(float* org, int colorindex, int modelIndex, int modelIndex2, float size);
 	TEMPENTITY* (*R_TempModel)				(float* pos, float* dir, float* angles, float life, int modelIndex, int soundtype);
 
@@ -75,86 +75,85 @@ typedef struct{
 	void(*Key_Event) (int key, int down);
 	//VGUI2
 	char* (*V_strncpy)(char* a1, const char* a2, size_t a3);
-}cl_refHookfunc_t;
+};
 
 //CVars
-typedef struct cl_cvars_s{
-	cvar_t* pDynamicBackground = nullptr;
+using cl_cvars_t = struct{
+	cvar_t* pDynamicBackground;
 
-	cvar_t* pShellEfx = nullptr;
-	cvar_t* pBloodEfx = nullptr;
-	cvar_t* pBloodSpriteSpeed = nullptr;
-	cvar_t* pBloodSpriteNumber = nullptr;
-	cvar_t* pGaussEfx = nullptr;
-	cvar_t* pEgonEfx = nullptr;
+	cvar_t* pShellEfx;
+	cvar_t* pBloodEfx;
+	cvar_t* pBloodSpriteSpeed;
+	cvar_t* pBloodSpriteNumber;
+	cvar_t* pGaussEfx;
+	cvar_t* pEgonEfx;
 
-	cvar_t* pDangerHealth = nullptr;
-	cvar_t* pDangerArmor = nullptr;
-	cvar_t* pDamageScreenFilter = nullptr;
-	cvar_t* pDamageScreenFactor = nullptr;
-	cvar_t* pDamageScreenBase = nullptr;
+	cvar_t* pDangerHealth;
+	cvar_t* pDangerArmor;
+	cvar_t* pDamageScreenFilter;
+	cvar_t* pDamageScreenFactor;
+	cvar_t* pDamageScreenBase;
 
-	cvar_t* pDynamicCrossHair = nullptr;
+	cvar_t* pDynamicCrossHair;
 
-	cvar_t* pAmmoMenuDrawRainbow = nullptr;
+	cvar_t* pAmmoMenuDrawRainbow;
 
-	cvar_t* pModelLag = nullptr;
-	cvar_t* pModelLagAutoStop = nullptr;
-	cvar_t* pModelLagValue = nullptr;
-	cvar_t* pModelSlide = nullptr;
-	cvar_t* pModelSlideAngle = nullptr;
-	cvar_t* pModelSlideLength = nullptr;
-	cvar_t* pModelSlideHeight = nullptr;
+	cvar_t* pModelLag;
+	cvar_t* pModelLagAutoStop;
+	cvar_t* pModelLagValue;
+	cvar_t* pModelSlide;
+	cvar_t* pModelSlideAngle;
+	cvar_t* pModelSlideLength;
+	cvar_t* pModelSlideHeight;
 
-	cvar_t* pCamIdealHeight = nullptr;
-	cvar_t* pCamIdealRight = nullptr;
+	cvar_t* pCamIdealHeight;
+	cvar_t* pCamIdealRight;
 
-	cvar_t* pDeathNotice = nullptr;
-	cvar_t* pDeathNoticeTime = nullptr;
+	cvar_t* pDeathNotice;
+	cvar_t* pDeathNoticeTime;
 
-	cvar_t* pHudEfx = nullptr;
+	cvar_t* pHudEfx;
 
-	cvar_t* pEccoCheckInfo = nullptr;
-	cvar_t* pEccoEnable = nullptr;
+	cvar_t* pEccoCheckInfo;
+	cvar_t* pEccoEnable;
 
-	cvar_t* pItemHighLight = nullptr;
-	cvar_t* pItemHighLightRange = nullptr;
-	cvar_t* pItemHighLightNameFOV = nullptr;
-	cvar_t* pItemHighLightPickup = nullptr;
-	cvar_t* pItemHighLightName = nullptr;
+	cvar_t* pItemHighLight;
+	cvar_t* pItemHighLightRange;
+	cvar_t* pItemHighLightNameFOV;
+	cvar_t* pItemHighLightPickup;
+	cvar_t* pItemHighLightName;
 
-	cvar_t* pEccoBuyMenu = nullptr;
+	cvar_t* pEccoBuyMenu;
 
-	cvar_t* pGrenadeIndicator = nullptr;
-	cvar_t* pGrenadeIndicatorRange = nullptr;
-	cvar_t* pGrenadeInicatorTime = nullptr;
+	cvar_t* pGrenadeIndicator;
+	cvar_t* pGrenadeIndicatorRange;
+	cvar_t* pGrenadeInicatorTime;
 
-	cvar_t* pMotd = nullptr;
+	cvar_t* pMotd;
 
-	cvar_t* pRadar = nullptr;
-	cvar_t* pRadarZoom = nullptr;
-	cvar_t* pRadarAvatar = nullptr;
-	cvar_t* pRadarAvatarSize = nullptr;
-	cvar_t* pRadarAvatarScale = nullptr;
-	cvar_t* pRadarZMin = nullptr;
-	cvar_t* pRadarZMax = nullptr;
+	cvar_t* pRadar;
+	cvar_t* pRadarZoom;
+	cvar_t* pRadarAvatar;
+	cvar_t* pRadarAvatarSize;
+	cvar_t* pRadarAvatarScale;
+	cvar_t* pRadarZMin;
+	cvar_t* pRadarZMax;
 
-	cvar_t* pCVarDevOverview = nullptr;
-	cvar_t* pCVarDrawEntities = nullptr;
-	cvar_t* pCVarDrawViewModel = nullptr;
-	cvar_t* pCVarDrawDynamic = nullptr;
-	cvar_t* pCVarFXAA = nullptr;
-	cvar_t* pCVarWater = nullptr;
-	cvar_t* pCVarShadow = nullptr;
+	cvar_t* pCVarDevOverview;
+	cvar_t* pCVarDrawEntities;
+	cvar_t* pCVarDrawViewModel;
+	cvar_t* pCVarDrawDynamic;
+	cvar_t* pCVarFXAA;
+	cvar_t* pCVarWater;
+	cvar_t* pCVarShadow;
 
-	cvar_t* pCVarAutoBunnyJump = nullptr;
+	cvar_t* pCVarAutoBunnyJump;
 #ifdef _DEBUG
-	cvar_t* pCCTV = nullptr;
+	cvar_t* pCCTV;
 #endif
 	//Defualt CVars
-	cvar_t* pCvarDefaultFOV = nullptr;
-}cl_cvars_t;
+	cvar_t* pCvarDefaultFOV;
+};
 
 extern cl_refHookfunc_t gHookFuncs;
 extern cl_cvars_t gCVars;
-extern char m_szCurrentLanguage[128];

@@ -59,7 +59,6 @@ CGameStudioModelRenderer* g_StudioRenderer;
 DWORD g_dwHUDListAddr;
 
 const clientdata_t* gClientData;
-float m_hfov;
 
 overviewInfo_t* gDevOverview;
 refdef_t* g_refdef = nullptr;
@@ -490,11 +489,17 @@ void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientda
 	gClientData = client;
 	gExportfuncs.HUD_TxferLocalOverrides(state, client);
 }
+
+static float s_flFov;
 int HUD_UpdateClientData (struct client_data_s* c, float f){
-	m_hfov = c->fov;
+	s_flFov = c->fov;
 	gCustomHud.HUD_UpdateClientData(c, f);
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
+float GetCurrentFOV() {
+	return s_flFov;
+}
+
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	gExportfuncs.HUD_PlayerMove(ppmove, server);
 	g_playerppmove.inwater = (ppmove->waterlevel > 1);
