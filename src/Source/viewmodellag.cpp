@@ -16,7 +16,8 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, c
 	if (gCVars.pModelLag->value <= 0)
 		return;
 	//¼¦ÃçÎäÆ÷
-	if (gCVars.pModelLagAutoStop->value > 0 && m_hfov != CMathlib::clamp<float>(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
+	extern float GetCurrentFOV();
+	if (gCVars.pModelLagAutoStop->value > 0 && GetCurrentFOV() != CMathlib::clamp<float>(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
 		return;
 	static Vector m_vecLastFacing;
 	Vector vOriginalOrigin = origin;

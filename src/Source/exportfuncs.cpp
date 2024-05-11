@@ -59,7 +59,6 @@ CGameStudioModelRenderer* g_StudioRenderer;
 DWORD g_dwHUDListAddr;
 
 const clientdata_t* gClientData;
-float m_hfov;
 
 overviewInfo_t* gDevOverview;
 refdef_t* g_refdef = nullptr;
@@ -172,6 +171,13 @@ void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy,
 #endif
 	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pSoundEngine, dummy, flags, entindex, origin, channel, name, fvol, attenuation, extraflags, pitch, sentenceIndex, soundLength);
 }
+int	pfnClientCmd (const char* cmd) {
+	return gHookFuncs.pfnClientCmd(cmd);
+}
+void Key_Event(int key, int down) {
+	gHookFuncs.Key_Event(key, down);
+}
+
 void CheckOtherPlugin(){
 	mh_plugininfo_t info;
 	if (g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info)) {
@@ -280,7 +286,12 @@ void InstallEngineHook() {
 	Fill_InlineEfxHook(R_BloodSprite);
 	Fill_InlineEfxHook(R_TempModel);
 	Fill_EngFunc(pfnPlaybackEvent);
+	Fill_EngFunc(pfnClientCmd);
+	Fill_EngFunc(Key_Event);
+
 	Install_InlineEngHook(pfnPlaybackEvent);
+	Install_InlineEngHook(pfnClientCmd);
+	Install_InlineEngHook(Key_Event);
 	Install_InlineEngHook(R_NewMap);
 	Install_InlineEngHook(CL_IsDevOverview);
 	Install_InlineEngHook(CL_SetDevOverView);
@@ -478,11 +489,17 @@ void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientda
 	gClientData = client;
 	gExportfuncs.HUD_TxferLocalOverrides(state, client);
 }
+
+static float s_flFov;
 int HUD_UpdateClientData (struct client_data_s* c, float f){
-	m_hfov = c->fov;
+	s_flFov = c->fov;
 	gCustomHud.HUD_UpdateClientData(c, f);
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
+float GetCurrentFOV() {
+	return s_flFov;
+}
+
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
 	gExportfuncs.HUD_PlayerMove(ppmove, server);
 	g_playerppmove.inwater = (ppmove->waterlevel > 1);

@@ -1,3 +1,6 @@
+#include <map>
+#include <string>
+
 #include <metahook.h>
 
 #include "usercmd.h"
@@ -43,4 +46,9 @@ void AutoFunc::DuckTap(usercmd_s* cmd){
 			cmd->buttons &= ~IN_DUCK;
 		s_bDuckWasDownLastFrame = ((cmd->buttons & IN_DUCK) != 0);
 	}
+}
+
+static std::map<std::string, std::string> s_dicConcurrentCmds;
+void AutoFunc::ConcurrentRun(usercmd_s* cmd){
+	//if(s_dicConcurrentCmds.find(cmd.))
 }
