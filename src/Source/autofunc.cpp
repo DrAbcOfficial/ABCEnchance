@@ -29,6 +29,10 @@ static void SetConcurrent(const char* cmd, const char* concurrent) {
 	if (g_pMetaHookAPI->FindCmd(cmd) == nullptr)
 		return;
 
+	//Oh no, nononononono, oh no
+	if (!stricmp(cmd, "concurrent") || !stricmp(cmd, "removeconcurrent")) {
+		ConsoleWriteline("concurrent and removeconcurrent does not support this!\n");
+	}
 	//FIXME: yes, this is stupid, but i dont wanna do a parser for now
 	std::string ss = concurrent;
 	if (ss.find(cmd) != std::string::npos) {
