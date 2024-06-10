@@ -41,8 +41,7 @@ static void SetConcurrent(const char* cmd, const char* concurrent) {
 			const char* nowcmd = gEngfuncs.Cmd_Argv(0);
 			auto finditer = s_dicConcurrentCmds.find(nowcmd);
 			if (finditer != s_dicConcurrentCmds.end()) {
-				if(finditer->second->concurrent.size() > 0)
-					gEngfuncs.pfnClientCmd(finditer->second->concurrent.c_str());
+				gEngfuncs.pfnClientCmd(finditer->second->concurrent.c_str());
 				finditer->second->origincall();
 			}
 		});
@@ -55,8 +54,12 @@ static void SetConcurrent(const char* cmd, const char* concurrent) {
 }
 static void RemoveConcurrent(const char* cmd) {
 	auto iter = s_dicConcurrentCmds.find(cmd);
-	if (iter != s_dicConcurrentCmds.end())
-		iter->second->concurrent.clear();
+	if (iter != s_dicConcurrentCmds.end()) {
+		concurrentcmd_t* obj = iter->second;
+		g_pMetaHookAPI->HookCmd(obj->cmd.c_str(), obj->origincall);
+		delete obj;
+		s_dicConcurrentCmds.erase(iter);
+	}
 	else
 		ConsoleWriteline("There is no concurrent in this command!\n");
 }
@@ -95,8 +98,7 @@ void AutoFunc::Exit(){
 	CABCConfig* config = abcconfig::GetConfig();
 	config->m_dicConcurrentCmd.clear();
 	for (auto iter = s_dicConcurrentCmds.begin(); iter != s_dicConcurrentCmds.end(); iter++) {
-		if(iter->second->concurrent.size() > 0)
-			config->m_dicConcurrentCmd.emplace(std::make_pair(iter->first, iter->second->concurrent));
+		config->m_dicConcurrentCmd.emplace(std::make_pair(iter->first, iter->second->concurrent));
 	}
 }
 
