@@ -28,6 +28,8 @@ static std::map<std::string, concurrentcmd_t*> s_dicConcurrentCmds;
 static void SetConcurrent(const char* cmd, const char* concurrent) {
 	if (g_pMetaHookAPI->FindCmd(cmd) == nullptr)
 		return;
+
+	//FIXME: yes, this is stupid, but i dont wanna do a parser for now
 	std::string ss = concurrent;
 	if (ss.find(cmd) != std::string::npos) {
 		ConsoleWriteline("There are recursive calls in concurrent command!\n");
