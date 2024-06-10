@@ -286,11 +286,11 @@ void InstallEngineHook() {
 	Fill_InlineEfxHook(R_BloodSprite);
 	Fill_InlineEfxHook(R_TempModel);
 	Fill_EngFunc(pfnPlaybackEvent);
-	Fill_EngFunc(pfnClientCmd);
+	//Fill_EngFunc(pfnClientCmd);
 	Fill_EngFunc(Key_Event);
 
 	Install_InlineEngHook(pfnPlaybackEvent);
-	Install_InlineEngHook(pfnClientCmd);
+	//Install_InlineEngHook(pfnClientCmd);
 	Install_InlineEngHook(Key_Event);
 	Install_InlineEngHook(R_NewMap);
 	Install_InlineEngHook(CL_IsDevOverview);
