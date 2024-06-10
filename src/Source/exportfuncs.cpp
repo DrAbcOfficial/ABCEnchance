@@ -171,9 +171,6 @@ void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy,
 #endif
 	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pSoundEngine, dummy, flags, entindex, origin, channel, name, fvol, attenuation, extraflags, pitch, sentenceIndex, soundLength);
 }
-int	pfnClientCmd (const char* cmd) {
-	return gHookFuncs.pfnClientCmd(cmd);
-}
 void Key_Event(int key, int down) {
 	gHookFuncs.Key_Event(key, down);
 }
@@ -286,11 +283,9 @@ void InstallEngineHook() {
 	Fill_InlineEfxHook(R_BloodSprite);
 	Fill_InlineEfxHook(R_TempModel);
 	Fill_EngFunc(pfnPlaybackEvent);
-	//Fill_EngFunc(pfnClientCmd);
 	Fill_EngFunc(Key_Event);
 
 	Install_InlineEngHook(pfnPlaybackEvent);
-	//Install_InlineEngHook(pfnClientCmd);
 	Install_InlineEngHook(Key_Event);
 	Install_InlineEngHook(R_NewMap);
 	Install_InlineEngHook(CL_IsDevOverview);
@@ -337,7 +332,6 @@ void GL_Init(void){
 extern void GameUI_GetInterface();
 
 void HUD_Init(void){
-	AutoFunc::Init();
 	MathLib_Init();
 	//VGUI init
 	gCVars.pShellEfx = CREATE_CVAR("abc_shellefx", "1", FCVAR_VALUE, nullptr);
@@ -393,6 +387,7 @@ void HUD_Init(void){
 	GetClientVoiceMgr()->HUD_Init();
 	GameUI_GetInterface();
 	abcconfig::LoadJson();
+	AutoFunc::Init();
 }
 
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
@@ -404,6 +399,8 @@ extern void FMOD_Shutdown();
 extern void FreeLibcurl();
 
 void HUD_Shutdown(void){
+	AutoFunc::Exit();
+
 	gExportfuncs.HUD_Shutdown();
 
 	gCustomHud.HUD_Clear();
