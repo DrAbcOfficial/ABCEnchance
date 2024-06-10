@@ -76,7 +76,7 @@ void AutoFunc::Init(){
 		}
 		SetConcurrent(gEngfuncs.Cmd_Argv(1), gEngfuncs.Cmd_Argv(2));
 	});
-	ADD_COMMAND("remove_concurrent", [](){
+	ADD_COMMAND("removeconcurrent", [](){
 		size_t argc = gEngfuncs.Cmd_Argc();
 		if (argc < 2) {
 			ConsoleWriteline("remove_concurrent [target command]\n");
