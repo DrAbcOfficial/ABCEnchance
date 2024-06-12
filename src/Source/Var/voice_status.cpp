@@ -155,7 +155,7 @@ void CVoiceStatus::UpdateServerState(bool bForce){
 		if (!info)
 			continue;
 		if (m_BanMgr.GetPlayerBan(info->GetSteamID64()))
-			banMask |= 1 << i;
+			banMask |= 1 << (i - 1);
 	}
 	serverBanMask = m_ServerBannedPlayers.to_ulong();
 	if(serverBanMask != banMask)
