@@ -82,7 +82,7 @@ void CVoiceStatus::HUD_Init(){
 
 void CVoiceStatus::HUD_Frame(double frametime){
 	// check server banned players once per second
-	if(gEngfuncs.GetClientTime() - m_LastUpdateServerState > 1)
+	if(gEngfuncs.GetClientTime() - m_LastUpdateServerState > 1.0f)
 		UpdateServerState(false);
 }
 
@@ -162,7 +162,7 @@ void CVoiceStatus::UpdateServerState(bool bForce){
 		bChange = true;
 	// Ok, the server needs to be updated.
 	char numStr[512];
-	sprintf(numStr, " %x", banMask);
+	sprintf(numStr, " %lx", banMask);
 	strcat(str, numStr);
 
 	if(bChange || bForce){
