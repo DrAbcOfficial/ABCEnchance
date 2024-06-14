@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "autofunc.h"
 #include "parsemsg.h"
 #include "cvardef.h"
 #include "local.h"
@@ -181,12 +182,14 @@ extern void Viewport_DropAllWeapon();
 void WeaponsResource::PickupWeapon(size_t id) {
 	WEAPON* wp = GetWeapon(id);
 	m_pOwnedWeaponData.Add(wp);
+	AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_ADDWEAPON, wp->szName);
 	Viewport_PickupWeapon(wp);
 }
 //从武器菜单删除缓存
 void WeaponsResource::DropWeapon(size_t s, size_t p) {
 	WEAPON* wp = GetWeapon(s, p);
 	m_pOwnedWeaponData.Remove(wp);
+	AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_DROPWEAPON, wp->szName);
 	Viewport_DropWeapon(wp);
 }
 //删除所有缓存

@@ -11,6 +11,7 @@
 #include "parsemsg.h"
 #include "mymathlib.h"
 #include "exportfuncs.h"
+#include "autofunc.h"
 #include "ClientParticleMan.h"
 
 #include "player_info.h"
@@ -164,6 +165,7 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
 		switch (iFlag) {
 		case -1:
 		case 0:
+			AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_DEATH);
 			gWR.DropAllWeapons();
 			break;
 		}
@@ -228,6 +230,8 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf) {
 	int armor = READ_BYTE();
 	int damageTaken = READ_BYTE();
 	int tiles = READ_LONG();
+	if (armor + damageTaken + tiles == 0)
+		return m_pfnDamage(pszName, iSize, pbuf);
 	vec3_t vecFrom;
 	for (size_t i = 0; i < 3; i++) {
 		vecFrom[i] = READ_COORD();
@@ -235,18 +239,22 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf) {
 	if(damageTaken > 0 || armor > 0)
 		m_HudIndicator.AddIdicator(damageTaken, armor, vecFrom);
 	g_pViewPort->UpdateTiles(tiles);
+	AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_DAMAGE, 
+		std::to_string(damageTaken).c_str(), std::to_string(armor).c_str(), std::to_string(tiles).c_str());
 	return m_pfnDamage(pszName, iSize, pbuf);
 }
 int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int battery = READ_SHORT();
 	g_pViewPort->SetArmor(battery);
+	AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_BATTERY, std::to_string(battery).c_str());
 	return m_pfnBattery(pszName, iSize, pbuf);
 }
 int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int health = READ_LONG();
 	g_pViewPort->SetHealth(health);
+	AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_HEALTH, std::to_string(health).c_str());
 	return m_pfnHealth(pszName, iSize, pbuf);
 }
 int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
@@ -345,7 +353,9 @@ int __MsgFunc_MOTD(const char* pszName, int iSize, void* pbuf) {
 }
 int __MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
-	g_pViewPort->SetFlashBattery(READ_BYTE());
+	int flash = READ_BYTE();
+	g_pViewPort->SetFlashBattery(flash);
+	AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_FLASHBATTERY, std::to_string(flash).c_str());
 	return m_pfnFlashBat(pszName, iSize, pbuf);
 }
 int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
