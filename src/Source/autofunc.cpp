@@ -114,7 +114,7 @@ void AutoFunc::Init(){
 			}
 		};
 		size_t argc = gEngfuncs.Cmd_Argc();
-		if (argc < 4) {
+		if (argc < 3) {
 			error();
 			return;
 		}
@@ -129,7 +129,14 @@ void AutoFunc::Init(){
 				s_dicEventCmd.erase(evt);
 			break;
 		}
-		case 1:s_dicEventCmd[evt] = gEngfuncs.Cmd_Argv(3);break;
+		case 1: {
+			if (argc < 4) {
+				error();
+				return;
+			}
+			s_dicEventCmd[evt] = gEngfuncs.Cmd_Argv(3); 
+			break;
+		}
 		default:error();break;
 		}
 		
