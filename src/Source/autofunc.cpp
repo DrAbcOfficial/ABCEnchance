@@ -192,17 +192,18 @@ void AutoFunc::TriggerEvent(const char* eventname,
 	if (s_dicEventCmd.find(eventname) != s_dicEventCmd.end()) {
 		std::string ssbuf = s_dicEventCmd[eventname];
 		if (ssbuf.size() > 0) {
-			static auto replace = [&ssbuf](const char* key, const char* value) {
+			static auto replace = [](const char* key, const char* value, std::string& ss) {
 				if (value) {
+					std::string temp1 = ss;
 					std::regex pattern(key);
-					std::string temp = std::regex_replace(ssbuf, pattern, value);
-					ssbuf = temp;
+					std::string temp = std::regex_replace(temp1, pattern, value);
+					ss = temp;
 				}
 			};
-			replace("\\{param1\\}", param1);
-			replace("\\{param2\\}", param2);
-			replace("\\{param3\\}", param3);
-			replace("\\{param4\\}", param4);
+			replace("\\{param1\\}", param1, ssbuf);
+			replace("\\{param2\\}", param2, ssbuf);
+			replace("\\{param3\\}", param3, ssbuf);
+			replace("\\{param4\\}", param4, ssbuf);
 			EngineClientCmd(ssbuf.c_str());
 		}
 	}
