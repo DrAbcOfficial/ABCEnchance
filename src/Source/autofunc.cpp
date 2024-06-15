@@ -1,6 +1,7 @@
 #include <map>
 #include <string>
 #include <array>
+#include <regex>
 
 #include <metahook.h>
 
@@ -193,15 +194,15 @@ void AutoFunc::TriggerEvent(const char* eventname,
 		if (ssbuf.size() > 0) {
 			static auto replace = [&ssbuf](const char* key, const char* value) {
 				if (value) {
-					size_t pos = ssbuf.find(key);
-					if (pos != std::string::npos)
-						ssbuf = ssbuf.replace(pos, std::strlen(key), value);
+					std::regex pattern(key);
+					std::string temp = std::regex_replace(ssbuf, pattern, value);
+					ssbuf = temp;
 				}
 			};
-			replace("{param1}", param1);
-			replace("{param2}", param2);
-			replace("{param3}", param3);
-			replace("{param4}", param4);
+			replace("\\{param1\\}", param1);
+			replace("\\{param2\\}", param2);
+			replace("\\{param3\\}", param3);
+			replace("\\{param4\\}", param4);
 			EngineClientCmd(ssbuf.c_str());
 		}
 	}
