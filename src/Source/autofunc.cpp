@@ -1,5 +1,7 @@
 #include <map>
 #include <string>
+#include <array>
+#include <regex>
 
 #include <metahook.h>
 
@@ -23,7 +25,16 @@ using concurrentcmd_t = struct {
 	xcommand_t origincall;
 };
 static std::map<std::string, concurrentcmd_t*> s_dicConcurrentCmds;
-
+static std::map<std::string, std::string> s_dicEventCmd;
+const std::array<std::string, 7> s_aryEvents = {
+	AutoFunc::EVENTCMD_DEATH,
+	AutoFunc::EVENTCMD_DAMAGE,
+	AutoFunc::EVENTCMD_HEALTH,
+	AutoFunc::EVENTCMD_BATTERY,
+	AutoFunc::EVENTCMD_FLASHBATTERY,
+	AutoFunc::EVENTCMD_ADDWEAPON,
+	AutoFunc::EVENTCMD_DROPWEAPON
+};
 
 static void SetConcurrent(const char* cmd, const char* concurrent) {
 	if (g_pMetaHookAPI->FindCmd(cmd) == nullptr)
@@ -75,8 +86,6 @@ void AutoFunc::Init(){
 	gCVars.pCVarAutoBunnyJump = CREATE_CVAR("cl_autojump", "0", FCVAR_VALUE, nullptr);
 	ADD_COMMAND("+ducktap", []() {g_bAutoDucktap = true; });
 	ADD_COMMAND("-ducktap", []() {g_bAutoDucktap = false; });
-
-
 	//Add concurrent cmd
 	ADD_COMMAND("concurrent", []() {
 		size_t argc = gEngfuncs.Cmd_Argc();
@@ -94,11 +103,51 @@ void AutoFunc::Init(){
 		}
 		RemoveConcurrent(gEngfuncs.Cmd_Argv(1));
 	});
+	//Add events cmd
+	ADD_COMMAND("events", []() {
+		static auto error = []() {
+			ConsoleWriteline("events [operate] [event] [cmd]\n");
+			ConsoleWriteline("operate: 0 = delete, 1 = set\n");
+			ConsoleWriteline("aviliable events:\n");
+			for (auto iter = s_aryEvents.begin(); iter != s_aryEvents.end(); iter++) {
+				std::string ss = "    [" + *iter + "]\n";
+				ConsoleWriteline(ss.c_str());
+			}
+		};
+		size_t argc = gEngfuncs.Cmd_Argc();
+		if (argc < 3) {
+			error();
+			return;
+		}
+		const char* evt = gEngfuncs.Cmd_Argv(2);
+		if (std::find(s_aryEvents.begin(), s_aryEvents.end(), evt) == s_aryEvents.end()) {
+			error();
+			return;
+		}
+		switch (std::atoi(gEngfuncs.Cmd_Argv(1))) {
+		case 0: {
+			if (s_dicEventCmd.find(evt) != s_dicEventCmd.end())
+				s_dicEventCmd.erase(evt);
+			break;
+		}
+		case 1: {
+			if (argc < 4) {
+				error();
+				return;
+			}
+			s_dicEventCmd[evt] = gEngfuncs.Cmd_Argv(3); 
+			break;
+		}
+		default:error();break;
+		}
+		
+	});
 	//Read Concurrent from json
 	CABCConfig* config = abcconfig::GetConfig();
 	for (auto iter = config->m_dicConcurrentCmd.begin(); iter != config->m_dicConcurrentCmd.end(); iter++) {
 		SetConcurrent(iter->first.c_str(), iter->second.c_str());
 	}
+	s_dicEventCmd = config->m_dicEventsCmd;
 }
 
 void AutoFunc::Exit(){
@@ -107,6 +156,7 @@ void AutoFunc::Exit(){
 	for (auto iter = s_dicConcurrentCmds.begin(); iter != s_dicConcurrentCmds.end(); iter++) {
 		config->m_dicConcurrentCmd.emplace(std::make_pair(iter->first, iter->second->concurrent));
 	}
+	config->m_dicEventsCmd = s_dicEventCmd;
 }
 
 void AutoFunc::AutoJump(usercmd_s* cmd){
@@ -136,7 +186,25 @@ void AutoFunc::DuckTap(usercmd_s* cmd){
 	}
 }
 
-
-void AutoFunc::ConcurrentRun(usercmd_s* cmd){
-	//if(s_dicConcurrentCmds.find(cmd.))
+//death
+void AutoFunc::TriggerEvent(const char* eventname, 
+	const char* param1, const char* param2, const char* param3, const char* param4){
+	if (s_dicEventCmd.find(eventname) != s_dicEventCmd.end()) {
+		std::string ssbuf = s_dicEventCmd[eventname];
+		if (ssbuf.size() > 0) {
+			static auto replace = [](const char* key, const char* value, std::string& ss) {
+				if (value) {
+					std::string temp1 = ss;
+					std::regex pattern(key);
+					std::string temp = std::regex_replace(temp1, pattern, value);
+					ss = temp;
+				}
+			};
+			replace("\\{param1\\}", param1, ssbuf);
+			replace("\\{param2\\}", param2, ssbuf);
+			replace("\\{param3\\}", param3, ssbuf);
+			replace("\\{param4\\}", param4, ssbuf);
+			EngineClientCmd(ssbuf.c_str());
+		}
+	}
 }

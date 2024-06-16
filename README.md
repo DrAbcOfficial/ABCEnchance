@@ -92,6 +92,9 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |+ducktap|Start ducktap|
 |-ducktap|Stop ducktap|
 |models|search player models|
+|concurrent|add concurrent cmd|
+|removeconcurrent|remove concurrent cmd|
+|events|add or remove event cmd|
 # 📊 CVars
 |CVar|uses|default|range|
 |---|---|---|---|
@@ -156,6 +159,38 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |hud_scoreboard_xxxxx|scoreboard thing|xxx|xxx|
 |hud_motd|-1 close Motd, 0 vanillia motd, 1 new motd|1|0
 
+
+# 🍕 Concurrent cmd and Event cmd
+
+Concurrent cmd are those that accompany the execution of a new cmd after the execution of a particular cmd is complete, columns such as
+``
+concurrent say "kill"
+```
+When set, kill will be executed after every say cmd the player executes.
+
+Event commands are commands that start executing when a specific client-side event is triggered.
+Event commands can have up to four parameters passed in, which can be used as placeholders in the form of param1 ~ param4.
+
+The following is an example of an event directive
+```
+events 1 death "say I bleed all over the place!"
+``
+will send a message when the player dies
+```
+events 1 damage "say I took {param1} damage!"
+```
+will send a message when the player is injured, the placeholders in the message will be replaced when it is sent
+
+|event|description|param1|param2|param3|param4|
+|---|---|---|---|---|---|
+|death|Player death|||||
+|damage|Player Injury|Damage Values|Armour Values|Damage Type ||
+|health|life change|life value||||
+|battery|Armour Value Change|Armour Value ||||
+|flash_battery|Battery value change|Battery value ||||
+|add_weapon|pick up weapon|weapon name ||||
+|drop_weapon|Lose Weapon|Weapon Name ||||
+
 ----
 
 # 🖼️ Images
@@ -192,5 +227,4 @@ This repository uses code from the following repositories:
 4. [CaptionMod](https://github.com/hzqst/CaptionMod)
 5. [CKF3](https://github.com/CKFDevPowered/CKF3Alpha)
 6. [hl1_source_sdk](https://github.com/tmp64/hl1_source_sdk)
-7. [libvpx](https://github.com/webmproject/libvpx)
 8. [qrgen](https://www.nayuki.io/page/qr-code-generator-library)
