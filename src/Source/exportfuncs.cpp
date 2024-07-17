@@ -409,6 +409,8 @@ void HUD_Shutdown(void){
 	FreeParticleMan();
 	UninstallClientHook();
 	CHttpClient::ShutDown();
+
+	GetClientVoiceMgr()->HUD_Shutdown();
 	abcconfig::SaveJson();
 }
 

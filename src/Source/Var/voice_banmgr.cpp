@@ -11,35 +11,42 @@
 
 
 #define BANMGR_FILEVERSION	1
-char const* g_pBanMgrFilename = "abcenchance/voice_ban.dt";
+char const g_pBanMgrFilename[] = "abcenchance/";
 
 CVoiceBanMgr::CVoiceBanMgr(){
 	Clear();
 }
 bool CVoiceBanMgr::Init(){
 	char filename[MAX_PATH];
-	vgui::filesystem()->GetLocalPath(g_pBanMgrFilename, filename, MAX_PATH);
-	std::ifstream ifs(filename, std::ios::binary);
-	if (ifs.is_open()) {
-		while (!ifs.eof()) {
-			uint64 steamid = 0;
-			ifs.read(reinterpret_cast<char*>(&steamid), sizeof(uint64));
-			m_aryBannedPlayer.push_back(steamid);
+	const char* result = vgui::filesystem()->GetLocalPath(g_pBanMgrFilename, filename, MAX_PATH);
+	if (result != nullptr) {
+		Q_snprintf(filename, MAX_PATH, "%s/voice_ban.dt", filename);
+		std::ifstream ifs(filename, std::ios::binary);
+		if (ifs.is_open()) {
+			while (!ifs.eof()) {
+				uint64 steamid = 0;
+				ifs.read(reinterpret_cast<char*>(&steamid), sizeof(uint64));
+				m_aryBannedPlayer.push_back(steamid);
+			}
+			ifs.close();
 		}
-		ifs.close();
+		return true;
 	}
-	return true;
+	return false;
 }
 void CVoiceBanMgr::Save(){
 	char filename[MAX_PATH];
-	vgui::filesystem()->GetLocalPath(g_pBanMgrFilename, filename, MAX_PATH);
-	std::ofstream ofs(filename, std::ios::binary);
-	if (ofs.is_open()) {
-		for (auto iter = m_aryBannedPlayer.begin(); iter != m_aryBannedPlayer.end(); iter++) {
-			uint64 steamid = *iter;
-			ofs.write(reinterpret_cast<char*>(steamid), sizeof(uint64));
+	const char* result = vgui::filesystem()->GetLocalPath(g_pBanMgrFilename, filename, MAX_PATH);
+	if (result != nullptr) {
+		Q_snprintf(filename, MAX_PATH, "%s/voice_ban.dt", filename);
+		std::ofstream ofs(filename, std::ios::binary);
+		if (ofs.is_open()) {
+			for (auto iter = m_aryBannedPlayer.begin(); iter != m_aryBannedPlayer.end(); iter++) {
+				uint64 steamid = *iter;
+				ofs.write(reinterpret_cast<char*>(steamid), sizeof(uint64));
+			}
+			ofs.close();
 		}
-		ofs.close();
 	}
 }
 bool CVoiceBanMgr::GetPlayerBan(uint64 steamid){

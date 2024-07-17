@@ -54,7 +54,6 @@ CVoiceStatus::CVoiceStatus(){
 
 CVoiceStatus::~CVoiceStatus(){
 	g_pInternalVoiceStatus = nullptr;
-	m_BanMgr.Save();
 }
 
 void CVoiceStatus::HUD_Init(){
@@ -84,6 +83,10 @@ void CVoiceStatus::HUD_Frame(double frametime){
 	// check server banned players once per second
 	if(gEngfuncs.GetClientTime() - m_LastUpdateServerState > 1.0f)
 		UpdateServerState(false);
+}
+
+void CVoiceStatus::HUD_Shutdown(){
+	m_BanMgr.Save();
 }
 
 void CVoiceStatus::UpdateSpeakerStatus( int entindex, bool bTalking ){
