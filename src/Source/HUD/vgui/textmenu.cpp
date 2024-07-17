@@ -44,6 +44,7 @@ void CTextMenu::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
 	SetBgColor(GetSchemeColor("TextMenu.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pMenu->SetFgColor(GetSchemeColor("TextMenu.TextColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
+	m_pMenu->SetFont(pScheme->GetFont(pScheme->GetResourceString("TextMenu.Font"), IsProportional()));
 }
 void CTextMenu::ShowPanel(bool state) {
 	if (state == IsVisible())

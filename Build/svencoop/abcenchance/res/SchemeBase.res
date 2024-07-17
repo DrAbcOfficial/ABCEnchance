@@ -375,6 +375,8 @@ Scheme
 		"TextMenu.BgColor"		"0 0 0 64"
 		//左侧菜单栏文字颜色
 		"TextMenu.TextColor"	"222 222 222 222"
+		//菜单字体
+		"TextMenu.Font"			"Title"
 		
 		//标题背景
 		"Vote.TitleBgColor"		"0 0 0 0"
