@@ -139,7 +139,7 @@ public:
 							FIMEMORY* mem = FreeImage_OpenMemory(reinterpret_cast<BYTE*>(const_cast<char*>(data)), length);
 							FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
 							if (format == FIF_GIF) {
-								FIMULTIBITMAP* multiBitmap = FreeImage_LoadMultiBitmapFromMemory(format, mem);
+								FIMULTIBITMAP* multiBitmap = FreeImage_LoadMultiBitmapFromMemory(format, mem, GIF_PLAYBACK);
 								size_t pageCount = FreeImage_GetPageCount(multiBitmap);
 								for (size_t i = 0; i < pageCount; i++) {
 									FIBITMAP* dib = FreeImage_LockPage(multiBitmap, i);
@@ -156,13 +156,12 @@ public:
 										// 遍历每个像素
 										for (int y = height - 1; y >= 0; y--) {
 											for (size_t x = 0; x < width; x++) {
-												BYTE index;
-												FreeImage_GetPixelIndex(dib, x, y, &index);
-												RGBQUAD color = FreeImage_GetPalette(dib)[index];
+												RGBQUAD color;
+												FreeImage_GetPixelColor(dib, x, y, &color);
 												head[0] = color.rgbRed;
 												head[1] = color.rgbGreen;
 												head[2] = color.rgbBlue;
-												head[3] = 255;
+												head[3] = color.rgbReserved;
 												head += 4;
 											}
 										}
@@ -1002,7 +1001,7 @@ void CScorePanel::UpdateScoresAndCounts(){
 	}
 
 	char buf[128];
-	wchar_t wbuf[128];
+	wchar_t wbuf[128] = {};
 
 	auto fnUpdateTeamHeader = [&](const char* pszTeamName, int nTeamID) {
 		TeamData& td = m_TeamData[nTeamID];
