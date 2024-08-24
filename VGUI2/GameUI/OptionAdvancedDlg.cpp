@@ -374,14 +374,16 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			write_mips(i);
 		}
 		delete[] flipped;
-		short dummy = 0;
-		stream.write((char*)&dummy, sizeof(short));
-		//Palette
-		for (size_t i = 0; i < 256; i++) {
-			RGBQUAD p = palette[i];
-			stream.write((char*)&p.rgbRed, 1);
-			stream.write((char*)&p.rgbGreen, 1);
-			stream.write((char*)&p.rgbBlue, 1);
+		short colorused = 256;
+		stream.write((char*)&colorused, sizeof(short));
+		//Palette x3
+		for (size_t j = 0; j < 3; j++) {
+			for (size_t i = 0; i < 256; i++) {
+				RGBQUAD p = palette[i];
+				stream.write((char*)&p.rgbRed, 1);
+				stream.write((char*)&p.rgbGreen, 1);
+				stream.write((char*)&p.rgbBlue, 1);
+			}
 		}
 		stream.close();
 		FreeImage_Unload(img);
