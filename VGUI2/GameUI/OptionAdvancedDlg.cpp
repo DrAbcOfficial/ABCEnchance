@@ -335,7 +335,11 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		lump.type = 0x43; //miptex
 		Q_strncpy(lump.name, "{LOGO", 16);
 		lump.offset = sizeof(WAD3Header_t) + sizeof(WAD3Lump_t);
-		lump.size = lump.sizeOnDisk = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3;
+		const static auto requiredPadding = [](int length, int padToMultipleOf) {
+			int excess = length % padToMultipleOf;
+			return excess == 0 ? 0 : padToMultipleOf - excess;
+		};
+		lump.size = lump.sizeOnDisk = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3 + requiredPadding(2 + 256 * 3, 4);
 		stream.write((char*)&lump, sizeof(WAD3Lump_t));
 		//mips header
 		BSPMipTexHeader_t header;
@@ -361,7 +365,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			}
 		}
 		//mips data
-		auto write_mips = [&](int mips_level) {
+		const  static auto write_mips = [&](int mips_level) {
 			int lv = pow(2, mips_level);
 			for (size_t i = 0; i < (nh/lv); i++) {
 				for (size_t j = 0; j < (nw/lv); j++) {
