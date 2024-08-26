@@ -20,7 +20,6 @@
 #include "usercmd.h"
 #include "extraprecache.h"
 #include "pm_defs.h"
-#include "usercmd.h"
 #include "entity_types.h"
 #include "StudioModelRenderer.h"
 #include "autofunc.h"
@@ -202,13 +201,13 @@ void FillEngineAddress() {
 			auto r_refdef_viewangles = (vec_t*)(*(DWORD*)(addr + 28));
 			g_refdef = (refdef_t*)((char*)r_refdef_viewangles - offsetof(refdef_t, viewangles));
 		}
+		/*
+			TODO: 5.26-rc1 R_RenderScene dose not exist no more!
+		*/
 #define R_RENDERSCENE_SIG_SVENGINE "\xDD\xD8\xDD\xD8\xE8"
-#define R_RENDERVIEW_SIG_SVENGINE "\x55\x8B\xEC\x83\xE4\xC0\x83\xEC\x34\x53\x56\x57\x8B\x7D\x08\x85\xFF"
+#define R_RENDERVIEW_SIG_SVENGINE "\x55\x8B\xEC\x83\xE4\xC0\x83\xEC\x34\x53\x8B\x5D\x08\x56\x57\x85\xDB\x2A\x2A\x89"
 		{
 			Fill_Sig(R_RENDERVIEW_SIG_SVENGINE, g_dwEngineBase, g_dwEngineSize, R_RenderView);
-			addr = (DWORD)Search_Pattern_From(gHookFuncs.R_RenderView, R_RENDERSCENE_SIG_SVENGINE);
-			gHookFuncs.R_RenderView = (decltype(gHookFuncs.R_RenderView))Search_Pattern(R_RENDERVIEW_SIG_SVENGINE);
-			Sig_FuncNotFound(R_RenderView);
 			addr = (ULONG_PTR)Search_Pattern_From(gHookFuncs.R_RenderView, R_RENDERSCENE_SIG_SVENGINE);
 			Sig_AddrNotFound(R_RenderScene);
 			gHookFuncs.R_RenderScene = (decltype(gHookFuncs.R_RenderScene))GetCallAddress(addr + 4);
