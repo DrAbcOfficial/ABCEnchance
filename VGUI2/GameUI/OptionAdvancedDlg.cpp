@@ -322,25 +322,15 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			}	
 		}
 		//header
+		//Magic
 		stream.write("WAD3", 4);
+		//Num of lump
 		unsigned int headerbuf = 1;
 		stream.write((char*)&headerbuf, 4);
-		headerbuf = sizeof(WAD3Header_t);
+		//lump offset
+		headerbuf = 0;
 		stream.write((char*)&headerbuf, 4);
-		//lump
 		size_t size = nw * nh;
-		WAD3Lump_t lump;
-		lump.compression = 0;
-		lump.dummy = 0;
-		lump.type = 0x43; //miptex
-		Q_strncpy(lump.name, "{LOGO", 16);
-		lump.offset = sizeof(WAD3Header_t) + sizeof(WAD3Lump_t);
-		const static auto requiredPadding = [](int length, int padToMultipleOf) {
-			int excess = length % padToMultipleOf;
-			return excess == 0 ? 0 : padToMultipleOf - excess;
-		};
-		lump.size = lump.sizeOnDisk = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3 + requiredPadding(2 + 256 * 3, 4);
-		stream.write((char*)&lump, sizeof(WAD3Lump_t));
 		//mips header
 		BSPMipTexHeader_t header;
 		Q_strncpy(header.name, "{LOGO", 16);
@@ -380,15 +370,32 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		delete[] flipped;
 		short colorused = 256;
 		stream.write((char*)&colorused, sizeof(short));
-		//Palette x3
-		for (size_t j = 0; j < 3; j++) {
-			for (size_t i = 0; i < 256; i++) {
-				RGBQUAD p = palette[i];
-				stream.write((char*)&p.rgbRed, 1);
-				stream.write((char*)&p.rgbGreen, 1);
-				stream.write((char*)&p.rgbBlue, 1);
-			}
+		//Palette
+		for (size_t i = 0; i < 256; i++) {
+			RGBQUAD p = palette[i];
+			stream.write((char*)&p.rgbRed, 1);
+			stream.write((char*)&p.rgbGreen, 1);
+			stream.write((char*)&p.rgbBlue, 1);
 		}
+		//dummy pad
+		headerbuf = 0;
+		stream.write((char*)&headerbuf, 2);
+		int lumpoffset = stream.tellp();
+		//lump
+		WAD3Lump_t lump;
+		lump.compression = 0;
+		lump.dummy = 0;
+		lump.type = 0x43; //miptex
+		Q_strncpy(lump.name, "{LOGO", 16);
+		lump.offset = sizeof(WAD3Header_t) + sizeof(WAD3Lump_t);
+		const static auto requiredPadding = [](int length, int padToMultipleOf) {
+			int excess = length % padToMultipleOf;
+			return excess == 0 ? 0 : padToMultipleOf - excess;
+			};
+		lump.size = lump.sizeOnDisk = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3 + requiredPadding(2 + 256 * 3, 4);
+		stream.write((char*)&lump, sizeof(WAD3Lump_t));
+		stream.seekp(8, std::ios::beg);
+		stream.write((char*)&lumpoffset, 4);
 		stream.close();
 		FreeImage_Unload(img);
 
