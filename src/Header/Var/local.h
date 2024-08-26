@@ -63,7 +63,7 @@ using cl_refHookfunc_t = struct{
 	void(__fastcall* CClient_SoundEngine_Initialize)(void* pSoundEngine, int);
 	void(__fastcall* CClient_SoundEngine_PlayFMODSound)(void* pSoundEngine, int, int flags, int entindex, float* origin,
 		int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength);
-	void		(*SetPunchAngle)			(int y, float value);
+	void		(*V_PunchAxis)				(int axis, float punch);
 
 	void* (__fastcall* CBasePanel_ctor)(void* pthis, int dummy);
 	void(__fastcall* CBasePanel_PaintBackground)(void* pthis, int dummy);

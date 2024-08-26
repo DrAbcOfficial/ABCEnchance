@@ -315,7 +315,7 @@ void CRadarPanel::RenderRadar(){
 	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
 	gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
 	gCustomHud.m_flOverViewYaw = local->curstate.angles[CMathlib::Q_YAW];
-	std::vector<std::pair<cvar_t*, float>> arySaveCvars = {
+	static std::vector<std::pair<cvar_t*, float>> arySaveCvars = {
 		{gCVars.pCVarDevOverview, 0.0f},
 		{gCVars.pCVarDrawEntities, 0.0f},
 		{gCVars.pCVarDrawViewModel, 0.0f},
