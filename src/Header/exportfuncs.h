@@ -13,40 +13,40 @@ extern CGameStudioModelRenderer* g_StudioRenderer;
 extern const clientdata_t* gClientData;
 
 extern overviewInfo_t* gDevOverview;
-extern refdef_t* g_refdef;
 extern metaplugins_t g_metaplugins;
 
+extern void CheckAsset();
+extern void CheckOtherPlugin();
+
 //Hook
-void AddHook(hook_t* h);
-void AddEngineHook(hook_t* h);
+extern void AddHook(hook_t* h);
+extern void AddEngineHook(hook_t* h);
+extern void FillEngineAddress();
+extern void FillAddress();
+extern void InstallEngineHook();
+extern void InstallClientHook();
+extern void UninstallEngineHook();
+extern void UninstallClientHook();
 
-void CheckOtherPlugin();
-void FillEngineAddress();
-void FillAddress();
-void InstallEngineHook();
-void InstallClientHook();
-void UninstallEngineHook();
-void UninstallClientHook();
-void CheckAsset();
 
-void GL_Init(void);
-void HUD_Init(void);
-int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio);
-int HUD_VidInit(void);
-void HUD_Shutdown(void);
-int HUD_Redraw(float time, int intermission);
-void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);
-int HUD_UpdateClientData(struct client_data_s* c, float f);
-void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
-void V_CalcRefdef(struct ref_params_s* pparams);
-void IN_MouseEvent(int mstate);
-void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
-int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding);
-int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
-void HUD_VoiceStatus(int entindex, qboolean talking);
-void HUD_Frame(double frametime);
-void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
-void HUD_TempEntUpdate(
+extern void GL_Init(void);
+extern void HUD_Init(void);
+extern int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio);
+extern int HUD_VidInit(void);
+extern void HUD_Shutdown(void);
+extern int HUD_Redraw(float time, int intermission);
+extern void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client);
+extern int HUD_UpdateClientData(struct client_data_s* c, float f);
+extern void HUD_ClientMove(struct playermove_s* ppmove, qboolean server);
+extern void V_CalcRefdef(struct ref_params_s* pparams);
+extern void IN_MouseEvent(int mstate);
+extern void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active);
+extern int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding);
+extern int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
+extern void HUD_VoiceStatus(int entindex, qboolean talking);
+extern void HUD_Frame(double frametime);
+extern void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
+extern void HUD_TempEntUpdate(
 	double frametime,   // Simulation time
 	double client_time, // Absolute time on client
 	double cl_gravity,  // True gravity on client
@@ -54,9 +54,7 @@ void HUD_TempEntUpdate(
 	TEMPENTITY** ppTempEntActive, // List 
 	int		(*Callback_AddVisibleEntity)(cl_entity_t* pEntity),
 	void	(*Callback_TempEntPlaySound)(TEMPENTITY* pTemp, float damp));
-void HUD_DrawTransparentTriangles();
-
-void R_NewMap(void);
+extern void HUD_DrawTransparentTriangles();
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)

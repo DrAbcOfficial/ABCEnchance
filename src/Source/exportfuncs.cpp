@@ -50,26 +50,32 @@
 #define _STR(s) #s
 #define STR(s) _STR(s)
 
+#pragma region External program management variables
+overviewInfo_t* gDevOverview;
+void* g_pClientSoundEngine;
+const clientdata_t* gClientData;
+CGameStudioModelRenderer* g_StudioRenderer;
+ref_params_t* g_clientrefparams = nullptr;
+DWORD g_dwHUDListAddr;
+#pragma endregion
+
+#pragma region Memcpy or internal management variable
+//memcpy
+engine_studio_api_t IEngineStudio;
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
+//new
+playerstatus_t g_playerppmove;
 metaplugins_t g_metaplugins;
-engine_studio_api_t IEngineStudio;
-CGameStudioModelRenderer* g_StudioRenderer;
-DWORD g_dwHUDListAddr;
+static float s_flFov;
+//hooks
+static std::vector<hook_t*> s_aryEngineHook = {};
+static std::vector<hook_t*> s_aryClientHook = {};
+#pragma endregion
 
-const clientdata_t* gClientData;
-
-overviewInfo_t* gDevOverview;
-refdef_t* g_refdef = nullptr;
-
-struct playerppmoveinfo {
-	bool onground;
-	bool inwater;
-	bool walking;
-} g_playerppmove;
-
+#pragma region Hooked Funcs
 //FINAL SHIT
-void R_NewMap(void){
+static void R_NewMap(void) {
 	//まともになったんだよ~
 	//これ　勣らないから
 	ClearExtraPrecache();
@@ -78,16 +84,16 @@ void R_NewMap(void){
 	EFX_Reset();
 	gHookFuncs.R_NewMap();
 }
-int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1){
+static int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1) {
 	if (gCVars.pDynamicCrossHair->value > 0)
 		return 0;
 	return gHookFuncs.R_CrossHair_ReDraw(pthis, dummy, param_1);
 }
-void __fastcall TFV_ShowScoreBoard(void* pthis) {
+static void __fastcall TFV_ShowScoreBoard(void* pthis) {
 	return;
 	//gHookFuncs.TFV_ShowScoreBoard(pthis);
 }
-void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
+static void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 	switch (iVguiMenu) {
 		//MissionBrief
 	case 0x4: return;
@@ -100,7 +106,7 @@ void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 		}
 		break;
 	}
-		  //TeamMenu
+			//TeamMenu
 	case 0x2:
 		//Vote
 	case 0x16:
@@ -119,48 +125,47 @@ void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 	//mission brief shit2 is 4, but fku all vgui shit
 	gHookFuncs.TFV_ShowVGUIMenu(pthis, dummy, iVguiMenu);
 }
-void __fastcall CStudioModelRenderer_Init(void* pthis, int dummy) {
+static void __fastcall CStudioModelRenderer_Init(void* pthis, int dummy) {
 	gHookFuncs.CStudioModelRenderer_Init(pthis, dummy);
 	g_StudioRenderer = static_cast<CGameStudioModelRenderer*>(pthis);
 }
 
-void EVVectorScale(float* punchangle1, float scale, float* punchangle2){
+static void EVVectorScale(float* punchangle1, float scale, float* punchangle2) {
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
 	CMathlib::VectorCopy(punchangle1, g_pViewPort->m_vecClientEVPunch);
 }
 extern bool g_bInRenderRadar;
-int CL_IsDevOverview(void){
+static int CL_IsDevOverview(void) {
 	return g_bInRenderRadar ? 1 : gHookFuncs.CL_IsDevOverview();
 }
-void CL_SetDevOverView(int param1){
+static void CL_SetDevOverView(int param1) {
 	gHookFuncs.CL_SetDevOverView(param1);
-	if (g_bInRenderRadar){
+	if (g_bInRenderRadar) {
 		(*(vec3_t*)(param1 + 0x1C))[CMathlib::Q_YAW] = gCustomHud.m_flOverViewYaw;
 		*(float*)(param1 + 0x10) = gCustomHud.m_vecOverViewOrg[0];
 		*(float*)(param1 + 0x14) = gCustomHud.m_vecOverViewOrg[1];
 		gDevOverview->z_max = gCustomHud.m_flOverViewZmax;
 		gDevOverview->z_min = gCustomHud.m_flOverViewZmin;
 		gDevOverview->zoom = gCustomHud.m_flOverViewScale;
-	}	
+	}
 }
-void R_ForceCVars(int mp) {
+static void R_ForceCVars(int mp) {
 	if (CL_IsDevOverview())
 		return;
 	gHookFuncs.R_ForceCVars(mp);
 }
-model_t* CL_GetModelByIndex (int index){
+static model_t* CL_GetModelByIndex(int index) {
 	auto extra = GetExtraModelByModelIndex(index);
 	if (extra)
 		return extra;
 
 	return gHookFuncs.CL_GetModelByIndex(index);
 }
-void* g_pClientSoundEngine;
-void __fastcall CClient_SoundEngine_Initialize(void* pSoundEngine, int dummy) {
+static void __fastcall CClient_SoundEngine_Initialize(void* pSoundEngine, int dummy) {
 	gHookFuncs.CClient_SoundEngine_Initialize(pSoundEngine, dummy);
 	g_pClientSoundEngine = pSoundEngine;
 }
-void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin, 
+void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin,
 	int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength) {
 #ifdef __HAS_NETEASE_API
 	if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
@@ -170,14 +175,9 @@ void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy,
 #endif
 	gHookFuncs.CClient_SoundEngine_PlayFMODSound(pSoundEngine, dummy, flags, entindex, origin, channel, name, fvol, attenuation, extraflags, pitch, sentenceIndex, soundLength);
 }
+#pragma endregion
 
-void CheckOtherPlugin(){
-	mh_plugininfo_t info;
-	if (g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info)) {
-		memcpy(&g_metaplugins.renderer.info, &info, sizeof(info));
-		g_metaplugins.renderer.has = true;
-	}
-}
+#pragma region Fillup Address and Hook
 void FillEngineAddress() {
 	auto engineFactory = Sys_GetFactory((HINTERFACEMODULE)g_dwEngineBase);
 	if (engineFactory && engineFactory("EngineSurface007", nullptr)) {
@@ -196,14 +196,6 @@ void FillEngineAddress() {
 #define CEngineClient_RenderView_SIG "\xFF\x74\x24\x04\x2A\x2A\x2A\x2A\x2A\x83\xC4\x04\x2A\x2A\x2A\x2A\x2A\x80\x7C\x24\x08\x00\xD9\xEE\x2A\x2A\x83\xEC\x10\xD9\x54\x24\x0C\xD9"
 		Fill_Sig(CEngineClient_RenderView_SIG, g_dwEngineBase, g_dwEngineSize, CEngineClient_RenderView);
 		DWORD addr;
-#define R_VIEWREFDEF_SIG "\x68\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68"
-		{
-			addr = (ULONG_PTR)g_pMetaHookAPI->SearchPattern(g_dwEngineBase, g_dwEngineSize, R_VIEWREFDEF_SIG, Sig_Length(R_VIEWREFDEF_SIG));
-			Sig_AddrNotFound(g_refdef);
-			auto r_refdef_viewangles = (vec_t*)(*(ULONG_PTR*)(addr + 28));
-			g_refdef = (refdef_t*)((char*)r_refdef_viewangles - offsetof(refdef_t, viewangles));
-		}
-
 #define DEVOVERVIEW_SIG "\x83\xEC\x30\xDD\x5C\x24\x2A\xD9\x05"
 		{
 			addr = (ULONG_PTR)Search_Pattern(DEVOVERVIEW_SIG);
@@ -212,12 +204,11 @@ void FillEngineAddress() {
 		}
 	}
 }
-
 extern void ClientDLLHook(void* interface_ptr);
-void FillAddress(){
+void FillAddress() {
 	auto pfnClientCreateInterface = g_pMetaHookAPI->GetClientFactory();
 	auto SCClient001 = pfnClientCreateInterface("SCClientDLL001", 0);
-	if (pfnClientCreateInterface && SCClient001){
+	if (pfnClientCreateInterface && SCClient001) {
 		ClientDLLHook(SCClient001);
 		//sig
 #define SC_GETCLIENTCOLOR_SIG "\x8B\x4C\x24\x04\x85\xC9\x2A\x2A\x6B\xC1\x5C\x0F\xBF\x80\x2A\x2A\x2A\x2A\x48\x83"
@@ -247,14 +238,10 @@ void FillAddress(){
 		}
 	}
 }
-
-static std::vector<hook_t*> s_aryEngineHook = {};
-static std::vector<hook_t*> s_aryClientHook = {};
-
-void AddHook(hook_t* h) {
+inline void AddHook(hook_t* h) {
 	s_aryClientHook.push_back(h);
 }
-void AddEngineHook(hook_t* h) {
+inline void AddEngineHook(hook_t* h) {
 	s_aryEngineHook.push_back(h);
 }
 void InstallEngineHook() {
@@ -269,7 +256,7 @@ void InstallEngineHook() {
 	Install_InlineEngHook(CL_GetModelByIndex);
 	Install_InlineEngHook(R_ForceCVars);
 }
-void InstallClientHook(){
+void InstallClientHook() {
 	Install_InlineHook(EVVectorScale);
 	Install_InlineHook(CClient_SoundEngine_PlayFMODSound);
 	Install_InlineHook(CClient_SoundEngine_Initialize);
@@ -290,24 +277,34 @@ void UninstallClientHook() {
 	}
 	s_aryClientHook.clear();
 }
-void CheckAsset(){
+#pragma endregion
+
+#pragma region Runtime Check
+void CheckOtherPlugin() {
+	mh_plugininfo_t info;
+	if (g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info)) {
+		memcpy(&g_metaplugins.renderer.info, &info, sizeof(info));
+		g_metaplugins.renderer.has = true;
+	}
+}
+inline void CheckAsset() {
 	if (!g_pFileSystem->FileExists("abcenchance/ABCEnchance.res"))
 		SYS_ERROR("Missing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
 }
+#pragma endregion
 
-void GL_Init(void){
+#pragma region HUD_XXX Funcs
+void GL_Init(void) {
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
-	if (GLEW_OK != err){
+	if (GLEW_OK != err) {
 		SYS_ERROR("glewInit failed, %s", glewGetErrorString(err));
 		return;
 	}
 	GL_ShaderInit();
 	gCustomHud.GL_Init();
 }
-extern void GameUI_GetInterface();
-
-void HUD_Init(void){
+void HUD_Init(void) {
 	MathLib_Init();
 	//VGUI init
 	gCVars.pShellEfx = CREATE_CVAR("abc_shellefx", "1", FCVAR_VALUE, nullptr);
@@ -332,7 +329,7 @@ void HUD_Init(void){
 	CREATE_CVAR("abc_version", STR(PLUGIN_VERSION), FCVAR_EXTDLL | FCVAR_CLIENTDLL, [](cvar_t* cvar) {
 		if (cvar->value != PLUGIN_VERSION)
 			gEngfuncs.Cvar_SetValue("abc_version", PLUGIN_VERSION);
-	});
+		});
 
 	ADD_COMMAND("models", []() {
 		if (gEngfuncs.Cmd_Argc() <= 1)
@@ -355,26 +352,22 @@ void HUD_Init(void){
 		}
 		vgui::filesystem()->FindClose(walk);
 		gEngfuncs.Con_Printf("==============\n");
-	});
+		});
 
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
 	g_pViewPort->Init();
 	GetClientVoiceMgr()->HUD_Init();
+	extern void GameUI_GetInterface();
 	GameUI_GetInterface();
 	abcconfig::LoadJson();
 	AutoFunc::Init();
 }
-
-int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio){
+int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio) {
 	memcpy(&IEngineStudio, pstudio, sizeof(IEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
-
-extern void FMOD_Shutdown();
-extern void FreeLibcurl();
-
-void HUD_Shutdown(void){
+void HUD_Shutdown(void) {
 	AutoFunc::Exit();
 
 	gExportfuncs.HUD_Shutdown();
@@ -385,6 +378,8 @@ void HUD_Shutdown(void){
 
 	GetTaskManager()->Shutdown();
 
+	extern void FMOD_Shutdown();
+	extern void FreeLibcurl();
 	FreeLibcurl();
 	FMOD_Shutdown();
 	FreeParticleMan();
@@ -394,18 +389,17 @@ void HUD_Shutdown(void){
 	GetClientVoiceMgr()->HUD_Shutdown();
 	abcconfig::SaveJson();
 }
-
-int HUD_VidInit(void){
+int HUD_VidInit(void) {
 	//Search and destory vanillia HUDs
 	if (g_dwHUDListAddr) {
 		HUDLIST* pHudList = reinterpret_cast<HUDLIST*>((*(DWORD*)(g_dwHUDListAddr)));
 		for (size_t i = 0; i <= 4; i++) {
-			switch (i){
-				case 0x0:gHookHud.m_Health = reinterpret_cast<CHudHealth*>(pHudList->p); break;
-				case 0x1:gHookHud.m_Battery = reinterpret_cast<CHudBattery*>(pHudList->p); break;
-				case 0x2:gHookHud.m_Ammo = reinterpret_cast<CHudAmmo*>(pHudList->p); break;
-				case 0x4:gHookHud.m_Flash = reinterpret_cast<CHudFlashlight*>(pHudList->p); break;
-				default:break;
+			switch (i) {
+			case 0x0:gHookHud.m_Health = reinterpret_cast<CHudHealth*>(pHudList->p); break;
+			case 0x1:gHookHud.m_Battery = reinterpret_cast<CHudBattery*>(pHudList->p); break;
+			case 0x2:gHookHud.m_Ammo = reinterpret_cast<CHudAmmo*>(pHudList->p); break;
+			case 0x4:gHookHud.m_Flash = reinterpret_cast<CHudFlashlight*>(pHudList->p); break;
+			default:break;
 			}
 			pHudList = pHudList->pNext;
 		}
@@ -421,10 +415,10 @@ int HUD_VidInit(void){
 	else
 		SYS_ERROR("Can not find vanillin HUDs");
 	if (g_pViewPort)
-		
 
-	//Fillup Default CVars
-	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
+
+		//Fillup Default CVars
+		gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
 	gCVars.pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
 	gCVars.pCVarDrawEntities = CVAR_GET_POINTER("r_drawentities");
 	gCVars.pCVarDrawViewModel = CVAR_GET_POINTER("r_drawviewmodel");
@@ -451,40 +445,32 @@ void HUD_Frame(double frametime) {
 	EFX_Frame();
 	CHttpClient::RunFrame();
 }
-int HUD_Redraw(float time, int intermission){
+int HUD_Redraw(float time, int intermission) {
 	CCustomHud::HideOriginalHud();
 	gCustomHud.HUD_Draw(time);
 	g_pViewPort->SetInterMission(intermission);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
-void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client){
+void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client) {
 	gClientData = client;
 	gExportfuncs.HUD_TxferLocalOverrides(state, client);
 }
-
-static float s_flFov;
-int HUD_UpdateClientData (struct client_data_s* c, float f){
+int HUD_UpdateClientData(struct client_data_s* c, float f) {
 	s_flFov = c->fov;
 	gCustomHud.HUD_UpdateClientData(c, f);
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
-float GetCurrentFOV() {
-	return s_flFov;
-}
-
-void HUD_ClientMove(struct playermove_s* ppmove, qboolean server){
+void HUD_ClientMove(struct playermove_s* ppmove, qboolean server) {
 	gExportfuncs.HUD_PlayerMove(ppmove, server);
 	g_playerppmove.inwater = (ppmove->waterlevel > 1);
 	g_playerppmove.onground = (ppmove->onground != -1);
 	g_playerppmove.walking = (ppmove->movetype == MOVETYPE_WALK);
 }
-void HUD_TxferPredictionData (struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
+void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
 	gCustomHud.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 	gExportfuncs.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 }
-
-ref_params_t* g_clientrefparams = nullptr;
-void V_CalcRefdef(struct ref_params_s* pparams){
+void V_CalcRefdef(struct ref_params_s* pparams) {
 	//pparams->nextView will be zeroed by client dll
 	gExportfuncs.V_CalcRefdef(pparams);
 	if (!gExportfuncs.CL_IsThirdPerson()) {
@@ -516,7 +502,7 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 	}
 	g_clientrefparams = pparams;
 }
-void IN_MouseEvent(int mstate){
+void IN_MouseEvent(int mstate) {
 	gCustomHud.IN_MouseEvent(mstate);
 	gExportfuncs.IN_MouseEvent(mstate);
 }
@@ -568,14 +554,12 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 			}
 		}
 	}
-	
 	return gExportfuncs.HUD_AddEntity(type, ent, modelname);
 }
-int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding){
-	return g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding) ? 
+int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding) {
+	return g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding) ?
 		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
 }
-
 void HUD_TempEntUpdate(
 	double frametime,   // Simulation time
 	double client_time, // Absolute time on client
@@ -595,3 +579,10 @@ void HUD_DrawTransparentTriangles() {
 		g_pParticleMan->Update();
 	gExportfuncs.HUD_DrawTransparentTriangles();
 }
+#pragma endregion
+
+#pragma region Extern funcs
+float GetCurrentFOV() {
+	return s_flFov;
+}
+#pragma endregion

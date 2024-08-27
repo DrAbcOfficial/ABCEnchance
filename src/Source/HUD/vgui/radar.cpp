@@ -116,7 +116,7 @@ private:
 };
 
 extern vgui::CViewport* g_pViewPort;
-#define VIEWPORT_RADAR_NAME "RadarPanel"
+constexpr auto VIEWPORT_RADAR_NAME = "RadarPanel";
 extern vgui::HScheme GetViewPortBaseScheme();
 CRadarPanel::CRadarPanel()
 	: BaseClass(nullptr, VIEWPORT_RADAR_NAME) {
@@ -208,9 +208,9 @@ void CRadarPanel::Paint(){
 		m_pNorthground->GetSize(nw, nh);
 		int len = GetWide() - nw;
 		float rotate = CMathlib::Q_DEG2RAD(local->curstate.angles[CMathlib::Q_YAW]);
-		int hh = gCVars.pRadar->value > 1 ? len / 2 : sqrt(2 * pow(len, 2)) / 2;
-		int stx = CMathlib::clamp(((size / 2) + hh * cos(rotate)), 0.0f, (float)len);
-		int sty = CMathlib::clamp(((size / 2) + hh * sin(rotate)), 0.0f, (float)len);
+		int hh = gCVars.pRadar->value > 1.0f ? (len / 2) : static_cast<int>(sqrt(2 * pow(len, 2.0f)) / 2.0f);
+		int stx = CMathlib::clamp(((size / 2.0f) + hh * cos(rotate)), 0.0f, (float)len);
+		int sty = CMathlib::clamp(((size / 2.0f) + hh * sin(rotate)), 0.0f, (float)len);
 		m_pNorthground->SetPos(stx, sty);
 
 		if (gCVars.pRadarAvatar->value > 0) {
