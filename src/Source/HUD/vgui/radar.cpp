@@ -303,7 +303,7 @@ void CRadarPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
 bool g_bInRenderRadar = false;
-void CRadarPanel::RenderRadar(ref_params_s* param_1){
+void CRadarPanel::RenderRadar(){
 	gCustomHud.m_flOverViewZmax = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::HEAD)->endpos[2] - gCVars.pRadarZMax->value;
 	gCustomHud.m_flOverViewZmin = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::FOOT)->endpos[2] - gCVars.pRadarZMin->value;
 
@@ -334,8 +334,13 @@ void CRadarPanel::RenderRadar(ref_params_s* param_1){
 		gCVars.pCVarWater->value = 0;
 	if (gCVars.pCVarShadow)
 		gCVars.pCVarShadow->value = 0;
+	static ref_params_t param = {};
+	CMathlib::VectorCopy(local->origin, param.vieworg);
+	param.viewangles[1] = 90;
+	param.viewport[2] = gScreenInfo.iWidth;
+	param.viewport[3] = gScreenInfo.iHeight;
 	g_bInRenderRadar = true;
-	gHookFuncs.CEngineClient_RenderView(param_1, true, false, 1);
+	gHookFuncs.CEngineClient_RenderView(&param, true, false, 1);
 	g_bInRenderRadar = false;
 	gCVars.pCVarDevOverview->value = arySaveCvars[0];
 	gCVars.pCVarDrawEntities->value = arySaveCvars[1];

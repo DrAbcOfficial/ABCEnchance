@@ -87,7 +87,7 @@ public:
 
 	bool IsInScore();
 
-	void RenderRadar(ref_params_s* param_1);
+	void RenderRadar();
 	~CCustomHud();			// destructor, frees allocated memory
 
 	int m_bitsHideHUDDisplay = 0;

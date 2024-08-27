@@ -865,8 +865,8 @@ hud_playerinfo_t* CCustomHud::GetPlayerHUDInfo(int index){
 bool CCustomHud::IsInScore() {
 	return m_bInScore;
 }
-void CCustomHud::RenderRadar(ref_params_s* param_1){
-	g_pViewPort->GetRadarPanel()->RenderRadar(param_1);
+void CCustomHud::RenderRadar(){
+	g_pViewPort->GetRadarPanel()->RenderRadar();
 }
 player_infosc_t* CCustomHud::GetPlayerInfoEx(int index) {
 	return reinterpret_cast<player_infosc_t*>(IEngineStudio.PlayerInfo(index - 1));
