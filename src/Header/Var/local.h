@@ -55,8 +55,7 @@ using cl_refHookfunc_t = struct{
 	void		(*R_NewMap)					();
 	int			(*CL_IsDevOverview)			();
 	void		(*R_ForceCVars)				(int mp);
-	void		(*R_RenderView)				(int a1);
-	void		(*R_RenderScene)			();
+	void		(*CEngineClient_RenderView)				(ref_params_s* param, bool bClearColor, bool bDrawViewModel, int iPassIndex);
 	model_t*	(*CL_GetModelByIndex)		(int index);
 	void		(*GL_Bind)					(int texnum);
 	void		(__cdecl* CL_SetDevOverView)(int param_1);

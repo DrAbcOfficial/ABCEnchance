@@ -315,19 +315,15 @@ void CRadarPanel::RenderRadar(){
 	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
 	gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
 	gCustomHud.m_flOverViewYaw = local->curstate.angles[CMathlib::Q_YAW];
-	static std::vector<std::pair<cvar_t*, float>> arySaveCvars = {
-		{gCVars.pCVarDevOverview, 0.0f},
-		{gCVars.pCVarDrawEntities, 0.0f},
-		{gCVars.pCVarDrawViewModel, 0.0f},
-		{gCVars.pCVarDrawDynamic, 0.0f},
-		{gCVars.pCVarFXAA, 0.0f},
-		{gCVars.pCVarWater, 0.0f},
-		{gCVars.pCVarShadow, 0.0f}
+	float arySaveCvars[] = {
+		gCVars.pCVarDevOverview->value,
+		gCVars.pCVarDrawEntities->value,
+		gCVars.pCVarDrawViewModel->value,
+		gCVars.pCVarDrawDynamic->value,
+		gCVars.pCVarFXAA ? gCVars.pCVarFXAA->value : 0.0f,
+		gCVars.pCVarWater ? gCVars.pCVarWater->value : 0.0f,
+		gCVars.pCVarShadow ? gCVars.pCVarShadow->value : 0.0f
 	};
-	for (auto iter = arySaveCvars.begin(); iter != arySaveCvars.end(); iter++) {
-		if ((*iter).first)
-			(*iter).second = (*iter).first->value;
-	}
 	gCVars.pCVarDevOverview->value = 2;
 	gCVars.pCVarDrawEntities->value = 0;
 	gCVars.pCVarDrawViewModel->value = 0;
@@ -339,12 +335,20 @@ void CRadarPanel::RenderRadar(){
 	if (gCVars.pCVarShadow)
 		gCVars.pCVarShadow->value = 0;
 	g_bInRenderRadar = true;
-	gHookFuncs.R_RenderScene();
+	extern ref_params_t* g_clientrefparams;
+	if(g_clientrefparams != nullptr)
+		gHookFuncs.CEngineClient_RenderView(g_clientrefparams, true, false, 1);
 	g_bInRenderRadar = false;
-	for (auto iter = arySaveCvars.begin(); iter != arySaveCvars.end(); iter++) {
-		if ((*iter).first)
-			(*iter).first->value = (*iter).second;
-	}
+	gCVars.pCVarDevOverview->value = arySaveCvars[0];
+	gCVars.pCVarDrawEntities->value = arySaveCvars[1];
+	gCVars.pCVarDrawViewModel->value = arySaveCvars[2];
+	gCVars.pCVarDrawDynamic->value = arySaveCvars[3];
+	if (gCVars.pCVarFXAA)
+		gCVars.pCVarFXAA->value = arySaveCvars[4];
+	if (gCVars.pCVarWater)
+		gCVars.pCVarWater->value = arySaveCvars[5];
+	if (gCVars.pCVarShadow)
+		gCVars.pCVarShadow->value = arySaveCvars[6];
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
 void CRadarPanel::SetScale(bool state){

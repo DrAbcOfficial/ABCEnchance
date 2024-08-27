@@ -193,6 +193,8 @@ void FillEngineAddress() {
 		Fill_Sig(R_FORCECVAR_SIG, g_dwEngineBase, g_dwEngineSize, R_ForceCVars);
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
+#define CEngineClient_RenderView_SIG "\xFF\x74\x24\x04\x2A\x2A\x2A\x2A\x2A\x83\xC4\x04\x2A\x2A\x2A\x2A\x2A\x80\x7C\x24\x08\x00\xD9\xEE\x2A\x2A\x83\xEC\x10\xD9\x54\x24\x0C\xD9"
+		Fill_Sig(CEngineClient_RenderView_SIG, g_dwEngineBase, g_dwEngineSize, CEngineClient_RenderView);
 		DWORD addr;
 #define R_VIEWREFDEF_SIG "\x68\x2A\x2A\x2A\x2A\xD9\x1D\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68\x2A\x2A\x2A\x2A\x68"
 		{
@@ -201,18 +203,7 @@ void FillEngineAddress() {
 			auto r_refdef_viewangles = (vec_t*)(*(ULONG_PTR*)(addr + 28));
 			g_refdef = (refdef_t*)((char*)r_refdef_viewangles - offsetof(refdef_t, viewangles));
 		}
-		/*
-			TODO: 5.26-rc1 R_RenderScene dose not exist no more!
-		*/
-#define R_RENDERSCENE_SIG_SVENGINE "\xDD\xD8\xDD\xD8\xE8"
-#define R_RENDERVIEW_SIG_SVENGINE "\x55\x8B\xEC\x83\xE4\xC0\x83\xEC\x34\x53\x8B\x5D\x08\x56\x57\x85\xDB\x2A\x2A\x89"
-		{
-			Fill_Sig(R_RENDERVIEW_SIG_SVENGINE, g_dwEngineBase, g_dwEngineSize, R_RenderView);
-			addr = (ULONG_PTR)Search_Pattern_From(gHookFuncs.R_RenderView, R_RENDERSCENE_SIG_SVENGINE);
-			Sig_AddrNotFound(R_RenderView);
-			gHookFuncs.R_RenderScene = (decltype(gHookFuncs.R_RenderScene))GetCallAddress(addr + 4);
-			Sig_FuncNotFound(R_RenderScene);
-		}
+
 #define DEVOVERVIEW_SIG "\x83\xEC\x30\xDD\x5C\x24\x2A\xD9\x05"
 		{
 			addr = (ULONG_PTR)Search_Pattern(DEVOVERVIEW_SIG);
@@ -491,6 +482,8 @@ void HUD_TxferPredictionData (struct entity_state_s* ps, const struct entity_sta
 	gCustomHud.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 	gExportfuncs.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 }
+
+ref_params_t* g_clientrefparams = nullptr;
 void V_CalcRefdef(struct ref_params_s* pparams){
 	//pparams->nextView will be zeroed by client dll
 	gExportfuncs.V_CalcRefdef(pparams);
@@ -521,6 +514,7 @@ void V_CalcRefdef(struct ref_params_s* pparams){
 		pparams->vieworg[1] += vecRight[1];
 		pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
 	}
+	g_clientrefparams = pparams;
 }
 void IN_MouseEvent(int mstate){
 	gCustomHud.IN_MouseEvent(mstate);
