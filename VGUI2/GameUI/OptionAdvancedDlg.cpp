@@ -378,8 +378,14 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			stream.write((char*)&p.rgbBlue, 1);
 		}
 		//dummy pad
+		headerbuf = stream.tellp();
+		const static auto requiredPadding = [](int length, int padToMultipleOf) {
+			int excess = length % padToMultipleOf;
+			return excess == 0 ? 0 : padToMultipleOf - excess;
+		};
+		int padding = requiredPadding(headerbuf, 4);
 		headerbuf = 0;
-		stream.write((char*)&headerbuf, 2);
+		stream.write((char*)&headerbuf, padding);
 		int lumpoffset = stream.tellp();
 		//lump
 		WAD3Lump_t lump;
@@ -388,10 +394,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		lump.type = 0x43; //miptex
 		Q_strncpy(lump.name, "{LOGO", 16);
 		lump.offset = sizeof(WAD3Header_t) + sizeof(WAD3Lump_t);
-		const static auto requiredPadding = [](int length, int padToMultipleOf) {
-			int excess = length % padToMultipleOf;
-			return excess == 0 ? 0 : padToMultipleOf - excess;
-			};
+		
 		lump.size = lump.sizeOnDisk = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3 + requiredPadding(2 + 256 * 3, 4);
 		stream.write((char*)&lump, sizeof(WAD3Lump_t));
 		stream.seekp(8, std::ios::beg);
