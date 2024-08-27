@@ -28,7 +28,7 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
-	void RenderRadar();
+	void RenderRadar(ref_params_s* param_1);
 	void SetScale(bool state);
 	void SetAvatarVisible(bool state);
 private:

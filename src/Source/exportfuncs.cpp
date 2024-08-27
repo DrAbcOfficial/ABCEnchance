@@ -55,7 +55,6 @@ overviewInfo_t* gDevOverview;
 void* g_pClientSoundEngine;
 const clientdata_t* gClientData;
 CGameStudioModelRenderer* g_StudioRenderer;
-ref_params_t* g_clientrefparams = nullptr;
 DWORD g_dwHUDListAddr;
 #pragma endregion
 
@@ -500,7 +499,6 @@ void V_CalcRefdef(struct ref_params_s* pparams) {
 		pparams->vieworg[1] += vecRight[1];
 		pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
 	}
-	g_clientrefparams = pparams;
 }
 void IN_MouseEvent(int mstate) {
 	gCustomHud.IN_MouseEvent(mstate);

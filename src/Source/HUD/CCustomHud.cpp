@@ -43,40 +43,43 @@
 CCustomHud gCustomHud;
 cl_hookedHud gHookHud;
 
-pfnUserMsgHook m_pfnInitHUD;
-pfnUserMsgHook m_pfnCurWeapon;
-pfnUserMsgHook m_pfnWeaponList;
-pfnUserMsgHook m_pfnCustWeapon;
-pfnUserMsgHook m_pfnAmmoX;
-pfnUserMsgHook m_pfnHideWeapon;
-pfnUserMsgHook m_pfnHideHUD;
-pfnUserMsgHook m_pfnWeaponSpr;
-pfnUserMsgHook m_pfnWeapPickup;
-pfnUserMsgHook m_pfnAmmoPickup;
-pfnUserMsgHook m_pfnItemPickup;
-pfnUserMsgHook m_pfnHealth;
-pfnUserMsgHook m_pfnScoreInfo;
-pfnUserMsgHook m_pfnSpectator;
-pfnUserMsgHook m_pfnServerName;
-pfnUserMsgHook m_pfnNextMap;
-pfnUserMsgHook m_pfnTimeEnd;
-pfnUserMsgHook m_pfnShowMenu;
-pfnUserMsgHook m_pfnVoteMenu;
-pfnUserMsgHook m_pfnEndVote;
-pfnUserMsgHook m_pfnMOTD;
-pfnUserMsgHook m_pfnFlashBat;
-pfnUserMsgHook m_pfnFlashlight;
-pfnUserMsgHook m_pfnTextMsg;
-pfnUserMsgHook m_pfnMetaHook;
-pfnUserMsgHook m_pfnDamage;
-pfnUserMsgHook m_pfnBattery;
+#pragma region UserMsg Varibles
+static pfnUserMsgHook m_pfnInitHUD;
+static pfnUserMsgHook m_pfnCurWeapon;
+static pfnUserMsgHook m_pfnWeaponList;
+static pfnUserMsgHook m_pfnCustWeapon;
+static pfnUserMsgHook m_pfnAmmoX;
+static pfnUserMsgHook m_pfnHideWeapon;
+static pfnUserMsgHook m_pfnHideHUD;
+static pfnUserMsgHook m_pfnWeaponSpr;
+static pfnUserMsgHook m_pfnWeapPickup;
+static pfnUserMsgHook m_pfnAmmoPickup;
+static pfnUserMsgHook m_pfnItemPickup;
+static pfnUserMsgHook m_pfnHealth;
+static pfnUserMsgHook m_pfnScoreInfo;
+static pfnUserMsgHook m_pfnSpectator;
+static pfnUserMsgHook m_pfnServerName;
+static pfnUserMsgHook m_pfnNextMap;
+static pfnUserMsgHook m_pfnTimeEnd;
+static pfnUserMsgHook m_pfnShowMenu;
+static pfnUserMsgHook m_pfnVoteMenu;
+static pfnUserMsgHook m_pfnEndVote;
+static pfnUserMsgHook m_pfnMOTD;
+static pfnUserMsgHook m_pfnFlashBat;
+static pfnUserMsgHook m_pfnFlashlight;
+static pfnUserMsgHook m_pfnTextMsg;
+static pfnUserMsgHook m_pfnMetaHook;
+static pfnUserMsgHook m_pfnDamage;
+static pfnUserMsgHook m_pfnBattery;
+#pragma endregion
 
-int __MsgFunc_InitHUD(const char* pszName, int iSize, void* pbuf) {
+#pragma region UserMsg Hooks
+static int __MsgFunc_InitHUD(const char* pszName, int iSize, void* pbuf) {
 	if (g_pParticleMan)
 		g_pParticleMan->ResetParticles();
 	return m_pfnInitHUD(pszName, iSize, pbuf);
 }
-int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
@@ -84,7 +87,7 @@ int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf) {
 	g_pViewPort->GetAmmoPanel()->RefreshAmmo();
 	return m_pfnAmmoX(pszName, iSize, pbuf);
 }
-int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 
 	WEAPON* Weapon = new WEAPON();
@@ -124,7 +127,7 @@ int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf) {
 	}
 	return m_pfnWeaponList(pszName, iSize, pbuf);
 }
-int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int id = READ_SHORT();
 	std::string name = READ_STRING();
@@ -136,7 +139,7 @@ int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf) {
 	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
 }
-int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int iState = READ_BYTE();
 	if (iState & CAmmoPanel::WEAPONSTATE::VALID) {
@@ -172,19 +175,19 @@ int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
 	}
 	return m_pfnCurWeapon(pszName, iSize, pbuf);
 }
-int __MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf){
+static int __MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	gCustomHud.HudHideCallBack(READ_BYTE());
 	return m_pfnHideWeapon(pszName, iSize, pbuf);
 }
-int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf){
+static int __MsgFunc_HideHUD(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	gCustomHud.HudHideCallBack(READ_BYTE());
 	return m_pfnHideHUD(pszName, iSize, pbuf);
 }
 //uzi akimbo
 //shit uzi
-int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int id = READ_SHORT();
 	std::string name = READ_STRING();
@@ -200,20 +203,20 @@ int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf) {
 	}
 	return m_pfnWeaponSpr(pszName, iSize, pbuf);
 }
-int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_SHORT();
 	g_pViewPort->GetWeaponStackPanel()->AddItemPickup(iIndex);
 	return m_pfnWeapPickup(pszName, iSize, pbuf);
 }
-int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
 	int iCount = READ_LONG();
 	g_pViewPort->GetAmmoStackPanel()->AddAmmoPickup(iIndex, iCount);
 	return m_pfnAmmoPickup(pszName, iSize, pbuf);
 }
-int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	const char* szName = READ_STRING();
 	auto index = gCustomHud.GetSpriteIndex(szName);
@@ -225,7 +228,7 @@ int __MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf) {
 	return m_pfnItemPickup(pszName, iSize, pbuf);
 }
 
-int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int armor = READ_BYTE();
 	int damageTaken = READ_BYTE();
@@ -243,21 +246,21 @@ int __MsgFunc_Damage(const char* pszName, int iSize, void* pbuf) {
 		std::to_string(damageTaken).c_str(), std::to_string(armor).c_str(), std::to_string(tiles).c_str());
 	return m_pfnDamage(pszName, iSize, pbuf);
 }
-int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_Battery(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int battery = READ_SHORT();
 	g_pViewPort->SetArmor(battery);
 	AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_BATTERY, std::to_string(battery).c_str());
 	return m_pfnBattery(pszName, iSize, pbuf);
 }
-int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_Health(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int health = READ_LONG();
 	g_pViewPort->SetHealth(health);
 	AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_HEALTH, std::to_string(health).c_str());
 	return m_pfnHealth(pszName, iSize, pbuf);
 }
-int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
 	//wtf is not this shit
@@ -275,7 +278,7 @@ int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 	CPlayerInfo::GetPlayerInfo(clientIndex)->Update();
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
 }
-int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
 	if (clientIndex - 1 < 32) {
@@ -284,7 +287,7 @@ int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {
 	}
 	return m_pfnSpectator(pszName, iSize, pbuf);
 }
-int __MsgFunc_ServerName(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_ServerName(const char* pszName, int iSize, void* pbuf) {
 	if (g_pViewPort)
 	{
 		BEGIN_READ(pbuf, iSize);
@@ -295,7 +298,7 @@ int __MsgFunc_ServerName(const char* pszName, int iSize, void* pbuf) {
 	}
 	return m_pfnServerName(pszName, iSize, pbuf);
 }
-int __MsgFunc_NextMap(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_NextMap(const char* pszName, int iSize, void* pbuf) {
 	if (g_pViewPort)
 	{
 		BEGIN_READ(pbuf, iSize);
@@ -306,7 +309,7 @@ int __MsgFunc_NextMap(const char* pszName, int iSize, void* pbuf) {
 	}
 	return m_pfnNextMap(pszName, iSize, pbuf);
 }
-int __MsgFunc_TimeEnd(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_TimeEnd(const char* pszName, int iSize, void* pbuf) {
 	
 	if (g_pViewPort)
 	{
@@ -316,11 +319,11 @@ int __MsgFunc_TimeEnd(const char* pszName, int iSize, void* pbuf) {
 	}
 	return m_pfnTimeEnd(pszName, iSize, pbuf);
 }
-int __MsgFunc_ShowMenu(const char* pszName, int iSize, void* pbuf){
+static int __MsgFunc_ShowMenu(const char* pszName, int iSize, void* pbuf){
 	//block hahahaha
 	return g_pViewPort->MsgShowMenu(pszName, iSize, pbuf);
 }
-int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf) {
 	if (!g_pViewPort->IsVoteEnable())
 		return m_pfnVoteMenu(pszName, iSize, pbuf);
 
@@ -335,11 +338,11 @@ int __MsgFunc_VoteMenu(const char* pszName, int iSize, void* pbuf) {
 	g_pViewPort->StartVote(szContent, szYes, szNo, iVoteType);
 	return 1;
 }
-int __MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_EndVote(const char* pszName, int iSize, void* pbuf) {
 	g_pViewPort->EndVote();
 	return m_pfnEndVote(pszName, iSize, pbuf);
 }
-int __MsgFunc_MOTD(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_MOTD(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int code = READ_BYTE();
 	char* msg = READ_STRING();
@@ -351,21 +354,21 @@ int __MsgFunc_MOTD(const char* pszName, int iSize, void* pbuf) {
 		g_pViewPort->FinishSendMOTD();
 	return m_pfnMOTD(pszName, iSize, pbuf);
 }
-int __MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int flash = READ_BYTE();
 	g_pViewPort->SetFlashBattery(flash);
 	AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_FLASHBATTERY, std::to_string(flash).c_str());
 	return m_pfnFlashBat(pszName, iSize, pbuf);
 }
-int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int on = READ_BYTE();
 	int battery = READ_BYTE();
 	g_pViewPort->SetFlashLight(on, battery);
 	return m_pfnFlashlight(pszName, iSize, pbuf);
 }
-int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 	if (g_pViewPort && g_pViewPort->TextMsg(pszName, iSize, pbuf))
 		return 1;
 	BEGIN_READ(pbuf, iSize);
@@ -426,7 +429,7 @@ int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 
 	return m_pfnTextMsg(pszName, iSize, pbuf);
 }
-int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
+static int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int type = READ_BYTE();
 	switch (type) {
@@ -483,7 +486,9 @@ int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	}
 	return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 }
+#pragma endregion
 
+#pragma region UserCmd Varibles
 void(*UserCmd_Slots[10])(void);
 void(*UserCmd_NextWeapon)(void);
 void(*UserCmd_PrevWeapon)(void);
@@ -491,42 +496,44 @@ void(*UserCmd_ShowScores)(void);
 void(*UserCmd_HideScores)(void);
 void(*UserCmd_Attack1)(void);
 void(*UserCmd_MissionBrief)(void);
+#pragma endregion
 
-void UserCmd_SlotInput(int i) {
+#pragma region UserCmd Hooks
+static void UserCmd_SlotInput(int i) {
 	bool bVisible = gCustomHud.IsTextMenuOpening();
 	gWR.SelectSlot(i, 1, false);
 	m_HudEccoBuyMenu.SlotCallBack(i);
 	if(!bVisible)
 		UserCmd_Slots[i]();
 }
-void __UserCmd_Slot1(void) {
+static void __UserCmd_Slot1(void) {
 	UserCmd_SlotInput(0);
 }
-void __UserCmd_Slot2(void) {
+static void __UserCmd_Slot2(void) {
 	UserCmd_SlotInput(1);
 }
-void __UserCmd_Slot3(void) {
+static void __UserCmd_Slot3(void) {
 	UserCmd_SlotInput(2);
 }
-void __UserCmd_Slot4(void) {
+static void __UserCmd_Slot4(void) {
 	UserCmd_SlotInput(3);
 }
-void __UserCmd_Slot5(void) {
+static void __UserCmd_Slot5(void) {
 	UserCmd_SlotInput(4);
 }
-void __UserCmd_Slot6(void) {
+static void __UserCmd_Slot6(void) {
 	UserCmd_SlotInput(5);
 }
-void __UserCmd_Slot7(void) {
+static void __UserCmd_Slot7(void) {
 	UserCmd_SlotInput(6);
 }
-void __UserCmd_Slot8(void) {
+static void __UserCmd_Slot8(void) {
 	UserCmd_SlotInput(7);
 }
-void __UserCmd_Slot9(void) {
+static void __UserCmd_Slot9(void) {
 	UserCmd_SlotInput(8);
 }
-void __UserCmd_Slot10(void) {
+static void __UserCmd_Slot10(void) {
 	bool bVisible = gCustomHud.IsTextMenuOpening();
 	gWR.SelectSlot(9, 1, false);
 	m_HudEccoBuyMenu.SlotCallBack(9);
@@ -534,36 +541,38 @@ void __UserCmd_Slot10(void) {
 	if (!bVisible)
 		UserCmd_Slots[9]();
 }
-void __UserCmd_MissionBrief(void) {
+static void __UserCmd_MissionBrief(void) {
 	g_pViewPort->ShowMOTD();
 }
-void __UserCmd_NextWeapon(void) {
+static void __UserCmd_NextWeapon(void) {
 	gWR.SelectSlot(gWR.m_iNowSlot, 1, true);
 	return UserCmd_NextWeapon();
 }
-void __UserCmd_PrevWeapon(void) {
+static void __UserCmd_PrevWeapon(void) {
 	gWR.SelectSlot(gWR.m_iNowSlot, -1, true);
 	return UserCmd_PrevWeapon();
 }
-void __UserCmd_OpenScoreboard(void) {
+static void __UserCmd_OpenScoreboard(void) {
 	gCustomHud.m_bInScore = true;
 	if (g_pViewPort && !g_pViewPort->GetInterMission())
 		g_pViewPort->ShowScoreBoard();
 	return;
 	//UserCmd_ShowScores();
 }
-void __UserCmd_CloseScoreboard(void) {
+static void __UserCmd_CloseScoreboard(void) {
 	gCustomHud.m_bInScore = false;
 	if (g_pViewPort && !g_pViewPort->GetInterMission())
 		g_pViewPort->HideScoreBoard();
 	//UserCmd_HideScores();
 }
-void __UserCmd_Attack1(void) {
+static void __UserCmd_Attack1(void) {
 	if (g_pViewPort->GetWeaponChoosePanel()->BlockAttackOnce())
 		return;
 	return UserCmd_Attack1();
 }
+#pragma endregion
 
+#pragma region CCustomHud
 void CCustomHud::GL_Init(void){
 	m_HudIndicator.GLInit();
 	m_HudEccoBuyMenu.GLInit();
@@ -856,8 +865,8 @@ hud_playerinfo_t* CCustomHud::GetPlayerHUDInfo(int index){
 bool CCustomHud::IsInScore() {
 	return m_bInScore;
 }
-void CCustomHud::RenderRadar(){
-	g_pViewPort->GetRadarPanel()->RenderRadar();
+void CCustomHud::RenderRadar(ref_params_s* param_1){
+	g_pViewPort->GetRadarPanel()->RenderRadar(param_1);
 }
 player_infosc_t* CCustomHud::GetPlayerInfoEx(int index) {
 	return reinterpret_cast<player_infosc_t*>(IEngineStudio.PlayerInfo(index - 1));
@@ -865,3 +874,4 @@ player_infosc_t* CCustomHud::GetPlayerInfoEx(int index) {
 CCustomHud :: ~CCustomHud(){
 	m_arySprites.clear();
 }
+#pragma endregion
