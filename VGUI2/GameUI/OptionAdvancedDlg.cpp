@@ -385,7 +385,9 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		};
 		int padding = requiredPadding(headerbuf, 4);
 		headerbuf = 0;
-		stream.write((char*)&headerbuf, padding);
+		for (size_t i = 0; i < padding; i++) {
+			stream.write((char*)&headerbuf, 1);
+		}
 		int lumpoffset = stream.tellp();
 		//lump
 		WAD3Lump_t lump;
