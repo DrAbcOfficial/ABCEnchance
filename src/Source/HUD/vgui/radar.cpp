@@ -339,9 +339,14 @@ void CRadarPanel::RenderRadar(){
 	param.viewangles[1] = 90;
 	param.viewport[2] = gScreenInfo.iWidth;
 	param.viewport[3] = gScreenInfo.iHeight;
+
+	extern bool* g_bRenderingPortals;
+	bool oldRender = *g_bRenderingPortals;
+	*g_bRenderingPortals = false;
 	g_bInRenderRadar = true;
 	gHookFuncs.CEngineClient_RenderView(&param, true, false, 1);
 	g_bInRenderRadar = false;
+	*g_bRenderingPortals = oldRender;
 	gCVars.pCVarDevOverview->value = arySaveCvars[0];
 	gCVars.pCVarDrawEntities->value = arySaveCvars[1];
 	gCVars.pCVarDrawViewModel->value = arySaveCvars[2];

@@ -17,6 +17,10 @@ extern int g_iEngineType;
 extern IFileSystem *g_pFileSystem;
 extern PVOID g_dwClientBase;
 extern DWORD g_dwClientSize;
+extern PVOID g_dwClientTextBase;
+extern DWORD g_dwClientTextSize;
+extern PVOID g_dwClientDataBase;
+extern DWORD g_dwClientDataSize;
 extern bool g_IsClientVGUI2;
 
 #define SYS_ERROR(msg, ...) g_pMetaHookAPI->SysError("[ABCEnchance]: " msg, __VA_ARGS__)

@@ -9,6 +9,7 @@
 #include "pm_movevars.h"
 #include "cvardef.h"
 #include "httpclient.h"
+#include "capstone.h"
 
 #include "Task.h"
 //Def
@@ -56,6 +57,7 @@ void* g_pClientSoundEngine;
 const clientdata_t* gClientData;
 CGameStudioModelRenderer* g_StudioRenderer;
 DWORD g_dwHUDListAddr;
+bool* g_bRenderingPortals;
 #pragma endregion
 
 #pragma region Memcpy or internal management variable
@@ -205,6 +207,18 @@ void FillEngineAddress() {
 }
 extern void ClientDLLHook(void* interface_ptr);
 void FillAddress() {
+	g_dwClientTextBase = g_pMetaHookAPI->GetSectionByName(g_dwClientBase, ".text\0\0\0", &g_dwClientTextSize);
+	if (!g_dwClientTextBase)
+	{
+		SYS_ERROR("Failed to locate section \".text\" in client.dll!");
+		return;
+	}
+	g_dwClientDataBase = g_pMetaHookAPI->GetSectionByName(g_dwClientBase, ".data\0\0\0", &g_dwClientDataSize);
+	if (!g_dwClientDataBase)
+	{
+		SYS_ERROR("Failed to locate section \".text\" in client.dll!");
+		return;
+	}
 	auto pfnClientCreateInterface = g_pMetaHookAPI->GetClientFactory();
 	auto SCClient001 = pfnClientCreateInterface("SCClientDLL001", 0);
 	if (pfnClientCreateInterface && SCClient001) {
@@ -234,6 +248,40 @@ void FillAddress() {
 		{
 			addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
 			g_dwHUDListAddr = *(DWORD*)(addr + 0x1);
+		}
+		if (1)
+		{
+			const char pattern[] = "\x6A\x00\x6A\x00\x6A\x00\x8B\x2A\xFF\x50\x2A";
+			auto addr = Search_Pattern_From_Size(g_dwClientTextBase, g_dwClientTextSize, pattern);
+			Sig_AddrNotFound(g_bRenderingPortals);
+
+			g_pMetaHookAPI->DisasmRanges(addr, 0x80, [](void* inst, PUCHAR address, size_t instLen, int instCount, int depth, PVOID context) {
+
+				auto pinst = (cs_insn*)inst;
+
+				if (pinst->id == X86_INS_MOV &&
+					pinst->detail->x86.op_count == 2 &&
+					pinst->detail->x86.operands[0].type == X86_OP_MEM &&
+					pinst->detail->x86.operands[1].type == X86_OP_IMM &&
+					(PUCHAR)pinst->detail->x86.operands[0].mem.disp > (PUCHAR)g_dwClientDataBase &&
+					(PUCHAR)pinst->detail->x86.operands[0].mem.disp < (PUCHAR)g_dwClientDataBase + g_dwClientDataSize &&
+					pinst->detail->x86.operands[1].imm == 1)
+				{
+					g_bRenderingPortals = (decltype(g_bRenderingPortals))pinst->detail->x86.operands[0].mem.disp;
+					return TRUE;
+				}
+
+				if (address[0] == 0xCC)
+					return TRUE;
+
+				if (pinst->id == X86_INS_RET)
+					return TRUE;
+
+				return FALSE;
+
+				}, 0, NULL);
+
+			Sig_VarNotFound(g_bRenderingPortals);
 		}
 	}
 }
