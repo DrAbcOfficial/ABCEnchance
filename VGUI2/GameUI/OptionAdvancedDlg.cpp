@@ -385,19 +385,21 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		};
 		int padding = requiredPadding(headerbuf, 4);
 		headerbuf = 0;
-		for (size_t i = 0; i < padding; i++) {
+		for (int i = 0; i < padding; i++) {
 			stream.write((char*)&headerbuf, 1);
 		}
 		int lumpoffset = stream.tellp();
 		//lump
-		WAD3Lump_t lump;
-		lump.compression = 0;
-		lump.dummy = 0;
-		lump.type = 0x43; //miptex
-		Q_strncpy(lump.name, "{LOGO", 16);
-		lump.offset = sizeof(WAD3Header_t) + sizeof(WAD3Lump_t);
-		
-		lump.size = lump.sizeOnDisk = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3 + requiredPadding(2 + 256 * 3, 4);
+		int lumpsize = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3 + requiredPadding(2 + 256 * 3, 4);
+		WAD3Lump_t lump = {
+			sizeof(WAD3Header_t) + sizeof(WAD3Lump_t),
+			lumpsize,
+			lumpsize,
+			0x43, //miptex
+			0,
+			0,
+			"{LOGO\0"
+		};
 		stream.write((char*)&lump, sizeof(WAD3Lump_t));
 		stream.seekp(8, std::ios::beg);
 		stream.write((char*)&lumpoffset, 4);
