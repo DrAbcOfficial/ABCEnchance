@@ -16,12 +16,6 @@
 #include "exportfuncs.h"
 #include "OptionAdvancedDlg.h"
 
-static vgui::IClientPanel* s_pBasePanel;
-static vgui::DHANDLE<vgui::COptionsAdvanceDialog>s_hAdvanceOptPanel;
-
-static vgui::PHandle s_hBasePanelWarpper;
-static vgui::DHANDLE<vgui::HTML>s_hHTMLBackground;
-
 class TransWarpper : public vgui::Panel {
 	using Panel::Panel;
 public:
@@ -40,6 +34,10 @@ public:
 		SetKeyBoardInputEnabled(false);
 		SetMouseInputEnabled(false);
 	}
+	virtual bool OnStartRequest(const char* url, const char* target, const char* pchPostData, bool bIsRedirect) {
+		m_bInteractive = false;
+		return HTML::OnStartRequest(url, target, pchPostData, bIsRedirect);
+	}
 	virtual void OnFinishRequest(const char* url, const char* pageTitle, const CUtlMap < CUtlString, CUtlString >& headers) override {
 		HTML::OnFinishRequest(url, pageTitle, headers);
 		if (!m_bInteractive) {
@@ -47,12 +45,26 @@ public:
 			OnKeyCodeTyped(vgui::KEY_NONE);
 			m_bInteractive = true;
 		}
+		m_bLoaded = strncmp("about:blank", url, 11);
 	}
+	bool m_bLoaded = false;
 private:
 	bool m_bInteractive = false;
 };
 
+static vgui::IClientPanel* s_pBasePanel;
+static vgui::DHANDLE<vgui::COptionsAdvanceDialog>s_hAdvanceOptPanel;
+
+static vgui::PHandle s_hBasePanelWarpper;
+static vgui::DHANDLE<BackGroundHTML>s_hHTMLBackground;
+
 static bool s_bInited = false;
+static void HTMLReopenBackground() {
+	char local[MAX_PATH] = "file:///";
+	const size_t uiURLLength = 8;
+	vgui::filesystem()->GetLocalPath("abcenchance/scence/background.html", local + uiURLLength, 252);
+	s_hHTMLBackground->OpenURL(local, nullptr, true);
+}
 static void SetBasePanelState(bool state) {
 	if (state) {
 		if (!s_bInited) {
@@ -65,10 +77,7 @@ static void SetBasePanelState(bool state) {
 			if (!s_hHTMLBackground) {
 				s_hHTMLBackground = new BackGroundHTML(s_hBasePanelWarpper);
 				s_hHTMLBackground->SetBgColor(Color(0, 0, 0, 0));
-				char local[MAX_PATH] = "file:///";
-				const size_t uiURLLength = 8;
-				vgui::filesystem()->GetLocalPath("abcenchance/scence/background.html", local + uiURLLength, 252);
-				s_hHTMLBackground->OpenURL(local, nullptr, true);
+				HTMLReopenBackground();
 			}
 			s_bInited = true;
 		}
@@ -111,14 +120,19 @@ void BackGroundOnCommand(void*& pPanel, const char*& cmd) {
 	BasePanelSendJSEvent(cmd);
 }
 void BasePanelConnectServer() {
-	BasePanelSendJSEvent("ConnectedServer");
-	if (s_hHTMLBackground)
+	if (s_hHTMLBackground && s_hHTMLBackground.Get()->m_bLoaded) {
+		BasePanelSendJSEvent("ConnectedServer");
+		s_hHTMLBackground.Get()->OpenURL("about:blank", nullptr, true);
 		s_hHTMLBackground.Get()->SetVisible(false);
+	}
+		
 }
 void BasePanelDiconnectServer() {
-	BasePanelSendJSEvent("DisconnectedServer");
-	if (s_hHTMLBackground)
+	if (s_hHTMLBackground && !s_hHTMLBackground.Get()->m_bLoaded) {
+		HTMLReopenBackground();
+		BasePanelSendJSEvent("DisconnectedServer");
 		s_hHTMLBackground.Get()->SetVisible(true);
+	}	
 }
 
 vgui::IClientPanel* BasePanel() {
@@ -132,7 +146,7 @@ void SetAdvanceOptPanelVisible(bool state) {
 			s_hAdvanceOptPanel->Close();
 	}
 }
-void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
+static void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	s_pBasePanel = static_cast<vgui::IClientPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
 	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/OptionsAdvanceDialogScheme.res", "OptionsAdvanceDialogScheme");
 	return s_pBasePanel;
