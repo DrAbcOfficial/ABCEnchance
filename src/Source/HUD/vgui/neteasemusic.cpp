@@ -475,25 +475,39 @@ void CNeteasePanel::Think() {
 			//lyric
 			if (m_pLyric != nullptr && m_pLyric->Size() > 0) {
 				auto lrc = m_pLyric->LyricAt(pos);
-				std::wstring szLrc = lrc.lyric;
-				m_pLyricLable->SetText(szLrc.c_str());
-				szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc.end_time - pos) / (lrc.end_time - lrc.start_time)), 0.0f, 1.0f));
-				m_pLyricLableHighlight->SetText(szLrc.c_str());
+				if (lrc) {
+					std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+					std::wstring szLrc = converter.from_bytes(reinterpret_cast<const char*>(lrc->CurrentLyric.data()));
+					m_pLyricLable->SetText(szLrc.c_str());
+					szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc->EndTime - pos) / (lrc->EndTime - lrc->StartTime)), 0.0f, 1.0f));
+					m_pLyricLableHighlight->SetText(szLrc.c_str());
+				}
+				else {
+					m_pLyricLable->SetText(L"");
+					m_pLyricLableHighlight->SetText(L"");
+				}
 			}
 			else {
-				m_pLyricLable->SetText("");
-				m_pLyricLableHighlight->SetText("");
+				m_pLyricLable->SetText(L"");
+				m_pLyricLableHighlight->SetText(L"");
 			}
 			if (m_pTransLyric != nullptr && m_pTransLyric->Size() > 0) {
 				auto lrc = m_pTransLyric->LyricAt(pos);
-				std::wstring szLrc = lrc.lyric;
-				m_pTranslatedLyricLable->SetText(szLrc.c_str());
-				szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc.end_time - pos) / (lrc.end_time - lrc.start_time)), 0.0f, 1.0f));
-				m_pTranslatedLyricLableHighlight->SetText(szLrc.c_str());
+				if (lrc) {
+					std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+					std::wstring szLrc = converter.from_bytes(reinterpret_cast<const char*>(lrc->CurrentLyric.data()));
+					m_pTranslatedLyricLable->SetText(szLrc.c_str());
+					szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc->EndTime - pos) / (lrc->EndTime - lrc->StartTime)), 0.0f, 1.0f));
+					m_pTranslatedLyricLableHighlight->SetText(szLrc.c_str());
+				}
+				else {
+					m_pTranslatedLyricLable->SetText(L"");
+					m_pTranslatedLyricLableHighlight->SetText(L"");
+				}
 			}
 			else {
-				m_pTranslatedLyricLable->SetText("");
-				m_pTranslatedLyricLableHighlight->SetText("");
+				m_pTranslatedLyricLable->SetText(L"");
+				m_pTranslatedLyricLableHighlight->SetText(L"");
 			}
 		}
 		else
@@ -822,9 +836,8 @@ void CNeteasePanel::PlayListMusic(){
 				panel->m_pAlbumPanel->SetImage(s_pAlbumImage);
 				//Set Lyric
 				if (obj->lyric != nullptr) {
-					lrc::LrcParser parser;
-					panel->m_pLyric = parser.ParseString(std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(obj->lyric->lyric));
-					panel->m_pTransLyric = parser.ParseString(std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(obj->lyric->tlyric));
+					panel->m_pLyric = std::unique_ptr<lrc::CLrcCollection>(lrc::LrcParser(reinterpret_cast<const char8_t*>(obj->lyric->lyric.c_str())));
+					panel->m_pTransLyric = std::unique_ptr<lrc::CLrcCollection>(lrc::LrcParser(reinterpret_cast<const char8_t*>(obj->lyric->tlyric.c_str())));
 				}
 				//Text
 				panel->m_pMusicNameLable->SetText(obj->music->name.c_str());

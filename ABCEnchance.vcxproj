@@ -248,6 +248,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\Utility\config.cpp" />
     <ClCompile Include="src\Source\Utility\curl.cpp" />
     <ClCompile Include="src\Source\Utility\httpclient.cpp" />
+    <ClCompile Include="src\Source\Utility\liblrc.cpp" />
     <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
     <ClCompile Include="src\Source\Utility\NeteaseApi.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
@@ -267,8 +268,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\Var\voice_banmgr.cpp" />
     <ClCompile Include="src\Source\Var\voice_status.cpp" />
     <ClCompile Include="src\Source\viewmodellag.cpp" />
-    <ClCompile Include="src\thirdparty\liblrc\lrc_parser.cpp" />
-    <ClCompile Include="src\thirdparty\liblrc\lyrics.cpp" />
     <ClCompile Include="src\thirdparty\wadlib\texture.cpp" />
     <ClCompile Include="src\thirdparty\wadlib\wadfile.cpp" />
     <ClCompile Include="vgui2\BaseUI.cpp" />
@@ -495,6 +494,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\Utility\crypto.h" />
     <ClInclude Include="src\Header\Utility\curl.h" />
     <ClInclude Include="src\Header\Utility\httpclient.h" />
+    <ClInclude Include="src\Header\Utility\liblrc.h" />
     <ClInclude Include="src\Header\Utility\mymathlib.h" />
     <ClInclude Include="src\Header\Utility\NeteaseApi.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_def.h" />
@@ -536,8 +536,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\thirdparty\Fmod\fmod_memoryinfo.h" />
     <ClInclude Include="src\thirdparty\Fmod\fmod_output.h" />
     <ClInclude Include="src\thirdparty\formatter.h" />
-    <ClInclude Include="src\thirdparty\liblrc\lrc_parser.h" />
-    <ClInclude Include="src\thirdparty\liblrc\lyrics.h" />
     <ClInclude Include="src\thirdparty\qrcodegen.h" />
     <ClInclude Include="src\thirdparty\wadlib\texture.h" />
     <ClInclude Include="src\thirdparty\wadlib\wadfile.h" />
@@ -643,9 +641,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="vgui_controls\URLLabel.h" />
     <ClInclude Include="vgui_controls\WizardPanel.h" />
     <ClInclude Include="vgui_controls\WizardSubPanel.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="src\thirdparty\liblrc\readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
