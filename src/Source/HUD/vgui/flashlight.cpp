@@ -61,6 +61,7 @@ void CFlashLightPanel::SetParent(vgui::VPANEL parent) {
 }
 
 void CFlashLightPanel::SetFlashLight(bool on, int battery){
+	vgui::GetAnimationController()->CancelAnimationsForPanel(GetParent());
 	vgui::GetAnimationController()->StartAnimationSequence(this, on ? "FlashLightOn" : "FlashLightOff");
 	m_pOnImage->SetVisible(on);
 	m_pOffImage->SetVisible(!on);
