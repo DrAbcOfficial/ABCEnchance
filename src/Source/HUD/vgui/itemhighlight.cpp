@@ -68,8 +68,10 @@ public:
 		m_pText = new vgui::Label(this, "Text", "#GameUI_ABC_ItemPickupNotice");
 	}
 	virtual void SetVisible(bool state) override {
-		if (state && !IsVisible()) 
+		if (state && !IsVisible()) {
+			vgui::GetAnimationController()->CancelAnimationsForPanel(GetParent());
 			vgui::GetAnimationController()->StartAnimationSequence(GetParent(), "ItemPickupNoticePopUp");
+		}
 		BaseClass::SetVisible(state);
 	}
 	virtual void PerformLayout() override {

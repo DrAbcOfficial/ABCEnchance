@@ -72,6 +72,7 @@ void CTileIconItem::SetImage(const char* image){
 
 void CTileIconItem::Show(){
 	SetVisible(true);
+	vgui::GetAnimationController()->CancelAnimationsForPanel(GetParent());
 	GetAnimationController()->StartAnimationSequence(GetParent(), GetName());
 }
 

@@ -198,6 +198,7 @@ void CWeaponChoosePanel::ShowPanel(bool state) {
 		return;
 	SetVisible(state);
 	if (state) {
+		vgui::GetAnimationController()->CancelAnimationsForPanel(GetParent());
 		vgui::GetAnimationController()->StartAnimationSequence(GetParent(), "WeaponChooseIn");
 		InvalidateLayout();
 	}
