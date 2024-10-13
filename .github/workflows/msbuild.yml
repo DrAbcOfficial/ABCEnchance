@@ -29,6 +29,7 @@ jobs:
       with:
         repository: DrAbcOfficial/ABCEnchance
         path: MetaHookSv/Plugins/ABCEnchance
+        ref: '5.25'
 
     - name: Setup build env
       working-directory: MetaHookSv

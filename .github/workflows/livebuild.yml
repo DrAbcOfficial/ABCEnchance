@@ -2,9 +2,9 @@ name: LiveBuild
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "5.25" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "5.25" ]
     
 env:
   SOLUTION_FILE_PATH: MetaHookSv/Plugins/ABCEnchance
@@ -30,6 +30,7 @@ jobs:
       with:
         repository: DrAbcOfficial/ABCEnchance
         path: MetaHookSv/Plugins/ABCEnchance
+        ref: '5.25'
 
     - name: Setup build env
       working-directory: MetaHookSv
