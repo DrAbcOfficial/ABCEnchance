@@ -304,7 +304,7 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 				gEngfuncs.pEventAPI->EV_WeaponAnimation(6, 0);
 				auto view = gEngfuncs.GetViewModel();
 				CClient_SoundEngine_PlayFMODSound(g_pClientSoundEngine, 0, 0, view->index, view->origin, CHAN_WEAPON, "weapons/gauss2.wav", 1.0f, 1.0f, 0, 100, -1, 0.0f);
-				gHookFuncs.V_PunchAxis(0, -1.5f);
+				gHookFuncs.SetPunchAngle(0, -1.5f);
 				//f1 ÉËº¦
 				//b1 ÊÇ·ñ×ó¼ü
 				DoGaussFire(fparam1, bparam1);
