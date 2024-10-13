@@ -8,7 +8,7 @@
 
 #include "NeteaseApi.h"
 #include "soundengine.h"
-#include "liblrc/lrc_parser.h"
+#include "liblrc.h"
 
 #include <vgui_controls/Frame.h>
 #include "IViewportPanel.h"
@@ -138,8 +138,8 @@ private:
 	unsigned long m_uiStartPlayOffset = 0;
 
 	std::shared_ptr<netease::CMusic> m_pPlaying = nullptr;
-	std::unique_ptr<lrc::Lyrics> m_pLyric = nullptr;
-	std::unique_ptr<lrc::Lyrics> m_pTransLyric = nullptr;
+	std::unique_ptr<lrc::CLrcCollection> m_pLyric = nullptr;
+	std::unique_ptr<lrc::CLrcCollection> m_pTransLyric = nullptr;
 	std::shared_ptr<netease::CMy> m_pLogined = nullptr;
 
 	PLAYSTATE m_pNowState;

@@ -9,14 +9,11 @@
 #include "cvardef.h"
 #include "local.h"
 #include "config.h"
+#include "enginedef.h"
 
 #include "autofunc.h"
 
-extern struct playerppmoveinfo {
-	bool onground;
-	bool inwater;
-	bool walking;
-} g_playerppmove;
+extern playerstatus_t g_playerppmove;
 static bool g_bAutoDucktap = false;
 
 using concurrentcmd_t = struct {

@@ -72,6 +72,7 @@ void CTextMenu::SetContent(const char* szMenu){
 
 
 void CTextMenu::StartFade(bool state){
+	vgui::GetAnimationController()->CancelAnimationsForPanel(GetParent());
 	vgui::GetAnimationController()->StartAnimationSequence(GetParent(), state ? "TextMenuIn" : "TextMenuOut");
 }
 
