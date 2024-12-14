@@ -242,7 +242,6 @@ void FillAddress() {
 		Fill_Sig(Client_SoundEngine_PlayFMODSound_SIG, g_dwClientBase, g_dwClientSize, CClient_SoundEngine_PlayFMODSound);
 #define V_PunchAxis_SIG "\x8B\x44\x24\x04\xF3\x0F\x10\x44\x24\x08\xF3\x0F\x11\x04\x85\x2A\x2A\x2A\x2A\xC3\xCC"
 		Fill_Sig(V_PunchAxis_SIG, g_dwClientBase, g_dwClientSize, V_PunchAxis);
-		auto x = gHookFuncs.V_PunchAxis;
 		PUCHAR addr;
 		if (1)
 		{

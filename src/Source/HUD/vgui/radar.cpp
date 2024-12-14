@@ -344,7 +344,10 @@ void CRadarPanel::RenderRadar(){
 	bool oldRender = *g_bRenderingPortals;
 	*g_bRenderingPortals = false;
 	g_bInRenderRadar = true;
-	gHookFuncs.CEngineClient_RenderView(&param, true, false, 1);
+
+	//why no work?
+	//gHookFuncs.CEngineClient_RenderView(&param, true, false, 1);
+
 	g_bInRenderRadar = false;
 	*g_bRenderingPortals = oldRender;
 	gCVars.pCVarDevOverview->value = arySaveCvars[0];
