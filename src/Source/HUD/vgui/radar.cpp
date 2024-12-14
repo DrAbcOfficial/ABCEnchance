@@ -346,7 +346,7 @@ void CRadarPanel::RenderRadar(){
 	g_bInRenderRadar = true;
 
 	//why no work?
-	//gHookFuncs.CEngineClient_RenderView(&param, true, false, 1);
+	gHookFuncs.CEngineClient_RenderView(&param, true, false, 1);
 
 	g_bInRenderRadar = false;
 	*g_bRenderingPortals = oldRender;
