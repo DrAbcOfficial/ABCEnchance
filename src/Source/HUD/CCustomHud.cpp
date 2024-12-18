@@ -272,8 +272,11 @@ static int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 		info->health = READ_FLOAT();
 		info->armor = READ_FLOAT();
 		info->team = READ_BYTE();
-		info->donors = READ_SHORT();
-		info->admin = READ_SHORT();
+		//Real value hide in ScorePanel + 0x9247
+		int i = READ_BYTE();
+		bool cl_hidextar = i;
+		info->donors = cl_hidextar;
+		info->admin = READ_BYTE();
 	}
 	CPlayerInfo::GetPlayerInfo(clientIndex)->Update();
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
