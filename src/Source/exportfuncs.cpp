@@ -242,6 +242,8 @@ void FillAddress() {
 		Fill_Sig(Client_SoundEngine_PlayFMODSound_SIG, g_dwClientBase, g_dwClientSize, CClient_SoundEngine_PlayFMODSound);
 #define V_PunchAxis_SIG "\x8B\x44\x24\x04\xF3\x0F\x10\x44\x24\x08\xF3\x0F\x11\x04\x85\x2A\x2A\x2A\x2A\xC3\xCC"
 		Fill_Sig(V_PunchAxis_SIG, g_dwClientBase, g_dwClientSize, V_PunchAxis);
+#define Crypto_GenerateKey_SIG "\x81\xEC\x8C\x08\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\x88\x08\x00\x00\x53\x8B\x9C\x24\x94"
+		Fill_Sig(Crypto_GenerateKey_SIG, g_dwClientBase, g_dwClientSize, Crypto_GenerateKey);
 		PUCHAR addr;
 		if (1)
 		{

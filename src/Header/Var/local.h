@@ -68,6 +68,7 @@ using cl_refHookfunc_t = struct{
 	void(__fastcall* CBasePanel_PaintBackground)(void* pthis, int dummy);
 
 	void(__fastcall* CGameUI_Start)(void* pthis, int dummy, void* engfuncs, int idoncare, void* ibasesystem);
+	byte* (__fastcall* Crypto_GenerateKey)(void* pthis, int dummy, size_t param1, bool param2);
 
 	void		(*pfnPlaybackEvent)			(int flags, const struct edict_s* pInvoker, unsigned short eventindex, float delay, float* origin, float* angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2);
 	//VGUI2

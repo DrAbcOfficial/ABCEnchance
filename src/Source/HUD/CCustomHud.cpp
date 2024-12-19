@@ -71,6 +71,7 @@ static pfnUserMsgHook m_pfnTextMsg;
 static pfnUserMsgHook m_pfnMetaHook;
 static pfnUserMsgHook m_pfnDamage;
 static pfnUserMsgHook m_pfnBattery;
+static pfnUserMsgHook m_pfnClExtrasInfo;
 #pragma endregion
 
 #pragma region UserMsg Hooks
@@ -432,6 +433,34 @@ static int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf) {
 
 	return m_pfnTextMsg(pszName, iSize, pbuf);
 }
+static int __MsgFunc_ClExtrasInfo(const char* pszName, int iSize, void* pbuf) {
+	//Why Encrypt it? is it aes?
+	//Funny Encrypt here, plain text length 33, sent length 105
+	//x3 Network traffic, lets fuck more server operator
+	BEGIN_READ(pbuf, iSize);
+	int plainDataLength = READ_LONG();
+	int ivLength = READ_LONG();
+	std::vector<byte> iv{};
+	for (int i = 0; i < ivLength; i++) {
+		iv.push_back(READ_BYTE());
+	}
+	int encryptLength = READ_LONG();
+	std::vector<byte> encrypt{};
+	for (int i = 0; i < encryptLength; i++) {
+		encrypt.push_back(READ_BYTE());
+	}
+	int enctryptDigestLength = READ_LONG();
+	std::vector<byte> digest{};
+	for (int i = 0; i < enctryptDigestLength; i++) {
+		digest.push_back(READ_BYTE());
+	}
+	extern PVOID g_dwClientBase;
+	//Funny Stack Object;
+	auto pCryptoObj = reinterpret_cast<char*>(g_dwClientBase) + 0xBE0;
+	byte* key = gHookFuncs.Crypto_GenerateKey(pCryptoObj, 0, 1, false);
+
+	return m_pfnClExtrasInfo(pszName, iSize, pbuf);
+}
 static int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int type = READ_BYTE();
@@ -612,6 +641,7 @@ void CCustomHud::HUD_Init(void){
 	m_pfnFlashlight = HOOK_MESSAGE(Flashlight);
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
 	m_pfnMetaHook = HOOK_MESSAGE(MetaHook);
+	m_pfnClExtrasInfo = HOOK_MESSAGE(ClExtrasInfo);
 	if(!m_pfnMetaHook)
 		gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 
