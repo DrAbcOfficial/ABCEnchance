@@ -58,6 +58,7 @@ const clientdata_t* gClientData;
 CGameStudioModelRenderer* g_StudioRenderer;
 DWORD g_dwHUDListAddr;
 bool* g_bRenderingPortals;
+hud_nativeplayerinfo_t* g_aryNativePlayerInfo;
 #pragma endregion
 
 #pragma region Memcpy or internal management variable
@@ -242,22 +243,18 @@ void FillAddress() {
 		Fill_Sig(Client_SoundEngine_PlayFMODSound_SIG, g_dwClientBase, g_dwClientSize, CClient_SoundEngine_PlayFMODSound);
 #define V_PunchAxis_SIG "\x8B\x44\x24\x04\xF3\x0F\x10\x44\x24\x08\xF3\x0F\x11\x04\x85\x2A\x2A\x2A\x2A\xC3\xCC"
 		Fill_Sig(V_PunchAxis_SIG, g_dwClientBase, g_dwClientSize, V_PunchAxis);
-#define Crypto_GenerateKey_SIG "\x81\xEC\x8C\x08\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\x88\x08\x00\x00\x53\x8B\x9C\x24\x94"
-		Fill_Sig(Crypto_GenerateKey_SIG, g_dwClientBase, g_dwClientSize, Crypto_GenerateKey);
-		PUCHAR addr;
-		if (1)
-		{
-			addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
+#pragma region HUDList
+		if (1) {
+			PUCHAR addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
 			g_dwHUDListAddr = *(DWORD*)(addr + 0x1);
 		}
-		if (1)
-		{
-			const char pattern[] = "\x6A\x00\x6A\x00\x6A\x00\x8B\x2A\xFF\x50\x2A";
+#pragma endregion
+#pragma region bRenderingPortal
+		if (1) {
+			constexpr char pattern[] = "\x6A\x00\x6A\x00\x6A\x00\x8B\x2A\xFF\x50\x2A";
 			auto addr = Search_Pattern_From_Size(g_dwClientTextBase, g_dwClientTextSize, pattern);
 			Sig_AddrNotFound(g_bRenderingPortals);
-
 			g_pMetaHookAPI->DisasmRanges(addr, 0x80, [](void* inst, PUCHAR address, size_t instLen, int instCount, int depth, PVOID context) {
-
 				auto pinst = (cs_insn*)inst;
 
 				if (pinst->id == X86_INS_MOV &&
@@ -281,9 +278,19 @@ void FillAddress() {
 				return FALSE;
 
 				}, 0, NULL);
-
 			Sig_VarNotFound(g_bRenderingPortals);
 		}
+#pragma endregion
+#pragma region Player Infos
+		if (1) {
+			constexpr char pattern[] = "\xC6\x85\x8F\xFE\xFF\xFF\x01\x66\x89\x90";
+			PUCHAR addr = (PUCHAR)Search_Pattern_From_Size(g_dwClientBase, g_dwClientSize, pattern);
+			g_aryNativePlayerInfo = reinterpret_cast<hud_nativeplayerinfo_t*> (*(DWORD*)(addr + 10) + 8);
+
+			auto x = 1 + 1;
+		}
+#pragma endregion
+
 	}
 }
 inline void AddHook(hook_t* h) {

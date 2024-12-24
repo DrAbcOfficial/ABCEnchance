@@ -4,37 +4,13 @@
 #include <optional>
 #include "player_infosc.h"
 
-typedef struct hud_playerinfo_s {
-	int index;
-	float frags;
-	long death;
-	float health;
-	float armor;
-	int team;
-	int donors;
-	int admin;
-	bool spectate;
-}hud_playerinfo_t;
-
-class CHudBattery;
-class CHudHealth;
-class CHudAmmo;
-class CHudFlashlight;
-typedef struct {
-	CHudBattery* m_Battery;
-	CHudHealth* m_Health;
-	CHudAmmo* m_Ammo;
-	CHudFlashlight* m_Flash;
-} cl_hookedHud;
-
-typedef int HSPRITE;
-
 enum SC_DONER_ICON {
-	DONER_NONE = 0,
+	DONER_NONE = 65536,
 	DONER_ELECTRIC_CROWBAR,
 	DONER_GOLDED_UZI,
 	DONER_GOLED_DOLLAR,
 	DONER_TESTER,
+	DONER_ARTIST,
 	DONER_DEVELOEPR
 };
 enum SC_ADMIN_ICON {
@@ -42,6 +18,40 @@ enum SC_ADMIN_ICON {
 	ADMIN_OPRATER,
 	ADMIN_SERVER_OWNER
 };
+using hud_playerinfo_t = struct hud_playerinfo_s {
+	int index;
+	float frags;
+	long death;
+	float health;
+	float armor;
+	int team;
+	bool isdonor;
+	SC_ADMIN_ICON admin;
+	bool spectate;
+};
+using hud_nativeplayerinfo_t = struct hud_nativeplayerinfo_s {
+	float frags;
+	int death;
+	int classify;
+	char unknown[64];
+	float health;
+	float armor;
+	SC_DONER_ICON donor;
+	SC_ADMIN_ICON admin;
+};
+
+class CHudBattery;
+class CHudHealth;
+class CHudAmmo;
+class CHudFlashlight;
+using cl_hookedHud = struct {
+	CHudBattery* m_Battery;
+	CHudHealth* m_Health;
+	CHudAmmo* m_Ammo;
+	CHudFlashlight* m_Flash;
+};
+
+typedef int HSPRITE;
 
 #ifndef __AMMO_H__
 class WEAPON;

@@ -275,9 +275,9 @@ static int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 		info->team = READ_BYTE();
 		//Real value hide in ScorePanel + 0x9247
 		int i = READ_BYTE();
-		bool cl_hidextar = i;
-		info->donors = cl_hidextar;
-		info->admin = READ_BYTE();
+		bool cl_hidexra = i;
+		info->isdonor = cl_hidexra;
+		info->admin = static_cast<SC_ADMIN_ICON>(READ_BYTE());
 	}
 	CPlayerInfo::GetPlayerInfo(clientIndex)->Update();
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
@@ -437,7 +437,7 @@ static int __MsgFunc_ClExtrasInfo(const char* pszName, int iSize, void* pbuf) {
 	//Why Encrypt it? is it aes?
 	//Funny Encrypt here, plain text length 33, sent length 105
 	//x3 Network traffic, lets fuck more server operator
-	BEGIN_READ(pbuf, iSize);
+	/*BEGIN_READ(pbuf, iSize);
 	int plainDataLength = READ_LONG();
 	int ivLength = READ_LONG();
 	std::vector<byte> iv{};
@@ -453,13 +453,10 @@ static int __MsgFunc_ClExtrasInfo(const char* pszName, int iSize, void* pbuf) {
 	std::vector<byte> digest{};
 	for (int i = 0; i < enctryptDigestLength; i++) {
 		digest.push_back(READ_BYTE());
-	}
-	extern PVOID g_dwClientBase;
-	//Funny Stack Object;
-	auto pCryptoObj = reinterpret_cast<char*>(g_dwClientBase) + 0xBE0;
-	byte* key = gHookFuncs.Crypto_GenerateKey(pCryptoObj, 0, 1, false);
-
-	return m_pfnClExtrasInfo(pszName, iSize, pbuf);
+	}*/
+	int result = m_pfnClExtrasInfo(pszName, iSize, pbuf);
+	CPlayerInfo::UpdateAll();
+	return result;
 }
 static int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);

@@ -63,7 +63,7 @@ public:
 	// Should be called before reading engine info.
 	// Returns this
 	CPlayerInfo *Update();
-	void UpdateAll();
+	static void UpdateAll();
 	/**
 	 * Returns whether the player has a real name.
 	 */
@@ -85,7 +85,7 @@ public:
 		bool dead;
 		short teamnumber = -1;
 		char teamname[MAX_TEAMNAME_LENGTH];
-		short donor;
+		int donor;
 		short admin;
 	};
 private:

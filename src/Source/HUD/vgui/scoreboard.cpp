@@ -24,6 +24,7 @@
 #include "Task.h"
 #include "httpclient.h"
 #include "FreeImage.h"
+#include "CCustomHud.h"
 
 #include "scoreboard.h"
 #include "avatar_image.h"
@@ -938,12 +939,12 @@ void CScorePanel::UpdatePlayerDonor(CPlayerInfo* pi) {
 	CDonorImage* pImg = static_cast<CDonorImage*>(m_pImageList->GetImage(pi->GetIndex() + DONOR_IMAGELIST_BASE));
 	int iTex = -1;
 	switch (pi->GetDonor()) {
-	case 1:iTex = m_iDonor1IconTexture; break;
-	case 2:iTex = m_iDonor2IconTexture; break;
-	case 3:iTex = m_iDonor3IconTexture; break;
-	case 4:iTex = m_iDonor4IconTexture; break;
-	case 5:iTex = m_iDonor5IconTexture; break;
-	case 6:iTex = m_iDonor6IconTexture; break;
+	case SC_DONER_ICON::DONER_ELECTRIC_CROWBAR:iTex = m_iDonor1IconTexture; break;
+	case SC_DONER_ICON::DONER_GOLDED_UZI:iTex = m_iDonor2IconTexture; break;
+	case SC_DONER_ICON::DONER_GOLED_DOLLAR:iTex = m_iDonor3IconTexture; break;
+	case SC_DONER_ICON::DONER_TESTER:iTex = m_iDonor4IconTexture; break;
+	case SC_DONER_ICON::DONER_ARTIST:iTex = m_iDonor5IconTexture; break;
+	case SC_DONER_ICON::DONER_DEVELOEPR:iTex = m_iDonor6IconTexture; break;
 	}
 	pImg->SetTexture(iTex);
 }

@@ -150,7 +150,12 @@ CPlayerInfo *CPlayerInfo::Update(){
 		m_ExtraInfo.frags = extraInfo->frags;
 		m_ExtraInfo.deaths = extraInfo->death;
 		m_ExtraInfo.health = extraInfo->health;
-		m_ExtraInfo.donor = extraInfo->donors;
+		if (extraInfo->isdonor) {
+			extern hud_nativeplayerinfo_t* g_aryNativePlayerInfo;
+			m_ExtraInfo.donor = g_aryNativePlayerInfo[GetIndex()-1].donor;
+		}
+		else
+			m_ExtraInfo.donor = SC_DONER_ICON::DONER_NONE;
 		m_ExtraInfo.teamnumber = extraInfo->team;
 		m_ExtraInfo.admin = extraInfo->admin;
 		Q_strcpy(m_ExtraInfo.teamname, CTeamInfo::GetTeamInfo(0)->GetNameByIndex(extraInfo->team));
