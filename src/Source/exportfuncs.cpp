@@ -283,6 +283,18 @@ void FillAddress() {
 #pragma endregion
 #pragma region Player Infos
 		if (1) {
+			/*
+			        10032b67 83 f8 07        CMP        pKey,0x7
+					10032b6a 0f 87 1c        JA         LAB_10032c8c
+							 01 00 00
+					10032b70 6b c1 5c        IMUL       pKey,ECX,0x5c
+					10032b73 c6 85 8f        MOV        byte ptr [EBP + local_175],0x1
+							 fe ff ff 01
+					10032b7a 66 89 90        MOV        word ptr [pKey + DAT_1064496c],DX                = ??
+							 6c 49 64 10
+
+					client.dll + 0x64496c = address of hud_nativeplayerinfo_t
+			*/
 			constexpr char pattern[] = "\xC6\x85\x8F\xFE\xFF\xFF\x01\x66\x89\x90";
 			PUCHAR addr = (PUCHAR)Search_Pattern_From_Size(g_dwClientBase, g_dwClientSize, pattern);
 			g_aryNativePlayerInfo = reinterpret_cast<hud_nativeplayerinfo_t*> (*(DWORD*)(addr + 10) + 8);
