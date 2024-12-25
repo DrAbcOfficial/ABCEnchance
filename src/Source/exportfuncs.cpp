@@ -298,8 +298,6 @@ void FillAddress() {
 			constexpr char pattern[] = "\xC6\x85\x8F\xFE\xFF\xFF\x01\x66\x89\x90";
 			PUCHAR addr = (PUCHAR)Search_Pattern_From_Size(g_dwClientBase, g_dwClientSize, pattern);
 			g_aryNativePlayerInfo = reinterpret_cast<hud_nativeplayerinfo_t*> (*(DWORD*)(addr + 10) + 8);
-
-			auto x = 1 + 1;
 		}
 #pragma endregion
 

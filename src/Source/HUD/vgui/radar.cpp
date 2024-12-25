@@ -308,7 +308,7 @@ void CRadarPanel::RenderRadar(){
 	gCustomHud.m_flOverViewZmin = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::FOOT)->endpos[2] - gCVars.pRadarZMin->value;
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
+	//glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
 	//设置到玩家脑袋上朝下看
 	gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
@@ -346,7 +346,7 @@ void CRadarPanel::RenderRadar(){
 	g_bInRenderRadar = true;
 
 	//why no work?
-	gHookFuncs.CEngineClient_RenderView(&param, true, false, 1);
+	gHookFuncs.CEngineClient_RenderView(&param, true, false, 0);
 
 	g_bInRenderRadar = false;
 	*g_bRenderingPortals = oldRender;
@@ -360,7 +360,7 @@ void CRadarPanel::RenderRadar(){
 		gCVars.pCVarWater->value = arySaveCvars[5];
 	if (gCVars.pCVarShadow)
 		gCVars.pCVarShadow->value = arySaveCvars[6];
-	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+	//glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
 void CRadarPanel::SetScale(bool state){
 	if (state)
