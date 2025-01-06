@@ -15,7 +15,7 @@ extern cl_enginefunc_t gEngfuncs;
 static CPlayerTrace s_PlayerTrace;
 
 void CPlayerTrace::Update(){
-	if (!g_pViewPort->IsVisible())
+	if (!GetBaseViewPort()->IsVisible())
 		return;
 	auto local = gEngfuncs.GetLocalPlayer();
 	if (!local)

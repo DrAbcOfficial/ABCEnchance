@@ -52,11 +52,12 @@ public:
 		}
 	}
 	virtual void Start(void) override {
+		extern vgui::CViewport* g_pViewPort;
 		g_pViewPort = new vgui::CViewport();
 		g_pViewPort->Start();
 	}
 	virtual void SetParent(vgui::VPANEL parent) override {
-		g_pViewPort->SetParent(parent);
+		GetBaseViewPort()->SetParent(parent);
 	}
 	virtual void UseVGUI1(VGUI2Extension_CallbackContext* CallbackContext) override {
 	}
@@ -66,12 +67,13 @@ public:
 	virtual void HideAllVGUIMenu(VGUI2Extension_CallbackContext* CallbackContext) override {
 	}
 	virtual void ActivateClientUI(VGUI2Extension_CallbackContext* CallbackContext) override {
-		g_pViewPort->ActivateClientUI();
+		GetBaseViewPort()->ActivateClientUI();
 	}
 	virtual void HideClientUI(VGUI2Extension_CallbackContext* CallbackContext) override {
-		g_pViewPort->HideClientUI();
+		GetBaseViewPort()->HideClientUI();
 	}
 	virtual void Shutdown() override {
+		extern vgui::CViewport* g_pViewPort;
 		if (g_pViewPort) {
 			delete g_pViewPort;
 			g_pViewPort = nullptr;

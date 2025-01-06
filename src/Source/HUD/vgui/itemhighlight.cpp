@@ -284,7 +284,7 @@ void CItemHighLightPanel::CreateHighLight(cl_entity_t* var) {
 		int modelindex = ent->entity.curstate.iuser1;
 		cl_entity_t* var = gEngfuncs.GetEntityByIndex(ent->clientIndex);
 		static const auto erase = [&modelindex, &var, &ent]() {
-			g_pViewPort->EraseHighLight(var, modelindex);
+			GetBaseViewPort()->EraseHighLight(var, modelindex);
 			ent->die = 0;
 		};
 		if (!var) {

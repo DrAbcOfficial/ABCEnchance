@@ -103,7 +103,7 @@ static void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 	case 0x5: {
 		if (gCVars.pMotd->value != 0) {
 			if (gCVars.pMotd->value >= 1)
-				g_pViewPort->ShowMOTD();
+				GetBaseViewPort()->ShowMOTD();
 			return;
 		}
 		break;
@@ -134,7 +134,7 @@ static void __fastcall CStudioModelRenderer_Init(void* pthis, int dummy) {
 
 static void EVVectorScale(float* punchangle1, float scale, float* punchangle2) {
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
-	CMathlib::VectorCopy(punchangle1, g_pViewPort->m_vecClientEVPunch);
+	CMathlib::VectorCopy(punchangle1, GetBaseViewPort()->m_vecClientEVPunch);
 }
 extern bool g_bInRenderRadar;
 static int CL_IsDevOverview(void) {
@@ -170,8 +170,8 @@ static void __fastcall CClient_SoundEngine_Initialize(void* pSoundEngine, int du
 void __fastcall CClient_SoundEngine_PlayFMODSound(void* pSoundEngine, int dummy, int flags, int entindex, float* origin,
 	int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength) {
 #ifdef __HAS_NETEASE_API
-	if (channel == 7 && g_pViewPort->GetMusicPanel()->IsSuppressBackGroudMusic()) {
-		if (g_pViewPort->GetMusicPanel()->GetPlayListSize() > 0)
+	if (channel == 7 && GetBaseViewPort()->GetMusicPanel()->IsSuppressBackGroudMusic()) {
+		if (GetBaseViewPort()->GetMusicPanel()->GetPlayListSize() > 0)
 			return;
 	}
 #endif
@@ -421,7 +421,7 @@ void HUD_Init(void) {
 
 	gExportfuncs.HUD_Init();
 	gCustomHud.HUD_Init();
-	g_pViewPort->Init();
+	GetBaseViewPort()->Init();
 	GetClientVoiceMgr()->HUD_Init();
 	extern void GameUI_GetInterface();
 	GameUI_GetInterface();
@@ -479,11 +479,9 @@ int HUD_VidInit(void) {
 	}
 	else
 		SYS_ERROR("Can not find vanillin HUDs");
-	if (g_pViewPort)
 
-
-		//Fillup Default CVars
-		gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
+	//Fillup Default CVars
+	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
 	gCVars.pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
 	gCVars.pCVarDrawEntities = CVAR_GET_POINTER("r_drawentities");
 	gCVars.pCVarDrawViewModel = CVAR_GET_POINTER("r_drawviewmodel");
@@ -494,7 +492,7 @@ int HUD_VidInit(void) {
 
 	int result = gExportfuncs.HUD_VidInit();
 	gCustomHud.HUD_VidInit();
-	g_pViewPort->VidInit();
+	GetBaseViewPort()->VidInit();
 	return result;
 }
 void HUD_VoiceStatus(int entindex, qboolean talking) {
@@ -513,7 +511,7 @@ void HUD_Frame(double frametime) {
 int HUD_Redraw(float time, int intermission) {
 	CCustomHud::HideOriginalHud();
 	gCustomHud.HUD_Draw(time);
-	g_pViewPort->SetInterMission(intermission);
+	GetBaseViewPort()->SetInterMission(intermission);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client) {
@@ -621,7 +619,7 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 	return gExportfuncs.HUD_AddEntity(type, ent, modelname);
 }
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding) {
-	return g_pViewPort->KeyInput(eventcode, keynum, pszCurrentBinding) ?
+	return GetBaseViewPort()->KeyInput(eventcode, keynum, pszCurrentBinding) ?
 		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
 }
 void HUD_TempEntUpdate(

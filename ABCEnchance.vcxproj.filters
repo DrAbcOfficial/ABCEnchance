@@ -701,6 +701,9 @@
     <ClCompile Include="src\Source\Utility\liblrc.cpp">
       <Filter>Public\Source\LIb</Filter>
     </ClCompile>
+    <ClCompile Include="vgui2\GameUI\VoteMenuDialog.cpp">
+      <Filter>vgui2\gameui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceSDK\Color.h">
@@ -1512,6 +1515,9 @@
     </ClInclude>
     <ClInclude Include="src\Header\Utility\liblrc.h">
       <Filter>Public\Header\LIb</Filter>
+    </ClInclude>
+    <ClInclude Include="vgui2\GameUI\VoteMenuDialog.h">
+      <Filter>vgui2\gameui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

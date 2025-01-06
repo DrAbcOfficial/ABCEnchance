@@ -36,7 +36,7 @@ CCrosshairPanel::CCrosshairPanel()
 	SetMouseInputEnabled(false);
 
 	gCVars.pDynamicCrossHair = CREATE_CVAR("cl_crosshair", "1", FCVAR_VALUE, [](cvar_t* cvar) {
-		g_pViewPort->ShowCrossHair(cvar->value > 0);
+		GetBaseViewPort()->ShowCrossHair(cvar->value > 0);
 	});
 	pDynamicCrossHairAH = CREATE_CVAR("cl_crosshairautohide", "1", FCVAR_VALUE, NULL);
 	pDynamicCrossHairL = CREATE_CVAR("cl_crosshairsize", "24", FCVAR_VALUE, NULL);
@@ -79,11 +79,11 @@ CCrosshairPanel::CCrosshairPanel()
 	m_pSprImage->SetColor(Color(255, 255, 255, 255));
 }
 void CCrosshairPanel::PaintBackground() {
-	if (g_pViewPort->IsInSpectate())
+	if (GetBaseViewPort()->IsInSpectate())
 		return;
-	if (g_pViewPort->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
+	if (GetBaseViewPort()->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return;
-	if (!g_pViewPort->HasSuit())
+	if (!GetBaseViewPort()->HasSuit())
 		return;
 	if (gClientData->health <= 0)
 		return;
@@ -94,15 +94,15 @@ void CCrosshairPanel::PaintBackground() {
 void CCrosshairPanel::OnThink() {
 	if (!gClientData)
 		return;
-	if (g_pViewPort->IsInSpectate()) {
+	if (GetBaseViewPort()->IsInSpectate()) {
 		HideDynamicCrossHair();
 		return;
 	}
-	if (g_pViewPort->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS)) {
+	if (GetBaseViewPort()->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS)) {
 		HideDynamicCrossHair();
 		return;
 	}
-	if (!g_pViewPort->HasSuit()) {
+	if (!GetBaseViewPort()->HasSuit()) {
 		HideDynamicCrossHair();
 		return;
 	}
@@ -128,7 +128,7 @@ void CCrosshairPanel::OnThink() {
 		m_iCenterY = ScreenHeight() / 2;
 	}
 	int iOffset = pDynamicCrossHairO->value;
-	int iDrift = fabs(g_pViewPort->m_vecClientEVPunch[0]) + fabs(g_pViewPort->m_vecClientEVPunch[1]);
+	int iDrift = fabs(GetBaseViewPort()->m_vecClientEVPunch[0]) + fabs(GetBaseViewPort()->m_vecClientEVPunch[1]);
 	if (iDrift <= 0)
 		iDrift = fabs(gClientData->punchangle[0]) + fabs(gClientData->punchangle[1]);
 	iDrift = iDrift * 5 * pDynamicCrossHairM->value;

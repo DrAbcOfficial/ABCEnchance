@@ -81,7 +81,7 @@ CDeathMsgPanel::CDeathMsgPanel()
 	SetVisible(false);
 
 	gCVars.pDeathNotice = CREATE_CVAR("hud_deathnotice", "1", FCVAR_VALUE, [](cvar_t* cvar) {
-		g_pViewPort->ShowDeathMsg(cvar->value > 0);
+		GetBaseViewPort()->ShowDeathMsg(cvar->value > 0);
 	});
 	gCVars.pDeathNoticeTime = CREATE_CVAR("hud_deathnotice_time", "6", FCVAR_VALUE, nullptr);
 	m_pDeathMsgCount = CREATE_CVAR("hud_deathnotice_count", "6", FCVAR_VALUE, nullptr);

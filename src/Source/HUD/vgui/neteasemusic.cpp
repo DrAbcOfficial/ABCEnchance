@@ -379,7 +379,7 @@ CNeteasePanel::CNeteasePanel()
 	});
 	m_pVolume = CREATE_CVAR("cl_netease_volume", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = std::clamp<float>(cvar->value, 0.0f, 1.0f);
-		g_pViewPort->GetMusicPanel()->SetVolume(cvar->value);
+		GetBaseViewPort()->GetMusicPanel()->SetVolume(cvar->value);
 	});
 	m_pSearchCount = CREATE_CVAR("cl_netease_searchcount", "5", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = std::max<int>(cvar->value, 1);
@@ -404,12 +404,12 @@ CNeteasePanel::CNeteasePanel()
 		for (int index = 1; index < argc; index++) {
 			char* arg = gEngfuncs.Cmd_Argv(index);
 			if (pCmd)
-				pCmd = pCmd->GetChildOrExcute(arg, g_pViewPort->GetMusicPanel());
+				pCmd = pCmd->GetChildOrExcute(arg, GetBaseViewPort()->GetMusicPanel());
 			if (!pCmd)
 				break;
 		}
 		if (pCmd)
-			pCmd->Excute(g_pViewPort->GetMusicPanel()); 
+			pCmd->Excute(GetBaseViewPort()->GetMusicPanel());
 	});
 }
 const char* CNeteasePanel::GetName(){
@@ -951,7 +951,7 @@ void CNeteasePanel::GetMyInfo(bool silence){
 			PrintF("#Netease_MyInfo", silence, info->name.c_str(), info->signature.c_str(), info->vip ? "Yes" : "No");
 		else
 			PrintF("#Netease_NotLogin", silence);
-		g_pViewPort->GetMusicPanel()->SetMyInfo(info);
+		GetBaseViewPort()->GetMusicPanel()->SetMyInfo(info);
 	}, silence)->Start();
 }
 void CNeteasePanel::SetMyInfo(std::shared_ptr<netease::CMy> info){

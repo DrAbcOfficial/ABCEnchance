@@ -125,8 +125,8 @@ CPlayerInfo *CPlayerInfo::Update(){
 		m_szModel.clear();
 		memset(&m_ExtraInfo, 0, sizeof(m_ExtraInfo));
 		m_pSteamId.Clear();
-		if(g_pViewPort)
-			g_pViewPort->GetScoreBoard()->UpdateOnPlayerInfo(GetIndex());
+		if(GetBaseViewPort())
+			GetBaseViewPort()->GetScoreBoard()->UpdateOnPlayerInfo(GetIndex());
 	}
 	if (bIsConnected){
 		if (!m_pSteamId.IsValid() || info->m_nSteamID != GetSteamID64()) {

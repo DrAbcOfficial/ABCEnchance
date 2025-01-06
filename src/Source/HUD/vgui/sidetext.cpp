@@ -34,7 +34,7 @@ CSidePanel::CSidePanel()
 	
 	//gCVars.pEccoCheckInfo = CREATE_CVAR("cl_eccocheck", "0", FCVAR_VALUE, nullptr);
 	gCVars.pEccoEnable = CREATE_CVAR("cl_sideenable", "1", FCVAR_VALUE, [](cvar_t* cvar){
-		g_pViewPort->ShowSideText(cvar->value > 0);
+		GetBaseViewPort()->ShowSideText(cvar->value > 0);
 	});
 
 	LoadControlSettings(VGUI2_ROOT_DIR "SideTextPanel.res");

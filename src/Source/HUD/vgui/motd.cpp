@@ -33,7 +33,7 @@ CMotdPanel::CMotdPanel()
 	gCVars.pMotd = CREATE_CVAR("hud_motd", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		switch (static_cast<int>(cvar->value)) {
 		case 1:
-		case -1: g_pViewPort->GetMotdPanel()->ShowPanel(false); break;
+		case -1: GetBaseViewPort()->GetMotdPanel()->ShowPanel(false); break;
 		default: break;
 		}
 		});

@@ -466,18 +466,18 @@ void CScorePanel::UpdateTimeEndInternal() {
 }
 
 void CScorePanel::UpdateTimeEnd() {
-	m_iTimeEndCount = g_pViewPort->GetTimeEnd();
+	m_iTimeEndCount = GetBaseViewPort()->GetTimeEnd();
 	m_flLastUpdateTimeEndTime = gEngfuncs.GetClientTime();
 }
 void CScorePanel::UpdateServerName(){
 	wchar_t wbuf[MAX_SERVERNAME_LENGTH];
-	localize()->ConvertANSIToUnicode(g_pViewPort->GetServerName(), wbuf, sizeof(wbuf));
+	localize()->ConvertANSIToUnicode(GetBaseViewPort()->GetServerName(), wbuf, sizeof(wbuf));
 	m_pServerNameLabel->SetText(wbuf);
 }
 void CScorePanel::UpdateNextMap() {
 	std::wstring buf = localize()->Find(NEXTMAP_LOCALIZE_TOKEN);;
 	wchar_t wbuf[MAX_SERVERNAME_LENGTH];
-	localize()->ConvertANSIToUnicode(g_pViewPort->GetNextMap(), wbuf, sizeof(wbuf));
+	localize()->ConvertANSIToUnicode(GetBaseViewPort()->GetNextMap(), wbuf, sizeof(wbuf));
 	buf += wbuf;
 	m_pNextMapLable->SetText(buf.c_str());
 }
@@ -915,7 +915,7 @@ void CScorePanel::UpdateClientInfo(int client)
 		colorKv->SetInt(PING_KEY, COLOR_PING);
 	}
 
-	Color SectionColor = g_pViewPort->GetPlayerColor(client);
+	Color SectionColor = GetBaseViewPort()->GetPlayerColor(client);
 	if (pd.nItemID == -1){
 		// Create player's row
 		pd.nItemID = m_pPlayerList->AddItem(pd.nTeamID, playerKv);
@@ -1077,7 +1077,7 @@ Color CScorePanel::GetPlayerBgColor(CPlayerInfo* pi)
 	}
 	else
 	{
-		return g_pViewPort->GetPlayerColor(pi->GetIndex());
+		return GetBaseViewPort()->GetPlayerColor(pi->GetIndex());
 	}
 
 	return Color(0, 0, 0, 0);

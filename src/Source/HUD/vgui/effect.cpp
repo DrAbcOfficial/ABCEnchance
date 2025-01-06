@@ -71,9 +71,9 @@ void CEffectPanel::SetParent(vgui::VPANEL parent) {
 }
 
 void CEffectPanel::OnThink(){
-	if (!g_pViewPort->LoacalPlayerAvilable())
+	if (!GetBaseViewPort()->LoacalPlayerAvilable())
 		return;
-	if (g_pViewPort->IsInSpectate() || gCVars.pHudEfx->value < 1) {
+	if (GetBaseViewPort()->IsInSpectate() || gCVars.pHudEfx->value < 1) {
 		ShowPanel(false);
 		return;
 	}

@@ -89,7 +89,7 @@ void CAmmoPanel::RefreshAmmo(){
 		ShowPanel(false);
 		return;
 	}
-	if (g_pViewPort->HasSuit())
+	if (GetBaseViewPort()->HasSuit())
 		ShowPanel(true);
 	if (!(m_pHandledWeapon->iState & VALID))
 		return;

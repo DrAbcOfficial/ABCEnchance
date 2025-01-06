@@ -57,7 +57,7 @@ void CPlayerInfoPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 }
 
 void CPlayerInfoPanel::Think(){
-	if (!g_pViewPort->IsPlayerTileEnable()) {
+	if (!GetBaseViewPort()->IsPlayerTileEnable()) {
 		SetVisible(false);
 		return;
 	}
@@ -150,11 +150,11 @@ void CPlayerInfoPanel::UpdateClientInfo(){
 		float flArmorRatio = clamp<float>((float)pi->GetArmor() / 100.0f, 0.0f, 1.0f);
 		float flHealthRatio = clamp((float)iHealth / 100.0f, 0.0f, 1.0f);
 		m_pNameLabel->SetText(pi->GetName());
-		m_pNameLabel->SetFgColor(g_pViewPort->GetPlayerColor(m_iPlayerIndex));
+		m_pNameLabel->SetFgColor(GetBaseViewPort()->GetPlayerColor(m_iPlayerIndex));
 		m_pArmorImagePanel->SetWide(m_pBackgroundImagePanel->GetWide() * flArmorRatio);
 		m_pHealthImagePanel->SetWide(m_pBackgroundImagePanel->GetWide() * flHealthRatio);
 		cl_entity_t* ent = gEngfuncs.GetEntityByIndex(m_iPlayerIndex);
-		if (iHealth < g_pViewPort->m_pPlayerTitleDanger->value) {
+		if (iHealth < GetBaseViewPort()->m_pPlayerTitleDanger->value) {
 			if (iHealth <= 0){
 				m_pCourchIconImagePanel->SetVisible(false);
 				m_pMedikIconImagePanel->SetVisible(false);

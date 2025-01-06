@@ -279,6 +279,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="VGUI2\GameUI\GameUI.cpp" />
     <ClCompile Include="vgui2\GameUI\NeteaseMusicDialog.cpp" />
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp" />
+    <ClCompile Include="vgui2\GameUI\VoteMenuDialog.cpp" />
     <ClCompile Include="vgui2\VGUI2ExtensionImport.cpp" />
     <ClCompile Include="VGUI2\VPanel.cpp" />
     <ClCompile Include="vgui_controls\AnalogBar.cpp" />
@@ -545,6 +546,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="VGUI2\GameUI\BasePanel.h" />
     <ClInclude Include="vgui2\GameUI\NeteaseMusicDialog.h" />
     <ClInclude Include="VGUI2\GameUI\OptionAdvancedDlg.h" />
+    <ClInclude Include="vgui2\GameUI\VoteMenuDialog.h" />
     <ClInclude Include="vgui2\interface\ISystemABC.h" />
     <ClInclude Include="VGUI2\VGUI2.h" />
     <ClInclude Include="vgui2\VGUI2ExtensionImport.h" />
