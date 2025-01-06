@@ -483,7 +483,7 @@ void Viewport_DropAllWeapon() {
 	g_pViewPort->GetWeaponChoosePanel()->Reset();
 }
 
-vgui::CViewport* GetBaseViewPort()
+inline vgui::CViewport* GetBaseViewPort()
 {
 	return g_pViewPort;
 }

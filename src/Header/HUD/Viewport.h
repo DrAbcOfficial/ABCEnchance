@@ -187,4 +187,4 @@ private:
 };
 }
 
-extern vgui::CViewport* GetBaseViewPort();
+extern inline vgui::CViewport* GetBaseViewPort();
