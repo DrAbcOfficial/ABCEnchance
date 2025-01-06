@@ -133,12 +133,18 @@ void TextImageEx::Paint()
 				continue;
 			}
 		}
+		// 5.26 Changelog: Added colours cyan, green, magenta, and orange to the text menu.
+		// Its said nothing, i assume token is c, g, m, o?
 		else if (ch == '\\') {
 				switch (wsz[1]) {
 				case 'w': DrawSetTextColor(Color(255, 255, 255, 255)); wsz++; continue;
 				case 'd': DrawSetTextColor(GetColor()); wsz++; continue;
 				case 'y': DrawSetTextColor(Color(255, 210, 64, 255)); wsz++; continue;
 				case 'r': DrawSetTextColor(Color(210, 64, 0, 255)); wsz++; continue;
+				case 'c': DrawSetTextColor(Color(0, 255, 255, 255)); wsz++; continue;
+				case 'g': DrawSetTextColor(Color(0, 255, 0, 255)); wsz++; continue;
+				case 'm': DrawSetTextColor(Color(255, 0, 255, 255)); wsz++; continue;
+				case 'o': DrawSetTextColor(Color(255, 165, 0, 255)); wsz++; continue;
 				case 'R': {
 					m_bRAlign = true;
 					x = wide - x;
