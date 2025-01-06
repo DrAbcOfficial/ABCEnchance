@@ -175,6 +175,8 @@ void CViewport::Reset() {
 		pPanel->Reset();
 	CPlayerInfo::GetThisPlayerInfo()->ResetAll();
 	m_iInterMission = 0;
+	extern void CloseVoteMenuDialog();
+	CloseVoteMenuDialog();
 }
 
 void CViewport::Init(void){

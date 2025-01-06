@@ -384,12 +384,29 @@ void vgui::CVoteMapPage::ResetList()
 	m_pList->ClearSelectedItems();
 	m_pList->RemoveAll();
 	m_pList->ResetScrollBar();
+
+	char buf[MAX_PATH];
+	m_pFilter->GetText(buf, MAX_PATH);
+
 	extern std::vector<std::string>& GetGameMapList();
 	auto& maplist = GetGameMapList();
 	for (auto iter = maplist.begin(); iter != maplist.end(); iter++) {
 		std::string& m = *iter;
-		KeyValues kv(m.c_str(), "name", m.c_str());
-		m_pList->AddItem(&kv, 0, false, false);
+
+		if (std::strlen(buf) > 0) {
+			std::string flt = buf;
+			std::transform(flt.begin(), flt.end(), flt.begin(), ::tolower);
+			std::string map_lower = m;
+			std::transform(map_lower.begin(), map_lower.end(), map_lower.begin(), ::tolower);
+			if ((flt.size() == 0) || (map_lower.find(flt) != std::string::npos)) {
+				KeyValues kv(m.c_str(), "name", m.c_str());
+				m_pList->AddItem(&kv, 0, false, false);
+			}
+		}
+		else {
+			KeyValues kv(m.c_str(), "name", m.c_str());
+			m_pList->AddItem(&kv, 0, false, false);
+		}
 	}
 	m_pList->SortList();
 }
@@ -407,4 +424,9 @@ void OpenVoteMenuDialog() {
 		s_hVoteMenuPanel = new vgui::CVoteMenuDialog(reinterpret_cast<vgui::Panel*>(pViewPort));
 	}
 	s_hVoteMenuPanel->Activate();
+}
+void CloseVoteMenuDialog() {
+	if (s_hVoteMenuPanel == nullptr)
+		return;
+	s_hVoteMenuPanel->Close();
 }
