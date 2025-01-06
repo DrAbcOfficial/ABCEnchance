@@ -149,6 +149,7 @@ void SetAdvanceOptPanelVisible(bool state) {
 static void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
 	s_pBasePanel = static_cast<vgui::IClientPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
 	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/OptionsAdvanceDialogScheme.res", "OptionsAdvanceDialogScheme");
+	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/VoteMenuDialogScheme.res", "VoteMenuDialogScheme");
 	return s_pBasePanel;
 }
 void BasePanel_InstallHook(void){

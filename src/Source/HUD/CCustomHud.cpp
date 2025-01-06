@@ -72,6 +72,7 @@ static pfnUserMsgHook m_pfnMetaHook;
 static pfnUserMsgHook m_pfnDamage;
 static pfnUserMsgHook m_pfnBattery;
 static pfnUserMsgHook m_pfnClExtrasInfo;
+static pfnUserMsgHook m_pfnMapList;
 #pragma endregion
 
 #pragma region UserMsg Hooks
@@ -458,6 +459,29 @@ static int __MsgFunc_ClExtrasInfo(const char* pszName, int iSize, void* pbuf) {
 	CPlayerInfo::UpdateAll();
 	return result;
 }
+
+static std::vector<std::string> s_aryMapList;
+std::vector<std::string>& GetGameMapList() {
+	return s_aryMapList;
+}
+static int __MsgFunc_MapList(const char* pszName, int iSize, void* pbuf) {
+	BEGIN_READ(pbuf, iSize);
+	int clearall = READ_BYTE();
+	if (clearall == 0) {
+		//need clear list
+		int all_count = READ_SHORT();
+		s_aryMapList.clear();
+	}
+	else {
+		int start = READ_SHORT();
+		int end = READ_SHORT();
+		for (int i = start; i < end; i++) {
+			char* map = READ_STRING();
+			s_aryMapList.push_back(map);
+		}
+	}
+	return m_pfnMapList(pszName,iSize,pbuf);
+}
 static int __MsgFunc_MetaHook(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int type = READ_BYTE();
@@ -644,7 +668,8 @@ void CCustomHud::HUD_Init(void){
 	m_pfnFlashlight = HOOK_MESSAGE(Flashlight);
 	m_pfnTextMsg = HOOK_MESSAGE(TextMsg);
 	m_pfnMetaHook = HOOK_MESSAGE(MetaHook);
-	m_pfnClExtrasInfo = HOOK_MESSAGE(ClExtrasInfo);
+	m_pfnClExtrasInfo = HOOK_MESSAGE(ClExtrasInfo)
+	m_pfnMapList = HOOK_MESSAGE(MapList);
 	if(!m_pfnMetaHook)
 		gEngfuncs.pfnHookUserMsg("MetaHook", __MsgFunc_MetaHook);
 

@@ -14,10 +14,16 @@ namespace vgui {
 	class CBaseVotePage : public PropertyPage {
 		DECLARE_CLASS_SIMPLE(CBaseVotePage, PropertyPage);
 	public:
-		CBaseVotePage(Panel* parent, const char* name, const char* list_title);
+		CBaseVotePage(Panel* parent, const char* name);
 	protected:
+		virtual void OnPageShow() override;
 		virtual void OnCommand(const char* cmd) override;
 		virtual void SendYesCommand(const char* value);
+		virtual void ResetList();
+
+		MESSAGE_FUNC(OnItemSelected, "ItemSelected");
+
+		void CloseParent();
 
 		ListPanel* m_pList = nullptr;
 		TextEntry* m_pFilter = nullptr;
@@ -26,8 +32,6 @@ namespace vgui {
 		Label* m_pSelected = nullptr;
 		Button* m_pYesButton = nullptr;
 		Button* m_pNoButton = nullptr;
-
-		std::vector<std::string> m_aryList;
 	};
 
 	class CVoteBanPage : public CBaseVotePage {
@@ -37,6 +41,7 @@ namespace vgui {
 			CVoteBanPage(Panel* parent);
 		protected:
 			virtual void SendYesCommand(const char* value) override;
+			virtual void ResetList() override;
 	};
 
 	class CVoteKickPage : public CBaseVotePage {
@@ -46,6 +51,7 @@ namespace vgui {
 		CVoteKickPage(Panel* parent);
 	protected:
 		virtual void SendYesCommand(const char* value) override;
+		virtual void ResetList() override;
 	};
 
 	class CVoteKillPage : public CBaseVotePage {
@@ -55,6 +61,7 @@ namespace vgui {
 		CVoteKillPage(Panel* parent);
 	protected:
 		virtual void SendYesCommand(const char* value) override;
+		virtual void ResetList() override;
 	};
 
 	class CVoteMapPage : public CBaseVotePage {
@@ -64,13 +71,16 @@ namespace vgui {
 		CVoteMapPage(Panel* parent);
 	protected:
 		virtual void SendYesCommand(const char* value) override;
+		virtual void ResetList() override;
 	};
 
 	class CVoteMenuDialog : public PropertyDialog {
 		DECLARE_CLASS_SIMPLE(CVoteMenuDialog, PropertyDialog);
 	public:
 		CVoteMenuDialog(Panel* parent);
+		virtual void Activate() override;
 	protected:
+		virtual void OnTick() override;
 		virtual void ApplySchemeSettings(IScheme* pScheme) override;
 	private:
 
