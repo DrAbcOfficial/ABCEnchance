@@ -87,6 +87,13 @@ if (result == 0)
     return;
 }
 
+string localPath = Path.GetFullPath(".");
+if(svenPath.Contains(localPath, StringComparison.OrdinalIgnoreCase))
+{
+    AnyKeyExit("Oops, are you put installer into your game folder? put them to another place.");
+    return;
+}
+
 if (!Path.Exists(svenPath + "/svencoop/metahook/configs/plugins.lst"))
 {
     AnyKeyExit("It looks like your metahook is not installed correctly, please make sure the metahook is installed in the right place!");
@@ -97,4 +104,4 @@ CopyFolder("./svencoop", svenPath + "/svencoop");
 CopyFolder("./svencoop_addon", svenPath + "/svencoop_addon");
 CopyFolder("./svencoop_hidpi", svenPath + "/svencoop_hidpi");
 FileWriter(svenPath + "/svencoop/metahook/configs/plugins.lst", "ABCEnchance.dll", "CommunicationDemo.dll");
-AnyKeyExit("Done!");
+AnyKeyExit("Done! you can remove installer folder safly.");
