@@ -94,6 +94,9 @@ static void SetBasePanelState(bool state) {
 		EngineClientCmd("mp3 loop media/gamestartup.mp3 ui");
 	}
 }
+void BasePanelSetHandle(void* ptr){
+	s_pBasePanel = reinterpret_cast<vgui::IClientPanel*>(ptr);
+}
 void BasePanelInit() {
 	gCVars.pDynamicBackground = CREATE_CVAR("hud_dynamic_background", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		SetBasePanelState(cvar->value > 0);
@@ -145,26 +148,4 @@ void SetAdvanceOptPanelVisible(bool state) {
 		else
 			s_hAdvanceOptPanel->Close();
 	}
-}
-static void* __fastcall CBasePanel_ctor(void* pthis, int dummy) {
-	s_pBasePanel = static_cast<vgui::IClientPanel*>(gHookFuncs.CBasePanel_ctor(pthis, dummy));
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/OptionsAdvanceDialogScheme.res", "OptionsAdvanceDialogScheme");
-	vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/VoteMenuDialogScheme.res", "VoteMenuDialogScheme");
-	return s_pBasePanel;
-}
-void BasePanel_InstallHook(void){
-	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
-	if (!hGameUI) {
-		SYS_ERROR("Failed to locate GameUI.dll");
-		return;
-	}
-	auto GameUIBase = g_pMetaHookAPI->GetModuleBase(hGameUI);
-	auto GameUISize = g_pMetaHookAPI->GetModuleSize(hGameUI);
-
-#define SC_CBASEPANEL_CTOR_SIG "\x55\x8B\xEC\x51\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\x6A\x00\x89\x75\xFC\xE8\x2A\x2A\x2A\x2A\xC7"
-	Fill_Sig(SC_CBASEPANEL_CTOR_SIG, GameUIBase, GameUISize, CBasePanel_ctor);
-	Install_InlineHook(CBasePanel_ctor);
-//#define SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG "\x55\x8B\xEC\x83\xEC\x38\x53\x8D\x45\xCC\x8B\xD9\x50\x8D\x45\xC8\x89\x5D\xD0\x50\xE8\x2A\x2A\x2A\x2A\xE8\x2A\x2A\x2A\x2A\x8D\x4D\xD4\x51"
-	//Fill_Sig(SC_CBASEPANEL_PAINTBACKGROUNDIMAGE_SIG, GameUIBase, GameUISize, CBasePanel_PaintBackground);
-	//Install_InlineHook(CBasePanel_PaintBackground);
 }

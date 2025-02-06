@@ -3,8 +3,10 @@
 #include <VGUI\ILocalize.h>
 #include <VGUI\ISurface.h>
 #include <VGUI\IInput.h>
+#include <Controls.h>
 
 #include <GameUI/BasePanel.h>
+#include "vguilocal.h"
 
 #include <IBaseUI.h>
 #include <IEngineSurface.h>
@@ -43,7 +45,6 @@ public:
 			g_pKeyValuesSystem = (IKeyValuesSystem*)fnVGUI2CreateInterface(KEYVALUESSYSTEM_INTERFACE_VERSION, NULL);
 		}
 		staticSurface = (IEngineSurface*)factories[0](ENGINE_SURFACE_VERSION, NULL);
-		BasePanel_InstallHook();
 		BasePanelInit();
 #ifdef __HAS_NETEASE_API
 		CreateNeteaseMusicDialogCmd();
@@ -104,6 +105,39 @@ void BaseUI_InstallHooks(void){
 }
 void BaseUI_UninstallHooks(void){
 	VGUI2Extension()->UnregisterBaseUICallbacks(&s_BaseUICallbacks);
+}
+
+class CVGUI2Extension_GameUIBasePanelCallbacks : public IVGUI2Extension_GameUIBasePanelCallbacks
+{
+	virtual int GetAltitude() const override
+	{
+		return 0;
+	}
+	virtual void CBasePanel_ctor(IGameUIBasePanelCtorCallbackContext* CallbackContext) override
+	{
+		BasePanelSetHandle(CallbackContext->GetBasePanel());
+		vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/OptionsAdvanceDialogScheme.res", "OptionsAdvanceDialogScheme");
+		vgui::scheme()->LoadSchemeFromFile(VGUI2_ROOT_DIR "gameui/VoteMenuDialogScheme.res", "VoteMenuDialogScheme");
+	}
+	virtual void CBasePanel_ApplySchemeSettings(void*& pPanel, void*& pScheme, VGUI2Extension_CallbackContext* CallbackContext) override
+	{
+
+	}
+};
+
+static CVGUI2Extension_GameUIBasePanelCallbacks s_BasePanelCallbacks;
+void GameUIBasePanel_InstallHooks()
+{
+	CreateInterfaceFn fnCreateInterface = g_pMetaHookAPI->GetEngineFactory();
+	if (!fnCreateInterface)
+	{
+		SYS_ERROR("Failed to get engine factory.");
+		return;
+	}
+	VGUI2Extension()->RegisterGameUIBasePanelCallbacks(&s_BasePanelCallbacks);
+}
+void GameUIBasePanel_UninstallHooks(void) {
+	VGUI2Extension()->UnregisterGameUIBasePanelCallbacks(&s_BasePanelCallbacks);
 }
 
 IGameUIFuncs* GameUIFuncs() {

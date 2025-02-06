@@ -9,12 +9,12 @@ enum EBackgroundState{
 	BACKGROUND_EXITING,
 };
 
-void BasePanel_InstallHook();
-void BackGroundOnCommand(void*& pPanel, const char*& cmd);
-void BasePanelInit();
-void BasePanelPostInit();
-void BasePanelConnectServer();
-void BasePanelDiconnectServer();
+extern void BackGroundOnCommand(void*& pPanel, const char*& cmd);
+extern void BasePanelInit();
+extern void BasePanelSetHandle(void* ptr);
+extern void BasePanelPostInit();
+extern void BasePanelConnectServer();
+extern void BasePanelDiconnectServer();
 
 namespace vgui {
 	class IClientPanel;

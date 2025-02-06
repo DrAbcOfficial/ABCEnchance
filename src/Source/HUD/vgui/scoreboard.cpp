@@ -81,9 +81,9 @@ public:
 		ClearFrame();
 	}
 	void Reset() {
-		if (m_bRequestId > 0)
-			GetHttpClient()->Interrupt(m_bRequestId);
-		m_bRequestId = 0;
+		if (m_pRequest.has_value() && m_pRequest.value() != nullptr)
+			GetHttpClient()->Interrupt(m_pRequest.value());
+		m_pRequest.reset();
 		m_bRequsetedAnimatedAvatars = false;
 		m_bDrawFriend = false;
 		ClearFrame();
@@ -126,9 +126,9 @@ public:
 		if (arg->m_eResult == EResult::k_EResultOK && arg->m_bHasAnimatedAvatar) {
 			const char* url = SteamFriends()->GetProfileItemPropertyString(arg->m_steamID, k_ECommunityProfileItemType_AnimatedAvatar, k_ECommunityProfileItemProperty_ImageSmall);
 			if (url && V_strlen(url) > 0) {
-				if (m_bRequestId == 0) {
+				if (!m_pRequest.has_value()) {
 					ClearFrame();
-					m_bRequestId = GetHttpClient()->Fetch(url, UtilHTTPMethod::Get)->OnRespond([](IUtilHTTPResponse* rep, CPlayerImage* pthis) {
+					m_pRequest = GetHttpClient()->Fetch(url, UtilHTTPMethod::Get)->OnRespond([](IUtilHTTPResponse* rep, CPlayerImage* pthis) {
 						using gif = struct {
 							byte* bgra;
 							size_t w;
@@ -188,9 +188,9 @@ public:
 							}
 							gifdata.reset();
 						}, pthis)->Start();
-							pthis->m_bRequestId = -1;
-						}, this)->Create(true)->Start()->GetId();
-						m_bIsAnimate = true;
+							pthis->m_pRequest = nullptr;
+						}, this)->Create(true)->Start();
+					m_bIsAnimate = true;
 				}
 				m_bRequsetedAnimatedAvatars = true;
 			}
@@ -324,8 +324,9 @@ private:
 	bool m_bDrawFriend;
 
 	bool m_bIsAnimate = false;
-	int m_bRequestId = 0;
 	bool m_bRequsetedAnimatedAvatars = false;
+	std::optional<CHttpClientItem*> m_pRequest = nullptr;
+
 	std::vector<IImage_HL25*> m_aryAnimatedAvatars;
 	size_t m_iCurrentImage;
 	float m_flAnimateTime;

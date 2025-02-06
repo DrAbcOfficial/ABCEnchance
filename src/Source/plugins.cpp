@@ -71,6 +71,7 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	ClientVGUI_InstallHooks();
 	BaseUI_InstallHooks();
 	GameUI_InstallHooks();
+	GameUIBasePanel_InstallHooks();
 	GameConsole_InstallHook();
 }
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
@@ -117,6 +118,7 @@ void IPluginsV4::ExitGame(int iResult){
 	UninstallEngineHook();
 
 	GameConsole_UninstallHook();
+	GameUIBasePanel_UninstallHooks();
 	GameUI_UninstallHooks();
 	BaseUI_UninstallHooks();
 	ClientVGUI_UninstallHooks();

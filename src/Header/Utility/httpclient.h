@@ -75,8 +75,6 @@ public:
 
 	CHttpClientItem* SetFeild(const char* key, const char* var);
 	HTTPCLIENT_STATE GetState() const;
-
-	UtilHTTPRequestId_t GetId();
 	bool Interrupt();
 protected:
 	virtual void Destroy();
@@ -95,9 +93,7 @@ private:
 	std::vector<byte> m_aryReciveData = {};
 
 	bool m_bAsync = false;
-	UtilHTTPRequestId_t m_pId = 0;
-	//Only for sync
-	IUtilHTTPRequest* m_pSyncReq = nullptr;
+	IUtilHTTPRequest* m_pRequest = nullptr;
 	
 	httpContext_s m_hContext;
 	HTTPCLIENT_STATE m_iStatue;
@@ -113,7 +109,7 @@ public:
 	void ClearAll();
 	CHttpClientItem* Fetch(const char* url, UtilHTTPMethod method);
 	CHttpClientItem* Fetch(httpContext_s* ctx);
-	bool Interrupt(UtilHTTPRequestId_t id);
+	bool Interrupt(CHttpClientItem* pDestory);
 private:
 	std::vector<CHttpClientItem*> m_aryItems;
 };

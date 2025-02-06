@@ -82,10 +82,10 @@ CHttpClientItem* CHttpClient::Fetch(httpContext_s* ctx){
 	m_aryItems.push_back(item);
 	return item;
 }
-bool CHttpClient::Interrupt(UtilHTTPRequestId_t id){
+bool CHttpClient::Interrupt(CHttpClientItem* pDestory){
 	for (auto iter = m_aryItems.begin(); iter != m_aryItems.end();) {
 		auto item = *iter;
-		if (item->GetId() == id) {
+		if (item == pDestory) {
 			bool state = item->Interrupt();
 			if (state) {
 				delete item;
@@ -96,7 +96,7 @@ bool CHttpClient::Interrupt(UtilHTTPRequestId_t id){
 		else
 			iter++;
 	}
-	return g_pUtilHTTPClient->DestroyRequestById(id);
+	return false;
 }
 
 CHttpClientItem::CHttpClientItem(httpContext_s* ctx) : IUtilHTTPCallbacks(){
@@ -107,33 +107,27 @@ CHttpClientItem::CHttpClientItem(httpContext_s* ctx) : IUtilHTTPCallbacks(){
 }
 CHttpClientItem* CHttpClientItem::Create(bool async){
 	m_iStatue = HTTPCLIENT_STATE::PENDING;
-	if (async) {
-		auto req = g_pUtilHTTPClient->CreateAsyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
-		m_pId = req->GetRequestId();
-		if (m_pCookieJar)
-			req->SetField("Set-Cookie", m_pCookieJar->Get().c_str());
-	}
-	else {
-		m_pSyncReq = g_pUtilHTTPClient->CreateSyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
-		if (m_pCookieJar)
-			m_pSyncReq->SetField("Set-Cookie", m_pCookieJar->Get().c_str());
-	}
+	if (async)
+		m_pRequest = g_pUtilHTTPClient->CreateAsyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
+	else
+		m_pRequest = g_pUtilHTTPClient->CreateSyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
+	if (m_pCookieJar)
+		m_pRequest->SetField("Set-Cookie", m_pCookieJar->Get().c_str());
 	m_bAsync = async;
 	return this;
 }
 CHttpClientItem* CHttpClientItem::Start(){
 	if (m_bAsync) {
-		auto req = g_pUtilHTTPClient->GetRequestById(m_pId);
-		if (req)
-			req->Send();
+		if (m_pRequest)
+			m_pRequest->Send();
 	}
 	return this;
 }
 IUtilHTTPResponse* CHttpClientItem::StartSync(){
 	if (!m_bAsync) {
-		m_pSyncReq->Send();
-		m_pSyncReq->WaitForComplete();
-		auto reb = m_pSyncReq->GetResponse(); 
+		m_pRequest->Send();
+		m_pRequest->WaitForComplete();
+		auto reb = m_pRequest->GetResponse(); 
 		if (m_pCookieJar) {
 			char cookiebuf[MAX_COOKIE_LENGTH];
 			reb->GetHeader("Set-Cookie", cookiebuf, MAX_COOKIE_LENGTH);
@@ -144,20 +138,17 @@ IUtilHTTPResponse* CHttpClientItem::StartSync(){
 	return nullptr;
 }
 CHttpClientItem* CHttpClientItem::SetFeild(const char* key, const char* var){
-	auto req = m_bAsync ? g_pUtilHTTPClient->GetRequestById(m_pId) : m_pSyncReq;
-	if (req)
-		req->SetField(key, var);
+	if (m_pRequest)
+		m_pRequest->SetField(key, var);
 	return this;
 }
 
 HTTPCLIENT_STATE CHttpClientItem::GetState() const{
 	return m_iStatue;
 }
-UtilHTTPRequestId_t CHttpClientItem::GetId(){
-	return m_pId;
-}
 bool CHttpClientItem::Interrupt(){
-	return g_pUtilHTTPClient->DestroyRequestById(m_pId);
+	m_pRequest->Destroy();
+	return true;
 }
 void CHttpClientItem::Destroy() {
 	m_iStatue = HTTPCLIENT_STATE::DESTORYED;
