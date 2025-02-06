@@ -84,7 +84,7 @@ jobs:
       with:
         format: YYYY-MM-DD-HH-mm-ss
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.2
+      uses: actions/upload-artifact@v4
       with:
         name: ABCEnchance-${{steps.current-time.outputs.formattedTime}}.zip
         path: ABCEnchance-windows-x86.zip
