@@ -10,19 +10,19 @@ static IUtilHTTPClient* g_pUtilHTTPClient;
 static CHttpClient g_pHttpClient;
 
 void CHttpClient::Init(){
-	g_hUtilHTTPClient = Sys_LoadModule("UtilHTTPClient_SteamAPI.dll");
+	g_hUtilHTTPClient = Sys_LoadModule("UtilHTTPClient_libcurl.dll");
 	if (!g_hUtilHTTPClient){
-		SYS_ERROR("Could not load UtilHTTPClient_SteamAPI.dll");
+		SYS_ERROR("Could not load UtilHTTPClient_libcurl.dll");
 		return;
 	}
 	auto factory = Sys_GetFactory(g_hUtilHTTPClient);
 	if (!factory){
-		SYS_ERROR("Could not get factory from UtilHTTPClient_SteamAPI.dll");
+		SYS_ERROR("Could not get factory from UtilHTTPClient_libcurl.dll");
 		return;
 	}
-	g_pUtilHTTPClient = (decltype(g_pUtilHTTPClient))factory(UTIL_HTTPCLIENT_STEAMAPI_INTERFACE_VERSION, NULL);
+	g_pUtilHTTPClient = (decltype(g_pUtilHTTPClient))factory(UTIL_HTTPCLIENT_LIBCURL_INTERFACE_VERSION, NULL);
 	if (!g_pUtilHTTPClient){
-		SYS_ERROR("Could not get UtilHTTPClient from UtilHTTPClient_SteamAPI.dll");
+		SYS_ERROR("Could not get UtilHTTPClient from UtilHTTPClient_libcurl.dll");
 		return;
 	}
 	if (g_pUtilHTTPClient){
@@ -111,12 +111,12 @@ CHttpClientItem* CHttpClientItem::Create(bool async){
 		auto req = g_pUtilHTTPClient->CreateAsyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
 		m_pId = req->GetRequestId();
 		if (m_pCookieJar)
-			req->SetField(UtilHTTPField::cookie, m_pCookieJar->Get().c_str());
+			req->SetField("Set-Cookie", m_pCookieJar->Get().c_str());
 	}
 	else {
 		m_pSyncReq = g_pUtilHTTPClient->CreateSyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
 		if (m_pCookieJar)
-			m_pSyncReq->SetField(UtilHTTPField::cookie, m_pCookieJar->Get().c_str());
+			m_pSyncReq->SetField("Set-Cookie", m_pCookieJar->Get().c_str());
 	}
 	m_bAsync = async;
 	return this;
@@ -125,14 +125,14 @@ CHttpClientItem* CHttpClientItem::Start(){
 	if (m_bAsync) {
 		auto req = g_pUtilHTTPClient->GetRequestById(m_pId);
 		if (req)
-			req->SendAsyncRequest();
+			req->Send();
 	}
 	return this;
 }
 IUtilHTTPResponse* CHttpClientItem::StartSync(){
 	if (!m_bAsync) {
-		m_pSyncReq->SendAsyncRequest();
-		m_pSyncReq->WaitForResponse();
+		m_pSyncReq->Send();
+		m_pSyncReq->WaitForComplete();
 		auto reb = m_pSyncReq->GetResponse(); 
 		if (m_pCookieJar) {
 			char cookiebuf[MAX_COOKIE_LENGTH];
@@ -205,6 +205,12 @@ void CHttpClientItem::OnUpdateState(UtilHTTPRequestState NewState) {
 	default:
 		break;
 	}
+}
+
+void CHttpClientItem::OnReceiveData(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, const void* pData, size_t cbSize)
+{
+	m_aryReciveData.resize(cbSize);
+	std::memcpy(m_aryReciveData.data(), pData, cbSize);
 }
 
 CHttpClient* GetHttpClient(){

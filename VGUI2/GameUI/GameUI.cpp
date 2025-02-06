@@ -5,6 +5,7 @@
 #include <IVGUI2Extension.h>
 
 extern void SetAdvanceOptPanelVisible(bool state);
+extern void ClientVGUI_InitLocalize();
 
 class CVGUI2Extension_GameUICallbacks : public IVGUI2Extension_GameUICallbacks{
 public:
@@ -17,11 +18,16 @@ public:
 	virtual void Initialize(CreateInterfaceFn* factories, int count) override{
 		
 	}
+	virtual void PreStart(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system){
+		ClientVGUI_InitLocalize();
+	}
 	virtual void Start(struct cl_enginefuncs_s* engineFuncs, int interfaceVersion, void* system) override{
 		BasePanelPostInit();
 	}
-
 	virtual void Shutdown(void) override{
+
+	}
+	virtual void PostShutdown(){
 
 	}
 	virtual void ActivateGameUI(VGUI2Extension_CallbackContext* CallbackContext) override{

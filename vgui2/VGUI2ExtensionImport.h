@@ -3,17 +3,17 @@
 #include <IVGUI2Extension.h>
 #include <IDpiManager.h>
 
-void VGUI2Extension_Init();
-void VGUI2Extension_Shutdown();
+extern void VGUI2Extension_Init();
+extern void VGUI2Extension_Shutdown();
 
-void BaseUI_InstallHooks(void);
-void BaseUI_UninstallHooks(void);
+extern void BaseUI_InstallHooks(void);
+extern void BaseUI_UninstallHooks(void);
 
-void GameUI_InstallHooks(void);
-void GameUI_UninstallHooks(void);
+extern void GameUI_InstallHooks(void);
+extern void GameUI_UninstallHooks(void);
 
-void ClientVGUI_InstallHooks(void);
-void ClientVGUI_UninstallHooks(void);
+extern void ClientVGUI_InstallHooks(void);
+extern void ClientVGUI_UninstallHooks(void);
 
-void GameConsole_InstallHook();
-void GameConsole_UninstallHook();
+extern void GameConsole_InstallHook();
+extern void GameConsole_UninstallHook();

@@ -20,7 +20,7 @@
 #include <IVGUI2Extension.h>
 
 namespace vgui{
-	bool VGui_InitInterfacesList(const char* moduleName, CreateInterfaceFn* factoryList, int numFactories);
+	extern bool VGui_InitInterfacesList(const char* moduleName, CreateInterfaceFn* factoryList, int numFactories);
 }
 
 class CVGUI2Extension_ClientVGUICallbacks : public IVGUI2Extension_ClientVGUICallbacks {
@@ -42,13 +42,6 @@ public:
 			SYS_ERROR("Resource version mismatch: \"abcenchance\\ABCEnchance.res\" too old.\nRequired Version: %d\nYour Version: %d\n",
 				PLUGIN_VERSION, iPluginVersion);
 			return;
-		}
-
-		if (g_pFileSystem){
-			if (!vgui::localize()->AddFile(g_pFileSystem, "abcenchance/localize/%language%.txt")){
-				if (!vgui::localize()->AddFile(g_pFileSystem, "abcenchance/localize/english.txt"))
-					SYS_ERROR("Failed to load abcenchance/localize/english.txt");
-			}
 		}
 	}
 	virtual void Start(void) override {
@@ -92,6 +85,14 @@ void ClientVGUI_InstallHooks(void) {
 }
 void ClientVGUI_UninstallHooks(void){
 	VGUI2Extension()->UnregisterClientVGUICallbacks(&s_ClientVGUICallbacks);
+}
+void ClientVGUI_InitLocalize() {
+	if (g_pFileSystem) {
+		if (!vgui::localize()->AddFile(g_pFileSystem, "abcenchance/localize/%language%.txt")) {
+			if (!vgui::localize()->AddFile(g_pFileSystem, "abcenchance/localize/english.txt"))
+				SYS_ERROR("Failed to load abcenchance/localize/english.txt");
+		}
+	}
 }
 
 //vgui2

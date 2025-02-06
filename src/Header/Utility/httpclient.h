@@ -82,6 +82,8 @@ protected:
 	virtual void Destroy();
 	virtual void OnResponseComplete(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance);
 	virtual void OnUpdateState(UtilHTTPRequestState NewState);
+	//Called when receive chunked payload data
+	virtual void OnReceiveData(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, const void* pData, size_t cbSize);
 private:
 	std::function<void(IUtilHTTPResponse*)> m_pOnResponse = nullptr;
 	std::function<void()> m_pOnFinish = nullptr;
@@ -89,6 +91,8 @@ private:
 	std::function<void(HTTPCLIENT_FAILED_CODE)> m_pOnFailed = nullptr;
 
 	CHttpCookieJar* m_pCookieJar = nullptr;
+
+	std::vector<byte> m_aryReciveData = {};
 
 	bool m_bAsync = false;
 	UtilHTTPRequestId_t m_pId = 0;
