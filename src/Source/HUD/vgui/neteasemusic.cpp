@@ -1020,7 +1020,7 @@ void QRCheck(vgui::CQRLoginPanel* panel, std::string& qrkey) {
 	}, panel, qrkey)->Start();
 }
 void vgui::CQRLoginPanel::Login(){
-	GetTaskManager()->Add<loginshare_obj*>([]() -> loginshare_obj*{
+	GetTaskManager()->Add<loginshare_obj*>([]() -> loginshare_obj* {
 		static loginshare_obj obj;
 		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
 		std::string url = "https://music.163.com/login?codekey=" + obj.qrkey;
@@ -1029,31 +1029,40 @@ void vgui::CQRLoginPanel::Login(){
 		static int s_size;
 
 		int qrsize = qrcode.getSize();
-		if (qrsize > s_size) {
-			s_size = qrsize;
+		int newSize = qrsize + 4;
+		if (newSize > s_size) {
+			s_size = newSize;
 			delete[] s_qrbyte;
 			s_qrbyte = new byte[s_size * s_size * 4];
 		}
 		size_t c = 0;
-		for (int x = 0; x < qrsize; x++) {
-			for (int y = 0; y < qrsize; y++) {
-				bool p = qrcode.getModule(x, y);
-				s_qrbyte[c * 4 + 0] = p ? 0 : 255;
-				s_qrbyte[c * 4 + 1] = p ? 0 : 255;
-				s_qrbyte[c * 4 + 2] = p ? 0 : 255;
-				s_qrbyte[c * 4 + 3] = 255;
+		for (int x = 0; x < newSize; x++) {
+			for (int y = 0; y < newSize; y++) {
+				if (x < 2 || x >= newSize - 2 || y < 2 || y >= newSize - 2) {
+					s_qrbyte[c * 4 + 0] = 255;
+					s_qrbyte[c * 4 + 1] = 255;
+					s_qrbyte[c * 4 + 2] = 255;
+					s_qrbyte[c * 4 + 3] = 255;
+				}
+				else {
+					bool p = qrcode.getModule(x - 2, y - 2);
+					s_qrbyte[c * 4 + 0] = p ? 0 : 255;
+					s_qrbyte[c * 4 + 1] = p ? 0 : 255;
+					s_qrbyte[c * 4 + 2] = p ? 0 : 255;
+					s_qrbyte[c * 4 + 3] = 255;
+				}
 				c++;
 			}
 		}
 		obj.qrimagebyte = s_qrbyte;
-		obj.size = qrsize;
+		obj.size = newSize;
 		return &obj;
-	})->ContinueWith([](loginshare_obj* obj, CQRLoginPanel* panel) {
-		s_pQRCodeImage->InitFromRGBA(obj->qrimagebyte, obj->size, obj->size);
-		panel->m_pQRImagePanel->SetImage(s_pQRCodeImage);
-		panel->SetVisible(true);
-		QRCheck(panel, obj->qrkey);
-	}, this)->Start();
+		})->ContinueWith([](loginshare_obj* obj, CQRLoginPanel* panel) {
+			s_pQRCodeImage->InitFromRGBA(obj->qrimagebyte, obj->size, obj->size);
+			panel->m_pQRImagePanel->SetImage(s_pQRCodeImage);
+			panel->SetVisible(true);
+			QRCheck(panel, obj->qrkey);
+			}, this)->Start();
 }
 void vgui::CQRLoginPanel::ResetText(){
 	m_pNotice->SetText("#Netease_QRNoticeText");
