@@ -432,6 +432,10 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 	memcpy(&IEngineStudio, pstudio, sizeof(IEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
+
+void FMOD_Shutdown();
+void FreeLibcurl();
+
 void HUD_Shutdown(void) {
 	AutoFunc::Exit();
 
@@ -443,9 +447,7 @@ void HUD_Shutdown(void) {
 
 	GetTaskManager()->Shutdown();
 
-	extern void FMOD_Shutdown();
-	extern void FreeLibcurl();
-	FreeLibcurl();
+	//FreeLibcurl();
 	FMOD_Shutdown();
 	FreeParticleMan();
 	UninstallClientHook();

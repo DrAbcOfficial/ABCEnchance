@@ -105,7 +105,7 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_DrawTransparentTriangles = HUD_DrawTransparentTriangles;
 
 	FillAddress();
-	LoadLibcurl();
+	//LoadLibcurl();
 	InstallClientHook();
 	FMOD_Init();
 	LoadParticleMan();
