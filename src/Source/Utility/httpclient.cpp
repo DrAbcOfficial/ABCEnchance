@@ -112,6 +112,7 @@ CHttpClientItem::CHttpClientItem(httpContext_s* ctx) : IUtilHTTPCallbacks(){
 		m_pRequest = g_pUtilHTTPClient->CreateSyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
 	if (m_pCookieJar)
 		m_pRequest->SetField("Set-Cookie", m_pCookieJar->Get().c_str());
+	m_pRequest->SetAutoDestroyOnFinish(true);
 }
 CHttpClientItem* CHttpClientItem::Start(){
 	if (!m_pRequest)
@@ -130,8 +131,8 @@ IUtilHTTPResponse* CHttpClientItem::StartSync(){
 		if (m_pCookieJar) {
 			char cookiebuf[MAX_COOKIE_LENGTH];
 			memset(cookiebuf, 0, MAX_COOKIE_LENGTH);
-			reb->GetHeader("Set-Cookie", cookiebuf, MAX_COOKIE_LENGTH);
-			m_pCookieJar->Set(cookiebuf);
+			if(reb->GetHeader("Set-Cookie", cookiebuf, MAX_COOKIE_LENGTH))
+				m_pCookieJar->Set(cookiebuf);
 		}
 		return reb;
 	}
