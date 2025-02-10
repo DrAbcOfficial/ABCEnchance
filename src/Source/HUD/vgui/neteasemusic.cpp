@@ -387,10 +387,6 @@ CNeteasePanel::CNeteasePanel()
 	m_pSuppressMusic = CREATE_CVAR("cl_netease_suppressmusic", "1", FCVAR_VALUE, nullptr);
 
 	s_pNeteaseApi = new netease::CNeteaseMusicAPI();
-	char buf[MAX_PATH];
-	vgui::filesystem()->GetLocalPath("abcenchance/", buf, MAX_PATH);
-	V_snprintf(buf, "%sneteasecookie", buf);
-	netease::CNeteaseMusicAPI::SetCookie(buf);
 
 	LoadControlSettings(VGUI2_ROOT_DIR "NeteasePanel.res");
 	SetVisible(false);
@@ -516,8 +512,7 @@ void CNeteasePanel::Think() {
 }
 static std::vector<byte> DownLoad(const std::string& url) {
 	std::vector<byte> retdata;
-	auto rep = GetHttpClient()->Fetch(url.c_str(), UtilHTTPMethod::Get)->
-	Create(false)->
+	auto rep = GetHttpClient()->Fetch(url.c_str(), UtilHTTPMethod::Get, false)->
 	StartSync();
 	const char* bytes = rep->GetPayload()->GetBytes();
 	size_t len = rep->GetPayload()->GetLength();

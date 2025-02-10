@@ -246,7 +246,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\steamrichpresence.cpp" />
     <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
     <ClCompile Include="src\Source\Utility\config.cpp" />
-    <ClCompile Include="src\Source\Utility\curl.cpp" />
     <ClCompile Include="src\Source\Utility\httpclient.cpp" />
     <ClCompile Include="src\Source\Utility\liblrc.cpp" />
     <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
@@ -493,7 +492,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\Utility\client_steam_context.h" />
     <ClInclude Include="src\Header\Utility\config.h" />
     <ClInclude Include="src\Header\Utility\crypto.h" />
-    <ClInclude Include="src\Header\Utility\curl.h" />
     <ClInclude Include="src\Header\Utility\httpclient.h" />
     <ClInclude Include="src\Header\Utility\liblrc.h" />
     <ClInclude Include="src\Header\Utility\mymathlib.h" />

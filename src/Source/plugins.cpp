@@ -3,7 +3,6 @@
 #include "exportfuncs.h"
 #include "ClientParticleMan.h"
 #include "httpclient.h"
-#include "curl.h"
 #include "soundengine.h"
 #include "VGUI2ExtensionImport.h"
 #include <vgui_controls/Controls.h>

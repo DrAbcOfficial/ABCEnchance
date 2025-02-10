@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <cstddef>
 #include <functional>
 
 #include <IUtilHTTPClient.h>
@@ -35,6 +36,7 @@ private:
 typedef struct httpContext_s {
 	std::string url;
 	UtilHTTPMethod method;
+	bool async;
 	CHttpCookieJar* cookie;
 } httpContext_t;
 
@@ -68,12 +70,12 @@ public:
 		return this;
 	}
 
-	CHttpClientItem* Create(bool async);
-
 	CHttpClientItem* Start();
 	IUtilHTTPResponse* StartSync();
 
 	CHttpClientItem* SetFeild(const char* key, const char* var);
+	CHttpClientItem* SetPostBody(const char* contentType, const char* payload, size_t payloadSize);
+	CHttpClientItem* SetCookieJar(CHttpCookieJar* jar);
 	HTTPCLIENT_STATE GetState() const;
 	bool Interrupt();
 protected:
@@ -90,7 +92,7 @@ private:
 
 	CHttpCookieJar* m_pCookieJar = nullptr;
 
-	std::vector<byte> m_aryReciveData = {};
+	std::vector<std::byte> m_aryReciveData = {};
 
 	bool m_bAsync = false;
 	IUtilHTTPRequest* m_pRequest = nullptr;
@@ -107,7 +109,7 @@ public:
 
 	void CheckAll();
 	void ClearAll();
-	CHttpClientItem* Fetch(const char* url, UtilHTTPMethod method);
+	CHttpClientItem* Fetch(const char* url, UtilHTTPMethod method, bool async = true);
 	CHttpClientItem* Fetch(httpContext_s* ctx);
 	bool Interrupt(CHttpClientItem* pDestory);
 private:

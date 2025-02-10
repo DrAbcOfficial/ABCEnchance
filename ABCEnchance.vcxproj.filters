@@ -638,9 +638,6 @@
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp">
       <Filter>vgui2</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\curl.cpp">
-      <Filter>Public\Source\LIb</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\win32helper.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
@@ -1422,9 +1419,6 @@
     </ClInclude>
     <ClInclude Include="vgui2\VGUI2ExtensionImport.h">
       <Filter>vgui2</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\curl.h">
-      <Filter>Public\Header\LIb</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\win32helper.h">
       <Filter>Public\Header\Utility</Filter>

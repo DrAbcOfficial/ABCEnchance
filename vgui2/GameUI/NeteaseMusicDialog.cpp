@@ -179,14 +179,12 @@ public:
 		};
 		GetHttpClient()->Fetch((myinfo->avatarurl + "?param=130y130").c_str(), UtilHTTPMethod::Get)->
 			OnRespond(decodecallback, m_pAvatar, this)->
-			Create(true)->
 			Start();
 		
 		int w, h;
 		GetSize(w, h);
 		GetHttpClient()->Fetch((myinfo->backgroundurl + "?param=" + std::to_string(w) + "y" + std::to_string(h)).c_str(), UtilHTTPMethod::Get)->
 			OnRespond(decodecallback, m_pBackgroud, this)->
-			Create(true)->
 			Start();
 
 		m_pName->SetText(myinfo->name.c_str());

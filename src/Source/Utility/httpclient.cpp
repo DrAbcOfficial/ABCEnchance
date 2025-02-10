@@ -67,10 +67,11 @@ void CHttpClient::ClearAll(){
 	}
 	m_aryItems.clear();
 }
-CHttpClientItem* CHttpClient::Fetch(const char* url, UtilHTTPMethod method){
+CHttpClientItem* CHttpClient::Fetch(const char* url, UtilHTTPMethod method, bool async){
 	httpContext_t ctx = {
 		url,
 		method,
+		async,
 		nullptr
 	};
 	CHttpClientItem* item = new CHttpClientItem(&ctx);
@@ -103,25 +104,23 @@ CHttpClientItem::CHttpClientItem(httpContext_s* ctx) : IUtilHTTPCallbacks(){
 	m_hContext.url = ctx->url;
 	m_hContext.method = ctx->method;
 	m_pCookieJar = ctx->cookie;
-	m_iStatue = HTTPCLIENT_STATE::INVALID;
-}
-CHttpClientItem* CHttpClientItem::Create(bool async){
 	m_iStatue = HTTPCLIENT_STATE::PENDING;
-	if (async)
+	m_bAsync = ctx->async;
+	if (m_bAsync)
 		m_pRequest = g_pUtilHTTPClient->CreateAsyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
 	else
 		m_pRequest = g_pUtilHTTPClient->CreateSyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
 	if (m_pCookieJar)
 		m_pRequest->SetField("Set-Cookie", m_pCookieJar->Get().c_str());
-	m_bAsync = async;
-	return this;
 }
 CHttpClientItem* CHttpClientItem::Start(){
+	if (!m_pRequest)
+		return nullptr;
 	if (m_bAsync) {
-		if (m_pRequest)
-			m_pRequest->Send();
+		m_pRequest->Send();
+		return this;
 	}
-	return this;
+	return nullptr;
 }
 IUtilHTTPResponse* CHttpClientItem::StartSync(){
 	if (!m_bAsync) {
@@ -130,6 +129,7 @@ IUtilHTTPResponse* CHttpClientItem::StartSync(){
 		auto reb = m_pRequest->GetResponse(); 
 		if (m_pCookieJar) {
 			char cookiebuf[MAX_COOKIE_LENGTH];
+			memset(cookiebuf, 0, MAX_COOKIE_LENGTH);
 			reb->GetHeader("Set-Cookie", cookiebuf, MAX_COOKIE_LENGTH);
 			m_pCookieJar->Set(cookiebuf);
 		}
@@ -138,11 +138,28 @@ IUtilHTTPResponse* CHttpClientItem::StartSync(){
 	return nullptr;
 }
 CHttpClientItem* CHttpClientItem::SetFeild(const char* key, const char* var){
-	if (m_pRequest)
+	if (m_pRequest) {
 		m_pRequest->SetField(key, var);
-	return this;
+		return this;
+	}
+	return nullptr;
 }
 
+CHttpClientItem* CHttpClientItem::SetPostBody(const char* contentType, const char* payload, size_t payloadSize) {
+	if (m_pRequest) {
+		m_pRequest->SetPostBody(contentType, payload, payloadSize);
+		return this;
+	}
+	return nullptr;
+}
+CHttpClientItem* CHttpClientItem::SetCookieJar(CHttpCookieJar* jar)
+{
+	if (m_pRequest) {
+		m_pCookieJar = jar;
+		return this;
+	}
+	return nullptr;
+}
 HTTPCLIENT_STATE CHttpClientItem::GetState() const{
 	return m_iStatue;
 }

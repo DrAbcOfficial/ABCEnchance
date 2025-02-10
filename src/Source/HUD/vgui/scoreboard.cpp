@@ -189,7 +189,7 @@ public:
 							gifdata.reset();
 						}, pthis)->Start();
 							pthis->m_pRequest = nullptr;
-						}, this)->Create(true)->Start();
+						}, this)->Start();
 					m_bIsAnimate = true;
 				}
 				m_bRequsetedAnimatedAvatars = true;
