@@ -3,8 +3,6 @@
 #include "httpclient.h"
 #include <Controls.h>
 
-#define MAX_COOKIE_LENGTH 2048
-
 static HINTERFACEMODULE g_hUtilHTTPClient;
 static IUtilHTTPClient* g_pUtilHTTPClient;
 static CHttpClient g_pHttpClient;
@@ -111,13 +109,15 @@ CHttpClientItem::CHttpClientItem(httpContext_s* ctx) : IUtilHTTPCallbacks(){
 	else
 		m_pRequest = g_pUtilHTTPClient->CreateSyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
 	if (m_pCookieJar)
-		m_pRequest->SetField("Set-Cookie", m_pCookieJar->Get().c_str());
+		m_pRequest->SetField("Cookie", m_pCookieJar->Get().c_str());
 	m_pRequest->SetAutoDestroyOnFinish(true);
 }
 CHttpClientItem* CHttpClientItem::Start(){
 	if (!m_pRequest)
 		return nullptr;
 	if (m_bAsync) {
+		if (m_pCookieJar)
+			m_pRequest->SetField("Cookie", m_pCookieJar->Get().c_str());
 		m_pRequest->Send();
 		return this;
 	}
@@ -125,14 +125,21 @@ CHttpClientItem* CHttpClientItem::Start(){
 }
 IUtilHTTPResponse* CHttpClientItem::StartSync(){
 	if (!m_bAsync) {
+		if (m_pCookieJar)
+			m_pRequest->SetField("Cookie", m_pCookieJar->Get().c_str());
 		m_pRequest->Send();
 		m_pRequest->WaitForComplete();
 		auto reb = m_pRequest->GetResponse(); 
 		if (m_pCookieJar) {
-			char cookiebuf[MAX_COOKIE_LENGTH];
-			memset(cookiebuf, 0, MAX_COOKIE_LENGTH);
-			if(reb->GetHeader("Set-Cookie", cookiebuf, MAX_COOKIE_LENGTH))
-				m_pCookieJar->Set(cookiebuf);
+			std::string cookiebuf;
+			size_t bufsize = 0;
+			if (reb->GetHeaderSize("Set-Cookie", &bufsize)) {
+				cookiebuf.resize(bufsize);
+				if (reb->GetHeader("Set-Cookie", cookiebuf.data(), bufsize)) {
+					m_pCookieJar->Set(cookiebuf);
+					m_pCookieJar->Save();
+				}
+			}
 		}
 		return reb;
 	}
@@ -190,9 +197,15 @@ void CHttpClientItem::OnResponseComplete(IUtilHTTPRequest* RequestInstance, IUti
 	if (m_pOnResponse) {
 		std::invoke(m_pOnResponse, ResponseInstance);
 		if (m_pCookieJar) {
-			char cookiebuf[MAX_COOKIE_LENGTH];
-			ResponseInstance->GetHeader("Set-Cookie", cookiebuf, MAX_COOKIE_LENGTH);
-			m_pCookieJar->Set(cookiebuf);
+			std::string cookiebuf;
+			size_t bufsize = 0;
+			if (ResponseInstance->GetHeaderSize("Set-Cookie", &bufsize)) {
+				cookiebuf.resize(bufsize);
+				if (ResponseInstance->GetHeader("Set-Cookie", cookiebuf.data(), bufsize)) {
+					m_pCookieJar->Set(cookiebuf);
+					m_pCookieJar->Save();
+				}
+			}
 		}
 	}
 }
@@ -234,10 +247,11 @@ CHttpCookieJar::CHttpCookieJar(const char* path){
 void CHttpCookieJar::Load(const char* path){
 	FileHandle_t file = vgui::filesystem()->Open(path, "r");
 	if (file) {
-		char buffer[MAX_COOKIE_LENGTH];
-		vgui::filesystem()->Read(buffer, MAX_COOKIE_LENGTH, file);
+		int filesize = vgui::filesystem()->Size(file);
+		std::string buffer;
+		buffer.resize(filesize);
+		vgui::filesystem()->Read(buffer.data(), filesize, file);
 		m_szCookie = buffer;
-		m_szCookie += '\0';
 		m_szPath = path;
 	}
 	vgui::filesystem()->Close(file);
@@ -254,6 +268,10 @@ std::string CHttpCookieJar::Get(){
 	return m_szCookie;
 }
 void CHttpCookieJar::Set(const char* cookie){
+	m_szCookie = cookie;
+}
+
+void CHttpCookieJar::Set(const std::string& cookie){
 	m_szCookie = cookie;
 }
 

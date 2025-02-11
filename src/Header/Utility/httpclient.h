@@ -27,6 +27,7 @@ public:
 	void Save();
 	std::string Get();
 	void Set(const char* cookie);
+	void Set(const std::string& cookie);
 	size_t Size();
 private:
 	std::string m_szPath;
