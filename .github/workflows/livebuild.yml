@@ -19,47 +19,34 @@ jobs:
     runs-on: windows-latest
 
     steps:    
-    - name: Git Clone Metahook
-      uses: sudosubin/git-clone-action@v1.0.1
-      with:
-        repository: hzqst/MetaHookSv
-        path: MetaHookSv
     
-    - name: Git Clone This
-      uses: sudosubin/git-clone-action@v1.0.1
-      with:
-        repository: DrAbcOfficial/ABCEnchance
-        path: MetaHookSv/Plugins/ABCEnchance
-
-    - name: Setup build env
-      working-directory: MetaHookSv
-      run: |
-          git submodule update --init --recursive
+    - uses: hzqst/checkout@v2.3.4
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Add Missing File
-      working-directory: MetaHookSv/Plugins/ABCEnchance/src
-      run: New-item ./Source/Utility/NeteaseApi.cpp;New-item ./Header/Utility/NeteaseApi.h
+    - name: Init dependencies
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: git submodule update --init --recursive
+      shell: cmd
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}}
       
     - name: Build AVX
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION_AVX}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION_AVX}}
     
     - name: Move to build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-          Move-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Build/ABCEnchance.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/svencoop/metahook/plugins/ABCEnchance.dll"
-          Move-Item -Force -Path "MetaHookSv/Plugins/ABCEnchance/Build/ABCEnchance_AVX2.dll" -Destination "MetaHookSv/Plugins/ABCEnchance/Build/svencoop/metahook/plugins/ABCEnchance_AVX2.dll"
+          Move-Item -Force -Path "Build/ABCEnchance.dll" -Destination "Build/svencoop/metahook/plugins/ABCEnchance.dll"
+          Move-Item -Force -Path "Build/ABCEnchance_AVX2.dll" -Destination "Build/svencoop/metahook/plugins/ABCEnchance_AVX2.dll"
     - name: Zipping All
       uses: vimtor/action-zip@v1
       with:
-          files: MetaHookSv/Plugins/ABCEnchance/build/
+          files: build/
           dest: ABCEnchance-windows-x86.zip
     - name: Current Time
       uses: srfrnk/current-time@master
