@@ -94,8 +94,8 @@
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(GLEWCheckRequirements)
-$(FreeImageCheckRequirements)
-$(CapstoneCheckRequirements)</Command>
+$(CapstoneCheckRequirements)
+$(FreeImageCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,8 +128,8 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(GLEWCheckRequirements)
-$(FreeImageCheckRequirements)
-$(CapstoneCheckRequirements)</Command>
+$(CapstoneCheckRequirements)
+$(FreeImageCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
@@ -163,8 +163,8 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(GLEWCheckRequirements)
-$(FreeImageCheckRequirements)
-$(CapstoneCheckRequirements)</Command>
+$(CapstoneCheckRequirements)
+$(FreeImageCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
