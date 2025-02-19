@@ -196,7 +196,8 @@ static int __MsgFunc_WeaponSpr(const char* pszName, int iSize, void* pbuf) {
 	if (name.size() > 0) {
 		WEAPON* wp = gWR.GetWeapon(id);
 		if (wp && wp->iId > 0) {
-			strncpy_s(wp->szSprName, name.c_str(), name.size());
+			strncpy(wp->szSprName, name.c_str(), sizeof(wp->szSprName) - 1);
+			wp->szSprName[sizeof(wp->szSprName) - 1] = 0;
 			gWR.LoadWeaponSprites(wp);
 			GetBaseViewPort()->GetWeaponChoosePanel()->ReloadWeaponSpr();
 			GetBaseViewPort()->GetWeaponStackPanel()->ReloadWeaponSpr();
@@ -296,9 +297,7 @@ static int __MsgFunc_ServerName(const char* pszName, int iSize, void* pbuf) {
 	if (GetBaseViewPort())
 	{
 		BEGIN_READ(pbuf, iSize);
-		char buf[MAX_SERVERNAME_LENGTH];
-		strncpy_s(buf, READ_STRING(), MAX_SERVERNAME_LENGTH);
-		snprintf(GetBaseViewPort()->GetServerName(), MAX_SERVERNAME_LENGTH, "%s", buf);
+		GetBaseViewPort()->SetServerName(READ_STRING());
 		GetBaseViewPort()->GetScoreBoard()->UpdateServerName();
 	}
 	return m_pfnServerName(pszName, iSize, pbuf);
@@ -307,9 +306,7 @@ static int __MsgFunc_NextMap(const char* pszName, int iSize, void* pbuf) {
 	if (GetBaseViewPort())
 	{
 		BEGIN_READ(pbuf, iSize);
-		char buf[MAX_SERVERNAME_LENGTH];
-		strncpy_s(buf, READ_STRING(), MAX_SERVERNAME_LENGTH);
-		snprintf(GetBaseViewPort()->GetNextMap(), MAX_SERVERNAME_LENGTH, "%s", buf);
+		GetBaseViewPort()->SetNextMap(READ_STRING());
 		GetBaseViewPort()->GetScoreBoard()->UpdateNextMap();
 	}
 	return m_pfnNextMap(pszName, iSize, pbuf);

@@ -1,5 +1,5 @@
 #include "texture.h"
-#include "FreeImage.h"
+#include <FreeImage.h>
 
 WadTexture::WadTexture(std::string const &name, WadFile*package, unsigned char* miptexData, WAD3Lump_t& lump){
     m_szName = name;
@@ -26,8 +26,9 @@ void WadTexture::GetRawData(std::ofstream& stream) {
     FIBITMAP* nimg = FreeImage_ColorQuantizeEx(img, FIQ_WUQUANT, 256);
     FreeImage_Unload(img);
     size_t size = m_iWidth * m_iHeight;
-    BSPMipTexHeader_t header;
-    strncpy_s(header.name, m_szName.c_str(), 16);
+    BSPMipTexHeader_t header = {0};
+    strncpy(header.name, m_szName.c_str(), sizeof(header.name) - 1);
+    header.name[sizeof(header.name) - 1] = 0;
     header.width = m_iWidth;
     header.height = m_iHeight;
     header.offsets[0] = sizeof(BSPMipTexHeader_t);

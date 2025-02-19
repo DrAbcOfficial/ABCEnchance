@@ -9,7 +9,8 @@
 #include "pm_movevars.h"
 #include "cvardef.h"
 #include "httpclient.h"
-#include "capstone.h"
+
+#include <capstone.h>//thirdparty
 
 #include "Task.h"
 //Def

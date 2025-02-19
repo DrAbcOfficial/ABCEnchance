@@ -55,12 +55,12 @@ void CAmmoPanel::Reset(){
 }
 void CAmmoPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
 	BaseClass::ApplySchemeSettings(pScheme);
-	SetBgColor(GetSchemeColor("AmmoBar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
-	m_pAmmo1Label->SetFgColor(GetSchemeColor("AmmoBar.Ammo1FgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
-	m_pAmmo2Label->SetFgColor(GetSchemeColor("AmmoBar.Ammo2FgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
-	m_pSlashLabel->SetFgColor(GetSchemeColor("AmmoBar.SlashFgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
-	m_Ammo1Icon->SetDrawColor(GetSchemeColor("AmmoBar.Ammo1IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
-	m_Ammo2Icon->SetDrawColor(GetSchemeColor("AmmoBar.Ammo2IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
+	SetBgColor(GetSchemeColor2("AmmoBar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	m_pAmmo1Label->SetFgColor(GetSchemeColor2("AmmoBar.Ammo1FgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
+	m_pAmmo2Label->SetFgColor(GetSchemeColor2("AmmoBar.Ammo2FgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
+	m_pSlashLabel->SetFgColor(GetSchemeColor2("AmmoBar.SlashFgColor", GetSchemeColor("Label.FgColor", pScheme), pScheme));
+	m_Ammo1Icon->SetDrawColor(GetSchemeColor2("AmmoBar.Ammo1IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
+	m_Ammo2Icon->SetDrawColor(GetSchemeColor2("AmmoBar.Ammo2IconColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
 }
 void CAmmoPanel::ShowPanel(bool state){
 	if (state == IsVisible())

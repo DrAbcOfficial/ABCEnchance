@@ -80,7 +80,8 @@ bool WadFile::SaveToFile(std::string const& filePath){
         lump.compression = 0;
         lump.dummy = 0;
         lump.type = 0x43; //miptex
-        strncpy_s(lump.name, (*iter)->Name().c_str(), 16);
+        strncpy(lump.name, (*iter)->Name().c_str(), sizeof(lump.name) - 1);
+        lump.name[sizeof(lump.name) - 1] = 0;
         lump.offset = sizeof(WAD3Header_t) + m_aryTextures.size() * sizeof(WAD3Lump_t) + lastsize;
         lump.size = lump.sizeOnDisk = (*iter)->GetRawDataSize();
         lastsize += lump.size;

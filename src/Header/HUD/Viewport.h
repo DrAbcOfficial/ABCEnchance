@@ -52,7 +52,8 @@ public:
 	void VidInit(void);
 	void Reset();
 	void Think(void);
-	char* GetNextMap();
+	const char* GetNextMap();
+	void SetNextMap(const char* name);
 	void Paint(void);
 	void SetParent(vgui::VPANEL vPanel);
 	void AddNewPanel(IViewportPanel* panel);
@@ -80,7 +81,8 @@ public:
 	void ShowScoreBoard();
 	void HideScoreBoard();
 	long GetTimeEnd();
-	char* GetServerName();
+	const char* GetServerName();
+	void SetServerName(const char*name);
 	CScorePanel* GetScoreBoard();
 	CVotePanel* GetVotePanel();
 	CMotdPanel* GetMotdPanel();

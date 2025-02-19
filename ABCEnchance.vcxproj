@@ -45,21 +45,12 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(ProjectDir)..\..\tools\global.props" Condition="exists('$(ProjectDir)..\..\tools\global.props')" />
-    <Import Project="$(ProjectDir)..\..\tools\global_template.props" Condition="!exists('$(ProjectDir)..\..\tools\global.props') and exists('$(ProjectDir)..\..\tools\global_template.props')" />
-    <Import Project="$(ProjectDir)..\..\tools\global_common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(ProjectDir)..\..\tools\global.props" Condition="exists('$(ProjectDir)..\..\tools\global.props')" />
-    <Import Project="$(ProjectDir)..\..\tools\global_template.props" Condition="!exists('$(ProjectDir)..\..\tools\global.props') and exists('$(ProjectDir)..\..\tools\global_template.props')" />
-    <Import Project="$(ProjectDir)..\..\tools\global_common.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(ProjectDir)..\..\tools\global.props" Condition="exists('$(ProjectDir)..\..\tools\global.props')" />
-    <Import Project="$(ProjectDir)..\..\tools\global_template.props" Condition="!exists('$(ProjectDir)..\..\tools\global.props') and exists('$(ProjectDir)..\..\tools\global_template.props')" />
-    <Import Project="$(ProjectDir)..\..\tools\global_common.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -80,7 +71,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;$(GLEWIncludeDirectory);$(FreeImageIncludeDirectory);$(CapstoneIncludeDirectory);..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\thirdparty\;.\src\Particleman\;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_ITERATOR_DEBUG_LEVEL=0;GLEW_STATIC;VGUI_USE_SURFACE2;VGUI_USE_SCHEME2;VGUI_USE_INPUT2;NO_MALLOC_OVERRIDE;NO_TIER0_MINIDUMP;__HAS_NETEASE_API;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader />
@@ -94,8 +85,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory);$(MetaHookBaseDir)include\SteamSDK</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
@@ -103,7 +94,8 @@
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(GLEWCheckRequirements)
-$(FreeImageCheckRequirements)</Command>
+$(FreeImageCheckRequirements)
+$(CapstoneCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -119,15 +111,15 @@ $(FreeImageCheckRequirements)</Command>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;$(GLEWIncludeDirectory);$(FreeImageIncludeDirectory);$(CapstoneIncludeDirectory);..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\thirdparty\;.\src\Particleman\;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory);$(MetaHookBaseDir)include\SteamSDK</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
@@ -136,7 +128,8 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(GLEWCheckRequirements)
-$(FreeImageCheckRequirements)</Command>
+$(FreeImageCheckRequirements)
+$(CapstoneCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
@@ -153,15 +146,15 @@ $(FreeImageCheckRequirements)</Command>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>.\;..\..\include;..\..\include\Interface;..\..\include\Interface\VGUI;..\..\include\HLSDK\utils;..\..\include\HLSDK\public;..\..\include\HLSDK\pm_shared;..\..\include\HLSDK\engine;..\..\include\HLSDK\dlls;..\..\include\HLSDK\common;..\..\include\HLSDK\cl_dll;..\..\include\VGUI;..\..\include\SteamSDK;$(GLEWIncludeDirectory);$(FreeImageIncludeDirectory);$(CapstoneIncludeDirectory);..\..\thirdparty\rapidjson\include;.\SourceSDK;.\VGUI2;.\VGUI2\interface;.\vgui_controls;.\SourceSDK\tier0;.\SourceSDK\tier1;.\SourceSDK\vstdlib;.\src\Header\;.\src\Header\Var\;.\src\Header\Utility\;.\src\Header\Utility\opengl\;.\src\Header\HUD\;.\src\Header\HUD\vgui\;.\src\thirdparty\;.\src\Particleman\;.\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);$(MetaHookBaseDir)include\SteamSDK\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory);$(MetaHookBaseDir)include\SteamSDK</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
@@ -170,11 +163,11 @@ copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(GLEWCheckRequirements)
-$(FreeImageCheckRequirements)</Command>
+$(FreeImageCheckRequirements)
+$(CapstoneCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\include\HLSDK\common\interface.cpp" />
     <ClCompile Include="SourceSDK\filesystem.cpp" />
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp" />
     <ClCompile Include="SourceSDK\mathlib\3dnow.cpp" />
@@ -249,7 +242,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\Utility\httpclient.cpp" />
     <ClCompile Include="src\Source\Utility\liblrc.cpp" />
     <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
-    <ClCompile Include="src\Source\Utility\NeteaseApi.cpp" />
+    <ClCompile Include="src\Source\Utility\NeteaseApiWrapper.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_shader.cpp" />
@@ -269,6 +262,7 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\viewmodellag.cpp" />
     <ClCompile Include="src\thirdparty\wadlib\texture.cpp" />
     <ClCompile Include="src\thirdparty\wadlib\wadfile.cpp" />
+    <ClCompile Include="thirdparty\MetaHookSv\include\HLSDK\common\interface.cpp" />
     <ClCompile Include="vgui2\BaseUI.cpp" />
     <ClCompile Include="VGUI2\Bitmap.cpp" />
     <ClCompile Include="VGUI2\Border.cpp" />

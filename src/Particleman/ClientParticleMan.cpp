@@ -7,7 +7,7 @@ HINTERFACEMODULE g_hParticleman = nullptr;
 
 void LoadParticleMan()
 {
-	char szPDir[512];
+	char szPDir[512]{};
 	CreateInterfaceFn ParticleManCreateInterface = nullptr;
 	if (!gEngfuncs.COM_ExpandFilename(PARTICLEMAN_DLLNAME, szPDir, sizeof(szPDir))){
 		SYS_ERROR("Could not get full path for particleman.dll!");
@@ -19,7 +19,7 @@ void LoadParticleMan()
 		SYS_ERROR("Could not load particleman.dll!");
 		return;
 	}
-	ParticleManCreateInterface = (CreateInterfaceFn)Sys_GetFactory(g_hParticleman);
+	ParticleManCreateInterface = Sys_GetFactory(g_hParticleman);
 	if (!ParticleManCreateInterface)
 	{
 		SYS_ERROR("Could not get factory from particleman.dll!");
