@@ -263,11 +263,20 @@ void CViewport::HideScoreBoard(){
 long CViewport::GetTimeEnd() {
 	return m_iTimeEnd;
 }
-char* CViewport::GetServerName(){
+const char* CViewport::GetServerName(){
 	return m_szServerName;
 }
-char* CViewport::GetNextMap() {
+void CViewport::SetServerName(const char* name)
+{
+	strncpy(m_szServerName, name, MAX_SERVERNAME_LENGTH - 1);
+	m_szServerName[MAX_SERVERNAME_LENGTH - 1] = 0;
+}
+const char* CViewport::GetNextMap() {
 	return m_szNextMapName;
+}
+void CViewport::SetNextMap(const char* name) {
+	strncpy(m_szNextMapName, name, MAX_SERVERNAME_LENGTH - 1);
+	m_szNextMapName[MAX_SERVERNAME_LENGTH - 1] = 0;
 }
 bool CViewport::IsPlayerTileEnable() {
 	return m_pPlayerTitle->value > 0;
