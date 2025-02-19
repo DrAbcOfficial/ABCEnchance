@@ -5,8 +5,8 @@
 // $NoKeywords: $
 //===========================================================================//
 
-#ifndef IFILESYSTEM_H
-#define IFILESYSTEM_H
+#ifndef SOURCE_IFILESYSTEM_H
+#define SOURCE_IFILESYSTEM_H
 
 #ifdef _WIN32
 #pragma once

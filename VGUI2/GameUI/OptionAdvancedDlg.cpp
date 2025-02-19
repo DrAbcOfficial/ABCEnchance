@@ -31,7 +31,7 @@
 #include "vgui_controls/GaussianBlurPanel.h"
 #include "vgui_controls/ModelViewPanel.h"
 
-#include "FreeImage.h"
+#include <FreeImage.h>
 #include "wadlib/wadfile.h"
 #include "NeteaseApi.h"
 

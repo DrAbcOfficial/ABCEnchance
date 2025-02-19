@@ -23,7 +23,9 @@
 #include "player_info.h"
 #include "Task.h"
 #include "httpclient.h"
-#include "FreeImage.h"
+
+#include <FreeImage.h>
+
 #include "CCustomHud.h"
 
 #include "scoreboard.h"

@@ -1,5 +1,5 @@
 #include "texture.h"
-#include "FreeImage.h"
+#include <FreeImage.h>
 
 WadTexture::WadTexture(std::string const &name, WadFile*package, unsigned char* miptexData, WAD3Lump_t& lump){
     m_szName = name;

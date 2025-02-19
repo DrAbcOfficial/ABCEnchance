@@ -114,6 +114,9 @@
     <Filter Include="vgui2\interface">
       <UniqueIdentifier>{31c8abc4-ccdf-48c3-9926-a4c81fec055b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\Source\HLSDK">
+      <UniqueIdentifier>{5153a3bf-a45c-4055-a914-6e4d54f6f61e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
@@ -334,9 +337,6 @@
     </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\radar.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\include\HLSDK\common\interface.cpp">
-      <Filter>Public\Source</Filter>
     </ClCompile>
     <ClCompile Include="VGUI2\GameUI\OptionAdvancedDlg.cpp">
       <Filter>vgui2\gameui</Filter>
@@ -700,6 +700,9 @@
     </ClCompile>
     <ClCompile Include="vgui2\GameUI\VoteMenuDialog.cpp">
       <Filter>vgui2\gameui</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\MetaHookSv\include\HLSDK\common\interface.cpp">
+      <Filter>Public\Source\HLSDK</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

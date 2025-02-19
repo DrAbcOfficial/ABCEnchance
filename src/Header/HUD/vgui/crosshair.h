@@ -4,7 +4,7 @@
 #include <string>
 #include <array>
 
-#include <vgui2/Border.h>
+#include <VGUI2/Border.h>
 #include <vgui_controls/Panel.h>
 #include "IViewportPanel.h"
 
