@@ -152,9 +152,9 @@ void GameUI_UninstallHooks(void){
 }
 
 void GameUI_GetInterface() {
-	HINTERFACEMODULE hGameUI = (HINTERFACEMODULE)GetModuleHandle("GameUI.dll");
+	auto hGameUI = GetModuleHandle("GameUI.dll");
 	if (hGameUI) {
-		CreateInterfaceFn fnCreateInterface = Sys_GetFactory(hGameUI);
+		CreateInterfaceFn fnCreateInterface = Sys_GetFactory((HINTERFACEMODULE)hGameUI);
 		gameui = static_cast<IGameUI*>(fnCreateInterface(GAMEUI_INTERFACE_VERSION, nullptr));
 	}
 }

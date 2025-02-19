@@ -63,8 +63,8 @@ public:
 #define CREATEINTERFACE_PROCNAME	((const char*)1)
 #endif
 
-typedef void* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
-typedef void* (*InstantiateInterfaceFn)();
+typedef IBaseInterface* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
+typedef IBaseInterface* (*InstantiateInterfaceFn)();
 
 // Used internally to register classes.
 class InterfaceReg
@@ -165,10 +165,13 @@ DLL_EXPORT void* CreateInterface(const char *pName, int *pReturnCode);
 DLL_EXPORT void *CreateInterfaceThunk( const char *pName, int *pReturnCode );
 #endif
 
+typedef struct HInterfaceModule_t* HINTERFACEMODULE;
+
 //-----------------------------------------------------------------------------
 // UNDONE: This is obsolete, use the module load/unload/get instead!!!
 //-----------------------------------------------------------------------------
-extern CreateInterfaceFn	Sys_GetFactory( CSysModule *pModule );
+extern CreateInterfaceFn	Sys_GetFactory(HINTERFACEMODULE pModule);
+//extern CreateInterfaceFn	Sys_GetFactory( CSysModule *pModule );
 extern CreateInterfaceFn	Sys_GetFactory( const char *pModuleName );
 extern CreateInterfaceFn	Sys_GetFactoryThis( void );
 
@@ -177,8 +180,10 @@ extern CreateInterfaceFn	Sys_GetFactoryThis( void );
 // The factory for that module should be passed on to dependent components for
 // proper versioning.
 //-----------------------------------------------------------------------------
-extern CSysModule			*Sys_LoadModule( const char *pModuleName );
+//extern CSysModule			*Sys_LoadModule( const char *pModuleName );
+extern HINTERFACEMODULE		Sys_LoadModule(const char* pModuleName);
 extern void					Sys_UnloadModule( CSysModule *pModule );
+extern void					Sys_FreeModule(HINTERFACEMODULE pModule);
 
 // This is a helper function to load a module, get its factory, and get a specific interface.
 // You are expected to free all of these things.

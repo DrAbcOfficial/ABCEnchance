@@ -33,7 +33,10 @@
 
 #include <FreeImage.h>
 #include "wadlib/wadfile.h"
+
+#ifdef __HAS_NETEASE_API
 #include "NeteaseApi.h"
+#endif
 
 #include "OptionAdvancedDlg.h"
 

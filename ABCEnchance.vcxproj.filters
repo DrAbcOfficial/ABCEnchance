@@ -602,9 +602,6 @@
     <ClCompile Include="src\Source\Utility\mymathlib.cpp">
       <Filter>Public\Source\LIb</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\NeteaseApi.cpp">
-      <Filter>Public\Source\LIb</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\Task.cpp">
       <Filter>Public\Source\LIb</Filter>
     </ClCompile>
@@ -703,6 +700,9 @@
     </ClCompile>
     <ClCompile Include="thirdparty\MetaHookSv\include\HLSDK\common\interface.cpp">
       <Filter>Public\Source\HLSDK</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\NeteaseApiWrapper.cpp">
+      <Filter>Public\Source\LIb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
