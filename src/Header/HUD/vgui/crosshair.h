@@ -54,6 +54,7 @@ private:
 	cvar_t* pDynamicCrossHairOTDW = nullptr;
 	cvar_t* pDynamicCrossHairT = nullptr;
 	cvar_t* pDynamicCrossHairD = nullptr;
+	cvar_t* pDynamicCrossHairAnimInterval = nullptr;
 
 	vgui::CSPRImage* m_pSprImage;
 	WEAPON* m_pHandledWeapon = nullptr;
@@ -62,6 +63,8 @@ private:
 
 	int m_iCenterX;
 	int m_iCenterY;
+	int m_iPreOffest = 0;
+	float m_flAnimTime = 0;
 
 	void HideDynamicCrossHair();
 	void SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc);

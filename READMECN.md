@@ -135,6 +135,7 @@
 |cl_crosshair_outline|描边粗细|1|0-999|
 |cl_crosshair_t|T形准心|0|0/1|
 |cl_crosshairdot|绘制中心点|0|0/1|
+|cl_crosshair_anim_interval|动态间隔时长|0.1|0-1|
 |---|---|---|---|
 |abc_bloodefx|启用Efx血迹特效|1|0/1|
 |abc_bloodsprite_speed|Efx血迹速度|128|0-9999|
