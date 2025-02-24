@@ -137,6 +137,7 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |cl_crosshair_outline|Outline thickness|1|0-999|
 |cl_crosshair_t|T shape|0|0/1|
 |cl_crosshairdot|Draw center dot or not|0|0/1|
+|cl_crosshair_anim_time|Dynamic interval duration|0.1|0-1|
 |---|---|---|---|
 |abc_bloodefx|Enable blood efx|1|0/1|
 |abc_bloodsprite_speed|Efx bloodsprite speed|128|0-9999|

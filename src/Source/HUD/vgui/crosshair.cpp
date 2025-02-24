@@ -55,6 +55,7 @@ CCrosshairPanel::CCrosshairPanel()
 	pDynamicCrossHairOTDW = CREATE_CVAR("cl_crosshair_outline", "1", FCVAR_VALUE, NULL);
 	pDynamicCrossHairT = CREATE_CVAR("cl_crosshair_t", "0", FCVAR_VALUE, NULL);
 	pDynamicCrossHairD = CREATE_CVAR("cl_crosshairdot", "0", FCVAR_VALUE, NULL);
+	pDynamicCrossHairAnimInterval = CREATE_CVAR("cl_crosshair_anim_interval", "0.1", FCVAR_VALUE, NULL);
 
 	pCvarDefaultCrosshair = CVAR_GET_POINTER("crosshair");
 
@@ -152,6 +153,14 @@ void CCrosshairPanel::OnThink() {
 	}
 	m_aryCrosshair[0]->SetBgColor(pDynamicCrossHairD->value > 0 ? c : Color(0, 0, 0, 0));
 	m_aryCrosshair[1]->SetBgColor(pDynamicCrossHairT->value <= 0 ? c : Color(0, 0, 0, 0));
+	//准星动态优化
+	if (gEngfuncs.GetClientTime() - m_flAnimTime <= pDynamicCrossHairAnimInterval->value && m_iPreOffest >= iFinalOffset) {
+		return;
+	}
+	else {
+		m_flAnimTime = gEngfuncs.GetClientTime();
+		m_iPreOffest = iFinalOffset;
+	}
 	//位置大小
 	//顺序中心上下左右
 	m_aryCrosshair[0]->SetBounds(m_iCenterX - iWidthOffset, m_iCenterY - iWidthOffset, iWidth, iWidth);
@@ -207,6 +216,7 @@ void CCrosshairPanel::Reset() {
 		ShowPanel(false);
 	m_pSprImage->Reset();
 	m_pHandledWeapon = nullptr;
+	m_iPreOffest = 0;
 }
 
 void CCrosshairPanel::ShowPanel(bool state) {
