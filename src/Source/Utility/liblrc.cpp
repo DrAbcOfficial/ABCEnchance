@@ -89,11 +89,11 @@ CLrcCollection* LrcParser(const char8_t* lrc) {
 	 return collection;
 }
 
-const char* CLrcLine::GetLyric(){
+const char* CLrcLine::GetLyric() const{
 	return reinterpret_cast<const char*>(CurrentLyric.c_str());
 }
 
-size_t CLrcCollection::Size(){
+size_t CLrcCollection::Size() const{
 	return Lines.size();
 }
 

@@ -14,13 +14,13 @@ namespace lrc {
 		std::u8string CurrentLyric = u8"";
 		time_t StartTime = 0;
 		time_t EndTime = 0;
-		const char* GetLyric();
+		const char* GetLyric() const;
 	};
 	class CLrcCollection {
 	public:
 		std::vector<CLrcLine*> Lines = {};
 		std::vector<lrcattribute_t*> Attributes = {};
-		size_t Size();
+		size_t Size() const;
 		CLrcLine* LyricAt(time_t time);
 		~CLrcCollection();
 	};

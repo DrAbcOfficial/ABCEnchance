@@ -3,6 +3,10 @@
 
   <PropertyGroup>
     <MetaHookBaseDir>$(SolutionDir)thirdparty\MetaHookSv\</MetaHookBaseDir>
+    <MetaHookLaunchName>svencoop.exe</MetaHookLaunchName>
+    <MetaHookLaunchCommnand>-game svencoop</MetaHookLaunchCommnand>
+    <MetaHookGameDirectory>D:\SteamLibrary\steamapps\common\Sven Co-op\</MetaHookGameDirectory>
+    <MetaHookModName>svencoop</MetaHookModName>
   </PropertyGroup>
   
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">

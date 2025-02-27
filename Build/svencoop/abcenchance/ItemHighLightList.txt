@@ -1,54 +1,51 @@
-models/w_2uzis.mdl 2
-models/w_2uzis_gold.mdl 2
-models/w_9mmar.mdl 2
-models/w_9mmhandgun.mdl 2
-models/w_357.mdl 2
-models/w_bgrap.mdl 2
-models/w_crossbow.mdl 2
-models/w_crowbar.mdl 2
-models/w_desert_eagle.mdl 2
-models/w_displacer.mdl 2
-models/w_egon.mdl 2
-models/w_desert_eagle.mdl 2
-models/w_gauss.mdl 2
-models/w_hgun.mdl 2
-models/w_m16.mdl 2
-models/w_m40a1.mdl 2
-models/w_minigun.mdl 2
-models/w_mp5.mdl 2
-models/w_minigun.mdl 2
-models/w_pipe_wrench.mdl 2
-models/w_pmedkit.mdl 2
-models/w_pipe_wrench.mdl 2
-models/w_rpg.mdl 2
-models/w_saw.mdl 2
-models/w_shock.mdl 2
-models/w_shotgun.mdl 2
-models/w_spore_launcher.mdl 2
-models/w_sqknest.mdl 2
-models/w_uzi.mdl 2
-models/w_uzi_gold.mdl 2
-models/w_9mmarclip.mdl 1
-models/w_9mmclip.mdl 1
-models/w_357ammo.mdl 1
-models/w_357ammobox.mdl 1
-models/w_argrenade.mdl 1
-models/w_chainammo.mdl 1
-models/w_crossbow_clip.mdl 1
-models/w_gaussammo.mdl 1
-models/w_grenade.mdl 1
-models/w_m40a1clip.mdl 1
-models/w_mp5_clip.mdl 1
-models/w_satchel.mdl 1
-models/w_rpgammo.mdl 1
-models/w_saw_clip.mdl 1
-models/w_shotbox.mdl 1
-models/w_tripmine.mdl 1
-models/w_uzi_clip.mdl 1
-models/w_adrenaline.mdl 0
-models/w_antidote.mdl 0
-models/w_battery.mdl 0
-models/w_longjump.mdl 0
-models/w_medkit.mdl 0
-models/w_oxygen.mdl 0
-models/w_rad.mdl 0
+models/w_2uzis.mdl	Weapon_UZI	255	255	0	200
+models/w_2uzis_gold.mdl	Weapon_UZIGold	255	255	0	200
+models/w_uzi.mdl	Weapon_UZI	255	255	0	200
+models/w_uzi_gold.mdl	Weapon_UZIGold	255	255	0	200
+models/w_9mmar.mdl	Weapon_9mmAR	255	255	0	200
+models/w_9mmhandgun.mdl	Weapon_9mmHandgun	255	255	0	200
+models/w_357.mdl	Weapon_357	255	255	0	200
+models/w_bgrap.mdl	Weapon_BGRAP	255	255	0	200
+models/w_crossbow.mdl	Weapon_Crossbow	255	255	0	200
+models/w_crowbar.mdl	Weapon_Crowbar	255	255	0	200
+models/w_desert_eagle.mdl	Weapon_DesertEagle	255	255	0	200
+models/w_displacer.mdl	Weapon_Displacer	255	255	0	200
+models/w_egon.mdl	Weapon_Egon	255	255	0	200
+models/w_gauss.mdl	Weapon_Gauss	255	255	0	200
+models/w_hgun.mdl	Weapon_HGun	255	255	0	200
+models/w_m16.mdl	Weapon_M16	255	255	0	200
+models/w_m40a1.mdl	Weapon_M40A1	255	255	0	200
+models/w_minigun.mdl	Weapon_Minigun	255	255	0	200
+models/w_mp5.mdl	Weapon_9mmAR	255	255	0	200
+models/w_pipe_wrench.mdl	Weapon_PipeWrench	255	255	0	200
+models/w_pmedkit.mdl	Weapon_Medkit	255	255	0	200
+models/w_rpg.mdl	Weapon_RPG	255	255	0	200
+models/w_saw.mdl	Weapon_SAW	255	255	0	200
+models/w_shock.mdl	Weapon_ShockRifle	255	255	0	200
+models/w_shotgun.mdl	Weapon_Shotgun	255	255	0	200
+models/w_spore_launcher.mdl	Weapon_SporeLauncher	255	255	0	200
+models/w_sqknest.mdl	Weapon_Sqknest	255	255	0	200
+models/w_9mmarclip.mdl	Ammo_9mmARClip	60	255	255	200
+models/w_9mmclip.mdl	Ammo_9mmClip	60	255	255	200
+models/w_357ammo.mdl	Ammo_357	60	255	255	200
+models/w_357ammobox.mdl	Ammo_357Box	60	255	255	200
+models/w_argrenade.mdl	Ammo_ARGrenade	60	255	255	200
+models/w_chainammo.mdl	Ammo_Chainammo	60	255	255	200
+models/w_crossbow_clip.mdl	Ammo_CrossbowClip	60	255	255	200
+models/w_gaussammo.mdl	Ammo_GaussClip	60	255	255	200
+models/w_grenade.mdl	Ammo_Grenade	60	255	255	200
+models/w_m40a1clip.mdl	Ammo_M40A1	60	255	255	200
+models/w_mp5_clip.mdl	Ammo_9mmARClip	60	255	255	200
+models/w_satchel.mdl	Ammo_Satchel	60	255	255	200
+models/w_rpgammo.mdl	Ammo_RPG	60	255	255	200
+models/w_saw_clip.mdl	Ammo_SAW	60	255	255	200
+models/w_shotbox.mdl	Ammo_Shotbox	60	255	255	200
+models/w_tripmine.mdl	Ammo_Tripmine	60	255	255	200
+models/w_uzi_clip.mdl	Ammo_UZIClip	60	255	255	200
+models/w_adrenaline.mdl	Item_Adrenaline	60	255	60	200
+models/w_antidote.mdl	Item_Antidote	60	255	60	200
+models/w_battery.mdl	Item_Battery	60	255	60	200
+models/w_longjump.mdl	Item_Longjump	60	255	60	200
+models/w_medkit.mdl	Item_Medkit	60	255	60	200
+models/w_oxygen.mdl	Item_OxygenCan	60	255	60	200
+models/w_rad.mdl	Item_Rad	60	255	60	200

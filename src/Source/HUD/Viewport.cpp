@@ -389,7 +389,7 @@ void CViewport::ShowDeathMsg(bool state){
 	m_pDeahMsg->ShowPanel(state);
 }
 void CViewport::EraseHighLight(cl_entity_t* var, int modelindex){
-	m_pItemHighLightPanel->EraseHighLight(var, modelindex);
+	m_pItemHighLightPanel->EraseEntity(var, modelindex);
 }
 #ifdef __HAS_NETEASE_API
 void CViewport::ShowMusic(bool state){

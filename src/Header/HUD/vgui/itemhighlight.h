@@ -3,7 +3,7 @@
 #define CITEMHIGHLIGHTPANEL_H
 
 #include <unordered_map>
-#include <optional>
+#include <vector>
 
 #include "vgui_controls/EditablePanel.h"
 #include "vgui/IViewportPanel.h"
@@ -15,11 +15,13 @@ namespace vgui {
 class CItemHighLightPanel : public vgui::EditablePanel, public IViewportPanel{
 public:
 	using cl_highlight_t = struct cl_highlight_s {
+		int ModelIndex;
 		std::string Path;
-		std::string Name;
-		//0 Item 1 Ammo 2 Weapon
-		int Type = 0;
-		int Index = -1;
+		std::wstring Name;
+		short R;
+		short G;
+		short B;
+		short A;
 	};
 
 	DECLARE_CLASS_SIMPLE(CItemHighLightPanel, vgui::EditablePanel);
@@ -34,18 +36,17 @@ public:
 	virtual bool IsVisible() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
-	void CreateHighLight(cl_entity_t* var);
 	void AddEntity(int type, cl_entity_s* ent, const char* modelname);
-	void EraseHighLight(cl_entity_t* var, int modelindex);
+	void EraseEntity(cl_entity_t* var, int modelindex);
+
+	std::vector<vgui::Panel*> m_aryLookatPanels{};
 private:
 	void LoadItemList();
-	std::optional<int> m_iHighLightMdl;
-
-	vgui::Panel* m_pLookatPanel;
-	vgui::Panel* m_pPickupPanel;
-	//temp entity
-	std::unordered_map<int, std::pair<TEMPENTITY*, TEMPENTITY*>> m_mapEntityRestored;
+	vgui::Panel* m_pPickupPanel = nullptr;
+	//EntityIndex, HighLightIndex
+	std::unordered_map<int, int> m_dicStoredEntity{};
 	//perm list
-	std::unordered_map<int, cl_highlight_t*> m_mapHighLightTable;
+	bool m_bHasFilledIndex;
+	std::vector<cl_highlight_t*> m_aryHighLightTable;
 };
 #endif // !CITEMHIGHLIGHTPANEL_H

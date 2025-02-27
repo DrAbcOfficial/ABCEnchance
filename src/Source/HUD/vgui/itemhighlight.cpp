@@ -18,6 +18,7 @@
 #include "local.h"
 
 #include "vgui_controls/Label.h"
+#include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/GaussianBlurPanel.h"
 #include "vgui_controls/AnimationController.h"
 
@@ -28,21 +29,50 @@
 #define VIEWPORT_ITEMHIGHLIGHT_NAME "ItemHighLightPanel"
 extern vgui::HScheme GetViewPortBaseScheme();
 
-class CItemNamePanel : public vgui::Label {
+class CItemNamePanel : public vgui::EditablePanel {
+	DECLARE_CLASS_SIMPLE(CItemNamePanel, vgui::EditablePanel);
 public:
-	using vgui::Label::Label;
-	DECLARE_CLASS_SIMPLE(CItemNamePanel, vgui::Label);
-	void Update(CItemHighLightPanel::cl_highlight_t* item, int ent) {
-		SetText(item->Name.c_str());
+	CItemNamePanel(vgui::Panel* parent) : BaseClass(parent, "ItemNamePanel") {
+		SetMouseInputEnabled(false);
+		SetKeyBoardInputEnabled(false);
+		SetProportional(true);
+		SetScheme(GetViewPortBaseScheme());
+
+		m_pLabel = new vgui::Label(this, "Text", "");
+		m_pImage = new vgui::ImagePanel(this, "Image");
+		LoadControlSettings(VGUI2_ROOT_DIR "ItemNamePanel.res");
+
+		GetSize(m_iOW, m_iOH);
+
+		m_pLabel->SetAutoDelete(true);
+		m_pImage->SetAutoDelete(true);
+	}
+	
+	void Update(CItemHighLightPanel::cl_highlight_t* item, int ent, int length) {
+		//最近为10
+#undef clamp
+		float ratio = std::clamp<float>(1.0f - (gCVars.pItemHighLightRange->value - length) / (gCVars.pItemHighLightRange->value),
+								0.5f, 1.0f);
+		int nw = m_iOW * ratio;
+		int nh = m_iOH * ratio;
+		m_pImage->SetSize(nw, nh);
+		m_pImage->SetPos((m_iOW - nw) / 2, (m_iOH - nh) / 2);
+		Color c = Color(item->R, item->G, item->B, item->A);
+		m_pLabel->SetFgColor(c);
+		m_pLabel->SetText(item->Name.c_str());
+		m_pImage->SetDrawColor(c);
 		m_pItem = item;
 		m_iEnt = ent;
+
 	}
 	virtual void OnThink() override {
 		BaseClass::OnThink();
 		auto ent = gEngfuncs.GetEntityByIndex(m_iEnt);
 		auto local = gEngfuncs.GetLocalPlayer();
 		if (!ent || !local || ent->curstate.messagenum != local->curstate.messagenum) {
-			SetVisible(false);
+			auto parent = reinterpret_cast<CItemHighLightPanel*>(GetParent());
+			std::erase_if(parent->m_aryLookatPanels, [this](vgui::Panel* panel) {return panel == this;});
+			DeletePanel();
 			return;
 		}
 		Vector vecHUD;
@@ -55,9 +85,13 @@ public:
 		m_pItem = nullptr;
 		m_iEnt = -1;
 	}
+	int m_iEnt;
 private:
 	CItemHighLightPanel::cl_highlight_t* m_pItem = nullptr;
-	int m_iEnt;
+	vgui::Label* m_pLabel = nullptr;
+	vgui::ImagePanel* m_pImage = nullptr;
+	int m_iOW;
+	int m_iOH;
 };
 class CItemPickupPanel : public vgui::Panel {
 	using Panel::Panel;
@@ -117,25 +151,25 @@ public:
 			m_pText->SetContentAlignment((vgui::Label::Alignment)align);
 		m_pGaussian->SetBlurness(inResourceData->GetInt("blur", 3));
 	}
-	void UpdateName(const char* name) {
-		std::string sz = m_szTemplate;
+	void UpdateName(const wchar_t* name) {
+		std::wstring sz = m_szTemplate;
 		const char* tkey = gEngfuncs.Key_LookupBinding("use");
 		if (tkey != nullptr) {
-			std::string key;
+			std::wstring key;
 			std::transform(tkey, tkey + std::strlen(tkey), std::back_inserter(key), [](char c) {
-				return std::toupper(c);
-				});
-			size_t pos = sz.find("%%USE_BINDKEY%%");
-			if (pos != std::string::npos)
-				sz = sz.replace(pos, std::strlen("%%USE_BINDKEY%%"), key);
-			pos = sz.find("%%PICKUP_ITEM%%");
-			if (pos != std::string::npos)
-				sz = sz.replace(pos, std::strlen("%%PICKUP_ITEM%%"), name);
+				return static_cast<wchar_t>(std::toupper(c));
+			});
+			size_t pos = sz.find(L"%%USE_BINDKEY%%");
+			if (pos != std::wstring::npos)
+				sz = sz.replace(pos, std::wcslen(L"%%USE_BINDKEY%%"), key);
+			pos = sz.find(L"%%PICKUP_ITEM%%");
+			if (pos != std::wstring::npos)
+				sz = sz.replace(pos, std::wcslen(L"%%PICKUP_ITEM%%"), name);
 		}
 		m_pText->SetText(sz.c_str());
 	}
 	void GetTemplateText() {
-		char temp[256];
+		wchar_t temp[256];
 		m_pText->GetText(temp, 256);
 		m_szTemplate = temp;
 		
@@ -143,7 +177,7 @@ public:
 private:
 	vgui::GaussianBlurPanel* m_pGaussian = nullptr;
 	vgui::Label* m_pText = nullptr;
-	std::string m_szTemplate;
+	std::wstring m_szTemplate;
 };
 CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIGHLIGHT_NAME){
 	SetMouseInputEnabled(false);
@@ -156,11 +190,13 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 		cvar->value = CMathlib::clamp<float>(cvar->value, 0.0f, 344.0f);
 	});
 	gCVars.pItemHighLightName = CREATE_CVAR("cl_itemhighlightname", "1", FCVAR_VALUE, NULL);
-	gCVars.pItemHighLightNameFOV = CREATE_CVAR("cl_itemhighlightfov", "20", FCVAR_VALUE, [](cvar_t* cvar) {
-		cvar->value = fmodf(cvar->value, 360);
+	gCVars.pItemHighLightNameFOV = CREATE_CVAR("cl_itemhighlightfov", "90", FCVAR_VALUE, [](cvar_t* cvar) {
+		cvar->value = fmodf(cvar->value, 360.0f);
+	});
+	gCVars.pItemHighLightAimFOV = CREATE_CVAR("cl_itemhighlightaimfov", "20", FCVAR_VALUE, [](cvar_t* cvar) {
+		cvar->value = fmodf(cvar->value, 360.0f);
 	});
 	gCVars.pItemHighLightPickup = CREATE_CVAR("cl_itemhighlightpickup", "1", FCVAR_VALUE, NULL);
-	m_pLookatPanel = new CItemNamePanel(this, "ItemNamePanel", "");
 	m_pPickupPanel = new CItemPickupPanel(this, "Pickup");
 	LoadControlSettings(VGUI2_ROOT_DIR "ItemHighLightPanel.res");
 
@@ -170,46 +206,68 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 void CItemHighLightPanel::OnThink(){
 	if (gCVars.pItemHighLightName->value <= 0 && gCVars.pItemHighLightPickup->value <= 0)
 		return;
-	//check
 	float maxdot = 0.0f;
+	float needdot = cos(gCVars.pItemHighLightNameFOV->value * M_PI / 180.0f);
 	cl_entity_t* maxdotent = nullptr;
+	size_t highlightindex = 0;
 	auto local = gEngfuncs.GetLocalPlayer();
 	Vector vecView;
 	gEngfuncs.GetViewAngles(vecView);
 	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 	Vector vecViewOfs;
 	gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(vecViewOfs);
-	for (auto iter = m_mapEntityRestored.begin(); iter != m_mapEntityRestored.end();) {
+	for (auto iter = m_dicStoredEntity.begin(); iter != m_dicStoredEntity.end();) {
 		auto& item = *iter;
-		cl_entity_t* ent = gEngfuncs.GetEntityByIndex(item.first);
+		int try_find = item.first;
+		cl_entity_t* ent = gEngfuncs.GetEntityByIndex(try_find);
+		auto lookat = std::find_if(m_aryLookatPanels.begin(), m_aryLookatPanels.end(), [&try_find](vgui::Panel* panel) {
+			return reinterpret_cast<CItemNamePanel*>(panel)->m_iEnt == try_find;
+		});
+		CItemNamePanel* name_panel = (lookat == m_aryLookatPanels.end()) ? 
+			nullptr : reinterpret_cast<CItemNamePanel*>(*lookat);
 		if (!ent) {
-			item.second.first->die = item.second.second->die = 0;
-			iter = m_mapEntityRestored.erase(iter);
+			if (name_panel != nullptr) {
+				std::erase_if(m_aryLookatPanels, [&name_panel](vgui::Panel* panel) {return panel == name_panel; });
+				name_panel->DeletePanel();
+			}
+			iter = m_dicStoredEntity.erase(iter);
 			continue;
 		}
 		Vector vecLength = ent->curstate.origin;
 		vecLength -= local->curstate.origin;
 		vecLength -= vecViewOfs;
 		if (vecLength.Length() >= gCVars.pItemHighLightRange->value) {
-			item.second.first->die = item.second.second->die = 0;
-			iter = m_mapEntityRestored.erase(iter);
+			if (name_panel != nullptr) {
+				std::erase_if(m_aryLookatPanels, [&name_panel](vgui::Panel* panel) {return panel == name_panel; });
+				name_panel->DeletePanel();
+			}
+			iter = m_dicStoredEntity.erase(iter);
 			continue;
 		}
 		float dot = vecLength.Normalize().Dot(vecView.Normalize());
 		if (dot > maxdot) {
 			maxdot = dot;
 			maxdotent = ent;
+			highlightindex = item.second;
 		}
+		if (dot >= needdot) {
+			if (name_panel == nullptr) {
+				name_panel = new CItemNamePanel(this);
+				m_aryLookatPanels.push_back(name_panel);
+			}
+			name_panel->Update(m_aryHighLightTable[item.second], try_find, vecLength.Length());
+		}
+		else if (name_panel != nullptr) {
+			std::erase_if(m_aryLookatPanels, [&name_panel](vgui::Panel* panel) {return panel == name_panel; });
+			name_panel->DeletePanel();
+		}	
 		iter++;
 	}
-	float needdot = cos(gCVars.pItemHighLightNameFOV->value * M_PI / 180);
-	if (maxdotent != nullptr && maxdot >= needdot) {
-		auto item = m_mapHighLightTable[maxdotent->curstate.modelindex];
+
+	float needaimdot = cos(gCVars.pItemHighLightAimFOV->value * M_PI / 180.0f);
+	if (maxdotent != nullptr && maxdot >= needaimdot) {
+		auto item = m_aryHighLightTable[highlightindex];
 		if (item != nullptr) {
-			if (gCVars.pItemHighLightName->value > 0) {
-				m_pLookatPanel->SetVisible(true);
-				reinterpret_cast<CItemNamePanel*>(m_pLookatPanel)->Update(item, maxdotent->index);
-			}
 			if (gCVars.pItemHighLightPickup->value > 0) {
 				Vector vecLength = maxdotent->curstate.origin;
 				vecLength -= local->curstate.origin;
@@ -220,105 +278,51 @@ void CItemHighLightPanel::OnThink(){
 			}
 		}
 	}
-	else {
-		m_pLookatPanel->SetVisible(false);
+	else
 		m_pPickupPanel->SetVisible(false);
-	}
 }
 void CItemHighLightPanel::Reset() {
-	m_iHighLightMdl.reset();
-	m_mapEntityRestored.clear();
+	m_dicStoredEntity.clear();
+	m_bHasFilledIndex = false;
 }
-void CItemHighLightPanel::CreateHighLight(cl_entity_t* var) {
-	if (!m_iHighLightMdl.has_value()) {
-		std::unordered_map<int, cl_highlight_t*> temp = {};
-		for (auto iter = m_mapHighLightTable.begin(); iter != m_mapHighLightTable.end(); iter++) {
-			auto& item = (*iter).second;
-			if (item == nullptr)
-				continue;
-			item->Index = gEngfuncs.pEventAPI->EV_FindModelIndex(item->Path.c_str());
-			if (item->Index > -1)
-				temp[item->Index] = item;
-		}
-		m_mapHighLightTable.clear();
-		m_mapHighLightTable.swap(temp);
-		m_iHighLightMdl = PrecacheExtraModel("abcenchance/mdl/item_highlight.mdl");
-	}
-	if (m_mapHighLightTable[var->curstate.modelindex] == nullptr)
+void CItemHighLightPanel::EraseEntity(cl_entity_t* var, int modelindex) {
+	if (m_dicStoredEntity.find(var->index) == m_dicStoredEntity.end())
 		return;
-	if (m_mapHighLightTable.find(var->curstate.modelindex) == m_mapHighLightTable.end())
-		return;
-	if (m_mapEntityRestored.find(var->index) != m_mapEntityRestored.end())
-		return;
-	model_t* mdl = gEngfuncs.hudGetModelByIndex(m_iHighLightMdl.value());
-	if (!mdl)
-		return;
-	TEMPENTITY* ent1 = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(var->curstate.origin, mdl);
-	TEMPENTITY* ent2 = gEngfuncs.pEfxAPI->CL_TempEntAllocHigh(var->curstate.origin, mdl);
-	if ((!ent1) || (!ent2))
-		return;
-	ent1->flags = ent2->flags = FTENT_PERSIST | FTENT_CLIENTCUSTOM;
-	ent1->clientIndex = ent2->clientIndex = var->index;
-	ent1->die = ent2->die = gEngfuncs.GetClientTime() + 999.0f;
-
-	Vector vecTemp;
-	if (CMathlib::FVectorLength(var->curstate.mins) <= 3.2) {
-		vecTemp.x = vecTemp.y = -16;
-		vecTemp.z = 0;
-	}
-	else
-		vecTemp = var->curstate.mins;
-	CMathlib::VectorCopy(vecTemp, ent1->tentOffset);
-	
-	if (CMathlib::FVectorLength(var->curstate.maxs) <= 3.2)
-		vecTemp[0] = vecTemp[1] = vecTemp[2] = 16;
-	else
-		CMathlib::VectorCopy(var->curstate.maxs, vecTemp);
-	CMathlib::VectorCopy(vecTemp, ent2->tentOffset);
-
-	ent2->entity.angles[1] = 180;
-	ent1->entity.curstate.skin = ent2->entity.curstate.skin = m_mapHighLightTable[var->curstate.modelindex]->Type;
-	//把索引传进回调
-	ent1->entity.curstate.iuser1 = ent2->entity.curstate.iuser1 = var->curstate.modelindex;
-	ent1->callback = ent2->callback = [](TEMPENTITY* ent, float frametime, float currenttime) {
-		int modelindex = ent->entity.curstate.iuser1;
-		cl_entity_t* var = gEngfuncs.GetEntityByIndex(ent->clientIndex);
-		static const auto erase = [&modelindex, &var, &ent]() {
-			GetBaseViewPort()->EraseHighLight(var, modelindex);
-			ent->die = 0;
-		};
-		if (!var) {
-			erase();
-			return;
-		}
-		else if (var->curstate.messagenum != gEngfuncs.GetLocalPlayer()->curstate.messagenum) {
-			erase();
-			return;
-		}
-		CMathlib::VectorCopy(var->curstate.origin, ent->entity.origin);
-		CMathlib::VectorAdd(ent->entity.origin, ent->tentOffset, ent->entity.origin);
-		ent->entity.angles[0] = var->curstate.angles[0];
-		ent->entity.angles[2] = var->curstate.angles[2];
-	};
-	m_mapEntityRestored[var->index] = std::make_pair(ent1, ent2);
-}
-void CItemHighLightPanel::EraseHighLight(cl_entity_t* var, int modelindex) {
-	if (m_mapEntityRestored.find(var->index) == m_mapEntityRestored.end())
-		return;
-	m_mapEntityRestored[var->index].first->die = m_mapEntityRestored[var->index].second->die = 0;
-	m_mapEntityRestored.erase(var->index);
+	m_dicStoredEntity.erase(var->index);
 }
 void CItemHighLightPanel::AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	if (gCVars.pItemHighLight->value <= 0)
 		return;
 	//mdl模型
-	if ((ent) && (ent->model) && (ent->model->type == mod_studio) && ent->baseline.movetype != MOVETYPE_FOLLOW)
-		CreateHighLight(ent);
+	if ((ent) && (ent->model) && (ent->model->type == mod_studio) &&
+		ent->baseline.movetype != MOVETYPE_FOLLOW && 
+		((ent->curstate.effects & EF_NODRAW) == 0)) {
+		if (!m_bHasFilledIndex) {
+			for (auto iter = m_aryHighLightTable.begin(); iter != m_aryHighLightTable.end(); iter++) {
+				auto& item = (*iter);
+				if (item == nullptr)
+					continue;
+				item->ModelIndex = gEngfuncs.pEventAPI->EV_FindModelIndex(item->Path.c_str());
+			}
+			m_bHasFilledIndex = true;
+		}
+		int index = -1;
+		for (size_t i = 0; i < m_aryHighLightTable.size(); i++)
+		{
+			if (m_aryHighLightTable[i]->ModelIndex == ent->curstate.modelindex) {
+				index = i;
+				break;
+			}
+		}
+		if (index > -1)
+			m_dicStoredEntity.emplace(std::make_pair(ent->index, index));
+	}
 }
 void CItemHighLightPanel::LoadItemList() {
 	char szItemPraseBuf[256];
 	const char* pfile = const_cast<const char*>(reinterpret_cast<char*>(gEngfuncs.COM_LoadFile(ITEM_LIST_PATH, 5, nullptr)));
-	int i = 0, index = 0;
+	int i = 0;
+	cl_highlight_s* pItem = nullptr;
 	if (!pfile){
 		gEngfuncs.Con_DPrintf("CHudItemHighLight::LoadItemList: No item list file %s\n", ITEM_LIST_PATH);
 		return;
@@ -328,27 +332,27 @@ void CItemHighLightPanel::LoadItemList() {
 		if (!pfile)
 			break;
 		if (i == 0) {
-			cl_highlight_s* item = new cl_highlight_s();
-			item->Path = szItemPraseBuf;
-			std::filesystem::path ph(item->Path);
-			std::string phname = ph.filename().replace_extension().string();
-			size_t pos = phname.find_first_of("_");
-			if (pos != std::string::npos && pos + 1 < phname.size())
-				phname = phname.substr(pos + 1);
-			item->Name = phname;
-			m_mapHighLightTable.emplace(std::make_pair(index, item));
+			pItem = new cl_highlight_s();
+			pItem->Path = szItemPraseBuf;
+			m_aryHighLightTable.push_back(pItem);
 		}
 		else {
-			if(m_mapHighLightTable.find(index) != m_mapHighLightTable.end())
-				m_mapHighLightTable[index]->Type = CMathlib::clamp<int>(std::atoi(szItemPraseBuf), 0, 2);
-			index++;
+			if (pItem == nullptr)
+				continue;
+			switch (i){
+				case 1:pItem->Name = vgui::localize()->Find(szItemPraseBuf); break;
+				case 2:pItem->R = atoi(szItemPraseBuf); break;
+				case 3:pItem->G = atoi(szItemPraseBuf); break;
+				case 4:pItem->B = atoi(szItemPraseBuf); break;
+				case 5:pItem->A = atoi(szItemPraseBuf); break;
+			}
 		}
 		i++;
-		if (i >= 2)
+		if (i > 5)
 			i = 0;
 	}
 	if (i != 0)
-		SYS_ERROR("Error in parsing file:%s\nLine:%d\nBuf is not end with even.", ITEM_LIST_PATH, index);
+		SYS_ERROR("Error in parsing file:%s\nBuf is not end with even.", ITEM_LIST_PATH);
 	gEngfuncs.COM_FreeFile(const_cast<void*>(reinterpret_cast<const void*>(pfile)));
 }
 const char* CItemHighLightPanel::GetName() {

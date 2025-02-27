@@ -128,6 +128,7 @@ using cl_cvars_t = struct{
 	cvar_t* pItemHighLight;
 	cvar_t* pItemHighLightRange;
 	cvar_t* pItemHighLightNameFOV;
+	cvar_t* pItemHighLightAimFOV;
 	cvar_t* pItemHighLightPickup;
 	cvar_t* pItemHighLightName;
 
