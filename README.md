@@ -64,23 +64,14 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
     5. Edit the res file in `svencoop/abcenchance/` to your liking.
 
 # 🏗️ Build
- 1. clone or download [MetahookSV](https://github.com/hzqst/MetaHookSv)
-   
- 2. clone or download repository
-   
- 3. copy `ABCEnchance-master` into `MetaHookSv-master/Plugins`
 
-    Automatic:
+ 1. clone this with `--recursive`
 
-    1. Run `build-ABCEnchance.ps1` in PowerShell
-   
-    Manual:
+ ```
+ git clone --recursive https://github.com/DrAbcOfficial/ABCEnchance
+ ```
 
-    1. build `glew` or `glew-debug`
-   
-    2. Create `NeteaseApi.h` and `NeteaseApi.cpp`
-   
-    3. build repository
+2. Build with MSVC
  
  ----
 

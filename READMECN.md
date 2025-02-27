@@ -62,23 +62,13 @@
     5. 按你的喜好随便编辑 `svencoop/abcenchance/` 里的res文件.
 
 # 🏗️ 构建
- 1. 克隆 [MetahookSV](https://github.com/hzqst/MetaHookSv)
-   
- 2. 克隆储存库到 `MetaHookSv-master/Plugins`
-   
- 3. 构建
+ 1. 克隆
 
-    自动构建:
+ ```
+ git clone --recursive https://github.com/DrAbcOfficial/ABCEnchance
+ ```
 
-    1. 用powershell中运行 `build-ABCEnchance.ps1`
-   
-    手动:
-
-    1. 按metahooksv里的指示构建 `glew` 或 `glew-debug`
-   
-    2. 添加缺失的`NeteaseApi.h`和`NeteaseApi.cpp`
-   
-    3. 打开sln按f5
+2. 打开sln使用VS构建
  
  ----
 
