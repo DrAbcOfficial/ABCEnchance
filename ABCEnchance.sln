@@ -5,19 +5,42 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ABCEnchance", "ABCEnchance.vcxproj", "{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABCEnchanceInstaller", "ABCEnchanceInstaller\ABCEnchanceInstaller.csproj", "{54D0AC85-E091-4E4C-98A8-F653DEB0E413}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|Win32 = Debug|Win32
+		Release_AVX2|Any CPU = Release_AVX2|Any CPU
 		Release_AVX2|Win32 = Release_AVX2|Win32
+		Release|Any CPU = Release|Any CPU
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Debug|Any CPU.Build.0 = Debug|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Debug|Win32.ActiveCfg = Debug|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Debug|Win32.Build.0 = Debug|Win32
+		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Any CPU.ActiveCfg = Release_AVX2|Win32
+		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Any CPU.Build.0 = Release_AVX2|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Win32.ActiveCfg = Release_AVX2|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release_AVX2|Win32.Build.0 = Release_AVX2|Win32
+		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Any CPU.ActiveCfg = Release|Win32
+		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Any CPU.Build.0 = Release|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Win32.ActiveCfg = Release|Win32
 		{FBF9CAF6-8DED-4EB0-8E7B-18294607C5C6}.Release|Win32.Build.0 = Release|Win32
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Debug|Win32.Build.0 = Debug|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release_AVX2|Any CPU.ActiveCfg = Release|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release_AVX2|Any CPU.Build.0 = Release|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release_AVX2|Win32.ActiveCfg = Release|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release_AVX2|Win32.Build.0 = Release|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release|Win32.ActiveCfg = Release|Any CPU
+		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release|Win32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
