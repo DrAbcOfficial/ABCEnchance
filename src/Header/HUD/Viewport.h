@@ -121,9 +121,6 @@ public:
 
 	bool TextMsg(const char* pszName, int iSize, void* pbuf);
 	void ShowDeathMsg(bool state);
-
-	void EraseHighLight(cl_entity_t* var, int modelindex);
-
 	void ShowMusic(bool state);
 #ifdef __HAS_NETEASE_API
 	CNeteasePanel* GetMusicPanel();

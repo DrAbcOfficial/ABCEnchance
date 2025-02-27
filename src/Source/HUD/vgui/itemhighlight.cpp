@@ -25,8 +25,8 @@
 #include "Viewport.h"
 #include "itemhighlight.h"
 
-#define ITEM_LIST_PATH "abcenchance/ItemHighLightList.txt"
-#define VIEWPORT_ITEMHIGHLIGHT_NAME "ItemHighLightPanel"
+constexpr auto ITEM_LIST_PATH = "abcenchance/ItemHighLightList.txt";
+constexpr auto VIEWPORT_ITEMHIGHLIGHT_NAME = "ItemHighLightPanel";
 extern vgui::HScheme GetViewPortBaseScheme();
 
 class CItemNamePanel : public vgui::EditablePanel {
@@ -285,11 +285,6 @@ void CItemHighLightPanel::Reset() {
 	m_dicStoredEntity.clear();
 	m_bHasFilledIndex = false;
 }
-void CItemHighLightPanel::EraseEntity(cl_entity_t* var, int modelindex) {
-	if (m_dicStoredEntity.find(var->index) == m_dicStoredEntity.end())
-		return;
-	m_dicStoredEntity.erase(var->index);
-}
 void CItemHighLightPanel::AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	if (gCVars.pItemHighLight->value <= 0)
 		return;
@@ -307,8 +302,7 @@ void CItemHighLightPanel::AddEntity(int type, cl_entity_s* ent, const char* mode
 			m_bHasFilledIndex = true;
 		}
 		int index = -1;
-		for (size_t i = 0; i < m_aryHighLightTable.size(); i++)
-		{
+		for (size_t i = 0; i < m_aryHighLightTable.size(); i++){
 			if (m_aryHighLightTable[i]->ModelIndex == ent->curstate.modelindex) {
 				index = i;
 				break;

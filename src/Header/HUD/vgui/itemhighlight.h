@@ -37,8 +37,6 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 
 	void AddEntity(int type, cl_entity_s* ent, const char* modelname);
-	void EraseEntity(cl_entity_t* var, int modelindex);
-
 	std::vector<vgui::Panel*> m_aryLookatPanels{};
 private:
 	void LoadItemList();
