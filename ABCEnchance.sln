@@ -32,15 +32,12 @@ Global
 		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Debug|Win32.Build.0 = Debug|Any CPU
 		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release_AVX2|Any CPU.ActiveCfg = Release|Any CPU
 		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release_AVX2|Any CPU.Build.0 = Release|Any CPU
 		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release_AVX2|Win32.ActiveCfg = Release|Any CPU
-		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release_AVX2|Win32.Build.0 = Release|Any CPU
 		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release|Any CPU.Build.0 = Release|Any CPU
 		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release|Win32.ActiveCfg = Release|Any CPU
-		{54D0AC85-E091-4E4C-98A8-F653DEB0E413}.Release|Win32.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
