@@ -5,7 +5,7 @@
 	"ControlName"		"CTextMenu"
 	"fieldName"		"TextMenu"
 	"xpos"	"10"
-	"ypos"	"c-127"
+	"ypos"	"c-227"
 	"wide"	"127"
 	"tall"	"261"
 
@@ -32,7 +32,7 @@
 	"enabled"		"1"
 	"autoResize"		"3"
 	"textAlignment" "north-west"
-	"font"			"UiBold"
+	// "font"			"UiBold"
 	
 	"proportionalToParent" "1"
 	"PaintBackgroundType"	"2"
