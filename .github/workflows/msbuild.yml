@@ -31,11 +31,11 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /t:ABCEnchance
       
     - name: Build AVX
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION_AVX}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION_AVX}} /t:ABCEnchance
 
     - name: Build Installer
       working-directory: ABCEnchanceInstaller
