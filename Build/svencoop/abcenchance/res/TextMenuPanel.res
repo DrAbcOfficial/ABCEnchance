@@ -5,7 +5,7 @@
 		"ControlName"		"CTextMenu"
 		"fieldName"		"TextMenu"
 		"xpos"		"8"
-		"ypos"		"c-96"
+		"ypos"		"c-216"
 		"wide"		"96"
 		"tall"		"196"
 
@@ -31,6 +31,6 @@
 		"enabled"		"1"
 		"autoResize"		"3"
 		"textAlignment" "north-west"
-		"font"			"UiBold"
+		// "font"			"TextMenu"
 	}
 }
