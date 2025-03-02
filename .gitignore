@@ -29,24 +29,25 @@
 *.out
 *.app
 
-# VC user file
+# user file
 *.vcxproj.user
+*.csproj.user
+*.pubxml.user
 
-#Netease Api
+# Netease Api
 /src/Source/Utility/NeteaseApi.cpp
 /src/Header/Utility/NeteaseApi.h
 
-#Debug ang Release
+# Debug ang Release
 /.vs
 /Build/*.dll
 /Debug
+/Debug-Netease
 /Release
 /Release_AVX2
+
+# Installer
 /ABCEnchanceInstaller/.vs
 /ABCEnchanceInstaller/bin
 /ABCEnchanceInstaller/obj
-/ABCEnchanceInstaller/ABCEnchanceInstaller.csproj.user
-/ABCEnchanceInstaller/Properties/PublishProfiles/FolderProfile.pubxml.user
-/src/Header/Utility/NeteaseApi.h
-/src/Source/Utility/NeteaseApi.cpp
-/src/Header/NeteaseApi.h
+/ABCEnchanceInstaller/ABCEnchanceInstaller
