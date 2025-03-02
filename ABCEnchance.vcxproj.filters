@@ -326,9 +326,6 @@
     <ClCompile Include="VGUI2\GameUI\BasePanel.cpp">
       <Filter>vgui2\gameui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\soundengine.cpp">
       <Filter>Public\Source</Filter>
     </ClCompile>
@@ -703,6 +700,9 @@
     </ClCompile>
     <ClCompile Include="src\Source\Utility\NeteaseApiWrapper.cpp">
       <Filter>Public\Source\LIb</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
+      <Filter>Public\Thirdparty</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1469,9 +1469,6 @@
       <Filter>Public\Thirdparty\wadlib</Filter>
     </ClInclude>
     <ClInclude Include="src\thirdparty\aigcjson.hpp">
-      <Filter>Public\Thirdparty</Filter>
-    </ClInclude>
-    <ClInclude Include="src\thirdparty\formatter.h">
       <Filter>Public\Thirdparty</Filter>
     </ClInclude>
     <ClInclude Include="src\thirdparty\qrcodegen.h">

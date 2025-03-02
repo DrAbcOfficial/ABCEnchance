@@ -14,12 +14,12 @@ void abcconfig::LoadJson(){
 		return;
 	}
 	int size = vgui::filesystem()->Size(file);
-	char* pMem = reinterpret_cast<char*>(malloc(size + 1));
+	char* pMem = new char[size + 1];
 	int bytesRead = vgui::filesystem()->Read(pMem, size, file);
 	pMem[bytesRead] = 0;
 	vgui::filesystem()->Close(file);
 	aigc::JsonHelper::JsonToObject(s_cfg, pMem);
-	free(pMem);
+	delete[] pMem;
 }
 
 void abcconfig::SaveJson(){
