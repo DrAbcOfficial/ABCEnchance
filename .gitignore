@@ -33,6 +33,7 @@
 *.vcxproj.user
 *.csproj.user
 *.pubxml.user
+*.slnLaunch.user
 
 # Netease Api
 /src/Source/Utility/NeteaseApi.cpp
