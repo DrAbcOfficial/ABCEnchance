@@ -6,7 +6,7 @@
 		"fieldName"		"AmmoPanel"
 		"xpos"		"rs1.0"
 		"ypos"		"rs1.0"
-		"wide"		"116"
+		"wide"		"170"
 		"tall"		"30"
 
 		"autoResize"		"1"
@@ -32,7 +32,7 @@
 	{
 		"ControlName"		"ImageSprPanel"
 		"fieldName"		"Ammo1Icon"
-		"xpos"		"6"
+		"xpos"		"0"
 		"ypos"		"cs-0.5"
 		"wide"		"15"
 		"tall"		"15"
@@ -45,7 +45,7 @@
 	{
 		"ControlName"		"Label"
 		"fieldName"		"Ammo1"
-		"xpos"		"14"
+		"xpos"		"20"
 		"ypos"		"cs-0.5"
 		"wide"		"44"
 		"tall"		"24"
@@ -53,18 +53,19 @@
 		"enabled"		"1"
 		"labelText"		"0"
 		"proportionalToParent" "1"
-		"textAlignment"		"center"
+		"textAlignment"		"right"
 		"brighttext"		"1"
 		"font"		"AmmoBar"
 		"wrap"		"0"
+		"autowidetocontents"	"1"
 	}
 
 	"Slash"
 	{
 		"ControlName"		"Label"
 		"fieldName"		"Slash"
-		"xpos"		"54"
-		"ypos"		"cs-0.5"
+		"xpos"		"80"
+		"ypos"		"cs-0.54"
 		"wide"		"12"
 		"tall"		"30"
 		"visible"		"1"
@@ -75,13 +76,14 @@
 		"brighttext"		"1"
 		"font"		"AmmoBar"
 		"wrap"		"0"
+		// "autowidetocontents"	"1"
 	}
 
 	"Ammo2"
 	{
 		"ControlName"		"Label"
 		"fieldName"		"Ammo2"
-		"xpos"		"61"
+		"xpos"		"100"
 		"ypos"		"cs-0.5"
 		"wide"		"44"
 		"tall"		"24"
@@ -93,13 +95,14 @@
 		"brighttext"		"1"
 		"font"		"AmmoBar"
 		"wrap"		"0"
+		"autowidetocontents"	"1"
 	}
 
 	"Ammo2Icon"
 	{
 		"ControlName"		"ImageSprPanel"
 		"fieldName"		"Ammo2Icon"
-		"xpos"		"101"
+		"xpos"		"145"
 		"ypos"		"cs-0.5"
 		"wide"		"15"
 		"tall"		"15"

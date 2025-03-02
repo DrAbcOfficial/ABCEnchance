@@ -376,7 +376,7 @@ Scheme
 		//左侧菜单栏文字颜色
 		"TextMenu.TextColor"	"222 222 222 222"
 		//菜单字体
-		"TextMenu.Font"			"Title"
+		"TextMenu.Font"			"TextMenu"
 		
 		//标题背景
 		"Vote.TitleBgColor"		"0 0 0 0"
@@ -743,7 +743,92 @@ Scheme
 				"antialias"	"1"
 			}
 		}
-		
+
+		"TextMenu"
+		{
+			"1"
+			{
+				"name"		"Verdana"
+				"tall"		"16"
+				"weight"	"600"
+				"yres"	"480 599"
+			}
+			"2"
+			{
+				"name"		"Verdana"
+				"tall"		"18"
+				"weight"	"600"
+				"yres"	"600 767"
+			}
+			"3"
+			{
+				"name"		"Verdana"
+				"tall"		"22"
+				"weight"	"600"
+				"yres"	"768 1023"
+				"antialias"	"1"
+			}
+			"4"
+			{
+				"name"		"Verdana"
+				"tall"		"24"
+				"weight"	"600"
+				"yres"	"1024 1199"
+				"antialias"	"1"
+			}
+			"5"
+			{
+				"name"		"Verdana"
+				"tall"		"28"
+				"weight"	"600"
+				"yres"	"1200 6000"
+				"antialias"	"1"
+			}
+		}
+
+		"AmmoBar"
+		{
+			"1"
+			{
+				"name"		"Verdana"
+				"tall"		"24"
+				"weight"	"700"
+				"yres"		"480 599"
+				"antialias"	"1"
+			}
+			"2"
+			{
+				"name"		"Verdana"
+				"tall"		"28"
+				"weight"	"700"
+				"yres"		"600 767"
+				"antialias"	"1"
+			}
+			"3"
+			{
+				"name"		"Verdana"
+				"tall"		"30"
+				"weight"	"700"
+				"yres"		"768 1023"
+				"antialias"	"1"
+			}
+			"4"
+			{
+				"name"		"Verdana"
+				"tall"		"32"
+				"weight"	"700"
+				"yres"		"1024 1199"
+				"antialias"	"1"
+			}
+			"5"
+			{
+				"name"		"Verdana"
+				"tall"		"42"
+				"weight"	"700"
+				"yres"		"1200 10000"
+				"antialias"	"1"
+			}
+		}
 		"HealthBar"
 		{
 			"1"
@@ -912,7 +997,7 @@ Scheme
 				"antialias"	"1"
 			}
 		}
-		"HealthBar"
+		"ClassicHealthBar"
 		{
 			"1"
 			{

@@ -19,6 +19,6 @@
 		"enabled"		"1"
 		"textAlignment"		"center"
 		"brighttext"		"1"
-		"font"		"CompactaBold"
+		"font"		"Default"
 	}
 }
