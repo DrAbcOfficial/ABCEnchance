@@ -418,6 +418,30 @@ void HUD_Init(void) {
 		}
 		vgui::filesystem()->FindClose(walk);
 		gEngfuncs.Con_Printf("==============\n");
+	});
+
+	ADD_COMMAND("find", []() {
+		if (gEngfuncs.Cmd_Argc() <= 1)
+			return;
+		std::string sz = gEngfuncs.Cmd_Argv(1);
+		gEngfuncs.Con_Printf("==============\n");
+		cvar_t* cvar = gEngfuncs.GetFirstCvarPtr();
+		while (cvar)
+		{
+			std::string cvarname = cvar->name;
+			if(cvarname.find(sz) != std::string::npos)
+				gEngfuncs.Con_Printf("  %s  [%s]\n", cvar->name, (cvar->flags & FCVAR_PROTECTED) != 0 ? "**" : cvar->string);
+			cvar = cvar->next;
+		}
+		gEngfuncs.Con_Printf("==============\n");
+		unsigned int cmd = gEngfuncs.GetFirstCmdFunctionHandle();
+		while (cmd) {
+			std::string cmdname = gEngfuncs.GetCmdFunctionName(cmd);
+			if (cmdname.find(sz) != std::string::npos)
+				gEngfuncs.Con_Printf("  %s\n", cmdname.c_str());
+			cmd = gEngfuncs.GetNextCmdFunctionHandle(cmd);
+		}
+		gEngfuncs.Con_Printf("==============\n");
 		});
 
 	gExportfuncs.HUD_Init();
