@@ -3,7 +3,6 @@
 #include <metahook.h>
 #include <codecvt>
 #include <locale>
-#include "formatter.h"
 
 #include "Task.h"
 
@@ -31,8 +30,74 @@
 //fuck microsoft
 #undef clamp
 
-#define VIEWPORT_NETEASEMUSIC_NAME "NeteasePanel"
-#define VIEWPORT_NETEASEMUSICQR_NAME "NeteaseQRPanel"
+namespace netease_fmt
+{
+	class arg_base
+	{
+	public:
+		virtual ~arg_base() = default;
+		virtual void format(std::ostringstream& ss) = 0;
+	};
+	template <class T>
+	class arg : public arg_base
+	{
+	public:
+		arg(const T& arg) : arg_(arg) {}
+		void format(std::ostringstream& ss) override {
+			ss << arg_;
+		}
+	private:
+		T arg_;
+	};
+	using arg_array = std::vector<std::shared_ptr<arg_base>>;
+	template <class T>
+	void transfer(arg_array& argArray, T t) {
+		argArray.push_back(std::make_shared<arg<T>>(t));
+	}
+	template<typename... Args>
+	void transfer(arg_array& argArray, Args&&... args) {
+		(transfer(argArray, args), ...);
+	}
+	template <typename... Args>
+	std::string format(const std::string& format_str, Args&&... args) {
+		if (sizeof...(args) == 0) {
+			return format_str;
+		}
+		arg_array argArray;
+		transfer(argArray, args...);
+		std::ostringstream ss;
+		size_t start = 0;
+		while (true) {
+			size_t pos = format_str.find('{', start);
+			if (pos == std::string::npos) {
+				ss << format_str.substr(start);
+				break;
+			}
+			ss << format_str.substr(start, pos - start);
+			if (format_str[pos + 1] == '{') {
+				ss << '{';
+				start = pos + 2;
+				continue;
+			}
+			start = pos + 1;
+			pos = format_str.find('}', start);
+			if (pos == std::string::npos) {
+				ss << format_str.substr(start - 1);
+				break;
+			}
+			size_t index = std::stoul(format_str.substr(start, pos - start));
+			if (index < argArray.size()) {
+				argArray[index]->format(ss);
+			}
+			start = pos + 1;
+		}
+		return ss.str();
+	}
+}
+
+
+constexpr auto VIEWPORT_NETEASEMUSIC_NAME = "NeteasePanel";
+constexpr auto VIEWPORT_NETEASEMUSICQR_NAME = "NeteaseQRPanel";
 
 extern vgui::HScheme GetViewPortBaseScheme();
 
@@ -207,7 +272,7 @@ public:
 		func = f;
 	}
 };
-inline void SearchCaller(CNeteasePanel* panel, CCloudMusicCmdItem* caller, netease::SearchType type) {
+inline static void SearchCaller(CNeteasePanel* panel, CCloudMusicCmdItem* caller, netease::SearchType type) {
 	if (gEngfuncs.Cmd_Argc() >= (int)caller->Sub() + 2) {
 		char* keyword = gEngfuncs.Cmd_Argv(gEngfuncs.Cmd_Argc() - 1);
 		panel->Search(keyword, type);
@@ -375,10 +440,10 @@ CNeteasePanel::CNeteasePanel()
 	s_pAlbumImage = new CAlbumImage();
 
 	m_pQuality = CREATE_CVAR("cl_netease_quality", "0", FCVAR_VALUE, [](cvar_t* cvar) {
-		cvar->value = std::clamp<int>(cvar->value, 0, 4);
+		cvar->value = clamp<int>(cvar->value, 0, 4);
 	});
 	m_pVolume = CREATE_CVAR("cl_netease_volume", "1", FCVAR_VALUE, [](cvar_t* cvar) {
-		cvar->value = std::clamp<float>(cvar->value, 0.0f, 1.0f);
+		cvar->value = clamp<float>(cvar->value, 0.0f, 1.0f);
 		GetBaseViewPort()->GetMusicPanel()->SetVolume(cvar->value);
 	});
 	m_pSearchCount = CREATE_CVAR("cl_netease_searchcount", "5", FCVAR_VALUE, [](cvar_t* cvar) {
@@ -475,7 +540,7 @@ void CNeteasePanel::Think() {
 					std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 					std::wstring szLrc = converter.from_bytes(reinterpret_cast<const char*>(lrc->CurrentLyric.data()));
 					m_pLyricLable->SetText(szLrc.c_str());
-					szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc->EndTime - pos) / (lrc->EndTime - lrc->StartTime)), 0.0f, 1.0f));
+					szLrc.resize(szLrc.size() * clamp(1.0f - (static_cast<float>(lrc->EndTime - pos) / (lrc->EndTime - lrc->StartTime)), 0.0f, 1.0f));
 					m_pLyricLableHighlight->SetText(szLrc.c_str());
 				}
 				else {
@@ -493,7 +558,7 @@ void CNeteasePanel::Think() {
 					std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 					std::wstring szLrc = converter.from_bytes(reinterpret_cast<const char*>(lrc->CurrentLyric.data()));
 					m_pTranslatedLyricLable->SetText(szLrc.c_str());
-					szLrc.resize(szLrc.size() * std::clamp(1.0f - (static_cast<float>(lrc->EndTime - pos) / (lrc->EndTime - lrc->StartTime)), 0.0f, 1.0f));
+					szLrc.resize(szLrc.size() * clamp(1.0f - (static_cast<float>(lrc->EndTime - pos) / (lrc->EndTime - lrc->StartTime)), 0.0f, 1.0f));
 					m_pTranslatedLyricLableHighlight->SetText(szLrc.c_str());
 				}
 				else {
@@ -671,7 +736,7 @@ void CNeteasePanel::PrintF(const char* str, bool dev, const Args&& ...args){
 	else
 		format = str;
 	
-	format = formatter::format(format, args...);
+	format = netease_fmt::format(format, args...);
 	format = "[NeteaseApi] " + format + "\n";
 	if(dev)
 		gEngfuncs.Con_DPrintf(format.c_str());
@@ -711,7 +776,7 @@ void CNeteasePanel::PlayListMusic(){
 		return;
 	if (m_pPlaying != nullptr)
 		StopMusic();
-	auto item = *m_aryPlayList.begin();
+	auto& item = *m_aryPlayList.begin();
 	m_aryPlayList.pop_front();
 	GetTaskManager()->Add<music_obj*>([this](std::shared_ptr<PlayItem> playitem, size_t quality) -> music_obj* {
 		static music_obj obj;
@@ -995,7 +1060,7 @@ struct loginshare_obj {
 	size_t size;
 	std::string qrkey;
 };
-void QRCheck(vgui::CQRLoginPanel* panel, std::string& qrkey) {
+static void QRCheck(vgui::CQRLoginPanel* panel, std::string& qrkey) {
 	GetTaskManager()->Add<netease::CLocalUser::QRStatue>([](std::string unikey) {
 		return s_pNeteaseApi.load()->GetUser()->QRCheck(unikey);
 	}, qrkey)->ContinueWith([](netease::CLocalUser::QRStatue result, vgui::CQRLoginPanel* panel, std::string& qrkey) {
