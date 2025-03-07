@@ -225,7 +225,7 @@ void CItemHighLightPanel::OnThink(){
 		});
 		CItemNamePanel* name_panel = (lookat == m_aryLookatPanels.end()) ? 
 			nullptr : reinterpret_cast<CItemNamePanel*>(*lookat);
-		if (!ent) {
+		if (!ent || ent->curstate.messagenum != local->curstate.messagenum) {
 			if (name_panel != nullptr) {
 				std::erase_if(m_aryLookatPanels, [&name_panel](vgui::Panel* panel) {return panel == name_panel; });
 				name_panel->DeletePanel();

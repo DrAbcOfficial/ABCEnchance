@@ -256,7 +256,8 @@ void vgui::CVoteKickPage::ResetList()
 		//update or create player avatar
 		if (s_aryAvatars->IsValidIndex(p.GetIndex())) {
 			CAvatarImage* img = reinterpret_cast<CAvatarImage*>(s_aryAvatars->GetImage(p.GetIndex()));
-			img->SetAvatarSteamID(*p.GetSteamID());
+			if (img)
+				img->SetAvatarSteamID(*p.GetSteamID());
 		}
 		else {
 			CAvatarImage* img = new CAvatarImage();
