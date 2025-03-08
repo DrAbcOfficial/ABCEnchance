@@ -49,7 +49,7 @@ public:
 	}
 	
 	void Update(CItemHighLightPanel::cl_highlight_t* item, int ent, int length) {
-		//×î½üÎª10
+		//ï¿½ï¿½ï¿½Îª10
 #undef clamp
 		float ratio = std::clamp<float>(1.0f - (gCVars.pItemHighLightRange->value - length) / (gCVars.pItemHighLightRange->value),
 								0.5f, 1.0f);
@@ -185,18 +185,18 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 	SetProportional(true);
 	SetScheme(GetViewPortBaseScheme());
 
-	gCVars.pItemHighLight = CREATE_CVAR("cl_itemhighlight", "1", FCVAR_VALUE, NULL);
-	gCVars.pItemHighLightRange = CREATE_CVAR("cl_itemhighlightrange", "344", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pItemHighLight = CREATE_CVAR("hud_highlight_item", "1", FCVAR_VALUE, NULL);
+	gCVars.pItemHighLightRange = CREATE_CVAR("hud_highlight_item_range", "344", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = CMathlib::clamp<float>(cvar->value, 0.0f, 344.0f);
 	});
-	gCVars.pItemHighLightName = CREATE_CVAR("cl_itemhighlightname", "1", FCVAR_VALUE, NULL);
-	gCVars.pItemHighLightNameFOV = CREATE_CVAR("cl_itemhighlightfov", "90", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pItemHighLightName = CREATE_CVAR("hud_highlight_item_name", "1", FCVAR_VALUE, NULL);
+	gCVars.pItemHighLightNameFOV = CREATE_CVAR("hud_highlight_item_fov", "90", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = fmodf(cvar->value, 360.0f);
 	});
-	gCVars.pItemHighLightAimFOV = CREATE_CVAR("cl_itemhighlightaimfov", "20", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pItemHighLightAimFOV = CREATE_CVAR("hud_highlight_item_aimfov", "20", FCVAR_VALUE, [](cvar_t* cvar) {
 		cvar->value = fmodf(cvar->value, 360.0f);
 	});
-	gCVars.pItemHighLightPickup = CREATE_CVAR("cl_itemhighlightpickup", "1", FCVAR_VALUE, NULL);
+	gCVars.pItemHighLightPickup = CREATE_CVAR("hud_highlight_item_pickup", "1", FCVAR_VALUE, NULL);
 	m_pPickupPanel = new CItemPickupPanel(this, "Pickup");
 	LoadControlSettings(VGUI2_ROOT_DIR "ItemHighLightPanel.res");
 
@@ -288,7 +288,7 @@ void CItemHighLightPanel::Reset() {
 void CItemHighLightPanel::AddEntity(int type, cl_entity_s* ent, const char* modelname){
 	if (gCVars.pItemHighLight->value <= 0)
 		return;
-	//mdlÄ£ÐÍ
+	//mdlÄ£ï¿½ï¿½
 	if ((ent) && (ent->model) && (ent->model->type == mod_studio) &&
 		ent->baseline.movetype != MOVETYPE_FOLLOW && 
 		((ent->curstate.effects & EF_NODRAW) == 0)) {

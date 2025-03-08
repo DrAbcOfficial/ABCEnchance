@@ -39,7 +39,7 @@ public:
 	}
 
 	virtual void Paint() override{
-		//¼ÆËãÆÁÄ»¾ø¶Ô×ø±ê
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int x = m_iX;
 		int y = m_iY;
 		//shader
@@ -50,7 +50,7 @@ public:
 		}
 		else
 			GL_Uniform1f(pp_texround.rad, 0.0f);
-		//¼ÆËãÎÆÀí×ø±ê
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		float h = static_cast<float>(m_iTall) / gScreenInfo.iHeight;
 		float w = static_cast<float>(m_iWide) / gScreenInfo.iWidth;
 		float stx = (1.0f - w) / 2.0f;
@@ -136,18 +136,18 @@ CRadarPanel::CRadarPanel()
 	ADD_COMMAND("+scale_radar", [](){g_pViewPort->GetRadarPanel()->SetScale(true); });
 	ADD_COMMAND("-scale_radar", []() {g_pViewPort->GetRadarPanel()->SetScale(false); });
 
-	gCVars.pRadar = CREATE_CVAR("cl_radar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pRadar = CREATE_CVAR("hud_radar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->ShowPanel(cvar->value);
 	});
-	gCVars.pRadarZMin = CREATE_CVAR("cl_radar_zmin", "256", FCVAR_VALUE, nullptr);
-	gCVars.pRadarZMax = CREATE_CVAR("cl_radar_zmax", "20", FCVAR_VALUE, nullptr);
-	gCVars.pRadarZoom = CREATE_CVAR("cl_radar_zoom", "2.5", FCVAR_VALUE, nullptr);
+	gCVars.pRadarZMin = CREATE_CVAR("hud_radar_zmin", "256", FCVAR_VALUE, nullptr);
+	gCVars.pRadarZMax = CREATE_CVAR("hud_radar_zmax", "20", FCVAR_VALUE, nullptr);
+	gCVars.pRadarZoom = CREATE_CVAR("hud_radar_zoom", "2.5", FCVAR_VALUE, nullptr);
 
-	gCVars.pRadarAvatar = CREATE_CVAR("cl_radar_avatar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
+	gCVars.pRadarAvatar = CREATE_CVAR("hud_radar_avatar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->SetAvatarVisible(cvar->value);
 	});
-	gCVars.pRadarAvatarSize = CREATE_CVAR("cl_radar_avatarsize", "20", FCVAR_VALUE, nullptr);
-	gCVars.pRadarAvatarScale = CREATE_CVAR("cl_radar_avatarscale", "0.2", FCVAR_VALUE, nullptr);
+	gCVars.pRadarAvatarSize = CREATE_CVAR("hud_radar_avatarsize", "20", FCVAR_VALUE, nullptr);
+	gCVars.pRadarAvatarScale = CREATE_CVAR("hud_radar_avatarscale", "0.2", FCVAR_VALUE, nullptr);
 	
 	m_pBackground = new vgui::ImagePanel(this, "Background");
 	m_pRoundBackground = new vgui::ImagePanel(this, "RoundBackground");
@@ -203,7 +203,7 @@ void CRadarPanel::Paint(){
 		}
 
 		int size = GetWide();
-		//Ö¸±±Õë
+		//Ö¸ï¿½ï¿½ï¿½ï¿½
 		int nw, nh;
 		m_pNorthground->GetSize(nw, nh);
 		int len = GetWide() - nw;
@@ -237,13 +237,13 @@ void CRadarPanel::Paint(){
 					continue;
 				}
 				iter->SetVisible(true);
-				//ÓëÄ¿±ê¾àÀë
+				//ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½
 				Vector vecLength = entity->curstate.origin;
 				vecLength -= local->curstate.origin;
 				Vector vecAngle;
 				CMathlib::VectorAngles(vecLength, vecAngle);
 				float nyaw = CMathlib::Q_DEG2RAD(vecAngle[CMathlib::Q_YAW] - local->curstate.angles[CMathlib::Q_YAW] + 90);
-				//Ëõ·Å±ÈÂÊÔÝ¶¨0.2£¬½»»»È¡·´·ûºÏÆÁÄ»×ø±êÏµ
+				//ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½ï¿½Ý¶ï¿½0.2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½Ïµ
 				std::swap(vecLength.x, vecLength.y);
 				vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
 				vecLength.z = 0;
@@ -309,7 +309,7 @@ void CRadarPanel::RenderRadar(){
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 	//glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
-	//ÉèÖÃµ½Íæ¼ÒÄÔ´üÉÏ³¯ÏÂ¿´
+	//ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½Ï³ï¿½ï¿½Â¿ï¿½
 	gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];

@@ -74,9 +74,9 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	vgui::GetAnimationController()->SetScriptFile(GetVPanel(), "abcenchance/HudAnimations.txt", true);
 
 	//for popnumber
-	m_pPlayerTitle = CREATE_CVAR("cl_playertitle", "1", FCVAR_VALUE, nullptr);
-	m_pPlayerTitleDanger = CREATE_CVAR("cl_playertitle_danger", "30", FCVAR_VALUE, nullptr);
-	m_pPopNumber = CREATE_CVAR("cl_popnumber", "1", FCVAR_VALUE, nullptr);
+	m_pPlayerTitle = CREATE_CVAR("hud_playerinfo", "1", FCVAR_VALUE, nullptr);
+	m_pPlayerTitleDanger = CREATE_CVAR("hud_playerinfo_danger", "30", FCVAR_VALUE, nullptr);
+	m_pPopNumber = CREATE_CVAR("hud_popnumber", "1", FCVAR_VALUE, nullptr);
 }
 
 CViewport::~CViewport(void){
@@ -352,14 +352,14 @@ bool CViewport::TextMsg(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	if (READ_BYTE() == static_cast<int>(CViewport::HUDNOTICE::PRINTNOTIFY)) {
 		char* msg_text = READ_STRING();
-		//Ê²Ã´¼¦°Í¶«Î÷
+		//Ê²Ã´ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½
 		if (msg_text[0] == '\0')
 			return false;
 		wchar_t wideBuf[256];
 		Q_UTF8ToUnicode(msg_text, wideBuf, sizeof(wideBuf));
 		std::wstring stdSzBuf = wideBuf;
-		//Ê£ÏÂµÄÀÏ×Ó²ÅÃ»ÐËÈ¤
-		//ÕýÔò²¶»ñÆ¥Åä
+		//Ê£ï¿½Âµï¿½ï¿½ï¿½ï¿½Ó²ï¿½Ã»ï¿½ï¿½È¤
+		//ï¿½ï¿½ï¿½ò²¶»ï¿½Æ¥ï¿½ï¿½
 		std::wsmatch matched;
 		bool found = false;
 		found = regex_search(stdSzBuf, matched, parttenSuicide);

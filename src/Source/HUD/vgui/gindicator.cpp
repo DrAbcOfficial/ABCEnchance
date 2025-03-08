@@ -42,9 +42,9 @@ CGenadeIndicatorPanel::CGenadeIndicatorPanel()
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
 
-	gCVars.pGrenadeIndicator = CREATE_CVAR("cl_grenadeindicator", "1", FCVAR_VALUE, nullptr);
-	gCVars.pGrenadeIndicatorRange = CREATE_CVAR("cl_grenadeindicator_range", "256", FCVAR_VALUE, nullptr);
-	gCVars.pGrenadeInicatorTime = CREATE_CVAR("cl_grenadeindicator_time", "4", FCVAR_VALUE, nullptr);
+	gCVars.pGrenadeIndicator = CREATE_CVAR("hud_indicator_grenade", "1", FCVAR_VALUE, nullptr);
+	gCVars.pGrenadeIndicatorRange = CREATE_CVAR("hud_indicator_grenade_range", "256", FCVAR_VALUE, nullptr);
+	gCVars.pGrenadeInicatorTime = CREATE_CVAR("hud_indicator_grenade_time", "4", FCVAR_VALUE, nullptr);
 	
 	LoadControlSettings(VGUI2_ROOT_DIR "GrenadeIndicatorPanel.res");
 }
@@ -99,13 +99,13 @@ void CGenadeIndicatorPanel::PaintBackground(){
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	if (!local)
 		return;
-	//ÊÓ½Ç½Ç¶È
+	//ï¿½Ó½Ç½Ç¶ï¿½
 	Vector vecView;
 	gEngfuncs.GetViewAngles(vecView);
 	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
 	for (auto it = m_aryImages.begin(); it != m_aryImages.end(); it++) {
 		CGIndicatorItem* img = (*it);
-		//¼ÆËãÎÒºÍÄ¿±êµÄÏà¶ÔÆ«ÒÆ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Òºï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½
 		Vector vecLength;
 		CMathlib::VectorSubtract(img->GetEnt()->curstate.origin, local->curstate.origin, vecLength);
 		vecLength = vecLength.Normalize();

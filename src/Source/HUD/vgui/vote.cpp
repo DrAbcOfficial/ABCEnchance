@@ -51,11 +51,11 @@ CVotePanel::CVotePanel()
 	LoadControlSettings(VGUI2_ROOT_DIR "VotePanel.res");
 	SetVisible(false);
 
-	m_pHudVote = CREATE_CVAR("cl_hud_vote", "1", FCVAR_VALUE, nullptr);
-	m_pHudVoteKeyYes = CREATE_CVAR("cl_hud_votekey_yes", "92", FCVAR_VALUE, [](cvar_t* cvar) {
+	m_pHudVote = CREATE_CVAR("hud_vote", "1", FCVAR_VALUE, nullptr);
+	m_pHudVoteKeyYes = CREATE_CVAR("hud_votekey_yes", "92", FCVAR_VALUE, [](cvar_t* cvar) {
 		GetBaseViewPort()->GetVotePanel()->m_iYes = static_cast<int>(cvar->value);
 	});
-	m_pHudVoteKeyNo = CREATE_CVAR("cl_hud_votekey_no", "93", FCVAR_VALUE, [](cvar_t* cvar) {
+	m_pHudVoteKeyNo = CREATE_CVAR("hud_votekey_no", "93", FCVAR_VALUE, [](cvar_t* cvar) {
 		GetBaseViewPort()->GetVotePanel()->m_iNo = static_cast<int>(cvar->value);
 	});
 }

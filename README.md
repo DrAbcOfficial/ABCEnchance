@@ -96,23 +96,23 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |hud_deathnotice|use new death message|1|0~1|
 |hud_deathnotice_time|the death message keep time|6|0~9999|
 |---|---|---|---|
-|cl_rainbowmenu|Draw weapon menu in rainbow|0|0/1/2|
+|hud_rainbow_menu|Draw weapon menu in rainbow|0|0/1/2|
 |---|---|---|---|
-|cl_itemhighlight|Draw item high light|1|0/1|
-|cl_itemhighlightrange|Item high light range|344|0~500|
+|hud_highlight_item|Draw item high light|1|0/1|
+|hud_highlight_item_range|Item high light range|344|0~500|
 |---|---|---|---|
-|cl_dangerhealth|Danger health value|45|0~9999|
-|cl_dangerarmor|Danger armor value|45|0~9999|
-|cl_damageshock|Enable shock pain indicator|0|0/1|
-|cl_damageshock_factor|shock pain indicator strong|0.015|0~99999|
-|cl_damageshock_base|min damage to show shock pain indicator|30|0~99999|
+|hud_danger_health|Danger health value|45|0~9999|
+|hud_danger_armor|Danger armor value|45|0~9999|
+|hud_damageshock|Enable shock pain indicator|0|0/1|
+|hud_damageshock_factor|shock pain indicator strong|0.015|0~99999|
+|hud_damageshock_base|min damage to show shock pain indicator|30|0~99999|
 |---|---|---|---|
-|cl_radar|Radar|1|0/1/2|
-|cl_radarzoom|Radar Zoom|2.5|0.0001~9999|
-|cl_radarupdateint|Radar image update interval|1|0-9999|
+|hud_radar|Radar|1|0/1/2|
+|hud_radarzoom|Radar Zoom|2.5|0.0001~9999|
+|hud_radarupdateint|Radar image update interval|1|0-9999|
 |---|---|---|---|
-|cl_playertitle|Show Player name|1|0/1/2|
-|cl_playertitle_danger|Set danger health|30|any shit|
+|hud_playerinfo|Show Player name|1|0/1/2|
+|hud_playerinfo_danger|Set danger health|30|any shit|
 |---|---|---|---|
 |cl_crosshair|Show dynamic crosshair|1|0/1|
 |cl_crosshairautohide|Auto hide crosshair when zoomed|1|0/1|
@@ -135,7 +135,7 @@ A MetaHookSV plugin that introduces more instability and possible enhancements t
 |abc_bloodsprite_num|Efx new bloodsprite number|32|0-9999|
 |abc_gaussefx|Enable gauss efx|1|0/1|
 |---|---|---|---|
-|cl_sideenable|Enable side text panel for speed, score, etc.|1|0/1|
+|hud_sideinfo|Enable side text panel for speed, score, etc.|1|0/1|
 |cl_eccomenu|Enable Ecco buymenu enhance|1|0/1|
 |---|---|---|---|
 |cl_modellag|View model lag|1|0/1|

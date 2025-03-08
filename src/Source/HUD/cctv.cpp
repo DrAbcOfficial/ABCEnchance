@@ -37,7 +37,7 @@ void CHudCCTV::GLInit() {
 
 }
 int CHudCCTV::Init(){
-	gCVars.pCCTV = CREATE_CVAR("cl_cctvlogo", "0", FCVAR_VALUE, nullptr);
+	gCVars.pCCTV = CREATE_CVAR("hud_cctvlogo", "0", FCVAR_VALUE, nullptr);
 
 	DownLogoStartX = CMathlib::GetScreenPixel(ScreenWidth(), DOWN_LOGO_STARTX);
 	DownLogoStartY = CMathlib::GetScreenPixel(ScreenHeight(), DOWN_LOGO_STARTY);

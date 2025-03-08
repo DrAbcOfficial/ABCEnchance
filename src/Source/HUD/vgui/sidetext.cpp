@@ -32,8 +32,7 @@ CSidePanel::CSidePanel()
 	m_pImage = new vgui::ImagePanel(this, "Image");
 	m_pMessage = new vgui::Label(this, "Message", "");
 	
-	//gCVars.pEccoCheckInfo = CREATE_CVAR("cl_eccocheck", "0", FCVAR_VALUE, nullptr);
-	gCVars.pEccoEnable = CREATE_CVAR("cl_sideenable", "1", FCVAR_VALUE, [](cvar_t* cvar){
+	gCVars.pEccoEnable = CREATE_CVAR("hud_sideinfo", "1", FCVAR_VALUE, [](cvar_t* cvar){
 		GetBaseViewPort()->ShowSideText(cvar->value > 0);
 	});
 

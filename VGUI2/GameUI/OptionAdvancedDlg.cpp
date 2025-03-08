@@ -588,11 +588,11 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 	m_pScoreSize->AddItem("#GameUI_ABC_Cvar_ScoreSizeNormal", nullptr);
 	m_pScoreSize->AddItem("#GameUI_ABC_Cvar_ScoreSizeCompact", nullptr);
 
-	m_pPopNumber = new CCvarToggleCheckButton(this, "PopNumber", "#GameUI_ABC_Cvar_PopNumber", "cl_popnumber");
+	m_pPopNumber = new CCvarToggleCheckButton(this, "PopNumber", "#GameUI_ABC_Cvar_PopNumber", "hud_popnumber");
 
 	m_pPlayerTitleGroup = new GroupBox(this, "PlayerTitleGroup", "#GameUI_ABC_PlayerTitleOptions", 2);
-	m_pPlayerTitle = new CCvarToggleCheckButton(this, "PlayerTitle", "#GameUI_ABC_Cvar_PlayerTitle", "cl_popnumber");
-	m_pPlayerTitleDanger = new CCvarLabelSlider(this, "PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", 0, 100, "cl_playertitle_danger");
+	m_pPlayerTitle = new CCvarToggleCheckButton(this, "PlayerTitle", "#GameUI_ABC_Cvar_PlayerTitle", "hud_popnumber");
+	m_pPlayerTitleDanger = new CCvarLabelSlider(this, "PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", 0, 100, "hud_playerinfo_danger");
 
 
 	m_pCameraGroup = new GroupBox(this, "CameraGroup", "#GameUI_ABC_CameraGroup", 2);
@@ -609,20 +609,20 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 	m_pModelSlideHeight = new CCvarLabelSlider(this, "ModelSlideHeight", "#GameUI_ABC_Cvar_ModelSlideHeight", "#GameUI_ABC_Cvar_ModelSlideHeight", -30.0f, 30.0f, "cl_modelslide_height");
 
 	m_pHealthArmor = new GroupBox(this, "HPAPGroup", "#GameUI_ABC_HPAPGroup", 5);
-	m_pDamageShock = new CCvarToggleCheckButton(this, "DamageShock", "#GameUI_ABC_Cvar_DamageShock", "cl_damageshock_factor");
-	m_pDamageShockFactor = new CCvarLabelSlider(this, "DamageShockFactor", "#GameUI_ABC_Cvar_DamageShockFactor", "#GameUI_ABC_Cvar_DamageShockFactor", 0.0f, 0.1f, "cl_damageshock_factor", false, true);
-	m_pDamageShockDmg = new CCvarLabelSlider(this, "DamageShockDmg", "#GameUI_ABC_Cvar_DamageShockDmg", "#GameUI_ABC_Cvar_DamageShockDmg", 0, 100, "cl_damageshock_base");
-	m_pDangerHealth = new CCvarLabelSlider(this, "DangerHealth", "#GameUI_ABC_Cvar_DangerHealth", "#GameUI_ABC_Cvar_DangerHealth", 0, 100, "cl_dangerhealth");
-	m_pDangerArmor = new CCvarLabelSlider(this, "DangerArmor", "#GameUI_ABC_Cvar_DangerArmor", "#GameUI_ABC_Cvar_DangerArmor", 0, 100, "cl_dangerarmor");
+	m_pDamageShock = new CCvarToggleCheckButton(this, "DamageShock", "#GameUI_ABC_Cvar_DamageShock", "hud_damageshock_factor");
+	m_pDamageShockFactor = new CCvarLabelSlider(this, "DamageShockFactor", "#GameUI_ABC_Cvar_DamageShockFactor", "#GameUI_ABC_Cvar_DamageShockFactor", 0.0f, 0.1f, "hud_damageshock_factor", false, true);
+	m_pDamageShockDmg = new CCvarLabelSlider(this, "DamageShockDmg", "#GameUI_ABC_Cvar_DamageShockDmg", "#GameUI_ABC_Cvar_DamageShockDmg", 0, 100, "hud_damageshock_base");
+	m_pDangerHealth = new CCvarLabelSlider(this, "DangerHealth", "#GameUI_ABC_Cvar_DangerHealth", "#GameUI_ABC_Cvar_DangerHealth", 0, 100, "hud_danger_health");
+	m_pDangerArmor = new CCvarLabelSlider(this, "DangerArmor", "#GameUI_ABC_Cvar_DangerArmor", "#GameUI_ABC_Cvar_DangerArmor", 0, 100, "hud_danger_armor");
 
 	m_pItemHighLightGroup = new GroupBox(this, "ItemHighLightGroup", "#GameUI_ABC_ItemHighLightGroup", 2);
-	m_pItemHighLight = new CCvarToggleCheckButton(this, "ItemHighLight", "#GameUI_ABC_Cvar_ItemHighLight", "cl_itemhighlight");
-	m_pItemHighLightRange = new CCvarLabelSlider(this, "ItemHighLightRange", "#GameUI_ABC_Cvar_ItemHighLightRange", "#GameUI_ABC_Cvar_ItemHighLightRange", 0, 344, "cl_itemhighlightrange");
+	m_pItemHighLight = new CCvarToggleCheckButton(this, "ItemHighLight", "#GameUI_ABC_Cvar_ItemHighLight", "hud_highlight_item");
+	m_pItemHighLightRange = new CCvarLabelSlider(this, "ItemHighLightRange", "#GameUI_ABC_Cvar_ItemHighLightRange", "#GameUI_ABC_Cvar_ItemHighLightRange", 0, 344, "hud_highlight_item_range");
 
 	m_pAutojump = new CCvarToggleCheckButton(this, "AutoJump", "#GameUI_ABC_Cvar_AutoJump", "cl_autojump");
-	m_pRainbowMenu = new CCvarToggleCheckButton(this, "RainbowMenu", "#GameUI_ABC_Cvar_RainbowMenu", "cl_rainbowmenu");
-	m_pEfxHud = new CCvarToggleCheckButton(this, "ExfHud", "#GameUI_ABC_Cvar_ExfHud", "cl_efxhud");
-	m_pSidePanel = new CCvarToggleCheckButton(this, "SideHud", "#GameUI_ABC_Cvar_SideHud", "cl_sideenable");
+	m_pRainbowMenu = new CCvarToggleCheckButton(this, "RainbowMenu", "#GameUI_ABC_Cvar_RainbowMenu", "hud_rainbow_menu");
+	m_pEfxHud = new CCvarToggleCheckButton(this, "ExfHud", "#GameUI_ABC_Cvar_ExfHud", "hud_efx");
+	m_pSidePanel = new CCvarToggleCheckButton(this, "SideHud", "#GameUI_ABC_Cvar_SideHud", "hud_sideinfo");
 	m_pMotd = new CCvarComboBox(this, "Motd", "#GameUI_ABC_Cvar_Motd", 3, "hud_motd");
 	m_pMotd->AddItem("#GameUI_ABC_Cvar_MotdNone", new KeyValues("value", "value", -1));
 	m_pMotd->AddItem("#GameUI_ABC_Cvar_MotdVanillia", new KeyValues("value", "value", 0));
@@ -634,12 +634,12 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 	m_pDeathNoticeCount = new CCvarLabelSlider(this, "DeathNoticeCount", "#GameUI_ABC_Cvar_DeathNoticeCount", "#GameUI_ABC_Cvar_DeathNoticeCount", 0, 10, "hud_deathnotice_count");
 
 	m_pGrenadeIndicatorGroup = new GroupBox(this, "GrenadeIndicatorGroup", "#GameUI_ABC_GrenadeIndicatorGroup", 3);
-	m_pGrenadeIndicator = new CCvarToggleCheckButton(this, "GrenadeIndicator", "#GameUI_ABC_Cvar_GrenadeIndicator", "cl_grenadeindicator");
-	m_pGrenadeIndicatorTime = new CCvarLabelSlider(this, "GrenadeIndicatorTime", "#GameUI_ABC_Cvar_GrenadeIndicatorTime", "#GameUI_ABC_Cvar_GrenadeIndicatorTime", 0.0f, 30.0f, "cl_grenadeindicator_time", false, true);
-	m_pGrenadeIndicatorRange = new CCvarLabelSlider(this, "GrenadeIndicatorRange", "#GameUI_ABC_Cvar_GrenadeIndicatorRange", "#GameUI_ABC_Cvar_GrenadeIndicatorRange", 0, 1024, "cl_grenadeindicator_range");
+	m_pGrenadeIndicator = new CCvarToggleCheckButton(this, "GrenadeIndicator", "#GameUI_ABC_Cvar_GrenadeIndicator", "hud_indicator_grenade");
+	m_pGrenadeIndicatorTime = new CCvarLabelSlider(this, "GrenadeIndicatorTime", "#GameUI_ABC_Cvar_GrenadeIndicatorTime", "#GameUI_ABC_Cvar_GrenadeIndicatorTime", 0.0f, 30.0f, "hud_indicator_grenade_time", false, true);
+	m_pGrenadeIndicatorRange = new CCvarLabelSlider(this, "GrenadeIndicatorRange", "#GameUI_ABC_Cvar_GrenadeIndicatorRange", "#GameUI_ABC_Cvar_GrenadeIndicatorRange", 0, 1024, "hud_indicator_grenade_range");
 
 	m_pVoteGroup = new GroupBox(this, "VoteGroup", "#GameUI_ABC_VoteGroup", 3);
-	m_pVote = new CCvarToggleCheckButton(this, "Vote", "#GameUI_ABC_Cvar_Vote", "cl_hud_vote");
+	m_pVote = new CCvarToggleCheckButton(this, "Vote", "#GameUI_ABC_Cvar_Vote", "hud_vote");
 	m_pVoteYes = new Label(this, "VoteYes", "#GameUI_ABC_Cvar_VoteYes");
 	m_pVoteNo = new Label(this, "VoteNo", "#GameUI_ABC_Cvar_VoteNo");
 	m_pVoteYesButton = new KeyBindingButton(this, "VoteBindingYes", "#GameUI_ABC_Cvar_BindgKeyBoard", this, "VoteYesBind");
@@ -659,8 +659,8 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 }
 void COptionsAdvanceSubOtherOption::OnResetData(){
 	BaseClass::OnResetData();
-	m_pVoteYesButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_yes")));
-	m_pVoteNoButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("cl_hud_votekey_no")));
+	m_pVoteYesButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("hud_votekey_yes")));
+	m_pVoteNoButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("hud_votekey_no")));
 }
 void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 	//m_pNewHud->ApplyChanges();
@@ -717,8 +717,8 @@ void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 
 	m_pVote->ApplyChanges();
 
-	CVAR_SET_FLOAT("cl_hud_votekey_yes", reinterpret_cast<KeyBindingButton*>(m_pVoteYesButton)->GetKeyCode());
-	CVAR_SET_FLOAT("cl_hud_votekey_no", reinterpret_cast<KeyBindingButton*>(m_pVoteNoButton)->GetKeyCode());
+	CVAR_SET_FLOAT("hud_votekey_yes", reinterpret_cast<KeyBindingButton*>(m_pVoteYesButton)->GetKeyCode());
+	CVAR_SET_FLOAT("hud_votekey_no", reinterpret_cast<KeyBindingButton*>(m_pVoteNoButton)->GetKeyCode());
 
 	m_pShellEfx->ApplyChanges();
 	m_pGaussEfx->ApplyChanges();

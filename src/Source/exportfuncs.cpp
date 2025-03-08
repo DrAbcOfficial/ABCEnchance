@@ -393,7 +393,6 @@ void HUD_Init(void) {
 	gCVars.pCamIdealRight = CREATE_CVAR("cam_idealright", "0", FCVAR_VALUE, nullptr);
 
 	CREATE_CVAR("abc_version", STR(PLUGIN_VERSION), FCVAR_EXTDLL | FCVAR_CLIENTDLL, [](cvar_t* cvar) {
-		if (cvar->value != PLUGIN_VERSION)
 			gEngfuncs.Cvar_SetValue("abc_version", PLUGIN_VERSION);
 		});
 

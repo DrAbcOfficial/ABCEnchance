@@ -205,7 +205,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClCompile Include="src\Source\exportfuncs.cpp" />
     <ClCompile Include="src\Source\HUD\cctv.cpp" />
     <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
-    <ClCompile Include="src\Source\HUD\eccobuymenu.cpp" />
     <ClCompile Include="src\Source\HUD\indicator.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\ammobar.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\ammostack.cpp" />
@@ -449,7 +448,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\basehud.h" />
     <ClInclude Include="src\Header\HUD\cctv.h" />
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />
-    <ClInclude Include="src\Header\HUD\eccobuymenu.h" />
     <ClInclude Include="src\Header\HUD\indicator.h" />
     <ClInclude Include="src\Header\HUD\numdisplay.h" />
     <ClInclude Include="src\Header\HUD\radar.h" />

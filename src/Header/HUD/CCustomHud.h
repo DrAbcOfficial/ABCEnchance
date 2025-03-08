@@ -117,8 +117,6 @@ public:
 	enum MetaHookMsgType {
 		MHSV_CMD_QUERY_PLUGIN = 1,
 		MHSV_CMD_QUERY_CVAR,
-		MHSV_CMD_ECCO_INFO = 7,
-		MHSV_CMD_ECCO_MENU = 8,
 		MHSV_CMD_ABC_CUSTOM = 77
 	};
 	enum class ABCCustomMsg {

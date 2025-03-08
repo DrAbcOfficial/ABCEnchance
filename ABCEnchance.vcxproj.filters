@@ -656,9 +656,6 @@
     <ClCompile Include="src\Source\HUD\weaponbank.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\eccobuymenu.cpp">
-      <Filter>Public\Source\HUD\legacy</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\ammostack.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
@@ -1373,9 +1370,6 @@
       <Filter>vgui_controls\dialog</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\cctv.h">
-      <Filter>Public\Header\HUD\legacy</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\eccobuymenu.h">
       <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\indicator.h">

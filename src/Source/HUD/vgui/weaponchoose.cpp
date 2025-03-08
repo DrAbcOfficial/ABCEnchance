@@ -135,7 +135,7 @@ extern vgui::HScheme GetViewPortBaseScheme();
 CWeaponChoosePanel::CWeaponChoosePanel()
 	: BaseClass(nullptr, VIEWPORT_WEAPONCHOOSE_NAME) {
 
-	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("cl_rainbowmenu", "0", FCVAR_VALUE, NULL);
+	gCVars.pAmmoMenuDrawRainbow = CREATE_CVAR("hud_rainbow_menu", "0", FCVAR_VALUE, NULL);
 
 	m_arySlotPanel = {
 		new vgui::ImagePanel(this,"Slot1"),
@@ -222,7 +222,7 @@ void CWeaponChoosePanel::PerformLayout(){
 	g_iRainbowColorCounter = 0;
 	for (size_t i = 0; i < m_aryPanelList.size(); i++) {
 		int y = 0;
-		//»æÖÆ¶¥¶ËÍ¼±ê
+		//ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
 		auto slot = m_arySlotPanel[i];
 		slot->SetPos(x, y);
 		y += slot->GetTall();
