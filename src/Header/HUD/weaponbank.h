@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include <map>
+#include <unordered_map>
 
-#define MAX_WEAPON_SLOT 10
-#define INVALID_WEAPON_SLOT MAX_WEAPON_SLOT + 1
-#define INVALID_WEAPON_POS -1
+constexpr auto MAX_WEAPON_SLOT = 10;
+constexpr auto INVALID_WEAPON_SLOT = MAX_WEAPON_SLOT + 1;
+constexpr auto INVALID_WEAPON_POS = -1;
 
 class WEAPON;
 class CWeaponData {
@@ -16,8 +17,8 @@ public:
 	void RemoveAll();
 	void Clear();
 	bool Has(size_t iSlot, size_t iPos);
-	std::map<size_t, WEAPON*>::iterator Begin();
-	std::map<size_t, WEAPON*>::iterator End();
+	std::unordered_map<size_t, WEAPON*>::iterator Begin();
+	std::unordered_map<size_t, WEAPON*>::iterator End();
 	std::map<size_t, WEAPON*>::iterator PosBegin(size_t iSlot);
 	std::map<size_t, WEAPON*>::iterator PosEnd(size_t iSlot);
 	std::map<size_t, WEAPON*>::reverse_iterator RPosBegin(size_t iSlot);
@@ -29,11 +30,11 @@ public:
 	CWeaponData();
 private:
 	//依照Id索引的
-	std::map<size_t, WEAPON*> m_dicWeaponIds;
+	std::unordered_map<size_t, WEAPON*> m_dicWeaponIds;
 	//依照Slot Pos索引的
-	std::map<size_t, std::map<size_t, WEAPON*>> m_dicWeaponSlots;
+	std::unordered_map<size_t, std::map<size_t, WEAPON*>> m_dicWeaponSlots;
 	//依照名称索引的
-	std::map<std::string, WEAPON*> m_dicWeaponNames;
+	std::unordered_map<std::string, WEAPON*> m_dicWeaponNames;
 };
 
 
@@ -47,7 +48,7 @@ private:
 	CWeaponData m_pAviliableWeaponData;
 
 	//玩家持有的所有子弹数据
-	std::map<size_t, int> m_dicAmmos;
+	std::unordered_map<size_t, int> m_dicAmmos;
 	//hud_fastswitch
 	cvar_t* pFastSwich = nullptr;
 

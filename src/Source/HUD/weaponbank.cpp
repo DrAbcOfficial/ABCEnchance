@@ -64,10 +64,10 @@ void CWeaponData::Remove(WEAPON* wp) {
 	m_dicWeaponNames.erase(wp->szName);
 	m_dicWeaponSlots[wp->iSlot].erase(wp->iSlotPos);
 }
-std::map<size_t, WEAPON*>::iterator CWeaponData::Begin() {
+std::unordered_map<size_t, WEAPON*>::iterator CWeaponData::Begin() {
 	return m_dicWeaponIds.begin();
 }
-std::map<size_t, WEAPON*>::iterator CWeaponData::End() {
+std::unordered_map<size_t, WEAPON*>::iterator CWeaponData::End() {
 	return m_dicWeaponIds.end();
 }
 std::map<size_t, WEAPON*>::iterator CWeaponData::PosBegin(size_t iSlot) {
