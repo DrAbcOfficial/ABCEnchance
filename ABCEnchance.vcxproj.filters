@@ -1375,9 +1375,6 @@
     <ClInclude Include="src\Header\HUD\indicator.h">
       <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\numdisplay.h">
-      <Filter>Public\Header\HUD\legacy</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\weaponbank.h">
       <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>

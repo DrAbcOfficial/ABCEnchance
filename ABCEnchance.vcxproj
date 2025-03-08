@@ -449,7 +449,6 @@ $(FreeImageCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\cctv.h" />
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />
     <ClInclude Include="src\Header\HUD\indicator.h" />
-    <ClInclude Include="src\Header\HUD\numdisplay.h" />
     <ClInclude Include="src\Header\HUD\radar.h" />
     <ClInclude Include="src\Header\HUD\vgui\ammobar.h" />
     <ClInclude Include="src\Header\HUD\vgui\ammostack.h" />
