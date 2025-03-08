@@ -8,13 +8,13 @@
 #include <vgui/VGUI.h>
 #include "interface.h"
 #include "tier3/tier3.h"
-#include <ICommandLine.h>
+#include "ICommandLine.h"
 
 namespace vgui
 {
 
-bool VGui_InternalLoadInterfaces(CreateInterfaceFn *factoryList, int numFactories);
-bool VGui_LoadEngineInterfaces(CreateInterfaceFn vguiFactory, CreateInterfaceFn engineFactory);
+extern bool VGui_InternalLoadInterfaces(CreateInterfaceFn *factoryList, int numFactories);
+extern bool VGui_LoadEngineInterfaces(CreateInterfaceFn vguiFactory, CreateInterfaceFn engineFactory);
 
 }
 

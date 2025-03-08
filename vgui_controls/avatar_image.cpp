@@ -5,14 +5,14 @@
 //=============================================================================
 #pragma once
 #include <metahook.h>
-#include <vguilocal.h>
 #include <string>
+#include "vguilocal.h"
 #include "steam_api.h"
-#include <player_info.h>
+#include "player_info.h"
 
-#include <vgui_controls/Panel.h>
-#include <vgui_controls/MessageMap.h>
-#include <vgui/ISurface.h>
+#include "vgui_controls/Panel.h"
+#include "vgui_controls/MessageMap.h"
+#include "vgui/ISurface.h"
 
 #include "tga_image.h"
 #include "client_steam_context.h"
