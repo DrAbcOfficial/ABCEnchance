@@ -333,8 +333,11 @@ void CItemHighLightPanel::LoadItemList() {
 		else {
 			if (pItem == nullptr)
 				continue;
+
+			auto pszName = vgui::localize()->Find(szItemPraseBuf);
+
 			switch (i){
-				case 1:pItem->Name = vgui::localize()->Find(szItemPraseBuf); break;
+			case 1:pItem->Name = pszName ? pszName : L""; break;
 				case 2:pItem->R = atoi(szItemPraseBuf); break;
 				case 3:pItem->G = atoi(szItemPraseBuf); break;
 				case 4:pItem->B = atoi(szItemPraseBuf); break;
