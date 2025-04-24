@@ -6,10 +6,10 @@
 
 #include <interface.h>
 #include <IFileSystem.h>
+
 extern IFileSystem* g_pFullFileSystem;
 
 #define HL1_WAD3_SIGNATURE "WAD3"
-
 
 WadFile::WadFile(){
     m_pHeader = { 0 };

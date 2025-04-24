@@ -277,6 +277,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		GetValidateSparySize(nw, nh);
 		FIBITMAP* nimg = FreeImage_Rescale(img, nw, nh);
 		FreeImage_Unload(img);
+
 		size_t bpp = FreeImage_GetBPP(nimg);
 		size_t pitch = FreeImage_GetPitch(nimg);
 		//Quantize Transparent Pixel
@@ -309,12 +310,15 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			bits -= pitch;
 		}
 
-		auto qimg = FreeImage_ColorQuantizeEx(nimg, FIQ_WUQUANT, 256);
-		FreeImage_Unload(nimg);
+		int numPalette = 256;
+		auto qimg = FreeImage_ColorQuantizeEx(nimg, FIQ_WUQUANT, numPalette);
+
 		//swap pallete
 		RGBQUAD* palette = FreeImage_GetPalette(qimg);
+
 		int bluindex = -1;
-		for (size_t i = 0; i < 256; i++) {
+
+		for (size_t i = 0; i < numPalette; i++) {
 			RGBQUAD p = palette[i];
 			if (p.rgbRed == 0 && p.rgbGreen == 0 && p.rgbBlue == 255) {
 				auto tem = palette[255];
@@ -324,6 +328,14 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 				break;
 			}	
 		}
+
+		if (bluindex == -1)
+		{
+			FreeImage_Unload(qimg);
+			numPalette = 255;
+			qimg = FreeImage_ColorQuantizeEx(nimg, FIQ_WUQUANT, numPalette);
+		}
+
 		//header
 		//Magic
 		g_pFullFileSystem->Write("WAD3", 4, hFileHandle);
@@ -335,7 +347,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		g_pFullFileSystem->Write(&headerbuf, 4, hFileHandle);
 		size_t size = nw * nh;
 		//mips header
-		BSPMipTexHeader_t header;
+		BSPMipTexHeader_t header = {0};
 		Q_strncpy(header.name, "{LOGO", 16);
 		header.width = nw;
 		header.height = nh;
@@ -349,7 +361,8 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		for (size_t i = 0; i < nh; i++) {
 			memcpy(flipped + i * nw, bits + (nh - i - 1) * nw, nw);
 		}
-		if (bluindex >= 0) {
+
+		if (bluindex != -1) {
 			for (size_t i = 0; i < size; i++) {
 				if ((int)flipped[i] == bluindex)
 					flipped[i] = 255;
@@ -357,29 +370,40 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 					flipped[i] = (BYTE)bluindex;
 			}
 		}
+
 		//mips data
 		const  static auto write_mips = [&](int mips_level) {
 			int lv = pow(2, mips_level);
 			for (size_t i = 0; i < (nh/lv); i++) {
 				for (size_t j = 0; j < (nw/lv); j++) {
-					char buf = flipped[i * lv * nw + j * lv];
+					BYTE buf = flipped[i * lv * nw + j * lv];
 					g_pFullFileSystem->Write(&buf, 1, hFileHandle);
 				}
 			}
 		};
+
 		for (size_t i = 0; i < 4; i++) {
 			write_mips(i);
 		}
+
 		delete[] flipped;
 		short colorused = 256;
 		g_pFullFileSystem->Write(&colorused, sizeof(short), hFileHandle);
-		//Palette
-		for (size_t i = 0; i < 256; i++) {
+
+		for (size_t i = 0; i < numPalette; i++) {
 			RGBQUAD p = palette[i];
 			g_pFullFileSystem->Write(&p.rgbRed, 1, hFileHandle);
 			g_pFullFileSystem->Write(&p.rgbGreen, 1, hFileHandle);
 			g_pFullFileSystem->Write(&p.rgbBlue, 1, hFileHandle);
 		}
+
+		if (numPalette == 255) {
+			RGBQUAD p = { 255, 0, 0, 255 };
+			g_pFullFileSystem->Write(&p.rgbRed, 1, hFileHandle);
+			g_pFullFileSystem->Write(&p.rgbGreen, 1, hFileHandle);
+			g_pFullFileSystem->Write(&p.rgbBlue, 1, hFileHandle);
+		}
+
 		//dummy pad
 		headerbuf = g_pFullFileSystem->Tell(hFileHandle);
 		const auto requiredPadding = [](int length, int padToMultipleOf) {
@@ -408,7 +432,9 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		g_pFullFileSystem->Write(&lumpoffset, 4, hFileHandle);
 		g_pFullFileSystem->Close(hFileHandle);
 
-		FreeImage_Unload(img);
+		FreeImage_Unload(nimg);
+
+		FreeImage_Unload(qimg);
 
 		m_pSparyWad->Load("tempdecal.wad");
 
@@ -436,9 +462,7 @@ void COptionsAdvanceSubMultiPlay::OnResetData(){
 
 	WadTexture* tex = m_pSparyWad->Get("{logo");
 	if (!tex) {
-		char fullpath[MAX_PATH];
-		filesystem()->GetLocalPath("tempdecal.wad", fullpath, MAX_PATH);
-		m_pSparyWad->Load(fullpath);
+		m_pSparyWad->Load("tempdecal.wad");
 		tex = m_pSparyWad->Get("{logo");
 	}
 
