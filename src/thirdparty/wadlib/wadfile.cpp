@@ -4,15 +4,27 @@
 #include "wadfile.h"
 #include "texture.h"
 
+#include <interface.h>
+#include <IFileSystem.h>
+
+extern IFileSystem* g_pFullFileSystem;
+
 #define HL1_WAD3_SIGNATURE "WAD3"
 
-
 WadFile::WadFile(){
+    m_pHeader = { 0 };
+    m_aryLumps = nullptr;
 }
+
 WadFile::~WadFile(){
     Clear();
-    delete[] m_aryLumps;
+
+    if (m_aryLumps) {
+        delete[] m_aryLumps;
+        m_aryLumps = nullptr;
+    }
 }
+
 std::string WadFile::FilePath(){
     return m_szFilePath;
 }
@@ -30,32 +42,35 @@ WadTexture* WadFile::Get(std::string name, bool ignoreCase){
     }
     return nullptr;
 }
+
 bool WadFile::Load(const std::string &filePath){
     Clear();
     if (filePath == "")
         return false;
     m_szFilePath = filePath;
-    std::ifstream stream;
-    stream.open(filePath, std::ios::in | std::ios::binary);
-    if (!stream.is_open())
+
+    auto hFileHandle = g_pFullFileSystem->Open(filePath.c_str(), "rb");
+
+    if (!hFileHandle)
         return false;
+
     WAD3Header_t header;
-    stream.read((char *)&header, sizeof(WAD3Header_t));
+    g_pFullFileSystem->Read(&header, sizeof(WAD3Header_t), hFileHandle);
     if (std::string(header.signature, 4) != HL1_WAD3_SIGNATURE)
         return false;
     m_aryLumps = new WAD3Lump_t[header.lumpsCount];
-    stream.seekg(header.lumpsOffset, std::ios::beg);
-    stream.read((char *)m_aryLumps, header.lumpsCount * sizeof(WAD3Lump_t));
+    g_pFullFileSystem->Seek(hFileHandle, header.lumpsOffset, FILESYSTEM_SEEK_HEAD);
+    g_pFullFileSystem->Read(m_aryLumps, header.lumpsCount * sizeof(WAD3Lump_t), hFileHandle);
     for (size_t i = 0; i < header.lumpsCount; i++){
         unsigned char *lumpData = new unsigned char[m_aryLumps[i].size];
-        stream.seekg(m_aryLumps[i].offset, std::ios::beg);
-        stream.read((char *)lumpData, m_aryLumps[i].size);
-        if (!stream)
-            continue;
+        g_pFullFileSystem->Seek(hFileHandle, m_aryLumps[i].offset, FILESYSTEM_SEEK_HEAD);
+        g_pFullFileSystem->Read(lumpData, m_aryLumps[i].size, hFileHandle);
+        if (g_pFullFileSystem->EndOfFile(hFileHandle))
+            break;
         m_aryTextures.push_back(new WadTexture(m_aryLumps[i].name, this, lumpData, m_aryLumps[i]));
         delete[] lumpData;
     }
-    stream.close();
+    g_pFullFileSystem->Close(hFileHandle);
     m_pHeader = header;
     return true;
 }

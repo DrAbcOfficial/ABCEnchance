@@ -90,12 +90,13 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>$(PluginPostBuildCommand)</Command>
+      <Command>$(PluginPostBuildCommand2)</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(GLEWCheckRequirements)
 $(CapstoneCheckRequirements)
-$(FreeImageCheckRequirements)</Command>
+$(FreeImageCheckRequirements)
+$(RapidJsonCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -123,13 +124,15 @@ $(FreeImageCheckRequirements)</Command>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>$(PluginPostBuildCommand)
+      <Command>$(PluginPostBuildCommand2)
+
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(GLEWCheckRequirements)
 $(CapstoneCheckRequirements)
-$(FreeImageCheckRequirements)</Command>
+$(FreeImageCheckRequirements)
+$(RapidJsonCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
@@ -158,13 +161,15 @@ $(FreeImageCheckRequirements)</Command>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>$(PluginPostBuildCommand)
+      <Command>$(PluginPostBuildCommand2)
+
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$(TargetExt)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>$(GLEWCheckRequirements)
 $(CapstoneCheckRequirements)
-$(FreeImageCheckRequirements)</Command>
+$(FreeImageCheckRequirements)
+$(RapidJsonCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
