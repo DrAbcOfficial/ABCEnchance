@@ -82,7 +82,7 @@ public:
 protected:
 	virtual void Destroy();
 	virtual void OnResponseComplete(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance);
-	virtual void OnUpdateState(UtilHTTPRequestState NewState);
+	virtual void OnUpdateState(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, UtilHTTPRequestState NewState);
 	//Called when receive chunked payload data
 	virtual void OnReceiveData(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, const void* pData, size_t cbSize);
 private:

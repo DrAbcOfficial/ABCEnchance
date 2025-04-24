@@ -136,7 +136,10 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pFavCheckButton->AddActionSignalTarget(this);
 }
 COptionsAdvanceSubMultiPlay::~COptionsAdvanceSubMultiPlay(){
-	delete m_pSparyWad;
+	if (m_pSparyWad) {
+		delete m_pSparyWad;
+		m_pSparyWad = nullptr;
+	}
 }
 void COptionsAdvanceSubMultiPlay::ResetModel(){
 	ChangeModel(CVAR_GET_STRING("model"));
@@ -248,28 +251,25 @@ void COptionsAdvanceSubMultiPlay::OnButtonChanged(){
 	m_pCrosshairDisplay->InvalidateLayout();
 }
 void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
+
 	FIBITMAP* img = nullptr;
-	char ext[4];
-	wchar_t wpath[MAX_PATH];
-	Q_UTF8ToUnicode(fullpath, wpath, MAX_PATH);
-	Q_strncpy(ext, std::filesystem::path(wpath).extension().string().c_str(), 4);
-	if (!strnicmp(ext, ".tga", 4))
-		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_TARGA, wpath, 0);
-	else if(!strnicmp(ext, ".bmp", 4))
-		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_BMP, wpath, 0);
-	else if (!strnicmp(ext, ".jpg", 4))
-		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_JPEG, wpath, 0);
-	else if (!strnicmp(ext, ".png", 4))
-		img = FreeImage_LoadU(FREE_IMAGE_FORMAT::FIF_PNG, wpath, 0);
+	wchar_t wszFullPath[MAX_PATH]{};
+	Q_UTF8ToUnicode(fullpath, wszFullPath, MAX_PATH);
+
+	auto fiFormat = FreeImage_GetFileTypeU(wszFullPath);
+
+	if (!FreeImage_FIFSupportsReading(fiFormat))
+		return;
+
+	img = FreeImage_LoadU(fiFormat, wszFullPath, 0);
+
 	if (img) {
-		std::ofstream stream;
-		char wadpath[MAX_PATH];
-		filesystem()->GetLocalPath("tempdecal.wad", wadpath, MAX_PATH);
-		stream.open(wadpath, std::ios::out | std::ios::binary);
-		if (!stream.is_open()) {
+		auto hFileHandle = g_pFullFileSystem->Open("tempdecal.wad", "wb");
+		if (!hFileHandle) {
 			FreeImage_Unload(img);
 			return;
 		}
+
 		size_t w = FreeImage_GetWidth(img);
 		size_t h = FreeImage_GetHeight(img);
 		size_t nw = w;
@@ -309,10 +309,10 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			bits -= pitch;
 		}
 
-		img = FreeImage_ColorQuantizeEx(nimg, FIQ_WUQUANT, 256);
+		auto qimg = FreeImage_ColorQuantizeEx(nimg, FIQ_WUQUANT, 256);
 		FreeImage_Unload(nimg);
 		//swap pallete
-		RGBQUAD* palette = FreeImage_GetPalette(img);
+		RGBQUAD* palette = FreeImage_GetPalette(qimg);
 		int bluindex = -1;
 		for (size_t i = 0; i < 256; i++) {
 			RGBQUAD p = palette[i];
@@ -326,13 +326,13 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		}
 		//header
 		//Magic
-		stream.write("WAD3", 4);
+		g_pFullFileSystem->Write("WAD3", 4, hFileHandle);
 		//Num of lump
 		unsigned int headerbuf = 1;
-		stream.write((char*)&headerbuf, 4);
+		g_pFullFileSystem->Write(&headerbuf, 4, hFileHandle);
 		//lump offset
 		headerbuf = 0;
-		stream.write((char*)&headerbuf, 4);
+		g_pFullFileSystem->Write(&headerbuf, 4, hFileHandle);
 		size_t size = nw * nh;
 		//mips header
 		BSPMipTexHeader_t header;
@@ -343,8 +343,8 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		header.offsets[1] = sizeof(BSPMipTexHeader_t) + size;
 		header.offsets[2] = sizeof(BSPMipTexHeader_t) + size + (size / 4);
 		header.offsets[3] = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16);
-		stream.write((char*)&header, sizeof(BSPMipTexHeader_t));
-		bits = FreeImage_GetBits(img);
+		g_pFullFileSystem->Write(&header, sizeof(BSPMipTexHeader_t), hFileHandle);
+		bits = FreeImage_GetBits(qimg);
 		BYTE* flipped = new BYTE[size];
 		for (size_t i = 0; i < nh; i++) {
 			memcpy(flipped + i * nw, bits + (nh - i - 1) * nw, nw);
@@ -363,7 +363,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			for (size_t i = 0; i < (nh/lv); i++) {
 				for (size_t j = 0; j < (nw/lv); j++) {
 					char buf = flipped[i * lv * nw + j * lv];
-					stream.write((char*)&buf, 1);
+					g_pFullFileSystem->Write(&buf, 1, hFileHandle);
 				}
 			}
 		};
@@ -372,30 +372,30 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		}
 		delete[] flipped;
 		short colorused = 256;
-		stream.write((char*)&colorused, sizeof(short));
+		g_pFullFileSystem->Write(&colorused, sizeof(short), hFileHandle);
 		//Palette
 		for (size_t i = 0; i < 256; i++) {
 			RGBQUAD p = palette[i];
-			stream.write((char*)&p.rgbRed, 1);
-			stream.write((char*)&p.rgbGreen, 1);
-			stream.write((char*)&p.rgbBlue, 1);
+			g_pFullFileSystem->Write(&p.rgbRed, 1, hFileHandle);
+			g_pFullFileSystem->Write(&p.rgbGreen, 1, hFileHandle);
+			g_pFullFileSystem->Write(&p.rgbBlue, 1, hFileHandle);
 		}
 		//dummy pad
-		headerbuf = stream.tellp();
-		const static auto requiredPadding = [](int length, int padToMultipleOf) {
+		headerbuf = g_pFullFileSystem->Tell(hFileHandle);
+		const auto requiredPadding = [](int length, int padToMultipleOf) {
 			int excess = length % padToMultipleOf;
 			return excess == 0 ? 0 : padToMultipleOf - excess;
 		};
 		int padding = requiredPadding(headerbuf, 4);
 		headerbuf = 0;
 		for (int i = 0; i < padding; i++) {
-			stream.write((char*)&headerbuf, 1);
+			g_pFullFileSystem->Write(&headerbuf, 1, hFileHandle);
 		}
-		int lumpoffset = stream.tellp();
+		int lumpoffset = g_pFullFileSystem->Tell(hFileHandle);
 		//lump
 		int lumpsize = sizeof(BSPMipTexHeader_t) + size + (size / 4) + (size / 16) + (size / 64) + sizeof(short) + 256 * 3 + requiredPadding(2 + 256 * 3, 4);
 		WAD3Lump_t lump = {
-			sizeof(WAD3Header_t) + sizeof(WAD3Lump_t),
+			sizeof(WAD3Header_t),
 			lumpsize,
 			lumpsize,
 			0x43, //miptex
@@ -403,13 +403,15 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			0,
 			"{LOGO\0"
 		};
-		stream.write((char*)&lump, sizeof(WAD3Lump_t));
-		stream.seekp(8, std::ios::beg);
-		stream.write((char*)&lumpoffset, 4);
-		stream.close();
+		g_pFullFileSystem->Write(&lump, sizeof(WAD3Lump_t), hFileHandle);
+		g_pFullFileSystem->Seek(hFileHandle, 8, FILESYSTEM_SEEK_HEAD);
+		g_pFullFileSystem->Write(&lumpoffset, 4, hFileHandle);
+		g_pFullFileSystem->Close(hFileHandle);
+
 		FreeImage_Unload(img);
 
-		m_pSparyWad->Load(wadpath);
+		m_pSparyWad->Load("tempdecal.wad");
+
 		WadTexture* tex = m_pSparyWad->Get("{logo");
 		if (tex)
 			SetSparyPixel(tex->GetPixels(), tex->Width(), tex->Height());
