@@ -12,22 +12,17 @@ extern IFileSystem* g_pFullFileSystem;
 #define HL1_WAD3_SIGNATURE "WAD3"
 
 WadFile::WadFile(){
-    m_pHeader = { 0 };
-    m_aryLumps = nullptr;
+   
 }
 
 WadFile::~WadFile(){
     Clear();
-
-    if (m_aryLumps) {
-        delete[] m_aryLumps;
-        m_aryLumps = nullptr;
-    }
 }
 
 std::string WadFile::FilePath(){
     return m_szFilePath;
 }
+
 WadTexture* WadFile::Get(std::string name, bool ignoreCase){
     for (auto iter = m_aryTextures.begin(); iter != m_aryTextures.end(); iter++) {
         std::string tn = (*iter)->Name();
@@ -45,8 +40,10 @@ WadTexture* WadFile::Get(std::string name, bool ignoreCase){
 
 bool WadFile::Load(const std::string &filePath){
     Clear();
+
     if (filePath == "")
         return false;
+
     m_szFilePath = filePath;
 
     auto hFileHandle = g_pFullFileSystem->Open(filePath.c_str(), "rb");
@@ -57,7 +54,11 @@ bool WadFile::Load(const std::string &filePath){
     WAD3Header_t header;
     g_pFullFileSystem->Read(&header, sizeof(WAD3Header_t), hFileHandle);
     if (std::string(header.signature, 4) != HL1_WAD3_SIGNATURE)
+    {
+        g_pFullFileSystem->Close(hFileHandle);
         return false;
+    }
+
     m_aryLumps = new WAD3Lump_t[header.lumpsCount];
     g_pFullFileSystem->Seek(hFileHandle, header.lumpsOffset, FILESYSTEM_SEEK_HEAD);
     g_pFullFileSystem->Read(m_aryLumps, header.lumpsCount * sizeof(WAD3Lump_t), hFileHandle);
@@ -65,8 +66,10 @@ bool WadFile::Load(const std::string &filePath){
         unsigned char *lumpData = new unsigned char[m_aryLumps[i].size];
         g_pFullFileSystem->Seek(hFileHandle, m_aryLumps[i].offset, FILESYSTEM_SEEK_HEAD);
         g_pFullFileSystem->Read(lumpData, m_aryLumps[i].size, hFileHandle);
+
         if (g_pFullFileSystem->EndOfFile(hFileHandle))
             break;
+
         m_aryTextures.push_back(new WadTexture(m_aryLumps[i].name, this, lumpData, m_aryLumps[i]));
         delete[] lumpData;
     }
@@ -110,10 +113,16 @@ bool WadFile::SaveToFile(std::string const& filePath){
 }
 
 void WadFile::Clear(){
+
     if (m_aryTextures.size() > 0) {
         for (auto iter = m_aryTextures.begin(); iter != m_aryTextures.end(); iter++) {
             delete* iter;
         }
         m_aryTextures.clear();
+    }
+
+    if (m_aryLumps) {
+        delete[] m_aryLumps;
+        m_aryLumps = nullptr;
     }
 }
