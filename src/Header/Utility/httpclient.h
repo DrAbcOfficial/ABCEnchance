@@ -82,7 +82,7 @@ public:
 protected:
 	virtual void Destroy() override;
 	virtual void OnResponseComplete(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance) override;
-	virtual void OnUpdateState(UtilHTTPRequestState NewState) override;
+	virtual void OnUpdateState(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, UtilHTTPRequestState NewState) override;
 	//Called when receive chunked payload data
 	virtual void OnReceiveData(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, const void* pData, size_t cbSize) override;
 private:
