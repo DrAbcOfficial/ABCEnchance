@@ -318,7 +318,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 
 		int bluindex = -1;
 
-		for (size_t i = 0; i < numPalette; i++) {
+		for (int i = 0; i < numPalette; i++) {
 			RGBQUAD p = palette[i];
 			if (p.rgbRed == 0 && p.rgbGreen == 0 && p.rgbBlue == 255) {
 				auto tem = palette[255];
@@ -390,7 +390,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		short colorused = 256;
 		g_pFullFileSystem->Write(&colorused, sizeof(short), hFileHandle);
 
-		for (size_t i = 0; i < numPalette; i++) {
+		for (int i = 0; i < numPalette; i++) {
 			RGBQUAD p = palette[i];
 			g_pFullFileSystem->Write(&p.rgbRed, 1, hFileHandle);
 			g_pFullFileSystem->Write(&p.rgbGreen, 1, hFileHandle);

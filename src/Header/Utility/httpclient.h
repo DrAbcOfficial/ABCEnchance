@@ -80,11 +80,11 @@ public:
 	HTTPCLIENT_STATE GetState() const;
 	bool Interrupt();
 protected:
-	virtual void Destroy();
-	virtual void OnResponseComplete(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance);
-	virtual void OnUpdateState(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, UtilHTTPRequestState NewState);
+	virtual void Destroy() override;
+	virtual void OnResponseComplete(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance) override;
+	virtual void OnUpdateState(UtilHTTPRequestState NewState) override;
 	//Called when receive chunked payload data
-	virtual void OnReceiveData(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, const void* pData, size_t cbSize);
+	virtual void OnReceiveData(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, const void* pData, size_t cbSize) override;
 private:
 	std::function<void(IUtilHTTPResponse*)> m_pOnResponse = nullptr;
 	std::function<void()> m_pOnFinish = nullptr;

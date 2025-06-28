@@ -209,7 +209,7 @@ void CHttpClientItem::OnResponseComplete(IUtilHTTPRequest* RequestInstance, IUti
 		}
 	}
 }
-void CHttpClientItem::OnUpdateState(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, UtilHTTPRequestState NewState) {
+void CHttpClientItem::OnUpdateState(UtilHTTPRequestState NewState) {
 	switch (NewState)
 	{
 	case UtilHTTPRequestState::Idle:
