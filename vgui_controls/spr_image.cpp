@@ -98,26 +98,9 @@ void CSPRImage::Paint(){
 		m_Color.GetColor(r, g, b, a);
 		if (m_pParent)
 			a = m_pParent->GetAlpha();
-		gEngfuncs.pTriAPI->SpriteTexture(const_cast<struct model_s*>(gEngfuncs.GetSpritePointer(m_iTextureID)), static_cast<int>(m_flFrame));
-		gEngfuncs.pTriAPI->RenderMode(m_iRenderMode);
-		gEngfuncs.pTriAPI->CullFace(TRI_NONE);
-		gEngfuncs.pTriAPI->Begin(TRI_QUADS);
-		gEngfuncs.pTriAPI->Color4ub(r, g, b, a);
-		gEngfuncs.pTriAPI->Brightness(1);
-		gEngfuncs.pTriAPI->TexCoord2f(flLeft, flTop);
-		gEngfuncs.pTriAPI->Vertex3f((float)(m_nX), (float)(m_nY), 0);
-		gEngfuncs.pTriAPI->Brightness(1);
-		gEngfuncs.pTriAPI->TexCoord2f(flLeft, flBottom);
-		gEngfuncs.pTriAPI->Vertex3f((float)(m_nX), (float)(m_nY + m_tall), 0);
-		gEngfuncs.pTriAPI->Brightness(1);
-		gEngfuncs.pTriAPI->TexCoord2f(flRight, flBottom);
-		gEngfuncs.pTriAPI->Vertex3f((float)(m_nX + m_wide), (float)(m_nY + m_tall), 0);
-		gEngfuncs.pTriAPI->Brightness(1);
-		gEngfuncs.pTriAPI->TexCoord2f(flRight, flTop);
-		gEngfuncs.pTriAPI->Vertex3f((float)(m_nX + m_wide), (float)(m_nY), 0);
-		gEngfuncs.pTriAPI->End();
-		gEngfuncs.pTriAPI->CullFace(TRI_FRONT);
-		gEngfuncs.pTriAPI->RenderMode(kRenderNormal);
+
+		extern void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom, int r, int g, int b, int a, int frame);
+		DrawSPRIconRect(m_iTextureID, m_iRenderMode, m_nX, m_nY, m_wide, m_tall, flLeft, flRight, flTop, flBottom, r, g, b, a, m_flFrame);
 	}
 }
 

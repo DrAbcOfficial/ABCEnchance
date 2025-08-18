@@ -1,6 +1,7 @@
 #pragma once
 void glBind(GLint tex);
 void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame = 0);
+void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom, int r, int g, int b, int a, int frame);
 void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], int r, int g, int b, int a);
 int GetHudFontHeight(vgui::HFont m_hFont);
 void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m_hFont);

@@ -67,6 +67,7 @@ using cl_refHookfunc_t = struct{
 #pragma endregion
 #pragma region Engine
 	void (*CEngineClient_RenderView)				(ref_params_s* param, bool bClearColor, bool bDrawViewModel, int iPassIndex);
+	/*(mspriteframe_s *)*/void* (*R_GetSpriteFrame) (/* (msprite_s*) */ void* pSprite, int frame);
 	void (*GL_Bind)					(int texnum);
 
 	void (*R_NewMap)					();
