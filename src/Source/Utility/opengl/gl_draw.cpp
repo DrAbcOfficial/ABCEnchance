@@ -20,6 +20,7 @@ void glBind(GLint tex){
 }
 
 void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame) {
+
 	gEngfuncs.pTriAPI->SpriteTexture((struct model_s*)gEngfuncs.GetSpritePointer(SprHandle), frame);
 	gEngfuncs.pTriAPI->RenderMode(mode);
 	gEngfuncs.pTriAPI->CullFace(TRI_NONE);
