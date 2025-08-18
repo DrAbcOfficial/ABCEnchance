@@ -27,36 +27,25 @@ using mspriteframe_t = struct mspriteframe_s
 	int		gl_texturenum;
 };
 
-void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, int r, int g, int b, int a, int frame) {
+void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, 
+	unsigned char r, unsigned char g, unsigned char b, unsigned char a, int frame) {
 	SPR_Set(SprHandle, r, g, b);
-	extern /* (msprite_s*) */ void* gpSprite;
+	extern /* (msprite_s**) */ void* gpSprite;
 	void* spr = *(void**)gpSprite;
 	mspriteframe_t* memsprite = static_cast<mspriteframe_t*>(gHookFuncs.R_GetSpriteFrame(spr, frame));
 	if (!memsprite)
 		return;
-	if (mode == kRenderTransAdd) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_ONE, GL_ONE);
-	}
-	glDepthMask(0);
-	glBind(memsprite->gl_texturenum);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, 0x46040000); //0x46040000 ?
-	glColor4i(r, g, b, a);
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0);
-	glVertex2f(x, y);
-	glTexCoord2f(0, 1);
-	glVertex2f(x, y + h);
-	glTexCoord2f(1, 1);
-	glVertex2f(x + w, y + h);
-	glTexCoord2f(1, 0);
-	glVertex2f(x + w, y);
-	glEnd();
-	glDepthMask(1);
+	vgui::surface()->DrawSetTexture(memsprite->gl_texturenum);
+	vgui::surface()->DrawSetColor(r, g, b, a);
+	if (mode == kRenderTransAdd)
+		vgui::surface()->DrawTexturedRectAdd(x, y, x + w, x + h);
+	else
+		vgui::surface()->DrawTexturedRect(x, y, x + w, x + h);
 }
-void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom, int r, int g, int b, int a, int frame) {
+void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom, 
+	unsigned char r, unsigned char g, unsigned char b, unsigned char a, int frame) {
 	SPR_Set(SprHandle, r, g, b);
-	extern /* (msprite_s*) */ void* gpSprite;
+	extern /* (msprite_s**) */ void* gpSprite;
 	void* spr = *(void**)gpSprite;
 	mspriteframe_t* memsprite = static_cast<mspriteframe_t*>(gHookFuncs.R_GetSpriteFrame(spr, frame));
 	if (!memsprite)
@@ -80,10 +69,22 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 	glVertex2f(x + w, y);
 	glEnd();
 	glDepthMask(1);
+	//vgui::Vertex_t dots[4] = {
+	//	vgui::Vertex_t(Vector2D(x, y), Vector2D(left, top)),
+	//	vgui::Vertex_t(Vector2D(x, y + h), Vector2D(left, bottom)),
+	//	vgui::Vertex_t(Vector2D(x + w,y + h), Vector2D(right, bottom)),
+	//	vgui::Vertex_t(Vector2D(x + w,y), Vector2D(right, top)),
+	//};
+	//if(mode == kRenderTransAdd)
+	//	glBlendFunc(GL_ONE, GL_ONE);
+	//vgui::surface()->DrawSetTexture(memsprite->gl_texturenum);
+	//vgui::surface()->DrawSetColor(r, g, b, a);
+	//vgui::surface()->DrawTexturedPolygon(4, dots);
 }
-void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], int r, int g, int b, int a) {
+void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], 
+	unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
 	SPR_Set(SprHandle, r, g, b);
-	extern /* (msprite_s*) */ void* gpSprite;
+	extern /* (msprite_s**) */ void* gpSprite;
 	void* spr = *(void**)gpSprite;
 	mspriteframe_t* memsprite = static_cast<mspriteframe_t*>(gHookFuncs.R_GetSpriteFrame(spr, 0));
 	if (!memsprite)
@@ -107,6 +108,17 @@ void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[
 	glVertex2f(p4[0], p4[1]);
 	glEnd();
 	glDepthMask(1);
+	//vgui::Vertex_t dots[4] = {
+	//	vgui::Vertex_t(Vector2D(p1), Vector2D(0,0)),
+	//	vgui::Vertex_t(Vector2D(p2), Vector2D(0,1)),
+	//	vgui::Vertex_t(Vector2D(p3), Vector2D(1,1)),
+	//	vgui::Vertex_t(Vector2D(p4), Vector2D(1,0)),
+	//};
+	//if (mode == kRenderTransAdd)
+	//	glBlendFunc(GL_ONE, GL_ONE);
+	//vgui::surface()->DrawSetTexture(memsprite->gl_texturenum);
+	//vgui::surface()->DrawSetColor(r, g, b, a);
+	//vgui::surface()->DrawTexturedPolygon(4, dots);
 }
 int GetHudFontHeight(vgui::HFont m_hFont) {
 	if (!m_hFont)

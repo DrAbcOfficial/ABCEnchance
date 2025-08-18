@@ -99,7 +99,8 @@ void CSPRImage::Paint(){
 		if (m_pParent)
 			a = m_pParent->GetAlpha();
 
-		extern void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom, int r, int g, int b, int a, int frame);
+		extern void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom,
+			unsigned char r, unsigned char g, unsigned char b, unsigned char a, int frame);
 		DrawSPRIconRect(m_iTextureID, m_iRenderMode, m_nX, m_nY, m_wide, m_tall, flLeft, flRight, flTop, flBottom, r, g, b, a, m_flFrame);
 	}
 }
