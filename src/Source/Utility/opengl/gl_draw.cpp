@@ -54,17 +54,21 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
 	}
-	vgui::Vertex_t dots[4] = {
-		vgui::Vertex_t(Vector2D(x, y), Vector2D(left, top)),
-		vgui::Vertex_t(Vector2D(x, y + h), Vector2D(left, bottom)),
-		vgui::Vertex_t(Vector2D(x + w,y + h), Vector2D(right, bottom)),
-		vgui::Vertex_t(Vector2D(x + w,y), Vector2D(right, top)),
-	};
-	if(mode == kRenderTransAdd)
-		glBlendFunc(GL_ONE, GL_ONE);
-	vgui::surface()->DrawSetTexture(memsprite->gl_texturenum);
-	vgui::surface()->DrawSetColor(r, g, b, a);
-	vgui::surface()->DrawTexturedPolygon(4, dots);
+	glDepthMask(0);
+	glBind(memsprite->gl_texturenum);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, 0x46040000); //0x46040000 ?
+	glColor4f(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(left, top);
+	glVertex2f(x, y);
+	glTexCoord2f(left, bottom);
+	glVertex2f(x, y + h);
+	glTexCoord2f(right, bottom);
+	glVertex2f(x + w, y + h);
+	glTexCoord2f(right, top);
+	glVertex2f(x + w, y);
+	glEnd();
+	glDepthMask(1);
 	if (mode == kRenderTransAdd) {
 		glDisable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -82,15 +86,21 @@ void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
 	}
-	vgui::Vertex_t dots[4] = {
-		vgui::Vertex_t(Vector2D(p1), Vector2D(0,0)),
-		vgui::Vertex_t(Vector2D(p2), Vector2D(0,1)),
-		vgui::Vertex_t(Vector2D(p3), Vector2D(1,1)),
-		vgui::Vertex_t(Vector2D(p4), Vector2D(1,0)),
-	};
-	vgui::surface()->DrawSetTexture(memsprite->gl_texturenum);
-	vgui::surface()->DrawSetColor(r, g, b, a);
-	vgui::surface()->DrawTexturedPolygon(4, dots);
+	glDepthMask(0);
+	glBind(memsprite->gl_texturenum);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, 0x46040000); //0x46040000 ?
+	glColor4f(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0);
+	glVertex2f(p1[0], p1[1]);
+	glTexCoord2f(0, 1);
+	glVertex2f(p2[0], p2[1]);
+	glTexCoord2f(1, 1);
+	glVertex2f(p3[0], p3[1]);
+	glTexCoord2f(1, 0);
+	glVertex2f(p4[0], p4[1]);
+	glEnd();
+	glDepthMask(1);
 	if (mode == kRenderTransAdd) {
 		glDisable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
