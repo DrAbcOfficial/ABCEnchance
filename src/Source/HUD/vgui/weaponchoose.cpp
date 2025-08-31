@@ -227,7 +227,8 @@ void CWeaponChoosePanel::PerformLayout(){
 		slot->SetPos(x, y);
 		y += slot->GetTall();
 		auto& list = m_aryPanelList[i];
-		bool ss = sslot >= 0 && sslot == i;
+		//防止槽位为空时展开选择框
+		bool ss = sslot >= 0 && sslot == i && gWR.HasWeapon(select); 
 		for (auto iter2 = list.begin(); iter2 != list.end(); iter2++) {
 			auto& item = *iter2;
 			if (ss)
@@ -290,6 +291,17 @@ void CWeaponChoosePanel::SelectWeapon(){
 }
 void CWeaponChoosePanel::ChooseWeapon(WEAPON* weapon){
 	ShowPanel(true);
+
+	//如果选到空槽位，关闭上次的选择框和高亮spr
+	if (!weapon || !gWR.HasWeapon(weapon)) {
+		if (m_pHandledWeapon)
+			reinterpret_cast<CWeaponChooseItem*>(m_pHandledWeapon.Get())->SetActivate(false);
+		m_pSelectBucket->SetVisible(false);
+		return;
+	}
+
+	m_pSelectBucket->SetVisible(true);
+
 	for (auto iter1 = m_aryPanelList.begin(); iter1 != m_aryPanelList.end(); iter1++) {
 		auto& list = *iter1;
 		for (auto iter2 = list.begin(); iter2 != list.end(); iter2++) {
