@@ -215,9 +215,7 @@ void CWeaponChoosePanel::SetParent(vgui::VPANEL parent) {
 void CWeaponChoosePanel::PerformLayout(){
 	BaseClass::PerformLayout();
 	WEAPON* select = gWR.m_pNowSelected;
-	int sslot = -1;
-	if (select)
-		sslot = select->iSlot;
+	int sslot = gWR.m_iNowSlot;
 	int x = 0;
 	g_iRainbowColorCounter = 0;
 	for (size_t i = 0; i < m_aryPanelList.size(); i++) {
@@ -297,6 +295,7 @@ void CWeaponChoosePanel::ChooseWeapon(WEAPON* weapon){
 		if (m_pHandledWeapon)
 			reinterpret_cast<CWeaponChooseItem*>(m_pHandledWeapon.Get())->SetActivate(false);
 		m_pSelectBucket->SetVisible(false);
+		InvalidateLayout();
 		return;
 	}
 
