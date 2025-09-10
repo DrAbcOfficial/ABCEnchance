@@ -368,6 +368,14 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		return pos;
 	};
 	if (bWheel) {
+		if (!m_pNowSelected) {
+			auto iter = m_pAviliableWeaponData.Begin();
+			if (iter != m_pAviliableWeaponData.End())
+				m_pNowSelected = iter->second;
+			else
+				return;
+		}
+			
 		//如果是当前slot
 		if (iAdvance > 0) {
 			if (m_pAviliableWeaponData.GetMaxPos(iSlot) == m_pNowSelected->iSlotPos) {
