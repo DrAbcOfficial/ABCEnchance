@@ -48,11 +48,13 @@ void GaussianBlurPanel::SetBlurness(size_t f){
 // Purpose: 
 //-----------------------------------------------------------------------------
 void GaussianBlurPanel::PaintBackground(){
+
+#if 0 //Not supported in Core Profile. btw undefined behavior, Don't do that.
 	static auto rendershader = [](pp_kawaseblur_program_t shader, float offset, int w, int h) {
 		GL_UseProgram(shader.program);
-		GL_Uniform2f(shader.offset, offset, offset);
-		GL_Uniform2f(shader.iResolution, w, h);
-		GL_Uniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
+		glUniform2f(shader.offset, offset, offset);
+		glUniform2f(shader.iResolution, w, h);
+		glUniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
 		glColor4ub(255, 255, 255, 255);
 		glBegin(GL_QUADS);
 		glTexCoord2i(0, 0);
@@ -70,6 +72,7 @@ void GaussianBlurPanel::PaintBackground(){
 	int hw = ScreenWidth() / 2;
 	int hh = ScreenHeight() / 2;
 	
+	//Copy current RT to m_hBufferTex for future blur usage
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hBufferFBO, ScreenWidth(), ScreenHeight(), hw, hh);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
@@ -77,7 +80,7 @@ void GaussianBlurPanel::PaintBackground(){
 	glPushAttrib(GL_VIEWPORT_BIT);
 	glViewport(-hw, -hh, ScreenWidth(), ScreenHeight());
 	glEnable(GL_TEXTURE_2D);
-	glBind(m_hBufferTex);
+	GL_Bind(m_hBufferTex);
 	for (size_t i = 0; i < m_iBlurIteration; i++) {
 		rendershader(pp_kawaseblur_down, m_iBlurOffset, hw, hh);
 	}
@@ -87,7 +90,7 @@ void GaussianBlurPanel::PaintBackground(){
 	glPopAttrib();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 
-	glBind(m_hBufferTex);
+	GL_Bind(m_hBufferTex);
 	Color bgcolor = GetBgColor();
 	glColor4ub(bgcolor.r(), bgcolor.g(), bgcolor.b(), bgcolor.a());
 
@@ -111,6 +114,7 @@ void GaussianBlurPanel::PaintBackground(){
 	glVertex2f(x + w, y + h);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
+#endif
 }
 
 //-----------------------------------------------------------------------------

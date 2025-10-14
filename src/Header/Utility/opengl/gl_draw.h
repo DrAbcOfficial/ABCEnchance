@@ -1,5 +1,6 @@
 #pragma once
-void glBind(GLint tex);
+
+void GL_Bind(GLint gltexturenum);
 void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int frame = 0);
 void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int frame);
 void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], unsigned char r, unsigned char g, unsigned char b, unsigned char a);

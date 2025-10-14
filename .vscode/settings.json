@@ -1,0 +1,95 @@
+{
+    // C/C++ IntelliSense 配置
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}",
+        "${workspaceFolder}/vgui_controls",
+        "${workspaceFolder}/SourceSDK",
+        "${workspaceFolder}/SourceSDK/tier0",
+        "${workspaceFolder}/SourceSDK/tier1",
+        "${workspaceFolder}/SourceSDK/vstdlib",
+        "${workspaceFolder}/VGUI2",
+        "${workspaceFolder}/VGUI2/interface",
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/src/Header",
+        "${workspaceFolder}/src/Header/Var",
+        "${workspaceFolder}/src/Header/Utility",
+        "${workspaceFolder}/src/Header/Utility/opengl",
+        "${workspaceFolder}/src/Header/HUD",
+        "${workspaceFolder}/src/Header/HUD/vgui",
+        "${workspaceFolder}/src/thirdparty",
+        "${workspaceFolder}/src/Particleman",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/Interface",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/Interface/VGUI",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/utils",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/public",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/pm_shared",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/engine",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/dlls",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/common",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/cl_dll",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/VGUI",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/SteamSDK",
+        "${workspaceFolder}/thirdparty/MetaHookSv/include/vgui_controls",
+        "${workspaceFolder}/thirdparty/MetaHookSv/thirdparty/rapidjson/include",
+        "${workspaceFolder}/thirdparty/MetaHookSv/thirdparty/capstone/include",
+        "${workspaceFolder}/thirdparty/MetaHookSv/thirdparty/FreeImage/Dist/x32",
+        "${workspaceFolder}/thirdparty/MetaHookSv/thirdparty/glew/include"
+    ],
+    "C_Cpp.default.defines": [
+        "WIN32",
+        "_WINDOWS",
+        "_USRDLL",
+        "GLEW_STATIC",
+        "VGUI_USE_SURFACE2",
+        "VGUI_USE_SCHEME2",
+        "VGUI_USE_INPUT2",
+        "NO_MALLOC_OVERRIDE",
+        "NO_TIER0_MINIDUMP",
+        "_ITERATOR_DEBUG_LEVEL=0"
+    ],
+    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.cStandard": "c17",
+    "C_Cpp.default.compilerPath": "",
+    "C_Cpp.default.intelliSenseMode": "windows-msvc-x86",
+    // 文件关联
+    "files.associations": {
+        "*.vsh": "glsl",
+        "*.fsh": "glsl",
+        "*.h": "cpp",
+        "*.cpp": "cpp"
+    },
+
+    // 文件编码（项目使用 MultiByte/GBK）
+    "files.encoding": "gbk",
+    "files.autoGuessEncoding": true,
+
+    // 排除不必要的文件夹以提高性能
+    "files.exclude": {
+        "**/.git": true,
+        "**/Debug": true,
+        "**/Release": true,
+        "**/Release_AVX2": true,
+        "**/*.obj": true,
+        "**/*.pdb": true,
+        "**/*.ilk": true
+    },
+
+    // 搜索排除
+    "search.exclude": {
+        "**/Debug": true,
+        "**/Release": true,
+        "**/Release_AVX2": true,
+        "**/*.obj": true,
+        "**/*.pdb": true
+    },
+
+    // 编辑器配置
+    "editor.formatOnSave": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false,
+
+    // C++ 特定设置
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.enhancedColorization": "enabled"
+}

@@ -32,32 +32,32 @@ public:
 	void SetScale(bool state);
 	void SetAvatarVisible(bool state);
 private:
-	vgui::ImagePanel* m_pBackground;
-	vgui::ImagePanel* m_pRoundBackground;
-	vgui::ImagePanel* m_pMapground;
-	vgui::ImagePanel* m_pUpground;
-	vgui::ImagePanel* m_pNorthground;
-	vgui::ImagePanel* m_pViewangleground;
+	vgui::ImagePanel* m_pBackground{};
+	vgui::ImagePanel* m_pRoundBackground{};
+	vgui::ImagePanel* m_pMapground{};
+	vgui::ImagePanel* m_pUpground{};
+	vgui::ImagePanel* m_pNorthground{};
+	vgui::ImagePanel* m_pViewangleground{};
 
 	std::array<vgui::CAvatarImagePanel*, 32> m_aryPlayerAvatars;
 
-	float m_flRoundRadius;
+	float m_flRoundRadius{};
 	Color m_cOutline;
 	Color m_cMap;
 
-	uint m_hRadarBufferFBO;
+	uint m_hRadarBufferFBO{};
 
-	int m_iStartWidth;
-	int m_iStartTall;
-	int m_iScaledWidth;
-	int m_iScaledTall;
+	int m_iStartWidth{};
+	int m_iStartTall{};
+	int m_iScaledWidth{};
+	int m_iScaledTall{};
 
 	size_t iOverviewR = 0;
 	size_t iOverviewG = 0;
 	size_t iOverviewB = 0;
 
-	vec3_t m_oldViewOrg;
-	vec3_t m_oldViewAng;
-	int m_oldFrameBuffer;
+	vec3_t m_oldViewOrg{};
+	vec3_t m_oldViewAng{};
+	int m_oldFrameBuffer{};
 };
 #endif

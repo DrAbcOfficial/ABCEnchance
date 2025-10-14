@@ -16,7 +16,6 @@ extern overviewInfo_t* gDevOverview;
 extern metaplugins_t g_metaplugins;
 
 extern void CheckAsset();
-extern void CheckOtherPlugin();
 
 //Hook
 extern void AddHook(hook_t* h);
@@ -58,7 +57,7 @@ extern void HUD_DrawTransparentTriangles();
 
 #define Fill_Sig(sig, base, size, dst) {gHookFuncs.dst = (decltype(gHookFuncs.dst))g_pMetaHookAPI->SearchPattern(base, size, sig, Sig_Length(sig));Sig_FuncNotFound(dst);}
 #define GetCallAddress(addr) (addr + (*(int *)((addr)+1)) + 5)
-#define Sig_NotFound(name) SYS_ERROR("Could not found: %s\nEngine buildnum£º%d", #name, g_dwEngineBuildnum);
+#define Sig_NotFound(name) SYS_ERROR("Could not found: %s\nEngine buildnum %d", #name, g_dwEngineBuildnum);
 #define Sig_FuncNotFound(name) if(!gHookFuncs.name) Sig_NotFound(name)
 #define Sig_AddrNotFound(name) if(!addr) Sig_NotFound(name)
 #define Sig_AddrFoundOrFill(name) Sig_AddrNotFound(name) else name = (decltype(name))addr;

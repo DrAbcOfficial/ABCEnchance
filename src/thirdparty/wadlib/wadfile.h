@@ -24,8 +24,8 @@ public:
 private:
     std::string m_szFilePath;
     std::vector<WadTexture*> m_aryTextures;
-    WAD3Header_t m_pHeader;
-    WAD3Lump_t* m_aryLumps;
+    WAD3Header_t m_pHeader{};
+    WAD3Lump_t* m_aryLumps{};
 };
 
 #endif // WADFILE_H

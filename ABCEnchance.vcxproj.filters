@@ -701,6 +701,9 @@
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
       <Filter>Public\Thirdparty</Filter>
     </ClCompile>
+    <ClCompile Include="src\Source\Utility\MetaRenderer.cpp">
+      <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceSDK\Color.h">
@@ -1503,6 +1506,9 @@
     </ClInclude>
     <ClInclude Include="vgui2\GameUI\VoteMenuDialog.h">
       <Filter>vgui2\gameui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Header\Utility\MetaRenderer.h">
+      <Filter>Public\Header\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

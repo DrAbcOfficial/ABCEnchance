@@ -143,26 +143,35 @@ int CHudIndicator::DrawPain(float flTime){
 		fa *= 0.7;
 		int wDiffer = SizedScreenW - ScreenWidth();
 		int hDiffer = SizedScreenH - ScreenHeight();
+
+		//Copy current RT to m_hFilterTex
 		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hFilterFBO);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hFilterTex, 0);
 		GL_BlitFrameBufferToFrameBufferColorOnly(m_hOldBuffer, m_hFilterFBO, ScreenWidth(), ScreenHeight(), ScreenWidth(), ScreenHeight());
-
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
+
+		//TODO: need refactoring
+#if 0
 		glEnable(GL_TEXTURE_2D);
-		glBind(m_hFilterTex);
+		GL_Bind(m_hFilterTex);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glColor4ub(255, 255, 255, 255);
 		GL_UseProgram(pp_colorlize.program);
-		GL_Uniform2f(pp_colorlize.ha, 0, fa);
-			DrawQuadPos(-wDiffer, -hDiffer, SizedScreenW, SizedScreenH);
-		GL_Uniform2f(pp_colorlize.ha, 0.3, fa);
-			DrawQuadPos(0, -hDiffer, SizedScreenW, SizedScreenH);
-		GL_Uniform2f(pp_colorlize.ha, 0.6, fa);
-			DrawQuadPos(-wDiffer, 0, SizedScreenW, SizedScreenH);
+
+		glUniform2f(pp_colorlize.ha, 0, fa);
+		DrawQuadPos(-wDiffer, -hDiffer, SizedScreenW, SizedScreenH);
+
+		glUniform2f(pp_colorlize.ha, 0.3, fa);
+		DrawQuadPos(0, -hDiffer, SizedScreenW, SizedScreenH);
+
+		glUniform2f(pp_colorlize.ha, 0.6, fa);
+		DrawQuadPos(-wDiffer, 0, SizedScreenW, SizedScreenH);
+
 		GL_UseProgram(0);
 		glDisable(GL_BLEND);
+#endif
 	}
 	for (indicatorinfo_t var : aryIndicators) {
 		if (var.flKeepTime <= flTime)

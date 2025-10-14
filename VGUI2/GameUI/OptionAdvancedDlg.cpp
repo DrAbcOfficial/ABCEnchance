@@ -53,9 +53,9 @@ using namespace vgui;
 
 class ModelListPanel : public ListPanel {
 public:
-	ModelListPanel(Panel* parent, const char* name): ListPanel(parent, name) {
+	ModelListPanel(Panel* parent, const char* name) : ListPanel(parent, name) {
 	}
-	void OnMouseDoublePressed(MouseCode code){
+	void OnMouseDoublePressed(MouseCode code) {
 		if (GetItemCount() > 0) {
 			int itemID = GetSelectedItem(0);
 			PostActionSignal(new KeyValues("FavChange", "itemID", itemID, "add", !std::strcmp(GetItem(itemID)->GetString("fav"), FAVMODEL_ICON) ? 0 : 1));
@@ -67,13 +67,14 @@ public:
 	ModelFilterButton(Panel* parent, const char* name, const char* content) : CheckButton(parent, name, content) {
 
 	}
-	void SetSelected(bool state) override{
+	void SetSelected(bool state) override {
 		KeyValues* msg = new KeyValues("FilterModelChecked", "state", (int)state);
 		PostActionSignal(msg);
 		Button::SetSelected(state);
 	}
 };
-COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubMultiPlay"){
+
+COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubMultiPlay") {
 	m_pModelViewer = new ModelViewPanel(this, "ModelViewer");
 	m_pModelController = new Slider(this, "ModelController");
 	m_pModelList = new ModelListPanel(this, "ModelList");
@@ -135,29 +136,33 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	m_pCrosshairOutline->AddActionSignalTarget(this);
 	m_pFavCheckButton->AddActionSignalTarget(this);
 }
-COptionsAdvanceSubMultiPlay::~COptionsAdvanceSubMultiPlay(){
+
+COptionsAdvanceSubMultiPlay::~COptionsAdvanceSubMultiPlay() {
 	if (m_pSparyWad) {
 		delete m_pSparyWad;
 		m_pSparyWad = nullptr;
 	}
 }
-void COptionsAdvanceSubMultiPlay::ResetModel(){
+
+void COptionsAdvanceSubMultiPlay::ResetModel() {
 	ChangeModel(CVAR_GET_STRING("model"));
 }
-void COptionsAdvanceSubMultiPlay::ChangeModel(const char* mdl){
-	char path[MAX_PATH] = {};
+
+void COptionsAdvanceSubMultiPlay::ChangeModel(const char* mdl) {
+	char path[MAX_PATH]{};
 	std::snprintf(path, MAX_PATH, "models/player/%s/%s.mdl", mdl, mdl);
 	m_pModelViewer->ChangeModel(path);
 }
-void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter){
+
+void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter) {
 	m_pModelList->RemoveAll();
 	m_aryModelList.clear();
 	FileFindHandle_t findHandle;
 	auto pszFileName = filesystem()->FindFirst("models/player/*.*", &findHandle);
 	if (!pszFileName)
 		return;
-	if (pszFileName){
-		do{
+	if (pszFileName) {
+		do {
 			if (filesystem()->FindIsDirectory(findHandle) && *pszFileName != '.') {
 				m_aryModelList.insert(std::make_pair<std::string, bool>(pszFileName, false));
 			}
@@ -171,7 +176,7 @@ void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter){
 		if (std::find(cfg->m_aryFavModels.begin(), cfg->m_aryFavModels.end(), name) != cfg->m_aryFavModels.end())
 			iter->second = true;
 	}
-	
+
 	size_t counter = 0;
 	size_t plr = 0;
 	std::string flt = filter ? filter : "";
@@ -193,6 +198,7 @@ void COptionsAdvanceSubMultiPlay::BuildModelList(const char* filter){
 	}
 	m_pModelList->SetSingleSelectedItem(plr);
 }
+
 void COptionsAdvanceSubMultiPlay::OnFavChange(int itemID, int add) {
 	auto item = m_pModelList->GetItem(itemID);
 	if (item) {
@@ -211,6 +217,7 @@ void COptionsAdvanceSubMultiPlay::OnFavChange(int itemID, int add) {
 			cfg->m_aryFavModels.erase(cfgit);
 	}
 }
+
 void COptionsAdvanceSubMultiPlay::OnOpenContextMenu(int itemID) {
 	if (itemID < 0)
 		return;
@@ -225,9 +232,11 @@ void COptionsAdvanceSubMultiPlay::OnOpenContextMenu(int itemID) {
 	menu->PositionRelativeToPanel(this, Menu::CURSOR, 0, true);
 	menu->MakePopup();
 }
+
 void COptionsAdvanceSubMultiPlay::OnFilterModelChecked(int state) {
 	FilterModel();
 }
+
 void COptionsAdvanceSubMultiPlay::OnSliderMoved() {
 	m_pModelViewer->SetModelRotate(0, m_pModelController->GetValue(), 0);
 
@@ -241,15 +250,18 @@ void COptionsAdvanceSubMultiPlay::OnSliderMoved() {
 	m_pCrosshairDisplay->SetOutlineWidth(m_pCrosshairOutlineWidth->GetValue());
 	m_pCrosshairDisplay->InvalidateLayout();
 }
+
 void COptionsAdvanceSubMultiPlay::OnItemSelected() {
 	ChangeModel(m_pModelList->GetItem(m_pModelList->GetSelectedItem(0))->GetName());
 }
-void COptionsAdvanceSubMultiPlay::OnButtonChanged(){
+
+void COptionsAdvanceSubMultiPlay::OnButtonChanged() {
 	m_pCrosshairDisplay->SetDot(m_pCrosshairDot->IsSelected());
 	m_pCrosshairDisplay->SetT(m_pCrosshairT->IsSelected());
 	m_pCrosshairDisplay->SetOutline(m_pCrosshairOutline->IsSelected());
 	m_pCrosshairDisplay->InvalidateLayout();
 }
+
 void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 
 	FIBITMAP* img = nullptr;
@@ -288,20 +300,20 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			BYTE* pixel = (BYTE*)bits;
 			for (size_t x = 0; x < nw; x++) {
 				switch (bitnum) {
-					case 1: //8bpp
-					case 2: //16bpp
-					case 3: break; //24bpp
-					  //32bpp
-					case 4: {
-						BYTE alpha = pixel[FI_RGBA_ALPHA];
-						if (alpha < 125) {
-							pixel[FI_RGBA_RED] = 0;
-							pixel[FI_RGBA_GREEN] = 0;
-							pixel[FI_RGBA_BLUE] = 255;
-						}
-						pixel[FI_RGBA_ALPHA] = 255;
-						break;
+				case 1: //8bpp
+				case 2: //16bpp
+				case 3: break; //24bpp
+					//32bpp
+				case 4: {
+					BYTE alpha = pixel[FI_RGBA_ALPHA];
+					if (alpha < 125) {
+						pixel[FI_RGBA_RED] = 0;
+						pixel[FI_RGBA_GREEN] = 0;
+						pixel[FI_RGBA_BLUE] = 255;
 					}
+					pixel[FI_RGBA_ALPHA] = 255;
+					break;
+				}
 					  //wtf
 				default: break;
 				}
@@ -326,7 +338,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 				palette[i] = tem;
 				bluindex = (int)i;
 				break;
-			}	
+			}
 		}
 
 		if (bluindex == -1)
@@ -347,7 +359,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		g_pFullFileSystem->Write(&headerbuf, 4, hFileHandle);
 		size_t size = nw * nh;
 		//mips header
-		BSPMipTexHeader_t header = {0};
+		BSPMipTexHeader_t header = { 0 };
 		Q_strncpy(header.name, "{LOGO", 16);
 		header.width = nw;
 		header.height = nh;
@@ -374,13 +386,13 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		//mips data
 		const  static auto write_mips = [&](int mips_level) {
 			int lv = pow(2, mips_level);
-			for (size_t i = 0; i < (nh/lv); i++) {
-				for (size_t j = 0; j < (nw/lv); j++) {
+			for (size_t i = 0; i < (nh / lv); i++) {
+				for (size_t j = 0; j < (nw / lv); j++) {
 					BYTE buf = flipped[i * lv * nw + j * lv];
 					g_pFullFileSystem->Write(&buf, 1, hFileHandle);
 				}
 			}
-		};
+			};
 
 		for (size_t i = 0; i < 4; i++) {
 			write_mips(i);
@@ -409,7 +421,7 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 		const auto requiredPadding = [](int length, int padToMultipleOf) {
 			int excess = length % padToMultipleOf;
 			return excess == 0 ? 0 : padToMultipleOf - excess;
-		};
+			};
 		int padding = requiredPadding(headerbuf, 4);
 		headerbuf = 0;
 		for (int i = 0; i < padding; i++) {
@@ -443,7 +455,8 @@ void COptionsAdvanceSubMultiPlay::OnFileSelected(const char* fullpath) {
 			SetSparyPixel(tex->GetPixels(), tex->Width(), tex->Height());
 	}
 }
-void COptionsAdvanceSubMultiPlay::OnResetData(){
+
+void COptionsAdvanceSubMultiPlay::OnResetData() {
 	ResetModel();
 	BuildModelList();
 
@@ -461,19 +474,21 @@ void COptionsAdvanceSubMultiPlay::OnResetData(){
 	m_pCrosshairDisplay->InvalidateLayout();
 
 	WadTexture* tex = m_pSparyWad->Get("{logo");
+
 	if (!tex) {
 		m_pSparyWad->Load("tempdecal.wad");
 		tex = m_pSparyWad->Get("{logo");
 	}
 
-	if(tex)
+	if (tex)
 		SetSparyPixel(tex->GetPixels(), tex->Width(), tex->Height());
-	
+
 }
-void COptionsAdvanceSubMultiPlay::OnApplyChanges(){
+
+void COptionsAdvanceSubMultiPlay::OnApplyChanges() {
 	BaseClass::OnApplyChanges();
 	int mdlIndex = m_pModelList->GetSelectedItem(0);
-	if (mdlIndex != -1) 
+	if (mdlIndex != -1)
 		CVAR_SET_STRING("model", m_pModelList->GetItem(mdlIndex)->GetName());
 
 	m_pCrosshairr->ApplyChanges();
@@ -494,7 +509,8 @@ void COptionsAdvanceSubMultiPlay::OnApplyChanges(){
 	m_pCrosshairT->ApplyChanges();
 	m_pCrosshairOutline->ApplyChanges();
 }
-void COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
+
+void COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd) {
 	if (!std::strcmp(cmd, "FilterModel"))
 		FilterModel();
 	else if (!std::strcmp(cmd, "OpenLoadSparyDialog")) {
@@ -509,24 +525,31 @@ void COptionsAdvanceSubMultiPlay::OnCommand(const char* cmd){
 		input()->SetAppModalSurface(filedialog->GetVPanel());
 	}
 }
-void COptionsAdvanceSubMultiPlay::ApplySchemeSettings(IScheme* pScheme){
+
+void COptionsAdvanceSubMultiPlay::ApplySchemeSettings(IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
 	m_pModelViewer->SetBgColor(GetSchemeColor("ModelViewer/BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pModelController->SetBgColor(GetSchemeColor("ModelViewer/SliderBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	m_pPlayerName->SetBgColor(GetSchemeColor("ModelViewer/NameTagBgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
-void COptionsAdvanceSubMultiPlay::FilterModel(){
-	char buf[MAX_PATH];
-	m_pModelFilter->GetText(buf, MAX_PATH);
+
+void COptionsAdvanceSubMultiPlay::FilterModel() {
+
+	char buf[MAX_PATH]{};
+
+	m_pModelFilter->GetText(buf, sizeof(buf));
+
 	if (std::strlen(buf) > 0) {
 		m_pModelList->RemoveAll();
 		m_pModelList->ResetScrollBar();
 		BuildModelList(buf);
 	}
-	else
+	else {
 		BuildModelList(nullptr);
+	}
 }
-void COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t& oh){
+
+void COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t& oh) {
 	float w = static_cast<float>(ow);
 	float h = static_cast<float>(oh);
 	if (w * h > 14336.0f) {
@@ -559,11 +582,10 @@ void COptionsAdvanceSubMultiPlay::GetValidateSparySize(size_t& ow, size_t& oh){
 	ow = static_cast<size_t>(w);
 	oh = static_cast<size_t>(h);
 }
-void COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wide, size_t height){
+
+void COptionsAdvanceSubMultiPlay::SetSparyPixel(unsigned char* pixels, size_t wide, size_t height) {
 	m_pSpary->SetImage(new MemoryBitmap(pixels, wide, height));
 }
-
-
 
 class KeyBindingBox : public MessageBox {
 public:
@@ -581,10 +603,11 @@ public:
 private:
 	Panel* m_pTarget;
 };
+
 class KeyBindingButton : public Button {
 public:
 	KeyBindingButton(Panel* parent, const char* panelName, const char* text, Panel* pActionSignalTarget = NULL, const char* pCmd = NULL) :
-		Button(parent, panelName, text, pActionSignalTarget, pCmd){
+		Button(parent, panelName, text, pActionSignalTarget, pCmd) {
 	}
 	int GetKeyCode() const {
 		return m_iCode;
@@ -595,7 +618,8 @@ public:
 private:
 	int m_iCode = 0;
 };
-COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubOtherOption"){
+
+COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : BaseClass(parent, "OptionsAdvanceSubOtherOption") {
 	m_pNewHud = new CCvarToggleCheckButton(this, "NewHud", "#GameUI_ABC_Cvar_NewHud", "cl_hud_enable");
 	m_pDynamicBackground = new CCvarToggleCheckButton(this, "DynamicBackground", "#GameUI_ABC_Cvar_DynamicBackground", "hud_dynamic_background");
 
@@ -619,7 +643,6 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 	m_pPlayerTitleGroup = new GroupBox(this, "PlayerTitleGroup", "#GameUI_ABC_PlayerTitleOptions", 2);
 	m_pPlayerTitle = new CCvarToggleCheckButton(this, "PlayerTitle", "#GameUI_ABC_Cvar_PlayerTitle", "hud_popnumber");
 	m_pPlayerTitleDanger = new CCvarLabelSlider(this, "PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", "#GameUI_ABC_Cvar_PlayerTitleDanger", 0, 100, "hud_playerinfo_danger");
-
 
 	m_pCameraGroup = new GroupBox(this, "CameraGroup", "#GameUI_ABC_CameraGroup", 2);
 	m_pCameraHeightValue = new CCvarLabelSlider(this, "CameraHeight", "#GameUI_ABC_Cvar_CameraHeight", "#GameUI_ABC_Cvar_CameraHeight", -100, 100, "cam_idealheight");
@@ -683,12 +706,14 @@ COptionsAdvanceSubOtherOption::COptionsAdvanceSubOtherOption(Panel* parent) : Ba
 	m_pNewHud->SetEnabled(false);
 	m_pNewHud->SetSelected(true);
 }
-void COptionsAdvanceSubOtherOption::OnResetData(){
+
+void COptionsAdvanceSubOtherOption::OnResetData() {
 	BaseClass::OnResetData();
 	m_pVoteYesButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("hud_votekey_yes")));
 	m_pVoteNoButton->SetText(GameUIFuncs()->Key_NameForKey(CVAR_GET_FLOAT("hud_votekey_no")));
 }
-void COptionsAdvanceSubOtherOption::OnApplyChanges(){
+
+void COptionsAdvanceSubOtherOption::OnApplyChanges() {
 	//m_pNewHud->ApplyChanges();
 	m_pDynamicBackground->ApplyChanges();
 
@@ -705,7 +730,6 @@ void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 
 	m_pPlayerTitle->ApplyChanges();
 	m_pPlayerTitleDanger->ApplyChanges();
-
 
 	m_pCameraHeightValue->ApplyChanges();
 	m_pCameraRightValue->ApplyChanges();
@@ -752,16 +776,46 @@ void COptionsAdvanceSubOtherOption::OnApplyChanges(){
 	m_pBloodSpriteSpeed->ApplyChanges();
 	m_pBloodSpriteCount->ApplyChanges();
 }
+
 void COptionsAdvanceSubOtherOption::OnKeyBinded(Panel* target, int code) {
-	char buf[64];
-	vgui::input()->GetKeyCodeText((KeyCode)code, buf, 64);
-	wchar_t wbuf[32];
-	Q_UTF8ToUnicode((char*)(buf + 4), wbuf, 32);
+
+	/*
+	// build key to text translation table
+	// first byte unshifted key
+	// second byte shifted key
+	// the rest is the name of the key
+	_keyTrans[KEY_0]			="0)KEY_0";
+	_keyTrans[KEY_1]			="1!KEY_1";
+	_keyTrans[KEY_2]			="2@KEY_2";
+	_keyTrans[KEY_3]			="3#KEY_3";
+	_keyTrans[KEY_4]			="4$KEY_4";
+	_keyTrans[KEY_5]			="5%KEY_5";
+	_keyTrans[KEY_6]			="6^KEY_6";
+	_keyTrans[KEY_7]			="7&KEY_7";
+	_keyTrans[KEY_8]			="8*KEY_8";
+	*/
+
+	char buf[64]{};
+	vgui::input()->GetKeyCodeText((KeyCode)code, buf, sizeof(buf));
+
+	auto pKey = V_strstr(buf, "KEY_");
+
+	wchar_t wbuf[32]{};
+	if (pKey)
+	{
+		Q_UTF8ToUnicode(pKey + (sizeof("KEY_") - 1), wbuf, sizeof(wbuf));
+	}
+	else
+	{
+		Q_UTF8ToUnicode(buf, wbuf, sizeof(wbuf));
+	}
+
 	KeyBindingButton* btn = reinterpret_cast<KeyBindingButton*>(target);
 	btn->SetText(wbuf);
 	btn->SetKeyCode(GameUIFuncs()->Key_KeyStringToKeyNum(buf + 4));
 }
-void COptionsAdvanceSubOtherOption::OnCommand(const char* cmd){
+
+void COptionsAdvanceSubOtherOption::OnCommand(const char* cmd) {
 	static auto popkeybindbox = [](Panel* parent, Panel* target) {
 		auto msgbox = new KeyBindingBox(parent, "#GameUI_ABC_Cvar_AnyKeyBinding", target);
 		msgbox->SetAutoDelete(true);
@@ -772,10 +826,10 @@ void COptionsAdvanceSubOtherOption::OnCommand(const char* cmd){
 		msgbox->Activate();
 		msgbox->MakePopup();
 		input()->SetAppModalSurface(msgbox->GetVPanel());
-	};
+		};
 	if (!Q_strcmp(cmd, "VoteYesBind"))
 		popkeybindbox(this, m_pVoteYesButton);
-	else if (!Q_strcmp(cmd, "VoteNoBind")) 
+	else if (!Q_strcmp(cmd, "VoteNoBind"))
 		popkeybindbox(this, m_pVoteNoButton);
 	else
 		BaseClass::OnCommand(cmd);
@@ -796,9 +850,9 @@ COptionsAdvanceDialog::COptionsAdvanceDialog(Panel* parent) : BaseClass(parent, 
 
 	EnableApplyButton(true);
 }
-void COptionsAdvanceDialog::ApplySchemeSettings(IScheme* pScheme){
+void COptionsAdvanceDialog::ApplySchemeSettings(IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
-	
+
 	SetBgColor(GetSchemeColor("OptionsAdvanceDialog/BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	SetBorder(pScheme->GetBorder("DialogBorder"));
 
