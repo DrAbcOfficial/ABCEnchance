@@ -20,6 +20,9 @@ void GL_ShaderInit()
 			SHADER_UNIFORM(pp_texround, xys, "xys");
 			SHADER_UNIFORM(pp_texround, gamma, "gamma");
 		}
+		/*
+			For blur RT
+		*/
 		pp_kawaseblur_up.program = MetaRenderer()->CompileShaderFile("abcenchance\\shader\\dual_kawase.vsh", "abcenchance\\shader\\dual_kawase_up.fsh");
 		if (pp_kawaseblur_up.program) {
 			SHADER_UNIFORM(pp_kawaseblur_up, iResolution, "iResolution");

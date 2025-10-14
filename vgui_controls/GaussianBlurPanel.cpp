@@ -48,6 +48,8 @@ void GaussianBlurPanel::SetBlurness(size_t f){
 // Purpose: 
 //-----------------------------------------------------------------------------
 void GaussianBlurPanel::PaintBackground(){
+
+#if 0 //Undefined behavior, Don't do that.
 	static auto rendershader = [](pp_kawaseblur_program_t shader, float offset, int w, int h) {
 		GL_UseProgram(shader.program);
 		glUniform2f(shader.offset, offset, offset);
@@ -70,6 +72,7 @@ void GaussianBlurPanel::PaintBackground(){
 	int hw = ScreenWidth() / 2;
 	int hh = ScreenHeight() / 2;
 	
+	//Copy current RT to m_hBufferTex for future blur usage
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hBufferFBO, ScreenWidth(), ScreenHeight(), hw, hh);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
@@ -111,6 +114,7 @@ void GaussianBlurPanel::PaintBackground(){
 	glVertex2f(x + w, y + h);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
+#endif
 }
 
 //-----------------------------------------------------------------------------
