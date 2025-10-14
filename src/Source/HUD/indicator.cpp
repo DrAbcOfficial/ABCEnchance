@@ -105,11 +105,11 @@ void CHudIndicator::CalcDamageDirection(indicatorinfo_s &var){
 	float angle = CMathlib::Q_DEG2RAD(vecFinal[CMathlib::Q_YAW]);
 	float ca = cos(angle);
 	float sa = sin(angle);
-	//ÒÔÆÁÄ»ÖĞĞÄÎª×ø±êÖáµÄ×ø±êÏµ
+	//ä»¥å±å¹•ä¸­å¿ƒä¸ºåæ ‡è½´çš„åæ ‡ç³»
 	float sprWidth = gScreenInfo.iHeight * 0.1667;
 	float y1 = gScreenInfo.iHeight / 4;
 	float y2 = y1 + sprWidth;
-	/*  Ğı×ª±ä»»
+	/*  æ—‹è½¬å˜æ¢
 	*                ^
 	*                |y
 	*           A----------B
@@ -124,7 +124,7 @@ void CHudIndicator::CalcDamageDirection(indicatorinfo_s &var){
 	CMathlib::Vector2RotateCASA(var.vecHUDB, sprWidth, y2, ca, sa);
 	CMathlib::Vector2RotateCASA(var.vecHUDC, -sprWidth, y1, ca, sa);
 	CMathlib::Vector2RotateCASA(var.vecHUDD, sprWidth, y1, ca, sa);
-	//±ä»»ÎªOpenGLÆÁÄ»×ø±ê
+	//å˜æ¢ä¸ºOpenGLå±å¹•åæ ‡
 	CMathlib::CenterPos2OpenGLPos(var.vecHUDA, ScreenWidth(), ScreenHeight());
 	CMathlib::CenterPos2OpenGLPos(var.vecHUDB, ScreenWidth(), ScreenHeight());
 	CMathlib::CenterPos2OpenGLPos(var.vecHUDC, ScreenWidth(), ScreenHeight());

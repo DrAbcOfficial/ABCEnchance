@@ -60,6 +60,7 @@ CGameStudioModelRenderer* g_StudioRenderer;
 DWORD g_dwHUDListAddr;
 bool* g_bRenderingPortals;
 hud_nativeplayerinfo_t* g_aryNativePlayerInfo;
+/* (msprite_s**) */ void* gpSprite;
 #pragma endregion
 
 #pragma region Memcpy or internal management variable
@@ -79,8 +80,8 @@ static std::vector<hook_t*> s_aryClientHook = {};
 #pragma region Hooked Funcs
 //FINAL SHIT
 static void R_NewMap(void) {
-	//§ﬁ§»§‚§À§ §√§ø§Û§¿§Ë~
-	//§≥§Ï°°“™§È§ §§§´§È
+	//„Åæ„Å®„ÇÇ„Å´„Å™„Å£„Åü„Çì„Å†„Çà~
+	//„Åì„Çå„ÄÄÂã£„Çâ„Å™„ÅÑ„Åã„Çâ
 	ClearExtraPrecache();
 
 	gCustomHud.HUD_Reset();
@@ -198,12 +199,20 @@ void FillEngineAddress() {
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
 #define CEngineClient_RenderView_SIG "\xFF\x74\x24\x04\x2A\x2A\x2A\x2A\x2A\x83\xC4\x04\x2A\x2A\x2A\x2A\x2A\x80\x7C\x24\x08\x00\xD9\xEE\x2A\x2A\x83\xEC\x10\xD9\x54\x24\x0C\xD9"
 		Fill_Sig(CEngineClient_RenderView_SIG, g_dwEngineBase, g_dwEngineSize, CEngineClient_RenderView);
+#define R_GetSpriteFrame_SIG "\x56\x8B\x2A\x2A\x2A\x2A\x33\xFF\x85\xF6\x75\x12\x68"
+		Fill_Sig(R_GetSpriteFrame_SIG, g_dwEngineBase, g_dwEngineSize, R_GetSpriteFrame);
 		DWORD addr;
 #define DEVOVERVIEW_SIG "\x83\xEC\x30\xDD\x5C\x24\x2A\xD9\x05"
 		{
 			addr = (ULONG_PTR)Search_Pattern(DEVOVERVIEW_SIG);
 			Sig_AddrNotFound(gDevOverview);
 			gDevOverview = (decltype(gDevOverview))(*(ULONG_PTR*)(addr + 9) - 0xC);
+		}
+#define GPSRITE_SIG "\x00\x00\x00\x8B\x89\x84\x01\x00\x00\x89\x0D"
+		{
+			addr = (ULONG_PTR)Search_Pattern(GPSRITE_SIG);
+			Sig_AddrNotFound(gpSprite);
+			gpSprite = (decltype(gpSprite))(*(ULONG_PTR*)(addr + 11));
 		}
 	}
 }

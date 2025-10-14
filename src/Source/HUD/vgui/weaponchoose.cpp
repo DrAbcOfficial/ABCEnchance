@@ -215,9 +215,7 @@ void CWeaponChoosePanel::SetParent(vgui::VPANEL parent) {
 void CWeaponChoosePanel::PerformLayout(){
 	BaseClass::PerformLayout();
 	WEAPON* select = gWR.m_pNowSelected;
-	int sslot = -1;
-	if (select)
-		sslot = select->iSlot;
+	int sslot = gWR.m_iNowSlot;
 	int x = 0;
 	g_iRainbowColorCounter = 0;
 	for (size_t i = 0; i < m_aryPanelList.size(); i++) {
@@ -227,7 +225,8 @@ void CWeaponChoosePanel::PerformLayout(){
 		slot->SetPos(x, y);
 		y += slot->GetTall();
 		auto& list = m_aryPanelList[i];
-		bool ss = sslot >= 0 && sslot == i;
+		//防止槽位为空时展开选择框
+		bool ss = sslot >= 0 && sslot == i && gWR.HasWeapon(select); 
 		for (auto iter2 = list.begin(); iter2 != list.end(); iter2++) {
 			auto& item = *iter2;
 			if (ss)
@@ -290,6 +289,18 @@ void CWeaponChoosePanel::SelectWeapon(){
 }
 void CWeaponChoosePanel::ChooseWeapon(WEAPON* weapon){
 	ShowPanel(true);
+
+	//如果选到空槽位，关闭上次的选择框和高亮spr
+	if (!weapon || !gWR.HasWeapon(weapon)) {
+		if (m_pHandledWeapon)
+			reinterpret_cast<CWeaponChooseItem*>(m_pHandledWeapon.Get())->SetActivate(false);
+		m_pSelectBucket->SetVisible(false);
+		InvalidateLayout();
+		return;
+	}
+
+	m_pSelectBucket->SetVisible(true);
+
 	for (auto iter1 = m_aryPanelList.begin(); iter1 != m_aryPanelList.end(); iter1++) {
 		auto& list = *iter1;
 		for (auto iter2 = list.begin(); iter2 != list.end(); iter2++) {

@@ -208,7 +208,7 @@ bool WeaponsResource::HasWeapon(size_t s, size_t p) {
 	return m_pOwnedWeaponData.Has(s, p);
 }
 bool WeaponsResource::HasWeapon(WEAPON* wp) {
-	return m_pOwnedWeaponData.Has(wp->iSlot, wp->iSlotPos);
+	return wp ? m_pOwnedWeaponData.Has(wp->iSlot, wp->iSlotPos) : false;
 }
 //玩家选择武器
 void WeaponsResource::SetSelectWeapon(WEAPON* wp, bool bWheel) {
@@ -336,13 +336,10 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		}
 		return slot;
 	};
-	if (!m_pNowSelected) {
-		m_pNowSelected = GetFirstPos(getMinSlot());
-		SetSelectWeapon(m_pNowSelected, bWheel);
-		return;
-	}
 	iSlot = CMathlib::clamp<size_t>(iSlot, 0, MAX_WEAPON_SLOT - 1);
 	static auto getNext = [&](WEAPON* wp) {
+		if (!wp)
+			return (size_t)0;
 		size_t pos = wp->iSlotPos;
 		for (auto iter = m_pAviliableWeaponData.PosBegin(wp->iSlot); iter != m_pAviliableWeaponData.PosEnd(wp->iSlot); iter++) {
 			WEAPON* compare = (*iter).second;
@@ -356,6 +353,8 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		return pos;
 	};
 	static auto getLast = [&](WEAPON* wp) {
+		if (!wp)
+			return (size_t)0;
 		size_t pos = wp->iSlotPos;
 		for (auto iter = m_pAviliableWeaponData.RPosBegin(wp->iSlot); iter != m_pAviliableWeaponData.RPosEnd(wp->iSlot); iter++) {
 			WEAPON* compare = (*iter).second;
@@ -369,6 +368,14 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
 		return pos;
 	};
 	if (bWheel) {
+		if (!m_pNowSelected) {
+			auto iter = m_pAviliableWeaponData.Begin();
+			if (iter != m_pAviliableWeaponData.End())
+				m_pNowSelected = iter->second;
+			else
+				return;
+		}
+			
 		//如果是当前slot
 		if (iAdvance > 0) {
 			if (m_pAviliableWeaponData.GetMaxPos(iSlot) == m_pNowSelected->iSlotPos) {
