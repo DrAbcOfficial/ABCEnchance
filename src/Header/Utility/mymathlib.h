@@ -6,6 +6,12 @@ typedef vec_t vec3_t[3];
 typedef vec_t vec4_t[4];
 typedef vec_t vec5_t[5];
 
+typedef float mat3x4[3][4];
+typedef float mat4[4][4];
+typedef float vec4[4];
+typedef int ivec4[4];
+typedef unsigned int uvec4[4];
+
 typedef int fixed4_t;
 typedef int fixed8_t;
 typedef int fixed16_t;

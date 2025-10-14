@@ -247,9 +247,9 @@ void DrawKawaseBlur(GLint tex, size_t blurness, float offsetw, float offseth, in
 	static auto rendershader = [](pp_kawaseblur_program_t shader, GLint tex, float offsetw, float offseth, int w, int h) {
 		glBind(tex);
 		GL_UseProgram(shader.program);
-		GL_Uniform2f(shader.offset, offsetw, offseth);
-		GL_Uniform2f(shader.iResolution, w, h);
-		GL_Uniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
+		glUniform2f(shader.offset, offsetw, offseth);
+		glUniform2f(shader.iResolution, w, h);
+		glUniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
 		glColor4ub(255, 255, 255, 255);
 		DrawQuad(w, h);
 		GL_UseProgram(0);

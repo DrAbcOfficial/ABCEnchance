@@ -369,6 +369,9 @@ inline void CheckAsset() {
 #pragma endregion
 
 #pragma region HUD_XXX Funcs
+
+void GL_ShaderInit();
+
 void GL_Init(void) {
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
@@ -377,6 +380,7 @@ void GL_Init(void) {
 		return;
 	}
 	GL_ShaderInit();
+
 	gCustomHud.GL_Init();
 }
 void HUD_Init(void) {

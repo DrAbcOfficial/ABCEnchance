@@ -1,4 +1,5 @@
 #pragma once
+
 void GL_UploadDepthStencilTexture(int texId, int w, int h);
 GLuint GL_GenTexture(void);
 GLuint GL_GenDepthStencilTexture(int w, int h);

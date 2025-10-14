@@ -39,18 +39,18 @@ public:
 	}
 
 	virtual void Paint() override{
-		//������Ļ��������
+
 		int x = m_iX;
 		int y = m_iY;
 		//shader
 		GL_UseProgram(pp_texround.program);
 		if (gCVars.pRadar->value > 1) {
-			GL_Uniform1f(pp_texround.rad, min(1.0f, m_flRoundRadius / m_iWide));
-			GL_Uniform3f(pp_texround.xys, x, y, m_iWide);
+			glUniform1f(pp_texround.rad, min(1.0f, m_flRoundRadius / m_iWide));
+			glUniform3f(pp_texround.xys, x, y, m_iWide);
 		}
 		else
-			GL_Uniform1f(pp_texround.rad, 0.0f);
-		//������������
+			glUniform1f(pp_texround.rad, 0.0f);
+
 		float h = static_cast<float>(m_iTall) / gScreenInfo.iHeight;
 		float w = static_cast<float>(m_iWide) / gScreenInfo.iWidth;
 		float stx = (1.0f - w) / 2.0f;

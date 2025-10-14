@@ -50,9 +50,9 @@ void GaussianBlurPanel::SetBlurness(size_t f){
 void GaussianBlurPanel::PaintBackground(){
 	static auto rendershader = [](pp_kawaseblur_program_t shader, float offset, int w, int h) {
 		GL_UseProgram(shader.program);
-		GL_Uniform2f(shader.offset, offset, offset);
-		GL_Uniform2f(shader.iResolution, w, h);
-		GL_Uniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
+		glUniform2f(shader.offset, offset, offset);
+		glUniform2f(shader.iResolution, w, h);
+		glUniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
 		glColor4ub(255, 255, 255, 255);
 		glBegin(GL_QUADS);
 		glTexCoord2i(0, 0);

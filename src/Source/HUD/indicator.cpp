@@ -155,11 +155,11 @@ int CHudIndicator::DrawPain(float flTime){
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glColor4ub(255, 255, 255, 255);
 		GL_UseProgram(pp_colorlize.program);
-		GL_Uniform2f(pp_colorlize.ha, 0, fa);
+		glUniform2f(pp_colorlize.ha, 0, fa);
 			DrawQuadPos(-wDiffer, -hDiffer, SizedScreenW, SizedScreenH);
-		GL_Uniform2f(pp_colorlize.ha, 0.3, fa);
+			glUniform2f(pp_colorlize.ha, 0.3, fa);
 			DrawQuadPos(0, -hDiffer, SizedScreenW, SizedScreenH);
-		GL_Uniform2f(pp_colorlize.ha, 0.6, fa);
+			glUniform2f(pp_colorlize.ha, 0.6, fa);
 			DrawQuadPos(-wDiffer, 0, SizedScreenW, SizedScreenH);
 		GL_UseProgram(0);
 		glDisable(GL_BLEND);
