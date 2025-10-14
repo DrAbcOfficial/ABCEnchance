@@ -102,11 +102,12 @@ private:
 	HTTPCLIENT_STATE m_iStatue;
 };
 
-class CHttpClient {
+class CHttpClient
+{
 public:
-	static void Init();
-	static void RunFrame();
-	static void ShutDown();
+	void Init();
+	void RunFrame();
+	void ShutDown();
 
 	void CheckAll();
 	void ClearAll();

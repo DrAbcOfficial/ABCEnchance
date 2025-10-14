@@ -13,10 +13,7 @@ metahook_api_t *g_pMetaHookAPI;
 mh_enginesave_t *g_pMetaSave;
 IFileSystem *g_pFileSystem;
 
-HMODULE g_hClientDll;
-HINSTANCE g_hThisModule;
-DWORD g_dwEngineBuildnum;
-HINSTANCE g_hEngineModule;
+DWORD g_dwEngineBuildnum = 0;
 PVOID g_dwClientBase = 0;
 DWORD g_dwClientSize = 0;
 PVOID g_dwClientTextBase = 0;
@@ -37,17 +34,18 @@ bool g_IsClientVGUI2 = false;
 void FMOD_Init();
 void FMOD_Shutdown();
 
-void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave){
+void IPluginsV4::Init(metahook_api_t *pAPI, mh_interface_t *pInterface, mh_enginesave_t *pSave)
+{
 	g_pInterface = pInterface;
 	g_pMetaHookAPI = pAPI;
 	g_pMetaSave = pSave;
 }
 
-void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
+void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs)
+{
 	g_pFileSystem = g_pInterface->FileSystem;
 	g_iEngineType = g_pMetaHookAPI->GetEngineType();
 	g_dwEngineBuildnum = g_pMetaHookAPI->GetEngineBuildnum();
-	g_hEngineModule = g_pMetaHookAPI->GetEngineModule();
 	g_dwEngineBase = g_pMetaHookAPI->GetEngineBase();
 	g_dwEngineSize = g_pMetaHookAPI->GetEngineSize();
 	g_dwEngineTextBase = g_pMetaHookAPI->GetSectionByName(g_dwEngineBase, ".text\x0\x0\x0", &g_dwEngineTextSize);
@@ -76,7 +74,6 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
 
-	g_hClientDll = g_pMetaHookAPI->GetClientModule();
 	g_dwClientBase = g_pMetaHookAPI->GetClientBase();
 	g_dwClientSize = g_pMetaHookAPI->GetClientSize();
 
@@ -107,14 +104,16 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	InstallClientHook();
 	FMOD_Init();
 	LoadParticleMan();
-	CHttpClient::Init();
+	GetHttpClient()->Init();
 }
 
-void IPluginsV4::Shutdown(void){
+void IPluginsV4::Shutdown(void)
+{
 	
 }
 
-void IPluginsV4::ExitGame(int iResult){
+void IPluginsV4::ExitGame(int iResult)
+{
 	UninstallEngineHook();
 
 	GameConsole_UninstallHook();

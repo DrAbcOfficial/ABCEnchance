@@ -297,7 +297,7 @@ void FillAddress() {
 #pragma region Player Infos
 		if (1) {
 			/*
-			        10032b67 83 f8 07        CMP        pKey,0x7
+					10032b67 83 f8 07        CMP        pKey,0x7
 					10032b6a 0f 87 1c        JA         LAB_10032c8c
 							 01 00 00
 					10032b70 6b c1 5c        IMUL       pKey,ECX,0x5c
@@ -407,7 +407,7 @@ void HUD_Init(void)
 	gCVars.pCamIdealRight = CREATE_CVAR("cam_idealright", "0", FCVAR_VALUE, nullptr);
 
 	CREATE_CVAR("abc_version", STR(PLUGIN_VERSION), FCVAR_EXTDLL | FCVAR_CLIENTDLL, [](cvar_t* cvar) {
-			gEngfuncs.Cvar_SetValue("abc_version", PLUGIN_VERSION);
+		gEngfuncs.Cvar_SetValue("abc_version", PLUGIN_VERSION);
 		});
 
 	ADD_COMMAND("models", []() {
@@ -431,7 +431,7 @@ void HUD_Init(void)
 		}
 		vgui::filesystem()->FindClose(walk);
 		gEngfuncs.Con_Printf("==============\n");
-	});
+		});
 
 	ADD_COMMAND("find", []() {
 		if (gEngfuncs.Cmd_Argc() <= 1)
@@ -442,7 +442,7 @@ void HUD_Init(void)
 		while (cvar)
 		{
 			std::string cvarname = cvar->name;
-			if(cvarname.find(sz) != std::string::npos)
+			if (cvarname.find(sz) != std::string::npos)
 				gEngfuncs.Con_Printf("  %s  [%s]\n", cvar->name, (cvar->flags & FCVAR_PROTECTED) != 0 ? "**" : cvar->string);
 			cvar = cvar->next;
 		}
@@ -473,7 +473,8 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 
 void FMOD_Shutdown();
 
-void HUD_Shutdown(void) {
+void HUD_Shutdown(void)
+{
 	AutoFunc::Exit();
 
 	gExportfuncs.HUD_Shutdown();
@@ -487,12 +488,13 @@ void HUD_Shutdown(void) {
 	FMOD_Shutdown();
 	FreeParticleMan();
 	UninstallClientHook();
-	CHttpClient::ShutDown();
-
+	GetHttpClient()->ShutDown();
 	GetClientVoiceMgr()->HUD_Shutdown();
 	abcconfig::SaveJson();
 }
-int HUD_VidInit(void) {
+
+int HUD_VidInit(void)
+{
 	//Search and destory vanillia HUDs
 	if (g_dwHUDListAddr) {
 		HUDLIST* pHudList = reinterpret_cast<HUDLIST*>((*(DWORD*)(g_dwHUDListAddr)));
@@ -516,7 +518,9 @@ int HUD_VidInit(void) {
 		//}
 	}
 	else
+	{
 		SYS_ERROR("Can not find vanillin HUDs");
+	}
 
 	//Fillup Default CVars
 	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
@@ -533,45 +537,60 @@ int HUD_VidInit(void) {
 	GetBaseViewPort()->VidInit();
 	return result;
 }
-void HUD_VoiceStatus(int entindex, qboolean talking) {
+
+void HUD_VoiceStatus(int entindex, qboolean talking)
+{
 	GetClientVoiceMgr()->UpdateSpeakerStatus(entindex, talking);
 	gExportfuncs.HUD_VoiceStatus(entindex, talking);
 }
-void HUD_Frame(double frametime) {
+
+void HUD_Frame(double frametime)
+{
 	GetClientVoiceMgr()->HUD_Frame(frametime);
 	gExportfuncs.HUD_Frame(frametime);
 	//task
 	GetTaskManager()->CheckAll();
 	GetPlayerTrace()->Update();
 	EFX_Frame();
-	CHttpClient::RunFrame();
+	GetHttpClient()->RunFrame();
 }
-int HUD_Redraw(float time, int intermission) {
+
+int HUD_Redraw(float time, int intermission)
+{
 	CCustomHud::HideOriginalHud();
 	gCustomHud.HUD_Draw(time);
 	GetBaseViewPort()->SetInterMission(intermission);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
-void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client) {
+void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client)
+{
 	gClientData = client;
 	gExportfuncs.HUD_TxferLocalOverrides(state, client);
 }
-int HUD_UpdateClientData(struct client_data_s* c, float f) {
+
+int HUD_UpdateClientData(struct client_data_s* c, float f)
+{
 	s_flFov = c->fov;
 	gCustomHud.HUD_UpdateClientData(c, f);
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
-void HUD_ClientMove(struct playermove_s* ppmove, qboolean server) {
+
+void HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
+{
 	gExportfuncs.HUD_PlayerMove(ppmove, server);
 	g_playerppmove.inwater = (ppmove->waterlevel > 1);
 	g_playerppmove.onground = (ppmove->onground != -1);
 	g_playerppmove.walking = (ppmove->movetype == MOVETYPE_WALK);
 }
-void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
+
+void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd)
+{
 	gCustomHud.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 	gExportfuncs.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 }
-void V_CalcRefdef(struct ref_params_s* pparams) {
+
+void V_CalcRefdef(struct ref_params_s* pparams)
+{
 	//pparams->nextView will be zeroed by client dll
 	gExportfuncs.V_CalcRefdef(pparams);
 	if (!gExportfuncs.CL_IsThirdPerson()) {
@@ -602,18 +621,24 @@ void V_CalcRefdef(struct ref_params_s* pparams) {
 		pparams->vieworg[2] += gCVars.pCamIdealHeight->value + vecRight[2];
 	}
 }
-void IN_MouseEvent(int mstate) {
+
+void IN_MouseEvent(int mstate)
+{
 	gCustomHud.IN_MouseEvent(mstate);
 	gExportfuncs.IN_MouseEvent(mstate);
 }
-void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active) {
+
+void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
+{
 	gExportfuncs.CL_CreateMove(frametime, cmd, active);
 	if (gCustomHud.IsInScore())
 		cmd->buttons |= IN_SCORE;
 	AutoFunc::AutoJump(cmd);
 	AutoFunc::DuckTap(cmd);
 }
-int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
+
+int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname)
+{
 	if (!gCustomHud.HUD_AddEntity(type, ent, modelname))
 		return 0;
 	//hook for engon beam
@@ -656,10 +681,13 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname) {
 	}
 	return gExportfuncs.HUD_AddEntity(type, ent, modelname);
 }
-int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding) {
+
+int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
+{
 	return GetBaseViewPort()->KeyInput(eventcode, keynum, pszCurrentBinding) ?
 		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
 }
+
 void HUD_TempEntUpdate(
 	double frametime,   // Simulation time
 	double client_time, // Absolute time on client
@@ -667,18 +695,22 @@ void HUD_TempEntUpdate(
 	TEMPENTITY** ppTempEntFree,   // List of freed temporary ents
 	TEMPENTITY** ppTempEntActive, // List 
 	int		(*Callback_AddVisibleEntity)(cl_entity_t* pEntity),
-	void	(*Callback_TempEntPlaySound)(TEMPENTITY* pTemp, float damp)) {
+	void	(*Callback_TempEntPlaySound)(TEMPENTITY* pTemp, float damp))
+{
 	Vector		vAngles;
 	gEngfuncs.GetViewAngles((float*)vAngles);
 	if (g_pParticleMan)
 		g_pParticleMan->SetVariables(cl_gravity, vAngles);
 	gExportfuncs.HUD_TempEntUpdate(frametime, client_time, cl_gravity, ppTempEntFree, ppTempEntActive, Callback_AddVisibleEntity, Callback_TempEntPlaySound);
 }
-void HUD_DrawTransparentTriangles() {
+
+void HUD_DrawTransparentTriangles()
+{
 	if (g_pParticleMan)
 		g_pParticleMan->Update();
 	gExportfuncs.HUD_DrawTransparentTriangles();
 }
+
 #pragma endregion
 
 #pragma region Extern funcs
