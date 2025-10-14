@@ -77,7 +77,7 @@ void GaussianBlurPanel::PaintBackground(){
 	glPushAttrib(GL_VIEWPORT_BIT);
 	glViewport(-hw, -hh, ScreenWidth(), ScreenHeight());
 	glEnable(GL_TEXTURE_2D);
-	glBind(m_hBufferTex);
+	GL_Bind(m_hBufferTex);
 	for (size_t i = 0; i < m_iBlurIteration; i++) {
 		rendershader(pp_kawaseblur_down, m_iBlurOffset, hw, hh);
 	}
@@ -87,7 +87,7 @@ void GaussianBlurPanel::PaintBackground(){
 	glPopAttrib();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 
-	glBind(m_hBufferTex);
+	GL_Bind(m_hBufferTex);
 	Color bgcolor = GetBgColor();
 	glColor4ub(bgcolor.r(), bgcolor.g(), bgcolor.b(), bgcolor.a());
 

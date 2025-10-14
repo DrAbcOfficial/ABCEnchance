@@ -62,7 +62,6 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 			"ABCEnchance.dll", g_iEngineType, g_dwEngineBuildnum);
 	}
 
-	CheckOtherPlugin();
 	FillEngineAddress();
 	//SVC_FillAddress();
 	InstallEngineHook();
@@ -73,6 +72,7 @@ void IPluginsV4::LoadEngine(cl_enginefunc_t *pEngfuncs){
 	GameUIBasePanel_InstallHooks();
 	GameConsole_InstallHook();
 }
+
 void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	memcpy(&gExportfuncs, pExportFunc, sizeof(gExportfuncs));
 
@@ -104,15 +104,16 @@ void IPluginsV4::LoadClient(cl_exportfuncs_t *pExportFunc){
 	pExportFunc->HUD_DrawTransparentTriangles = HUD_DrawTransparentTriangles;
 
 	FillAddress();
-	//LoadLibcurl();
 	InstallClientHook();
 	FMOD_Init();
 	LoadParticleMan();
 	CHttpClient::Init();
 }
+
 void IPluginsV4::Shutdown(void){
 	
 }
+
 void IPluginsV4::ExitGame(int iResult){
 	UninstallEngineHook();
 

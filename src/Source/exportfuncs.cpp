@@ -49,6 +49,9 @@
 #include <voice_status.h>
 #include <ClientParticleMan.h>
 
+void GL_ShaderInit();
+void MetaRenderer_Init();
+
 #define _STR(s) #s
 #define STR(s) _STR(s)
 
@@ -355,13 +358,7 @@ void UninstallClientHook() {
 #pragma endregion
 
 #pragma region Runtime Check
-void CheckOtherPlugin() {
-	mh_plugininfo_t info;
-	if (g_pMetaHookAPI->GetPluginInfo("Renderer.dll", &info)) {
-		memcpy(&g_metaplugins.renderer.info, &info, sizeof(info));
-		g_metaplugins.renderer.has = true;
-	}
-}
+
 inline void CheckAsset() {
 	if (!g_pFileSystem->FileExists("abcenchance/ABCEnchance.res"))
 		SYS_ERROR("Missing resource files!\nPlease make sure the \"abcenchance/\" folder is placed correctly!");
@@ -370,9 +367,11 @@ inline void CheckAsset() {
 
 #pragma region HUD_XXX Funcs
 
-void GL_ShaderInit();
+void GL_Init(void)
+{
+	//Load interface from Renderer.dll
+	MetaRenderer_Init();
 
-void GL_Init(void) {
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
 	if (GLEW_OK != err) {
@@ -383,7 +382,9 @@ void GL_Init(void) {
 
 	gCustomHud.GL_Init();
 }
-void HUD_Init(void) {
+
+void HUD_Init(void)
+{
 	MathLib_Init();
 	//VGUI init
 	gCVars.pShellEfx = CREATE_CVAR("abc_shellefx", "1", FCVAR_VALUE, nullptr);
@@ -471,7 +472,6 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 }
 
 void FMOD_Shutdown();
-void FreeLibcurl();
 
 void HUD_Shutdown(void) {
 	AutoFunc::Exit();
@@ -484,7 +484,6 @@ void HUD_Shutdown(void) {
 
 	GetTaskManager()->Shutdown();
 
-	//FreeLibcurl();
 	FMOD_Shutdown();
 	FreeParticleMan();
 	UninstallClientHook();

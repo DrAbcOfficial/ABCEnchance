@@ -26,6 +26,8 @@
 #include "Viewport.h"
 #include "radar.h"
 
+#include <IMetaRenderer.h>
+
 #undef clamp
 
 class CRadarMapImage : public vgui::IImage_HL25 {
@@ -56,7 +58,7 @@ public:
 		float stx = (1.0f - w) / 2.0f;
 		float sty = (1.0f - h) / 2.0f;
 		glEnable(GL_TEXTURE_2D);
-		glBind(m_hBufferTex);
+		GL_Bind(m_hBufferTex);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glColor4ub(m_DrawColor.r(), m_DrawColor.g(), m_DrawColor.b(), m_DrawColor.a());
@@ -281,7 +283,7 @@ const char* CRadarPanel::GetName(){
 void CRadarPanel::Reset(){
 	SetScale(false);
 	cvar_t* pCvarDevC = CVAR_GET_POINTER("dev_overview_color");
-	if (pCvarDevC && g_metaplugins.renderer.has) {
+	if (pCvarDevC && MetaRenderer()) {
 		sscanf_s(pCvarDevC->string, "%d %d %d", &iOverviewR, &iOverviewG, &iOverviewB);
 		iOverviewR /= 255;
 		iOverviewG /= 255;
@@ -309,7 +311,7 @@ void CRadarPanel::RenderRadar(){
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 	//glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
-	//���õ�����Դ��ϳ��¿�
+
 	gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];

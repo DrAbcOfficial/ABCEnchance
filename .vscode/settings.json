@@ -52,8 +52,6 @@
     "C_Cpp.default.cStandard": "c17",
     "C_Cpp.default.compilerPath": "",
     "C_Cpp.default.intelliSenseMode": "windows-msvc-x86",
-    "C_Cpp.default.windowsSdkVersion": "10.0",
-
     // 文件关联
     "files.associations": {
         "*.vsh": "glsl",
