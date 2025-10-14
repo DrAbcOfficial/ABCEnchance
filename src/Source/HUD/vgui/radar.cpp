@@ -40,8 +40,10 @@ public:
 
 	}
 
-	virtual void Paint() override{
-
+	virtual void Paint() override
+	{
+		//Not supported in Core Profile
+#if 0
 		int x = m_iX;
 		int y = m_iY;
 		//shader
@@ -74,6 +76,7 @@ public:
 		glEnd();
 		glDisable(GL_BLEND);
 		GL_UseProgram(0);
+#endif
 	}
 	virtual void SetPos(int x, int y) override{
 		m_iX = x;
@@ -118,8 +121,11 @@ private:
 };
 
 extern vgui::CViewport* g_pViewPort;
+
 constexpr auto VIEWPORT_RADAR_NAME = "RadarPanel";
+
 extern vgui::HScheme GetViewPortBaseScheme();
+
 CRadarPanel::CRadarPanel()
 	: BaseClass(nullptr, VIEWPORT_RADAR_NAME) {
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
@@ -141,6 +147,7 @@ CRadarPanel::CRadarPanel()
 	gCVars.pRadar = CREATE_CVAR("hud_radar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->ShowPanel(cvar->value);
 	});
+
 	gCVars.pRadarZMin = CREATE_CVAR("hud_radar_zmin", "256", FCVAR_VALUE, nullptr);
 	gCVars.pRadarZMax = CREATE_CVAR("hud_radar_zmax", "20", FCVAR_VALUE, nullptr);
 	gCVars.pRadarZoom = CREATE_CVAR("hud_radar_zoom", "2.5", FCVAR_VALUE, nullptr);
@@ -176,7 +183,9 @@ CRadarPanel::~CRadarPanel(){
 	if (m_hRadarBufferFBO)
 		glDeleteFramebuffers(1, &m_hRadarBufferFBO);
 }
-void CRadarPanel::PerformLayout(){
+
+void CRadarPanel::PerformLayout()
+{
 	BaseClass::PerformLayout();
 	int w, h;
 	GetSize(w, h);
@@ -188,7 +197,9 @@ void CRadarPanel::PerformLayout(){
 	m_pViewangleground->GetSize(vw, vh);
 	m_pViewangleground->SetPos((w - vw) / 2, (h - vh) / 2);
 }
-void CRadarPanel::Paint(){
+
+void CRadarPanel::Paint()
+{
 	if (!g_pViewPort->HasSuit())
 		return;
 	auto local = gEngfuncs.GetLocalPlayer();
@@ -205,7 +216,7 @@ void CRadarPanel::Paint(){
 		}
 
 		int size = GetWide();
-		//ָ����
+
 		int nw, nh;
 		m_pNorthground->GetSize(nw, nh);
 		int len = GetWide() - nw;
@@ -239,13 +250,13 @@ void CRadarPanel::Paint(){
 					continue;
 				}
 				iter->SetVisible(true);
-				//��Ŀ�����
+
 				Vector vecLength = entity->curstate.origin;
 				vecLength -= local->curstate.origin;
 				Vector vecAngle;
 				CMathlib::VectorAngles(vecLength, vecAngle);
 				float nyaw = CMathlib::Q_DEG2RAD(vecAngle[CMathlib::Q_YAW] - local->curstate.angles[CMathlib::Q_YAW] + 90);
-				//���ű����ݶ�0.2������ȡ��������Ļ����ϵ
+
 				std::swap(vecLength.x, vecLength.y);
 				vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
 				vecLength.z = 0;
@@ -262,7 +273,9 @@ void CRadarPanel::Paint(){
 	}
 	BaseClass::Paint();
 }
-void CRadarPanel::ApplySettings(KeyValues* inResourceData){
+
+void CRadarPanel::ApplySettings(KeyValues* inResourceData)
+{
 	BaseClass::ApplySettings(inResourceData);
 	GetSize(m_iStartWidth, m_iStartTall);
 
@@ -270,17 +283,23 @@ void CRadarPanel::ApplySettings(KeyValues* inResourceData){
 	m_iScaledWidth = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_wide", 300));
 	m_iScaledTall = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_tall", 300));
 }
-void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme){
+
+void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
+{
 	BaseClass::ApplySchemeSettings(pScheme);
 	m_cOutline = GetSchemeColor("Radar.OutlineColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
 	m_cMap = GetSchemeColor("Radar.MapColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme);
 	SetFgColor(GetSchemeColor("Radar.FgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
 	SetBgColor(GetSchemeColor("Radar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
-const char* CRadarPanel::GetName(){
+
+const char* CRadarPanel::GetName()
+{
 	return VIEWPORT_RADAR_NAME;
 }
-void CRadarPanel::Reset(){
+
+void CRadarPanel::Reset()
+{
 	SetScale(false);
 	cvar_t* pCvarDevC = CVAR_GET_POINTER("dev_overview_color");
 	if (pCvarDevC && MetaRenderer()) {
@@ -290,27 +309,38 @@ void CRadarPanel::Reset(){
 		iOverviewB /= 255;
 	}
 }
-void CRadarPanel::ShowPanel(bool state){
+
+void CRadarPanel::ShowPanel(bool state)
+{
 	if (state == IsVisible())
 		return;
+
 	SetVisible(state);
 }
-bool CRadarPanel::IsVisible() {
+
+bool CRadarPanel::IsVisible()
+{
 	return BaseClass::IsVisible();
 }
-vgui::VPANEL CRadarPanel::GetVPanel() {
+
+vgui::VPANEL CRadarPanel::GetVPanel()
+{
 	return BaseClass::GetVPanel();
 }
-void CRadarPanel::SetParent(vgui::VPANEL parent) {
+
+void CRadarPanel::SetParent(vgui::VPANEL parent)
+{
 	BaseClass::SetParent(parent);
 }
+
 bool g_bInRenderRadar = false;
-void CRadarPanel::RenderRadar(){
+
+void CRadarPanel::RenderRadar()
+{
 	gCustomHud.m_flOverViewZmax = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::HEAD)->endpos[2] - gCVars.pRadarZMax->value;
 	gCustomHud.m_flOverViewZmin = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::FOOT)->endpos[2] - gCVars.pRadarZMin->value;
 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	//glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
 
 	gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
@@ -362,16 +392,19 @@ void CRadarPanel::RenderRadar(){
 		gCVars.pCVarWater->value = arySaveCvars[5];
 	if (gCVars.pCVarShadow)
 		gCVars.pCVarShadow->value = arySaveCvars[6];
-	//glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
 }
-void CRadarPanel::SetScale(bool state){
+
+void CRadarPanel::SetScale(bool state)
+{
 	if (state)
 		SetSize(m_iScaledWidth, m_iScaledTall);
 	else
 		SetSize(m_iStartWidth, m_iStartTall);
 	InvalidateLayout();
 }
-void CRadarPanel::SetAvatarVisible(bool state){
+
+void CRadarPanel::SetAvatarVisible(bool state)
+{
 	for (auto iter = m_aryPlayerAvatars.begin(); iter != m_aryPlayerAvatars.end(); iter++) {
 		(*iter)->SetVisible(state);
 	}

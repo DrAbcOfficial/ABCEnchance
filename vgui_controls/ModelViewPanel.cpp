@@ -753,6 +753,9 @@ private:
 		}
 	}
 	void DrawPoints(void) {
+
+#if 0//Not supproted in Core Profile
+
 		if (!m_pstudiomdl)
 			return;
 		int					i, j;
@@ -881,6 +884,7 @@ private:
 				}
 			}
 		}
+#endif
 	}
 	void Lighting(float* lv, int bone, int flags, vec3_t normal) {
 		float 	illum;
@@ -1217,6 +1221,9 @@ void vgui::ModelViewPanel::SetLightOrigin(float x, float y, float z){
 // Purpose: draws the graph
 //-----------------------------------------------------------------------------
 void ModelViewPanel::Paint(){
+
+#if 0//Not supported in Core Profile
+
 	GLfloat oldProjection[16], oldModelView[16];
 	glGetFloatv(GL_PROJECTION_MATRIX, oldProjection);
 	glGetFloatv(GL_MODELVIEW_MATRIX, oldModelView);
@@ -1287,6 +1294,8 @@ void ModelViewPanel::Paint(){
 	glVertex2f(0, 0);
 	glEnd();
 	glDisable(GL_BLEND);
+
+#endif
 }
 
 void vgui::ModelViewPanel::ApplySettings(KeyValues* inResourceData){

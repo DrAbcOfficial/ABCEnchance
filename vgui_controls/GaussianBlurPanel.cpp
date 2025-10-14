@@ -49,7 +49,7 @@ void GaussianBlurPanel::SetBlurness(size_t f){
 //-----------------------------------------------------------------------------
 void GaussianBlurPanel::PaintBackground(){
 
-#if 0 //Undefined behavior, Don't do that.
+#if 0 //Not supported in Core Profile. btw undefined behavior, Don't do that.
 	static auto rendershader = [](pp_kawaseblur_program_t shader, float offset, int w, int h) {
 		GL_UseProgram(shader.program);
 		glUniform2f(shader.offset, offset, offset);
