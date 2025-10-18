@@ -459,7 +459,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\Header\autofunc.h" />
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
-    <ClInclude Include="src\Header\HUD\basehud.h" />
     <ClInclude Include="src\Header\HUD\cctv.h" />
     <ClInclude Include="src\Header\HUD\CCustomHud.h" />
     <ClInclude Include="src\Header\HUD\indicator.h" />

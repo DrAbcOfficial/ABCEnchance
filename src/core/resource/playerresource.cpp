@@ -48,6 +48,15 @@ PlayerInfo* PlayerResource::GetLocalPlayerInfo() {
 	return nullptr;
 }
 
+bool PlayerResource::IsInSpectate(int i)
+{
+	auto plr = gEngfuncs.GetEntityByIndex(i);
+	if (plr)
+		return plr->curstate.iuser1 > 0;
+	else
+		return false;
+}
+
 bool PlayerInfo::IsValid() const {
 	return m_bIsConnected && m_szName.size() > 0;
 }

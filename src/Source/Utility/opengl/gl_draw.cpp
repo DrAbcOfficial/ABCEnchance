@@ -9,7 +9,6 @@
 #include "gl_shader.h"
 #include "gl_def.h"
 #include "gl_common.h"
-#include "hud.h"
 #include "local.h"
 #include "exportfuncs.h"
 #include "vgui_controls/Controls.h"
@@ -59,42 +58,12 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 	if (!memsprite)
 		return;
 
-	if (MetaRenderer())
-	{
-		uint64_t programState = DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED;
-		if (mode == kRenderTransAdd) {
-			programState = DRAW_TEXTURED_RECT_ADDITIVE_BLEND_ENABLED;
-		}
-
-		float color4v[4]{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
-		MetaRenderer()->DrawTexturedQuad(memsprite->gl_texturenum, x, y, x + w, y + h, color4v, programState, "ABC::DrawSPRIconRect");
+	uint64_t programState = DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED;
+	if (mode == kRenderTransAdd) {
+		programState = DRAW_TEXTURED_RECT_ADDITIVE_BLEND_ENABLED;
 	}
-	else
-	{
-		if (mode == kRenderTransAdd) {
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_ONE, GL_ONE);
-		}
-		glDepthMask(0);
-		GL_Bind(memsprite->gl_texturenum);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, 0x46040000); //0x46040000 ?
-		glColor4f(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
-		glBegin(GL_QUADS);
-		glTexCoord2f(left, top);
-		glVertex2f(x, y);
-		glTexCoord2f(left, bottom);
-		glVertex2f(x, y + h);
-		glTexCoord2f(right, bottom);
-		glVertex2f(x + w, y + h);
-		glTexCoord2f(right, top);
-		glVertex2f(x + w, y);
-		glEnd();
-		glDepthMask(1);
-		if (mode == kRenderTransAdd) {
-			glDisable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		}
-	}
+	float color4v[4]{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
+	MetaRenderer()->DrawTexturedQuad(memsprite->gl_texturenum, x, y, x + w, y + h, color4v, programState, "ABC::DrawSPRIconRect");
 }
 
 void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], unsigned char r, unsigned char g, unsigned char b, unsigned char a)
@@ -138,32 +107,6 @@ void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[
 		uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
 
 		MetaRenderer()->DrawTexturedRect(memsprite->gl_texturenum, vertices, 4, indices, 6, programState, "ABC::DrawSPRIconPos");
-	}
-	else
-	{
-		if (mode == kRenderTransAdd) {
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_ONE, GL_ONE);
-		}
-		glDepthMask(0);
-		GL_Bind(memsprite->gl_texturenum);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, 0x46040000); //0x46040000 ?
-		glColor4f(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0, 0);
-		glVertex2f(p1[0], p1[1]);
-		glTexCoord2f(0, 1);
-		glVertex2f(p2[0], p2[1]);
-		glTexCoord2f(1, 1);
-		glVertex2f(p3[0], p3[1]);
-		glTexCoord2f(1, 0);
-		glVertex2f(p4[0], p4[1]);
-		glEnd();
-		glDepthMask(1);
-		if (mode == kRenderTransAdd) {
-			glDisable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		}
 	}
 }
 int GetHudFontHeight(vgui::HFont m_hFont) {
@@ -285,46 +228,3 @@ void ScaleColors(int& r, int& g, int& b, int a) {
 	g = (int)(g * x);
 	b = (int)(b * x);
 }
-
-#if 0//Unused & deprecated stuffs
-void DrawQuadPos(int x, int y, int w, int h) {
-
-	glBegin(GL_QUADS);
-	glTexCoord2i(0, 0);
-	glVertex3i(x, y + h, -1);
-	glTexCoord2i(0, 1);
-	glVertex3i(x, y, -1);
-	glTexCoord2i(1, 1);
-	glVertex3i(x + w, y, -1);
-	glTexCoord2i(1, 0);
-	glVertex3i(x + w, y + h, -1);
-	glEnd();
-}
-void DrawQuad(int w, int h) {
-	DrawQuadPos(0, 0, w, h);
-}
-void DrawScreenQuad() {
-	DrawQuad(ScreenWidth(), ScreenHeight());
-}
-void DrawKawaseBlur(GLint tex, size_t blurness, float offsetw, float offseth, int w,int h) {
-	static auto rendershader = [](pp_kawaseblur_program_t shader, GLint tex, float offsetw, float offseth, int w, int h) {
-		GL_Bind(tex);
-		GL_UseProgram(shader.program);
-		glUniform2f(shader.offset, offsetw, offseth);
-		glUniform2f(shader.iResolution, w, h);
-		glUniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
-		glColor4ub(255, 255, 255, 255);
-		DrawQuad(w, h);
-		GL_UseProgram(0);
-	};
-	glEnable(GL_TEXTURE_2D);
-	glPushAttrib(GL_VIEWPORT_BIT);
-	glViewport(0, 0, w, h);
-	for (size_t i = 0; i < blurness; i++) {
-		rendershader(pp_kawaseblur_down, tex, offsetw, offseth, w, h);
-		rendershader(pp_kawaseblur_up, tex, offsetw, offseth, w, h);
-	}
-	glPopAttrib();
-	glDisable(GL_TEXTURE_2D);
-}
-#endif

@@ -9,6 +9,18 @@
 class IViewportPanel;
 #endif
 
+const enum {
+	HUD_HIDEWEAPONS = (1 << 0),
+	HUD_HIDEFLASHLIGHT = (1 << 1),
+	HUD_HIDEALL = (1 << 2),
+	HUD_HIDEHEALTH = (1 << 3),
+	HUD_HIDESELECTION = (1 << 4),
+	HUD_HIDEBATTERY = (1 << 5),
+	HUD_HIDECUSTOM1 = (1 << 6),
+	HUD_HIDECUSTOM2 = (1 << 7)
+};
+constexpr auto WEAPON_SUIT = 31;
+
 class CPlayerInfoPanel;
 class CMotdPanel;
 class CSidePanel;
@@ -66,7 +78,6 @@ public:
 
 	bool LoacalPlayerAvilable();
 
-	bool IsInSpectate();
 	bool HasSuit();
 	void WeaponBitsChangeCallback(int bits);
 	bool IsHudHide(int HideToken);

@@ -958,9 +958,6 @@
     <ClInclude Include="src\Header\HUD\vgui\scoreboard.h">
       <Filter>Public\Header\HUD\vgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\basehud.h">
-      <Filter>Public\Header\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\HUD\CCustomHud.h">
       <Filter>Public\Header\HUD</Filter>
     </ClInclude>

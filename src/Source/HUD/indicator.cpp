@@ -4,7 +4,6 @@
 #include "mymathlib.h"
 #include "glew.h"
 
-#include "hud.h"
 #include "vguilocal.h"
 #include "gl_def.h"
 #include "gl_draw.h"
@@ -12,7 +11,10 @@
 #include "gl_shader.h"
 #include "local.h"
 
+#include "core/resource/playerresource.h"
+
 #include "CCustomHud.h"
+#include "Viewport.h"
 #include "vgui_controls/Controls.h"
 
 #include "indicator.h"
@@ -61,7 +63,7 @@ void CHudIndicator::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDif
 	CMathlib::HSVToRGB(thsv[0], thsv[1], thsv[2], r, g, b);
 }
 int CHudIndicator::Draw(float flTime) {
-	if (gCustomHud.IsInSpectate())
+	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
 		return 1;
 	if (gCustomHud.IsHudHide(HUD_HIDEALL))
 		return 1;

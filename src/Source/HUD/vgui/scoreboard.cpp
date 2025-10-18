@@ -34,7 +34,6 @@
 #include "avatar_image.h"
 
 //VoiceShit
-#include "hud.h"
 #include "voice_status.h"
 
 #include "Viewport.h"

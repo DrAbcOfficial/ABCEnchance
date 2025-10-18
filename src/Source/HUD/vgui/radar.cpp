@@ -8,7 +8,6 @@
 
 #include "exportfuncs.h"
 
-#include "hud.h"
 #include "vguilocal.h"
 #include "playertrace.h"
 

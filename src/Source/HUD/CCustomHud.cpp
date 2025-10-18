@@ -5,7 +5,6 @@
 
 #include "vguilocal.h"
 #include "local.h"
-#include "hud.h"
 
 #include "parsemsg.h"
 #include "mymathlib.h"
@@ -16,8 +15,6 @@
 #include "core/resource/playerresource.h"
 #include "core/resource/spriteresource.h"
 #include "core/resource/weaponresource.h"
-
-#include "basehud.h"
 
 #include "CCustomHud.h"
 
@@ -761,6 +758,7 @@ void CCustomHud::HUD_TxferPredictionData(struct entity_state_s* ps, const struct
 bool CCustomHud::HasSuit() {
 	if (!m_bitsWeaponBits.has_value())
 		return false;
+	constexpr auto WEAPON_SUIT = 31;
 	return (m_bitsWeaponBits.value() & (1 << WEAPON_SUIT)) != 0;
 }
 void CCustomHud::WeaponBitsChangeCallBack(int bits){
@@ -772,13 +770,6 @@ void CCustomHud::HudHideCallBack(int hidetoken){
 }
 bool CCustomHud::IsHudHide(int HideToken) {
 	return (m_bitsHideHUDDisplay & HideToken) != 0;
-}
-bool CCustomHud::IsInSpectate() {
-	auto local = gEngfuncs.GetLocalPlayer();
-	if (local)
-		return local->curstate.iuser1 > 0;
-	else
-		return false;
 }
 bool CCustomHud::IsMouseVisible(){
 	if(GetBaseViewPort())
@@ -813,13 +804,13 @@ void CCustomHud::OnMousePressed(int code) {
 }
 void CCustomHud::HideOriginalHud() {
 	if (gHookHud.m_Ammo)
-		gHookHud.m_Ammo->m_iFlags &= ~HUD_ACTIVE;
+		gHookHud.m_Ammo->m_iFlags &= ~1;
 	if (gHookHud.m_Battery)
-		gHookHud.m_Battery->m_iFlags &= ~HUD_ACTIVE;
+		gHookHud.m_Battery->m_iFlags &= ~1;
 	if (gHookHud.m_Health)
-		gHookHud.m_Health->m_iFlags &= ~HUD_ACTIVE;
+		gHookHud.m_Health->m_iFlags &= ~1;
 	if(gHookHud.m_Flash)
-		gHookHud.m_Flash->m_iFlags &= ~HUD_ACTIVE;
+		gHookHud.m_Flash->m_iFlags &= ~1;
 }
 bool CCustomHud::IsInScore() {
 	return m_bInScore;

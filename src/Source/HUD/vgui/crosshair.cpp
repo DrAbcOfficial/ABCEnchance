@@ -13,7 +13,8 @@
 #include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/spr_image.h>
 
-#include "hud.h"
+#include "core/resource/playerresource.h"
+
 #include "local.h"
 #include "vguilocal.h"
 
@@ -79,7 +80,7 @@ CCrosshairPanel::CCrosshairPanel()
 	m_pSprImage->SetColor(Color(255, 255, 255, 255));
 }
 void CCrosshairPanel::PaintBackground() {
-	if (GetBaseViewPort()->IsInSpectate())
+	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
 		return;
 	if (GetBaseViewPort()->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return;
@@ -94,7 +95,7 @@ void CCrosshairPanel::PaintBackground() {
 void CCrosshairPanel::OnThink() {
 	if (!gClientData)
 		return;
-	if (GetBaseViewPort()->IsInSpectate()) {
+	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index)){
 		HideDynamicCrossHair();
 		return;
 	}

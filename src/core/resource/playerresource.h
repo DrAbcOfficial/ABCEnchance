@@ -97,6 +97,8 @@ public:
 
 	PlayerInfo* GetPlayerInfo(int idx);
 	PlayerInfo* GetLocalPlayerInfo();
+
+	bool IsInSpectate(int i);
 private:
 	std::array<PlayerInfo, SC_MAX_PLAYERS + 1> m_aryPlayerInfos;
 };

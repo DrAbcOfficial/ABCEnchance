@@ -7,13 +7,15 @@
 #include <string>
 #include "cvardef.h"
 
-#include "hud.h"
 #include "CCustomHud.h"
 
 #include "vgui_controls/spr_image.h"
 #include "vgui_controls/ImageSprPanel.h"
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/AnimationController.h"
+#include "core/resource/playerresource.h"
+
+#include "Viewport.h"
 #include "weaponchoose.h"
 
 extern const clientdata_t* gClientData;
@@ -259,7 +261,8 @@ void CWeaponChoosePanel::ReloadWeaponSpr(){
 	}
 }
 bool CWeaponChoosePanel::ShouldDraw(){
-	if (gCustomHud.IsInSpectate())
+	
+	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
 		return false;
 	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return false;

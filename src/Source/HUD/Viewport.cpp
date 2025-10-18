@@ -19,7 +19,6 @@
 
 #include "core/event.h"
 #include "core/resource/playerresource.h"
-#include "hud.h"
 
 #include "parsemsg.h"
 #include "mymathlib.h"
@@ -472,9 +471,6 @@ void CViewport::ShowCrossHair(bool on) {
 	m_pCrossHairPanel->ShowPanel(on);
 }
 
-bool CViewport::IsInSpectate() {
-	return gCustomHud.IsInSpectate();
-}
 bool CViewport::HasSuit() {
 	return gCustomHud.HasSuit();
 }

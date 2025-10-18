@@ -1,6 +1,5 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 #include <tier0/platform.h>
-#include "hud.h"
 #include "client_steam_context.h"
 
 static CClientSteamContext g_ClientSteamContext;

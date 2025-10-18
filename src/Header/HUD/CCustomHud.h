@@ -5,15 +5,18 @@
 
 #include "core/resource/weaponresource.h"
 
-class CHudBattery;
-class CHudHealth;
-class CHudAmmo;
-class CHudFlashlight;
+class CBaseHud {
+public:
+	int m_x;
+	int m_y;
+	int   m_type;
+	int	  m_iFlags; // active, moving, 
+};
 using cl_hookedHud = struct {
-	CHudBattery* m_Battery;
-	CHudHealth* m_Health;
-	CHudAmmo* m_Ammo;
-	CHudFlashlight* m_Flash;
+	CBaseHud* m_Battery;
+	CBaseHud* m_Health;
+	CBaseHud* m_Ammo;
+	CBaseHud* m_Flash;
 };
 
 typedef int HSPRITE;
@@ -30,8 +33,6 @@ public:
 	void IN_MouseEvent(int mstate);
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 	void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
-
-	bool IsInSpectate();
 
 	bool HasSuit();
 	void WeaponBitsChangeCallBack(int bits);

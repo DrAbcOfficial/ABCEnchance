@@ -9,6 +9,7 @@
 #include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/ImageSprPanel.h>
 #include <vgui_controls/AnimationController.h>
+#include "core/resource/playerresource.h"
 
 #include "local.h"
 #include "vguilocal.h"
@@ -72,7 +73,7 @@ void CEffectPanel::SetParent(vgui::VPANEL parent) {
 void CEffectPanel::OnThink(){
 	if (!GetBaseViewPort()->LoacalPlayerAvilable())
 		return;
-	if (GetBaseViewPort()->IsInSpectate() || gCVars.pHudEfx->value < 1) {
+	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index) || gCVars.pHudEfx->value < 1) {
 		ShowPanel(false);
 		return;
 	}

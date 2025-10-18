@@ -14,7 +14,6 @@
 
 #include "Task.h"
 //Def
-#include "hud.h"
 #include "vguilocal.h"
 #include "exportfuncs.h"
 #include "Color.h"
@@ -423,26 +422,22 @@ void HUD_Shutdown(void)
 int HUD_VidInit(void)
 {
 	//Search and destory vanillia HUDs
+	struct HUDLIST {
+		CBaseHud* p;
+		HUDLIST* pNext;
+	};
 	if (g_dwHUDListAddr) {
 		HUDLIST* pHudList = reinterpret_cast<HUDLIST*>((*(DWORD*)(g_dwHUDListAddr)));
 		for (size_t i = 0; i <= 4; i++) {
 			switch (i) {
-			case 0x0:gHookHud.m_Health = reinterpret_cast<CHudHealth*>(pHudList->p); break;
-			case 0x1:gHookHud.m_Battery = reinterpret_cast<CHudBattery*>(pHudList->p); break;
-			case 0x2:gHookHud.m_Ammo = reinterpret_cast<CHudAmmo*>(pHudList->p); break;
-			case 0x4:gHookHud.m_Flash = reinterpret_cast<CHudFlashlight*>(pHudList->p); break;
+			case 0x0:gHookHud.m_Health = pHudList->p; break;
+			case 0x1:gHookHud.m_Battery = pHudList->p; break;
+			case 0x2:gHookHud.m_Ammo = pHudList->p; break;
+			case 0x4:gHookHud.m_Flash = pHudList->p; break;
 			default:break;
 			}
 			pHudList = pHudList->pNext;
 		}
-
-		//nah
-		//while (pHudList) {
-		//	// Use RTTI to know which HUD
-		//	//if (dynamic_cast<CHudBattery*>(pHudList->p) != nullptr)
-		//	//	gHookHud.m_Battery = (dynamic_cast<CHudBattery*>(pHudList->p));
-		//	pHudList = pHudList->pNext;
-		//}
 	}
 	else
 	{
