@@ -4,7 +4,8 @@
 #include "parsemsg.h"
 #include "cvardef.h"
 #include "local.h"
-#include "player_info.h"
+
+#include "core/resource/playerresource.h"
 
 #include "voice_status.h"
 
@@ -154,10 +155,10 @@ void CVoiceStatus::UpdateServerState(bool bForce){
 	unsigned long serverBanMask = 0;
 	unsigned long banMask = 0;
 	for (unsigned long i = 1; i < 33; i++) {
-		CPlayerInfo* info = CPlayerInfo::GetPlayerInfo(i);
+		PlayerInfo* info = gPlayerRes.GetPlayerInfo(i);
 		if (!info)
 			continue;
-		if (m_BanMgr.GetPlayerBan(info->GetSteamID64()))
+		if (m_BanMgr.GetPlayerBan(info->m_pSteamId.ConvertToUint64()))
 			banMask |= 1 << (i - 1);
 	}
 	serverBanMask = m_ServerBannedPlayers.to_ulong();
@@ -223,10 +224,10 @@ bool CVoiceStatus::IsInSquelchMode() const{
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CVoiceStatus::IsPlayerBlocked(int iPlayer){
-	CPlayerInfo* info = CPlayerInfo::GetPlayerInfo(iPlayer);
+	PlayerInfo* info = gPlayerRes.GetPlayerInfo(iPlayer);
 	if (!info)
 		return false;
-	return m_BanMgr.GetPlayerBan(info->GetSteamID64());
+	return m_BanMgr.GetPlayerBan(info->m_pSteamId.ConvertToUint64());
 }
 
 //-----------------------------------------------------------------------------
@@ -246,7 +247,7 @@ bool CVoiceStatus::IsPlayerAudible(int iPlayer) const{
 void CVoiceStatus::SetPlayerBlockedState(int iPlayer, bool blocked){
 	if (CVAR_GET_FLOAT("voice_clientdebug"))
 		gEngfuncs.pfnConsolePrint( "CVoiceStatus::SetPlayerBlockedState part 1\n" );
-	CPlayerInfo* info = CPlayerInfo::GetPlayerInfo(iPlayer);
+	PlayerInfo* info = gPlayerRes.GetPlayerInfo(iPlayer);
 	if (!info)
 		return;
 	if (CVAR_GET_FLOAT("voice_clientdebug"))
@@ -255,9 +256,9 @@ void CVoiceStatus::SetPlayerBlockedState(int iPlayer, bool blocked){
 	// Squelch or (try to) unsquelch this player.
 	if (CVAR_GET_FLOAT("voice_clientdebug")){
 		char str[256];
-		sprintf(str, "CVoiceStatus::SetPlayerBlockedState: setting player %llu ban to %d\n", info->GetSteamID64(), blocked);
+		sprintf(str, "CVoiceStatus::SetPlayerBlockedState: setting player %llu ban to %d\n", info->m_pSteamId.ConvertToUint64(), blocked);
 		gEngfuncs.pfnConsolePrint(str);
 	}
-	m_BanMgr.SetPlayerBan( info->GetSteamID64(), blocked);
+	m_BanMgr.SetPlayerBan( info->m_pSteamId.ConvertToUint64(), blocked);
 	UpdateServerState(false);
 }

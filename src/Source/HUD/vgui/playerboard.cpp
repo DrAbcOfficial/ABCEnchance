@@ -12,7 +12,7 @@
 #include "vguilocal.h"
 #include "mymathlib.h"
 #include "steamclientpublic.h"
-#include "player_info.h"
+#include "core/resource/playerresource.h"
 
 #include "vgui_controls/ImagePanel.h"
 #include "playerboard.h"
@@ -66,7 +66,7 @@ void CPlayerInfoPanel::Think(){
 		return;
 	if (local->index == m_iPlayerIndex)
 		return;
-	//ÊÓ½Ç½Ç¶È
+	//ï¿½Ó½Ç½Ç¶ï¿½
 	vec3_t vecView;
 	Vector vecLength;
 	float angledotResult;
@@ -77,11 +77,11 @@ void CPlayerInfoPanel::Think(){
 	cl_entity_t* entity = gEngfuncs.GetEntityByIndex(m_iPlayerIndex);
 	if (!entity ||
 		entity->curstate.messagenum != local->curstate.messagenum ||
-		!entity->player || !entity->model) {
+		!entity->m_pPlayerInfo || !entity->model) {
 		SetVisible(false);
 		return;
 	}
-	//¼ÆËãÎÒºÍÄ¿±êµÄÏà¶ÔÆ«ÒÆ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Òºï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½
 	vecLength = entity->curstate.origin;
 	vecLength -= local->curstate.origin;
 	if (vecLength.Length() >= 1024) {
@@ -140,14 +140,14 @@ void CPlayerInfoPanel::SetParent(vgui::VPANEL parent)
 }
 
 void CPlayerInfoPanel::UpdateClientInfo(){
-	CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(m_iPlayerIndex);
+	PlayerInfo* pi = gPlayerRes.GetPlayerInfo(m_iPlayerIndex);
 	if (pi->IsValid()) {
-		if (pi->IsSpectator() || pi->GetTeamNumber() != CPlayerInfo::GetThisPlayerInfo()->GetTeamNumber()) {
+		if (pi->m_bIsSpectate || pi->m_iTeamNumber != gPlayerRes.GetLocalPlayerInfo()->m_iTeamNumber) {
 			ShowPanel(false);
 			return;
 		}	
-		int iHealth = pi->GetHealth();
-		float flArmorRatio = clamp<float>((float)pi->GetArmor() / 100.0f, 0.0f, 1.0f);
+		int iHealth = pi->m_iHealth;
+		float flArmorRatio = clamp<float>((float)pi->m_iArmor / 100.0f, 0.0f, 1.0f);
 		float flHealthRatio = clamp((float)iHealth / 100.0f, 0.0f, 1.0f);
 		m_pNameLabel->SetText(pi->GetName());
 		m_pNameLabel->SetFgColor(GetBaseViewPort()->GetPlayerColor(m_iPlayerIndex));

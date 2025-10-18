@@ -5,7 +5,6 @@
 #include "glew.h"
 
 #include "hud.h"
-#include "weapon.h"
 #include "vguilocal.h"
 #include "gl_def.h"
 #include "gl_draw.h"

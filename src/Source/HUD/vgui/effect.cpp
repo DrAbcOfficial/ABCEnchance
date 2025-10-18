@@ -14,7 +14,6 @@
 #include "vguilocal.h"
 
 #include "steamclientpublic.h"
-#include "player_info.h"
 #include "Viewport.h"
 #include <exportfuncs.h>
 

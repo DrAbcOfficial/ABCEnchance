@@ -10,7 +10,7 @@
 #include <IClientVGUI.h>
 #include "vguilocal.h"
 #include "steam_api.h"
-#include "player_info.h"
+
 #include "scoreboard.h"
 #include "Viewport.h"
 #include "exportfuncs.h"

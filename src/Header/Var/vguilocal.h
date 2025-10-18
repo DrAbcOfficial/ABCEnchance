@@ -22,12 +22,8 @@ extern size_t ScreenHeight();
 extern size_t ScreenWidth();
 //VGUI2
 #define VGUI2_ROOT_DIR "abcenchance/res/"
-constexpr auto SC_MAX_PLAYERS = 32;
-constexpr auto SC_MAX_TEAMS = 19;//No barnacle
 constexpr auto SC_MAX_STEAMID = 32; // 0:0:4294967295, STEAM_ID_PENDING
 constexpr auto MAX_SERVERNAME_LENGTH = 256;
-constexpr auto MAX_PLAYERNAME_LENGTH = 32;
-constexpr auto MAX_TEAMNAME_LENGTH = 32;
 //VGUI COLOR CODE
 extern Color g_aryVGUIColorCode[];
 enum {

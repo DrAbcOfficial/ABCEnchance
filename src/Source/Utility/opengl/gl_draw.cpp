@@ -23,10 +23,6 @@ void GL_Bind(GLint gltexturenum)
 	{
 		MetaRenderer()->Bind(gltexturenum);
 	}
-	else
-	{
-		gHookFuncs.GL_Bind(gltexturenum);
-	}
 }
 
 using mspriteframe_t = struct mspriteframe_s

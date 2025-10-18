@@ -2,6 +2,7 @@
 #define CAMMOPANEL_H
 #include <vgui_controls/EditablePanel.h>
 #include "IViewportPanel.h"
+#include "core/resource/weaponresource.h"
 
 namespace vgui {
 	class Label;
@@ -9,10 +10,6 @@ namespace vgui {
 	class ImageSprPanel;
 	class CSPRImage;
 }
-
-#ifndef __AMMO_H__
-class WEAPON;
-#endif
 
 class CAmmoPanel : public vgui::EditablePanel, public IViewportPanel
 {
@@ -29,7 +26,7 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
-	void SetWeapon(WEAPON* weapon);
+	void SetWeapon(Weapon* weapon);
 	void RefreshAmmo();
 	enum WEAPONSTATE {
 		NOTVALID = 0,
@@ -50,6 +47,6 @@ private:
 	vgui::CSPRImage* m_pSpr1 = nullptr;
 	vgui::CSPRImage* m_pSpr2 = nullptr;
 
-	WEAPON* m_pHandledWeapon = nullptr;
+	Weapon* m_pHandledWeapon = nullptr;
 };
 #endif

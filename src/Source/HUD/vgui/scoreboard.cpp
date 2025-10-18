@@ -20,7 +20,9 @@
 #include "client_steam_context.h"
 #include "local.h"
 #include "vguilocal.h"
-#include "player_info.h"
+
+#include "core/resource/playerresource.h"
+
 #include "Task.h"
 #include "httpclient.h"
 
@@ -509,7 +511,7 @@ void CScorePanel::UpdateOnPlayerInfo(int client)
 
 void CScorePanel::DeathMsg(int killer, int victim)
 {
-	if (victim == CPlayerInfo::GetThisPlayerInfo()->GetIndex())
+	if (victim == gPlayerRes.GetLocalPlayerInfo()->m_iIndex)
 	{
 		// if we were the one killed, set the scoreboard to indicate killer
 		m_flKillerHighlightStart = gEngfuncs.GetClientTime();
@@ -651,11 +653,11 @@ void CScorePanel::RefreshItems()
 	// Assign player teams, calculate team scores
 	for (int i = 1; i <= SC_MAX_PLAYERS; i++)
 	{
-		CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(i)->Update();
+		PlayerInfo* pi = gPlayerRes.GetPlayerInfo(i)->Update();
 		if (!pi)
 			continue;
 		PlayerData& pd = m_PlayerData[i];
-		pd.bIsConnected = pi->IsConnected();
+		pd.bIsConnected = pi->m_bIsConnected;
 
 		if (!pd.bIsConnected)
 			continue;
@@ -664,22 +666,22 @@ void CScorePanel::RefreshItems()
 		pd.nTeamID = GetPlayerTeam(pi);
 
 		TeamData& td = m_TeamData[pd.nTeamID];
-		td.iFrags += pi->GetFrags();
-		td.iDeaths += pi->GetDeaths();
+		td.iFrags += pi->m_iFrags;
+		td.iDeaths += pi->m_iDeaths;
 		td.iPlayerCount++;
 	}
 
 	// Override team scores and add them to sorting list
 	int iTeamCount = 0;
 
-	for (int i = 0; i <= SC_MAX_TEAMS; i++)
+	for (int i = 0; i < PREDEFINED_TEAM_COUNT; i++)
 	{
 		TeamData& td = m_TeamData[i];
 
 		if (td.iPlayerCount == 0)
 			continue;
 
-		CTeamInfo* ti = CTeamInfo::GetTeamInfo(i);
+		TeamInfo* ti = gTeamRes.GetTeamInfo(i);
 
 		if (ti->IsScoreOverriden())
 		{
@@ -821,9 +823,9 @@ void CScorePanel::UpdateAllClients()
 
 void CScorePanel::UpdateClientInfo(int client)
 {
-	CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(client);
+	PlayerInfo* pi = gPlayerRes.GetPlayerInfo(client);
 	PlayerData& pd = m_PlayerData[client];
-	if (pi->IsConnected() && !pd.bIsConnected){
+	if (pi->m_bIsConnected && !pd.bIsConnected){
 		// Player just connected
 		pd.bIsConnected = true;
 
@@ -832,9 +834,9 @@ void CScorePanel::UpdateClientInfo(int client)
 			pi->Reset();
 		}
 		pd.nItemID = -1;
-		pd.nTeamID = pi->GetTeamNumber();
+		pd.nTeamID = static_cast<int>(pi->m_iTeamNumber);
 	}
-	else if (!pi->IsConnected() && pd.bIsConnected){
+	else if (!pi->m_bIsConnected && pd.bIsConnected){
 		// Player disconnected
 		pd.bIsConnected = false;
 
@@ -844,7 +846,7 @@ void CScorePanel::UpdateClientInfo(int client)
 
 		pi->Reset();
 	}
-	Assert(pd.bIsConnected == pi->IsConnected());
+	Assert(pd.bIsConnected == pi->m_bIsConnected);
 	// Skip unconnected players
 	if (!pi->IsValid())
 		return;
@@ -852,7 +854,7 @@ void CScorePanel::UpdateClientInfo(int client)
 		// Player changed team
 		m_pPlayerList->RemoveItem(pd.nItemID);
 		pd.nItemID = -1;
-		pd.nTeamID = pi->GetTeamNumber();
+		pd.nTeamID = static_cast<int>(pi->m_iTeamNumber);
 	}
 
 	// Create section for player's team if need to
@@ -872,29 +874,29 @@ void CScorePanel::UpdateClientInfo(int client)
 		UpdatePlayerDonor(pi);
 		playerKv->SetInt(DONOR_KEY, client + DONOR_IMAGELIST_BASE);
 		// Name
-		if (hud_scoreboard_showrealname->value > 0 && pi->GetRealName()[0] != '\0')
-				snprintf(buf, sizeof(buf), "%s (%s)", pi->GetName(), pi->GetRealName());
+		if (hud_scoreboard_showrealname->value > 0 && pi->m_szRealName[0] != '\0')
+				snprintf(buf, sizeof(buf), "%s (%s)", pi->GetName(), pi->m_szRealName.c_str());
 		else
 			snprintf(buf, sizeof(buf), "%s", pi->GetName());
 		playerKv->SetString(NAME_KEY, buf);
 		// SteamID
-		playerKv->SetString(STEAMID_KEY, hud_scoreboard_showsteamidtype->value > 0 ? pi->GetSteamIDString64() :  pi->GetSteamIDString());
+		playerKv->SetString(STEAMID_KEY, hud_scoreboard_showsteamidtype->value > 0 ? pi->m_szSteamID64 :  pi->m_pSteamId.Render());
 
-		if (pi->IsSpectator()) {
+		if (pi->m_bIsSpectate) {
 			colorKv->SetInt(HEALTH_KEY,COLOR_GREY);
 			playerKv->SetString(HEALTH_KEY, m_szSpectatorTag);
 			colorKv->SetInt(ARMOR_KEY, COLOR_GREY);
 			playerKv->SetString(ARMOR_KEY, NA_LOCALIZE_TOKEN);
 		}
 		else {
-			int iHealth = pi->GetHealth();
+			int iHealth = pi->m_iHealth;
 			if(iHealth < 0)
 				playerKv->SetString(HEALTH_KEY, HEALTHDEAD_LOCALIZE_TOKEN);
 			else
 				playerKv->SetInt(HEALTH_KEY, iHealth);
 			colorKv->SetInt(HEALTH_KEY, COLOR_PERCENT);
 
-			int iArmor = pi->GetArmor();
+			int iArmor = pi->m_iArmor;
 			if (iArmor < 0)
 				playerKv->SetString(ARMOR_KEY, NA_LOCALIZE_TOKEN);
 			else
@@ -903,18 +905,18 @@ void CScorePanel::UpdateClientInfo(int client)
 		}
 		
 		// Frags & deaths
-		playerKv->SetInt(FRAG_KEY, pi->GetFrags());
-		playerKv->SetInt(DEATH_KEY, pi->GetDeaths());
+		playerKv->SetInt(FRAG_KEY, pi->m_iFrags);
+		playerKv->SetInt(DEATH_KEY, pi->m_iDeaths);
 
 		// Ping
 		// ForceUpdatePing
 		pi->UpdatePing();
 		if (hud_scoreboard_showloss->value > 0){
-			snprintf(buf, sizeof(buf), "%d/%d", pi->GetPing(), pi->GetPacketLoss());
+			snprintf(buf, sizeof(buf), "%d/%d", pi->m_iPing, pi->m_iLoss);
 			playerKv->SetString(PING_KEY, buf);
 		}
 		else
-			playerKv->SetInt(PING_KEY, pi->GetPing());
+			playerKv->SetInt(PING_KEY, pi->m_iPing);
 		colorKv->SetInt(PING_KEY, COLOR_PING);
 	}
 
@@ -938,40 +940,40 @@ void CScorePanel::UpdateClientInfo(int client)
 	colorKv->deleteThis();
 }
 
-void CScorePanel::UpdatePlayerDonor(CPlayerInfo* pi) {
-	CDonorImage* pImg = static_cast<CDonorImage*>(m_pImageList->GetImage(pi->GetIndex() + DONOR_IMAGELIST_BASE));
+void CScorePanel::UpdatePlayerDonor(PlayerInfo* pi) {
+	CDonorImage* pImg = static_cast<CDonorImage*>(m_pImageList->GetImage(pi->m_iIndex + DONOR_IMAGELIST_BASE));
 	int iTex = -1;
-	switch (pi->GetDonor()) {
-	case SC_DONER_ICON::DONER_ELECTRIC_CROWBAR:iTex = m_iDonor1IconTexture; break;
-	case SC_DONER_ICON::DONER_GOLDED_UZI:iTex = m_iDonor2IconTexture; break;
-	case SC_DONER_ICON::DONER_GOLED_DOLLAR:iTex = m_iDonor3IconTexture; break;
-	case SC_DONER_ICON::DONER_TESTER:iTex = m_iDonor4IconTexture; break;
-	case SC_DONER_ICON::DONER_ARTIST:iTex = m_iDonor5IconTexture; break;
-	case SC_DONER_ICON::DONER_DEVELOEPR:iTex = m_iDonor6IconTexture; break;
+	switch (pi->m_eDonor) {
+	case PlayerInfo::DONOR::ELECTRIC_CROWBAR:iTex = m_iDonor1IconTexture; break;
+	case PlayerInfo::DONOR::GOLDED_UZI:iTex = m_iDonor2IconTexture; break;
+	case PlayerInfo::DONOR::GOLED_DOLLAR:iTex = m_iDonor3IconTexture; break;
+	case PlayerInfo::DONOR::TESTER:iTex = m_iDonor4IconTexture; break;
+	case PlayerInfo::DONOR::ARTIST:iTex = m_iDonor5IconTexture; break;
+	case PlayerInfo::DONOR::DEVELOEPR:iTex = m_iDonor6IconTexture; break;
 	}
 	pImg->SetTexture(iTex);
 }
 
-void CScorePanel::UpdatePlayerAdmin(CPlayerInfo* pi) {
-	CPlayerImage* pImg = static_cast<CPlayerImage*>(m_pImageList->GetImage(pi->GetIndex()));
+void CScorePanel::UpdatePlayerAdmin(PlayerInfo* pi) {
+	CPlayerImage* pImg = static_cast<CPlayerImage*>(m_pImageList->GetImage(pi->m_iIndex));
 	int tex = -1;
-	switch (pi->GetAdmin()) {
-	case 1:tex = m_iAdminIconTexture; break;
-	case 2:tex = m_iServerIconTexture; break;
+	switch (pi->m_iAdmin) {
+	case PlayerInfo::ADMIN::OPRATER:tex = m_iAdminIconTexture; break;
+	case PlayerInfo::ADMIN::SERVER_OWNER:tex = m_iServerIconTexture; break;
 	}
 	//Update admin 
 	pImg->SetAdminTexture(tex);
 }
 
-void CScorePanel::UpdateClientIcon(CPlayerInfo* pi){
-	CPlayerImage* pImg = static_cast<CPlayerImage*>(m_pImageList->GetImage(pi->GetIndex()));
+void CScorePanel::UpdateClientIcon(PlayerInfo* pi){
+	CPlayerImage* pImg = static_cast<CPlayerImage*>(m_pImageList->GetImage(pi->m_iIndex));
 	// Update size
 	int size = GetClientIconSize();
 	pImg->SetSize(size, size);
 	// Update muted state
-	pImg->SetMuted(GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()));
+	pImg->SetMuted(GetClientVoiceMgr()->IsPlayerBlocked(pi->m_iIndex));
 	// Update avatar
-	CSteamID* steamID = pi->GetSteamID();
+	CSteamID* steamID = &pi->m_pSteamId;
 	if (hud_scoreboard_showavatars->value > 0 && steamID->IsValid())
 		pImg->SetAvatar(steamID);
 	else
@@ -980,7 +982,7 @@ void CScorePanel::UpdateClientIcon(CPlayerInfo* pi){
 
 void CScorePanel::UpdateScoresAndCounts(){
 	// Reset team data
-	for (int i = 1; i <= SC_MAX_TEAMS; i++){
+	for (int i = 1; i <= PREDEFINED_TEAM_COUNT; i++){
 		TeamData& td = m_TeamData[i];
 		td.iPlayerCount = 0;
 		td.iFrags = 0;
@@ -991,14 +993,14 @@ void CScorePanel::UpdateScoresAndCounts(){
 	int iPlayerCount = 0;
 
 	for (int i = 1; i <= SC_MAX_PLAYERS; i++){
-		CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(i);
+		PlayerInfo* pi = gPlayerRes.GetPlayerInfo(i);
 
 		if (!pi->IsValid())
 			continue;
 
-		TeamData& td = m_TeamData[pi->GetTeamNumber()];
-		td.iFrags += pi->GetFrags();
-		td.iDeaths += pi->GetDeaths();
+		TeamData& td = m_TeamData[static_cast<int>(pi->m_iTeamNumber)];
+		td.iFrags += pi->m_iFrags;
+		td.iDeaths += pi->m_iDeaths;
 		td.iPlayerCount++;
 
 		iPlayerCount++;
@@ -1037,13 +1039,13 @@ void CScorePanel::UpdateScoresAndCounts(){
 	};
 
 	// Update team score and player count
-	for (int i = 1; i <= SC_MAX_TEAMS; i++){
+	for (int i = 1; i <= PREDEFINED_TEAM_COUNT; i++){
 		TeamData& td = m_TeamData[i];
 
 		if (td.iPlayerCount == 0)
 			continue;
 
-		CTeamInfo* ti = CTeamInfo::GetTeamInfo(i);
+		TeamInfo* ti = gTeamRes.GetTeamInfo(i);
 
 		if (ti->IsScoreOverriden()){
 			td.iFrags = ti->GetFrags();
@@ -1067,12 +1069,12 @@ int CScorePanel::GetNameColumnWidth()
 	return w;
 }
 
-int CScorePanel::GetPlayerTeam(CPlayerInfo* pi)
+int CScorePanel::GetPlayerTeam(PlayerInfo* pi)
 {
-	return pi->GetTeamNumber();
+	return static_cast<int>(pi->m_iTeamNumber);
 }
 
-Color CScorePanel::GetPlayerBgColor(CPlayerInfo* pi)
+Color CScorePanel::GetPlayerBgColor(PlayerInfo* pi)
 {
 	if (pi->IsThisPlayer())
 	{
@@ -1080,7 +1082,7 @@ Color CScorePanel::GetPlayerBgColor(CPlayerInfo* pi)
 	}
 	else
 	{
-		return GetBaseViewPort()->GetPlayerColor(pi->GetIndex());
+		return GetBaseViewPort()->GetPlayerColor(pi->m_iIndex);
 	}
 
 	return Color(0, 0, 0, 0);
@@ -1121,7 +1123,7 @@ void CScorePanel::OpenPlayerMenu(int itemID){
 		return;
 
 	// SteamID64
-	m_MenuData.nSteamID64 = CPlayerInfo::GetPlayerInfo(m_MenuData.nClient)->GetSteamID64();
+	m_MenuData.nSteamID64 = gPlayerRes.GetPlayerInfo(m_MenuData.nClient)->m_pSteamId.ConvertToUint64();
 	if (m_MenuData.nSteamID64 != 0){
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nProfilePageItemID, true);
 		m_pPlayerMenu->SetItemEnabled(m_MenuData.nProfileUrlItemID, true);
@@ -1154,9 +1156,9 @@ void CScorePanel::OnItemContextMenu(int itemID) {
 
 void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 {
-	CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(m_MenuData.nClient);
+	PlayerInfo* pi = gPlayerRes.GetPlayerInfo(m_MenuData.nClient);
 
-	if (!pi->IsConnected())
+	if (!pi->m_bIsConnected)
 		return;
 
 	switch (command)
@@ -1165,10 +1167,10 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	{
 		if (pi->IsThisPlayer())
 			return;
-		if(GetClientVoiceMgr()->IsPlayerBlocked(pi->GetIndex()))
-			GetClientVoiceMgr()->SetPlayerBlockedState(pi->GetIndex(), false);
+		if(GetClientVoiceMgr()->IsPlayerBlocked(pi->m_iIndex))
+			GetClientVoiceMgr()->SetPlayerBlockedState(pi->m_iIndex, false);
 		else
-			GetClientVoiceMgr()->SetPlayerBlockedState(pi->GetIndex(), true);
+			GetClientVoiceMgr()->SetPlayerBlockedState(pi->m_iIndex, true);
 		// Muting one player may mute others (if they have identical Unique IDs)
 		UpdateAllClients();
 
@@ -1177,7 +1179,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	case MenuAction::SteamProfile:
 	{
 		if (SteamFriends())
-			SteamFriends()->ActivateGameOverlayToUser("steamid", *pi->GetSteamID());
+			SteamFriends()->ActivateGameOverlayToUser("steamid", pi->m_pSteamId);
 		else
 		{
 			// Open in browser
@@ -1196,7 +1198,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	case MenuAction::CopyName:
 	{
 		wchar_t name[MAX_PLAYERNAME_LENGTH + 1];
-		localize()->ConvertANSIToUnicode(pi->GetRealName(), name, sizeof(name));
+		localize()->ConvertANSIToUnicode(pi->m_szRealName.c_str(), name, sizeof(name));
 		system()->SetClipboardText(name, wcslen(name));
 		break;
 	}
@@ -1209,14 +1211,14 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 	}
 	case MenuAction::CopySteamID:
 	{
-		std::string steamid = std::string(pi->GetSteamIDString());
-		system()->SetClipboardText(steamid.c_str(), steamid.size());
+		auto steamid = pi->m_pSteamId.Render();
+		system()->SetClipboardText(steamid, strlen(steamid));
 		break;
 	}
 	case MenuAction::CopySteamID64:
 	{
-		std::string steamid = std::to_string(m_MenuData.nSteamID64);
-		system()->SetClipboardText(steamid.c_str(), steamid.size());
+		auto steamid = pi->m_szSteamID64;
+		system()->SetClipboardText(steamid, strlen(steamid));
 		break;
 	}
 	}

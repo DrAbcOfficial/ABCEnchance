@@ -20,7 +20,6 @@
 #include "mymathlib.h"
 #include "Viewport.h"
 #include "playertrace.h"
-#include "weapon.h"
 
 #include "crosshair.h"
 #include <exportfuncs.h>
@@ -256,7 +255,7 @@ void CCrosshairPanel::SetCrosshairSPR(int x, int y, int hPic, wrect_t* hRc) {
 	m_pSprImage->SetSize(w, h);
 	m_pSprImage->SetRect(hRc->left, hRc->right, hRc->top, hRc->bottom);
 }
-void CCrosshairPanel::SetWeapon(WEAPON* weapon) {
+void CCrosshairPanel::SetWeapon(Weapon* weapon) {
 	m_pHandledWeapon = weapon;
 	if (!m_pHandledWeapon || m_pHandledWeapon->iId <= 0) {
 		ShowPanel(false);

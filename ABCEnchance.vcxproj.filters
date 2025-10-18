@@ -117,6 +117,12 @@
     <Filter Include="Public\Source\HLSDK">
       <UniqueIdentifier>{5153a3bf-a45c-4055-a914-6e4d54f6f61e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\core">
+      <UniqueIdentifier>{77b75e01-9a2b-421b-aae3-77421ffc0dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\core\resource">
+      <UniqueIdentifier>{f0d7ddbe-ec7d-4d76-a075-751b221494a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
@@ -237,9 +243,6 @@
       <Filter>Public\Source\Utility\opengl</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Utility\parsemsg.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\player_info.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Utility\steamid.cpp">
@@ -653,9 +656,6 @@
     <ClCompile Include="src\Source\HUD\indicator.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\weaponbank.cpp">
-      <Filter>Public\Source\HUD\legacy</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\vgui\ammostack.cpp">
       <Filter>Public\Source\HUD\vgui</Filter>
     </ClCompile>
@@ -703,6 +703,21 @@
     </ClCompile>
     <ClCompile Include="src\Source\Utility\MetaRenderer.cpp">
       <Filter>Public\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\event.cpp">
+      <Filter>Public\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\resource\playerresource.cpp">
+      <Filter>Public\core\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\resource\spriteresource.cpp">
+      <Filter>Public\core\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\resource\weaponresource.cpp">
+      <Filter>Public\core\resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\resource\teamresource.cpp">
+      <Filter>Public\core\resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -955,9 +970,6 @@
     <ClInclude Include="src\Header\Utility\parsemsg.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Utility\player_info.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Utility\svc_hook.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
@@ -972,9 +984,6 @@
     </ClInclude>
     <ClInclude Include="src\Header\Utility\opengl\gl_utility.h">
       <Filter>Public\Header\Utility\opengl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\weapon.h">
-      <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\enginedef.h">
       <Filter>Public\Header\Var</Filter>
@@ -998,9 +1007,6 @@
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Var\voice_banmgr.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\weaponinfo_sven.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\efxenchance.h">
@@ -1378,9 +1384,6 @@
     <ClInclude Include="src\Header\HUD\indicator.h">
       <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\HUD\weaponbank.h">
-      <Filter>Public\Header\HUD\legacy</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Utility\client_steam_context.h">
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
@@ -1509,6 +1512,21 @@
     </ClInclude>
     <ClInclude Include="src\Header\Utility\MetaRenderer.h">
       <Filter>Public\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\event.h">
+      <Filter>Public\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\resource\playerresource.h">
+      <Filter>Public\core\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\resource\spriteresource.h">
+      <Filter>Public\core\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\resource\weaponresource.h">
+      <Filter>Public\core\resource</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\resource\teamresource.h">
+      <Filter>Public\core\resource</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

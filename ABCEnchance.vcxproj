@@ -202,6 +202,11 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="SourceSDK\tier1\utlsymbol.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
+    <ClCompile Include="src\core\event.cpp" />
+    <ClCompile Include="src\core\resource\playerresource.cpp" />
+    <ClCompile Include="src\core\resource\spriteresource.cpp" />
+    <ClCompile Include="src\core\resource\teamresource.cpp" />
+    <ClCompile Include="src\core\resource\weaponresource.cpp" />
     <ClCompile Include="src\Particleman\ClientParticleMan.cpp" />
     <ClCompile Include="src\Source\autofunc.cpp" />
     <ClCompile Include="src\Source\clientdll.cpp" />
@@ -236,7 +241,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\Source\HUD\vgui\weaponchoose.cpp" />
     <ClCompile Include="src\Source\HUD\vgui\weaponstack.cpp" />
     <ClCompile Include="src\Source\HUD\Viewport.cpp" />
-    <ClCompile Include="src\Source\HUD\weaponbank.cpp" />
     <ClCompile Include="src\Source\playertrace.cpp" />
     <ClCompile Include="src\Source\plugins.cpp" />
     <ClCompile Include="src\Source\soundengine.cpp" />
@@ -253,7 +257,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\Source\Utility\opengl\gl_shader.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_utility.cpp" />
     <ClCompile Include="src\Source\Utility\parsemsg.cpp" />
-    <ClCompile Include="src\Source\Utility\player_info.cpp" />
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp" />
     <ClCompile Include="src\Source\Utility\steamid.cpp" />
     <ClCompile Include="src\Source\Utility\svc_hook.cpp" />
@@ -448,6 +451,11 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="SourceSDK\vstdlib\strtools.h" />
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
+    <ClInclude Include="src\core\event.h" />
+    <ClInclude Include="src\core\resource\playerresource.h" />
+    <ClInclude Include="src\core\resource\spriteresource.h" />
+    <ClInclude Include="src\core\resource\teamresource.h" />
+    <ClInclude Include="src\core\resource\weaponresource.h" />
     <ClInclude Include="src\Header\autofunc.h" />
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
@@ -480,7 +488,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\Header\HUD\vgui\weaponchoose.h" />
     <ClInclude Include="src\Header\HUD\vgui\weaponstack.h" />
     <ClInclude Include="src\Header\HUD\Viewport.h" />
-    <ClInclude Include="src\Header\HUD\weaponbank.h" />
     <ClInclude Include="src\Header\IEngineSurface.h" />
     <ClInclude Include="src\Header\playertrace.h" />
     <ClInclude Include="src\Header\plugins.h" />
@@ -499,7 +506,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\Header\Utility\opengl\gl_shader.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_utility.h" />
     <ClInclude Include="src\Header\Utility\parsemsg.h" />
-    <ClInclude Include="src\Header\Utility\player_info.h" />
     <ClInclude Include="src\Header\Utility\svc_hook.h" />
     <ClInclude Include="src\Header\Utility\Task.h" />
     <ClInclude Include="src\Header\Utility\win32helper.h" />
@@ -512,8 +518,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\Header\Var\vguilocal.h" />
     <ClInclude Include="src\Header\Var\voice_banmgr.h" />
     <ClInclude Include="src\Header\Var\voice_status.h" />
-    <ClInclude Include="src\Header\Var\weapon.h" />
-    <ClInclude Include="src\Header\Var\weaponinfo_sven.h" />
     <ClInclude Include="src\Header\vgui_internal.h" />
     <ClInclude Include="src\Header\viewmodellag.h" />
     <ClInclude Include="src\Particleman\ClientParticleMan.h" />

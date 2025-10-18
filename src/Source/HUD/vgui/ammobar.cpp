@@ -13,8 +13,8 @@
 
 #include "local.h"
 #include "vguilocal.h"
-#include "weapon.h"
-#include "weaponbank.h"
+
+#include "core/resource/weaponresource.h"
 
 #include "Viewport.h"
 
@@ -79,7 +79,7 @@ void CAmmoPanel::SetParent(vgui::VPANEL parent){
 	BaseClass::SetParent(parent);
 }
 
-void CAmmoPanel::SetWeapon(WEAPON* weapon){
+void CAmmoPanel::SetWeapon(Weapon* weapon){
 	m_pHandledWeapon = weapon;
 	RefreshAmmo();
 }

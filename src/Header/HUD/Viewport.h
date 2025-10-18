@@ -3,6 +3,8 @@
 #include <vector>
 #include "vgui_controls/Panel.h"
 
+#include "core/resource/weaponresource.h"
+
 #ifndef VGUI_IVIEWPORTPANEL_H
 class IViewportPanel;
 #endif
@@ -29,10 +31,6 @@ class CItemStackPanel;
 class CWeaponStackPanel;
 class CWeaponChoosePanel;
 class CItemHighLightPanel;
-
-#ifndef __AMMO_H__
-class WEAPON;
-#endif
 
 namespace vgui {
 	class CScorePanel;
@@ -135,7 +133,7 @@ public:
 
 	CWeaponChoosePanel* GetWeaponChoosePanel();
 
-	void SetCurWeapon(WEAPON* weapon);
+	void SetCurWeapon(Weapon* weapon);
 
 	enum class HUDNOTICE {
 		PRINTNOTIFY = 1,

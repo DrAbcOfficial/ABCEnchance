@@ -18,7 +18,6 @@
 #include "vguilocal.h"
 #include "exportfuncs.h"
 #include "Color.h"
-#include "weapon.h"
 #include "usercmd.h"
 #include "extraprecache.h"
 #include "pm_defs.h"
@@ -39,7 +38,6 @@
 #include "CCustomHud.h"
 #include "local.h"
 #include "steam_api.h"
-#include "player_info.h"
 //HUD
 #include "neteasemusic.h"
 #include "Viewport.h"
@@ -56,19 +54,17 @@ void MetaRenderer_Init();
 #define STR(s) _STR(s)
 
 #pragma region External program management variables
-overviewInfo_t* gDevOverview;
 void* g_pClientSoundEngine;
 const clientdata_t* gClientData;
 CGameStudioModelRenderer* g_StudioRenderer;
 DWORD g_dwHUDListAddr;
-bool* g_bRenderingPortals;
-hud_nativeplayerinfo_t* g_aryNativePlayerInfo;
+hudpanel_info_t* g_aryNativeHUDPanelInfo;
 /* (msprite_s**) */ void* gpSprite;
 #pragma endregion
 
 #pragma region Memcpy or internal management variable
 //memcpy
-engine_studio_api_t IEngineStudio;
+engine_studio_api_t gEngineStudio;
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
 //new
@@ -141,26 +137,6 @@ static void EVVectorScale(float* punchangle1, float scale, float* punchangle2) {
 	gHookFuncs.EVVectorScale(punchangle1, scale, punchangle2);
 	CMathlib::VectorCopy(punchangle1, GetBaseViewPort()->m_vecClientEVPunch);
 }
-extern bool g_bInRenderRadar;
-static int CL_IsDevOverview(void) {
-	return g_bInRenderRadar ? 1 : gHookFuncs.CL_IsDevOverview();
-}
-static void CL_SetDevOverView(int param1) {
-	gHookFuncs.CL_SetDevOverView(param1);
-	if (g_bInRenderRadar) {
-		(*(vec3_t*)(param1 + 0x1C))[CMathlib::Q_YAW] = gCustomHud.m_flOverViewYaw;
-		*(float*)(param1 + 0x10) = gCustomHud.m_vecOverViewOrg[0];
-		*(float*)(param1 + 0x14) = gCustomHud.m_vecOverViewOrg[1];
-		gDevOverview->z_max = gCustomHud.m_flOverViewZmax;
-		gDevOverview->z_min = gCustomHud.m_flOverViewZmin;
-		gDevOverview->zoom = gCustomHud.m_flOverViewScale;
-	}
-}
-static void R_ForceCVars(int mp) {
-	if (CL_IsDevOverview())
-		return;
-	gHookFuncs.R_ForceCVars(mp);
-}
 static model_t* CL_GetModelByIndex(int index) {
 	auto extra = GetExtraModelByModelIndex(index);
 	if (extra)
@@ -190,14 +166,6 @@ void FillEngineAddress() {
 	if (engineFactory && engineFactory("EngineSurface007", nullptr)) {
 #define R_NEWMAP_SIG "\x55\x8B\xEC\x51\xC7\x45\xFC\x00\x00\x00\x00\xEB\x2A\x8B\x45\xFC\x83\xC0\x01\x89\x45\xFC\x81\x7D\xFC\x00\x01\x00\x00"
 		Fill_Sig(R_NEWMAP_SIG, g_dwEngineBase, g_dwEngineSize, R_NewMap);
-#define R_ISCLOVERVIEW_SIG "\xD9\x05\x2A\x2A\x2A\x2A\xD9\xEE\xDA\xE9\xDF\xE0\xF6\xC4\x44\x2A\x2A\x83\x3D\x2A\x2A\x2A\x2A\x00\x2A\x2A\xB8\x01\x00\x00\x00\xC3\x2A\x2A"
-		Fill_Sig(R_ISCLOVERVIEW_SIG, g_dwEngineBase, g_dwEngineSize, CL_IsDevOverview);
-#define GL_BIND_SIG "\x8B\x44\x24\x04\x39\x05\x2A\x2A\x2A\x2A\x2A\x2A\x50\x68\xE1\x0D\x00\x00\xA3\x2A\x2A\x2A\x2A\xFF\x15\x2A\x2A\x2A\x2A\xC3"
-		Fill_Sig(GL_BIND_SIG, g_dwEngineBase, g_dwEngineSize, GL_Bind);
-#define CL_SETDEVOVERVIEW "\xD9\x05\x2A\x2A\x2A\x2A\xD9\x05\x2A\x2A\x2A\x2A\xDC\xC9"
-		Fill_Sig(CL_SETDEVOVERVIEW, g_dwEngineBase, g_dwEngineSize, CL_SetDevOverView);
-#define R_FORCECVAR_SIG "\x83\x7C\x24\x2A\x00\x2A\x2A\x2A\x2A\x00\x00\x81\x3D\x2A\x2A\x2A\x2A\xFF\x00\x00\x00"
-		Fill_Sig(R_FORCECVAR_SIG, g_dwEngineBase, g_dwEngineSize, R_ForceCVars);
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
 #define CEngineClient_RenderView_SIG "\xFF\x74\x24\x04\x2A\x2A\x2A\x2A\x2A\x83\xC4\x04\x2A\x2A\x2A\x2A\x2A\x80\x7C\x24\x08\x00\xD9\xEE\x2A\x2A\x83\xEC\x10\xD9\x54\x24\x0C\xD9"
@@ -205,12 +173,6 @@ void FillEngineAddress() {
 #define R_GetSpriteFrame_SIG "\x56\x8B\x2A\x2A\x2A\x2A\x33\xFF\x85\xF6\x75\x12\x68"
 		Fill_Sig(R_GetSpriteFrame_SIG, g_dwEngineBase, g_dwEngineSize, R_GetSpriteFrame);
 		DWORD addr;
-#define DEVOVERVIEW_SIG "\x83\xEC\x30\xDD\x5C\x24\x2A\xD9\x05"
-		{
-			addr = (ULONG_PTR)Search_Pattern(DEVOVERVIEW_SIG);
-			Sig_AddrNotFound(gDevOverview);
-			gDevOverview = (decltype(gDevOverview))(*(ULONG_PTR*)(addr + 9) - 0xC);
-		}
 #define GPSRITE_SIG "\x00\x00\x00\x8B\x89\x84\x01\x00\x00\x89\x0D"
 		{
 			addr = (ULONG_PTR)Search_Pattern(GPSRITE_SIG);
@@ -262,38 +224,6 @@ void FillAddress() {
 			g_dwHUDListAddr = *(DWORD*)(addr + 0x1);
 		}
 #pragma endregion
-#pragma region bRenderingPortal
-		if (1) {
-			constexpr char pattern[] = "\x6A\x00\x6A\x00\x6A\x00\x8B\x2A\xFF\x50\x2A";
-			auto addr = Search_Pattern_From_Size(g_dwClientTextBase, g_dwClientTextSize, pattern);
-			Sig_AddrNotFound(g_bRenderingPortals);
-			g_pMetaHookAPI->DisasmRanges(addr, 0x80, [](void* inst, PUCHAR address, size_t instLen, int instCount, int depth, PVOID context) {
-				auto pinst = (cs_insn*)inst;
-
-				if (pinst->id == X86_INS_MOV &&
-					pinst->detail->x86.op_count == 2 &&
-					pinst->detail->x86.operands[0].type == X86_OP_MEM &&
-					pinst->detail->x86.operands[1].type == X86_OP_IMM &&
-					(PUCHAR)pinst->detail->x86.operands[0].mem.disp > (PUCHAR)g_dwClientDataBase &&
-					(PUCHAR)pinst->detail->x86.operands[0].mem.disp < (PUCHAR)g_dwClientDataBase + g_dwClientDataSize &&
-					pinst->detail->x86.operands[1].imm == 1)
-				{
-					g_bRenderingPortals = (decltype(g_bRenderingPortals))pinst->detail->x86.operands[0].mem.disp;
-					return TRUE;
-				}
-
-				if (address[0] == 0xCC)
-					return TRUE;
-
-				if (pinst->id == X86_INS_RET)
-					return TRUE;
-
-				return FALSE;
-
-				}, 0, NULL);
-			Sig_VarNotFound(g_bRenderingPortals);
-		}
-#pragma endregion
 #pragma region Player Infos
 		if (1) {
 			/*
@@ -310,7 +240,7 @@ void FillAddress() {
 			*/
 			constexpr char pattern[] = "\xC6\x85\x8F\xFE\xFF\xFF\x01\x66\x89\x90";
 			PUCHAR addr = (PUCHAR)Search_Pattern_From_Size(g_dwClientBase, g_dwClientSize, pattern);
-			g_aryNativePlayerInfo = reinterpret_cast<hud_nativeplayerinfo_t*> (*(DWORD*)(addr + 10) + 8);
+			g_aryNativeHUDPanelInfo = reinterpret_cast<hudpanel_info_t*> (*(DWORD*)(addr + 10) + 8);
 		}
 #pragma endregion
 
@@ -329,10 +259,7 @@ void InstallEngineHook() {
 
 	Install_InlineEngHook(pfnPlaybackEvent);
 	Install_InlineEngHook(R_NewMap);
-	Install_InlineEngHook(CL_IsDevOverview);
-	Install_InlineEngHook(CL_SetDevOverView);
 	Install_InlineEngHook(CL_GetModelByIndex);
-	Install_InlineEngHook(R_ForceCVars);
 }
 void InstallClientHook() {
 	Install_InlineHook(EVVectorScale);
@@ -467,7 +394,7 @@ void HUD_Init(void)
 	AutoFunc::Init();
 }
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio) {
-	memcpy(&IEngineStudio, pstudio, sizeof(IEngineStudio));
+	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
 

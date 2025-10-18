@@ -421,19 +421,19 @@ private:
 	float			m_shadelight = 192;					// direct world light
 
 	model_t* LoadModel(const char* modelname) {
-		return IEngineStudio.Mod_ForName(modelname, false);
+		return gEngineStudio.Mod_ForName(modelname, false);
 	}
 
 	studiohdr_t* GetStudioHdr(model_t* mdl) {
-		return reinterpret_cast<studiohdr_t*>(IEngineStudio.Mod_Extradata(mdl));
+		return reinterpret_cast<studiohdr_t*>(gEngineStudio.Mod_Extradata(mdl));
 	}
 
 	model_t* LoadDemandSequences(char* modelname) {
-		return IEngineStudio.Mod_ForName(modelname, false);
+		return gEngineStudio.Mod_ForName(modelname, false);
 	}
 
 	studioseqhdr_t* GetSequenceHdr(model_t* mdl) {
-		return reinterpret_cast<studioseqhdr_t*>(IEngineStudio.Mod_Extradata(mdl));
+		return reinterpret_cast<studioseqhdr_t*>(gEngineStudio.Mod_Extradata(mdl));
 	}
 
 

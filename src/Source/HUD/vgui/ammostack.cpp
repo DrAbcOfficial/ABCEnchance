@@ -6,10 +6,7 @@
 #include <map>
 #include <string>
 #include "cvardef.h"
-#include "weaponinfo.h"
-class WEAPON;
-typedef int HSPRITE;
-#include "weaponbank.h"
+#include "core/resource/weaponresource.h"
 
 #include "vgui_controls/ImageSprPanel.h"
 #include "vgui_controls/Label.h"

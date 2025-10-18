@@ -27,7 +27,7 @@ int PrecacheExtraModel(const char* path){
 	int index = GetExtraModelIndex(path);
 	if (index > -1)
 		return index;
-	g_ExtraPreacheModel[g_iExtraPrecaheSize] = IEngineStudio.Mod_ForName(path, true);
+	g_ExtraPreacheModel[g_iExtraPrecaheSize] = gEngineStudio.Mod_ForName(path, true);
 	g_ExtraPreacheModel[g_iExtraPrecaheSize]->needload = NL_CLIENT;
 	index = g_iExtraPrecaheSize + EXTRPRECACHE_INDEX_BASE;
 	g_iExtraPrecaheSize++;

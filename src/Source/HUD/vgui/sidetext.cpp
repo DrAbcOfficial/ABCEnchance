@@ -16,8 +16,9 @@
 #include "plugins.h"
 #include <exportfuncs.h>
 
+#include "core/resource/playerresource.h"
+
 #include "steamclientpublic.h"
-#include <player_info.h>
 
 extern vgui::HScheme GetViewPortBaseScheme();
 
@@ -87,7 +88,7 @@ void CSidePanel::OnThink() {
 			return subject;
 	};
 	std::string szTemp = m_szTeplate;
-	szTemp = ReplaceAll(szTemp, "{SCORE}", std::to_string(CPlayerInfo::GetPlayerInfo(gEngfuncs.GetLocalPlayer()->index)->GetFrags()));
+	szTemp = ReplaceAll(szTemp, "{SCORE}", std::to_string(gPlayerRes.GetLocalPlayerInfo()->m_iFrags));
 	szTemp = ReplaceAll(szTemp, "{MAXSPEED}", std::to_string(static_cast<int>(m_flMaxSpeed)));
 	szTemp = ReplaceAll(szTemp, "{SPEED}", std::to_string(static_cast<int>(flPlayerSpeed)));
 

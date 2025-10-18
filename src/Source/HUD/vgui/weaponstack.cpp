@@ -6,8 +6,7 @@
 #include "cvardef.h"
 #include "weaponinfo.h"
 typedef int HSPRITE;
-#include "weapon.h"
-#include "weaponbank.h"
+#include "core/resource/weaponresource.h"
 
 #include "vgui_controls/ImageSprPanel.h"
 #include "weaponstack.h"
@@ -28,7 +27,7 @@ void CWeaponStackItem::ApplySchemeSettings(vgui::IScheme* pScheme){
 
 void CWeaponStackItem::CheckExpire(){
 	BaseClass::CheckExpire();
-	WEAPON* weapon = gWR.GetWeapon(m_iWeapon);
+	auto weapon = gWR.GetWeapon(m_iWeapon);
 	if (weapon == nullptr)
 		return;
 	if(gWR.HasAmmo(weapon))
@@ -37,7 +36,7 @@ void CWeaponStackItem::CheckExpire(){
 		m_pPanel->SetDrawColor(m_cEmpty);
 }
 void CWeaponStackItem::ForceReload() {
-	WEAPON* weapon = gWR.GetWeapon(m_iWeapon);
+	auto weapon = gWR.GetWeapon(m_iWeapon);
 	if (weapon == nullptr)
 		return;
 	m_pPanel->SetImage(weapon->hInactive);
@@ -60,7 +59,7 @@ const char* CWeaponStackPanel::GetName() {
 	return VIEWPORT_WEAPONSTACK_NAME;
 }
 void CWeaponStackPanel::AddItemPickup(int wepindex){
-	WEAPON* weapon = gWR.GetWeapon(wepindex);
+	auto weapon = gWR.GetWeapon(wepindex);
 	if (weapon == nullptr)
 		return;
 	CWeaponStackItem* item = new CWeaponStackItem(this, weapon->hInactive, 

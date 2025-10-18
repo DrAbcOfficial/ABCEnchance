@@ -12,7 +12,6 @@
 
 #include "studio.h"
 #include "com_model.h"
-#include "player_infosc.h"
 
 class CVector;
 typedef unsigned char byte;
@@ -162,7 +161,7 @@ public:
 	model_t* m_pRenderModel;
 
 	// Player info for current player, if drawing a player
-	player_infosc_t* m_pPlayerInfo;
+	player_info_sc_t* m_pPlayerInfo;
 
 	// The index of the player being drawn
 	int				m_nPlayerIndex;

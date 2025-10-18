@@ -7,6 +7,7 @@
 #include <tier1/utlmap.h>
 #include <vgui_controls/Frame.h>
 #include "IViewportPanel.h"
+#include "core/resource/playerresource.h"
 
 namespace vgui
 {
@@ -136,10 +137,10 @@ private:
 	ImageList* m_pImageList = nullptr;
 	Menu* m_pPlayerMenu = nullptr;
 
-	std::array<TeamData, SC_MAX_TEAMS + 2> m_TeamData;
-	std::array<bool, SC_MAX_TEAMS + 2> m_IsTeamSectionCreated;
+	std::array<TeamData, PREDEFINED_TEAM_COUNT> m_TeamData;
+	std::array<bool, PREDEFINED_TEAM_COUNT> m_IsTeamSectionCreated;
 	std::array<PlayerData, SC_MAX_PLAYERS + 1> m_PlayerData;
-	std::array<int, SC_MAX_TEAMS + 1> m_SortedTeamIDs;
+	std::array<int, PREDEFINED_TEAM_COUNT> m_SortedTeamIDs;
 	MenuData m_MenuData;
 
 	int m_iKillerIndex = 0;
@@ -211,8 +212,8 @@ private:
 	 * Resizes the panel.
 	 */
 	void UpdateAllClients();
-	void UpdatePlayerAdmin(CPlayerInfo* pi);
-	void UpdatePlayerDonor(CPlayerInfo* pi);
+	void UpdatePlayerAdmin(PlayerInfo* pi);
+	void UpdatePlayerDonor(PlayerInfo* pi);
 	/**
 	 * Updates client's row in the scoreboard.
 	 */
@@ -221,7 +222,7 @@ private:
 	/**
 	 * Updates m_pImageList[i]: changes muted state and updates Steam avatar.
 	 */
-	void UpdateClientIcon(CPlayerInfo* pi);
+	void UpdateClientIcon(PlayerInfo* pi);
 
 	/**
 	 * Updates team scores and player counts.
@@ -236,12 +237,12 @@ private:
 	/**
 	 * Returns player team [0; MAX_TEAMS] or TEAM_SPECTATOR.
 	 */
-	int GetPlayerTeam(CPlayerInfo* pi);
+	int GetPlayerTeam(PlayerInfo* pi);
 
 	/**
 	 * Returns bright color if this is this player, fading red if it's the last killer or (0,0,0,0).
 	 */
-	Color GetPlayerBgColor(CPlayerInfo* pi);
+	Color GetPlayerBgColor(PlayerInfo* pi);
 
 	/**
 	 * Returns client icon size.

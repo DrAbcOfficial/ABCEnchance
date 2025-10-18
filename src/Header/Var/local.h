@@ -68,13 +68,9 @@ using cl_refHookfunc_t = struct{
 #pragma region Engine
 	void (*CEngineClient_RenderView)				(ref_params_s* param, bool bClearColor, bool bDrawViewModel, int iPassIndex);
 	/*(mspriteframe_s *)*/void* (*R_GetSpriteFrame) (/* (msprite_s*) */ void* pSprite, int frame);
-	void (*GL_Bind)					(int texnum);
 
 	void (*R_NewMap)					();
-	void (*R_ForceCVars)				(int mp);
 
-	int (*CL_IsDevOverview)			();
-	void (*CL_SetDevOverView)(int param_1);
 	model_t* (*CL_GetModelByIndex)		(int index);
 #pragma endregion
 #pragma region VGUI

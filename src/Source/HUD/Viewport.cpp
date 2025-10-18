@@ -16,7 +16,9 @@
 #include "local.h"
 #include "vguilocal.h"
 #include "steam_api.h"
-#include "player_info.h"
+
+#include "core/event.h"
+#include "core/resource/playerresource.h"
 #include "hud.h"
 
 #include "parsemsg.h"
@@ -60,6 +62,17 @@ vgui::HScheme GetViewPortBaseScheme() {
 	return g_pViewPort->GetBaseScheme();
 }
 
+
+//Event
+class UpdatePlayerInfoListener : public EventListener {
+	virtual void OnEvent(const Event* event) override {
+		if (event->GetType() == typeid(PlayerInfoUpdateEvent)) {
+			const PlayerInfoUpdateEvent* ev = reinterpret_cast<const PlayerInfoUpdateEvent*>(event);
+			GetBaseViewPort()->GetScoreBoard()->UpdateOnPlayerInfo(ev->m_pPlayerInfo->m_iIndex);
+		}
+	}
+};
+
 CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	int swide, stall;
 	surface()->GetScreenSize(swide, stall);
@@ -77,6 +90,8 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	m_pPlayerTitle = CREATE_CVAR("hud_playerinfo", "1", FCVAR_VALUE, nullptr);
 	m_pPlayerTitleDanger = CREATE_CVAR("hud_playerinfo_danger", "30", FCVAR_VALUE, nullptr);
 	m_pPopNumber = CREATE_CVAR("hud_popnumber", "1", FCVAR_VALUE, nullptr);
+
+	g_EventManager.AddListener(typeid(PlayerInfoUpdateEvent), std::make_shared<UpdatePlayerInfoListener>());
 }
 
 CViewport::~CViewport(void){
@@ -173,15 +188,16 @@ vgui::HScheme CViewport::GetBaseScheme() {
 void CViewport::Reset() {
 	for (IViewportPanel* pPanel : m_Panels)
 		pPanel->Reset();
-	CPlayerInfo::GetThisPlayerInfo()->ResetAll();
+	gPlayerRes.ResetAll();
+	gTeamRes.ResetAll();
 	m_iInterMission = 0;
 	extern void CloseVoteMenuDialog();
 	CloseVoteMenuDialog();
 }
 
 void CViewport::Init(void){
-	CPlayerInfo::GetThisPlayerInfo()->InitPlayerInfos();
-	CTeamInfo::InitTeamInfos();
+	gPlayerRes.Init();
+	gTeamRes.Init();
 }
 
 void CViewport::ActivateClientUI(void){
@@ -408,7 +424,7 @@ CWeaponStackPanel* CViewport::GetWeaponStackPanel(){
 CWeaponChoosePanel* CViewport::GetWeaponChoosePanel(){
 	return m_pWeaponChoose;
 }
-void CViewport::SetCurWeapon(WEAPON* weapon){
+void CViewport::SetCurWeapon(Weapon* weapon){
 	m_pAmmoPanel->SetWeapon(weapon);
 	m_pCrossHairPanel->SetWeapon(weapon);
 }
@@ -475,13 +491,13 @@ void CViewport::WeaponBitsChangeCallback(int bits){
 bool CViewport::IsHudHide(int HideToken) {
 	return gCustomHud.IsHudHide(HideToken);
 }
-void Viewport_PickupWeapon(WEAPON* wp) {
+void Viewport_PickupWeapon(Weapon* wp) {
 	g_pViewPort->GetWeaponChoosePanel()->InsertWeapon(wp);
 }
-void Viewport_DropWeapon(WEAPON* wp) {
+void Viewport_DropWeapon(Weapon* wp) {
 	g_pViewPort->GetWeaponChoosePanel()->RemoveWeapon(wp);
 }
-void Viewport_ChooseWeapon(WEAPON* wp) {
+void Viewport_ChooseWeapon(Weapon* wp) {
 	g_pViewPort->GetWeaponChoosePanel()->ChooseWeapon(wp);
 }
 void Viewport_SelectWeapon() {

@@ -7,13 +7,26 @@ class CGameStudioModelRenderer;
 
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
-extern engine_studio_api_t IEngineStudio;
+extern engine_studio_api_t gEngineStudio;
 extern CGameStudioModelRenderer* g_StudioRenderer;
 
 extern const clientdata_t* gClientData;
 
-extern overviewInfo_t* gDevOverview;
 extern metaplugins_t g_metaplugins;
+
+
+
+using hudpanel_info_t = struct hudpanel_info_s {
+	float frags;
+	int death;
+	int classify;
+	char unknown[64];
+	float health;
+	float armor;
+	int donor;
+	int admin;
+};
+extern hudpanel_info_t* g_aryNativeHUDPanelInfo;
 
 extern void CheckAsset();
 

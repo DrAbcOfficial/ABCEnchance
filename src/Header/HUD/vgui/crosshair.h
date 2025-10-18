@@ -7,11 +7,9 @@
 #include <VGUI2/Border.h>
 #include <vgui_controls/Panel.h>
 #include "IViewportPanel.h"
+#include "core/resource/weaponresource.h"
 
 typedef struct cvar_s cvar_t;
-#ifndef __AMMO_H__
-class WEAPON;
-#endif
 
 namespace vgui {
 	class CSPRImage;
@@ -33,7 +31,7 @@ public:
 	virtual vgui::VPANEL GetVPanel() override;
 	virtual void SetParent(vgui::VPANEL parent) override;
 
-	void SetWeapon(WEAPON* weapon);
+	void SetWeapon(Weapon* weapon);
 private:
 	cvar_t* pCvarDefaultCrosshair = nullptr;
 
@@ -57,7 +55,7 @@ private:
 	cvar_t* pDynamicCrossHairAnimInterval = nullptr;
 
 	vgui::CSPRImage* m_pSprImage;
-	WEAPON* m_pHandledWeapon = nullptr;
+	Weapon* m_pHandledWeapon = nullptr;
 	std::array<vgui::Panel*, 5> m_aryCrosshair;
 	std::array<vgui::Panel*, 5> m_aryCrosshairBorder;
 

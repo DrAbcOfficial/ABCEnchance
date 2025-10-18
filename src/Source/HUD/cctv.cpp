@@ -6,7 +6,6 @@
 #include "vguilocal.h"
 #include "vgui_controls/Controls.h"
 #include "hud.h"
-#include "weapon.h"
 #include "CCustomHud.h"
 
 #include "gl_shader.h"

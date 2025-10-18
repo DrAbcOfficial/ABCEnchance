@@ -21,7 +21,8 @@
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/avatar_image.h"
 
-#include "player_info.h"
+#include "core/resource/playerresource.h"
+
 #include <CCustomHud.h>
 #include "Viewport.h"
 #include "radar.h"
@@ -233,19 +234,19 @@ void CRadarPanel::Paint()
 			float w = ww / 2;
 			for (size_t i = 0; i < 32; i++) {
 				auto iter = m_aryPlayerAvatars[i];
-				CPlayerInfo* pi = CPlayerInfo::GetPlayerInfo(i + 1);
+				PlayerInfo* pi = gPlayerRes.GetPlayerInfo(i + 1);
 				if (!pi->IsValid()) {
 					iter->SetVisible(false);
 					continue;
 				}
-				CPlayerInfo* lpi = CPlayerInfo::GetThisPlayerInfo();
-				if (pi->GetTeamNumber() != lpi->GetTeamNumber()) {
+				PlayerInfo* lpi = gPlayerRes.GetLocalPlayerInfo();
+				if (pi->m_iTeamNumber != lpi->m_iTeamNumber) {
 					iter->SetVisible(false);
 					continue;
 				}
 				//Avatar
 				cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i + 1);
-				if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->player || !entity->model || local == entity) {
+				if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->m_pPlayerInfo || !entity->model || local == entity) {
 					iter->SetVisible(false);
 					continue;
 				}
@@ -333,8 +334,6 @@ void CRadarPanel::SetParent(vgui::VPANEL parent)
 	BaseClass::SetParent(parent);
 }
 
-bool g_bInRenderRadar = false;
-
 void CRadarPanel::RenderRadar()
 {
 	gCustomHud.m_flOverViewZmax = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::HEAD)->endpos[2] - gCVars.pRadarZMax->value;
@@ -372,16 +371,8 @@ void CRadarPanel::RenderRadar()
 	param.viewport[2] = gScreenInfo.iWidth;
 	param.viewport[3] = gScreenInfo.iHeight;
 
-	extern bool* g_bRenderingPortals;
-	bool oldRender = *g_bRenderingPortals;
-	*g_bRenderingPortals = false;
-	g_bInRenderRadar = true;
+	//TODO: Wait for metarenderer
 
-	//why no work?
-	gHookFuncs.CEngineClient_RenderView(&param, true, false, 0);
-
-	g_bInRenderRadar = false;
-	*g_bRenderingPortals = oldRender;
 	gCVars.pCVarDevOverview->value = arySaveCvars[0];
 	gCVars.pCVarDrawEntities->value = arySaveCvars[1];
 	gCVars.pCVarDrawViewModel->value = arySaveCvars[2];
