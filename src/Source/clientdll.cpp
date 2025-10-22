@@ -23,7 +23,7 @@ class CNewClientDLL : public IClientDLL {
 		m_pfnCClientDLL_PlaySoundFX(this, 0, origin, channel, name, fvol, attenuation, extraflags, pitch);
 	}
 	virtual void RenderBegin(ref_params_s* param_1) {
-		gCustomHud.RenderRadar();
+		//gCustomHud.RenderRadar();
 		m_pfnCClientDLL_RenderBegin(this, 0, param_1);
 	}
 	virtual void RenderEnd1() {

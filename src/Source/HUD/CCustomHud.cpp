@@ -589,13 +589,103 @@ static void __UserCmd_VoteMenu(void) {
 #pragma endregion
 
 #pragma region CCustomHud
-void CCustomHud::GL_Init(void){
+
+/*
+ Called from GL_BeginRendering
+*/
+void CCustomHud::OnBeginRendering(int* x, int* y, int* width, int* height)
+{
+
+}
+
+/*
+	Called from GL_BeginRendering -> R_RenderFrameStart
+*/
+void CCustomHud::OnRenderFrameStart()
+{
+
+}
+
+/*
+	Called from GL_BeginRendering
+*/
+void CCustomHud::OnBeginRenderingPost(int* x, int* y, int* width, int* height)
+{
+
+}
+
+/*
+	Called from GL_FreeFrameBuffers
+*/
+void CCustomHud::OnFreeFrameBuffers()
+{
+
+}
+
+/*
+	Called from GL_GenerateFrameBuffers
+*/
+void CCustomHud::OnGenerateFrameBuffers()
+{
+
+}
+
+/*
+	Called from R_PreRenderView
+*/
+void CCustomHud::OnPreRenderView()
+{
+	RenderRadar();
+}
+
+/*
+	Called from R_PreRenderView, after switching to target FBO
+*/
+void CCustomHud::OnPreRenderViewPost()
+{
+
+}
+
+/*
+	Called from R_PostRenderView
+*/
+void CCustomHud::OnPostRenderView()
+{
+
+}
+
+/*
+	Called from R_PostRenderView, after executing all built-in post-processes
+*/
+void CCustomHud::OnPostRenderViewPost()
+{
+
+}
+
+/*
+	Called from R_RenderEndFrame
+*/
+void CCustomHud::OnRenderEndFrame()
+{
+
+}
+
+
+void CCustomHud::GL_Init(void)
+{
 	m_HudIndicator.GLInit();
 #ifdef _DEBUG
 	m_HudCCTV.GLInit();
 #endif
+
+	if (MetaRenderer())
+	{
+		MetaRenderer()->RegisterRenderCallbacks(this);
+	}
 }
-void CCustomHud::HUD_Init(void){
+
+void CCustomHud::HUD_Init(void)
+{
 	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
 	m_pfnInitHUD = HOOK_MESSAGE(InitHUD);
 	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
@@ -660,20 +750,26 @@ void CCustomHud::HUD_Init(void){
 	m_HudCCTV.Init();
 #endif
 }
-void CCustomHud::HUD_VidInit(void){
+
+void CCustomHud::HUD_VidInit(void)
+{
 	gSpriteRes.VidInit();
 	m_HudIndicator.VidInit();
 	gWR.VidInit();
 
 	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
 }
-void CCustomHud::HUD_Draw(float flTime){
+
+void CCustomHud::HUD_Draw(float flTime)
+{
 #ifdef _DEBUG
 	m_HudCCTV.Draw(flTime);
 #endif
 	m_HudIndicator.Draw(flTime);
 }
-void CCustomHud::HUD_Reset(void){
+
+void CCustomHud::HUD_Reset(void)
+{
 	m_HudIndicator.Reset();
 	gWR.Reset();
 #ifdef _DEBUG

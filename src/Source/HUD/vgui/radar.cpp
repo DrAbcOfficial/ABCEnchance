@@ -30,17 +30,20 @@
 
 #undef clamp
 
-class CRadarMapImage : public vgui::IImage_HL25 {
+class CRadarMapImage : public vgui::IImage_HL25
+{
 public:
-	virtual void Destroy() {
+	void Destroy() override
+	{
 		delete this;
 	}
 
-	virtual void SetAdditive(bool bIsAdditive) {
+	void SetAdditive(bool bIsAdditive) override
+	{
 
 	}
 
-	virtual void Paint() override
+	void Paint() override
 	{
 		//Not supported in Core Profile
 #if 0
@@ -78,45 +81,43 @@ public:
 		GL_UseProgram(0);
 #endif
 	}
-	virtual void SetPos(int x, int y) override{
+	void SetPos(int x, int y) override {
 		m_iX = x;
 		m_iY = y;
 	}
-	virtual void SetOffset(int x, int y){
-		m_iOffX = x;
-		m_iOffY = y;
-	}
-	virtual void GetContentSize(int& wide, int& tall) override{
+	void GetContentSize(int& wide, int& tall) override {
 		wide = m_iWide;
 		tall = m_iTall;
 	}
-	virtual void GetSize(int& wide, int& tall) override{
+	void GetSize(int& wide, int& tall) override {
 		GetContentSize(wide, tall);
 	}
-	virtual void SetSize(int wide, int tall) override{
+	void SetSize(int wide, int tall) override {
 		m_iWide = wide;
 		m_iTall = tall;
 	}
-	virtual void SetColor(Color col) override{
+	void SetColor(Color col) override {
 		m_DrawColor = col;
 	}
-	
-	void SetTex(uint tex) {
-		m_hBufferTex = tex;
+
+	void SetGLTexture(uint tex) {
+		m_GLTexture = tex;
 	}
 	void SetRadius(float r) {
 		m_flRoundRadius = r;
 	}
-	virtual ~CRadarMapImage() {
-		if (m_hBufferTex)
-			glDeleteTextures(1, &m_hBufferTex);
+	void SetOffset(int x, int y) {
+		m_iOffX = x;
+		m_iOffY = y;
 	}
 private:
 	float m_flRoundRadius = 0;
 	int m_iOffX = 0, m_iOffY = 0;
 	int m_iX = 0, m_iY = 0;
 	int m_iWide = 0, m_iTall = 0;
-	uint m_hBufferTex;
+
+	uint m_GLTexture{};
+
 	Color m_DrawColor = Color(255, 255, 255, 255);
 };
 
@@ -128,25 +129,26 @@ extern vgui::HScheme GetViewPortBaseScheme();
 
 CRadarPanel::CRadarPanel()
 	: BaseClass(nullptr, VIEWPORT_RADAR_NAME) {
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
 
-	glGenFramebuffers(1, &m_hRadarBufferFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hRadarBufferFBO);
-	auto tex = GL_GenTextureRGBA8(gScreenInfo.iWidth, gScreenInfo.iHeight);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+	if (MetaRenderer())
+	{
+		m_RadarFBO.iWidth = 1024;
+		m_RadarFBO.iHeight = 1024;
+		MetaRenderer()->GenFrameBuffer(&m_RadarFBO, "m_RadarFBO");
+		MetaRenderer()->FrameBufferColorTexture(&m_RadarFBO, GL_RGBA8);
+	}
 
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
 
-	ADD_COMMAND("+scale_radar", [](){g_pViewPort->GetRadarPanel()->SetScale(true); });
+	ADD_COMMAND("+scale_radar", []() {g_pViewPort->GetRadarPanel()->SetScale(true); });
 	ADD_COMMAND("-scale_radar", []() {g_pViewPort->GetRadarPanel()->SetScale(false); });
 
 	gCVars.pRadar = CREATE_CVAR("hud_radar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->ShowPanel(cvar->value);
-	});
+		});
 
 	gCVars.pRadarZMin = CREATE_CVAR("hud_radar_zmin", "256", FCVAR_VALUE, nullptr);
 	gCVars.pRadarZMax = CREATE_CVAR("hud_radar_zmax", "20", FCVAR_VALUE, nullptr);
@@ -154,34 +156,44 @@ CRadarPanel::CRadarPanel()
 
 	gCVars.pRadarAvatar = CREATE_CVAR("hud_radar_avatar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		g_pViewPort->GetRadarPanel()->SetAvatarVisible(cvar->value);
-	});
+		});
 	gCVars.pRadarAvatarSize = CREATE_CVAR("hud_radar_avatarsize", "20", FCVAR_VALUE, nullptr);
 	gCVars.pRadarAvatarScale = CREATE_CVAR("hud_radar_avatarscale", "0.2", FCVAR_VALUE, nullptr);
-	
+
 	m_pBackground = new vgui::ImagePanel(this, "Background");
 	m_pRoundBackground = new vgui::ImagePanel(this, "RoundBackground");
 	m_pMapground = new vgui::ImagePanel(this, "Mapground");
 	m_pUpground = new vgui::ImagePanel(this, "Upground");
 	m_pNorthground = new vgui::ImagePanel(this, "Northground");
 	m_pViewangleground = new vgui::ImagePanel(this, "Viewangleground");
-	for (size_t i = 0; i < 32; i++){
+	for (size_t i = 0; i < 32; i++) {
 		m_aryPlayerAvatars[i] = new vgui::CAvatarImagePanel(this, "Avatar");
 		m_aryPlayerAvatars[i]->SetVisible(true);
 		m_aryPlayerAvatars[i]->SetShouldScaleImage(true);
 	}
 	LoadControlSettings(VGUI2_ROOT_DIR "RadarPanel.res");
-	auto radarimg = new CRadarMapImage();
-	radarimg->SetTex(tex);
-	int w, h;
+
+	m_pRadarImage = new CRadarMapImage();
+	m_pRadarImage->SetGLTexture(m_RadarFBO.s_hBackBufferTex);
+
+	int w{}, h{};
 	m_pMapground->GetSize(w, h);
-	radarimg->SetSize(w, h);
-	radarimg->SetRadius(m_flRoundRadius);
-	m_pMapground->SetImage(radarimg);
+	m_pRadarImage->SetSize(w, h);
+	m_pRadarImage->SetRadius(m_flRoundRadius);
+
+	m_pMapground->SetImage(m_pRadarImage);
 }
 
-CRadarPanel::~CRadarPanel(){
-	if (m_hRadarBufferFBO)
-		glDeleteFramebuffers(1, &m_hRadarBufferFBO);
+CRadarPanel::~CRadarPanel() {
+	if (m_pRadarImage)
+	{
+		delete m_pRadarImage;
+		m_pRadarImage = nullptr;
+	}
+	if (MetaRenderer() && m_RadarFBO.s_hBackBufferFBO)
+	{
+		MetaRenderer()->FreeFBO(&m_RadarFBO);
+	}
 }
 
 void CRadarPanel::PerformLayout()
@@ -335,53 +347,63 @@ void CRadarPanel::SetParent(vgui::VPANEL parent)
 
 void CRadarPanel::RenderRadar()
 {
-	gCustomHud.m_flOverViewZmax = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::HEAD)->endpos[2] - gCVars.pRadarZMax->value;
-	gCustomHud.m_flOverViewZmin = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::FOOT)->endpos[2] - gCVars.pRadarZMin->value;
+	if (MetaRenderer())
+	{
+		MetaRenderer()->BeginDebugGroup("CRadarPanel::RenderRadar");
+		MetaRenderer()->BindFrameBuffer(&m_RadarFBO);
+		MetaRenderer()->SetCurrentSceneFBO(&m_RadarFBO);
 
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
+		gCustomHud.m_flOverViewZmax = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::HEAD)->endpos[2] - gCVars.pRadarZMax->value;
+		gCustomHud.m_flOverViewZmin = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::FOOT)->endpos[2] - gCVars.pRadarZMin->value;
 
-	gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
-	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-	gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
-	gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
-	gCustomHud.m_flOverViewYaw = local->curstate.angles[CMathlib::Q_YAW];
-	float arySaveCvars[] = {
-		gCVars.pCVarDevOverview->value,
-		gCVars.pCVarDrawEntities->value,
-		gCVars.pCVarDrawViewModel->value,
-		gCVars.pCVarDrawDynamic->value,
-		gCVars.pCVarFXAA ? gCVars.pCVarFXAA->value : 0.0f,
-		gCVars.pCVarWater ? gCVars.pCVarWater->value : 0.0f,
-		gCVars.pCVarShadow ? gCVars.pCVarShadow->value : 0.0f
-	};
-	gCVars.pCVarDevOverview->value = 2;
-	gCVars.pCVarDrawEntities->value = 0;
-	gCVars.pCVarDrawViewModel->value = 0;
-	gCVars.pCVarDrawDynamic->value = 0;
-	if (gCVars.pCVarFXAA)
-		gCVars.pCVarFXAA->value = 0;
-	if (gCVars.pCVarWater)
-		gCVars.pCVarWater->value = 0;
-	if (gCVars.pCVarShadow)
-		gCVars.pCVarShadow->value = 0;
-	static ref_params_t param = {};
-	CMathlib::VectorCopy(local->origin, param.vieworg);
-	param.viewangles[1] = 90;
-	param.viewport[2] = gScreenInfo.iWidth;
-	param.viewport[3] = gScreenInfo.iHeight;
+		gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
+		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+		gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
+		gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
+		gCustomHud.m_flOverViewYaw = local->curstate.angles[CMathlib::Q_YAW];
+		float arySaveCvars[] = {
+			gCVars.pCVarDevOverview->value,
+			gCVars.pCVarDrawEntities->value,
+			gCVars.pCVarDrawViewModel->value,
+			gCVars.pCVarDrawDynamic->value,
+			gCVars.pCVarFXAA ? gCVars.pCVarFXAA->value : 0.0f,
+			gCVars.pCVarWater ? gCVars.pCVarWater->value : 0.0f,
+			gCVars.pCVarShadow ? gCVars.pCVarShadow->value : 0.0f
+		};
+		gCVars.pCVarDevOverview->value = 2;
+		gCVars.pCVarDrawEntities->value = 0;
+		gCVars.pCVarDrawViewModel->value = 0;
+		gCVars.pCVarDrawDynamic->value = 0;
+		if (gCVars.pCVarFXAA)
+			gCVars.pCVarFXAA->value = 0;
+		if (gCVars.pCVarWater)
+			gCVars.pCVarWater->value = 0;
+		if (gCVars.pCVarShadow)
+			gCVars.pCVarShadow->value = 0;
 
-	//TODO: Wait for metarenderer
+		MetaRenderer()->PushRefDef();
 
-	gCVars.pCVarDevOverview->value = arySaveCvars[0];
-	gCVars.pCVarDrawEntities->value = arySaveCvars[1];
-	gCVars.pCVarDrawViewModel->value = arySaveCvars[2];
-	gCVars.pCVarDrawDynamic->value = arySaveCvars[3];
-	if (gCVars.pCVarFXAA)
-		gCVars.pCVarFXAA->value = arySaveCvars[4];
-	if (gCVars.pCVarWater)
-		gCVars.pCVarWater->value = arySaveCvars[5];
-	if (gCVars.pCVarShadow)
-		gCVars.pCVarShadow->value = arySaveCvars[6];
+		MetaRenderer()->SetRefDefViewOrigin(local->origin);
+		vec3_t viewangles = { 0, 0, 90 };
+		MetaRenderer()->SetRefDefViewAngles(viewangles);
+
+		MetaRenderer()->RenderScene();
+
+		MetaRenderer()->PopRefDef();
+
+		gCVars.pCVarDevOverview->value = arySaveCvars[0];
+		gCVars.pCVarDrawEntities->value = arySaveCvars[1];
+		gCVars.pCVarDrawViewModel->value = arySaveCvars[2];
+		gCVars.pCVarDrawDynamic->value = arySaveCvars[3];
+		if (gCVars.pCVarFXAA)
+			gCVars.pCVarFXAA->value = arySaveCvars[4];
+		if (gCVars.pCVarWater)
+			gCVars.pCVarWater->value = arySaveCvars[5];
+		if (gCVars.pCVarShadow)
+			gCVars.pCVarShadow->value = arySaveCvars[6];
+
+		MetaRenderer()->EndDebugGroup();
+	}
 }
 
 void CRadarPanel::SetScale(bool state)
