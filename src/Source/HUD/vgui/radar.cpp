@@ -136,6 +136,7 @@ CRadarPanel::CRadarPanel()
 		m_RadarFBO.iHeight = 1024;
 		MetaRenderer()->GenFrameBuffer(&m_RadarFBO, "m_RadarFBO");
 		MetaRenderer()->FrameBufferColorTexture(&m_RadarFBO, GL_RGBA8);
+		MetaRenderer()->FrameBufferDepthTexture(&m_RadarFBO, GL_DEPTH24_STENCIL8);
 	}
 
 	SetProportional(true);
@@ -362,15 +363,15 @@ void CRadarPanel::RenderRadar()
 		gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
 		gCustomHud.m_flOverViewYaw = local->curstate.angles[CMathlib::Q_YAW];
 		float arySaveCvars[] = {
-			gCVars.pCVarDevOverview->value,
 			gCVars.pCVarDrawEntities->value,
 			gCVars.pCVarDrawViewModel->value,
 			gCVars.pCVarDrawDynamic->value,
 			gCVars.pCVarFXAA ? gCVars.pCVarFXAA->value : 0.0f,
 			gCVars.pCVarWater ? gCVars.pCVarWater->value : 0.0f,
-			gCVars.pCVarShadow ? gCVars.pCVarShadow->value : 0.0f
+			gCVars.pCVarShadow ? gCVars.pCVarShadow->value : 0.0f,
+			gCVars.pCVarDeferredLighting ? gCVars.pCVarDeferredLighting->value : 0.0f,
+			gCVars.pCVarGammaBlend ? gCVars.pCVarGammaBlend->value : 0.0f,
 		};
-		gCVars.pCVarDevOverview->value = 2;
 		gCVars.pCVarDrawEntities->value = 0;
 		gCVars.pCVarDrawViewModel->value = 0;
 		gCVars.pCVarDrawDynamic->value = 0;
@@ -380,27 +381,62 @@ void CRadarPanel::RenderRadar()
 			gCVars.pCVarWater->value = 0;
 		if (gCVars.pCVarShadow)
 			gCVars.pCVarShadow->value = 0;
+		if (gCVars.pCVarDeferredLighting)
+			gCVars.pCVarDeferredLighting->value = 0;
+		if (gCVars.pCVarGammaBlend)
+			gCVars.pCVarGammaBlend->value = 1;
 
 		MetaRenderer()->PushRefDef();
 
+		MetaRenderer()->SetMultiviewEnabled(true);
+
+		auto oldDrawClassify = MetaRenderer()->GetDrawClassify();
+		MetaRenderer()->SetDrawClassify(DRAW_CLASSIFY_WORLD | DRAW_CLASSIFY_LIGHTMAP);
+
 		MetaRenderer()->SetRefDefViewOrigin(local->origin);
-		vec3_t viewangles = { 0, 0, 90 };
+		vec3_t viewangles = { 90, 0, 0 };
 		MetaRenderer()->SetRefDefViewAngles(viewangles);
+
+		MetaRenderer()->UpdateRefDef();
+
+		MetaRenderer()->LoadIdentityForProjectionMatrix();
+		MetaRenderer()->SetupOrthoProjectionMatrix(-1024 / 2, 1024 / 2, -1024 / 2, 1024 / 2, 2048, -2048, true);
+
+		MetaRenderer()->LoadIdentityForWorldMatrix();
+		MetaRenderer()->SetupPlayerViewWorldMatrix(local->origin, viewangles);
+
+		MetaRenderer()->SetViewport(0, 0, 1024, 1024);
+
+		camera_ubo_t CameraUBO{};
+		MetaRenderer()->SetupCameraView(&CameraUBO.views[0]);
+		CameraUBO.numViews = 1;
+
+		MetaRenderer()->UploadCameraUBOData(&CameraUBO);
+
+		vec4_t vClearColor = { 0, 0, 0, 1 };
+		MetaRenderer()->ClearColorDepthStencil(vClearColor, 1, 0, STENCIL_MASK_ALL);
 
 		MetaRenderer()->RenderScene();
 
+		MetaRenderer()->SetDrawClassify(oldDrawClassify);
+
+		MetaRenderer()->SetMultiviewEnabled(false);
+
 		MetaRenderer()->PopRefDef();
 
-		gCVars.pCVarDevOverview->value = arySaveCvars[0];
-		gCVars.pCVarDrawEntities->value = arySaveCvars[1];
-		gCVars.pCVarDrawViewModel->value = arySaveCvars[2];
-		gCVars.pCVarDrawDynamic->value = arySaveCvars[3];
+		gCVars.pCVarDrawEntities->value = arySaveCvars[0];
+		gCVars.pCVarDrawViewModel->value = arySaveCvars[1];
+		gCVars.pCVarDrawDynamic->value = arySaveCvars[2];
 		if (gCVars.pCVarFXAA)
-			gCVars.pCVarFXAA->value = arySaveCvars[4];
+			gCVars.pCVarFXAA->value = arySaveCvars[3];
 		if (gCVars.pCVarWater)
-			gCVars.pCVarWater->value = arySaveCvars[5];
+			gCVars.pCVarWater->value = arySaveCvars[4];
 		if (gCVars.pCVarShadow)
-			gCVars.pCVarShadow->value = arySaveCvars[6];
+			gCVars.pCVarShadow->value = arySaveCvars[5];
+		if (gCVars.pCVarDeferredLighting)
+			gCVars.pCVarDeferredLighting->value = arySaveCvars[6];
+		if (gCVars.pCVarGammaBlend)
+			gCVars.pCVarGammaBlend->value = arySaveCvars[7];
 
 		MetaRenderer()->EndDebugGroup();
 	}

@@ -453,6 +453,8 @@ int HUD_VidInit(void)
 	gCVars.pCVarFXAA = CVAR_GET_POINTER("r_fxaa");
 	gCVars.pCVarWater = CVAR_GET_POINTER("r_water");
 	gCVars.pCVarShadow = CVAR_GET_POINTER("r_shadow");
+	gCVars.pCVarDeferredLighting = CVAR_GET_POINTER("r_deferred_lighting");
+	gCVars.pCVarGammaBlend = CVAR_GET_POINTER("r_gamma_blend");
 
 	int result = gExportfuncs.HUD_VidInit();
 	gCustomHud.HUD_VidInit();
