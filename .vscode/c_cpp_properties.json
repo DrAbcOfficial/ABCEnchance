@@ -1,0 +1,62 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/vgui_controls",
+                "${workspaceFolder}/SourceSDK",
+                "${workspaceFolder}/SourceSDK/tier0",
+                "${workspaceFolder}/SourceSDK/tier1",
+                "${workspaceFolder}/SourceSDK/vstdlib",
+                "${workspaceFolder}/VGUI2",
+                "${workspaceFolder}/VGUI2/interface",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/Header",
+                "${workspaceFolder}/src/Header/Var",
+                "${workspaceFolder}/src/Header/Utility",
+                "${workspaceFolder}/src/Header/Utility/opengl",
+                "${workspaceFolder}/src/Header/HUD",
+                "${workspaceFolder}/src/Header/HUD/vgui",
+                "${workspaceFolder}/src/thirdparty",
+                "${workspaceFolder}/src/Particleman",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/Interface",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/Interface/VGUI",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/utils",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/public",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/pm_shared",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/engine",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/dlls",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/common",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/HLSDK/cl_dll",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/VGUI",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/SteamSDK",
+                "${workspaceFolder}/thirdparty/MetaHookSv/include/vgui_controls",
+                "${workspaceFolder}/thirdparty/MetaHookSv/thirdparty/rapidjson/include",
+                "${workspaceFolder}/thirdparty/MetaHookSv/thirdparty/ScopeExit/include",
+                "${workspaceFolder}/thirdparty/MetaHookSv/thirdparty/install/capstone/x86/Release/include/capstone",
+                "${workspaceFolder}/thirdparty/MetaHookSv/thirdparty/install/FreeImage/x86/Release/include",
+                "${workspaceFolder}/thirdparty/MetaHookSv/thirdparty/install/glew/x86/Release/include/GL"
+            ],
+            "defines": [
+                "WIN32",
+                "NDEBUG",
+                "_WINDOWS",
+                "_USRDLL",
+                "GLEW_STATIC",
+                "VGUI_USE_SURFACE2",
+                "VGUI_USE_SCHEME2",
+                "VGUI_USE_INPUT2",
+                "NO_MALLOC_OVERRIDE",
+                "NO_TIER0_MINIDUMP"
+            ],
+            "windowsSdkVersion": "10.0.26100.0",
+            "compilerPath": "cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "windows-msvc-x86"
+        }
+    ],
+    "version": 4
+}

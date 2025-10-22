@@ -245,7 +245,7 @@ void CRadarPanel::Paint()
 				}
 				//Avatar
 				cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i + 1);
-				if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->m_pPlayerInfo || !entity->model || local == entity) {
+				if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->player || !entity->model || local == entity) {
 					iter->SetVisible(false);
 					continue;
 				}
