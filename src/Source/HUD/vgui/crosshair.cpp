@@ -80,14 +80,23 @@ CCrosshairPanel::CCrosshairPanel()
 	m_pSprImage->SetColor(Color(255, 255, 255, 255));
 }
 void CCrosshairPanel::PaintBackground() {
+
+	//Fix crash when localplayer can be null on main menu
+	if (!gEngfuncs.GetLocalPlayer())
+		return;
+
 	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
 		return;
+
 	if (GetBaseViewPort()->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return;
+
 	if (!GetBaseViewPort()->HasSuit())
 		return;
+
 	if (gClientData->health <= 0)
 		return;
+
 	//默认准心
 	if (pCvarDefaultCrosshair->value > 0)
 		DrawDefaultCrosshair(m_iCenterX, m_iCenterY);

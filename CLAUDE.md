@@ -163,11 +163,6 @@ svencoop/
 3. 在`CCustomHud::Init()`或`Viewport`中注册和初始化面板
 4. 添加对应的CVars到`local.cpp`控制显示/隐藏
 
-### 添加新的OpenGL着色器
-1. 在`Build/svencoop/abcenchance/shader/`添加`.vsh`(顶点)和`.fsh`(片段)文件
-2. 在代码中通过`gl_shader.cpp`的接口加载和编译
-3. 使用`gl_draw.cpp`的工具函数进行绘制
-
 ### Hook新的引擎函数
 1. 在`exportfuncs.cpp`或相应模块声明函数指针
 2. 在`autofunc.cpp`中通过签名搜索或直接地址获取原函数

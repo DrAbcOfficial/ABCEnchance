@@ -12,6 +12,11 @@
 
 #define OFFSET(type, variable) ((const void*)&(((type*)NULL)->variable))
 
+#define LUMIN1x1_BUFFERS 3
+#define DOWNSAMPLE_BUFFERS 2
+#define LUMIN_BUFFERS 3
+#define BLUR_BUFFERS 3
+
 class CCompileShaderArgs
 {
 public:

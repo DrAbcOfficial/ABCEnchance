@@ -14,6 +14,9 @@
 
 #include "Panel.h"
 
+#include <IMetaRenderer.h>
+#include "gl_common.h"
+
 namespace vgui
 {
 //-----------------------------------------------------------------------------
@@ -32,9 +35,8 @@ protected:
 	virtual void PaintBackground();
 	virtual void ApplySettings(KeyValues *inResourceData);
 private:
-	uint m_hBufferTex = 0;
-	uint m_hBufferFBO = 0;
-	int m_oldFrameBuffer = 0;
+	FBO_Container_t m_BlurFBO[2]{};
+
 	size_t m_iBlurIteration = 3;
 	size_t m_iBlurOffset = 5;
 };

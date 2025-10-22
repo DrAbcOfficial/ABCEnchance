@@ -11,28 +11,42 @@
 #include <gl_utility.h>
 #include <gl_shader.h>
 #include <gl_def.h>
+#include <gl_common.h>
 
 extern size_t ScreenWidth();
 extern size_t ScreenHeight();
 
 using namespace vgui;
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-GaussianBlurPanel::GaussianBlurPanel(Panel *parent, const char *name) : Panel(parent, name){
-	glGenFramebuffers(1, &m_hBufferFBO);
-	m_hBufferTex = GL_GenTextureRGB8(ScreenWidth() / 2, ScreenHeight() / 2);
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_hBufferTex, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
+
+GaussianBlurPanel::GaussianBlurPanel(Panel *parent, const char *name) : Panel(parent, name)
+{
+	if (MetaRenderer())
+	{
+		m_BlurFBO[0].iWidth = MetaRenderer()->GetSwapChainWidth() / 2;
+		m_BlurFBO[0].iHeight = MetaRenderer()->GetSwapChainWidth() / 2;
+
+		MetaRenderer()->GenFrameBuffer(&m_BlurFBO[0], "GaussianBlurFBO_Vertical");
+		MetaRenderer()->FrameBufferColorTexture(&m_BlurFBO[0], GL_RGBA8);
+
+		m_BlurFBO[1].iWidth = MetaRenderer()->GetSwapChainWidth() / 2;
+		m_BlurFBO[1].iHeight = MetaRenderer()->GetSwapChainWidth() / 2;
+
+		MetaRenderer()->GenFrameBuffer(&m_BlurFBO[1], "GaussianBlurFBO_Horizontal");
+		MetaRenderer()->FrameBufferColorTexture(&m_BlurFBO[1], GL_RGBA8);
+	}
 }
 
 GaussianBlurPanel::~GaussianBlurPanel(){
-	if (m_hBufferFBO)
-		glDeleteFramebuffers(1, &m_hBufferFBO);
-	if (m_hBufferTex)
-		glDeleteTextures(1, &m_hBufferTex);
+
+	if (MetaRenderer())
+	{
+		MetaRenderer()->FreeFBO(&m_BlurFBO[0]);
+		MetaRenderer()->FreeFBO(&m_BlurFBO[1]);
+	}
 }
 
 
@@ -47,74 +61,98 @@ void GaussianBlurPanel::SetBlurness(size_t f){
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void GaussianBlurPanel::PaintBackground(){
+void GaussianBlurPanel::PaintBackground()
+{
+	if (MetaRenderer())
+	{
+		auto CurrentRenderingFBO = MetaRenderer()->GetCurrentRenderingFBO();
 
-#if 0 //Not supported in Core Profile. btw undefined behavior, Don't do that.
-	static auto rendershader = [](pp_kawaseblur_program_t shader, float offset, int w, int h) {
-		GL_UseProgram(shader.program);
-		glUniform2f(shader.offset, offset, offset);
-		glUniform2f(shader.iResolution, w, h);
-		glUniform2f(shader.halfpixel, 0.5f / (float)w, 0.5f / (float)h);
-		glColor4ub(255, 255, 255, 255);
-		glBegin(GL_QUADS);
-		glTexCoord2i(0, 0);
-		glVertex2i(0, 0);
-		glTexCoord2i(0, 1);
-		glVertex2i(0, h);
-		glTexCoord2i(1, 1);
-		glVertex2i(w, h);
-		glTexCoord2i(1, 0);
-		glVertex2i(w, 0);
-		glEnd();
-		GL_UseProgram(0);
-	};
+		//Note that BlurPass will modify proj & world matrix, so we need to backup first
+		MetaRenderer()->PushProjectionMatrix();
+		MetaRenderer()->PushWorldMatrix();
 
-	int hw = ScreenWidth() / 2;
-	int hh = ScreenHeight() / 2;
-	
-	//Copy current RT to m_hBufferTex for future blur usage
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_oldFrameBuffer);
-	GL_BlitFrameBufferToFrameBufferColorOnly(m_oldFrameBuffer, m_hBufferFBO, ScreenWidth(), ScreenHeight(), hw, hh);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_hBufferFBO);
+		MetaRenderer()->BlurPass(CurrentRenderingFBO, &m_BlurFBO[0], 1.0f, false);
+		MetaRenderer()->BlurPass(&m_BlurFBO[0], &m_BlurFBO[1], 1.0f, true);
 
-	glPushAttrib(GL_VIEWPORT_BIT);
-	glViewport(-hw, -hh, ScreenWidth(), ScreenHeight());
-	glEnable(GL_TEXTURE_2D);
-	GL_Bind(m_hBufferTex);
-	for (size_t i = 0; i < m_iBlurIteration; i++) {
-		rendershader(pp_kawaseblur_down, m_iBlurOffset, hw, hh);
+		//Switch back to current rendering frame buffer
+		MetaRenderer()->BindFrameBuffer(CurrentRenderingFBO);
+
+		MetaRenderer()->PopProjectionMatrix();
+		MetaRenderer()->PopWorldMatrix();
+
+		//Note that BlurPass will modify the state of GL_DEPTH_TEST and GL_CULL_FACE, so we need to revert them
+		glViewport(0, 0, CurrentRenderingFBO->iWidth, CurrentRenderingFBO->iHeight);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+
+		int w{}, h{};
+		GetSize(w, h);
+
+		int absX{}, absY{};
+		ipanel()->GetAbsPos(GetVPanel(), absX, absY);
+
+		int screenW{}, screenH{};
+		screenW = CurrentRenderingFBO->iWidth;
+		screenH = CurrentRenderingFBO->iHeight;
+
+		// 计算纹理坐标，只采样Panel所遮挡的区域
+		// BlurFBO的尺寸是屏幕的一半
+		float u0 = (float)absX / (float)screenW;
+		float u1 = (float)(absX + w) / (float)screenW;
+		// OpenGL纹理坐标原点在左下角，需要翻转v坐标
+		float v0 = 1.0f - (float)absY / (float)screenH;
+		float v1 = 1.0f - (float)(absY + h) / (float)screenH;
+
+		Color BgColor = GetBgColor();
+		vec4_t vColor4 = { BgColor.r() / 255.0f, BgColor.g() / 255.0f, BgColor.b() / 255.0f, BgColor.a() / 255.0f };
+
+		// 使用DrawTexturedRect手动指定纹理坐标
+		texturedrectvertex_t vertices[4];
+
+		// 左下角 (屏幕坐标: 0, h)
+		vertices[0].pos[0] = 0;
+		vertices[0].pos[1] = h;
+		vertices[0].texcoord[0] = u0;
+		vertices[0].texcoord[1] = v1;  // 屏幕下方对应纹理的下方
+		vertices[0].col[0] = vColor4[0];
+		vertices[0].col[1] = vColor4[1];
+		vertices[0].col[2] = vColor4[2];
+		vertices[0].col[3] = vColor4[3];
+
+		// 右下角 (屏幕坐标: w, h)
+		vertices[1].pos[0] = w;
+		vertices[1].pos[1] = h;
+		vertices[1].texcoord[0] = u1;
+		vertices[1].texcoord[1] = v1;  // 屏幕下方对应纹理的下方
+		vertices[1].col[0] = vColor4[0];
+		vertices[1].col[1] = vColor4[1];
+		vertices[1].col[2] = vColor4[2];
+		vertices[1].col[3] = vColor4[3];
+
+		// 右上角 (屏幕坐标: w, 0)
+		vertices[2].pos[0] = w;
+		vertices[2].pos[1] = 0;
+		vertices[2].texcoord[0] = u1;
+		vertices[2].texcoord[1] = v0;  // 屏幕上方对应纹理的上方
+		vertices[2].col[0] = vColor4[0];
+		vertices[2].col[1] = vColor4[1];
+		vertices[2].col[2] = vColor4[2];
+		vertices[2].col[3] = vColor4[3];
+
+		// 左上角 (屏幕坐标: 0, 0)
+		vertices[3].pos[0] = 0;
+		vertices[3].pos[1] = 0;
+		vertices[3].texcoord[0] = u0;
+		vertices[3].texcoord[1] = v0;  // 屏幕上方对应纹理的上方
+		vertices[3].col[0] = vColor4[0];
+		vertices[3].col[1] = vColor4[1];
+		vertices[3].col[2] = vColor4[2];
+		vertices[3].col[3] = vColor4[3];
+
+		const uint32_t indices[] = { 0, 1, 2, 2, 3, 0 };
+
+		MetaRenderer()->DrawTexturedRect(m_BlurFBO[1].s_hBackBufferTex, vertices, 4, indices, 6, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "GaussianBlurPanel::PaintBackground");
 	}
-	for (size_t i = 0; i < m_iBlurIteration; i++) {
-		rendershader(pp_kawaseblur_up, m_iBlurOffset, hw, hh);
-	}
-	glPopAttrib();
-	glBindFramebuffer(GL_FRAMEBUFFER, m_oldFrameBuffer);
-
-	GL_Bind(m_hBufferTex);
-	Color bgcolor = GetBgColor();
-	glColor4ub(bgcolor.r(), bgcolor.g(), bgcolor.b(), bgcolor.a());
-
-	int x, y, w, h;
-	GetBounds(x, y, w, h);
-	int absx, absy;
-	ipanel()->GetAbsPos(GetVPanel(), absx, absy);
-	absy = ScreenHeight() - absy - h;
-	float rx = (float)absx / ScreenWidth();
-	float ry = (float)absy / ScreenHeight();
-	float rw = (float)w / ScreenWidth();
-	float rh = (float)h / ScreenHeight();
-	glBegin(GL_QUADS);
-	glTexCoord2f(rx, ry);
-	glVertex2f(x, y + h);
-	glTexCoord2f(rx, ry + rh);
-	glVertex2f(x, y);
-	glTexCoord2f(rx + rw, ry + rh);
-	glVertex2f(x + w, y);
-	glTexCoord2f(rx + rw, ry);
-	glVertex2f(x + w, y + h);
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-#endif
 }
 
 //-----------------------------------------------------------------------------

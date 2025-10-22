@@ -6,9 +6,13 @@
 #include <vgui_controls/EditablePanel.h>
 #include <vgui_controls/ImagePanel.h>
 #include "IViewportPanel.h"
+#include "gl_common.h"
+
 namespace vgui {
 	class CAvatarImagePanel;
 }
+
+class CRadarMapImage;
 
 class CRadarPanel : public vgui::EditablePanel, public IViewportPanel {
 public:
@@ -38,6 +42,7 @@ private:
 	vgui::ImagePanel* m_pUpground{};
 	vgui::ImagePanel* m_pNorthground{};
 	vgui::ImagePanel* m_pViewangleground{};
+	CRadarMapImage* m_pRadarImage{};
 
 	std::array<vgui::CAvatarImagePanel*, 32> m_aryPlayerAvatars;
 
@@ -45,7 +50,7 @@ private:
 	Color m_cOutline;
 	Color m_cMap;
 
-	uint m_hRadarBufferFBO{};
+	FBO_Container_t m_RadarFBO{ };
 
 	int m_iStartWidth{};
 	int m_iStartTall{};
@@ -58,6 +63,5 @@ private:
 
 	vec3_t m_oldViewOrg{};
 	vec3_t m_oldViewAng{};
-	int m_oldFrameBuffer{};
 };
 #endif

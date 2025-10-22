@@ -77,7 +77,7 @@ void CPlayerInfoPanel::Think(){
 	cl_entity_t* entity = gEngfuncs.GetEntityByIndex(m_iPlayerIndex);
 	if (!entity ||
 		entity->curstate.messagenum != local->curstate.messagenum ||
-		!entity->m_pPlayerInfo || !entity->model) {
+		!entity->player || !entity->model) {
 		SetVisible(false);
 		return;
 	}
