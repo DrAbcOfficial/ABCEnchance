@@ -10,6 +10,7 @@
 #include <metahook.h>
 #include "mymathlib.h"
 
+
 #define OFFSET(type, variable) ((const void*)&(((type*)NULL)->variable))
 
 #define BUFFER_OFFSET(i) ((unsigned int *)NULL + (i))
@@ -32,6 +33,11 @@
 										DRAW_CLASSIFY_WATER | \
 										DRAW_CLASSIFY_LIGHTMAP\
 )
+
+#define LUMIN1x1_BUFFERS 3
+#define DOWNSAMPLE_BUFFERS 2
+#define LUMIN_BUFFERS 3
+#define BLUR_BUFFERS 3
 
 class CCompileShaderArgs
 {
@@ -207,6 +213,7 @@ public:
 #define DRAW_TEXTURED_RECT_ALPHA_BASED_ADDITIVE_ENABLED 0x4ull
 #define DRAW_TEXTURED_RECT_SCISSOR_ENABLED 0x8ull
 #define DRAW_TEXTURED_RECT_ALPHA_TEST_ENABLED 0x10ull
+#define DRAW_TEXTURED_RECT_MASK_TEXTURE_ENABLED 0x20ull
 
 #define DRAW_FILLED_RECT_ALPHA_BLEND_ENABLED 0x1ull
 #define DRAW_FILLED_RECT_ADDITIVE_BLEND_ENABLED 0x2ull

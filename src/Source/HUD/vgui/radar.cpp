@@ -45,78 +45,57 @@ public:
 
 	void Paint() override
 	{
-		//Not supported in Core Profile
-#if 0
-		int x = m_iX;
-		int y = m_iY;
-		//shader
-		GL_UseProgram(pp_texround.program);
-		if (gCVars.pRadar->value > 1) {
-			glUniform1f(pp_texround.rad, min(1.0f, m_flRoundRadius / m_iWide));
-			glUniform3f(pp_texround.xys, x, y, m_iWide);
-		}
-		else
-			glUniform1f(pp_texround.rad, 0.0f);
-
-		float h = static_cast<float>(m_iTall) / gScreenInfo.iHeight;
-		float w = static_cast<float>(m_iWide) / gScreenInfo.iWidth;
-		float stx = (1.0f - w) / 2.0f;
-		float sty = (1.0f - h) / 2.0f;
-		glEnable(GL_TEXTURE_2D);
-		GL_Bind(m_hBufferTex);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4ub(m_DrawColor.r(), m_DrawColor.g(), m_DrawColor.b(), m_DrawColor.a());
-		glBegin(GL_QUADS);
-		glTexCoord2f(stx, sty);
-		glVertex2f(x, y + m_iTall);
-		glTexCoord2f(stx + w, sty);
-		glVertex2f(x + m_iWide, y + m_iTall);
-		glTexCoord2f(stx + w, sty + h);
-		glVertex2f(x + m_iWide, y);
-		glTexCoord2f(stx, sty + h);
-		glVertex2f(x, y);
-		glEnd();
-		glDisable(GL_BLEND);
-		GL_UseProgram(0);
-#endif
+		vec4_t vColor4f = { m_DrawColor.r() / 255.0f, m_DrawColor.g() / 255.0f ,m_DrawColor.b() / 255.0f ,m_DrawColor.a() / 255.0f };
+		
+		MetaRenderer()->DrawTexturedQuadMask(
+			m_BaseTexture,
+			m_MaskTexture,
+			m_iX + 0, 
+			m_iY + m_iTall,
+			m_iX + m_iWide,
+			m_iY + 0,
+			vColor4f,
+			DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED | DRAW_TEXTURED_RECT_MASK_TEXTURE_ENABLED,
+			"CRadarMapImage::Paint");
 	}
+
 	void SetPos(int x, int y) override {
 		m_iX = x;
 		m_iY = y;
 	}
+
 	void GetContentSize(int& wide, int& tall) override {
 		wide = m_iWide;
 		tall = m_iTall;
 	}
+
 	void GetSize(int& wide, int& tall) override {
 		GetContentSize(wide, tall);
 	}
+
 	void SetSize(int wide, int tall) override {
 		m_iWide = wide;
 		m_iTall = tall;
 	}
+
 	void SetColor(Color col) override {
 		m_DrawColor = col;
 	}
 
-	void SetGLTexture(uint tex) {
-		m_GLTexture = tex;
+	void SetBaseTexture(uint tex) {
+		m_BaseTexture = tex;
 	}
-	void SetRadius(float r) {
-		m_flRoundRadius = r;
+
+	void SetMaskTexture(uint tex) {
+		m_MaskTexture = tex;
 	}
-	void SetOffset(int x, int y) {
-		m_iOffX = x;
-		m_iOffY = y;
-	}
+
 private:
-	float m_flRoundRadius = 0;
-	int m_iOffX = 0, m_iOffY = 0;
 	int m_iX = 0, m_iY = 0;
 	int m_iWide = 0, m_iTall = 0;
 
-	uint m_GLTexture{};
+	uint m_BaseTexture{};
+	uint m_MaskTexture{};
 
 	Color m_DrawColor = Color(255, 255, 255, 255);
 };
@@ -174,23 +153,34 @@ CRadarPanel::CRadarPanel()
 	}
 	LoadControlSettings(VGUI2_ROOT_DIR "RadarPanel.res");
 
+	m_iRadarRoundBackgroundTextureId = vgui::surface()->CreateNewTextureID();
+	vgui::surface()->DrawSetTextureFile(m_iRadarRoundBackgroundTextureId, "abcenchance/tga/radar_background", true, false);
+
 	m_pRadarImage = new CRadarMapImage();
-	m_pRadarImage->SetGLTexture(m_RadarFBO.s_hBackBufferTex);
+	m_pRadarImage->SetBaseTexture(m_RadarFBO.s_hBackBufferTex);
+	m_pRadarImage->SetMaskTexture(m_iRadarRoundBackgroundTextureId);
 
 	int w{}, h{};
 	m_pMapground->GetSize(w, h);
 	m_pRadarImage->SetSize(w, h);
-	m_pRadarImage->SetRadius(m_flRoundRadius);
 
 	m_pMapground->SetImage(m_pRadarImage);
 }
 
 CRadarPanel::~CRadarPanel() {
+
 	if (m_pRadarImage)
 	{
 		delete m_pRadarImage;
 		m_pRadarImage = nullptr;
 	}
+
+	if (m_iRadarRoundBackgroundTextureId)
+	{
+		vgui::surface()->DeleteTextureByID(m_iRadarRoundBackgroundTextureId);
+		m_iRadarRoundBackgroundTextureId = 0;
+	}
+
 	if (MetaRenderer() && m_RadarFBO.s_hBackBufferFBO)
 	{
 		MetaRenderer()->FreeFBO(&m_RadarFBO);
@@ -215,6 +205,7 @@ void CRadarPanel::Paint()
 {
 	if (!g_pViewPort->HasSuit())
 		return;
+
 	auto local = gEngfuncs.GetLocalPlayer();
 	if (local) {
 		if (gCVars.pRadar->value > 0) {
@@ -354,14 +345,16 @@ void CRadarPanel::RenderRadar()
 		MetaRenderer()->BindFrameBuffer(&m_RadarFBO);
 		MetaRenderer()->SetCurrentSceneFBO(&m_RadarFBO);
 
-		gCustomHud.m_flOverViewZmax = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::HEAD)->endpos[2] - gCVars.pRadarZMax->value;
-		gCustomHud.m_flOverViewZmin = GetPlayerTrace()->Get(CPlayerTrace::TRACE_TYPE::FOOT)->endpos[2] - gCVars.pRadarZMin->value;
-
 		gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
+
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-		gCustomHud.m_vecOverViewOrg[0] = local->curstate.origin[0];
-		gCustomHud.m_vecOverViewOrg[1] = local->curstate.origin[1];
-		gCustomHud.m_flOverViewYaw = local->curstate.angles[CMathlib::Q_YAW];
+		VectorCopy(local->curstate.origin, gCustomHud.m_vecOverViewOrigin);
+		gCustomHud.m_vecOverViewOrigin[2] += 72;
+
+		VectorCopy(local->curstate.angles, gCustomHud.m_vecOverViewAngles);
+		gCustomHud.m_vecOverViewAngles[0] = 90;
+		gCustomHud.m_vecOverViewAngles[2] = 0;
+
 		float arySaveCvars[] = {
 			gCVars.pCVarDrawEntities->value,
 			gCVars.pCVarDrawViewModel->value,
@@ -393,17 +386,24 @@ void CRadarPanel::RenderRadar()
 		auto oldDrawClassify = MetaRenderer()->GetDrawClassify();
 		MetaRenderer()->SetDrawClassify(DRAW_CLASSIFY_WORLD | DRAW_CLASSIFY_LIGHTMAP);
 
-		MetaRenderer()->SetRefDefViewOrigin(local->origin);
-		vec3_t viewangles = { 90, 0, 0 };
-		MetaRenderer()->SetRefDefViewAngles(viewangles);
+		MetaRenderer()->SetRefDefViewOrigin(gCustomHud.m_vecOverViewOrigin);
+		MetaRenderer()->SetRefDefViewAngles(gCustomHud.m_vecOverViewAngles);
 
 		MetaRenderer()->UpdateRefDef();
 
 		MetaRenderer()->LoadIdentityForProjectionMatrix();
-		MetaRenderer()->SetupOrthoProjectionMatrix(-1024 / 2, 1024 / 2, -1024 / 2, 1024 / 2, 2048, -2048, true);
+		//MetaRenderer()->SetupOrthoProjectionMatrix(-1024 / 2, 1024 / 2, -1024 / 2, 1024 / 2, 2048, -2048, true);
+		MetaRenderer()->SetupOrthoProjectionMatrix(
+			-(4096.0 / gCustomHud.m_flOverViewScale), 
+			(4096.0 / gCustomHud.m_flOverViewScale),
+			-(4096.0 / gCustomHud.m_flOverViewScale),
+			(4096.0 / gCustomHud.m_flOverViewScale), 
+			2048, 
+			-2048,
+			true);
 
 		MetaRenderer()->LoadIdentityForWorldMatrix();
-		MetaRenderer()->SetupPlayerViewWorldMatrix(local->origin, viewangles);
+		MetaRenderer()->SetupPlayerViewWorldMatrix(gCustomHud.m_vecOverViewOrigin, gCustomHud.m_vecOverViewAngles);
 
 		MetaRenderer()->SetViewport(0, 0, 1024, 1024);
 

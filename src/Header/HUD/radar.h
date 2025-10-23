@@ -43,6 +43,7 @@ private:
 	vgui::ImagePanel* m_pNorthground{};
 	vgui::ImagePanel* m_pViewangleground{};
 	CRadarMapImage* m_pRadarImage{};
+	int m_iRadarRoundBackgroundTextureId{};
 
 	std::array<vgui::CAvatarImagePanel*, 32> m_aryPlayerAvatars;
 

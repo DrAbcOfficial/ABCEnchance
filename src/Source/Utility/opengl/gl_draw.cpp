@@ -62,8 +62,64 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 	if (mode == kRenderTransAdd) {
 		programState = DRAW_TEXTURED_RECT_ADDITIVE_BLEND_ENABLED;
 	}
+
 	float color4v[4]{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
-	MetaRenderer()->DrawTexturedQuad(memsprite->gl_texturenum, x, y, x + w, y + h, color4v, programState, "ABC::DrawSPRIconRect");
+	
+	/*
+	It was:
+	glBegin(GL_QUADS);
+	glTexCoord2f(left, top);
+	glVertex2f(x, y);
+	glTexCoord2f(left, bottom);
+	glVertex2f(x, y + h);
+	glTexCoord2f(right, bottom);
+	glVertex2f(x + w, y + h);
+	glTexCoord2f(right, top);
+	glVertex2f(x + w, y);
+	glEnd();
+	*/
+	if (MetaRenderer())
+	{
+		// 使用 DrawTexturedRect 并正确设置纹理坐标
+		texturedrectvertex_t vertices[4];
+
+		// 左上角 (left, top)
+		vertices[0].pos[0] = x;
+		vertices[0].pos[1] = y;
+		vertices[0].texcoord[0] = left;
+		vertices[0].texcoord[1] = top;
+		vertices[0].col[0] = color4v[0]; vertices[0].col[1] = color4v[1];
+		vertices[0].col[2] = color4v[2]; vertices[0].col[3] = color4v[3];
+
+		// 左下角 (left, bottom)
+		vertices[1].pos[0] = x;
+		vertices[1].pos[1] = y + h;
+		vertices[1].texcoord[0] = left;
+		vertices[1].texcoord[1] = bottom;
+		vertices[1].col[0] = color4v[0]; vertices[1].col[1] = color4v[1];
+		vertices[1].col[2] = color4v[2]; vertices[1].col[3] = color4v[3];
+
+		// 右下角 (right, bottom)
+		vertices[2].pos[0] = x + w;
+		vertices[2].pos[1] = y + h;
+		vertices[2].texcoord[0] = right;
+		vertices[2].texcoord[1] = bottom;
+		vertices[2].col[0] = color4v[0]; vertices[2].col[1] = color4v[1];
+		vertices[2].col[2] = color4v[2]; vertices[2].col[3] = color4v[3];
+
+		// 右上角 (right, top)
+		vertices[3].pos[0] = x + w;
+		vertices[3].pos[1] = y;
+		vertices[3].texcoord[0] = right;
+		vertices[3].texcoord[1] = top;
+		vertices[3].col[0] = color4v[0]; vertices[3].col[1] = color4v[1];
+		vertices[3].col[2] = color4v[2]; vertices[3].col[3] = color4v[3];
+
+		// 索引: 两个三角形 (0,1,2) 和 (0,2,3)
+		uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
+
+		MetaRenderer()->DrawTexturedRect(memsprite->gl_texturenum, vertices, 4, indices, 6, programState, "ABC::DrawSPRIconRect");
+	}
 }
 
 void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], unsigned char r, unsigned char g, unsigned char b, unsigned char a)

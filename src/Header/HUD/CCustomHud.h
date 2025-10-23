@@ -110,10 +110,8 @@ public:
 	std::optional<int> m_bitsWeaponBits = 0;
 
 	float m_flOverViewScale = 0.0f;
-	float m_flOverViewYaw = 0.0f;
-	float m_flOverViewZmax = 0.0f;
-	float m_flOverViewZmin = 0.0f;
-	vec3_t m_vecOverViewOrg;
+	vec3_t m_vecOverViewOrigin;
+	vec3_t m_vecOverViewAngles;
 
 	size_t m_flCursorSize = 0;
 	int m_iCursorTga = 0;
