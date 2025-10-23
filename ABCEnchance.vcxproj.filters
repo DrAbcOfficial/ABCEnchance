@@ -236,12 +236,6 @@
     <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp">
       <Filter>Public\Source\Utility\opengl</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\opengl\gl_shader.cpp">
-      <Filter>Public\Source\Utility\opengl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\opengl\gl_utility.cpp">
-      <Filter>Public\Source\Utility\opengl</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\parsemsg.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
