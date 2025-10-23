@@ -16,11 +16,9 @@ void GL_ShaderInit()
 			SHADER_UNIFORM(pp_colorlize, ha, "ha");
 		}
 	}
-	else
-	{
-		pp_colorlize.program = GL_CompileShaderFile("abcenchance\\shader\\pp_fullscreen.vsh", "abcenchance\\shader\\colorlize.fsh");
-		if (pp_colorlize.program) {
-			SHADER_UNIFORM(pp_colorlize, ha, "ha");
-		}
-	}
+}
+
+void GL_FreeShaders()
+{
+
 }

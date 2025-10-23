@@ -24,11 +24,15 @@ CHudIndicator m_HudIndicator;
 
 void CHudIndicator::GLInit() {
 	glGenFramebuffersEXT(1, &m_hFilterFBO);
+#if 0 //need refactor
 	m_hFilterTex = GL_GenTextureRGBA8(ScreenWidth(), ScreenHeight());
+#endif
 }
+
 void CHudIndicator::Init(void){
 	Reset();
 }
+
 int CHudIndicator::VidInit(void){
 	PainColorTime = atof(pSchemeData->GetResourceString("HealthArmor.PainColorTime"));
 	PainIndicatorTime = atof(pSchemeData->GetResourceString("HealthArmor.PainIndicatorTime"));
@@ -144,7 +148,7 @@ int CHudIndicator::DrawPain(float flTime){
 		fa *= 0.7;
 		int wDiffer = SizedScreenW - ScreenWidth();
 		int hDiffer = SizedScreenH - ScreenHeight();
-
+#if 0
 		//Copy current RT to m_hFilterTex
 		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &m_hOldBuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hFilterFBO);
@@ -153,7 +157,7 @@ int CHudIndicator::DrawPain(float flTime){
 		glBindFramebuffer(GL_FRAMEBUFFER, m_hOldBuffer);
 
 		//TODO: need refactoring
-#if 0
+
 		glEnable(GL_TEXTURE_2D);
 		GL_Bind(m_hFilterTex);
 		glEnable(GL_BLEND);

@@ -47,6 +47,7 @@
 #include <ClientParticleMan.h>
 
 void GL_ShaderInit();
+void GL_FreeShaders();
 void MetaRenderer_Init();
 
 #define _STR(s) #s
@@ -392,7 +393,9 @@ void HUD_Init(void)
 	abcconfig::LoadJson();
 	AutoFunc::Init();
 }
-int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio) {
+
+int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio)
+{
 	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
@@ -486,6 +489,7 @@ int HUD_Redraw(float time, int intermission)
 	GetBaseViewPort()->SetInterMission(intermission);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }
+
 void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientdata_s* client)
 {
 	gClientData = client;
