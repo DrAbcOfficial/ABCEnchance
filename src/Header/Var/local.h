@@ -152,6 +152,8 @@ using cl_cvars_t = struct{
 	cvar_t* pCVarFXAA;
 	cvar_t* pCVarWater;
 	cvar_t* pCVarShadow;
+	cvar_t* pCVarDeferredLighting;
+	cvar_t* pCVarGammaBlend;
 
 	cvar_t* pCVarAutoBunnyJump;
 #ifdef _DEBUG

@@ -254,8 +254,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\Source\Utility\NeteaseApiWrapper.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp" />
-    <ClCompile Include="src\Source\Utility\opengl\gl_shader.cpp" />
-    <ClCompile Include="src\Source\Utility\opengl\gl_utility.cpp" />
     <ClCompile Include="src\Source\Utility\parsemsg.cpp" />
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp" />
     <ClCompile Include="src\Source\Utility\steamid.cpp" />
