@@ -433,10 +433,27 @@ int HUD_VidInit(void)
 		HUDLIST* pHudList = reinterpret_cast<HUDLIST*>((*(DWORD*)(g_dwHUDListAddr)));
 		for (size_t i = 0; i <= 4; i++) {
 			switch (i) {
-			case 0x0:gHookHud.m_Health = pHudList->p; break;
-			case 0x1:gHookHud.m_Battery = pHudList->p; break;
-			case 0x2:gHookHud.m_Ammo = pHudList->p; break;
-			case 0x4:gHookHud.m_Flash = pHudList->p; break;
+			case 0x0: {
+				gHookHud.m_Health = pHudList->p; 
+				gHookHud.m_Health->m_iFlags = 0;
+				break;
+			}
+			case 0x1: {
+				gHookHud.m_Battery = pHudList->p;
+				gHookHud.m_Battery->m_iFlags = 0;
+				break;
+			}
+
+			case 0x2: {
+				gHookHud.m_Ammo = pHudList->p;
+				gHookHud.m_Ammo->m_iFlags = 0;
+				break;
+			}
+			case 0x4: {
+				gHookHud.m_Flash = pHudList->p;
+				gHookHud.m_Flash->m_iFlags = 0;
+				break;
+			}
 			default:break;
 			}
 			pHudList = pHudList->pNext;
