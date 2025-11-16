@@ -258,7 +258,7 @@ static int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 		infos->m_iDeaths = READ_LONG();
 		infos->m_iHealth = READ_FLOAT();
 		infos->m_iArmor = READ_FLOAT();
-		infos->m_iTeamNumber = static_cast<TEAM_INDEX>(READ_BYTE());
+		infos->m_iTeamNumber = static_cast<TEAM_ID>(READ_BYTE());
 		infos->m_eHideExtra = static_cast<PlayerInfo::HIDE_EXTRA>(READ_BYTE());
 		infos->m_iAdmin = static_cast<PlayerInfo::ADMIN>(READ_BYTE());
 		//Real donor hide in ScorePanel + 0x9247

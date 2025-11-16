@@ -126,7 +126,7 @@ void PlayerInfo::Reset() {
 	m_iArmor = 0;
 	m_iHealth = 0;
 	m_bDead = false;
-	m_iTeamNumber = TEAM_INDEX::NONE;
+	m_iTeamNumber = TEAM_ID::NONE;
 	memset(m_szTeamName, 0, sizeof(m_szTeamName));
 	memset(m_szSteamID64, 0, sizeof(m_szSteamID64));
 	m_iAdmin = ADMIN::NONE;

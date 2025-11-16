@@ -59,7 +59,7 @@ public:
 	int m_iArmor;
 	int m_iHealth;
 	bool m_bDead;
-	TEAM_INDEX m_iTeamNumber;
+	TEAM_ID m_iTeamNumber;
 	char m_szTeamName[MAX_TEAMNAME_LENGTH];
 	char m_szSteamID64[20];
 	enum class ADMIN {

@@ -79,7 +79,7 @@ public:
 
 
 private:
-	static constexpr int HEADER_SECTION_ID = 0;
+	static constexpr TEAM_ID HEADER_SECTION_ID = TEAM_ID::NONE;
 	static constexpr float HIGHLIGHT_KILLER_TIME = 10.f;
 	static constexpr float UPDATE_PERIOD = 0.5f;
 
@@ -103,16 +103,18 @@ private:
 
 	struct TeamData
 	{
+		TEAM_ID nID;
 		int iFrags = 0;
 		int iDeaths = 0;
 		int iPlayerCount = 0;
+		bool bCreated = 0;
 	};
 
 	struct PlayerData
 	{
 		bool bIsConnected = false;
 		int nItemID = -1;
-		int nTeamID = 0;
+		TEAM_ID nTeamID = TEAM_ID::NONE;
 	};
 
 	struct MenuData
@@ -137,10 +139,9 @@ private:
 	ImageList* m_pImageList = nullptr;
 	Menu* m_pPlayerMenu = nullptr;
 
-	std::array<TeamData, PREDEFINED_TEAM_COUNT> m_TeamData;
-	std::array<bool, PREDEFINED_TEAM_COUNT> m_IsTeamSectionCreated;
-	std::array<PlayerData, SC_MAX_PLAYERS + 1> m_PlayerData;
-	std::array<int, PREDEFINED_TEAM_COUNT> m_SortedTeamIDs;
+	std::array<TeamData, PREDEFINED_TEAM_COUNT> m_TeamData{};
+	std::array<PlayerData, SC_MAX_PLAYERS + 1> m_PlayerData{};
+	std::array<TEAM_ID, PREDEFINED_TEAM_COUNT> m_SortedTeamIDs{};
 	MenuData m_MenuData;
 
 	int m_iKillerIndex = 0;
@@ -204,7 +205,7 @@ private:
 	/**
 	 * Creates a section for specified team.
 	 */
-	void CreateSection(int nTeamID);
+	void CreateSection(TEAM_ID nTeamID);
 
 	/**
 	 * Adds/removes/updates rows of all clients.
@@ -233,11 +234,6 @@ private:
 	 * Returns width of name column + widths of disabled columns.
 	 */
 	int GetNameColumnWidth();
-
-	/**
-	 * Returns player team [0; MAX_TEAMS] or TEAM_SPECTATOR.
-	 */
-	int GetPlayerTeam(PlayerInfo* pi);
 
 	/**
 	 * Returns bright color if this is this player, fading red if it's the last killer or (0,0,0,0).

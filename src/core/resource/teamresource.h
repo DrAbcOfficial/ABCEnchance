@@ -9,7 +9,7 @@
 
 class TeamResource;
 
-enum class TEAM_INDEX {
+enum class TEAM_ID {
 	FORCE_NONE = -1,
 	NONE,
 	MACHINE,
@@ -35,7 +35,7 @@ enum class TEAM_INDEX {
 };
 
 struct PREDEFINED_TEAM {
-	TEAM_INDEX iTeamIndex;
+	TEAM_ID iTeamId;
 	const char* pszTeamToken;
 };
 constexpr auto PREDEFINED_TEAM_COUNT = 22;
@@ -48,7 +48,7 @@ public:
 	/**
 	 * Returns team number.
 	 */
-	TEAM_INDEX GetNumber() const;
+	TEAM_ID GetNumber() const;
 
 	/**
 	 * Returns name of the team. This is the one returned by CPlayerInfo::GetTeamName().
@@ -72,7 +72,7 @@ public:
 	 */
 	int GetDeaths() const;
 private:
-	TEAM_INDEX m_iNumber = TEAM_INDEX::FORCE_NONE;
+	TEAM_ID m_iNumber = TEAM_ID::FORCE_NONE;
 	std::string m_Name;
 	bool m_bScoreOverriden = false;
 	int m_iFrags = 0;
@@ -95,8 +95,12 @@ public:
 	 */
 	void UpdateAllTeams();
 	std::array<TeamInfo, PREDEFINED_TEAM_COUNT>& GetTeamInfos();
-	const char* GetTeamNameToken(TEAM_INDEX i);
-	TeamInfo* GetTeamInfo(int number);
+	const char* GetTeamNameToken(TEAM_ID id);
+
+	int GetTeamIndexByTeamID(TEAM_ID id);
+
+	TeamInfo* GetTeamInfo(TEAM_ID id);
+	TeamInfo* GetTeamInfo(int index);
 private:
 	std::array<TeamInfo, PREDEFINED_TEAM_COUNT> m_aryTeamInfo;
 };

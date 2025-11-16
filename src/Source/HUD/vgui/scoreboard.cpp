@@ -87,7 +87,7 @@ public:
 		if (m_pRequest.has_value() && m_pRequest.value() != nullptr)
 			GetHttpClient()->Interrupt(m_pRequest.value());
 		m_pRequest.reset();
-		m_bRequsetedAnimatedAvatars = false;
+		m_bRequestedAnimatedAvatars = false;
 		m_bDrawFriend = false;
 		ClearFrame();
 	}
@@ -97,7 +97,7 @@ public:
 		}
 		m_aryAnimatedAvatars.clear();
 	}
-	void SetFrameTime(float time) {
+	void SetFrameTime(unsigned long time) {
 		m_flAnimateTime = time;
 	}
 	void AddFrame(byte* bgra, int w, int h) {
@@ -144,6 +144,10 @@ public:
 							FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
 							if (format == FIF_GIF) {
 								FIMULTIBITMAP* multiBitmap = FreeImage_LoadMultiBitmapFromMemory(format, mem, GIF_PLAYBACK);
+								if (!multiBitmap) {
+									FreeImage_CloseMemory(mem);
+									return pgif;
+								}
 								size_t pageCount = FreeImage_GetPageCount(multiBitmap);
 								for (size_t i = 0; i < pageCount; i++) {
 									FIBITMAP* dib = FreeImage_LockPage(multiBitmap, i);
@@ -195,7 +199,7 @@ public:
 						}, this)->Start();
 					m_bIsAnimate = true;
 				}
-				m_bRequsetedAnimatedAvatars = true;
+				m_bRequestedAnimatedAvatars = true;
 			}
 		}
 	}
@@ -206,7 +210,7 @@ public:
 		if (!pSteamID)
 			return;
 
-		if (!m_bRequsetedAnimatedAvatars) 
+		if (!m_bRequestedAnimatedAvatars) 
 			m_RTestCallResult.Set(SteamFriends()->RequestEquippedProfileItems(*pSteamID), this, &CPlayerImage::RequestAnimateAvatarCallback);
 		m_pAvatar.SetAvatarSteamID(*pSteamID);
 		SetFriend(SteamFriends()->GetFriendRelationship(*pSteamID) == k_EFriendRelationshipFriend);
@@ -327,13 +331,13 @@ private:
 	bool m_bDrawFriend;
 
 	bool m_bIsAnimate = false;
-	bool m_bRequsetedAnimatedAvatars = false;
+	bool m_bRequestedAnimatedAvatars = false;
 	std::optional<CHttpClientItem*> m_pRequest = nullptr;
 
 	std::vector<IImage_HL25*> m_aryAnimatedAvatars;
 	size_t m_iCurrentImage;
-	float m_flAnimateTime;
-	float m_flNextAnimateTime;
+	long m_flAnimateTime = 0;
+	long m_flNextAnimateTime = 0;
 
 	CAvatarImage m_pAvatar;
 
@@ -464,7 +468,7 @@ void CScorePanel::UpdateTimeEndInternal() {
 		wchar_t wbuf[64];
 		localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
 		m_pTimeEndLable->SetText(wbuf);
-		m_iTimeEndCount -= (flTime - m_flLastUpdateTimeEndTime);
+		m_iTimeEndCount -= (long)(flTime - m_flLastUpdateTimeEndTime);
 		m_flLastUpdateTimeEndTime = flTime + 1.0f;
 	}
 }
@@ -643,7 +647,6 @@ void CScorePanel::RefreshItems()
 {
 	std::fill(m_TeamData.begin(), m_TeamData.end(), TeamData());
 	std::fill(m_PlayerData.begin(), m_PlayerData.end(), PlayerData());
-	std::fill(m_IsTeamSectionCreated.begin(), m_IsTeamSectionCreated.end(), false);
 	m_pPlayerList->RemoveAll();
 	m_pPlayerList->RemoveAllSections();
 
@@ -662,40 +665,40 @@ void CScorePanel::RefreshItems()
 			continue;
 
 		pd.nItemID = -1;
-		pd.nTeamID = GetPlayerTeam(pi);
+		pd.nTeamID = pi->m_iTeamNumber;
 
-		TeamData& td = m_TeamData[pd.nTeamID];
-		td.iFrags += pi->m_iFrags;
-		td.iDeaths += pi->m_iDeaths;
-		td.iPlayerCount++;
+		for (TeamData& td : m_TeamData) {
+			if (td.nID == pi->m_iTeamNumber) {
+				td.iFrags += pi->m_iFrags;
+				td.iDeaths += pi->m_iDeaths;
+				td.iPlayerCount++;
+				break;
+			}
+		}
 	}
 
 	// Override team scores and add them to sorting list
 	int iTeamCount = 0;
-
-	for (int i = 0; i < PREDEFINED_TEAM_COUNT; i++)
+	for(auto& td: m_TeamData)
 	{
-		TeamData& td = m_TeamData[i];
-
 		if (td.iPlayerCount == 0)
 			continue;
-
-		TeamInfo* ti = gTeamRes.GetTeamInfo(i);
-
+		TeamInfo* ti = gTeamRes.GetTeamInfo(td.nID);
 		if (ti->IsScoreOverriden())
 		{
 			td.iFrags = ti->GetFrags();
 			td.iDeaths = ti->GetDeaths();
 		}
-
-		m_SortedTeamIDs[iTeamCount] = i;
+		m_SortedTeamIDs[iTeamCount] = ti->GetNumber();
 		iTeamCount++;
 	}
 
 	// Sort teams based on the score
-	std::sort(m_SortedTeamIDs.begin(), m_SortedTeamIDs.begin() + iTeamCount, [&](int ilhs, int irhs) {
-		const TeamData& lhs = m_TeamData[ilhs];
-		const TeamData& rhs = m_TeamData[irhs];
+	std::sort(m_SortedTeamIDs.begin(), m_SortedTeamIDs.begin() + iTeamCount, [&](TEAM_ID ilhs, TEAM_ID irhs) {
+		int idxl = gTeamRes.GetTeamIndexByTeamID(ilhs);
+		int idxr = gTeamRes.GetTeamIndexByTeamID(irhs);
+		const TeamData& lhs = m_TeamData[idxl];
+		const TeamData& rhs = m_TeamData[idxr];
 
 		// Compare kills
 		if (lhs.iFrags > rhs.iFrags)
@@ -717,7 +720,7 @@ void CScorePanel::RefreshItems()
 	CreateSection(HEADER_SECTION_ID);
 
 	// Create sections for teams
-	if (iTeamCount != 1 || m_SortedTeamIDs[0] != 0)
+	if (iTeamCount > 1 || m_SortedTeamIDs[0] != HEADER_SECTION_ID)
 	{
 		for (int i = 0; i < iTeamCount; i++)
 		{
@@ -727,30 +730,32 @@ void CScorePanel::RefreshItems()
 	UpdateAllClients();
 }
 
-void CScorePanel::CreateSection(int nTeamID){
-	if (nTeamID < 0)
+void CScorePanel::CreateSection(TEAM_ID nTeamID){
+	int i = gTeamRes.GetTeamIndexByTeamID(nTeamID);
+	if (i < 0)
 		return;
-	if (m_IsTeamSectionCreated[nTeamID])
+	TeamData& td = m_TeamData[i];
+	if (td.bCreated == true)
 		return;
 
-	m_IsTeamSectionCreated[nTeamID] = true;
-
-	TeamData& td = m_TeamData[nTeamID];
-
-	m_pPlayerList->AddSection(nTeamID, "", StaticPlayerSortFuncByFrags);
+	td.bCreated = true;
+	td.nID = nTeamID;
+	
+	int iTeamID = (int)nTeamID;
+	m_pPlayerList->AddSection(iTeamID, "", StaticPlayerSortFuncByFrags);
 
 	if (nTeamID == HEADER_SECTION_ID){
-		m_pPlayerList->SetSectionAlwaysVisible(nTeamID);
-		m_pPlayerList->SetSectionDividerColor(nTeamID, Color(0, 0, 0, 0));
+		m_pPlayerList->SetSectionAlwaysVisible(iTeamID);
+		m_pPlayerList->SetSectionDividerColor(iTeamID, Color(0, 0, 0, 0));
 	}
 
 	// Avatar
-	m_pPlayerList->AddColumnToSection(nTeamID, AVATAR_KEY, "",
+	m_pPlayerList->AddColumnToSection(iTeamID, AVATAR_KEY, "",
 		SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::COLUMN_CENTER,
 		m_iColumnWidthAvatar);
 
 	//Donor
-	m_pPlayerList->AddColumnToSection(nTeamID, DONOR_KEY, "",
+	m_pPlayerList->AddColumnToSection(iTeamID, DONOR_KEY, "",
 		SectionedListPanel::COLUMN_IMAGE | SectionedListPanel::COLUMN_CENTER,
 		m_iColumnWidthDonor);
 	
@@ -762,35 +767,35 @@ void CScorePanel::CreateSection(int nTeamID){
 	else
 		nameCol = NA_LOCALIZE_TOKEN;
 
-	m_pPlayerList->AddColumnToSection(nTeamID, NAME_KEY, nameCol,
+	m_pPlayerList->AddColumnToSection(iTeamID, NAME_KEY, nameCol,
 		SectionedListPanel::COLUMN_BRIGHT | SectionedListPanel::COLUMN_COLORED,
 		GetNameColumnWidth());
 
 	// SteamID
 	if (hud_scoreboard_showsteamid->value > 0)
 	{
-		m_pPlayerList->AddColumnToSection(nTeamID, STEAMID_KEY, nTeamID == HEADER_SECTION_ID ? STEAMID_LOCALIZE_TOKEN : "",
+		m_pPlayerList->AddColumnToSection(iTeamID, STEAMID_KEY, nTeamID == HEADER_SECTION_ID ? STEAMID_LOCALIZE_TOKEN : "",
 			SectionedListPanel::COLUMN_BRIGHT,
 			m_iColumnWidthSteamID);
 	}
 
 	// Frags
-	m_pPlayerList->AddColumnToSection(nTeamID, HEALTH_KEY, nTeamID == HEADER_SECTION_ID ? HEALTH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
+	m_pPlayerList->AddColumnToSection(iTeamID, HEALTH_KEY, nTeamID == HEADER_SECTION_ID ? HEALTH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
 		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthHealth);
 
 	// Frags
-	m_pPlayerList->AddColumnToSection(nTeamID, ARMOR_KEY, nTeamID == HEADER_SECTION_ID ? ARMOR_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
+	m_pPlayerList->AddColumnToSection(iTeamID, ARMOR_KEY, nTeamID == HEADER_SECTION_ID ? ARMOR_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
 		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthArmor);
 
 	// Frags
-	m_pPlayerList->AddColumnToSection(nTeamID, FRAG_KEY, nTeamID == HEADER_SECTION_ID ? SCORE_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
+	m_pPlayerList->AddColumnToSection(iTeamID, FRAG_KEY, nTeamID == HEADER_SECTION_ID ? SCORE_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
 		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthFrags);
 
 	// Deaths
-	m_pPlayerList->AddColumnToSection(nTeamID, DEATH_KEY, nTeamID == HEADER_SECTION_ID ? DEATH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
+	m_pPlayerList->AddColumnToSection(iTeamID, DEATH_KEY, nTeamID == HEADER_SECTION_ID ? DEATH_LOCALIZE_TOKEN : NA_LOCALIZE_TOKEN,
 		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthDeaths);
 
@@ -802,7 +807,7 @@ void CScorePanel::CreateSection(int nTeamID){
 	else
 		pingLabel = "";
 
-	m_pPlayerList->AddColumnToSection(nTeamID, PING_KEY, pingLabel,
+	m_pPlayerList->AddColumnToSection(iTeamID, PING_KEY, pingLabel,
 		SectionedListPanel::COLUMN_BRIGHT,
 		m_iColumnWidthPing);
 }
@@ -835,7 +840,7 @@ void CScorePanel::UpdateClientInfo(int client)
 			pi->Reset();
 		}
 		pd.nItemID = -1;
-		pd.nTeamID = static_cast<int>(pi->m_iTeamNumber);
+		pd.nTeamID = pi->m_iTeamNumber;
 	}
 	else if (!pi->m_bIsConnected && pd.bIsConnected){
 		// Player disconnected
@@ -843,7 +848,7 @@ void CScorePanel::UpdateClientInfo(int client)
 
 		m_pPlayerList->RemoveItem(pd.nItemID);
 		pd.nItemID = -1;
-		pd.nTeamID = 0;
+		pd.nTeamID = TEAM_ID::NONE;
 
 		pi->Reset();
 	}
@@ -851,11 +856,11 @@ void CScorePanel::UpdateClientInfo(int client)
 	// Skip unconnected players
 	if (!pi->IsValid())
 		return;
-	if (GetPlayerTeam(pi) != pd.nTeamID){
+	if (pi->m_iTeamNumber != pd.nTeamID){
 		// Player changed team
 		m_pPlayerList->RemoveItem(pd.nItemID);
 		pd.nItemID = -1;
-		pd.nTeamID = static_cast<int>(pi->m_iTeamNumber);
+		pd.nTeamID = pi->m_iTeamNumber;
 	}
 
 	// Create section for player's team if need to
@@ -924,14 +929,14 @@ void CScorePanel::UpdateClientInfo(int client)
 	Color SectionColor = GetBaseViewPort()->GetPlayerColor(client);
 	if (pd.nItemID == -1){
 		// Create player's row
-		pd.nItemID = m_pPlayerList->AddItem(pd.nTeamID, playerKv);
+		pd.nItemID = m_pPlayerList->AddItem((int)pd.nTeamID, playerKv);
 		m_pPlayerList->SetItemFgColor(pd.nItemID, SectionColor);
 		m_pPlayerList->SetItemColorData(pd.nItemID, colorKv);
 		m_pPlayerList->InvalidateLayout();
 	}
 	else{
 		// Update player's row
-		m_pPlayerList->ModifyItem(pd.nItemID, pd.nTeamID, playerKv);
+		m_pPlayerList->ModifyItem(pd.nItemID, (int)pd.nTeamID, playerKv);
 	}
 	SectionColor = GetPlayerBgColor(pi);
 	SectionColor.SetColor(SectionColor.r(), SectionColor.g(), SectionColor.b(), 80);
@@ -983,8 +988,7 @@ void CScorePanel::UpdateClientIcon(PlayerInfo* pi){
 
 void CScorePanel::UpdateScoresAndCounts(){
 	// Reset team data
-	for (int i = 1; i <= PREDEFINED_TEAM_COUNT; i++){
-		TeamData& td = m_TeamData[i];
+	for (auto& td : m_TeamData) {
 		td.iPlayerCount = 0;
 		td.iFrags = 0;
 		td.iDeaths = 0;
@@ -998,62 +1002,60 @@ void CScorePanel::UpdateScoresAndCounts(){
 
 		if (!pi->IsValid())
 			continue;
-
-		TeamData& td = m_TeamData[static_cast<int>(pi->m_iTeamNumber)];
-		td.iFrags += pi->m_iFrags;
-		td.iDeaths += pi->m_iDeaths;
-		td.iPlayerCount++;
-
 		iPlayerCount++;
+
+		for (auto& td : m_TeamData) {
+			if (td.nID == pi->m_iTeamNumber) {
+				td.iFrags += pi->m_iFrags;
+				td.iDeaths += pi->m_iDeaths;
+				td.iPlayerCount++;
+				break;
+			}
+		}
 	}
 
 	char buf[128];
 	wchar_t wbuf[128] = {};
 
-	auto fnUpdateTeamHeader = [&](const char* pszTeamName, int nTeamID) {
-		TeamData& td = m_TeamData[nTeamID];
-
+	auto fnUpdateTeamHeader = [&](TeamInfo* team, TeamData& td) {
 		// Team name and player count
 		wchar_t wbuf2[128];
 		wchar_t* localizedName = nullptr;
+		const char* pszTeamName = team->GetName();
 		if (!(localizedName = localize()->Find(pszTeamName))){
 			// set localizedName to pszTeamName converted to WString
 			localize()->ConvertANSIToUnicode(pszTeamName, wbuf2, sizeof(wbuf2));
 			localizedName = wbuf2;
 		}
 
+		int iTeamID = static_cast<int>(team->GetNumber());
 		swprintf_s(wbuf, 128, L"%s (%d/%d)", localizedName, td.iPlayerCount, iPlayerCount);
-		m_pPlayerList->ModifyColumn(nTeamID, NAME_KEY, wbuf);
+		m_pPlayerList->ModifyColumn(iTeamID, NAME_KEY, wbuf);
 
-		m_pPlayerList->ModifyColumn(nTeamID, HEALTH_KEY, L"");
-		m_pPlayerList->ModifyColumn(nTeamID, ARMOR_KEY, L"");
+		m_pPlayerList->ModifyColumn(iTeamID, HEALTH_KEY, L"");
+		m_pPlayerList->ModifyColumn(iTeamID, ARMOR_KEY, L"");
 
 		// Team frags
 		snprintf(buf, sizeof(buf), "%d", td.iFrags);
 		localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
-		m_pPlayerList->ModifyColumn(nTeamID, FRAG_KEY, wbuf);
+		m_pPlayerList->ModifyColumn(iTeamID, FRAG_KEY, wbuf);
 
 		// Team deaths
 		snprintf(buf, sizeof(buf), "%d", td.iDeaths);
 		localize()->ConvertANSIToUnicode(buf, wbuf, sizeof(wbuf));
-		m_pPlayerList->ModifyColumn(nTeamID, DEATH_KEY, wbuf);
+		m_pPlayerList->ModifyColumn(iTeamID, DEATH_KEY, wbuf);
 	};
 
 	// Update team score and player count
-	for (int i = 1; i <= PREDEFINED_TEAM_COUNT; i++){
-		TeamData& td = m_TeamData[i];
-
+	for(auto& td : m_TeamData){
 		if (td.iPlayerCount == 0)
 			continue;
-
-		TeamInfo* ti = gTeamRes.GetTeamInfo(i);
-
+		TeamInfo* ti = gTeamRes.GetTeamInfo(td.nID);
 		if (ti->IsScoreOverriden()){
 			td.iFrags = ti->GetFrags();
 			td.iDeaths = ti->GetDeaths();
 		}
-
-		fnUpdateTeamHeader(ti->GetName(), i);
+		fnUpdateTeamHeader(ti, td);
 	}
 	// Update total player count
 	snprintf(buf, sizeof(buf), "%d/%d", iPlayerCount, gEngfuncs.GetMaxClients());
@@ -1068,11 +1070,6 @@ int CScorePanel::GetNameColumnWidth()
 		w += m_iColumnWidthSteamID;
 
 	return w;
-}
-
-int CScorePanel::GetPlayerTeam(PlayerInfo* pi)
-{
-	return static_cast<int>(pi->m_iTeamNumber);
 }
 
 Color CScorePanel::GetPlayerBgColor(PlayerInfo* pi)
