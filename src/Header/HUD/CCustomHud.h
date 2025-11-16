@@ -6,21 +6,6 @@
 #include "core/resource/weaponresource.h"
 #include <IMetaRenderer.h>
 
-class CBaseHud
-{
-public:
-	int m_x;
-	int m_y;
-	int   m_type;
-	int	  m_iFlags; // active, moving, 
-};
-using cl_hookedHud = struct {
-	CBaseHud* m_Battery;
-	CBaseHud* m_Health;
-	CBaseHud* m_Ammo;
-	CBaseHud* m_Flash;
-};
-
 typedef int HSPRITE;
 
 class CCustomHud : public IMetaRendererCallbacks
@@ -126,7 +111,5 @@ public:
 	enum class ABCCustomMsg {
 		POPNUMBER = 0
 	};
-	static void HideOriginalHud();
 };
 extern CCustomHud gCustomHud;
-extern cl_hookedHud gHookHud;

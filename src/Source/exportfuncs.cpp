@@ -422,47 +422,42 @@ void HUD_Shutdown(void)
 	abcconfig::SaveJson();
 }
 
+
+using VanilliaHud = struct {
+	void* m_vtable;
+	int m_x;
+	int m_y;
+	int   m_type;
+	int	  m_iFlags;
+};
+static std::vector<VanilliaHud*> s_aryVanillianHud{};
+
 int HUD_VidInit(void)
 {
 	//Search and destory vanillia HUDs
-	struct HUDLIST {
-		CBaseHud* p;
-		HUDLIST* pNext;
+	using hudlist_t = struct hudlist_s {
+		VanilliaHud* p;
+		hudlist_s* pNext;
 	};
 	if (g_dwHUDListAddr) {
-		HUDLIST* pHudList = reinterpret_cast<HUDLIST*>((*(DWORD*)(g_dwHUDListAddr)));
-		for (size_t i = 0; i <= 4; i++) {
+		s_aryVanillianHud.clear();
+		hudlist_t* pHudList = reinterpret_cast<hudlist_t*>((*(DWORD*)(g_dwHUDListAddr)));
+		for (size_t i = 0; i <= 0x4; i++) {
 			switch (i) {
-			case 0x0: {
-				gHookHud.m_Health = pHudList->p; 
-				gHookHud.m_Health->m_iFlags = 0;
-				break;
-			}
-			case 0x1: {
-				gHookHud.m_Battery = pHudList->p;
-				gHookHud.m_Battery->m_iFlags = 0;
-				break;
-			}
-
-			case 0x2: {
-				gHookHud.m_Ammo = pHudList->p;
-				gHookHud.m_Ammo->m_iFlags = 0;
-				break;
-			}
-			case 0x4: {
-				gHookHud.m_Flash = pHudList->p;
-				gHookHud.m_Flash->m_iFlags = 0;
-				break;
-			}
-			default:break;
+				case 0x4:
+				case 0x2:
+				case 0x1:
+				case 0x0: {
+					s_aryVanillianHud.push_back(pHudList->p);
+					break;
+				}
+				default:break;
 			}
 			pHudList = pHudList->pNext;
 		}
 	}
 	else
-	{
 		SYS_ERROR("Can not find vanillin HUDs");
-	}
 
 	//Fillup Default CVars
 	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
@@ -501,7 +496,9 @@ void HUD_Frame(double frametime)
 
 int HUD_Redraw(float time, int intermission)
 {
-	CCustomHud::HideOriginalHud();
+	for (auto h : s_aryVanillianHud) {
+		h->m_iFlags &= ~1;
+	}
 	gCustomHud.HUD_Draw(time);
 	GetBaseViewPort()->SetInterMission(intermission);
 	return gExportfuncs.HUD_Redraw(time, intermission);

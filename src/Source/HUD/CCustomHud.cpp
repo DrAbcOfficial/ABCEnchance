@@ -37,7 +37,6 @@
 #endif
 
 CCustomHud gCustomHud;
-cl_hookedHud gHookHud;
 
 #pragma region UserMsg Varibles
 static pfnUserMsgHook m_pfnInitHUD;
@@ -897,16 +896,6 @@ void CCustomHud::OnMousePressed(int code) {
 			break;
 		}
 	}
-}
-void CCustomHud::HideOriginalHud() {
-	if (gHookHud.m_Ammo)
-		gHookHud.m_Ammo->m_iFlags &= ~1;
-	if (gHookHud.m_Battery)
-		gHookHud.m_Battery->m_iFlags &= ~1;
-	if (gHookHud.m_Health)
-		gHookHud.m_Health->m_iFlags &= ~1;
-	if(gHookHud.m_Flash)
-		gHookHud.m_Flash->m_iFlags &= ~1;
 }
 bool CCustomHud::IsInScore() {
 	return m_bInScore;
