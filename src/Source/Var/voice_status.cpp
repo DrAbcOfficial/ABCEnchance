@@ -156,7 +156,7 @@ void CVoiceStatus::UpdateServerState(bool bForce){
 	unsigned long banMask = 0;
 	for (unsigned long i = 1; i < 33; i++) {
 		PlayerInfo* info = gPlayerRes.GetPlayerInfo(i);
-		if (!info)
+		if (!info->IsValid())
 			continue;
 		if (m_BanMgr.GetPlayerBan(info->m_pSteamId.ConvertToUint64()))
 			banMask |= 1 << (i - 1);
@@ -225,7 +225,7 @@ bool CVoiceStatus::IsInSquelchMode() const{
 //-----------------------------------------------------------------------------
 bool CVoiceStatus::IsPlayerBlocked(int iPlayer){
 	PlayerInfo* info = gPlayerRes.GetPlayerInfo(iPlayer);
-	if (!info)
+	if (!info->IsValid())
 		return false;
 	return m_BanMgr.GetPlayerBan(info->m_pSteamId.ConvertToUint64());
 }
@@ -248,7 +248,7 @@ void CVoiceStatus::SetPlayerBlockedState(int iPlayer, bool blocked){
 	if (CVAR_GET_FLOAT("voice_clientdebug"))
 		gEngfuncs.pfnConsolePrint( "CVoiceStatus::SetPlayerBlockedState part 1\n" );
 	PlayerInfo* info = gPlayerRes.GetPlayerInfo(iPlayer);
-	if (!info)
+	if (!info->IsValid())
 		return;
 	if (CVAR_GET_FLOAT("voice_clientdebug"))
 		gEngfuncs.pfnConsolePrint( "CVoiceStatus::SetPlayerBlockedState part 2\n" );

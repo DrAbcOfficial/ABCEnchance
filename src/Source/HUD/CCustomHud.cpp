@@ -269,7 +269,7 @@ static int __MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf) {
 static int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf) {
 	BEGIN_READ(pbuf, iSize);
 	int clientIndex = READ_BYTE();
-	if (clientIndex - 1 < 32) {
+	if (clientIndex > 0 && clientIndex <= 32) {
 		int beSpectator = READ_BYTE();
 		auto pi = gPlayerRes.GetPlayerInfo(clientIndex);
 		pi->m_bIsSpectate = beSpectator != 0;

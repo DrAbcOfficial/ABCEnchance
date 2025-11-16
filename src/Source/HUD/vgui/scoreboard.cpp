@@ -653,7 +653,7 @@ void CScorePanel::RefreshItems()
 	for (int i = 1; i <= SC_MAX_PLAYERS; i++)
 	{
 		PlayerInfo* pi = gPlayerRes.GetPlayerInfo(i)->Update();
-		if (!pi)
+		if (!pi->IsValid())
 			continue;
 		PlayerData& pd = m_PlayerData[i];
 		pd.bIsConnected = pi->m_bIsConnected;
@@ -823,6 +823,8 @@ void CScorePanel::UpdateAllClients()
 void CScorePanel::UpdateClientInfo(int client)
 {
 	PlayerInfo* pi = gPlayerRes.GetPlayerInfo(client);
+	if (!pi->IsValid())
+		return;
 	PlayerData& pd = m_PlayerData[client];
 	if (pi->m_bIsConnected && !pd.bIsConnected){
 		// Player just connected
@@ -945,10 +947,10 @@ void CScorePanel::UpdatePlayerDonor(PlayerInfo* pi) {
 	switch (pi->m_eDonor) {
 	case PlayerInfo::DONOR::ELECTRIC_CROWBAR:iTex = m_iDonor1IconTexture; break;
 	case PlayerInfo::DONOR::GOLDED_UZI:iTex = m_iDonor2IconTexture; break;
-	case PlayerInfo::DONOR::GOLED_DOLLAR:iTex = m_iDonor3IconTexture; break;
+	case PlayerInfo::DONOR::GOLDED_DOLLAR:iTex = m_iDonor3IconTexture; break;
 	case PlayerInfo::DONOR::TESTER:iTex = m_iDonor4IconTexture; break;
 	case PlayerInfo::DONOR::ARTIST:iTex = m_iDonor5IconTexture; break;
-	case PlayerInfo::DONOR::DEVELOEPR:iTex = m_iDonor6IconTexture; break;
+	case PlayerInfo::DONOR::DEVELOPER:iTex = m_iDonor6IconTexture; break;
 	}
 	pImg->SetTexture(iTex);
 }
@@ -1157,7 +1159,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 {
 	PlayerInfo* pi = gPlayerRes.GetPlayerInfo(m_MenuData.nClient);
 
-	if (!pi->m_bIsConnected)
+	if (!pi->IsValid())
 		return;
 
 	switch (command)

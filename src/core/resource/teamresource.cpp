@@ -51,7 +51,7 @@ void TeamResource::ResetAll() {
 void TeamResource::UpdateAllTeams() {
 	for (int i = 1; i <= SC_MAX_PLAYERS; i++) {
 		PlayerInfo* pi = gPlayerRes.GetPlayerInfo(i);
-		if (!pi->m_bIsConnected)
+		if (!pi->IsValid())
 			continue;
 		if (pi->m_iTeamNumber < TEAM_INDEX::NONE)
 			continue;

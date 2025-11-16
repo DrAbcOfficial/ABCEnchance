@@ -17,11 +17,8 @@ PlayerResource gPlayerRes;
 constexpr auto UNDEFINEDTEAM_LOCALIZE_TOKEN = "Scores_UndifinedTeam";
 
 void PlayerResource::Init() {
-	// Set player info IDs
-	int i = 1;
-	for (auto& info : m_aryPlayerInfos) {
-		info.m_iIndex = i;
-		i++;
+	for (int i = 1; i <= SC_MAX_PLAYERS; ++i) {
+		m_aryPlayerInfos[i].m_iIndex = i;
 	}
 }
 
@@ -37,6 +34,7 @@ void PlayerResource::UpdateAll(){
 	}
 }
 
+//Entindex
 PlayerInfo* PlayerResource::GetPlayerInfo(int idx) {
 	return &m_aryPlayerInfos[idx];
 }
