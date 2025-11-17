@@ -17,7 +17,8 @@
 #include "vguilocal.h"
 #include "steam_api.h"
 
-#include "core/event.h"
+#include "core/events/playerinfo.h"
+#include "core/events/networkmessage.h"
 #include "core/resource/playerresource.h"
 
 #include "parsemsg.h"
@@ -61,17 +62,6 @@ vgui::HScheme GetViewPortBaseScheme() {
 	return g_pViewPort->GetBaseScheme();
 }
 
-
-//Event
-class UpdatePlayerInfoListener : public EventListener {
-	virtual void OnEvent(const Event* event) override {
-		if (event->GetType() == typeid(PlayerInfoUpdateEvent)) {
-			const PlayerInfoUpdateEvent* ev = reinterpret_cast<const PlayerInfoUpdateEvent*>(event);
-			GetBaseViewPort()->GetScoreBoard()->UpdateOnPlayerInfo(ev->m_pPlayerInfo->m_iIndex);
-		}
-	}
-};
-
 CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	int swide, stall;
 	surface()->GetScreenSize(swide, stall);
@@ -89,8 +79,22 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	m_pPlayerTitle = CREATE_CVAR("hud_playerinfo", "1", FCVAR_VALUE, nullptr);
 	m_pPlayerTitleDanger = CREATE_CVAR("hud_playerinfo_danger", "30", FCVAR_VALUE, nullptr);
 	m_pPopNumber = CREATE_CVAR("hud_popnumber", "1", FCVAR_VALUE, nullptr);
-
-	g_EventManager.AddListener(typeid(PlayerInfoUpdateEvent), std::make_shared<UpdatePlayerInfoListener>());
+	g_EventPlayerInfoChanged.append([&](PlayerInfo* info) {
+		this->GetScoreBoard()->UpdateOnPlayerInfo(info->m_iIndex);
+	});
+	g_EventAmmoX.append([&](int, int) {
+		this->GetAmmoPanel()->RefreshAmmo();
+	});
+	g_EventCustWeapon.append([&](int, const char*) {
+		this->GetWeaponChoosePanel()->ReloadWeaponSpr();
+		this->GetWeaponStackPanel()->ReloadWeaponSpr();
+	});
+	g_EventCurWeapon.append([&](int state, int id, int, int) {
+		if (state > 0) {
+			Weapon* pWeapon = gWR.GetWeapon(id);
+			this->SetCurWeapon(pWeapon);
+		}
+	});
 }
 
 CViewport::~CViewport(void){

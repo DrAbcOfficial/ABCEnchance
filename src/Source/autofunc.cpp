@@ -10,6 +10,7 @@
 #include "local.h"
 #include "config.h"
 #include "enginedef.h"
+#include "core/events/networkmessage.h"
 
 #include "autofunc.h"
 
@@ -145,6 +146,17 @@ void AutoFunc::Init(){
 		SetConcurrent(iter->first.c_str(), iter->second.c_str());
 	}
 	s_dicEventCmd = config->m_dicEventsCmd;
+
+	g_EventCurWeapon.append([](int state, int id, int, int) {
+		if (state <= 0) {
+			switch (id) {
+			case -1:
+			case 0:
+				AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_DEATH);
+				break;
+			}
+		}
+	});
 }
 
 void AutoFunc::Exit(){

@@ -58,9 +58,9 @@ void TeamResource::UpdateAllTeams() {
 	}
 }
 int TeamResource::GetTeamIndexByTeamID(TEAM_ID id){
-	for (int i = 0; i < m_aryTeamInfo.size();i++) {
+	for (size_t i = 0; i < m_aryTeamInfo.size();i++) {
 		if (m_aryTeamInfo[i].m_iNumber == id)
-			return i;
+			return (int)i;
 	}
 	return -1;
 }

@@ -41,9 +41,7 @@ CCustomHud gCustomHud;
 #pragma region UserMsg Varibles
 static pfnUserMsgHook m_pfnInitHUD;
 static pfnUserMsgHook m_pfnCurWeapon;
-static pfnUserMsgHook m_pfnWeaponList;
 static pfnUserMsgHook m_pfnCustWeapon;
-static pfnUserMsgHook m_pfnAmmoX;
 static pfnUserMsgHook m_pfnHideWeapon;
 static pfnUserMsgHook m_pfnHideHUD;
 static pfnUserMsgHook m_pfnWeaponSpr;
@@ -71,96 +69,8 @@ static pfnUserMsgHook m_pfnMapList;
 #pragma endregion
 
 #pragma region UserMsg Hooks
-static int __MsgFunc_InitHUD(const char* pszName, int iSize, void* pbuf) {
-	if (g_pParticleMan)
-		g_pParticleMan->ResetParticles();
-	return m_pfnInitHUD(pszName, iSize, pbuf);
-}
-static int __MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf) {
-	BEGIN_READ(pbuf, iSize);
-	int iIndex = READ_BYTE();
-	int iCount = READ_LONG();
-	gWR.SetAmmo(iIndex, abs(iCount));
-	GetBaseViewPort()->GetAmmoPanel()->RefreshAmmo();
-	return m_pfnAmmoX(pszName, iSize, pbuf);
-}
-static int __MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf) {
-	BEGIN_READ(pbuf, iSize);
-	Weapon recived_weapon{};
-	//read data
-	Q_strcpy(recived_weapon.szName, READ_STRING());
-	Q_strcpy(recived_weapon.szSprName, recived_weapon.szName);
-	recived_weapon.iAmmoType = READ_CHAR();
-	recived_weapon.iMax1 = READ_LONG();
-	if (recived_weapon.iMax1 == 255)
-		recived_weapon.iMax1 = -1;
-	recived_weapon.iAmmo2Type = READ_CHAR();
-	recived_weapon.iMax2 = READ_LONG();
-	if (recived_weapon.iMax2 == 255)
-		recived_weapon.iMax2 = -1;
-	recived_weapon.iSlot = READ_CHAR();
-	recived_weapon.iSlotPos = READ_CHAR();
-	recived_weapon.iId = READ_SHORT();
-	recived_weapon.iFlags = READ_BYTE();
-	Weapon* wp = gWR.GetWeapon(recived_weapon.iId);
-	if (!wp) {
-		Weapon* new_weapon = new Weapon();
-		Q_memcpy(new_weapon, &recived_weapon, sizeof(Weapon));
-		new_weapon->iClip = 0;
-		gWR.AddWeapon(new_weapon);
-	}
-	else
-		gWR.UpdateWeapon(&recived_weapon);
-	return m_pfnWeaponList(pszName, iSize, pbuf);
-}
-static int __MsgFunc_CustWeapon(const char* pszName, int iSize, void* pbuf) {
-	BEGIN_READ(pbuf, iSize);
-	int id = READ_SHORT();
-	std::string name = READ_STRING();
-	if (name.size() != 0) {
-		gWR.LoadWeaponSprites(id, name.c_str());
-		GetBaseViewPort()->GetWeaponChoosePanel()->ReloadWeaponSpr();
-		GetBaseViewPort()->GetWeaponStackPanel()->ReloadWeaponSpr();
-	}
-	return m_pfnCustWeapon(pszName, iSize, pbuf);
 
-}
-static int __MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf) {
-	BEGIN_READ(pbuf, iSize);
-	int iState = READ_BYTE();
-	if (iState & CAmmoPanel::WEAPONSTATE::VALID) {
-		int iId = READ_SHORT();
-		//sc���������
-		if (iId == -1) {
-			gWR.DropAllWeapons();
-			return m_pfnCurWeapon(pszName, iSize, pbuf);
-		}
-		int iClip = READ_LONG();
-		int iClip2 = READ_LONG();
-		Weapon* pWeapon = gWR.GetWeapon(iId);
-		gWR.m_pCurWeapon = pWeapon;
-		if (!pWeapon) {
-			GetBaseViewPort()->SetCurWeapon(nullptr);
-			return m_pfnCurWeapon(pszName, iSize, pbuf);
-		}
-		//���µ�ϻ��Ϣ
-		pWeapon->iClip = iClip;
-		pWeapon->iClip2 = iClip2;
-		pWeapon->iState = iState;
-		GetBaseViewPort()->SetCurWeapon(pWeapon);
-	}
-	else {
-		int iFlag = READ_SHORT();
-		switch (iFlag) {
-		case -1:
-		case 0:
-			AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_DEATH);
-			gWR.DropAllWeapons();
-			break;
-		}
-	}
-	return m_pfnCurWeapon(pszName, iSize, pbuf);
-}
+
 static int __MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf){
 	BEGIN_READ(pbuf, iSize);
 	gCustomHud.HudHideCallBack(READ_BYTE());
@@ -687,9 +597,9 @@ void CCustomHud::HUD_Init(void)
 {
 	//m_pfnSVCPrint = SVC_HookFunc(svc_print, __SVCHook_Print);
 	m_pfnInitHUD = HOOK_MESSAGE(InitHUD);
-	m_pfnAmmoX = HOOK_MESSAGE(AmmoX);
+
 	m_pfnCurWeapon = HOOK_MESSAGE(CurWeapon);
-	m_pfnWeaponList = HOOK_MESSAGE(WeaponList);
+	
 	m_pfnCustWeapon = HOOK_MESSAGE(CustWeapon);
 	m_pfnHideWeapon = HOOK_MESSAGE(HideWeapon);
 	m_pfnHideHUD = HOOK_MESSAGE(HideHUD);

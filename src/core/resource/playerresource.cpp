@@ -10,9 +10,11 @@
 #include "com_model.h"
 #pragma endregion
 
+#include "core/events/playerinfo.h"
 #include "playerresource.h"
 
 PlayerResource gPlayerRes;
+eventpp::CallbackList<void(PlayerInfo*)> g_EventPlayerInfoChanged;
 
 constexpr auto UNDEFINEDTEAM_LOCALIZE_TOKEN = "Scores_UndifinedTeam";
 
@@ -78,7 +80,7 @@ PlayerInfo* PlayerInfo::Update() {
 		m_szRealName.clear();
 		m_szModel.clear();
 		m_pSteamId.Clear();
-		g_EventManager.TriggerEvent(PlayerInfoUpdateEvent(this));
+		g_EventPlayerInfoChanged(this);
 	}
 	if (bIsConnected) {
 		if (!m_pSteamId.IsValid() || info->m_nSteamID != m_pSteamId.ConvertToUint64()) {
@@ -135,9 +137,4 @@ void PlayerInfo::Reset() {
 	m_eHideExtra = HIDE_EXTRA::NO;
 	m_eDonor = DONOR::NONE;
 	m_pSteamId.Clear();
-}
-
-PlayerInfoUpdateEvent::PlayerInfoUpdateEvent(PlayerInfo* p)
-{
-	m_pPlayerInfo = p;
 }

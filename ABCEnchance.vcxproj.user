@@ -3,4 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerCommandArguments>$(MetaHookLaunchCommnand)</LocalDebuggerCommandArguments>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerCommandArgumentsHistory>-game svencoop|</LocalDebuggerCommandArgumentsHistory>
+  </PropertyGroup>
 </Project>

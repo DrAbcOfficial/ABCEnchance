@@ -10,9 +10,6 @@
 #include <string>
 
 #include "steam_api.h"
-
-#include "core/event.h"
-
 #include "teamresource.h"
 
 constexpr auto SC_MAX_PLAYERS = 32;
@@ -102,16 +99,6 @@ public:
 private:
 	std::array<PlayerInfo, SC_MAX_PLAYERS + 1> m_aryPlayerInfos;
 };
-
-class PlayerInfoUpdateEvent : public ConcreteEvent<PlayerInfoUpdateEvent> {
-public:
-	PlayerInfo* m_pPlayerInfo;
-	PlayerInfoUpdateEvent(PlayerInfo* p);
-	virtual const std::string_view GetName() const {
-		return "PlayerInfoUpdate";
-	}
-};
-
 extern PlayerResource gPlayerRes;
 
 #endif

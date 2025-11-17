@@ -1,6 +1,7 @@
 #include <interface.h>
 #include <plugins.h>
 #include "IParticleMan.h"
+#include "core/events/networkmessage.h"
 
 IParticleMan* g_pParticleMan = nullptr;
 HINTERFACEMODULE g_hParticleman = nullptr;
@@ -34,6 +35,10 @@ void LoadParticleMan()
 	g_pParticleMan->SetUp(&gEngfuncs);
 	// Add custom particle classes here BEFORE calling anything else or you will die.
 	g_pParticleMan->AddCustomParticleClassSize(sizeof(CBaseParticle));
+	g_EventInitHUD.append([]() {
+		if (g_pParticleMan)
+			g_pParticleMan->ResetParticles();
+	});
 }
 
 void FreeParticleMan()

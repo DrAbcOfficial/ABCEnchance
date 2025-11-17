@@ -27,6 +27,7 @@
 #include "vgui_controls/Controls.h"
 #include "config.h"
 #include "playertrace.h"
+#include "core/events/networkmessage.h"
 //GL
 #include "glew.h"
 #include "gl_def.h"
@@ -385,6 +386,7 @@ void HUD_Init(void)
 		});
 
 	gExportfuncs.HUD_Init();
+	RegisterNetworkMessageEventTrigger();
 	gCustomHud.HUD_Init();
 	GetBaseViewPort()->Init();
 	GetClientVoiceMgr()->HUD_Init();

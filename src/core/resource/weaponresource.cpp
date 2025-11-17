@@ -15,6 +15,7 @@
 #include "CCustomHud.h"
 #pragma endregion
 
+#include "core/events/networkmessage.h"
 #include "weaponresource.h"
 
 
@@ -102,6 +103,44 @@ WeaponList::WeaponList() = default;
 void WeaponsResource::Init() {
     if(!s_pFastSwich)
         s_pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
+    g_EventAmmoX.append([&](int index, int count) {
+        this->SetAmmo(index, count);
+    });
+    g_EventWeaponList.append([&](Weapon* recived) {
+        Weapon* wp = gWR.GetWeapon(recived->iId);
+        if (!wp) {
+            Weapon* new_weapon = new Weapon();
+            memcpy(new_weapon, recived, sizeof(Weapon));
+            new_weapon->iClip = 0;
+            this->AddWeapon(new_weapon);
+        }
+        else
+            this->UpdateWeapon(recived);
+    });
+    g_EventCustWeapon.append([&](int id, const char* name) {
+        this->LoadWeaponSprites(id, name);
+    });
+    g_EventCurWeapon.append([&](int state, int id, int clip, int clip2) {
+        if (state > 0) {
+            if (id == -1) {
+                this->DropAllWeapons();
+                return;
+            }
+            Weapon* pWeapon = this->GetWeapon(id);
+            this->m_pCurWeapon = pWeapon;
+            pWeapon->iClip = clip;
+            pWeapon->iClip2 = clip2;
+            pWeapon->iState = state;
+        }
+        else {
+            switch (id) {
+            case -1:
+            case 0:
+                this->DropAllWeapons();
+                break;
+            }
+        }
+    });
 }
 
 void WeaponsResource::Reset() {
