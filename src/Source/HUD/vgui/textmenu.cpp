@@ -14,7 +14,6 @@
 #include "textmenu.h"
 
 #include "plugins.h"
-#include <parsemsg.h>
 
 #define VIEWPORT_TEXTMENU_NAME "TextMenu"
 extern vgui::HScheme GetViewPortBaseScheme();
@@ -92,19 +91,17 @@ void CTextMenu::SelectMenuItem(int slot){
 	}
 }
 
-bool CTextMenu::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
+bool CTextMenu::MsgShowMenu(int slot, int time, int bits, const char* message) {
 	if (!m_bWaitingForMore)
 		m_szMenuString.clear();
-
-	BEGIN_READ(pbuf, iSize);
-	m_bitsValidSlots = READ_SHORT();
-	int iDisplayTime = READ_CHAR();
-	int iNeedMoreBits = READ_BYTE();
+	m_bitsValidSlots = slot;
+	int iDisplayTime = time;
+	int iNeedMoreBits = bits;
 	int iNeedMore = iNeedMoreBits & 0x7F;
 	m_bIsASMenu = (iNeedMoreBits >> 7) & 1;
 	m_flShutoffTime = iDisplayTime > 0 ? gEngfuncs.GetClientTime() + iDisplayTime : -1;
 	if (m_bitsValidSlots){
-		m_szMenuString += READ_STRING();
+		m_szMenuString += message;
 		if (!iNeedMore) {
 			//Remove all \n from begin and end
 			//someone will send a bunch of \n\n\n\n\n\n\n\n\n\n\n\n\n\n in the beginning, wtf?????

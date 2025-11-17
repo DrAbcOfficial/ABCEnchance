@@ -141,6 +141,13 @@ void WeaponsResource::Init() {
             }
         }
     });
+    g_EventWeaponSpr.append([&](int id, const char* name) {
+        Weapon* wp = this->GetWeapon(id);
+        if (wp && wp->iId > 0) {
+            strncpy_s(wp->szSprName, sizeof(wp->szSprName), name, strlen(name));
+            this->LoadWeaponSprites(wp);
+        }
+    });
 }
 
 void WeaponsResource::Reset() {

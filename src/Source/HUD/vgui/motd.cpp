@@ -132,7 +132,7 @@ void CMotdPanel::BuildPage() {
 void CMotdPanel::AddBuffer(std::string szBuffer) {
 	m_szBuffer += szBuffer;
 }
-void CMotdPanel::AppendMotd(char* message) {
+void CMotdPanel::AppendMotd(const char* message) {
 	AddBuffer(message);
 }
 void CMotdPanel::ChangePage(size_t iNewPage) {

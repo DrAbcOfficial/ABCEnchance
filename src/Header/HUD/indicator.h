@@ -23,7 +23,6 @@ public:
 	indicatorinfo_t aryIndicators[NUM_MAX_INDICATOR];
 
 	void CalcDamageDirection(indicatorinfo_s& var);
-	void AddIdicator(int dmg, int armor, vec3_t vecFrom);
 
 	
 	int iNowSelectIndicator = 0;

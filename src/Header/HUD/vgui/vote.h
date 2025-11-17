@@ -22,7 +22,7 @@ namespace vgui {
 		virtual VPANEL GetVPanel() override;
 		virtual void SetParent(VPANEL parent) override;
 
-		void StartVote(char* szContent, char* szYes, char* szNo, int iVoteType);
+		void StartVote(const char* szContent, const char* szYes, const char* szNo, int iVoteType);
 		void EndVote();
 		bool IsVoteEnable();
 	bool KeyCodeTyped(int code);

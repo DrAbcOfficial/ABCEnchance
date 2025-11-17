@@ -11,6 +11,7 @@
 #pragma endregion
 
 #include "core/events/playerinfo.h"
+#include "core/events/networkmessage.h"
 #include "playerresource.h"
 
 PlayerResource gPlayerRes;
@@ -22,6 +23,25 @@ void PlayerResource::Init() {
 	for (int i = 1; i <= SC_MAX_PLAYERS; ++i) {
 		m_aryPlayerInfos[i].m_iIndex = i;
 	}
+	g_EventScoreInfo.append([&](int index, float frag, int death, float health, float armor, int team, int extra, int admin) {
+		auto infos = this->GetPlayerInfo(index);
+		infos->m_iFrags = frag;
+		infos->m_iDeaths = death;
+		infos->m_iHealth = health;
+		infos->m_iArmor = armor;
+		infos->m_iTeamNumber = static_cast<TEAM_ID>(team);
+		infos->m_eHideExtra = static_cast<PlayerInfo::HIDE_EXTRA>(extra);
+		infos->m_iAdmin = static_cast<PlayerInfo::ADMIN>(admin);
+		//Real donor hide in ScorePanel + 0x9247
+		infos->Update();
+	});
+	g_EventSpectator.append([&](int index, bool spectate) {
+		auto pi = this->GetPlayerInfo(index);
+		pi->m_bIsSpectate = spectate;
+	});
+	g_EventClExtrasInfo.append([&]() {
+		this->UpdateAll();
+	});
 }
 
 void PlayerResource::ResetAll() {

@@ -106,7 +106,7 @@ bool CVotePanel::KeyCodeTyped(int code){
 	}
 	return true;
 }
-void CVotePanel::StartVote(char* szContent, char* szYes, char* szNo, int iVoteType){
+void CVotePanel::StartVote(const char* szContent, const char* szYes, const char* szNo, int iVoteType){
 	auto VotePattern = [&](std::string & content, std::string & szpattern, std::string & localtoken) {
 		std::regex pattern(szpattern);
 		std::smatch result;

@@ -26,7 +26,7 @@ public:
 
 	virtual void OnThink() override;
 	void SelectMenuItem(int slot);
-	bool MsgShowMenu(const char* pszName, int iSize, void* pbuf);
+	bool MsgShowMenu(int slot, int time, int bits, const char* message);
 private:
 	void SetContent(const char* szMenu);
 

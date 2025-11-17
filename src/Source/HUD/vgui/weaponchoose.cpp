@@ -264,7 +264,7 @@ bool CWeaponChoosePanel::ShouldDraw(){
 	
 	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
 		return false;
-	if (gCustomHud.IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
+	if (GetBaseViewPort()->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return false;
 	if (!gCustomHud.HasSuit())
 		return false;

@@ -9,6 +9,7 @@
 #include "vgui_controls/ImageList.h"
 
 #include "core/resource/playerresource.h"
+#include "core/events/networkmessage.h"
 
 #include "VoteMenuDialog.h"
 
@@ -368,6 +369,16 @@ vgui::CVoteMapPage::CVoteMapPage(Panel* parent) : BaseClass(parent, "VoteMapPage
 {
 	LoadControlSettings("abcenchance/res/gameui/VoteMapPage.res");
 	m_pList->AddColumnHeader(0, "name", "#GameUI_ABC_VotePageName", 0, ListPanel::ColumnFlags_e::COLUMN_RESIZEWITHWINDOW);
+	g_EventMapList.append([&](int clearall, int start, int end, const char** maps) {
+		if (clearall == 0)
+			m_aryMaps.clear();
+		else {
+			for (int i = 0; i < end - start; i++) {
+				const char* map = maps[i];
+				m_aryMaps.push_back(map);
+			}
+		}
+	});
 }
 
 void vgui::CVoteMapPage::SendYesCommand(const char* value)
@@ -387,23 +398,19 @@ void vgui::CVoteMapPage::ResetList()
 	char buf[MAX_PATH];
 	m_pFilter->GetText(buf, MAX_PATH);
 
-	extern std::vector<std::string>& GetGameMapList();
-	auto& maplist = GetGameMapList();
-	for (auto iter = maplist.begin(); iter != maplist.end(); iter++) {
-		std::string& m = *iter;
-
+	for (auto& m : m_aryMaps) {
 		if (std::strlen(buf) > 0) {
 			std::string flt = buf;
 			std::transform(flt.begin(), flt.end(), flt.begin(), ::tolower);
 			std::string map_lower = m;
 			std::transform(map_lower.begin(), map_lower.end(), map_lower.begin(), ::tolower);
 			if ((flt.size() == 0) || (map_lower.find(flt) != std::string::npos)) {
-				KeyValues kv(m.c_str(), "name", m.c_str());
+				KeyValues kv(m, "name", m);
 				m_pList->AddItem(&kv, 0, false, false);
 			}
 		}
 		else {
-			KeyValues kv(m.c_str(), "name", m.c_str());
+			KeyValues kv(m, "name", m);
 			m_pList->AddItem(&kv, 0, false, false);
 		}
 	}

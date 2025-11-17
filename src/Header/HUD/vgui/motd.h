@@ -29,7 +29,7 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 	virtual void OnThink() override;
 
-	void AppendMotd(char* message);
+	void AppendMotd(const char* message);
 	void ShowMotd();
 
 	void FinishSendMOTD();

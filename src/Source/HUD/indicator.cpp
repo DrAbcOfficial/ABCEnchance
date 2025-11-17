@@ -12,6 +12,7 @@
 #include "local.h"
 
 #include "core/resource/playerresource.h"
+#include "core/events/networkmessage.h"
 
 #include "CCustomHud.h"
 #include "Viewport.h"
@@ -31,6 +32,34 @@ void CHudIndicator::GLInit() {
 
 void CHudIndicator::Init(void){
 	Reset();
+	g_EventDamage.append([&](int armor, int damage, int tiles, float vecFrom[3]) {
+		if (damage <= 0 && armor <= 0)
+			return;
+		float flTime = gEngfuncs.GetClientTime();
+		for (indicatorinfo_t& var : aryIndicators) {
+			if (var.flKeepTime < flTime)
+				continue;
+			if (CMathlib::VectorCompare(var.vecFrom, vecFrom)) {
+				var.flKeepTime = flTime + PainColorTime;
+				return;
+			}
+		}
+		if (gCVars.pDamageScreenFilter->value > 0) {
+			m_hScreenFilter.iDamage = damage;
+			m_hScreenFilter.iArmor = armor;
+			CMathlib::VectorCopy(vecFrom, m_hScreenFilter.vecFrom);
+			m_hScreenFilter.flKeepTime = gEngfuncs.GetClientTime() + ShockIndicatorTime;
+		}
+		indicatorinfo_t* pTarget = &aryIndicators[iNowSelectIndicator];
+		pTarget->iDamage = damage;
+		pTarget->iArmor = armor;
+		CMathlib::VectorCopy(vecFrom, pTarget->vecFrom);
+		pTarget->flKeepTime = gEngfuncs.GetClientTime() + PainIndicatorTime;
+		iNowSelectIndicator++;
+		if (iNowSelectIndicator >= NUM_MAX_INDICATOR)
+			iNowSelectIndicator = 0;
+		flPainColorKeepTime = gEngfuncs.GetClientTime() + PainColorTime;
+	});
 }
 
 int CHudIndicator::VidInit(void){
@@ -69,35 +98,9 @@ void CHudIndicator::CalcuPainFade(int& r, int& g, int& b, Color* c,float timeDif
 int CHudIndicator::Draw(float flTime) {
 	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
 		return 1;
-	if (gCustomHud.IsHudHide(HUD_HIDEALL))
+	if (GetBaseViewPort()->IsHudHide(HUD_HIDEALL))
 		return 1;
 	return DrawPain(flTime);
-}
-void CHudIndicator::AddIdicator(int dmg, int armor, vec3_t vecFrom) {
-	float flTime = gEngfuncs.GetClientTime();
-	for (indicatorinfo_t& var : m_HudIndicator.aryIndicators) {
-		if (var.flKeepTime < flTime)
-			continue;
-		if (CMathlib::VectorCompare(var.vecFrom, vecFrom)) {
-			var.flKeepTime = flTime + m_HudIndicator.PainColorTime;
-			return;
-		}
-	}
-	if (gCVars.pDamageScreenFilter->value > 0) {
-		m_hScreenFilter.iDamage = dmg;
-		m_hScreenFilter.iArmor = armor;
-		CMathlib::VectorCopy(vecFrom, m_hScreenFilter.vecFrom);
-		m_hScreenFilter.flKeepTime = gEngfuncs.GetClientTime() + ShockIndicatorTime;
-	}
-	indicatorinfo_t* pTarget = &aryIndicators[iNowSelectIndicator];
-	pTarget->iDamage = dmg;
-	pTarget->iArmor = armor;
-	CMathlib::VectorCopy(vecFrom, pTarget->vecFrom);
-	pTarget->flKeepTime = gEngfuncs.GetClientTime() + PainIndicatorTime;
-	iNowSelectIndicator++;
-	if (iNowSelectIndicator >= NUM_MAX_INDICATOR)
-		iNowSelectIndicator = 0;
-	flPainColorKeepTime = gEngfuncs.GetClientTime() + PainColorTime;
 }
 void CHudIndicator::CalcDamageDirection(indicatorinfo_s &var){
 	vec3_t vecFinal;

@@ -20,8 +20,7 @@
 #include "core/events/playerinfo.h"
 #include "core/events/networkmessage.h"
 #include "core/resource/playerresource.h"
-
-#include "parsemsg.h"
+#include "core/resource/spriteresource.h"
 #include "mymathlib.h"
 
 #include "motd.h"
@@ -55,6 +54,17 @@
 #include "keydefs.h"
 
 using namespace vgui;
+
+const enum class HUDHIDE_BIT {
+	HIDEWEAPONS = 0,
+	HIDEFLASHLIGHT = 1,
+	HIDEALL = 2,
+	HIDEHEALTH = 3,
+	HIDESELECTION = 4,
+	HIDEBATTERY = 5,
+	HIDECUSTOM1 = 6,
+	HIDECUSTOM2 = 7
+};
 
 CViewport *g_pViewPort = nullptr;
 
@@ -93,6 +103,198 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 		if (state > 0) {
 			Weapon* pWeapon = gWR.GetWeapon(id);
 			this->SetCurWeapon(pWeapon);
+		}
+	});
+	auto hudhideCallback = [&](int token) {
+		this->m_bitsHideHUDDisplay = token;
+		auto bitSet = std::bitset<32>(token);
+		if (bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEALL)))
+			this->SetVisible(false);
+		else
+			this->SetVisible(true);
+		this->m_pHealthPanel->SetArmorVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)));
+		this->m_pHealthPanel->SetHealthVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
+		if (HasSuit()) {
+			this->m_pHealthPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)) || !bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
+			this->m_pFlashLight->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEFLASHLIGHT)));
+			this->m_pAmmoPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEWEAPONS)));
+		}
+	};
+	g_EventHideHUD.append(hudhideCallback);
+	g_EventHideWeapon.append(hudhideCallback);
+	g_EventWeaponSpr.append([&](int id, const char* name) {
+		Weapon* wp = gWR.GetWeapon(id);
+		if (wp && wp->iId > 0) {
+			this->GetWeaponChoosePanel()->ReloadWeaponSpr();
+			this->GetWeaponStackPanel()->ReloadWeaponSpr();
+		}
+	});
+	g_EventWeapPickup.append([&](int index) {
+		this->GetWeaponStackPanel()->AddItemPickup(index);
+	});
+	g_EventAmmoPickup.append([&](int index, int count) {
+		this->GetAmmoStackPanel()->AddAmmoPickup(index, count);
+	});
+	g_EventItemPickup.append([&](const char* name) {
+		auto index = gSpriteRes.GetSpriteIndex(name);
+		if (!index.has_value())
+			return;
+		HSPRITE spr = gSpriteRes.GetSprite(index.value());
+		wrect_t* rect = gSpriteRes.GetSpriteRect(index.value());
+		this->GetItemStackPanel()->AddItemPickup(spr, rect->left, rect->right, rect->top, rect->bottom);
+	});
+	g_EventDamage.append([&](int, int, int tiles, float*) {
+		this->UpdateTiles(tiles);
+	});
+	g_EventBattery.append([&](int battery) {
+		this->SetArmor(battery);
+	});
+	g_EventHealth.append([&](int health) {
+		this->SetHealth(health);
+	});
+	g_EventServerName.append([&](const char* name) {
+		this->SetServerName(name);
+		this->GetScoreBoard()->UpdateServerName();
+	});
+	g_EventNextMap.append([&](const char* map) {
+		this->SetNextMap(map);
+		this->GetScoreBoard()->UpdateNextMap();
+	});
+	g_EventTimeEnd.append([&](int time) {
+		this->m_iTimeEnd = time;
+		this->GetScoreBoard()->UpdateTimeEnd();
+	});
+	g_EventShowMenu.append([&](int slot, int time, int bits, const char* message) {
+		this->MsgShowMenu(slot, time, bits, message);
+	});
+	g_EventVoteMenu.append([&](int type, const char* content, const char* yes, const char* no) {
+		this->StartVote(content, yes, no, type);
+	});
+	g_EventEndVote.append([&]() {
+		this->EndVote();
+	});
+	g_EventMOTD.append([&](int code, const char* msg) {
+		if (msg[0] != '\0')
+			this->AppendMOTD(msg);
+		else
+			this->CloseMOTD();
+		if (code > 0)
+			this->FinishSendMOTD();
+	});
+	g_EventFlashBat.append([&](int flash) {
+		this->SetFlashBattery(flash);
+	});
+	g_EventFlashlight.append([&](bool on, int flash) {
+		this->SetFlashLight(on, flash);
+	});
+	g_EventTextMsg.append([&](int target, const char* msg, const char* sstr1, const char* sstr2, const char* sstr3, const char* sstr4) {
+		const static std::wregex parttenSuicide(L" committed suicide.");
+		const static std::wregex parttenKilled(L" was killed by a ");
+		const static std::wregex parttenPlayer(L" : (.*) : ");
+		vgui::CViewport::HUDNOTICE msg_dest = static_cast<vgui::CViewport::HUDNOTICE>(target);
+		if (msg_dest == CViewport::HUDNOTICE::PRINTNOTIFY) {
+			if (msg[0] == '\0')
+				return true;
+			wchar_t wideBuf[256];
+			Q_UTF8ToUnicode(msg, wideBuf, sizeof(wideBuf));
+			std::wstring stdSzBuf = wideBuf;
+			std::wsmatch matched;
+			bool found = false;
+			found = regex_search(stdSzBuf, matched, parttenSuicide);
+			if (found) {
+				m_pDeahMsg->AddItem(matched.prefix().str().c_str(), L"", vgui::localize()->Find("DeathMsg_Suicide"));
+				return false;
+			}
+			found = regex_search(stdSzBuf, matched, parttenKilled);
+			if (found) {
+				std::wstring k = matched.suffix().str();
+				k.erase(k.end() - 2);
+				m_pDeahMsg->AddItem(matched.prefix().str().c_str(), k.c_str(), vgui::localize()->Find("DeathMsg_MonsterKill"));
+				return false;
+			}
+			found = regex_search(stdSzBuf, matched, parttenPlayer);
+			if (found) {
+				std::wstring e = matched.str();
+				std::wstring sub = e.substr(3, e.length() - 6);
+				std::wstring k = matched.prefix().str();
+				m_pDeahMsg->AddItem(matched.suffix().str().c_str(), k.c_str(), sub.c_str());
+				return false;
+			}
+		}
+#define BUFFER_SIZE 256
+		static auto findLocalize = [](std::string_view str) {
+			if (str.front() == '#') {
+				const wchar_t* find = vgui::localize()->Find(str.data());
+				if (find) {
+					char buffer[BUFFER_SIZE];
+					Q_UnicodeToUTF8(find, buffer, BUFFER_SIZE);
+					str = buffer;
+				}
+			}
+		};
+		int type = 0;
+		findLocalize(msg);
+		findLocalize(sstr1);
+		if (strlen(sstr1) > 0)
+			type++;
+		findLocalize(sstr2);
+		if (strlen(sstr2) > 0)
+			type++;
+		findLocalize(sstr3);
+		if (strlen(sstr3) > 0)
+			type++;
+		findLocalize(sstr4);
+		if (strlen(sstr4) > 0)
+			type++;
+		char buffer[BUFFER_SIZE * 4];
+#undef BUFFER_SIZE
+		std::string szBuf;
+		switch (type) {
+		case 1:Q_snprintf(buffer, msg, sstr1); szBuf = buffer; break;
+		case 2:Q_snprintf(buffer, msg, sstr1, sstr2); szBuf = buffer; break;
+		case 3:Q_snprintf(buffer, msg, sstr1, sstr2, sstr3); szBuf = buffer; break;
+		case 4:Q_snprintf(buffer, msg, sstr1, sstr2, sstr3, sstr4); szBuf = buffer; break;
+		case 0:
+		default:szBuf = msg; break;
+		}
+		if (szBuf.back() == '\n')
+			szBuf.pop_back();
+		std::replace(szBuf.begin(), szBuf.end(), '\r', '\n');
+		switch (msg_dest)
+		{
+			case vgui::CViewport::HUDNOTICE::PRINTNOTIFY:
+			case vgui::CViewport::HUDNOTICE::PRINTCENTER:
+					this->ShowNotice(msg_dest, szBuf.c_str());
+				return false;
+		}
+		return true;
+	});
+	g_EventMetaHook.append([&](int type, mh_package_t* package) {
+		switch (package->subtype) {
+		case ABCCustomMsg::POPNUMBER: {
+			if (this->m_pPopNumber->value <= 0)
+				return;
+			cl_entity_t* local = gEngfuncs.GetLocalPlayer();
+			if (!local)
+				return;
+			Vector vecView;
+			gEngfuncs.GetViewAngles(vecView);
+			CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
+			Vector vecLength;
+			CMathlib::VectorSubtract(package->popnum.origin, local->curstate.origin, vecLength);
+			vecLength = vecLength.Normalize();
+			float angledotResult = CMathlib::DotProduct(vecLength, vecView);
+			if (angledotResult > 0.5) {
+				Color clr{
+					package->popnum.color[0],
+					package->popnum.color[1],
+					package->popnum.color[2],
+					package->popnum.color[3]
+				};
+				this->AddPopNumber(package->popnum.origin, clr, package->popnum.value);
+			}
+			break;
+		}
 		}
 	});
 }
@@ -246,30 +448,6 @@ bool CViewport::LoacalPlayerAvilable(){
 bool CViewport::IsScoreBoardVisible(){
 	return m_pScorePanel->IsVisible();
 }
-const enum class HUDHIDE_BIT {
-	HIDEWEAPONS = 0,
-	HIDEFLASHLIGHT = 1,
-	HIDEALL = 2,
-	HIDEHEALTH = 3,
-	HIDESELECTION = 4,
-	HIDEBATTERY = 5,
-	HIDECUSTOM1 = 6,
-	HIDECUSTOM2 = 7
-};
-void CViewport::HudHideCallBack(int code){
-	auto bitSet = std::bitset<32>(code);
-	if (bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEALL)))
-		SetVisible(false);
-	else
-		SetVisible(true);
-	m_pHealthPanel->SetArmorVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)));
-	m_pHealthPanel->SetHealthVisible(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
-	if (HasSuit()) {
-		m_pHealthPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEBATTERY)) || !bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEHEALTH)));
-		m_pFlashLight->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEFLASHLIGHT)));
-		m_pAmmoPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEWEAPONS)));
-	}	
-}
 void CViewport::ShowScoreBoard(){
 	m_pScorePanel->ShowPanel(true);
 }
@@ -303,7 +481,7 @@ bool CViewport::IsPlayerTileEnable() {
 bool CViewport::IsVoteEnable(){
 	return m_pVotePanel->IsVoteEnable();
 }
-void CViewport::StartVote(char* szContent, char* szYes, char* szNo, int iVoteType){
+void CViewport::StartVote(const char* szContent, const char* szYes, const char* szNo, int iVoteType){
 	m_pVotePanel->StartVote(szContent, szYes, szNo, iVoteType);
 }
 void CViewport::EndVote(){
@@ -315,7 +493,7 @@ void CViewport::AddPopNumber(vec3_t vecOrigin, Color& pColor, int value){
 	dynamic_cast<vgui::Panel*>(p)->MakeReadyForUse();
 	p->ShowPanel(true);
 }
-void CViewport::AppendMOTD(char* szMessage) {
+void CViewport::AppendMOTD(const char* szMessage) {
 	m_pMOTDPanel->AppendMotd(szMessage);
 }
 void CViewport::ShowMOTD(){
@@ -331,8 +509,8 @@ void CViewport::ShowSideText(bool state){
 	m_pSidePanel->ShowPanel(state);
 }
 
-bool CViewport::MsgShowMenu(const char* pszName, int iSize, void* pbuf){
-	return m_pTextMenu->MsgShowMenu(pszName, iSize, pbuf);
+bool CViewport::MsgShowMenu(int slot, int time, int bits, const char* message){
+	return m_pTextMenu->MsgShowMenu(slot, time, bits, message);
 }
 
 void CViewport::ShowTextMenu(bool state){
@@ -363,46 +541,6 @@ void CViewport::UpdateTiles(long tiles){
 void CViewport::SetSpectate(bool state){
 	m_pHealthPanel->ShowPanel(!state);
 	m_pAmmoPanel->ShowPanel(!state);
-}
-bool CViewport::TextMsg(const char* pszName, int iSize, void* pbuf){
-	const static std::wregex parttenSuicide(L" committed suicide.");
-	const static std::wregex parttenKilled(L" was killed by a ");
-	const static std::wregex parttenPlayer(L" : (.*) : ");
-	BEGIN_READ(pbuf, iSize);
-	if (READ_BYTE() == static_cast<int>(CViewport::HUDNOTICE::PRINTNOTIFY)) {
-		char* msg_text = READ_STRING();
-		//ʲô���Ͷ���
-		if (msg_text[0] == '\0')
-			return false;
-		wchar_t wideBuf[256];
-		Q_UTF8ToUnicode(msg_text, wideBuf, sizeof(wideBuf));
-		std::wstring stdSzBuf = wideBuf;
-		//ʣ�µ����Ӳ�û��Ȥ
-		//���򲶻�ƥ��
-		std::wsmatch matched;
-		bool found = false;
-		found = regex_search(stdSzBuf, matched, parttenSuicide);
-		if (found) {
-			m_pDeahMsg->AddItem(matched.prefix().str().c_str(), L"", vgui::localize()->Find("DeathMsg_Suicide"));
-			return true;
-		}
-		found = regex_search(stdSzBuf, matched, parttenKilled);
-		if (found) {
-			std::wstring k = matched.suffix().str();
-			k.erase(k.end() - 2);
-			m_pDeahMsg->AddItem(matched.prefix().str().c_str(), k.c_str(), vgui::localize()->Find("DeathMsg_MonsterKill"));
-			return true;
-		}
-		found = regex_search(stdSzBuf, matched, parttenPlayer);
-		if (found) {
-			std::wstring e = matched.str();
-			std::wstring sub = e.substr(3, e.length() - 6);
-			std::wstring k = matched.prefix().str();
-			m_pDeahMsg->AddItem(matched.suffix().str().c_str(), k.c_str(), sub.c_str());
-			return true;
-		}
-	}
-	return false;
 }
 void CViewport::ShowDeathMsg(bool state){
 	m_pDeahMsg->ShowPanel(state);
@@ -489,7 +627,7 @@ void CViewport::WeaponBitsChangeCallback(int bits){
 	m_pWeaponChoose->ShowPanel(hasSuit);
 }
 bool CViewport::IsHudHide(int HideToken) {
-	return gCustomHud.IsHudHide(HideToken);
+	return (m_bitsHideHUDDisplay & HideToken) != 0;
 }
 void Viewport_PickupWeapon(Weapon* wp) {
 	g_pViewPort->GetWeaponChoosePanel()->InsertWeapon(wp);

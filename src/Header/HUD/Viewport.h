@@ -81,7 +81,6 @@ public:
 	bool HasSuit();
 	void WeaponBitsChangeCallback(int bits);
 	bool IsHudHide(int HideToken);
-	void HudHideCallBack(int token);
 	void LongjumpCallBack(bool state);
 
 	HScheme GetBaseScheme();
@@ -100,19 +99,19 @@ public:
 	bool IsPlayerTileEnable();
 
 	bool IsVoteEnable();
-	void StartVote(char* szContent, char* szYes, char* szNo, int iVoteType);
+	void StartVote(const char* szContent, const char* szYes, const char* szNo, int iVoteType);
 	void EndVote();
 
 	void AddPopNumber(vec3_t vecOrigin, Color& pColor, int value);
 
-	void AppendMOTD(char* szMessage);
+	void AppendMOTD(const char* szMessage);
 	void ShowMOTD();
 	void CloseMOTD();
 	void FinishSendMOTD();
 	
 	void ShowSideText(bool state);
 
-	bool MsgShowMenu(const char* pszName, int iSize, void* pbuf);
+	bool MsgShowMenu(int slot, int time, int bits, const char* message);
 	void ShowTextMenu(bool state);
 	void SelectMenuItem(int slot);
 	bool IsTextMenuOpen();
@@ -128,7 +127,6 @@ public:
 
 	void SetSpectate(bool state);
 
-	bool TextMsg(const char* pszName, int iSize, void* pbuf);
 	void ShowDeathMsg(bool state);
 	void ShowMusic(bool state);
 #ifdef __HAS_NETEASE_API
@@ -189,6 +187,7 @@ private:
 
 	vgui::HScheme m_hBaseScheme = 0;
 	int m_iInterMission = 0;
+	int m_bitsHideHUDDisplay = 0;
 
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";

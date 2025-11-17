@@ -72,6 +72,8 @@ namespace vgui {
 	protected:
 		virtual void SendYesCommand(const char* value) override;
 		virtual void ResetList() override;
+	private:
+		std::vector<const char*> m_aryMaps;
 	};
 
 	class CVoteMenuDialog : public PropertyDialog {

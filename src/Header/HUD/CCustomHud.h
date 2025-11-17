@@ -75,9 +75,6 @@ public:
 	bool HasSuit();
 	void WeaponBitsChangeCallBack(int bits);
 
-	bool IsHudHide(int HideToken);
-	void HudHideCallBack(int hidetoken);
-
 	bool IsMouseVisible();
 	bool IsTextMenuOpening();
 	bool SelectTextMenuItem(int slot);
@@ -91,7 +88,6 @@ public:
 
 	void RenderRadar();
 
-	int m_bitsHideHUDDisplay = 0;
 	std::optional<int> m_bitsWeaponBits = 0;
 
 	float m_flOverViewScale = 0.0f;
@@ -102,14 +98,5 @@ public:
 	int m_iCursorTga = 0;
 
 	bool m_bInScore = false;
-
-	enum MetaHookMsgType {
-		MHSV_CMD_QUERY_PLUGIN = 1,
-		MHSV_CMD_QUERY_CVAR,
-		MHSV_CMD_ABC_CUSTOM = 77
-	};
-	enum class ABCCustomMsg {
-		POPNUMBER = 0
-	};
 };
 extern CCustomHud gCustomHud;
