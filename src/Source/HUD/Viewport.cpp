@@ -90,19 +90,20 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	m_pPlayerTitleDanger = CREATE_CVAR("hud_playerinfo_danger", "30", FCVAR_VALUE, nullptr);
 	m_pPopNumber = CREATE_CVAR("hud_popnumber", "1", FCVAR_VALUE, nullptr);
 	g_EventPlayerInfoChanged.append([&](PlayerInfo* info) {
-		this->GetScoreBoard()->UpdateOnPlayerInfo(info->m_iIndex);
+		this->m_pScorePanel->UpdateOnPlayerInfo(info->m_iIndex);
 	});
 	g_EventAmmoX.append([&](int, int) {
-		this->GetAmmoPanel()->RefreshAmmo();
+		this->m_pAmmoPanel->RefreshAmmo();
 	});
 	g_EventCustWeapon.append([&](int, const char*) {
-		this->GetWeaponChoosePanel()->ReloadWeaponSpr();
-		this->GetWeaponStackPanel()->ReloadWeaponSpr();
+		this->m_pWeaponChoose->ReloadWeaponSpr();
+		this->m_pWeaponStack->ReloadWeaponSpr();
 	});
 	g_EventCurWeapon.append([&](int state, int id, int, int) {
 		if (state > 0) {
 			Weapon* pWeapon = gWR.GetWeapon(id);
-			this->SetCurWeapon(pWeapon);
+			this->m_pAmmoPanel->SetWeapon(pWeapon);
+			this->m_pCrossHairPanel->SetWeapon(pWeapon);
 		}
 	});
 	auto hudhideCallback = [&](int token) {
@@ -125,15 +126,15 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 	g_EventWeaponSpr.append([&](int id, const char* name) {
 		Weapon* wp = gWR.GetWeapon(id);
 		if (wp && wp->iId > 0) {
-			this->GetWeaponChoosePanel()->ReloadWeaponSpr();
-			this->GetWeaponStackPanel()->ReloadWeaponSpr();
+			this->m_pWeaponChoose->ReloadWeaponSpr();
+			this->m_pWeaponStack->ReloadWeaponSpr();
 		}
 	});
 	g_EventWeapPickup.append([&](int index) {
-		this->GetWeaponStackPanel()->AddItemPickup(index);
+		this->m_pWeaponStack->AddItemPickup(index);
 	});
 	g_EventAmmoPickup.append([&](int index, int count) {
-		this->GetAmmoStackPanel()->AddAmmoPickup(index, count);
+		this->m_pAmmoStack->AddAmmoPickup(index, count);
 	});
 	g_EventItemPickup.append([&](const char* name) {
 		auto index = gSpriteRes.GetSpriteIndex(name);
@@ -141,51 +142,52 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 			return;
 		HSPRITE spr = gSpriteRes.GetSprite(index.value());
 		wrect_t* rect = gSpriteRes.GetSpriteRect(index.value());
-		this->GetItemStackPanel()->AddItemPickup(spr, rect->left, rect->right, rect->top, rect->bottom);
+		this->m_pItemStack->AddItemPickup(spr, rect->left, rect->right, rect->top, rect->bottom);
 	});
 	g_EventDamage.append([&](int, int, int tiles, float*) {
 		this->UpdateTiles(tiles);
 	});
-	g_EventBattery.append([&](int battery) {
-		this->SetArmor(battery);
+	g_EventBattery.append([&](int armor) {
+		this->m_pHealthPanel->SetArmor(armor);
 	});
 	g_EventHealth.append([&](int health) {
-		this->SetHealth(health);
+		this->m_pEffectPanel->SetHealth(health);
+		this->m_pHealthPanel->SetHealth(health);
 	});
 	g_EventServerName.append([&](const char* name) {
-		this->SetServerName(name);
-		this->GetScoreBoard()->UpdateServerName();
+		strncpy_s(this->m_szServerName, name, MAX_SERVERNAME_LENGTH - 1);
+		this->m_pScorePanel->UpdateServerName();
 	});
 	g_EventNextMap.append([&](const char* map) {
-		this->SetNextMap(map);
-		this->GetScoreBoard()->UpdateNextMap();
+		strncpy_s(m_szNextMapName, map, MAX_SERVERNAME_LENGTH - 1);
+		this->m_pScorePanel->UpdateNextMap();
 	});
 	g_EventTimeEnd.append([&](int time) {
 		this->m_iTimeEnd = time;
-		this->GetScoreBoard()->UpdateTimeEnd();
+		this->m_pScorePanel->UpdateTimeEnd();
 	});
 	g_EventShowMenu.append([&](int slot, int time, int bits, const char* message) {
-		this->MsgShowMenu(slot, time, bits, message);
+		this->m_pTextMenu->MsgShowMenu(slot, time, bits, message);
 	});
 	g_EventVoteMenu.append([&](int type, const char* content, const char* yes, const char* no) {
-		this->StartVote(content, yes, no, type);
+		this->m_pVotePanel->StartVote(content, yes, no, type);
 	});
 	g_EventEndVote.append([&]() {
-		this->EndVote();
+		this->m_pVotePanel->EndVote();
 	});
 	g_EventMOTD.append([&](int code, const char* msg) {
-		if (msg[0] != '\0')
-			this->AppendMOTD(msg);
+		if (strlen(msg) > 0)
+			this->m_pMOTDPanel->AppendMotd(msg);
 		else
-			this->CloseMOTD();
+			this->m_pMOTDPanel->ShowPanel(false);
 		if (code > 0)
-			this->FinishSendMOTD();
+			this->m_pMOTDPanel->FinishSendMOTD();
 	});
 	g_EventFlashBat.append([&](int flash) {
-		this->SetFlashBattery(flash);
+		this->m_pFlashLight->SetFlashBattery(flash);
 	});
 	g_EventFlashlight.append([&](bool on, int flash) {
-		this->SetFlashLight(on, flash);
+		this->m_pFlashLight->SetFlashLight(on, flash);
 	});
 	g_EventTextMsg.append([&](int target, const char* msg, const char* sstr1, const char* sstr2, const char* sstr3, const char* sstr4) {
 		const static std::wregex parttenSuicide(L" committed suicide.");
@@ -463,17 +465,8 @@ long CViewport::GetTimeEnd() {
 const char* CViewport::GetServerName(){
 	return m_szServerName;
 }
-void CViewport::SetServerName(const char* name)
-{
-	strncpy(m_szServerName, name, MAX_SERVERNAME_LENGTH - 1);
-	m_szServerName[MAX_SERVERNAME_LENGTH - 1] = 0;
-}
 const char* CViewport::GetNextMap() {
 	return m_szNextMapName;
-}
-void CViewport::SetNextMap(const char* name) {
-	strncpy(m_szNextMapName, name, MAX_SERVERNAME_LENGTH - 1);
-	m_szNextMapName[MAX_SERVERNAME_LENGTH - 1] = 0;
 }
 bool CViewport::IsPlayerTileEnable() {
 	return m_pPlayerTitle->value > 0;
@@ -481,36 +474,17 @@ bool CViewport::IsPlayerTileEnable() {
 bool CViewport::IsVoteEnable(){
 	return m_pVotePanel->IsVoteEnable();
 }
-void CViewport::StartVote(const char* szContent, const char* szYes, const char* szNo, int iVoteType){
-	m_pVotePanel->StartVote(szContent, szYes, szNo, iVoteType);
-}
-void CViewport::EndVote(){
-	m_pVotePanel->EndVote();
-}
 void CViewport::AddPopNumber(vec3_t vecOrigin, Color& pColor, int value){
 	CPopNumberPanel* p = new CPopNumberPanel(vecOrigin, pColor, value);
 	p->SetParent(GetVPanel());
 	dynamic_cast<vgui::Panel*>(p)->MakeReadyForUse();
 	p->ShowPanel(true);
 }
-void CViewport::AppendMOTD(const char* szMessage) {
-	m_pMOTDPanel->AppendMotd(szMessage);
-}
 void CViewport::ShowMOTD(){
 	m_pMOTDPanel->ShowMotd();
 }
-void CViewport::CloseMOTD(){
-	m_pMOTDPanel->ShowPanel(false);
-}
-void CViewport::FinishSendMOTD() {
-	m_pMOTDPanel->FinishSendMOTD();
-}
 void CViewport::ShowSideText(bool state){
 	m_pSidePanel->ShowPanel(state);
-}
-
-bool CViewport::MsgShowMenu(int slot, int time, int bits, const char* message){
-	return m_pTextMenu->MsgShowMenu(slot, time, bits, message);
 }
 
 void CViewport::ShowTextMenu(bool state){
@@ -521,19 +495,6 @@ void CViewport::SelectMenuItem(int slot){
 }
 bool CViewport::IsTextMenuOpen(){
 	return m_pTextMenu->IsVisible();
-}
-void CViewport::SetFlashLight(bool on, int battery){
-	m_pFlashLight->SetFlashLight(on, battery);
-}
-void CViewport::SetFlashBattery(int battery){
-	m_pFlashLight->SetFlashBattery(battery);
-}
-void CViewport::SetHealth(int health){
-	m_pEffectPanel->SetHealth(health);
-	m_pHealthPanel->SetHealth(health);
-}
-void CViewport::SetArmor(int armor) {
-	m_pHealthPanel->SetArmor(armor);
 }
 void CViewport::UpdateTiles(long tiles){
 	m_pDmgTiles->UpdateTiles(tiles);
@@ -553,21 +514,8 @@ CNeteasePanel* CViewport::GetMusicPanel(){
 	return m_pNeteaseMusic;
 }
 #endif
-CAmmoStackPanel* CViewport::GetAmmoStackPanel(){
-	return m_pAmmoStack;
-}
-CItemStackPanel* CViewport::GetItemStackPanel(){
-	return m_pItemStack;
-}
-CWeaponStackPanel* CViewport::GetWeaponStackPanel(){
-	return m_pWeaponStack;
-}
 CWeaponChoosePanel* CViewport::GetWeaponChoosePanel(){
 	return m_pWeaponChoose;
-}
-void CViewport::SetCurWeapon(Weapon* weapon){
-	m_pAmmoPanel->SetWeapon(weapon);
-	m_pCrossHairPanel->SetWeapon(weapon);
 }
 void CViewport::ShowNotice(HUDNOTICE type, const char* message){
 	switch (type)
@@ -587,10 +535,6 @@ void CViewport::Paint(void){
 	BaseClass::Paint();
 }
 
-CScorePanel* CViewport::GetScoreBoard() {
-	return m_pScorePanel;
-}
-
 CVotePanel* CViewport::GetVotePanel(){
 	return m_pVotePanel;
 }
@@ -599,9 +543,6 @@ CMotdPanel* CViewport::GetMotdPanel(){
 	return m_pMOTDPanel;
 }
 
-CAmmoPanel* CViewport::GetAmmoPanel(){
-	return m_pAmmoPanel;
-}
 
 Color CViewport::GetPlayerColor(int index){
 	vec3_t color;
@@ -616,6 +557,15 @@ void CViewport::ShowCrossHair(bool on) {
 bool CViewport::HasSuit() {
 	return gCustomHud.HasSuit();
 }
+
+bool CViewport::SelectTextMenuItem(int slot) {
+	if (IsTextMenuOpen()) {
+		SelectMenuItem(slot);
+		return true;
+	}
+	return false;
+}
+
 void CViewport::WeaponBitsChangeCallback(int bits){
 	bool hasSuit = (bits & (1 << WEAPON_SUIT)) != 0;
 	m_pSidePanel->ShowPanel(hasSuit && (gCVars.pEccoEnable->value > 0));

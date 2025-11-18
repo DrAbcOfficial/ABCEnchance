@@ -51,7 +51,7 @@ void(*UserCmd_VoteMenu)(void);
 
 #pragma region UserCmd Hooks
 static void UserCmd_SlotInput(int i) {
-	bool bVisible = gCustomHud.IsTextMenuOpening();
+	bool bVisible = GetBaseViewPort()->IsTextMenuOpen();
 	gWR.SelectSlot(i, 1, false);
 	if(!bVisible)
 		UserCmd_Slots[i]();
@@ -84,7 +84,7 @@ static void __UserCmd_Slot9(void) {
 	UserCmd_SlotInput(8);
 }
 static void __UserCmd_Slot10(void) {
-	bool bVisible = gCustomHud.IsTextMenuOpening();
+	bool bVisible = GetBaseViewPort()->IsTextMenuOpen();
 	gWR.SelectSlot(9, 1, false);
 	if (!bVisible)
 		UserCmd_Slots[9]();
@@ -172,7 +172,7 @@ void CCustomHud::OnGenerateFrameBuffers()
 */
 void CCustomHud::OnPreRenderView()
 {
-	RenderRadar();
+	GetBaseViewPort()->GetRadarPanel()->RenderRadar();
 }
 
 /*
@@ -290,7 +290,7 @@ void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 		iuser = newuser;
 	}
 	if (!m_bitsWeaponBits.has_value() || m_bitsWeaponBits != cdata->iWeaponBits)
-		WeaponBitsChangeCallBack(cdata->iWeaponBits);
+		GetBaseViewPort()->WeaponBitsChangeCallback(cdata->iWeaponBits);
 	m_bitsWeaponBits = cdata->iWeaponBits;
 
 	//check lj
@@ -357,32 +357,6 @@ bool CCustomHud::HasSuit() {
 	constexpr auto WEAPON_SUIT = 31;
 	return (m_bitsWeaponBits.value() & (1 << WEAPON_SUIT)) != 0;
 }
-void CCustomHud::WeaponBitsChangeCallBack(int bits){
-	GetBaseViewPort()->WeaponBitsChangeCallback(bits);
-}
-bool CCustomHud::IsMouseVisible(){
-	if(GetBaseViewPort())
-		return GetBaseViewPort()->IsMouseInputEnabled();
-
-	return false;
-}
-bool CCustomHud::IsTextMenuOpening() {
-	return GetBaseViewPort()->IsTextMenuOpen();
-}
-bool CCustomHud::SelectTextMenuItem(int slot){
-	if (IsTextMenuOpening()) {
-		GetBaseViewPort()->SelectMenuItem(slot);
-		return true;
-	}
-	return false;
-}
-void CCustomHud::SetMouseVisible(bool state) {
-	if(GetBaseViewPort())
-		GetBaseViewPort()->SetMouseInputEnabled(state);
-}
-void CCustomHud::SetCurWeapon(Weapon* weapon){
-	GetBaseViewPort()->SetCurWeapon(weapon);
-}
 void CCustomHud::OnMousePressed(int code) {
 	switch (code) {
 		case vgui::MouseCode::MOUSE_LEFT: {
@@ -393,8 +367,5 @@ void CCustomHud::OnMousePressed(int code) {
 }
 bool CCustomHud::IsInScore() {
 	return m_bInScore;
-}
-void CCustomHud::RenderRadar(){
-	GetBaseViewPort()->GetRadarPanel()->RenderRadar();
 }
 #pragma endregion

@@ -12,7 +12,7 @@
 #include "autofunc.h"
 #include <vguilocal.h>
 #include <mymathlib.h>
-#include "CCustomHud.h"
+#include "Viewport.h"
 #pragma endregion
 
 #include "core/events/networkmessage.h"
@@ -378,7 +378,7 @@ size_t WeaponsResource::getLastPos(Weapon* wp) const {
 }
 
 void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
-    if (gCustomHud.SelectTextMenuItem(iSlot + 1) || !gCustomHud.HasSuit()) {
+    if (GetBaseViewPort()->SelectTextMenuItem(iSlot + 1) || !GetBaseViewPort()->HasSuit()) {
         return;
     }
 

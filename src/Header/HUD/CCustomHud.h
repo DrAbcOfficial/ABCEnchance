@@ -73,20 +73,12 @@ public:
 	void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);
 
 	bool HasSuit();
-	void WeaponBitsChangeCallBack(int bits);
 
-	bool IsMouseVisible();
-	bool IsTextMenuOpening();
 	bool SelectTextMenuItem(int slot);
-	void SetMouseVisible(bool state);
-
-	void SetCurWeapon(Weapon* weapon);
 
 	void OnMousePressed(int code);
 
 	bool IsInScore();
-
-	void RenderRadar();
 
 	std::optional<int> m_bitsWeaponBits = 0;
 

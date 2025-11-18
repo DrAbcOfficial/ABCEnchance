@@ -63,7 +63,6 @@ public:
 	void Reset();
 	void Think(void);
 	const char* GetNextMap();
-	void SetNextMap(const char* name);
 	void Paint(void);
 	void SetParent(vgui::VPANEL vPanel);
 	void AddNewPanel(IViewportPanel* panel);
@@ -79,6 +78,7 @@ public:
 	bool LoacalPlayerAvilable();
 
 	bool HasSuit();
+	bool SelectTextMenuItem(int slot);
 	void WeaponBitsChangeCallback(int bits);
 	bool IsHudHide(int HideToken);
 	void LongjumpCallBack(bool state);
@@ -90,39 +90,25 @@ public:
 	void HideScoreBoard();
 	long GetTimeEnd();
 	const char* GetServerName();
-	void SetServerName(const char*name);
-	CScorePanel* GetScoreBoard();
 	CVotePanel* GetVotePanel();
 	CMotdPanel* GetMotdPanel();
-	CAmmoPanel* GetAmmoPanel();
 	Color GetPlayerColor(int index);
 	bool IsPlayerTileEnable();
 
 	bool IsVoteEnable();
-	void StartVote(const char* szContent, const char* szYes, const char* szNo, int iVoteType);
-	void EndVote();
 
 	void AddPopNumber(vec3_t vecOrigin, Color& pColor, int value);
 
-	void AppendMOTD(const char* szMessage);
 	void ShowMOTD();
-	void CloseMOTD();
-	void FinishSendMOTD();
 	
 	void ShowSideText(bool state);
 
-	bool MsgShowMenu(int slot, int time, int bits, const char* message);
 	void ShowTextMenu(bool state);
 	void SelectMenuItem(int slot);
 	bool IsTextMenuOpen();
 
-	void SetFlashLight(bool on, int battery);
-	void SetFlashBattery(int battery);
-
 	void ShowCrossHair(bool on);
 
-	void SetHealth(int health);
-	void SetArmor(int armor);
 	void UpdateTiles(long tiles);
 
 	void SetSpectate(bool state);
@@ -135,14 +121,7 @@ private:
 	CNeteasePanel* m_pNeteaseMusic = nullptr;
 public:
 #endif // __HAS_NETEASE_API
-
-	CAmmoStackPanel* GetAmmoStackPanel();
-	CItemStackPanel* GetItemStackPanel();
-	CWeaponStackPanel* GetWeaponStackPanel();
-
 	CWeaponChoosePanel* GetWeaponChoosePanel();
-
-	void SetCurWeapon(Weapon* weapon);
 
 	enum class HUDNOTICE {
 		PRINTNOTIFY = 1,
