@@ -74,8 +74,6 @@ public:
 
 	bool HasSuit();
 
-	bool SelectTextMenuItem(int slot);
-
 	void OnMousePressed(int code);
 
 	bool IsInScore();
