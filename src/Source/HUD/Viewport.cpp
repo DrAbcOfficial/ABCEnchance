@@ -535,13 +535,13 @@ void CViewport::ShowDeathMsg(bool state){
 void CViewport::ShowMusic(bool state){
 	m_pNeteaseMusic->ShowPanel(state);
 }
-bool CViewport::IsInScore(){
-	return m_bInScore;
-}
 CNeteasePanel* CViewport::GetMusicPanel(){
 	return m_pNeteaseMusic;
 }
 #endif
+bool CViewport::IsInScore() {
+	return m_bInScore;
+}
 CWeaponChoosePanel* CViewport::GetWeaponChoosePanel(){
 	return m_pWeaponChoose;
 }
