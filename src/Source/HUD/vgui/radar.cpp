@@ -345,15 +345,13 @@ void CRadarPanel::RenderRadar()
 		MetaRenderer()->BindFrameBuffer(&m_RadarFBO);
 		MetaRenderer()->SetCurrentSceneFBO(&m_RadarFBO);
 
-		gCustomHud.m_flOverViewScale = gCVars.pRadarZoom->value;
-
 		cl_entity_t* local = gEngfuncs.GetLocalPlayer();
-		VectorCopy(local->curstate.origin, gCustomHud.m_vecOverViewOrigin);
-		gCustomHud.m_vecOverViewOrigin[2] += 72;
+		VectorCopy(local->curstate.origin, m_vecOverViewOrigin);
+		m_vecOverViewOrigin[2] += 72;
 
-		VectorCopy(local->curstate.angles, gCustomHud.m_vecOverViewAngles);
-		gCustomHud.m_vecOverViewAngles[0] = 90;
-		gCustomHud.m_vecOverViewAngles[2] = 0;
+		VectorCopy(local->curstate.angles, m_vecOverViewAngles);
+		m_vecOverViewAngles[0] = 90;
+		m_vecOverViewAngles[2] = 0;
 
 		float arySaveCvars[] = {
 			gCVars.pCVarDrawEntities->value,
@@ -386,24 +384,26 @@ void CRadarPanel::RenderRadar()
 		auto oldDrawClassify = MetaRenderer()->GetDrawClassify();
 		MetaRenderer()->SetDrawClassify(DRAW_CLASSIFY_WORLD | DRAW_CLASSIFY_LIGHTMAP);
 
-		MetaRenderer()->SetRefDefViewOrigin(gCustomHud.m_vecOverViewOrigin);
-		MetaRenderer()->SetRefDefViewAngles(gCustomHud.m_vecOverViewAngles);
+		MetaRenderer()->SetRefDefViewOrigin(m_vecOverViewOrigin);
+		MetaRenderer()->SetRefDefViewAngles(m_vecOverViewAngles);
 
 		MetaRenderer()->UpdateRefDef();
 
 		MetaRenderer()->LoadIdentityForProjectionMatrix();
 		//MetaRenderer()->SetupOrthoProjectionMatrix(-1024 / 2, 1024 / 2, -1024 / 2, 1024 / 2, 2048, -2048, true);
+
+		float scale = gCVars.pRadarZoom->value;
 		MetaRenderer()->SetupOrthoProjectionMatrix(
-			-(4096.0 / gCustomHud.m_flOverViewScale), 
-			(4096.0 / gCustomHud.m_flOverViewScale),
-			-(4096.0 / gCustomHud.m_flOverViewScale),
-			(4096.0 / gCustomHud.m_flOverViewScale), 
+			-(4096.0 / scale),
+			(4096.0 / scale),
+			-(4096.0 / scale),
+			(4096.0 / scale),
 			2048, 
 			-2048,
 			true);
 
 		MetaRenderer()->LoadIdentityForWorldMatrix();
-		MetaRenderer()->SetupPlayerViewWorldMatrix(gCustomHud.m_vecOverViewOrigin, gCustomHud.m_vecOverViewAngles);
+		MetaRenderer()->SetupPlayerViewWorldMatrix(m_vecOverViewOrigin, m_vecOverViewAngles);
 
 		MetaRenderer()->SetViewport(0, 0, 1024, 1024);
 

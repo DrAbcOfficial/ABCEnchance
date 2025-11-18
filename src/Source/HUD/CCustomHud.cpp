@@ -260,8 +260,6 @@ void CCustomHud::HUD_VidInit(void)
 	gSpriteRes.VidInit();
 	m_HudIndicator.VidInit();
 	gWR.VidInit();
-
-	m_flCursorSize = GET_SCREEN_PIXEL(true, "Common.CursorSize");
 }
 
 void CCustomHud::HUD_Draw(float flTime)
@@ -282,7 +280,6 @@ void CCustomHud::HUD_Reset(void)
 
 	m_bInScore = false;
 	m_bitsWeaponBits.reset();
-	VGUI_CREATE_NEWTGA_TEXTURE(m_iCursorTga, "abcenchance/tga/cursor");
 }
 void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 	//check spectate

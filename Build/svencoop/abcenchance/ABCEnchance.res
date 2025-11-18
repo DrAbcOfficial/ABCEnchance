@@ -15,42 +15,15 @@ Scheme
 		"BuyMenu.ButtonColor"		"125 125 125 125"
 	}
 
-    //标记为[长度]的量以屏幕左上角宽高为（0,0），屏幕右下角宽高为（1,1）计算
-    //标记为[尺寸]的量以屏幕高计算
-    //时间单位为秒
 	BaseSettings
 	{
 		"Version"						"100020"
 		"Language"                      ""
-		//[尺寸]鼠标光标大小
-		"Common.CursorSize"             "0.03"
 
 		//伤害指示器持续时间
 		"HealthArmor.PainIndicatorTime"	"3"
 		//色差伤害指示器持续时间
 		"HealthArmor.ShockIndicatorTime""0.2"
-
-        //购买菜单进入动画时间
-		"EccoBuyMenu.BuyMenuAnimateTime"		"0.1"
-		//购买菜单圆心起始宽
-		"EccoBuyMenu.BuyMenuCenterX"		"0.3"
-		//购买菜单圆心起始高
-		"EccoBuyMenu.BuyMenuCenterY"		"0.5"
-		//购买菜单圆尺寸
-		"EccoBuyMenu.BuyMenuHeight"		"0.2"
-		//购买菜单圆空心尺寸
-		"EccoBuyMenu.BuyMenuOffset"		"0.15"
-		//购买菜单物品模型缩放
-		"EccoBuyMenu.BuyMenuModelSize"		"1.3"
-		//购买菜单第三人称摄像机旋转角度
-		"EccoBuyMenu.BuyMenuCamYaw"		"220"
-		//购买菜单第三人称摄像机距离
-		"EccoBuyMenu.BuyMenuCamDist"		"80"
-		//购买菜单第三人你摄像机高度
-		"EccoBuyMenu.BuyMenuCamHeight"		"-40"
-		//购买菜单第三人称摄像机左右平移
-		"EccoBuyMenu.BuyMenuCamRight"		"50"
-
 		//手雷指示器尺寸
 		"GrenadeIndicator.Size"      "0.03"
 	}

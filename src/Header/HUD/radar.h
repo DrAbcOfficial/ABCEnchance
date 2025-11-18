@@ -64,5 +64,7 @@ private:
 
 	vec3_t m_oldViewOrg{};
 	vec3_t m_oldViewAng{};
+	vec3_t m_vecOverViewOrigin{};
+	vec3_t m_vecOverViewAngles{};
 };
 #endif

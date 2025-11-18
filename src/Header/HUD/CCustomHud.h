@@ -90,13 +90,6 @@ public:
 
 	std::optional<int> m_bitsWeaponBits = 0;
 
-	float m_flOverViewScale = 0.0f;
-	vec3_t m_vecOverViewOrigin;
-	vec3_t m_vecOverViewAngles;
-
-	size_t m_flCursorSize = 0;
-	int m_iCursorTga = 0;
-
 	bool m_bInScore = false;
 };
 extern CCustomHud gCustomHud;
