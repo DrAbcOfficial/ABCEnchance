@@ -73,7 +73,6 @@ public:
 	void AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 
 	void SetInterMission(int intermission);
-	int GetInterMission();
 
 	bool LoacalPlayerAvilable();
 
@@ -115,6 +114,8 @@ public:
 
 	void ShowDeathMsg(bool state);
 	void ShowMusic(bool state);
+
+	bool IsInScore();
 #ifdef __HAS_NETEASE_API
 	CNeteasePanel* GetMusicPanel();
 private:
@@ -167,6 +168,7 @@ private:
 	vgui::HScheme m_hBaseScheme = 0;
 	int m_iInterMission = 0;
 	int m_bitsHideHUDDisplay = 0;
+	bool m_bInScore;
 
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";

@@ -575,7 +575,7 @@ void IN_MouseEvent(int mstate)
 void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 {
 	gExportfuncs.CL_CreateMove(frametime, cmd, active);
-	if (gCustomHud.IsInScore())
+	if (GetBaseViewPort()->IsInScore())
 		cmd->buttons |= IN_SCORE;
 	AutoFunc::AutoJump(cmd);
 	AutoFunc::DuckTap(cmd);

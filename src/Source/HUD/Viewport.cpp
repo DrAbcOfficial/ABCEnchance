@@ -19,6 +19,7 @@
 
 #include "core/events/playerinfo.h"
 #include "core/events/networkmessage.h"
+#include "core/events/command.h"
 #include "core/resource/playerresource.h"
 #include "core/resource/spriteresource.h"
 #include "mymathlib.h"
@@ -299,6 +300,33 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 		}
 		}
 	});
+	g_EventCmdSlot.append([&](int) {
+		return this->IsTextMenuOpen();
+	});
+	g_EventCmdMissionBrief.append([&]() {
+		this->ShowMOTD();
+		return false;
+	});
+	g_EventCmdOpenScoreboard.append([&]() {
+		this->m_bInScore = true;
+		if (this && !this->m_iInterMission)
+			this->ShowScoreBoard();
+		return false;
+	});
+	g_EventCmdCloseScoreboard.append([&]() {
+		this->m_bInScore = false;
+		if (this && !this->m_iInterMission)
+			this->HideScoreBoard();
+		return false;
+	});
+	g_EventCmdVoteMenu.append([&]() {
+		extern void OpenVoteMenuDialog();
+		OpenVoteMenuDialog();
+		return false;
+	});
+	g_EventCmdAttack1.append([&]() {
+		return !this->m_pWeaponChoose->BlockAttackOnce();
+	});
 }
 
 CViewport::~CViewport(void){
@@ -439,9 +467,6 @@ void CViewport::SetInterMission(int intermission) {
 		m_pScorePanel->ShowPanel(intermission > 0);
 	m_iInterMission = intermission;
 }
-int CViewport::GetInterMission() {
-	return m_iInterMission;
-}
 
 bool CViewport::LoacalPlayerAvilable(){
 	return gEngfuncs.GetLocalPlayer() != nullptr;
@@ -509,6 +534,9 @@ void CViewport::ShowDeathMsg(bool state){
 #ifdef __HAS_NETEASE_API
 void CViewport::ShowMusic(bool state){
 	m_pNeteaseMusic->ShowPanel(state);
+}
+bool CViewport::IsInScore(){
+	return m_bInScore;
 }
 CNeteasePanel* CViewport::GetMusicPanel(){
 	return m_pNeteaseMusic;

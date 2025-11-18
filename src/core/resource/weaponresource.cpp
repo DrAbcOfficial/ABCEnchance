@@ -16,6 +16,7 @@
 #pragma endregion
 
 #include "core/events/networkmessage.h"
+#include "core/events/command.h"
 #include "weaponresource.h"
 
 
@@ -147,6 +148,18 @@ void WeaponsResource::Init() {
             strncpy_s(wp->szSprName, sizeof(wp->szSprName), name, strlen(name));
             this->LoadWeaponSprites(wp);
         }
+    });
+    g_EventCmdSlot.append([&](int slot) {
+        this->SelectSlot(slot, 1, false);
+        return true;
+    });
+    g_EventCmdNextWeapon.append([&]() {
+        this->SelectSlot(this->m_iNowSlot, 1, true);
+        return true;
+    });
+    g_EventCmdPrevWeapon.append([&]() {
+        this->SelectSlot(this->m_iNowSlot, -1, true);
+        return true;
     });
 }
 

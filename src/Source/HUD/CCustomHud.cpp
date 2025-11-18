@@ -38,93 +38,6 @@
 
 CCustomHud gCustomHud;
 
-#pragma region UserCmd Varibles
-void(*UserCmd_Slots[10])(void);
-void(*UserCmd_NextWeapon)(void);
-void(*UserCmd_PrevWeapon)(void);
-void(*UserCmd_ShowScores)(void);
-void(*UserCmd_HideScores)(void);
-void(*UserCmd_Attack1)(void);
-void(*UserCmd_MissionBrief)(void);
-void(*UserCmd_VoteMenu)(void);
-#pragma endregion
-
-#pragma region UserCmd Hooks
-static void UserCmd_SlotInput(int i) {
-	bool bVisible = GetBaseViewPort()->IsTextMenuOpen();
-	gWR.SelectSlot(i, 1, false);
-	if(!bVisible)
-		UserCmd_Slots[i]();
-}
-static void __UserCmd_Slot1(void) {
-	UserCmd_SlotInput(0);
-}
-static void __UserCmd_Slot2(void) {
-	UserCmd_SlotInput(1);
-}
-static void __UserCmd_Slot3(void) {
-	UserCmd_SlotInput(2);
-}
-static void __UserCmd_Slot4(void) {
-	UserCmd_SlotInput(3);
-}
-static void __UserCmd_Slot5(void) {
-	UserCmd_SlotInput(4);
-}
-static void __UserCmd_Slot6(void) {
-	UserCmd_SlotInput(5);
-}
-static void __UserCmd_Slot7(void) {
-	UserCmd_SlotInput(6);
-}
-static void __UserCmd_Slot8(void) {
-	UserCmd_SlotInput(7);
-}
-static void __UserCmd_Slot9(void) {
-	UserCmd_SlotInput(8);
-}
-static void __UserCmd_Slot10(void) {
-	bool bVisible = GetBaseViewPort()->IsTextMenuOpen();
-	gWR.SelectSlot(9, 1, false);
-	if (!bVisible)
-		UserCmd_Slots[9]();
-}
-static void __UserCmd_MissionBrief(void) {
-	GetBaseViewPort()->ShowMOTD();
-}
-static void __UserCmd_NextWeapon(void) {
-	gWR.SelectSlot(gWR.m_iNowSlot, 1, true);
-	return UserCmd_NextWeapon();
-}
-static void __UserCmd_PrevWeapon(void) {
-	gWR.SelectSlot(gWR.m_iNowSlot, -1, true);
-	return UserCmd_PrevWeapon();
-}
-static void __UserCmd_OpenScoreboard(void) {
-	gCustomHud.m_bInScore = true;
-	if (GetBaseViewPort() && !GetBaseViewPort()->GetInterMission())
-		GetBaseViewPort()->ShowScoreBoard();
-	return;
-	//UserCmd_ShowScores();
-}
-static void __UserCmd_CloseScoreboard(void) {
-	gCustomHud.m_bInScore = false;
-	if (GetBaseViewPort() && !GetBaseViewPort()->GetInterMission())
-		GetBaseViewPort()->HideScoreBoard();
-	//UserCmd_HideScores();
-}
-static void __UserCmd_Attack1(void) {
-	if (GetBaseViewPort()->GetWeaponChoosePanel()->BlockAttackOnce())
-		return;
-	return UserCmd_Attack1();
-}
-static void __UserCmd_VoteMenu(void) {
-	extern void OpenVoteMenuDialog();
-	OpenVoteMenuDialog();
-	//UserCmd_VoteMenu();
-}
-#pragma endregion
-
 #pragma region CCustomHud
 
 /*
@@ -223,25 +136,6 @@ void CCustomHud::GL_Init(void)
 
 void CCustomHud::HUD_Init(void)
 {
-	UserCmd_Attack1 = HOOK_COMMAND("+attack", Attack1);
-	UserCmd_Slots[0] = HOOK_COMMAND("slot1", Slot1);
-	UserCmd_Slots[1] = HOOK_COMMAND("slot2", Slot2);
-	UserCmd_Slots[2] = HOOK_COMMAND("slot3", Slot3);
-	UserCmd_Slots[3] = HOOK_COMMAND("slot4", Slot4);
-	UserCmd_Slots[4] = HOOK_COMMAND("slot5", Slot5);
-	UserCmd_Slots[5] = HOOK_COMMAND("slot6", Slot6);
-	UserCmd_Slots[6] = HOOK_COMMAND("slot7", Slot7);
-	UserCmd_Slots[7] = HOOK_COMMAND("slot8", Slot8);
-	UserCmd_Slots[8] = HOOK_COMMAND("slot9", Slot9);
-	UserCmd_Slots[9] = HOOK_COMMAND("slot10", Slot10);
-
-	UserCmd_MissionBrief = HOOK_COMMAND("missionbriefing", MissionBrief);
-	UserCmd_NextWeapon = HOOK_COMMAND("invnext", NextWeapon);
-	UserCmd_PrevWeapon = HOOK_COMMAND("invprev", PrevWeapon);
-	UserCmd_ShowScores = HOOK_COMMAND("+showscores", OpenScoreboard);
-	UserCmd_HideScores = HOOK_COMMAND("-showscores", CloseScoreboard);
-	UserCmd_VoteMenu = HOOK_COMMAND("votemenu", VoteMenu);
-
 	gCVars.pDamageScreenFilter = CREATE_CVAR("hud_damageshock", "1", FCVAR_VALUE, nullptr);
 	gCVars.pDamageScreenFactor = CREATE_CVAR("hud_damageshock_factor", "0.015", FCVAR_VALUE, nullptr);
 	gCVars.pDamageScreenBase = CREATE_CVAR("hud_damageshock_base", "15", FCVAR_VALUE, nullptr);
@@ -277,8 +171,6 @@ void CCustomHud::HUD_Reset(void)
 #ifdef _DEBUG
 	m_HudCCTV.Reset();
 #endif
-
-	m_bInScore = false;
 	m_bitsWeaponBits.reset();
 }
 void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
@@ -364,8 +256,5 @@ void CCustomHud::OnMousePressed(int code) {
 			break;
 		}
 	}
-}
-bool CCustomHud::IsInScore() {
-	return m_bInScore;
 }
 #pragma endregion

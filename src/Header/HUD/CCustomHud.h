@@ -76,10 +76,6 @@ public:
 
 	void OnMousePressed(int code);
 
-	bool IsInScore();
-
 	std::optional<int> m_bitsWeaponBits = 0;
-
-	bool m_bInScore = false;
 };
 extern CCustomHud gCustomHud;
