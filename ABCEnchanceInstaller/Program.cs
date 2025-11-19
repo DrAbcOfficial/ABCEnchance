@@ -88,7 +88,7 @@ if (result == 0)
 }
 
 string localPath = Path.GetFullPath(".");
-if(svenPath.Contains(localPath, StringComparison.OrdinalIgnoreCase))
+if (svenPath.Contains(localPath, StringComparison.OrdinalIgnoreCase))
 {
     AnyKeyExit("Oops, are you put installer into your game folder? put them to another place.");
     return;

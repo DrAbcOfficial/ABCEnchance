@@ -143,7 +143,6 @@ void CCustomHud::HUD_Init(void)
 	gCVars.pDangerArmor = CREATE_CVAR("hud_danger_armor", "45", FCVAR_VALUE, nullptr);
 
 	m_HudIndicator.Init();
-	gWR.Init();
 #ifdef _DEBUG
 	m_HudCCTV.Init();
 #endif
