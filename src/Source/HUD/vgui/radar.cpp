@@ -103,8 +103,6 @@ private:
 	Color m_DrawColor = Color(255, 255, 255, 255);
 };
 
-extern vgui::CViewport* g_pViewPort;
-
 constexpr auto VIEWPORT_RADAR_NAME = "RadarPanel";
 
 extern vgui::HScheme GetViewPortBaseScheme();
@@ -126,11 +124,11 @@ CRadarPanel::CRadarPanel()
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
 
-	ADD_COMMAND("+scale_radar", []() {g_pViewPort->GetRadarPanel()->SetScale(true); });
-	ADD_COMMAND("-scale_radar", []() {g_pViewPort->GetRadarPanel()->SetScale(false); });
+	ADD_COMMAND("+scale_radar", []() {GetBaseViewPort()->GetRadarPanel()->SetScale(true); });
+	ADD_COMMAND("-scale_radar", []() {GetBaseViewPort()->GetRadarPanel()->SetScale(false); });
 
 	gCVars.pRadar = CREATE_CVAR("hud_radar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
-		g_pViewPort->GetRadarPanel()->ShowPanel(cvar->value);
+		GetBaseViewPort()->GetRadarPanel()->ShowPanel(cvar->value);
 		});
 
 	gCVars.pRadarZMin = CREATE_CVAR("hud_radar_zmin", "256", FCVAR_VALUE, nullptr);
@@ -138,7 +136,7 @@ CRadarPanel::CRadarPanel()
 	gCVars.pRadarZoom = CREATE_CVAR("hud_radar_zoom", "2.5", FCVAR_VALUE, nullptr);
 
 	gCVars.pRadarAvatar = CREATE_CVAR("hud_radar_avatar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
-		g_pViewPort->GetRadarPanel()->SetAvatarVisible(cvar->value);
+		GetBaseViewPort()->GetRadarPanel()->SetAvatarVisible(cvar->value);
 		});
 	gCVars.pRadarAvatarSize = CREATE_CVAR("hud_radar_avatarsize", "20", FCVAR_VALUE, nullptr);
 	gCVars.pRadarAvatarScale = CREATE_CVAR("hud_radar_avatarscale", "0.2", FCVAR_VALUE, nullptr);
@@ -206,7 +204,7 @@ void CRadarPanel::PerformLayout()
 
 void CRadarPanel::Paint()
 {
-	if (!g_pViewPort->HasSuit())
+	if (!GetBaseViewPort()->HasSuit())
 		return;
 
 	auto local = gEngfuncs.GetLocalPlayer();

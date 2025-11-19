@@ -58,7 +58,6 @@ public:
 public:
 	//ClientVGUI Interface
 	void Start(void);
-	void Init(void);
 	void VidInit(void);
 	void Reset();
 	void Think(void);

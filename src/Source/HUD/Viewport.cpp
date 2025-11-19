@@ -99,104 +99,9 @@ CViewport::~CViewport(void){
 }
 
 void CViewport::Start(void){
-	AddNewPanel(m_pRadar = new CRadarPanel());
-	AddNewPanel(m_pEffectPanel = new CEffectPanel());
-	AddNewPanel(m_pSidePanel = new CSidePanel());
-	AddNewPanel(m_pItemHighLightPanel = new CItemHighLightPanel());
-	AddNewPanel(m_pGIndicator = new CGenadeIndicatorPanel());
-	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
-	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
-	for (size_t i = 0; i < 32; i++) {
-		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
-		m_pPlayerInfoPanels[i]->SetId(i);
-	}
-	AddNewPanel(m_pHealthPanel = new CHealthPanel());
-	AddNewPanel(m_pDeahMsg = new CDeathMsgPanel());
-	AddNewPanel(m_pDmgTiles = new CDmgTilesPanel());
-	AddNewPanel(m_pAmmoPanel = new CAmmoPanel());
-	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
-	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
-	AddNewPanel(m_pTextMenu = new CTextMenu()); 
-	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
-#ifdef __HAS_NETEASE_API
-	AddNewPanel(m_pNeteaseMusic = new CNeteasePanel());
-#endif
-	AddNewPanel(m_pVotePanel = new vgui::CVotePanel());
-	AddNewPanel(m_pScorePanel = new vgui::CScorePanel());
-	AddNewPanel(m_pAmmoStack = new CAmmoStackPanel());
-	AddNewPanel(m_pItemStack = new CItemStackPanel());
-	AddNewPanel(m_pWeaponStack = new CWeaponStackPanel());
-	AddNewPanel(m_pWeaponChoose = new CWeaponChoosePanel());
-}
-
-void CViewport::SetParent(VPANEL vPanel){
-	BaseClass::SetParent(vPanel);
-	m_pScorePanel->SetParent(GetVPanel());
-	m_pVotePanel->SetParent(GetVPanel());
-	m_pMOTDPanel->SetParent(GetVPanel());
-	m_pSidePanel->SetParent(GetVPanel());
-	m_pTextMenu->SetParent(GetVPanel());
-	m_pFlashLight->SetParent(GetVPanel());
-	m_pNotice->SetParent(GetVPanel());
-	m_pNoticeCenter->SetParent(GetVPanel());
-	m_pCrossHairPanel->SetParent(GetVPanel());
-	m_pEffectPanel->SetParent(GetVPanel());
-	m_pHealthPanel->SetParent(GetVPanel());
-	m_pAmmoPanel->SetParent(GetVPanel());
-	m_pDmgTiles->SetParent(GetVPanel());
-	m_pGIndicator->SetParent(GetVPanel());
-	m_pDeahMsg->SetParent(GetVPanel());
-#ifdef __HAS_NETEASE_API
-	m_pNeteaseMusic->SetParent(GetVPanel());
-#endif
-	m_pRadar->SetParent(GetVPanel());
-	m_pAmmoStack->SetParent(GetVPanel());
-	m_pItemStack->SetParent(GetVPanel());
-	m_pWeaponStack->SetParent(GetVPanel());
-	m_pWeaponChoose->SetParent(GetVPanel());
-	for (size_t i = 0; i < 32; i++) {
-		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
-	}
-}
-
-void CViewport::AddNewPanel(IViewportPanel* panel){
-	m_Panels.push_back(panel);
-	panel->SetParent(GetVPanel());
-	dynamic_cast<vgui::Panel*>(panel)->MakeReadyForUse();
-}
-
-void CViewport::Think(void){
-	vgui::GetAnimationController()->UpdateAnimations(gEngfuncs.GetClientTime());
-#ifdef __HAS_NETEASE_API
-	m_pNeteaseMusic->Think();
-#endif
-	for (size_t i = 0; i < 32; i++) {
-		m_pPlayerInfoPanels[i]->Think();
-	}
-}
-
-void CViewport::VidInit(void){
-	Reset();
-}
-
-vgui::HScheme CViewport::GetBaseScheme() {
-	return m_hBaseScheme;
-}
-
-void CViewport::Reset() {
-	for (IViewportPanel* pPanel : m_Panels)
-		pPanel->Reset();
-	gPlayerRes.ResetAll();
-	gTeamRes.ResetAll();
-	m_iInterMission = 0;
-	extern void CloseVoteMenuDialog();
-	CloseVoteMenuDialog();
-}
-
-void CViewport::Init(void){
-	//gPlayerRes.Init();
-	//gTeamRes.Init();
-	//gWR.Init();
+	gPlayerRes.Init();
+	gTeamRes.Init();
+	gWR.Init();
 #pragma region MyRegion
 	g_EventPlayerInfoChanged.append([&](PlayerInfo* info) {
 		this->m_pScorePanel->UpdateOnPlayerInfo(info->m_iIndex);
@@ -436,6 +341,99 @@ void CViewport::Init(void){
 		return !this->m_pWeaponChoose->BlockAttackOnce();
 		});
 #pragma endregion
+
+	AddNewPanel(m_pRadar = new CRadarPanel());
+	AddNewPanel(m_pEffectPanel = new CEffectPanel());
+	AddNewPanel(m_pSidePanel = new CSidePanel());
+	AddNewPanel(m_pItemHighLightPanel = new CItemHighLightPanel());
+	AddNewPanel(m_pGIndicator = new CGenadeIndicatorPanel());
+	AddNewPanel(m_pFlashLight = new CFlashLightPanel());
+	AddNewPanel(m_pMOTDPanel = new CMotdPanel());
+	for (size_t i = 0; i < 32; i++) {
+		AddNewPanel(m_pPlayerInfoPanels[i] = new CPlayerInfoPanel());
+		m_pPlayerInfoPanels[i]->SetId(i);
+	}
+	AddNewPanel(m_pHealthPanel = new CHealthPanel());
+	AddNewPanel(m_pDeahMsg = new CDeathMsgPanel());
+	AddNewPanel(m_pDmgTiles = new CDmgTilesPanel());
+	AddNewPanel(m_pAmmoPanel = new CAmmoPanel());
+	AddNewPanel(m_pNotice = new CNoticePanel("NoticePanel"));
+	AddNewPanel(m_pNoticeCenter = new CNoticePanel("NoticeCenterPanel"));
+	AddNewPanel(m_pTextMenu = new CTextMenu()); 
+	AddNewPanel(m_pCrossHairPanel = new CCrosshairPanel());
+#ifdef __HAS_NETEASE_API
+	AddNewPanel(m_pNeteaseMusic = new CNeteasePanel());
+#endif
+	AddNewPanel(m_pVotePanel = new vgui::CVotePanel());
+	AddNewPanel(m_pScorePanel = new vgui::CScorePanel());
+	AddNewPanel(m_pAmmoStack = new CAmmoStackPanel());
+	AddNewPanel(m_pItemStack = new CItemStackPanel());
+	AddNewPanel(m_pWeaponStack = new CWeaponStackPanel());
+	AddNewPanel(m_pWeaponChoose = new CWeaponChoosePanel());
+}
+
+void CViewport::SetParent(VPANEL vPanel){
+	BaseClass::SetParent(vPanel);
+	m_pScorePanel->SetParent(GetVPanel());
+	m_pVotePanel->SetParent(GetVPanel());
+	m_pMOTDPanel->SetParent(GetVPanel());
+	m_pSidePanel->SetParent(GetVPanel());
+	m_pTextMenu->SetParent(GetVPanel());
+	m_pFlashLight->SetParent(GetVPanel());
+	m_pNotice->SetParent(GetVPanel());
+	m_pNoticeCenter->SetParent(GetVPanel());
+	m_pCrossHairPanel->SetParent(GetVPanel());
+	m_pEffectPanel->SetParent(GetVPanel());
+	m_pHealthPanel->SetParent(GetVPanel());
+	m_pAmmoPanel->SetParent(GetVPanel());
+	m_pDmgTiles->SetParent(GetVPanel());
+	m_pGIndicator->SetParent(GetVPanel());
+	m_pDeahMsg->SetParent(GetVPanel());
+#ifdef __HAS_NETEASE_API
+	m_pNeteaseMusic->SetParent(GetVPanel());
+#endif
+	m_pRadar->SetParent(GetVPanel());
+	m_pAmmoStack->SetParent(GetVPanel());
+	m_pItemStack->SetParent(GetVPanel());
+	m_pWeaponStack->SetParent(GetVPanel());
+	m_pWeaponChoose->SetParent(GetVPanel());
+	for (size_t i = 0; i < 32; i++) {
+		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
+	}
+}
+
+void CViewport::AddNewPanel(IViewportPanel* panel){
+	m_Panels.push_back(panel);
+	panel->SetParent(GetVPanel());
+	dynamic_cast<vgui::Panel*>(panel)->MakeReadyForUse();
+}
+
+void CViewport::Think(void){
+	vgui::GetAnimationController()->UpdateAnimations(gEngfuncs.GetClientTime());
+#ifdef __HAS_NETEASE_API
+	m_pNeteaseMusic->Think();
+#endif
+	for (size_t i = 0; i < 32; i++) {
+		m_pPlayerInfoPanels[i]->Think();
+	}
+}
+
+void CViewport::VidInit(void){
+	Reset();
+}
+
+vgui::HScheme CViewport::GetBaseScheme() {
+	return m_hBaseScheme;
+}
+
+void CViewport::Reset() {
+	for (IViewportPanel* pPanel : m_Panels)
+		pPanel->Reset();
+	gPlayerRes.ResetAll();
+	gTeamRes.ResetAll();
+	m_iInterMission = 0;
+	extern void CloseVoteMenuDialog();
+	CloseVoteMenuDialog();
 }
 
 void CViewport::ActivateClientUI(void){

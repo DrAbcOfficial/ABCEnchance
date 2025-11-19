@@ -48,6 +48,7 @@ public:
 		extern vgui::CViewport* g_pViewPort;
 		g_pViewPort = new vgui::CViewport();
 		g_pViewPort->Start();
+		g_pViewPort->SetVisible(false);
 	}
 	virtual void SetParent(vgui::VPANEL parent) override {
 		GetBaseViewPort()->SetParent(parent);

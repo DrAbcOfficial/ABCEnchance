@@ -166,7 +166,6 @@ void CCustomHud::HUD_Draw(float flTime)
 void CCustomHud::HUD_Reset(void)
 {
 	m_HudIndicator.Reset();
-	gWR.Reset();
 #ifdef _DEBUG
 	m_HudCCTV.Reset();
 #endif

@@ -388,7 +388,6 @@ void HUD_Init(void)
 	gExportfuncs.HUD_Init();
 	RegisterNetworkMessageEventTrigger();
 	gCustomHud.HUD_Init();
-	GetBaseViewPort()->Init();
 	GetClientVoiceMgr()->HUD_Init();
 	extern void GameUI_GetInterface();
 	GameUI_GetInterface();
