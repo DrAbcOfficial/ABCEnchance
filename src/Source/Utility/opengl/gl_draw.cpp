@@ -118,7 +118,7 @@ void DrawTexturePos(int tex, int mode, float p1[2], float p2[2], float p3[2], fl
 	{
 		uint64_t programState = DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED;
 		if (mode == kRenderTransAdd) {
-			programState = DRAW_TEXTURED_RECT_ADDITIVE_BLEND_ENABLED;
+			programState = DRAW_TEXTURED_RECT_ALPHA_BASED_ADDITIVE_ENABLED;
 		}
 		float color4v[4]{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
 		texturedrectvertex_t vertices[4];

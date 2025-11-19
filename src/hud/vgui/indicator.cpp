@@ -11,7 +11,7 @@
 #include "indicator.h"
 #undef max
 
-constexpr auto VIEWPORT_CROSSHAIR_NAME = "IndicatorPanel";
+constexpr auto VIEWPORT_INDICATOR_NAME = "IndicatorPanel";
 constexpr auto CVAR_STYLE_NAME = "hud_indicator_style";
 
 using namespace vgui;
@@ -57,33 +57,28 @@ public:
         const float img_height = static_cast<float>(std::max(m_iTall, 1));
         const float img_half_w = img_width / 2.0f;
         const float img_half_h = img_height / 2.0f;
-        const float y_base = ScreenHeight() / 4.0f;
+        const float y_base = m_iContainerTall / 2.0f - m_iOffY;
         const float y_top = y_base;
         const float y_bottom = y_base + img_height;
         auto rotateAndOffset = [&](float out[2], float x, float y) {
-            float local_x = x + static_cast<float>(m_iOffX);
-            float local_y = y + static_cast<float>(m_iOffY);
+            float local_x = x + static_cast<float>(m_iX);
+			float local_y = y + static_cast<float>(m_iY);
 
             float rot_x = local_x * ca - local_y * sa;
             float rot_y = local_x * sa + local_y * ca;
 
-            float screen_x = ScreenWidth() / 2.0f + rot_x;
-            float screen_y = ScreenHeight() / 2.0f - rot_y;
-
-            screen_x += static_cast<float>(m_iX);
-            screen_y += static_cast<float>(m_iY);
-
-            out[0] = screen_x;
-            out[1] = screen_y;
-        };
+            out[0] = rot_x + m_iContainerWide / 2.0f;
+            out[1] = m_iContainerTall / 2.0f - rot_y;
+            };
         vec2_t vecHUD[4]{};
         rotateAndOffset(vecHUD[0], -img_half_w, y_bottom);
         rotateAndOffset(vecHUD[1], img_half_w, y_bottom);
         rotateAndOffset(vecHUD[2], img_half_w, y_top);
         rotateAndOffset(vecHUD[3], -img_half_w, y_top);
 
+        float alpha_multi = surface()->DrawGetAlphaMultiplier();
         DrawTexturePos(m_iTexture, kRenderTransAdd, vecHUD[0], vecHUD[1], vecHUD[2], vecHUD[3],
-            m_DrawColor.r(), m_DrawColor.g(), m_DrawColor.b(), m_DrawColor.a());
+            m_DrawColor.r(), m_DrawColor.g(), m_DrawColor.b(), m_DrawColor.a() * alpha_multi);
     }
 
     virtual void GetSize(int& wide, int& tall) override {
@@ -114,6 +109,11 @@ public:
         m_DrawColor = col;
     }
 
+    void SetContainerSize(int w, int h) {
+        m_iContainerWide = w;
+        m_iContainerTall = h;
+    }
+
     void SetHitFrom(const vec3_t org) {
         m_vecHitFrom.x = org[0];
 		m_vecHitFrom.y = org[1];
@@ -125,22 +125,40 @@ private:
     int m_iX = 0, m_iY = 0;
     int m_iOffX = 0, m_iOffY = 0;
     int m_iWide = 0, m_iTall = 0;
+	int m_iContainerWide = 0, m_iContainerTall = 0;
     Color m_DrawColor = Color(255, 255, 255, 255);
     Vector m_vecHitFrom{};
 };
 
+class IndicatorImagePanel : public ImagePanel {
+public:
+    using ImagePanel::ImagePanel;
+    virtual void ApplySettings(KeyValues* inResourceData) override
+    {
+        ImagePanel::ApplySettings(inResourceData);
+        m_iOffset = inResourceData->GetInt("offset", 0);
+    }
+    void SetImage(IndicatorImage* image) {
+        ImagePanel::SetImage(image);
+        image->SetOffset(0, m_iOffset);
+    }
+private:
+    int m_iOffset = 0;
+};
+
 extern vgui::HScheme GetViewPortBaseScheme();
 CIndicatorPanel::CIndicatorPanel()
-	: BaseClass(nullptr, VIEWPORT_CROSSHAIR_NAME) {
+	: BaseClass(nullptr, VIEWPORT_INDICATOR_NAME) {
 	SetProportional(true);
 	SetKeyBoardInputEnabled(false);
 	SetMouseInputEnabled(false);
 	SetScheme(GetViewPortBaseScheme());
 
     m_aryImagePanels = {
-        new ImagePanel(this, "IndicatorImage1"),
-        new ImagePanel(this, "IndicatorImage2"),
-        new ImagePanel(this, "IndicatorImage3")
+        new IndicatorImagePanel(this, "IndicatorImage1"),
+        new IndicatorImagePanel(this, "IndicatorImage2"),
+        new IndicatorImagePanel(this, "IndicatorImage3"),
+        new IndicatorImagePanel(this, "IndicatorImage4")
     };
     m_iTex = surface()->CreateNewTextureID();
 
@@ -155,13 +173,31 @@ CIndicatorPanel::~CIndicatorPanel()
         surface()->DeleteTextureByID(m_iTex);
 }
 
+void CIndicatorPanel::Paint()
+{
+    BaseClass::Paint();
+    for (auto& panel : m_aryImagePanels) {
+        auto img = reinterpret_cast<IndicatorImage*>(panel->GetImage());
+    }
+}
+
+void CIndicatorPanel::PerformLayout()
+{
+    BaseClass::PerformLayout();
+    for (auto& panel : m_aryImagePanels) {
+        int w, h;
+        panel->GetSize(w, h);
+		auto img = reinterpret_cast<IndicatorImage*>(panel->GetImage());
+        img->SetContainerSize(w, h);
+    }
+}
+
 void CIndicatorPanel::ApplySchemeSettings(vgui::IScheme* pScheme) {
 	BaseClass::ApplySchemeSettings(pScheme);
     auto color = GetSchemeColor("Indicator.FgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
     SetFgColor(color);
 	SetBgColor(GetSchemeColor("Indicator.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
     for (auto& panel : m_aryImagePanels) {
-        panel->SetFgColor(color);
         panel->SetDrawColor(color);
     }
 }
@@ -175,12 +211,12 @@ void CIndicatorPanel::ApplySettings(KeyValues* inResourceData)
         img->m_iTexture = m_iTex;
         panel->SetImage(img);
     }
-    InvalidateLayout(false, true); // force applyschemesettings to run
-    m_flFadeTime = inResourceData->GetFloat("fade_time", 3.0f);
+    m_flFadeTime = inResourceData->GetFloat("fade_time", 1.0f);
+    m_flKeepTime = inResourceData->GetFloat("keep_time", 2.0f);
 }
 
 const char* CIndicatorPanel::GetName() {
-	return VIEWPORT_CROSSHAIR_NAME;
+	return VIEWPORT_INDICATOR_NAME;
 }
 void CIndicatorPanel::Reset() {
 	if (IsVisible())
@@ -206,12 +242,14 @@ void CIndicatorPanel::SetParent(vgui::VPANEL parent) {
 
 void CIndicatorPanel::SetHitIndicator(int damage, int armor, const float vecFrom[3]){
     auto panel = m_aryImagePanels[m_iIndex];
-    auto img = dynamic_cast<IndicatorImage*>(panel->GetImage());
+    auto img = reinterpret_cast<IndicatorImage*>(panel->GetImage());
     if (panel && img) {
         img->SetHitFrom(vecFrom);
+        if (!panel->IsVisible())
+            panel->SetVisible(true);
         vgui::GetAnimationController()->CancelAnimationsForPanel(panel);
-        panel->SetAlpha(255);
-        vgui::GetAnimationController()->RunAnimationCommand(panel, "alpha", 0, 0.0f, m_flFadeTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
+		panel->SetAlpha(255);
+        vgui::GetAnimationController()->RunAnimationCommand(panel, "alpha", 0, m_flKeepTime, m_flFadeTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
     }
     m_iIndex++;
     if (m_iIndex >= m_aryImagePanels.size())

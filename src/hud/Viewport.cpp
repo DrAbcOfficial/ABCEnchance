@@ -161,6 +161,8 @@ void CViewport::Start(void){
 		});
 	g_EventDamage.append([&](int armor, int damage, int tiles, float* from) {
 		this->UpdateTiles(tiles);
+		if (!this->m_pIndicator->IsVisible())
+			this->m_pIndicator->SetVisible(true);
 		this->m_pIndicator->SetHitIndicator(damage, armor, from);
 		});
 	g_EventBattery.append([&](int armor) {

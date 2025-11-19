@@ -7,27 +7,18 @@
 
 #include <tier0/platform.h>
 #include <vgui/IScheme.h>
-#include <vgui/ISurface.h>
-#include <vgui/ISystem.h>
-#include <vgui/IVGui.h>
 #include <KeyValues.h>
 #include <vgui_controls/AnimationController.h>
-#include "interface.h"
-#include "IFileSystem.h"
 #include "filesystem_helpers.h"
 
-#include <stdio.h>
-#include <math.h>
 #include "mempool.h"
 #include "utldict.h"
 #include "mathlib/mathlib.h"
-#include "characterset.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/dbg.h>
 // for SRC
 #include <vstdlib/random.h>
-#include <tier0/memdbgon.h>
 
 using namespace vgui;
 

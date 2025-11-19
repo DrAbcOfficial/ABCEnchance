@@ -15,6 +15,8 @@ public:
 
 	CIndicatorPanel();
 	virtual ~CIndicatorPanel();
+	virtual void Paint() override;
+	virtual void PerformLayout() override;
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 	// IViewportPanel overrides
@@ -27,10 +29,11 @@ public:
 
 	void SetHitIndicator(int damage, int armor, const float vecFrom[3]);
 private:
-	std::array<vgui::ImagePanel*, 3> m_aryImagePanels;
+	std::array<vgui::ImagePanel*, 4> m_aryImagePanels;
 	size_t m_iIndex = 0;
 	int m_iTex;
-	float m_flFadeTime = 3.0f;
+	float m_flFadeTime = 1.0f;
+	float m_flKeepTime = 1.0f;
 	cvar_t* m_pCvarIndicatorStyle = nullptr;
 	float m_vecHitFrom[3]{};
 	int m_iDamage = 0;
