@@ -248,15 +248,15 @@ static int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int target = READ_BYTE();
-	const char* msg = READ_STRING();
-	const char* sstr1 = READ_STRING();
-	const char* sstr2 = READ_STRING();
-	const char* sstr3 = READ_STRING();
-	const char* sstr4 = READ_STRING();
+	std::string msg = READ_STRING();
+	std::string sstr1 = READ_STRING();
+	std::string sstr2 = READ_STRING();
+	std::string sstr3 = READ_STRING();
+	std::string sstr4 = READ_STRING();
 	bool ret = true;
 	g_EventTextMsg.forEach([&](const eventpp::CallbackList<bool(int, const char*, const char*, const char*, const char*, const char*)>::Handle& handle, 
 		const eventpp::CallbackList<bool(int, const char*, const char*, const char*, const char*, const char*)>::Callback& callback) {
-			ret &= callback(target, msg, sstr1, sstr2, sstr3, sstr4);
+			ret &= callback(target, msg.c_str(), sstr1.c_str(), sstr2.c_str(), sstr3.c_str(), sstr4.c_str());
 	});
 	return ret ? m_pfnTextMsg(pszName, iSize, pbuf) : 1;
 }

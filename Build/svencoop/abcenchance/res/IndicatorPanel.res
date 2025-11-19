@@ -15,7 +15,8 @@
 		"proportionalToParent" "1"
 		
 		"image"		"abcenchance/tga/pain_indicator"
-		"fade_time"	"3.0"
+		"fade_time"	"1.0"
+		"keep_time"	"2.0"
 	}
 	"IndicatorImage1"
 	{
@@ -45,6 +46,18 @@
 	{
 		"ControlName"		"IndicatorImagePanel"
 		"fieldName"		"IndicatorImage3"
+		"xpos"		"100"
+		"ypos"		"150"
+		"wide"		"200"
+		"tall"		"100"
+		"visible"		"0"
+		"scaleImage"		"1"
+		"offset"	"50"
+	}
+	"IndicatorImage4"
+	{
+		"ControlName"		"IndicatorImagePanel"
+		"fieldName"		"IndicatorImage4"
 		"xpos"		"100"
 		"ypos"		"150"
 		"wide"		"200"
