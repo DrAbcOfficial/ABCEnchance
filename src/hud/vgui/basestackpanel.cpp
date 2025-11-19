@@ -15,7 +15,6 @@ CBaseSprStackItem::CBaseSprStackItem(Panel* parent, int iSpridx, int l, int r, i
 	m_pPanel->SetImage(iSpridx);
 	m_pPanel->SetRect(l, r, t, b);
 	m_pPanel->SetRenderMode(kRenderTransAdd);
-	m_pPanel->GetImage()->SetAlphaParent(this);
 	iSprIdx = iSpridx;
 	fIn = fi;
 	fOut = fo;

@@ -9,11 +9,11 @@
 using namespace vgui;
 
 CSPRImage::CSPRImage() {
-	m_pParent = nullptr;
+
 }
+
 CSPRImage::CSPRImage(const char *pFilePath) : CSPRImage(){
 	LoadSprImage(pFilePath);
-	m_pParent = nullptr;
 }
 
 void CSPRImage::SetTextureID(int id) {
@@ -96,8 +96,7 @@ void CSPRImage::Paint(){
 		float flBottom = static_cast<float>(rect.bottom) / h;
 		int r, g, b, a;
 		m_Color.GetColor(r, g, b, a);
-		if (m_pParent)
-			a = m_pParent->GetAlpha();
+		a *= surface()->DrawGetAlphaMultiplier();
 
 		extern void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom,
 			unsigned char r, unsigned char g, unsigned char b, unsigned char a, int frame);
@@ -128,8 +127,4 @@ void CSPRImage::SetSize(int wide, int tall){
 
 void CSPRImage::SetColor(Color col){
 	m_Color = col;
-}
-
-void CSPRImage::SetAlphaParent(Panel* panel){
-	m_pParent = panel;
 }
