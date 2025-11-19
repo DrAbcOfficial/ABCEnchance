@@ -113,12 +113,6 @@ void CCustomHud::HUD_Init(void)
 	gCVars.pDangerArmor = CREATE_CVAR("hud_danger_armor", "45", FCVAR_VALUE, nullptr);
 }
 
-void CCustomHud::HUD_VidInit(void)
-{
-	gSpriteRes.VidInit();
-	gWR.VidInit();
-}
-
 void CCustomHud::HUD_Reset(void)
 {
 	m_bitsWeaponBits.reset();

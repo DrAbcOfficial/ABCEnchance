@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <metahook.h>
 
 #include "pm_defs.h"
@@ -48,7 +49,7 @@ void R_BloodSprite(float* org, int colorindex, int modelIndex, int modelIndex2, 
 			vec3_t	offset, dir;
 			vec3_t	forward, right, up;
 			int nColor = colorindex;
-			nColor = CMathlib::clamp<int>(nColor, 0, 255);
+			nColor = std::clamp<int>(nColor, 0, 255);
 			pTemp->entity.curstate.scale = CMathlib::RANDOM_FLOAT((size / 25.0f), (size / 35.0f));
 			pTemp->flags = FTENT_SPRANIMATE;
 			pTemp->entity.curstate.rendercolor.r = g_arySvencoopBasePalette1[nColor].r();
@@ -153,18 +154,18 @@ void DoGaussFire(float fparam1, int bparam1) {
 	CMathlib::VectorAdd(vecSrc, vecForward, vecDest);
 
 	while (flDamage > 10 && nMaxHits > 0) {
-		//¼õÒ»´Î·´Éä´ÎÊý
+		//ï¿½ï¿½Ò»ï¿½Î·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		nMaxHits--;
-		//×öºöÂÔÍæ¼ÒµÄÉäÏß
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½
 		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 		gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecDest, PM_STUDIO_BOX, entignore, &tr);
-		//¸ßË¹Ö±»÷
+		//ï¿½ï¿½Ë¹Ö±ï¿½ï¿½
 		if (tr.allsolid != 0)
 			break;
-		//Äã´òµ½ÁËÐé¿Õ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (tr.ent < 0)
 			break;
-		//³õÊ¼ÈëÉä
+		//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 		if (fFirstBeam) {
 			local->curstate.effects |= EF_MUZZLEFLASH;
 			fFirstBeam = false;
@@ -175,31 +176,31 @@ void DoGaussFire(float fparam1, int bparam1) {
 			gEngfuncs.pEfxAPI->R_BeamPoints(vecSrc, tr.endpos, gEfxVarible.iGaussBeam, 0.2f,
 				bparam1 ? (float)GAUSS_LASER_P_WIDTH : (float)GAUSS_LASER_S_WIDTH, 0, 1, 0, 0, 0, 1, bparam1 ? 0.8f : 1.0f, bparam1 ? 0.0f : 1.0f);
 		cl_entity_t* hit = gEngfuncs.GetEntityByIndex(tr.ent);
-		//¿É·´Éä¸ßË¹
+		//ï¿½É·ï¿½ï¿½ï¿½ï¿½Ë¹
 		if (hit && hit->model && hit->model->type == mod_brush) {
-			//»æÖÆÂäµãÄ£ÐÍ
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
 			if (gEfxVarible.iGaussLoophole)
 				CreateGaussLoophole(&tr);
-			//Çå¿ÕÎÞÊÓÊµÌå
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
 			entignore = -1;
-			//Óë»÷ÖÐÃæ·¨Ïß×öµã³Ë£¬È¡¸ºÊý£¬ÅÐ¶ÏÈëÉä½Ç
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ·¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			
 			CMathlib::VectorCopy(tr.plane.normal, vecNormal);
 			float n = -CMathlib::DotProduct(vecNormal, vecDir);
-			//½Ç¶ÈÐ¡ÓÚ60¡ã
+			//ï¿½Ç¶ï¿½Ð¡ï¿½ï¿½60ï¿½ï¿½
 			if (n < 0.5) {
 				// reflect
-				//ÏòÁ¿ºÍÏà¼Ó³Ë¶þÈ¡µÃÖÕµã×ø±ê
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³Ë¶ï¿½È¡ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½
 				vecReflect[0] = 2.0f * vecNormal[0] * n + vecDir[0];
 				vecReflect[1] = 2.0f * vecNormal[1] * n + vecDir[1];
 				vecReflect[2] = 2.0f * vecNormal[2] * n + vecDir[2];
-				//È¡µÃÐÂµÄÉäÏß×ø±êºÍ·½Ïò
+				//È¡ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½
 				CMathlib::VectorCopy(vecReflect, vecDir);
 				CMathlib::VectorCopy(tr.endpos, vecSrc);
 				vecDest[0] = vecSrc[0] + vecDir[0] * 8192.0f;
 				vecDest[1] = vecSrc[1] + vecDir[1] * 8192.0f;
 				vecDest[2] = vecSrc[2] + vecDir[2] * 8192.0f;
-				//Âäµã»æÖÆËæ»úÉ¢Éä²¨¶¯Spr
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¢ï¿½ä²¨ï¿½ï¿½Spr
 				for (int i = 0; i < CMathlib::RANDOM_LONG(0, 4); i++) {
 					vecRandom[0] = vecSrc[0] + CMathlib::RANDOM_FLOAT(GAUSS_WAVE_LENGTH / 2, GAUSS_WAVE_LENGTH) *
 						(vecNormal[0] * n * CMathlib::RANDOM_FLOAT(1, 3) + vecDir[0] * CMathlib::RANDOM_FLOAT(-3, 3));
@@ -216,31 +217,31 @@ void DoGaussFire(float fparam1, int bparam1) {
 				flDamage *= 1 - n;
 			}
 			else {
-				//²»¿É·´Éä¸ßË¹
-				//·´Éä¹â´òµ½ÈËÁË
-				//ÒÑ¾­°¤ÁËÒ»È­ÁË£¬²»Òª·´ÉäÁË
-				//¼´´©Í¸Ö±»÷
+				//ï¿½ï¿½ï¿½É·ï¿½ï¿½ï¿½ï¿½Ë¹
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				//ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½Ò»È­ï¿½Ë£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				//ï¿½ï¿½ï¿½ï¿½Í¸Ö±ï¿½ï¿½
 				if (fHasPunched)
 					break;
 				fHasPunched = true;
-				//Èç¹ûÓÒ¼üÃ»·¨Ö±»÷µ½£¬ÄÇ¾Í³¢ÊÔ´©Ç½£¨×ó¼üÃ»·¨´©Ç½µÄ£©
+				//ï¿½ï¿½ï¿½ï¿½Ò¼ï¿½Ã»ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾Í³ï¿½ï¿½Ô´ï¿½Ç½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ç½ï¿½Ä£ï¿½
 				if (!bparam1) {
 					vecSrc[0] = tr.endpos[0] + vecDir[0] * 8;
 					vecSrc[1] = tr.endpos[1] + vecDir[1] * 8;
 					vecSrc[2] = tr.endpos[2] + vecDir[2] * 8;
-					//ÒÔµÚÒ»´ÎÖ±»÷µÄÈëÉäµãÎªÆðµã£¬ÏòÍæ¼ÒµÄÇ°·½8µ¥Î»×ö´©Í¸¼¤¹âÆðµã£¬ÒÔÍæ¼ÒµÄÊó±êËùÖ¸·½ÏòÎªÖÕµã
+					//ï¿½Ôµï¿½Ò»ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½Òµï¿½Ç°ï¿½ï¿½8ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Îªï¿½Õµï¿½
 					gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 					gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecDest, PM_STUDIO_BOX, entignore, &beam_tr);
-					//·´Éä¼¤¹âÂäµãÊÇ¹ÌÌå
+					//ï¿½ï¿½ï¿½ä¼¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½ï¿½ï¿½
 					if (beam_tr.allsolid == 0) {
-						//ÒÔµÚÒ»´Î´©Í¸µÄÈë¿ÚµãÎªÖØµãÖØÖÃ´©Í¸¼¤¹â
+						//ï¿½Ôµï¿½Ò»ï¿½Î´ï¿½Í¸ï¿½ï¿½ï¿½ï¿½Úµï¿½Îªï¿½Øµï¿½ï¿½ï¿½ï¿½Ã´ï¿½Í¸ï¿½ï¿½ï¿½ï¿½
 						gEngfuncs.pEventAPI->EV_SetTraceHull(2);
 						gEngfuncs.pEventAPI->EV_PlayerTrace(beam_tr.endpos, tr.endpos, PM_STUDIO_BOX, entignore, &beam_tr);
-						//Çó¸ÃÉäÏß³¤¶ÈÎªn
+						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½Îªn
 						CMathlib::VectorSubtract(beam_tr.endpos, tr.endpos, vecLength);
 						n = (float)CMathlib::VectorLength(vecLength);
-						//Èç¹û³¤¶È±ÈÉËº¦Ð¡
-						//ÉäÏßµÄºóÃæÒ»µã×öÇò
+						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È±ï¿½ï¿½Ëºï¿½Ð¡
+						//ï¿½ï¿½ï¿½ßµÄºï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 						CMathlib::VectorCopy(beam_tr.endpos, vecRandomSrc);
 						vecRandomSrc[0] += vecDir[0] * flDamage;
 						vecRandomSrc[1] += vecDir[1] * flDamage;
@@ -255,30 +256,30 @@ void DoGaussFire(float fparam1, int bparam1) {
 								CreateGaussLoophole(&beam_tr);
 						}
 						if (n < flDamage) {
-							//²»ÄÜÎª0µÄ£¬³¤¶ÈÓÀÔ¶Îª1
+							//ï¿½ï¿½ï¿½ï¿½Îª0ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶Îª1
 							if (n == 0)
 								n = 1;
-							//Ã¿ÕÛÉäÒ»´ÎÉËº¦ÉÙn
+							//Ã¿ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ëºï¿½ï¿½ï¿½n
 							flDamage -= n;
-							//ÏÂÒ»´ÎÖ÷¼¤¹âµãÎªÕÛÉä¼¤¹âµãÖÕµã£¬·¨ÏßÖØÖÃÎªÏòÇ°
+							//ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ä¼¤ï¿½ï¿½ï¿½ï¿½Õµã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ç°
 							vecSrc[0] = beam_tr.endpos[0] + vecDir[0];
 							vecSrc[1] = beam_tr.endpos[1] + vecDir[1];
 							vecSrc[2] = beam_tr.endpos[2] + vecDir[2];
 						}
 					}
 					else
-						//±»ÉúÎï×èµ²£¬Í£Ö¹Ñ­»·
+						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½èµ²ï¿½ï¿½Í£Ö¹Ñ­ï¿½ï¿½
 						flDamage = 0;
 				}
 				else {
-					//´óÓÚ60¡ã£¬²»´©Í¸£¬ÕÛÉäÒ»´ÎºóÍ£Ö¹Ñ­»·
+					//ï¿½ï¿½ï¿½ï¿½60ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Îºï¿½Í£Ö¹Ñ­ï¿½ï¿½
 					flDamage = 0;
 				}
 			}
 		}
 		else {
-			//²»¿É·´Éä±íÃæ
-			//ÒÔÖÕµãÏòÇ°³¢ÊÔÒ»´Î´©Í¸ºóÍ£Ö¹
+			//ï¿½ï¿½ï¿½É·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			//ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î´ï¿½Í¸ï¿½ï¿½Í£Ö¹
 			CMathlib::VectorAdd(tr.endpos, vecDir, vecSrc);
 			entignore = tr.ent;
 		}
@@ -295,8 +296,8 @@ void EV_StopPreviousGauss(){
 void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short eventindex, 
 	float delay, float* origin, float* angles, 
 	float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2) {
-	//¸ßË¹flag 3, index 12
-	//¸ßË¹ÐîÁ¦flag1, index 13
+	//ï¿½ï¿½Ë¹flag 3, index 12
+	//ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½ï¿½flag1, index 13
 	switch (eventindex) {
 		case 12: {
 			if (gCVars.pGaussEfx->value > 0) {
@@ -305,8 +306,8 @@ void pfnPlaybackEvent (int flags, const struct edict_s* pInvoker, unsigned short
 				auto view = gEngfuncs.GetViewModel();
 				CClient_SoundEngine_PlayFMODSound(g_pClientSoundEngine, 0, 0, view->index, view->origin, CHAN_WEAPON, "weapons/gauss2.wav", 1.0f, 1.0f, 0, 100, -1, 0.0f);
 				gHookFuncs.V_PunchAxis(0, -1.5f);
-				//f1 ÉËº¦
-				//b1 ÊÇ·ñ×ó¼ü
+				//f1 ï¿½Ëºï¿½
+				//b1 ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
 				DoGaussFire(fparam1, bparam1);
 				return;
 			}

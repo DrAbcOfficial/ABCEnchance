@@ -1,5 +1,5 @@
+#include <algorithm>
 #include "cvardef.h"
-#include <mymathlib.h>
 
 #include "CvarComboBox.h"
 
@@ -64,7 +64,7 @@ void CCvarComboBox::Reset(void){
 		}
 	}
 	if(index < 0)
-		index = CMathlib::clamp<int>(value, 0, m_pComboBox->GetItemCount() - 1);
+		index = std::clamp<int>(value, 0, m_pComboBox->GetItemCount() - 1);
 	m_iStartValue = index;
 	m_pComboBox->ActivateItem(index);
 }
@@ -82,7 +82,7 @@ int CCvarComboBox::AddItem(const wchar_t* itemText, const KeyValues* userData){
 }
 
 void CCvarComboBox::SetSelected(int select){
-	m_iStartValue = CMathlib::clamp<int>(CVAR_GET_FLOAT(m_szCvarName), 0, m_pComboBox->GetItemCount() - 1);
+	m_iStartValue = std::clamp<int>(CVAR_GET_FLOAT(m_szCvarName), 0, m_pComboBox->GetItemCount() - 1);
 	m_pComboBox->ActivateItem(m_iStartValue);
 	PostActionSignal(new KeyValues("SelectChange", "select", select));
 }

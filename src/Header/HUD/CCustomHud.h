@@ -63,7 +63,6 @@ public:
 
 	void GL_Init(void);
 	void HUD_Init(void);
-	void HUD_VidInit(void);
 	void HUD_Reset(void);
 	void HUD_UpdateClientData(client_data_t* cdata, float time);
 	void IN_MouseEvent(int mstate);

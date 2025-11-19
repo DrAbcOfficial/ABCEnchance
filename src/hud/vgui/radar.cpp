@@ -1,21 +1,12 @@
 #include <metahook.h>
 
 #include <cmath>
+#include <algorithm>
 #include "mymathlib.h"
 
 #include "local.h"
-#include "steamclientpublic.h"
-
-#include "exportfuncs.h"
 
 #include "vguilocal.h"
-#include "playertrace.h"
-
-#include "glew.h"
-#include "gl_utility.h"
-#include "gl_def.h"
-#include "gl_shader.h"
-#include "gl_draw.h"
 #include <IMetaRenderer.h>
 
 #include "vgui_controls/ImagePanel.h"
@@ -226,8 +217,8 @@ void CRadarPanel::Paint()
 		int len = GetWide() - nw;
 		float rotate = CMathlib::Q_DEG2RAD(local->curstate.angles[CMathlib::Q_YAW]);
 		int hh = gCVars.pRadar->value > 1.0f ? (len / 2) : static_cast<int>(sqrt(2 * pow(len, 2.0f)) / 2.0f);
-		int stx = CMathlib::clamp(((size / 2.0f) + hh * cos(rotate)), 0.0f, (float)len);
-		int sty = CMathlib::clamp(((size / 2.0f) + hh * sin(rotate)), 0.0f, (float)len);
+		int stx = std::clamp(((size / 2.0f) + hh * cos(rotate)), 0.0f, (float)len);
+		int sty = std::clamp(((size / 2.0f) + hh * sin(rotate)), 0.0f, (float)len);
 		m_pNorthground->SetPos(stx, sty);
 
 		if (gCVars.pRadarAvatar->value > 0) {
@@ -267,8 +258,8 @@ void CRadarPanel::Paint()
 				float vlen = vecLength.Length();
 				int ale = GetWide() - ww;
 				int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : sqrt(2 * pow(vlen, 2)) / 2;
-				int atx = CMathlib::clamp((Length - w + ahh * cos(nyaw)), 0.0f, static_cast<float>(ale));
-				int aty = CMathlib::clamp((Length - w + ahh * sin(nyaw)), 0.0f, static_cast<float>(ale));
+				int atx = std::clamp((Length - w + ahh * cos(nyaw)), 0.0f, static_cast<float>(ale));
+				int aty = std::clamp((Length - w + ahh * sin(nyaw)), 0.0f, static_cast<float>(ale));
 				aty = ale - aty;
 				iter->SetPos(atx, aty);
 				iter->SetSize(ww, ww);

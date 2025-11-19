@@ -399,7 +399,7 @@ int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppint
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
 
-void FMOD_Shutdown();
+extern void FMOD_Shutdown();
 
 void HUD_Shutdown(void)
 {
@@ -470,7 +470,6 @@ int HUD_VidInit(void)
 	gCVars.pCVarGammaBlend = CVAR_GET_POINTER("r_gamma_blend");
 
 	int result = gExportfuncs.HUD_VidInit();
-	gCustomHud.HUD_VidInit();
 	GetBaseViewPort()->VidInit();
 	return result;
 }

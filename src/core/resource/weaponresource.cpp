@@ -1,20 +1,19 @@
-﻿#include <cmath>
+﻿
 #include <metahook.h>
 #include <string>
-#include <vector>
+#include <algorithm>
 
 #pragma region hlsdk
 #include "cdll_int.h"
 #pragma endregion
 
 #pragma region TODO: remove these mess
-#include <local.h>
+#include "local.h"
 #include "autofunc.h"
-#include <vguilocal.h>
-#include <mymathlib.h>
-#include "hud/Viewport.h"
+#include "vguilocal.h"
 #pragma endregion
 
+#include "hud/Viewport.h"
 #include "core/events/networkmessage.h"
 #include "core/events/command.h"
 #include "weaponresource.h"
@@ -398,7 +397,7 @@ void WeaponsResource::SelectSlot(size_t iSlot, int iAdvance, bool bWheel) {
     BuildAviliableWeapons();
     if (m_pAviliableWeaponData.Size() == 0) return;
 
-    iSlot = CMathlib::clamp<size_t>(iSlot, 0, MAX_WEAPON_SLOT - 1);
+    iSlot = std::clamp<size_t>(iSlot, 0, MAX_WEAPON_SLOT - 1);
 
     if (bWheel && !m_pNowSelected) {
         auto it = m_pAviliableWeaponData.Begin();

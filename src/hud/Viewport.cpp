@@ -419,6 +419,8 @@ void CViewport::Think(void){
 }
 
 void CViewport::VidInit(void){
+	gSpriteRes.VidInit();
+	gWR.VidInit();
 	Reset();
 }
 

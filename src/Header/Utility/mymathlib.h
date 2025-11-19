@@ -50,16 +50,6 @@ public:
 		Q_YAW,		// left / right
 		Q_ROLL		// fall over
 	};
-
-	template<typename T>
-	static T clamp(T val, T minVal, T maxVal){
-		if (val < minVal)
-			return minVal;
-		else if (val > maxVal)
-			return maxVal;
-		else
-			return val;
-	}
 	static float METER2INCH(float x);
 	static float INCH2METER(float x);
 	static void VectorSubtract(vec3_t a, vec3_t b, vec3_t c);

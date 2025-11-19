@@ -1,21 +1,14 @@
 #include <metahook.h>
+#include <algorithm>
 
 #include <studio.h>
 #include <com_model.h>
 
-#include <vguilocal.h>
 
 #include <glew.h>
-#include <gl_utility.h>
-#include <gl_draw.h>
-
-#include <vgui/IScheme.h>
-#include <vgui/ISurface.h>
-#include <vgui/IVGUI.h>
 
 #include <mymathlib.h>
 #include <exportfuncs.h>
-#include "StudioModelRenderer.h"
 
 #include "ModelViewPanel.h"
 
@@ -1174,22 +1167,22 @@ void vgui::ModelViewPanel::SetBodygroup(int group, int body){
 	m_Renderer->SetBodygroup(group, body);
 }
 float vgui::ModelViewPanel::GetBlend(int blend){
-	int idx = CMathlib::clamp(blend, 0, 1);
+	int idx = std::clamp(blend, 0, 1);
 	return m_aryBlend[idx].m_flValue;
 }
 void vgui::ModelViewPanel::SetBlend(int blend, float value){
-	int idx = CMathlib::clamp(blend, 0, 1);
+	int idx = std::clamp(blend, 0, 1);
 	m_aryBlend[idx].m_iIdx = idx;
 	m_aryBlend[idx].m_flValue = value;
 	m_Renderer->SetBlending(idx, value);
 }
 float vgui::ModelViewPanel::GetController(int idx){
-	int i = CMathlib::clamp(idx, 0, 3);
+	int i = std::clamp(idx, 0, 3);
 	return m_aryController[i].m_flValue;
 }
 
 void vgui::ModelViewPanel::SetController(int idx, float value){
-	int i = CMathlib::clamp(idx, 0, 3);
+	int i = std::clamp(idx, 0, 3);
 	m_aryController[i].m_iIdx = idx;
 	m_aryController[i].m_flValue = value;
 	m_Renderer->SetController(i, value);

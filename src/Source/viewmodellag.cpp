@@ -1,5 +1,5 @@
 #include <metahook.h>
-#include <cmath>
+#include <algorithm>
 #include "mymathlib.h"
 
 #include "pm_defs.h"
@@ -15,9 +15,9 @@ void V_CalcViewModelLag(ref_params_t* pparams, Vector& origin, Vector& angles, c
 {
 	if (gCVars.pModelLag->value <= 0)
 		return;
-	//¼¦ÃçÎäÆ÷
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	extern float GetCurrentFOV();
-	if (gCVars.pModelLagAutoStop->value > 0 && GetCurrentFOV() != CMathlib::clamp<float>(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
+	if (gCVars.pModelLagAutoStop->value > 0 && GetCurrentFOV() != std::clamp<float>(gCVars.pCvarDefaultFOV->value, 10.0f, 110.0f))
 		return;
 	static Vector m_vecLastFacing;
 	Vector vOriginalOrigin = origin;
@@ -90,7 +90,7 @@ void V_CalcModelSlide(ref_params_t* pparams) {
 	gEngfuncs.pEventAPI->EV_PlayerTrace(local->curstate.origin, vecEnd, PM_STUDIO_IGNORE, local->index, &tr);
 	if (tr.fraction >= 1)
 		return;
-	float flViewHeight = CMathlib::clamp<float>(pparams->viewheight[2], 12.0f, 28.0f);
+	float flViewHeight = std::clamp<float>(pparams->viewheight[2], 12.0f, 28.0f);
 	//12 Duck
 	//28 Stand
 	float flSlideRatio = 1 - ((flViewHeight - 12) / 16);

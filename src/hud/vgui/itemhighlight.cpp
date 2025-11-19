@@ -12,7 +12,6 @@
 #include "cvardef.h"
 #include "extraprecache.h"
 #include "exportfuncs.h"
-#include "playertrace.h"
 
 #include "vguilocal.h"
 #include "local.h"
@@ -21,8 +20,6 @@
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/GaussianBlurPanel.h"
 #include "vgui_controls/AnimationController.h"
-
-#include "hud/Viewport.h"
 #include "itemhighlight.h"
 
 constexpr auto ITEM_LIST_PATH = "abcenchance/ItemHighLightList.txt";
@@ -187,7 +184,7 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 
 	gCVars.pItemHighLight = CREATE_CVAR("hud_highlight_item", "1", FCVAR_VALUE, NULL);
 	gCVars.pItemHighLightRange = CREATE_CVAR("hud_highlight_item_range", "344", FCVAR_VALUE, [](cvar_t* cvar) {
-		cvar->value = CMathlib::clamp<float>(cvar->value, 0.0f, 344.0f);
+		cvar->value = std::clamp<float>(cvar->value, 0.0f, 344.0f);
 	});
 	gCVars.pItemHighLightName = CREATE_CVAR("hud_highlight_item_name", "1", FCVAR_VALUE, NULL);
 	gCVars.pItemHighLightNameFOV = CREATE_CVAR("hud_highlight_item_fov", "90", FCVAR_VALUE, [](cvar_t* cvar) {
