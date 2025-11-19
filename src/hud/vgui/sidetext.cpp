@@ -9,16 +9,13 @@
 
 #include "local.h"
 #include "vguilocal.h"
-
-#include "sidetext.h"
-#include "Viewport.h"
-
-#include "plugins.h"
-#include <exportfuncs.h>
+#include "hud/Viewport.h"
+#include "exportfuncs.h"
 
 #include "core/resource/playerresource.h"
 
 #include "steamclientpublic.h"
+#include "sidetext.h"
 
 extern vgui::HScheme GetViewPortBaseScheme();
 

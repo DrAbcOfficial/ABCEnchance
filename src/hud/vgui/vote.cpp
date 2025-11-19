@@ -9,12 +9,12 @@
 #include <vgui/ILocalize.h>
 #include <vgui/IGameUIFuncs.h>
 #include <vgui_controls/Label.h>
-#include "vgui_controls/ImagePanel.h"
+#include <vgui_controls/ImagePanel.h>
 
 #include "vguilocal.h"
-#include <local.h>
+#include "local.h"
 
-#include "Viewport.h"
+#include "hud/Viewport.h"
 
 #include "vote.h"
 

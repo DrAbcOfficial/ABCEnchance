@@ -10,11 +10,8 @@
 
 #include "local.h"
 #include "vguilocal.h"
-
+#include "hud/Viewport.h"
 #include "motd.h"
-#include "Viewport.h"
-
-#include "plugins.h"
 
 #define VIEWPORT_MOTD_NAME "MotdPanel"
 extern vgui::HScheme GetViewPortBaseScheme();

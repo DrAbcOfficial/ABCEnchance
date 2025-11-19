@@ -3,9 +3,7 @@
 #include "parsemsg.h"
 #include "core/resource/weaponresource.h"
 #include "strtools.h"
-
-#include "vguilocal.h"
-#include "Viewport.h"
+#include "hud/Viewport.h"
 #include "networkmessage.h"
 
 #define DEFINE_NETMESSAGE_HOOK(name, ...) \

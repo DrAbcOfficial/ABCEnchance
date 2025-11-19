@@ -12,7 +12,7 @@
 #include "autofunc.h"
 #include <vguilocal.h>
 #include <mymathlib.h>
-#include "Viewport.h"
+#include "hud/Viewport.h"
 #pragma endregion
 
 #include "core/events/networkmessage.h"

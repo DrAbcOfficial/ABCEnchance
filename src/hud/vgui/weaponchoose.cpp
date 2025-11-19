@@ -7,15 +7,13 @@
 #include <string>
 #include "cvardef.h"
 
-#include "CCustomHud.h"
-
 #include "vgui_controls/spr_image.h"
 #include "vgui_controls/ImageSprPanel.h"
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/AnimationController.h"
 #include "core/resource/playerresource.h"
 
-#include "Viewport.h"
+#include "hud/Viewport.h"
 #include "weaponchoose.h"
 
 extern const clientdata_t* gClientData;
@@ -266,7 +264,7 @@ bool CWeaponChoosePanel::ShouldDraw(){
 		return false;
 	if (GetBaseViewPort()->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return false;
-	if (!gCustomHud.HasSuit())
+	if (!GetBaseViewPort()->HasSuit())
 		return false;
 	if (gClientData->health <= 0)
 		return false;

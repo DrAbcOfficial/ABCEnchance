@@ -64,10 +64,8 @@ public:
 	void GL_Init(void);
 	void HUD_Init(void);
 	void HUD_VidInit(void);
-	void HUD_Draw(float flTime);
 	void HUD_Reset(void);
 	void HUD_UpdateClientData(client_data_t* cdata, float time);
-	void HUD_Clear(void);
 	void IN_MouseEvent(int mstate);
 	int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname);
 	void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd);

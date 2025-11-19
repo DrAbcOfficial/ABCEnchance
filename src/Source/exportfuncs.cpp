@@ -38,9 +38,7 @@
 #include "CCustomHud.h"
 #include "local.h"
 #include "steam_api.h"
-//HUD
-#include "neteasemusic.h"
-#include "Viewport.h"
+#include "hud/Viewport.h"
 //efx
 #include "efxenchance.h"
 #include "viewmodellag.h"
@@ -409,7 +407,6 @@ void HUD_Shutdown(void)
 
 	gExportfuncs.HUD_Shutdown();
 
-	gCustomHud.HUD_Clear();
 	GL_FreeShaders();
 	ClearExtraPrecache();
 
@@ -500,7 +497,6 @@ int HUD_Redraw(float time, int intermission)
 	for (auto h : s_aryVanillianHud) {
 		h->m_iFlags &= ~1;
 	}
-	gCustomHud.HUD_Draw(time);
 	GetBaseViewPort()->SetInterMission(intermission);
 	return gExportfuncs.HUD_Redraw(time, intermission);
 }

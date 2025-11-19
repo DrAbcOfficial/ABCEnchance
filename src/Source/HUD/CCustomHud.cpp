@@ -1,36 +1,15 @@
 #include <metahook.h>
-#include <string>
-#include <vector>
-#include <algorithm>
 
-#include "vguilocal.h"
 #include "local.h"
-
-#include "parsemsg.h"
-#include "mymathlib.h"
-#include "exportfuncs.h"
-#include "autofunc.h"
-#include "ClientParticleMan.h"
 
 #include "core/resource/playerresource.h"
 #include "core/resource/spriteresource.h"
 #include "core/resource/weaponresource.h"
 
 #include "CCustomHud.h"
-
-#include "indicator.h"
-#include "itemhighlight.h"
-
-#include "vgui_controls/Controls.h"
-
-#include "radar.h"
-#include "ammostack.h"
-#include "itemstack.h"
-#include "weaponstack.h"
-#include "scoreboard.h"
-#include "weaponchoose.h"
-#include "ammobar.h"
-#include "Viewport.h"
+#include "hud/vgui/radar.h"
+#include "hud/vgui/weaponchoose.h"
+#include "hud/Viewport.h"
 
 CCustomHud gCustomHud;
 
@@ -119,8 +98,6 @@ void CCustomHud::OnRenderEndFrame()
 
 void CCustomHud::GL_Init(void)
 {
-	m_HudIndicator.GLInit();
-
 	if (MetaRenderer())
 	{
 		MetaRenderer()->RegisterRenderCallbacks(this);
@@ -134,25 +111,16 @@ void CCustomHud::HUD_Init(void)
 	gCVars.pDamageScreenBase = CREATE_CVAR("hud_damageshock_base", "15", FCVAR_VALUE, nullptr);
 	gCVars.pDangerHealth = CREATE_CVAR("hud_danger_health", "45", FCVAR_VALUE, nullptr);
 	gCVars.pDangerArmor = CREATE_CVAR("hud_danger_armor", "45", FCVAR_VALUE, nullptr);
-
-	m_HudIndicator.Init();
 }
 
 void CCustomHud::HUD_VidInit(void)
 {
 	gSpriteRes.VidInit();
-	m_HudIndicator.VidInit();
 	gWR.VidInit();
-}
-
-void CCustomHud::HUD_Draw(float flTime)
-{
-	m_HudIndicator.Draw(flTime);
 }
 
 void CCustomHud::HUD_Reset(void)
 {
-	m_HudIndicator.Reset();
 	m_bitsWeaponBits.reset();
 }
 void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
@@ -174,9 +142,6 @@ void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
 		GetBaseViewPort()->LongjumpCallBack(nlj);
 		lj = nlj;
 	}	
-}
-void CCustomHud::HUD_Clear(void){
-	m_HudIndicator.Clear();
 }
 void CCustomHud::IN_MouseEvent(int mstate){
 	auto MouseTest = [&](int mstate, int testBit, vgui::MouseCode enumMouse) {

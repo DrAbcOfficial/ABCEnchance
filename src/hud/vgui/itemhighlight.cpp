@@ -22,7 +22,7 @@
 #include "vgui_controls/GaussianBlurPanel.h"
 #include "vgui_controls/AnimationController.h"
 
-#include "Viewport.h"
+#include "hud/Viewport.h"
 #include "itemhighlight.h"
 
 constexpr auto ITEM_LIST_PATH = "abcenchance/ItemHighLightList.txt";

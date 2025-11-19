@@ -36,10 +36,7 @@
 //VoiceShit
 #include "voice_status.h"
 
-#include "Viewport.h"
-
-#include "plugins.h"
-#include <mymathlib.h>
+#include "hud/Viewport.h"
 
 #define STEAM_PROFILE_URL "http://steamcommunity.com/profiles/"
 
@@ -1088,7 +1085,7 @@ Color CScorePanel::GetPlayerBgColor(PlayerInfo* pi)
 
 int CScorePanel::GetClientIconSize()
 {
-	return CMathlib::clamp(m_pPlayerList->GetLineSpacing() - 2, 0, 32);
+	return std::clamp(m_pPlayerList->GetLineSpacing() - 2, 0, 32);
 }
 
 void CScorePanel::CreatePlayerMenu(){
@@ -1224,7 +1221,7 @@ void CScorePanel::OnPlayerMenuCommand(MenuAction command)
 
 CScorePanel::SizeMode CScorePanel::GetSizeMode()
 {
-	return (SizeMode)CMathlib::clamp((int)hud_scoreboard_size->value, 0, 2);
+	return (SizeMode)std::clamp((int)hud_scoreboard_size->value, 0, 2);
 }
 
 int CScorePanel::GetLineSpacingForHeight(int h)

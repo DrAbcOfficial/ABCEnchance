@@ -20,6 +20,7 @@ const enum {
 	HUD_HIDECUSTOM2 = (1 << 7)
 };
 constexpr auto WEAPON_SUIT = 31;
+constexpr auto MAX_SERVERNAME_LENGTH = 256;
 
 class CPlayerInfoPanel;
 class CMotdPanel;

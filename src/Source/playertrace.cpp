@@ -6,7 +6,7 @@
 #include "mymathlib.h"
 
 #include "vguilocal.h"
-#include "Viewport.h"
+#include "hud/Viewport.h"
 
 #include "playertrace.h"
 

@@ -12,8 +12,8 @@
 #include <vgui_controls/AnimationController.h>
 
 #include "local.h"
-#include <vguilocal.h>
-#include "Viewport.h"
+#include "vguilocal.h"
+#include "hud/Viewport.h"
 
 #include "deadmsg.h"
 

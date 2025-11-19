@@ -23,7 +23,6 @@ extern size_t ScreenWidth();
 //VGUI2
 #define VGUI2_ROOT_DIR "abcenchance/res/"
 constexpr auto SC_MAX_STEAMID = 32; // 0:0:4294967295, STEAM_ID_PENDING
-constexpr auto MAX_SERVERNAME_LENGTH = 256;
 //VGUI COLOR CODE
 extern Color g_aryVGUIColorCode[];
 enum {

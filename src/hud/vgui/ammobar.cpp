@@ -16,7 +16,7 @@
 
 #include "core/resource/weaponresource.h"
 
-#include "Viewport.h"
+#include "hud/Viewport.h"
 
 #include "ammobar.h"
 

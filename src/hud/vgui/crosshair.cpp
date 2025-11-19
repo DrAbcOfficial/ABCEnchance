@@ -17,9 +17,7 @@
 
 #include "local.h"
 #include "vguilocal.h"
-
-#include "mymathlib.h"
-#include "Viewport.h"
+#include "hud/Viewport.h"
 #include "playertrace.h"
 
 #include "crosshair.h"

@@ -15,10 +15,9 @@
 #include "core/resource/playerresource.h"
 
 #include "vgui_controls/ImagePanel.h"
-#include "playerboard.h"
-#include "Viewport.h"
 
-#include "plugins.h"
+#include "hud/Viewport.h"
+#include "playerboard.h"
 
 //thank you microsoft
 #undef clamp

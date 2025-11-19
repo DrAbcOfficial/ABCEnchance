@@ -15,8 +15,8 @@
 #include "vguilocal.h"
 
 #include "steamclientpublic.h"
-#include "Viewport.h"
-#include <exportfuncs.h>
+#include "hud/Viewport.h"
+#include "exportfuncs.h"
 
 #include "effect.h"
 

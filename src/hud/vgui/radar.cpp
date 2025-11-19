@@ -16,17 +16,16 @@
 #include "gl_def.h"
 #include "gl_shader.h"
 #include "gl_draw.h"
+#include <IMetaRenderer.h>
 
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/avatar_image.h"
 
 #include "core/resource/playerresource.h"
-
-#include <CCustomHud.h>
-#include "Viewport.h"
+#include "hud/Viewport.h"
 #include "radar.h"
 
-#include <IMetaRenderer.h>
+
 
 #undef clamp
 
