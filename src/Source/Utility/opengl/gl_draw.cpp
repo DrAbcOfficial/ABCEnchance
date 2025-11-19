@@ -1,22 +1,12 @@
 #include <metahook.h>
-#include <triangleapi.h>
-#include "studio.h"
-
-#include "mymathlib.h"
-#include "glew.h"
 #include "vguilocal.h"
-#include "gl_utility.h"
-#include "gl_shader.h"
-#include "gl_def.h"
 #include "gl_common.h"
 #include "local.h"
-#include "exportfuncs.h"
 #include "vgui_controls/Controls.h"
 
-#include "gl_draw.h"
 #include <IMetaRenderer.h>
 
-void GL_Bind(GLint gltexturenum)
+void GL_Bind(int gltexturenum)
 {
 	if (MetaRenderer())
 	{
@@ -80,10 +70,10 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 	*/
 	if (MetaRenderer())
 	{
-		// Ê¹ÓÃ DrawTexturedRect ²¢ÕýÈ·ÉèÖÃÎÆÀí×ø±ê
+		// Ê¹ï¿½ï¿½ DrawTexturedRect ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		texturedrectvertex_t vertices[4];
 
-		// ×óÉÏ½Ç (left, top)
+		// ï¿½ï¿½ï¿½Ï½ï¿½ (left, top)
 		vertices[0].pos[0] = x;
 		vertices[0].pos[1] = y;
 		vertices[0].texcoord[0] = left;
@@ -91,7 +81,7 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 		vertices[0].col[0] = color4v[0]; vertices[0].col[1] = color4v[1];
 		vertices[0].col[2] = color4v[2]; vertices[0].col[3] = color4v[3];
 
-		// ×óÏÂ½Ç (left, bottom)
+		// ï¿½ï¿½ï¿½Â½ï¿½ (left, bottom)
 		vertices[1].pos[0] = x;
 		vertices[1].pos[1] = y + h;
 		vertices[1].texcoord[0] = left;
@@ -99,7 +89,7 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 		vertices[1].col[0] = color4v[0]; vertices[1].col[1] = color4v[1];
 		vertices[1].col[2] = color4v[2]; vertices[1].col[3] = color4v[3];
 
-		// ÓÒÏÂ½Ç (right, bottom)
+		// ï¿½ï¿½ï¿½Â½ï¿½ (right, bottom)
 		vertices[2].pos[0] = x + w;
 		vertices[2].pos[1] = y + h;
 		vertices[2].texcoord[0] = right;
@@ -107,7 +97,7 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 		vertices[2].col[0] = color4v[0]; vertices[2].col[1] = color4v[1];
 		vertices[2].col[2] = color4v[2]; vertices[2].col[3] = color4v[3];
 
-		// ÓÒÉÏ½Ç (right, top)
+		// ï¿½ï¿½ï¿½Ï½ï¿½ (right, top)
 		vertices[3].pos[0] = x + w;
 		vertices[3].pos[1] = y;
 		vertices[3].texcoord[0] = right;
@@ -115,30 +105,22 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 		vertices[3].col[0] = color4v[0]; vertices[3].col[1] = color4v[1];
 		vertices[3].col[2] = color4v[2]; vertices[3].col[3] = color4v[3];
 
-		// Ë÷Òý: Á½¸öÈý½ÇÐÎ (0,1,2) ºÍ (0,2,3)
+		// ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (0,1,2) ï¿½ï¿½ (0,2,3)
 		uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
 
 		MetaRenderer()->DrawTexturedRect(memsprite->gl_texturenum, vertices, 4, indices, 6, programState, "ABC::DrawSPRIconRect");
 	}
 }
 
-void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+void DrawTexturePos(int tex, int mode, float p1[2], float p2[2], float p3[2], float p4[2], unsigned char r, unsigned char g, unsigned b, unsigned a)
 {
-	SPR_Set(SprHandle, r, g, b);
-	void* spr = *(void**)gpSprite;
-	mspriteframe_t* memsprite = static_cast<mspriteframe_t*>(gHookFuncs.R_GetSpriteFrame(spr, 0));
-	if (!memsprite)
-		return;
-
 	if (MetaRenderer())
 	{
 		uint64_t programState = DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED;
 		if (mode == kRenderTransAdd) {
 			programState = DRAW_TEXTURED_RECT_ADDITIVE_BLEND_ENABLED;
 		}
-
 		float color4v[4]{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
-
 		texturedrectvertex_t vertices[4];
 		vertices[0].pos[0] = p1[0]; vertices[0].pos[1] = p1[1];
 		vertices[0].texcoord[0] = 0.0f; vertices[0].texcoord[1] = 0.0f;
@@ -159,18 +141,21 @@ void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[
 		vertices[3].texcoord[0] = 1.0f; vertices[3].texcoord[1] = 0.0f;
 		vertices[3].col[0] = color4v[0]; vertices[3].col[1] = color4v[1];
 		vertices[3].col[2] = color4v[2]; vertices[3].col[3] = color4v[3];
-
 		uint32_t indices[6] = { 0, 1, 2, 0, 2, 3 };
-
-		MetaRenderer()->DrawTexturedRect(memsprite->gl_texturenum, vertices, 4, indices, 6, programState, "ABC::DrawSPRIconPos");
+		MetaRenderer()->DrawTexturedRect(tex, vertices, 4, indices, 6, programState, "ABC::DrawTexturePos");
 	}
 }
-int GetHudFontHeight(vgui::HFont m_hFont) {
-	if (!m_hFont)
-		return 0;
 
-	return vgui::surface()->GetFontTall(m_hFont);
+void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+	SPR_Set(SprHandle, r, g, b);
+	void* spr = *(void**)gpSprite;
+	mspriteframe_t* memsprite = static_cast<mspriteframe_t*>(gHookFuncs.R_GetSpriteFrame(spr, 0));
+	if (!memsprite)
+		return;
+	DrawTexturePos(memsprite->gl_texturenum, mode, p1, p2, p3, p4, r, g, b, a);
 }
+
 void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m_hFont) {
 	if (width)
 		*width = 0;
@@ -188,14 +173,10 @@ void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m
 	}
 
 	if (height)
-		*height = GetHudFontHeight(m_hFont);
+		*height = m_hFont ? vgui::surface()->GetFontTall(m_hFont) : 0;
 }
-int DrawVGUI2String(wchar_t* msg, int x, int y, int r, int g, int b, vgui::HFont m_hFont, bool add) {
-	return DrawVGUI2String(msg, x, y, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, m_hFont, add);
-}
-
 int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui::HFont m_hFont, bool add) {
-	
+
 	int iOriginalX;
 	int iTotalLines;
 	int iCurrentLine;
@@ -277,6 +258,9 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 	}
 
 	return x;
+}
+int DrawVGUI2String(wchar_t* msg, int x, int y, int r, int g, int b, vgui::HFont m_hFont, bool add) {
+	return DrawVGUI2String(msg, x, y, (float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, m_hFont, add);
 }
 void ScaleColors(int& r, int& g, int& b, int a) {
 	float x = (float)a / 255;

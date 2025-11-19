@@ -59,13 +59,6 @@ void  CMathlib::ColorCalcuAlpha(int& r, int& g, int& b, int a) {
 	g *= static_cast<int>((float)(a) / 255); 
 	b *= static_cast<int>((float)(a) / 255);
 }
-void CMathlib::Vector2RotateCASA(vec2_t out, float x, float y, float ca, float sa) {
-	out[0] = x * ca - y * sa; out[1] = x * sa + y * ca;
-}
-void CMathlib::CenterPos2OpenGLPos(vec2_t pos, int w, int h){
-	pos[0] += w / 2; 
-	pos[1] = h / 2 - pos[1];
-}
 size_t CMathlib::GetScreenPixel(int length, double percent) {
 	return (size_t)((float)length * clamp<float>(static_cast<float>(percent), 0.0f, 1.0f));
 }

@@ -1,13 +1,5 @@
 #pragma once
-#include <vector>
 #include <metahook.h>
-
-#include <vgui/IImage.h>
-#include <vgui/ISurface.h>
-#include <vgui/ISystem.h>
-#include <vgui/ILocalize.h>
-
-#include <vgui_controls/tga_image.h>
 #include <vgui_controls/Label.h>
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/ImageClipPanel.h"

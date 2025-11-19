@@ -66,7 +66,7 @@ using cl_refHookfunc_t = struct{
 	void (*V_PunchAxis)				(int axis, float punch);
 #pragma endregion
 #pragma region Engine
-	void (*CEngineClient_RenderView)				(ref_params_s* param, bool bClearColor, bool bDrawViewModel, int iPassIndex);
+	void (*CEngineClient_RenderView)				(struct ref_params_s* param, bool bClearColor, bool bDrawViewModel, int iPassIndex);
 	/*(mspriteframe_s *)*/void* (*R_GetSpriteFrame) (/* (msprite_s*) */ void* pSprite, int frame);
 
 	void (*R_NewMap)					();

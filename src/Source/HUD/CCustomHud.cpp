@@ -96,14 +96,6 @@ void CCustomHud::OnRenderEndFrame()
 }
 
 
-void CCustomHud::GL_Init(void)
-{
-	if (MetaRenderer())
-	{
-		MetaRenderer()->RegisterRenderCallbacks(this);
-	}
-}
-
 void CCustomHud::HUD_Init(void)
 {
 	gCVars.pDamageScreenFilter = CREATE_CVAR("hud_damageshock", "1", FCVAR_VALUE, nullptr);
@@ -175,10 +167,6 @@ void CCustomHud::IN_MouseEvent(int mstate){
 	for (size_t i = 0; i < 5; i++) {
 		MouseTest(mstate, 1 << i, static_cast<vgui::MouseCode>(i));
 	}
-}
-int CCustomHud::HUD_AddEntity(int type, cl_entity_s* ent, const char* modelname){
-	GetBaseViewPort()->AddEntity(type, ent, modelname);
-	return 1;
 }
 void CCustomHud::HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd) {
 	auto wp = WeaponData::FromWeaponData(pwd);

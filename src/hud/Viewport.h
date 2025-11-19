@@ -44,6 +44,7 @@ class CItemStackPanel;
 class CWeaponStackPanel;
 class CWeaponChoosePanel;
 class CItemHighLightPanel;
+class CIndicatorPanel;
 
 namespace vgui {
 	class CScorePanel;
@@ -164,6 +165,7 @@ private:
 	CWeaponStackPanel* m_pWeaponStack = nullptr;
 	CWeaponChoosePanel* m_pWeaponChoose = nullptr;
 	CItemHighLightPanel* m_pItemHighLightPanel = nullptr;
+	CIndicatorPanel* m_pIndicator = nullptr;
 
 	vgui::HScheme m_hBaseScheme = 0;
 	int m_iInterMission = 0;

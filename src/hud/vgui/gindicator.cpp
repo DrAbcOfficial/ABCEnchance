@@ -3,16 +3,9 @@
 
 #include <metahook.h>
 
-#include <vgui/ISurface.h>
-#include <vgui/ISystem.h>
-#include <vgui/ILocalize.h>
-#include <vgui_controls/ImagePanel.h>
-#include <vgui_controls/AnimationController.h>
-
 #include "local.h"
 #include "vguilocal.h"
 
-#include "triangleapi.h"
 #include "mymathlib.h"
 
 #include "gindicator.h"

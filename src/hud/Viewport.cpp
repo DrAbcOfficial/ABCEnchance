@@ -47,6 +47,7 @@
 #include "hud/vgui/weaponstack.h"
 #include "hud/vgui/weaponchoose.h"
 #include "hud/vgui/itemhighlight.h"
+#include "hud/vgui/indicator.h"
 
 #include "CCustomHud.h"
 
@@ -158,8 +159,9 @@ void CViewport::Start(void){
 		wrect_t* rect = gSpriteRes.GetSpriteRect(index.value());
 		this->m_pItemStack->AddItemPickup(spr, rect->left, rect->right, rect->top, rect->bottom);
 		});
-	g_EventDamage.append([&](int, int, int tiles, float*) {
+	g_EventDamage.append([&](int armor, int damage, int tiles, float* from) {
 		this->UpdateTiles(tiles);
+		this->m_pIndicator->SetHitIndicator(damage, armor, from);
 		});
 	g_EventBattery.append([&](int armor) {
 		this->m_pHealthPanel->SetArmor(armor);
@@ -370,6 +372,7 @@ void CViewport::Start(void){
 	AddNewPanel(m_pItemStack = new CItemStackPanel());
 	AddNewPanel(m_pWeaponStack = new CWeaponStackPanel());
 	AddNewPanel(m_pWeaponChoose = new CWeaponChoosePanel());
+	AddNewPanel(m_pIndicator = new CIndicatorPanel());
 }
 
 void CViewport::SetParent(VPANEL vPanel){
@@ -397,6 +400,7 @@ void CViewport::SetParent(VPANEL vPanel){
 	m_pItemStack->SetParent(GetVPanel());
 	m_pWeaponStack->SetParent(GetVPanel());
 	m_pWeaponChoose->SetParent(GetVPanel());
+	m_pIndicator->SetParent(GetVPanel());
 	for (size_t i = 0; i < 32; i++) {
 		m_pPlayerInfoPanels[i]->SetParent(GetVPanel());
 	}

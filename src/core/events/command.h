@@ -10,3 +10,4 @@ extern DEFINE_COMMAND_EVENT(OpenScoreboard);
 extern DEFINE_COMMAND_EVENT(CloseScoreboard);
 extern DEFINE_COMMAND_EVENT(VoteMenu);
 extern DEFINE_COMMAND_EVENT(Attack1);
+extern void RegisterCommandEvents();

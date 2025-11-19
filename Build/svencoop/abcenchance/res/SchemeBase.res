@@ -397,6 +397,9 @@ Scheme
 		"Radar.FgColor"			"255 255 255 255"
 		//雷达背景颜色
 		"Radar.BgColor"		"Blank"
+		
+		"Indicator.FgColor"		"255 0 0 255"
+		"Indicator.BgColor"		"Blank"
 	}
 
 	//

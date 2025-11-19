@@ -707,6 +707,9 @@
     <ClCompile Include="src\hud\Viewport.cpp">
       <Filter>Public\hud</Filter>
     </ClCompile>
+    <ClCompile Include="src\hud\vgui\indicator.cpp">
+      <Filter>Public\hud\vgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceSDK\Color.h">
@@ -1512,6 +1515,9 @@
     </ClInclude>
     <ClInclude Include="src\hud\Viewport.h">
       <Filter>Public\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hud\vgui\indicator.h">
+      <Filter>Public\hud\vgui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

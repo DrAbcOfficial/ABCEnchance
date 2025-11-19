@@ -5,18 +5,13 @@
 #include "cl_entity.h"
 #include "mymathlib.h"
 #include "com_model.h"
-#include "triangleapi.h"
-#include "pm_movevars.h"
 #include "cvardef.h"
 #include "httpclient.h"
-
-#include <capstone.h>//thirdparty
 
 #include "Task.h"
 //Def
 #include "vguilocal.h"
 #include "exportfuncs.h"
-#include "Color.h"
 #include "usercmd.h"
 #include "extraprecache.h"
 #include "pm_defs.h"
@@ -28,16 +23,12 @@
 #include "config.h"
 #include "playertrace.h"
 #include "core/events/networkmessage.h"
+#include "core/events/command.h"
 //GL
 #include "glew.h"
-#include "gl_def.h"
-#include "gl_shader.h"
-#include "gl_utility.h"
-#include "gl_draw.h"
 //Base HUD
 #include "CCustomHud.h"
 #include "local.h"
-#include "steam_api.h"
 #include "hud/Viewport.h"
 //efx
 #include "efxenchance.h"
@@ -297,7 +288,6 @@ void GL_Init(void)
 {
 	//Load interface from Renderer.dll
 	MetaRenderer_Init();
-
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
 	if (GLEW_OK != err) {
@@ -305,8 +295,10 @@ void GL_Init(void)
 		return;
 	}
 	GL_ShaderInit();
-
-	gCustomHud.GL_Init();
+	if (MetaRenderer())
+	{
+		MetaRenderer()->RegisterRenderCallbacks(&gCustomHud);
+	}
 }
 
 void HUD_Init(void)
@@ -385,6 +377,7 @@ void HUD_Init(void)
 
 	gExportfuncs.HUD_Init();
 	RegisterNetworkMessageEventTrigger();
+	RegisterCommandEvents();
 	gCustomHud.HUD_Init();
 	GetClientVoiceMgr()->HUD_Init();
 	extern void GameUI_GetInterface();
@@ -577,8 +570,7 @@ void CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 
 int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname)
 {
-	if (!gCustomHud.HUD_AddEntity(type, ent, modelname))
-		return 0;
+	GetBaseViewPort()->AddEntity(type, ent, modelname);
 	//hook for engon beam
 	if (gCVars.pEgonEfx->value > 0) {
 		if (type == ET_BEAM) {

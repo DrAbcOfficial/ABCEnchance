@@ -218,6 +218,7 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\hud\vgui\flashlight.cpp" />
     <ClCompile Include="src\hud\vgui\gindicator.cpp" />
     <ClCompile Include="src\hud\vgui\health.cpp" />
+    <ClCompile Include="src\hud\vgui\indicator.cpp" />
     <ClCompile Include="src\hud\vgui\itemhighlight.cpp" />
     <ClCompile Include="src\hud\vgui\itemstack.cpp" />
     <ClCompile Include="src\hud\vgui\motd.cpp" />
@@ -501,6 +502,7 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\hud\vgui\flashlight.h" />
     <ClInclude Include="src\hud\vgui\gindicator.h" />
     <ClInclude Include="src\hud\vgui\health.h" />
+    <ClInclude Include="src\hud\vgui\indicator.h" />
     <ClInclude Include="src\hud\vgui\itemhighlight.h" />
     <ClInclude Include="src\hud\vgui\itemstack.h" />
     <ClInclude Include="src\hud\vgui\motd.h" />
