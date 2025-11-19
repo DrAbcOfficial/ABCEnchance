@@ -647,9 +647,6 @@
     <ClCompile Include="src\Source\clientdll.cpp">
       <Filter>Public\Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\HUD\cctv.cpp">
-      <Filter>Public\Source\HUD\legacy</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\HUD\indicator.cpp">
       <Filter>Public\Source\HUD\legacy</Filter>
     </ClCompile>
@@ -1374,9 +1371,6 @@
     </ClInclude>
     <ClInclude Include="vgui_controls\FileOpenDialog.h">
       <Filter>vgui_controls\dialog</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\cctv.h">
-      <Filter>Public\Header\HUD\legacy</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\HUD\indicator.h">
       <Filter>Public\Header\HUD\legacy</Filter>

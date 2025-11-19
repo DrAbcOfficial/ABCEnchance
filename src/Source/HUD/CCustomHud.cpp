@@ -32,10 +32,6 @@
 #include "ammobar.h"
 #include "Viewport.h"
 
-#ifdef _DEBUG
-#include "cctv.h"
-#endif
-
 CCustomHud gCustomHud;
 
 #pragma region CCustomHud
@@ -124,9 +120,6 @@ void CCustomHud::OnRenderEndFrame()
 void CCustomHud::GL_Init(void)
 {
 	m_HudIndicator.GLInit();
-#ifdef _DEBUG
-	m_HudCCTV.GLInit();
-#endif
 
 	if (MetaRenderer())
 	{
@@ -143,9 +136,6 @@ void CCustomHud::HUD_Init(void)
 	gCVars.pDangerArmor = CREATE_CVAR("hud_danger_armor", "45", FCVAR_VALUE, nullptr);
 
 	m_HudIndicator.Init();
-#ifdef _DEBUG
-	m_HudCCTV.Init();
-#endif
 }
 
 void CCustomHud::HUD_VidInit(void)
@@ -157,18 +147,12 @@ void CCustomHud::HUD_VidInit(void)
 
 void CCustomHud::HUD_Draw(float flTime)
 {
-#ifdef _DEBUG
-	m_HudCCTV.Draw(flTime);
-#endif
 	m_HudIndicator.Draw(flTime);
 }
 
 void CCustomHud::HUD_Reset(void)
 {
 	m_HudIndicator.Reset();
-#ifdef _DEBUG
-	m_HudCCTV.Reset();
-#endif
 	m_bitsWeaponBits.reset();
 }
 void CCustomHud::HUD_UpdateClientData(client_data_t* cdata, float time){
