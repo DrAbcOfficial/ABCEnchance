@@ -45,18 +45,21 @@ public:
 
 	void Paint() override
 	{
-		vec4_t vColor4f = { m_DrawColor.r() / 255.0f, m_DrawColor.g() / 255.0f ,m_DrawColor.b() / 255.0f ,m_DrawColor.a() / 255.0f };
-		
-		MetaRenderer()->DrawTexturedQuadMask(
-			m_BaseTexture,
-			m_MaskTexture,
-			m_iX + 0, 
-			m_iY + m_iTall,
-			m_iX + m_iWide,
-			m_iY + 0,
-			vColor4f,
-			DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED | DRAW_TEXTURED_RECT_MASK_TEXTURE_ENABLED,
-			"CRadarMapImage::Paint");
+		if (MetaRenderer())
+		{
+			vec4_t vColor4f = { m_DrawColor.r() / 255.0f, m_DrawColor.g() / 255.0f ,m_DrawColor.b() / 255.0f ,m_DrawColor.a() / 255.0f };
+
+			MetaRenderer()->DrawTexturedQuadMask(
+				m_BaseTexture,
+				m_MaskTexture,
+				m_iX + 0,
+				m_iY + m_iTall,
+				m_iX + m_iWide,
+				m_iY + 0,
+				vColor4f,
+				DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED | DRAW_TEXTURED_RECT_MASK_TEXTURE_ENABLED,
+				"CRadarMapImage::Paint");
+		}
 	}
 
 	void SetPos(int x, int y) override {
