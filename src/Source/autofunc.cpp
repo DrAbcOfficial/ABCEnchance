@@ -9,14 +9,12 @@
 #include "cvardef.h"
 #include "local.h"
 #include "config.h"
-#include "enginedef.h"
 #include "core/events/networkmessage.h"
+#include "core/events/hudevents.h"
 
 #include "autofunc.h"
 
-extern playerstatus_t g_playerppmove;
 static bool g_bAutoDucktap = false;
-
 using concurrentcmd_t = struct {
 	std::string cmd;
 	std::string concurrent;
@@ -33,6 +31,13 @@ const std::array<std::string, 7> s_aryEvents = {
 	AutoFunc::EVENTCMD_ADDWEAPON,
 	AutoFunc::EVENTCMD_DROPWEAPON
 };
+
+using playermove_t = struct playermove_s {
+	bool inwater;
+	bool onground;
+	bool walking;
+};
+static playermove_t s_playerppmove = {};
 
 static void SetConcurrent(const char* cmd, const char* concurrent) {
 	if (g_pMetaHookAPI->FindCmd(cmd) == nullptr)
@@ -170,7 +175,14 @@ void AutoFunc::Init(){
 	g_EventFlashBat.append([](int flash) {
 		AutoFunc::TriggerEvent(AutoFunc::EVENTCMD_FLASHBATTERY, std::to_string(flash).c_str());
 	});
+	g_EventHudClientMove.append([](bool inwater, bool onground, bool walking) {
+		s_playerppmove.inwater = inwater;
+		s_playerppmove.onground = onground;
+		s_playerppmove.walking = walking;
+	});
 }
+
+
 
 void AutoFunc::Exit(){
 	CABCConfig* config = abcconfig::GetConfig();
@@ -185,8 +197,8 @@ void AutoFunc::AutoJump(usercmd_s* cmd){
 	//Auto jump from openag
 	if (gCVars.pCVarAutoBunnyJump->value > 0) {
 		static bool s_bJumpWasDownLastFrame = false;
-		bool shouldReleaseJump = (!g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking);
-		if (s_bJumpWasDownLastFrame && g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking)
+		bool shouldReleaseJump = (!s_playerppmove.onground && !s_playerppmove.inwater && s_playerppmove.walking);
+		if (s_bJumpWasDownLastFrame && s_playerppmove.onground && !s_playerppmove.inwater && s_playerppmove.walking)
 			shouldReleaseJump = true;
 		if (shouldReleaseJump)
 			cmd->buttons &= ~IN_JUMP;
@@ -199,8 +211,8 @@ void AutoFunc::DuckTap(usercmd_s* cmd){
 	if (g_bAutoDucktap) {
 		static bool s_bDuckWasDownLastFrame = false;
 		cmd->buttons |= IN_DUCK;
-		bool shouldReleaseDuck = (!g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking);
-		if (s_bDuckWasDownLastFrame && g_playerppmove.onground && !g_playerppmove.inwater && g_playerppmove.walking)
+		bool shouldReleaseDuck = (!s_playerppmove.onground && !s_playerppmove.inwater && s_playerppmove.walking);
+		if (s_bDuckWasDownLastFrame && s_playerppmove.onground && !s_playerppmove.inwater && s_playerppmove.walking)
 			shouldReleaseDuck = true;
 		if (shouldReleaseDuck)
 			cmd->buttons &= ~IN_DUCK;

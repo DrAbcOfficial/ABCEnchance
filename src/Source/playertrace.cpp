@@ -3,7 +3,7 @@
 #include "event_api.h"
 
 #include "mathlib/vector.h"
-#include "mymathlib.h"
+#include "core/library/mymathlib.h"
 
 #include "vguilocal.h"
 #include "hud/Viewport.h"

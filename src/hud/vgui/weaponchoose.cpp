@@ -16,7 +16,6 @@
 #include "hud/Viewport.h"
 #include "weaponchoose.h"
 
-extern const clientdata_t* gClientData;
 static int g_iRainbowColorCounter = 0;
 CWeaponChooseItem::CWeaponChooseItem(vgui::Panel* parent, Weapon* wep) : BaseClass(parent, "WeaponItem") {
 	m_pWeapon = wep;
@@ -265,7 +264,7 @@ bool CWeaponChoosePanel::ShouldDraw(){
 		return false;
 	if (!GetBaseViewPort()->HasSuit())
 		return false;
-	if (gClientData->health <= 0)
+	if (gPlayerRes.GetLocalPlayerInfo()->m_iHealth <= 0)
 		return false;
 	if (CVAR_GET_FLOAT("hud_fastswitch") > 0)
 		return false;

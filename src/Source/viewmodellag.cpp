@@ -1,10 +1,11 @@
 #include <metahook.h>
 #include <algorithm>
-#include "mymathlib.h"
 
 #include "pm_defs.h"
 #include "pmtrace.h"
 #include "event_api.h"
+
+#include "core/library/mymathlib.h"
 
 #include "local.h"
 #include "exportfuncs.h"

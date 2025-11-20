@@ -2,10 +2,8 @@
 #include "plugins.h"
 #include "exportfuncs.h"
 #include "ClientParticleMan.h"
-#include "httpclient.h"
-#include "soundengine.h"
+#include "core/library/httpclient.h"
 #include "VGUI2ExtensionImport.h"
-#include <vgui_controls/Controls.h>
 
 cl_enginefunc_t gEnginefuncs;
 mh_interface_t *g_pInterface;

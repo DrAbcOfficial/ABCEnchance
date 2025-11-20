@@ -8,7 +8,8 @@
 #include <glew.h>
 #include <stdint.h>
 #include <metahook.h>
-#include "mymathlib.h"
+
+#include "core/library/mymathlib.h"
 
 
 #define OFFSET(type, variable) ((const void*)&(((type*)NULL)->variable))

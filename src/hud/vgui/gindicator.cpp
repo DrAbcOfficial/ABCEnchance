@@ -6,7 +6,7 @@
 #include "local.h"
 #include "vguilocal.h"
 
-#include "mymathlib.h"
+#include "core/library/mymathlib.h"
 
 #include "gindicator.h"
 

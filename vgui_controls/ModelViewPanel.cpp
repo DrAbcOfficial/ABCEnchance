@@ -4,11 +4,11 @@
 #include <studio.h>
 #include <com_model.h>
 
-
 #include <glew.h>
 
-#include <mymathlib.h>
 #include <exportfuncs.h>
+
+#include "core/library/mymathlib.h"
 
 #include "ModelViewPanel.h"
 

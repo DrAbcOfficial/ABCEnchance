@@ -1,20 +1,11 @@
-#include "enginedef.h"
 #include "r_studioint.h"
 
 #define PLUGIN_VERSION 100020
 
-class CGameStudioModelRenderer;
-
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
 extern engine_studio_api_t gEngineStudio;
-extern CGameStudioModelRenderer* g_StudioRenderer;
-
 extern const clientdata_t* gClientData;
-
-extern metaplugins_t g_metaplugins;
-
-
 
 using hudpanel_info_t = struct hudpanel_info_s {
 	float frags;

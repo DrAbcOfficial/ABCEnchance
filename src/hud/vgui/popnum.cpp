@@ -10,9 +10,9 @@
 #include <vgui_controls/Label.h>
 
 #include "local.h"
-#include "mymathlib.h"
-#include "triangleapi.h"
 #include "vguilocal.h"
+
+#include "core/library/mymathlib.h"
 
 #include "plugins.h"
 #include "popnum.h"
@@ -97,11 +97,11 @@ void CPopNumberPanel::OnThink(){
 	cl_entity_t* local = gEngfuncs.GetLocalPlayer();
 	if (!local)
 		return;
-	//ÊÓ½Ç½Ç¶È
+	//ï¿½Ó½Ç½Ç¶ï¿½
 	Vector vecView;
 	gEngfuncs.GetViewAngles(vecView);
 	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
-	//¼ÆËãÎÒºÍÄ¿±êµÄÏà¶ÔÆ«ÒÆ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Òºï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½
 	Vector vecLength;
 	CMathlib::VectorSubtract(m_vecOrigin, local->curstate.origin, vecLength);
 	vecLength = vecLength.Normalize();

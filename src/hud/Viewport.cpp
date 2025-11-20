@@ -22,7 +22,8 @@
 #include "core/resource/playerresource.h"
 #include "core/resource/spriteresource.h"
 
-#include "mymathlib.h"
+#include "core/library/mymathlib.h"
+
 #include "cdll_int.h"
 
 #include "hud/vgui/motd.h"

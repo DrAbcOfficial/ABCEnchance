@@ -10,7 +10,6 @@
 #include "local.h"
 #include "vguilocal.h"
 #include "hud/Viewport.h"
-#include "exportfuncs.h"
 
 #include "core/resource/playerresource.h"
 
@@ -69,9 +68,10 @@ void CSidePanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
 void CSidePanel::OnThink() {
-	if (!gClientData || !gEngfuncs.GetLocalPlayer())
+	auto local = gEngfuncs.GetLocalPlayer();
+	if (!local)
 		return;
-	Vector vecSpeed = { gClientData->velocity[0] , gClientData->velocity[1] , 0 };
+	Vector2D vecSpeed = Vector(local->curstate.velocity).AsVector2D();
 	float flPlayerSpeed = vecSpeed.Length();
 	if (m_flMaxSpeed < flPlayerSpeed)
 		m_flMaxSpeed = flPlayerSpeed;

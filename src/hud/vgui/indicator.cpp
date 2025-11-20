@@ -4,9 +4,12 @@
 #include <array>
 #include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/AnimationController.h>
-#include "mymathlib.h"
+
+#include "core/library/mymathlib.h"
+
 #include "vguilocal.h"
 #include "local.h"
+
 #include "gl_draw.h"
 #include "indicator.h"
 #undef max

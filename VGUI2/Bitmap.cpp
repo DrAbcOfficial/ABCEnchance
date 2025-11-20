@@ -1,6 +1,5 @@
 #include <vgui/ISurface.h>
 #include "bitmap.h"
-#include "vgui_internal.h"
 #include "FileSystem.h"
 #include "UtlBuffer.h"
 #include <tier0/dbg.h>

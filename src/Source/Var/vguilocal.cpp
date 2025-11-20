@@ -1,7 +1,9 @@
 #include <metahook.h>
-#include "mymathlib.h"
-#include "vguilocal.h"
+
 #include "Controls.h"
+#include "core/library/mymathlib.h"
+
+#include "vguilocal.h"
 
 vgui::IScheme* pSchemeData;
 ScreenInfo_t gScreenInfo;

@@ -3,12 +3,12 @@
 #include <vector>
 //Lib
 #include "cl_entity.h"
-#include "mymathlib.h"
 #include "com_model.h"
 #include "cvardef.h"
-#include "httpclient.h"
 
-#include "Task.h"
+#include "core/library/httpclient.h"
+#include "core/library/Task.h"
+#include "core/library/mymathlib.h"
 //Def
 #include "vguilocal.h"
 #include "exportfuncs.h"
@@ -16,7 +16,6 @@
 #include "extraprecache.h"
 #include "pm_defs.h"
 #include "entity_types.h"
-#include "StudioModelRenderer.h"
 #include "autofunc.h"
 
 #include "vgui_controls/Controls.h"
@@ -48,7 +47,6 @@ void MetaRenderer_Init();
 #pragma region External program management variables
 void* g_pClientSoundEngine;
 const clientdata_t* gClientData;
-CGameStudioModelRenderer* g_StudioRenderer;
 DWORD g_dwHUDListAddr;
 hudpanel_info_t* g_aryNativeHUDPanelInfo;
 /* (msprite_s**) */ void* gpSprite;
@@ -59,9 +57,6 @@ hudpanel_info_t* g_aryNativeHUDPanelInfo;
 engine_studio_api_t gEngineStudio;
 cl_enginefunc_t gEngfuncs;
 cl_exportfuncs_t gExportfuncs;
-//new
-playerstatus_t g_playerppmove;
-metaplugins_t g_metaplugins;
 static float s_flFov;
 //hooks
 static std::vector<hook_t*> s_aryEngineHook = {};
@@ -117,10 +112,6 @@ static void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 	}
 	//mission brief shit2 is 4, but fku all vgui shit
 	gHookFuncs.TFV_ShowVGUIMenu(pthis, dummy, iVguiMenu);
-}
-static void __fastcall CStudioModelRenderer_Init(void* pthis, int dummy) {
-	gHookFuncs.CStudioModelRenderer_Init(pthis, dummy);
-	g_StudioRenderer = static_cast<CGameStudioModelRenderer*>(pthis);
 }
 
 static void EVVectorScale(float* punchangle1, float scale, float* punchangle2) {
@@ -198,8 +189,6 @@ void FillAddress() {
 		Fill_Sig(TFV_SHOWSCOREBOARD_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowScoreBoard);
 #define TFV_SHOWVGUIMENU_SHIT_SIG "\xA1\x2A\x2A\x2A\x2A\x57\x8B\xF9\x8B\x40\x04\xFF\xD0\x85\xC0\x0F\x85\x2A\x2A\x2A\x2A\x55\x8B\x6C\x24\x0C\x39\x05"
 		Fill_Sig(TFV_SHOWVGUIMENU_SHIT_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowVGUIMenu);
-#define CStudioModelRenderer_Init_SIG "\xA1\x2A\x2A\x2A\x2A\x56\x68\x2A\x2A\x2A\x2A\x8B\xF1\x2A\x2A\x89\x46\x24\xA1"
-		Fill_Sig(CStudioModelRenderer_Init_SIG, g_dwClientBase, g_dwClientSize, CStudioModelRenderer_Init);
 #define Client_SoundEngine_Initialize_SIG "\x81\xEC\x8C\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\x88\x00\x00\x00\x53\x57\x6A\x00"
 		Fill_Sig(Client_SoundEngine_Initialize_SIG, g_dwClientBase, g_dwClientSize, CClient_SoundEngine_Initialize);
 #define Client_SoundEngine_PlayFMODSound_SIG "\x55\x8B\xEC\x83\xE4\xF8\x81\xEC\x98\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\x33"
@@ -256,7 +245,6 @@ void InstallClientHook() {
 	Install_InlineHook(R_CrossHair_ReDraw);
 	Install_InlineHook(TFV_ShowScoreBoard);
 	Install_InlineHook(TFV_ShowVGUIMenu);
-	Install_InlineHook(CStudioModelRenderer_Init);
 }
 void UninstallEngineHook() {
 	for (hook_t* h : s_aryEngineHook) {
@@ -506,9 +494,7 @@ int HUD_UpdateClientData(struct client_data_s* c, float f)
 void HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
 {
 	gExportfuncs.HUD_PlayerMove(ppmove, server);
-	g_playerppmove.inwater = (ppmove->waterlevel > 1);
-	g_playerppmove.onground = (ppmove->onground != -1);
-	g_playerppmove.walking = (ppmove->movetype == MOVETYPE_WALK);
+	g_EventHudClientMove((ppmove->waterlevel > 1), (ppmove->onground != -1), (ppmove->movetype == MOVETYPE_WALK));
 }
 
 void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd)

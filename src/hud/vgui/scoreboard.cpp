@@ -20,8 +20,8 @@
 
 #include "core/resource/playerresource.h"
 
-#include "Task.h"
-#include "httpclient.h"
+#include "core/library/Task.h"
+#include "core/library/httpclient.h"
 
 #include <FreeImage.h>
 

@@ -8,7 +8,6 @@
 #include "GaussianBlurPanel.h"
 #include <glew.h>
 #include <gl_draw.h>
-#include <gl_utility.h>
 #include <gl_shader.h>
 #include <gl_def.h>
 #include <gl_common.h>

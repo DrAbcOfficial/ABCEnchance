@@ -9,7 +9,7 @@
 #include "palette.h"
 #include "local.h"
 
-#include "mymathlib.h"
+#include "core/library/mymathlib.h"
 #include "extraprecache.h"
 #include "mathlib/vector.h"
 

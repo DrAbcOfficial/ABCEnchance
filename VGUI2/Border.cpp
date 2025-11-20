@@ -9,7 +9,6 @@
 #include "VPanel.h"
 #include "KeyValues.h"
 #include "Border.h"
-#include "vgui_internal.h"
 
 //#include "tier0/memdbgon.h"
 

@@ -71,7 +71,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\AIGCJson\include;$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_ITERATOR_DEBUG_LEVEL=0;GLEW_STATIC;VGUI_USE_SURFACE2;VGUI_USE_SCHEME2;VGUI_USE_INPUT2;NO_MALLOC_OVERRIDE;NO_TIER0_MINIDUMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader />
@@ -112,7 +112,7 @@ $(RapidJsonCheckRequirements)</Command>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(ProjectDir)thirdparty\eventpp\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\AIGCJson\include;$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,7 +149,7 @@ $(RapidJsonCheckRequirements)</Command>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\AIGCJson\include;$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -205,6 +205,12 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\core\events\command.cpp" />
     <ClCompile Include="src\core\events\hudevents.cpp" />
     <ClCompile Include="src\core\events\networkmessage.cpp" />
+    <ClCompile Include="src\core\library\httpclient.cpp" />
+    <ClCompile Include="src\core\library\liblrc.cpp" />
+    <ClCompile Include="src\core\library\mymathlib.cpp" />
+    <ClCompile Include="src\core\library\soundengine.cpp" />
+    <ClCompile Include="src\core\library\Task.cpp" />
+    <ClCompile Include="src\core\library\win32helper.cpp" />
     <ClCompile Include="src\core\metahook\MetaRenderer.cpp" />
     <ClCompile Include="src\core\metahook\MetaRendererCallbacks.cpp" />
     <ClCompile Include="src\core\resource\playerresource.cpp" />
@@ -239,26 +245,17 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\hud\Viewport.cpp" />
     <ClCompile Include="src\Particleman\ClientParticleMan.cpp" />
     <ClCompile Include="src\Source\autofunc.cpp" />
-    <ClCompile Include="src\Source\crypto.cpp" />
     <ClCompile Include="src\Source\efxenchance.cpp" />
     <ClCompile Include="src\Source\exportfuncs.cpp" />
     <ClCompile Include="src\Source\playertrace.cpp" />
     <ClCompile Include="src\Source\plugins.cpp" />
-    <ClCompile Include="src\Source\soundengine.cpp" />
-    <ClCompile Include="src\Source\steamrichpresence.cpp" />
     <ClCompile Include="src\Source\Utility\config.cpp" />
-    <ClCompile Include="src\Source\Utility\httpclient.cpp" />
-    <ClCompile Include="src\Source\Utility\liblrc.cpp" />
-    <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
     <ClCompile Include="src\Source\Utility\NeteaseApiWrapper.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp" />
     <ClCompile Include="src\Source\Utility\parsemsg.cpp" />
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp" />
     <ClCompile Include="src\Source\Utility\steamid.cpp" />
-    <ClCompile Include="src\Source\Utility\svc_hook.cpp" />
-    <ClCompile Include="src\Source\Utility\Task.cpp" />
-    <ClCompile Include="src\Source\Utility\win32helper.cpp" />
     <ClCompile Include="src\Source\Var\extraprecache.cpp" />
     <ClCompile Include="src\Source\Var\local.cpp" />
     <ClCompile Include="src\Source\Var\vguilocal.cpp" />
@@ -452,6 +449,12 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\core\events\hudevents.h" />
     <ClInclude Include="src\core\events\networkmessage.h" />
     <ClInclude Include="src\core\events\playerinfo.h" />
+    <ClInclude Include="src\core\library\httpclient.h" />
+    <ClInclude Include="src\core\library\liblrc.h" />
+    <ClInclude Include="src\core\library\mymathlib.h" />
+    <ClInclude Include="src\core\library\soundengine.h" />
+    <ClInclude Include="src\core\library\Task.h" />
+    <ClInclude Include="src\core\library\win32helper.h" />
     <ClInclude Include="src\core\metahook\MetaRenderer.h" />
     <ClInclude Include="src\core\metahook\MetaRendererCallbacks.h" />
     <ClInclude Include="src\core\resource\playerresource.h" />
@@ -461,35 +464,21 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\Header\autofunc.h" />
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
-    <ClInclude Include="src\Header\IEngineSurface.h" />
     <ClInclude Include="src\Header\playertrace.h" />
     <ClInclude Include="src\Header\plugins.h" />
-    <ClInclude Include="src\Header\soundengine.h" />
-    <ClInclude Include="src\Header\steamrichpresence.h" />
     <ClInclude Include="src\Header\Utility\config.h" />
-    <ClInclude Include="src\Header\Utility\crypto.h" />
-    <ClInclude Include="src\Header\Utility\httpclient.h" />
-    <ClInclude Include="src\Header\Utility\liblrc.h" />
-    <ClInclude Include="src\Header\Utility\mymathlib.h" />
-    <ClInclude Include="src\Header\Utility\NeteaseApi.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_def.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_draw.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_shader.h" />
-    <ClInclude Include="src\Header\Utility\opengl\gl_utility.h" />
     <ClInclude Include="src\Header\Utility\parsemsg.h" />
-    <ClInclude Include="src\Header\Utility\svc_hook.h" />
-    <ClInclude Include="src\Header\Utility\Task.h" />
     <ClInclude Include="src\Header\Utility\win32helper.h" />
     <ClInclude Include="src\Header\Var\enginedef.h" />
     <ClInclude Include="src\Header\Var\extraprecache.h" />
     <ClInclude Include="src\Header\Var\local.h" />
     <ClInclude Include="src\Header\Var\palette.h" />
-    <ClInclude Include="src\Header\Var\player_infosc.h" />
-    <ClInclude Include="src\Header\Var\StudioModelRenderer.h" />
     <ClInclude Include="src\Header\Var\vguilocal.h" />
     <ClInclude Include="src\Header\Var\voice_banmgr.h" />
     <ClInclude Include="src\Header\Var\voice_status.h" />
-    <ClInclude Include="src\Header\vgui_internal.h" />
     <ClInclude Include="src\Header\viewmodellag.h" />
     <ClInclude Include="src\hud\vgui\ammobar.h" />
     <ClInclude Include="src\hud\vgui\ammostack.h" />
@@ -521,7 +510,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\Particleman\IParticleMan.h" />
     <ClInclude Include="src\Particleman\pman_particlemem.h" />
     <ClInclude Include="src\Particleman\pman_triangleffect.h" />
-    <ClInclude Include="src\thirdparty\aigcjson.hpp" />
     <ClInclude Include="src\thirdparty\Fmod\fmod.h" />
     <ClInclude Include="src\thirdparty\Fmod\fmod.hpp" />
     <ClInclude Include="src\thirdparty\Fmod\fmodiphone.h" />

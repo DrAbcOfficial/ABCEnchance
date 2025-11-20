@@ -55,8 +55,6 @@ using cl_refHookfunc_t = struct{
 	void (__fastcall* TFV_ShowScoreBoard)	(void* pthis);
 	void (__fastcall* TFV_ShowVGUIMenu)		(void* pthis, int dummy, int iVguiMenu);
 
-	void (__fastcall* CStudioModelRenderer_Init)		(void* pthis, int dummy);
-
 	void (__fastcall* CClient_SoundEngine_Initialize)(void* pSoundEngine, int);
 	void (__fastcall* CClient_SoundEngine_PlayFMODSound)(void* pSoundEngine, int, int flags, int entindex, float* origin,
 		 int channel, const char* name, float fvol, float attenuation, int extraflags, int pitch, int sentenceIndex, float soundLength);

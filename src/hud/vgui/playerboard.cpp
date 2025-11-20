@@ -10,9 +10,10 @@
 
 #include "local.h"
 #include "vguilocal.h"
-#include "mymathlib.h"
+
 #include "steamclientpublic.h"
 #include "core/resource/playerresource.h"
+#include "core/library/mymathlib.h"
 
 #include "vgui_controls/ImagePanel.h"
 

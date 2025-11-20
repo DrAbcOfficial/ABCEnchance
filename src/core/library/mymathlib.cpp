@@ -1,7 +1,9 @@
 #include <cmath>
 #include <random>
+
 #include <metahook.h>
-#include <mymathlib.h>
+
+#include "core/library/mymathlib.h"
 
 bool CMathlib::Q_IS_NAN(float x){
 	return ((*(int*)&x) & mathlib::nanmask) == mathlib::nanmask;

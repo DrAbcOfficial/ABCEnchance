@@ -6,7 +6,6 @@
 #include <vgui/IVGui.h>
 #include <vgui/Cursor.h>
 #include <VGUI_controls/Controls.h>
-#include "vgui_internal.h"
 #include "VPanel.h"
 
 using namespace vgui;

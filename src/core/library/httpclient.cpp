@@ -244,24 +244,29 @@ CHttpCookieJar::CHttpCookieJar(){
 CHttpCookieJar::CHttpCookieJar(const char* path){
 	Load(path);
 }
-void CHttpCookieJar::Load(const char* path){
+void CHttpCookieJar::Load(const char* path) {
+	if (!path || *path == '\0') return; // 校验路径有效性
 	FileHandle_t file = vgui::filesystem()->Open(path, "r");
-	if (file) {
-		int filesize = vgui::filesystem()->Size(file);
-		std::string buffer;
-		buffer.resize(filesize);
+	if (!file) {
+		return;
+	}
+	int filesize = vgui::filesystem()->Size(file);
+	if (filesize > 0) {
+		std::string buffer(filesize, '\0');
 		vgui::filesystem()->Read(buffer.data(), filesize, file);
 		m_szCookie = buffer;
-		m_szPath = path;
 	}
+	m_szPath = path;
 	vgui::filesystem()->Close(file);
 }
-void CHttpCookieJar::Save(){
-	if (m_szPath.empty())
-		return;
+
+void CHttpCookieJar::Save() {
+	if (m_szPath.empty()) return;
 	FileHandle_t file = vgui::filesystem()->Open(m_szPath.c_str(), "w");
-	if (file)
-		vgui::filesystem()->Write(m_szCookie.c_str(), m_szCookie.size(), file);
+	if (!file) {
+		return;
+	}
+	vgui::filesystem()->Write(m_szCookie.c_str(), m_szCookie.size(), file);
 	vgui::filesystem()->Close(file);
 }
 std::string CHttpCookieJar::Get(){
