@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
     body {
         margin: 0;
@@ -20,34 +22,107 @@
         top: 35%;
         width: 40%;
         height: auto;
+        z-index: 1;
+    }
+    .player-info{
+        position: fixed;
+        top: 5%;
+        right: 5%;
+        width: 28%;
+        height: auto;
+        padding: 8px 10px;
+        background: linear-gradient(to left, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.0));
+        display: flex;
+        align-items: center;
+        z-index: 2;
+        backdrop-filter: blur(3px);
+    }
+    .player-avatar {
+        width: 80px;
+        height: 80px;
+        border: 2px solid #999;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        object-fit: cover;
+    }
+    .player-name-container {
+        flex: 1;
+        padding: 8px 12px;
+        text-align: right;
+    }
+    .player-name {
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.2;
     }
     </style>
     <script>
-        function LoadVideo(){
-            let videos = ["./movie/blastpit.mp4", "./movie/reception.mp4", "./movie/testchamber.mp4", "./movie/trainstation.mp4", "./movie/viewport.mp4", "./movie/wastebin.mp4", "./movie/xen.mp4", "./movie/xencave.mp4"];
-            let audios = ["./sound/blastpit.mp3", "./sound/reception.mp3", "./sound/testchamber.mp3", "./sound/trainstation.mp3", "./sound/viewport.mp3", "./sound/wastebin.mp3", "./sound/xen.mp3", "./sound/xencave.mp3"]
-            let index = Math.floor(Math.random() * videos.length);
-            let video = videos[index];
-            let audio = audios[index];
-            let videoElements = document.getElementsByClassName("background-video");
-            videoElements[0].setAttribute("src", video);
-            let audioElemets = document.getElementsByClassName("background-audio");
-            audioElemets[0].setAttribute("src", audio);
+        function LoadVideo() {
+            const videos = [
+                "./movie/blastpit.mp4", "./movie/reception.mp4", "./movie/testchamber.mp4", 
+                "./movie/trainstation.mp4", "./movie/viewport.mp4", "./movie/wastebin.mp4", 
+                "./movie/xen.mp4", "./movie/xencave.mp4"
+            ];
+            const audios = [
+                "./sound/blastpit.mp3", "./sound/reception.mp3", "./sound/testchamber.mp3", 
+                "./sound/trainstation.mp3", "./sound/viewport.mp3", "./sound/wastebin.mp3", 
+                "./sound/xen.mp3", "./sound/xencave.mp3"
+            ];
+            const index = Math.floor(Math.random() * videos.length);
+            document.querySelector(".background-video").src = videos[index];
+            document.querySelector(".background-audio").src = audios[index];
         }
-        window.onload = ()=>{
-            LoadVideo();
-        }
-        window.onkeydown = (ev)=>{
-            if(ev.keyCode == 0){
-                let audioElemets = document.getElementsByClassName("background-audio");
-                audioElemets[0].play();
+
+        function renderRGBABase64ToImage(width, height, rgbaBase64) {
+            const decodedStr = atob(rgbaBase64);
+            const rgbaData = new Uint8Array(decodedStr.length);
+            for (let i = 0; i < decodedStr.length; i++) {
+                rgbaData[i] = decodedStr.charCodeAt(i);
             }
+            if (rgbaData.length !== width * height * 4) {
+                throw new Error(`RGBA数据长度错误，预期${width * height * 4}字节，实际${rgbaData.length}字节`);
+            }
+            const canvas = document.getElementById("avatar");
+            const ctx = canvas.getContext('2d');
+            canvas.width = width;
+            canvas.height = height;
+
+            const imageData = ctx.createImageData(width, height);
+            imageData.data.set(rgbaData);
+            ctx.putImageData(imageData, 0, 0);
         }
-      </script>
+
+        window.onload = LoadVideo;
+
+        window.onkeydown = (ev) => {
+            if (ev.code === 0) {
+                const audio = document.querySelector(".background-audio");
+                audio.paused ? audio.play() : audio.pause();
+            }
+        };
+        window.addEventListener('vgui-command', (event) => {
+            console.log(event);
+            if(event.detail.command == 'player_info'){
+                const nameElement = document.getElementById('name');
+                nameElement.textContent = event.detail.message.playername;
+                renderRGBABase64ToImage(event.detail.message.avatar.width, event.detail.message.avatar.height, event.detail.message.avatar.data);
+            }
+        });
+
+    </script>
 </head>
 <body>
-    <img src="./sven_logo.png" class="background-logo">
+    <div class="player-info">
+        <div class="player-name-container">
+            <p id="name" class="player-name"></p>
+        </div>
+        <canvas id="avatar" class="player-avatar">
+    </div>
+    <img src="./sven_logo.png" class="background-logo" alt="Sven Logo">
     <video autoplay muted loop class="background-video" type="video/mp4"></video>
-    <audio autoplay loop class="background-audio" type="audio/mp3"></audio>
+    <audio loop class="background-audio" type="audio/mpeg"></audio>
 </body>
 </html>

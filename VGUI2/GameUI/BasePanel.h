@@ -15,6 +15,7 @@ extern void BasePanelSetHandle(void* ptr);
 extern void BasePanelPostInit();
 extern void BasePanelConnectServer();
 extern void BasePanelDiconnectServer();
+extern void BasePanelSendJSEvent(const char* cmd, const char* other = nullptr);
 
 namespace vgui {
 	class IClientPanel;

@@ -119,7 +119,6 @@ public:
 };
 static CVGUI2Extension_KeyValuesCallbacks s_GameUIKeyValuesCallbacks;
 
-extern void OpenAdvanceOptPanel(vgui::Panel* pthis);
 class CVGUI2Extension_TaskBarCallbacks : public IVGUI2Extension_GameUITaskBarCallbacks {
 	virtual int GetAltitude() const override{
 		return 0;
