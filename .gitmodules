@@ -4,3 +4,6 @@
 [submodule "thirdparty/eventpp"]
 	path = thirdparty/eventpp
 	url = https://github.com/wqking/eventpp
+[submodule "thirdparty/AIGCJson"]
+	path = thirdparty/AIGCJson
+	url = https://github.com/AIGMix/AIGCJson
