@@ -224,9 +224,6 @@
     <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp">
       <Filter>Public\Source\Utility\opengl</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\parsemsg.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Utility\steamid.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
@@ -698,6 +695,9 @@
     <ClCompile Include="src\core\module\voice_status.cpp">
       <Filter>Public\core\module</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\library\NetworkMessageReader.cpp">
+      <Filter>Public\core\library</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceSDK\Color.h">
@@ -933,9 +933,6 @@
     </ClInclude>
     <ClInclude Include="SourceSDK\tier1\UtlSortVector.h">
       <Filter>SourceSDK\tier1</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\parsemsg.h">
-      <Filter>Public\Header\Utility</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\opengl\gl_def.h">
       <Filter>Public\Header\Utility\opengl</Filter>
@@ -1479,6 +1476,9 @@
     </ClInclude>
     <ClInclude Include="src\core\module\voice_status.h">
       <Filter>Public\core\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\library\NetworkMessageReader.h">
+      <Filter>Public\core\library</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

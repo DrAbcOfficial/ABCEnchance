@@ -208,6 +208,7 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\core\library\httpclient.cpp" />
     <ClCompile Include="src\core\library\liblrc.cpp" />
     <ClCompile Include="src\core\library\mymathlib.cpp" />
+    <ClCompile Include="src\core\library\NetworkMessageReader.cpp" />
     <ClCompile Include="src\core\library\soundengine.cpp" />
     <ClCompile Include="src\core\library\Task.cpp" />
     <ClCompile Include="src\core\library\win32helper.cpp" />
@@ -257,7 +258,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\Source\Utility\NeteaseApiWrapper.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp" />
-    <ClCompile Include="src\Source\Utility\parsemsg.cpp" />
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp" />
     <ClCompile Include="src\Source\Utility\steamid.cpp" />
     <ClCompile Include="src\Source\Var\local.cpp" />
@@ -452,6 +452,7 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\core\library\httpclient.h" />
     <ClInclude Include="src\core\library\liblrc.h" />
     <ClInclude Include="src\core\library\mymathlib.h" />
+    <ClInclude Include="src\core\library\NetworkMessageReader.h" />
     <ClInclude Include="src\core\library\soundengine.h" />
     <ClInclude Include="src\core\library\Task.h" />
     <ClInclude Include="src\core\library\win32helper.h" />
@@ -474,7 +475,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\Header\Utility\opengl\gl_def.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_draw.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_shader.h" />
-    <ClInclude Include="src\Header\Utility\parsemsg.h" />
     <ClInclude Include="src\Header\Utility\win32helper.h" />
     <ClInclude Include="src\Header\Var\enginedef.h" />
     <ClInclude Include="src\Header\Var\local.h" />
