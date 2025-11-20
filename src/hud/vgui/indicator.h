@@ -15,7 +15,6 @@ public:
 
 	CIndicatorPanel();
 	virtual ~CIndicatorPanel();
-	virtual void Paint() override;
 	virtual void PerformLayout() override;
 	virtual void ApplySchemeSettings(vgui::IScheme* pScheme) override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
@@ -35,6 +34,9 @@ private:
 	float m_flFadeTime = 1.0f;
 	float m_flKeepTime = 1.0f;
 	cvar_t* m_pCvarIndicatorStyle = nullptr;
+	cvar_t* m_pDamageScreenFilter = nullptr;
+	cvar_t* m_pDamageScreenFactor = nullptr;
+	cvar_t* m_pDamageScreenBase = nullptr;
 	float m_vecHitFrom[3]{};
 	int m_iDamage = 0;
 	int m_iArmor = 0;

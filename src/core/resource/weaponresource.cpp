@@ -16,6 +16,7 @@
 #include "hud/Viewport.h"
 #include "core/events/networkmessage.h"
 #include "core/events/command.h"
+#include "core/events/hudevents.h"
 #include "weaponresource.h"
 
 
@@ -158,6 +159,10 @@ void WeaponsResource::Init() {
     g_EventCmdPrevWeapon.append([&]() {
         this->SelectSlot(this->m_iNowSlot, -1, true);
         return true;
+    });
+    g_EventHudTxferPredictionData.append([&](struct entity_state_s*, const struct entity_state_s*, struct clientdata_s*, const struct clientdata_s*, struct weapon_data_s*, const struct weapon_data_s* pwd) {
+        auto wp = WeaponData::FromWeaponData(pwd);
+        this->SyncWeapon(wp);
     });
 }
 

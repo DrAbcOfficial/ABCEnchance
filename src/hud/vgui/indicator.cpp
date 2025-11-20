@@ -165,20 +165,15 @@ CIndicatorPanel::CIndicatorPanel()
 	LoadControlSettings(VGUI2_ROOT_DIR "IndicatorPanel.res");
 
 	m_pCvarIndicatorStyle = CREATE_CVAR(CVAR_STYLE_NAME, "2", FCVAR_VALUE, nullptr);
+    m_pDamageScreenFilter = CREATE_CVAR("hud_damageshock", "1", FCVAR_VALUE, nullptr);
+    m_pDamageScreenFactor = CREATE_CVAR("hud_damageshock_factor", "0.015", FCVAR_VALUE, nullptr);
+    m_pDamageScreenBase = CREATE_CVAR("hud_damageshock_base", "15", FCVAR_VALUE, nullptr);
 }
 
 CIndicatorPanel::~CIndicatorPanel()
 {
     if (m_iTex)
         surface()->DeleteTextureByID(m_iTex);
-}
-
-void CIndicatorPanel::Paint()
-{
-    BaseClass::Paint();
-    for (auto& panel : m_aryImagePanels) {
-        auto img = reinterpret_cast<IndicatorImage*>(panel->GetImage());
-    }
 }
 
 void CIndicatorPanel::PerformLayout()
@@ -241,6 +236,8 @@ void CIndicatorPanel::SetParent(vgui::VPANEL parent) {
 }
 
 void CIndicatorPanel::SetHitIndicator(int damage, int armor, const float vecFrom[3]){
+    m_iDamage = damage;
+    m_iArmor = armor;
     auto panel = m_aryImagePanels[m_iIndex];
     auto img = reinterpret_cast<IndicatorImage*>(panel->GetImage());
     if (panel && img) {

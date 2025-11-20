@@ -10,19 +10,20 @@
 #include <vgui/ILocalize.h>
 #include <vgui/IEngineVGui.h>
 #include <vgui_controls/Controls.h>
-#include <vgui_controls/Label.h>
 #include <vgui_controls/AnimationController.h>
 
 #include "local.h"
 #include "vguilocal.h"
-#include "steam_api.h"
 
 #include "core/events/playerinfo.h"
 #include "core/events/networkmessage.h"
 #include "core/events/command.h"
+#include "core/events/hudevents.h"
 #include "core/resource/playerresource.h"
 #include "core/resource/spriteresource.h"
+
 #include "mymathlib.h"
+#include "cdll_int.h"
 
 #include "hud/vgui/motd.h"
 #include "hud/vgui/popnum.h"
@@ -48,11 +49,7 @@
 #include "hud/vgui/weaponchoose.h"
 #include "hud/vgui/itemhighlight.h"
 #include "hud/vgui/indicator.h"
-
-#include "CCustomHud.h"
-
 #include "Viewport.h"
-#include "exportfuncs.h"
 #include "keydefs.h"
 
 using namespace vgui;
@@ -344,6 +341,42 @@ void CViewport::Start(void){
 	g_EventCmdAttack1.append([&]() {
 		return !this->m_pWeaponChoose->BlockAttackOnce();
 		});
+	g_EventHudUpdateClientData.append([&](client_data_t* cdata, float time) {
+		//check spectate
+		float newuser = gEngfuncs.GetLocalPlayer()->curstate.iuser1;
+		static float iuser;
+		if (iuser != newuser) {
+			this->SetSpectate(newuser > 0);
+			iuser = newuser;
+		}
+		if (!this->m_bitsWeaponBits.has_value() || this->m_bitsWeaponBits != cdata->iWeaponBits) {
+			bool hasSuit = (cdata->iWeaponBits & (1 << WEAPON_SUIT)) != 0;
+			m_pSidePanel->ShowPanel(hasSuit && (gCVars.pEccoEnable->value > 0));
+			m_pFlashLight->ShowPanel(hasSuit);
+			m_pCrossHairPanel->ShowPanel(hasSuit && (gCVars.pDynamicCrossHair->value > 0));
+			m_pHealthPanel->ShowPanel(hasSuit);
+			m_pAmmoPanel->ShowPanel(hasSuit);
+			m_pDmgTiles->ShowPanel(hasSuit);
+			m_pWeaponChoose->ShowPanel(hasSuit);
+		}
+		m_bitsWeaponBits = cdata->iWeaponBits;
+
+		//check lj
+		static bool lj = false;
+		bool nlj = std::atoi(gEngfuncs.PhysInfo_ValueForKey("slj"));
+		if (lj != nlj) {
+			m_pHealthPanel->SetLongJump(nlj);
+			lj = nlj;
+		}
+	});
+	g_EventHudMousePressed.append([&](int code) {
+		switch (code) {
+		case vgui::MouseCode::MOUSE_LEFT: {
+			this->GetWeaponChoosePanel()->SelectWeapon();
+			break;
+		}
+		}
+	});
 #pragma endregion
 
 	AddNewPanel(m_pRadar = new CRadarPanel());
@@ -440,6 +473,7 @@ void CViewport::Reset() {
 	gPlayerRes.ResetAll();
 	gTeamRes.ResetAll();
 	m_iInterMission = 0;
+	m_bitsWeaponBits.reset();
 	extern void CloseVoteMenuDialog();
 	CloseVoteMenuDialog();
 }
@@ -486,9 +520,6 @@ bool CViewport::IsScoreBoardVisible(){
 }
 void CViewport::ShowScoreBoard(){
 	m_pScorePanel->ShowPanel(true);
-}
-void CViewport::LongjumpCallBack(bool state){
-	m_pHealthPanel->SetLongJump(state);
 }
 void CViewport::HideScoreBoard(){
 	m_pScorePanel->ShowPanel(false);
@@ -592,7 +623,10 @@ void CViewport::ShowCrossHair(bool on) {
 }
 
 bool CViewport::HasSuit() {
-	return gCustomHud.HasSuit();
+	if (!m_bitsWeaponBits.has_value())
+		return false;
+	constexpr auto WEAPON_SUIT = 31;
+	return (m_bitsWeaponBits.value() & (1 << WEAPON_SUIT)) != 0;
 }
 
 bool CViewport::SelectTextMenuItem(int slot) {
@@ -601,17 +635,6 @@ bool CViewport::SelectTextMenuItem(int slot) {
 		return true;
 	}
 	return false;
-}
-
-void CViewport::WeaponBitsChangeCallback(int bits){
-	bool hasSuit = (bits & (1 << WEAPON_SUIT)) != 0;
-	m_pSidePanel->ShowPanel(hasSuit && (gCVars.pEccoEnable->value > 0));
-	m_pFlashLight->ShowPanel(hasSuit);
-	m_pCrossHairPanel->ShowPanel(hasSuit && (gCVars.pDynamicCrossHair->value > 0));
-	m_pHealthPanel->ShowPanel(hasSuit);
-	m_pAmmoPanel->ShowPanel(hasSuit);
-	m_pDmgTiles->ShowPanel(hasSuit);
-	m_pWeaponChoose->ShowPanel(hasSuit);
 }
 bool CViewport::IsHudHide(int HideToken) {
 	return (m_bitsHideHUDDisplay & HideToken) != 0;

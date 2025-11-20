@@ -8,9 +8,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Public\Header\HUD">
-      <UniqueIdentifier>{706e3ef1-714a-49ad-a06a-c77ac042866e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Public\Header\Utility">
       <UniqueIdentifier>{f37789c1-daa3-4088-96af-71554c4e4a7d}</UniqueIdentifier>
     </Filter>
@@ -20,9 +17,6 @@
     <Filter Include="Public\Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Public\Source\HUD">
-      <UniqueIdentifier>{f1c05770-a298-4602-9a80-8c527af7d8ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="Public\Source\Utility">
       <UniqueIdentifier>{a51af813-27e9-4365-a9ed-bdddee0a49b8}</UniqueIdentifier>
@@ -217,9 +211,6 @@
     </ClCompile>
     <ClCompile Include="VGUI2\Border.cpp">
       <Filter>vgui2</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\HUD\CCustomHud.cpp">
-      <Filter>Public\Source\HUD</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp">
       <Filter>Public\Source\Utility\opengl</Filter>
@@ -581,9 +572,6 @@
     <ClCompile Include="src\thirdparty\wadlib\wadfile.cpp">
       <Filter>Public\Thirdparty\wadlib</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\clientdll.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
     <ClCompile Include="SourceSDK\filesystem.cpp">
       <Filter>SourceSDK</Filter>
     </ClCompile>
@@ -709,6 +697,12 @@
     </ClCompile>
     <ClCompile Include="src\hud\vgui\indicator.cpp">
       <Filter>Public\hud\vgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\events\hudevents.cpp">
+      <Filter>Public\core\events</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\MetaRendererCallbacks.cpp">
+      <Filter>Public\core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -945,9 +939,6 @@
     </ClInclude>
     <ClInclude Include="SourceSDK\tier1\UtlSortVector.h">
       <Filter>SourceSDK\tier1</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\HUD\CCustomHud.h">
-      <Filter>Public\Header\HUD</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\Utility\parsemsg.h">
       <Filter>Public\Header\Utility</Filter>
@@ -1518,6 +1509,12 @@
     </ClInclude>
     <ClInclude Include="src\hud\vgui\indicator.h">
       <Filter>Public\hud\vgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\events\hudevents.h">
+      <Filter>Public\core\events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\MetaRendererCallbacks.h">
+      <Filter>Public\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

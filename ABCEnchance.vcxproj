@@ -203,7 +203,9 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="SourceSDK\vstdlib\KeyValuesSystem.cpp" />
     <ClCompile Include="SourceSDK\vstdlib\random.cpp" />
     <ClCompile Include="src\core\events\command.cpp" />
+    <ClCompile Include="src\core\events\hudevents.cpp" />
     <ClCompile Include="src\core\events\networkmessage.cpp" />
+    <ClCompile Include="src\core\MetaRendererCallbacks.cpp" />
     <ClCompile Include="src\core\resource\playerresource.cpp" />
     <ClCompile Include="src\core\resource\spriteresource.cpp" />
     <ClCompile Include="src\core\resource\teamresource.cpp" />
@@ -236,11 +238,9 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\hud\Viewport.cpp" />
     <ClCompile Include="src\Particleman\ClientParticleMan.cpp" />
     <ClCompile Include="src\Source\autofunc.cpp" />
-    <ClCompile Include="src\Source\clientdll.cpp" />
     <ClCompile Include="src\Source\crypto.cpp" />
     <ClCompile Include="src\Source\efxenchance.cpp" />
     <ClCompile Include="src\Source\exportfuncs.cpp" />
-    <ClCompile Include="src\Source\HUD\CCustomHud.cpp" />
     <ClCompile Include="src\Source\playertrace.cpp" />
     <ClCompile Include="src\Source\plugins.cpp" />
     <ClCompile Include="src\Source\soundengine.cpp" />
@@ -450,8 +450,10 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="SourceSDK\vstdlib\vstdlib.h" />
     <ClInclude Include="SourceSDK\winlite.h" />
     <ClInclude Include="src\core\events\command.h" />
+    <ClInclude Include="src\core\events\hudevents.h" />
     <ClInclude Include="src\core\events\networkmessage.h" />
     <ClInclude Include="src\core\events\playerinfo.h" />
+    <ClInclude Include="src\core\MetaRendererCallbacks.h" />
     <ClInclude Include="src\core\resource\playerresource.h" />
     <ClInclude Include="src\core\resource\spriteresource.h" />
     <ClInclude Include="src\core\resource\teamresource.h" />
@@ -459,7 +461,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\Header\autofunc.h" />
     <ClInclude Include="src\Header\efxenchance.h" />
     <ClInclude Include="src\Header\exportfuncs.h" />
-    <ClInclude Include="src\Header\HUD\CCustomHud.h" />
     <ClInclude Include="src\Header\IEngineSurface.h" />
     <ClInclude Include="src\Header\playertrace.h" />
     <ClInclude Include="src\Header\plugins.h" />

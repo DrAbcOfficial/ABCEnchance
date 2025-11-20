@@ -24,10 +24,12 @@
 #include "playertrace.h"
 #include "core/events/networkmessage.h"
 #include "core/events/command.h"
+#include "core/events/hudevents.h"
+
+#include "core/MetaRendererCallbacks.h"
 //GL
 #include "glew.h"
 //Base HUD
-#include "CCustomHud.h"
 #include "local.h"
 #include "hud/Viewport.h"
 //efx
@@ -72,8 +74,6 @@ static void R_NewMap(void) {
 	//まともになったんだよ~
 	//これ　勣らないから
 	ClearExtraPrecache();
-
-	gCustomHud.HUD_Reset();
 	EFX_Reset();
 	gHookFuncs.R_NewMap();
 }
@@ -171,7 +171,6 @@ void FillEngineAddress() {
 		}
 	}
 }
-extern void ClientDLLHook(void* interface_ptr);
 void FillAddress() {
 	g_dwClientTextBase = g_pMetaHookAPI->GetSectionByName(g_dwClientBase, ".text\0\0\0", &g_dwClientTextSize);
 	if (!g_dwClientTextBase)
@@ -188,7 +187,6 @@ void FillAddress() {
 	auto pfnClientCreateInterface = g_pMetaHookAPI->GetClientFactory();
 	auto SCClient001 = pfnClientCreateInterface("SCClientDLL001", 0);
 	if (pfnClientCreateInterface && SCClient001) {
-		ClientDLLHook(SCClient001);
 		//sig
 #define SC_GETCLIENTCOLOR_SIG "\x8B\x4C\x24\x04\x85\xC9\x2A\x2A\x6B\xC1\x5C\x0F\xBF\x80\x2A\x2A\x2A\x2A\x48\x83"
 		Fill_Sig(SC_GETCLIENTCOLOR_SIG, g_dwClientBase, g_dwClientSize, GetClientColor);
@@ -297,7 +295,7 @@ void GL_Init(void)
 	GL_ShaderInit();
 	if (MetaRenderer())
 	{
-		MetaRenderer()->RegisterRenderCallbacks(&gCustomHud);
+		MetaRenderer()->RegisterRenderCallbacks(&g_MetaRendererCallbacks);
 	}
 }
 
@@ -378,7 +376,6 @@ void HUD_Init(void)
 	gExportfuncs.HUD_Init();
 	RegisterNetworkMessageEventTrigger();
 	RegisterCommandEvents();
-	gCustomHud.HUD_Init();
 	GetClientVoiceMgr()->HUD_Init();
 	extern void GameUI_GetInterface();
 	GameUI_GetInterface();
@@ -502,7 +499,7 @@ void HUD_TxferLocalOverrides(struct entity_state_s* state, const struct clientda
 int HUD_UpdateClientData(struct client_data_s* c, float f)
 {
 	s_flFov = c->fov;
-	gCustomHud.HUD_UpdateClientData(c, f);
+	HudEvent::OnUpdateClientData(c, f);
 	return gExportfuncs.HUD_UpdateClientData(c, f);
 }
 
@@ -516,7 +513,7 @@ void HUD_ClientMove(struct playermove_s* ppmove, qboolean server)
 
 void HUD_TxferPredictionData(struct entity_state_s* ps, const struct entity_state_s* pps, struct clientdata_s* pcd, const struct clientdata_s* ppcd, struct weapon_data_s* wd, const struct weapon_data_s* pwd)
 {
-	gCustomHud.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
+	HudEvent::OnTxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 	gExportfuncs.HUD_TxferPredictionData(ps, pps, pcd, ppcd, wd, pwd);
 }
 
@@ -555,7 +552,7 @@ void V_CalcRefdef(struct ref_params_s* pparams)
 
 void IN_MouseEvent(int mstate)
 {
-	gCustomHud.IN_MouseEvent(mstate);
+	HudEvent::OnIN_MouseEvent(mstate);
 	gExportfuncs.IN_MouseEvent(mstate);
 }
 

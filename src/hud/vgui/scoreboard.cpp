@@ -7,17 +7,14 @@
 
 #include <vgui/IImage.h>
 #include <vgui/IInput.h>
-#include <vgui/ISurface.h>
 #include <vgui/ISystem.h>
 #include <vgui/ILocalize.h>
 #include <vgui_controls/Label.h>
 #include <vgui_controls/SectionedListPanel.h>
 #include <vgui_controls/ImageList.h>
 #include <vgui_controls/Menu.h>
-#include <vgui_controls/AnimationController.h>
 #include <vgui_controls/MemoryBitmap.h>
 
-#include "client_steam_context.h"
 #include "local.h"
 #include "vguilocal.h"
 
@@ -27,8 +24,6 @@
 #include "httpclient.h"
 
 #include <FreeImage.h>
-
-#include "CCustomHud.h"
 
 #include "scoreboard.h"
 #include "avatar_image.h"

@@ -1,9 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 #include "vgui_controls/Panel.h"
-
-#include "core/resource/weaponresource.h"
 
 #ifndef VGUI_IVIEWPORTPANEL_H
 class IViewportPanel;
@@ -79,9 +78,7 @@ public:
 
 	bool HasSuit();
 	bool SelectTextMenuItem(int slot);
-	void WeaponBitsChangeCallback(int bits);
 	bool IsHudHide(int HideToken);
-	void LongjumpCallBack(bool state);
 
 	HScheme GetBaseScheme();
 
@@ -171,6 +168,7 @@ private:
 	int m_iInterMission = 0;
 	int m_bitsHideHUDDisplay = 0;
 	bool m_bInScore;
+	std::optional<int> m_bitsWeaponBits = 0;
 
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";
 	char m_szNextMapName[MAX_SERVERNAME_LENGTH] = "<ERROR>";

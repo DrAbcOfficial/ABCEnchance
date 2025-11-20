@@ -40,6 +40,9 @@ CHealthPanel::CHealthPanel()
 
 	m_iRestoredHealWide = m_pHealthImagePanel->GetWide();
 	m_iRestoredArmorWide = m_pArmorImagePanel->GetWide();
+
+	gCVars.pDangerHealth = CREATE_CVAR("hud_danger_health", "45", FCVAR_VALUE, nullptr);
+	gCVars.pDangerArmor = CREATE_CVAR("hud_danger_armor", "45", FCVAR_VALUE, nullptr);
 }
 const char* CHealthPanel::GetName(){
 	return VIEWPORT_HEALTH_NAME;

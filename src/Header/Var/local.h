@@ -95,9 +95,6 @@ using cl_cvars_t = struct{
 
 	cvar_t* pDangerHealth;
 	cvar_t* pDangerArmor;
-	cvar_t* pDamageScreenFilter;
-	cvar_t* pDamageScreenFactor;
-	cvar_t* pDamageScreenBase;
 
 	cvar_t* pDynamicCrossHair;
 
