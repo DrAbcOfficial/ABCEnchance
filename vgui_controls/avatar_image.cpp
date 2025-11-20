@@ -14,7 +14,6 @@
 #include "vgui/ISurface.h"
 
 #include "tga_image.h"
-#include "client_steam_context.h"
 #include "avatar_image.h"
 
 #include "core/resource/playerresource.h"

@@ -114,6 +114,9 @@
     <Filter Include="Public\hud\vgui">
       <UniqueIdentifier>{be056b65-0166-4f88-bda2-d9297b2c5ded}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\core\metahook">
+      <UniqueIdentifier>{0fdae477-66be-43ae-93b4-107cd37ffafe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
@@ -518,9 +521,6 @@
     <ClCompile Include="vgui_controls\WizardSubPanel.cpp">
       <Filter>vgui_controls\base</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\client_steam_context.cpp">
-      <Filter>Public\Source\LIb</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\crypto.cpp">
       <Filter>Public\Source\LIb</Filter>
     </ClCompile>
@@ -598,9 +598,6 @@
     </ClCompile>
     <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
       <Filter>Public\Thirdparty</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\MetaRenderer.cpp">
-      <Filter>Public\Source\Utility</Filter>
     </ClCompile>
     <ClCompile Include="src\core\resource\playerresource.cpp">
       <Filter>Public\core\resource</Filter>
@@ -701,8 +698,11 @@
     <ClCompile Include="src\core\events\hudevents.cpp">
       <Filter>Public\core\events</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\MetaRendererCallbacks.cpp">
-      <Filter>Public\core</Filter>
+    <ClCompile Include="src\core\metahook\MetaRendererCallbacks.cpp">
+      <Filter>Public\core\metahook</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\metahook\MetaRenderer.cpp">
+      <Filter>Public\core\metahook</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1300,9 +1300,6 @@
     <ClInclude Include="vgui_controls\FileOpenDialog.h">
       <Filter>vgui_controls\dialog</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Utility\client_steam_context.h">
-      <Filter>Public\Header\LIb</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Utility\crypto.h">
       <Filter>Public\Header\LIb</Filter>
     </ClInclude>
@@ -1408,9 +1405,6 @@
     <ClInclude Include="vgui2\GameUI\VoteMenuDialog.h">
       <Filter>vgui2\gameui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Utility\MetaRenderer.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\resource\playerresource.h">
       <Filter>Public\core\resource</Filter>
     </ClInclude>
@@ -1513,8 +1507,11 @@
     <ClInclude Include="src\core\events\hudevents.h">
       <Filter>Public\core\events</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\MetaRendererCallbacks.h">
-      <Filter>Public\core</Filter>
+    <ClInclude Include="src\core\metahook\MetaRendererCallbacks.h">
+      <Filter>Public\core\metahook</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\metahook\MetaRenderer.h">
+      <Filter>Public\core\metahook</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -205,7 +205,8 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\core\events\command.cpp" />
     <ClCompile Include="src\core\events\hudevents.cpp" />
     <ClCompile Include="src\core\events\networkmessage.cpp" />
-    <ClCompile Include="src\core\MetaRendererCallbacks.cpp" />
+    <ClCompile Include="src\core\metahook\MetaRenderer.cpp" />
+    <ClCompile Include="src\core\metahook\MetaRendererCallbacks.cpp" />
     <ClCompile Include="src\core\resource\playerresource.cpp" />
     <ClCompile Include="src\core\resource\spriteresource.cpp" />
     <ClCompile Include="src\core\resource\teamresource.cpp" />
@@ -245,11 +246,9 @@ $(RapidJsonCheckRequirements)</Command>
     <ClCompile Include="src\Source\plugins.cpp" />
     <ClCompile Include="src\Source\soundengine.cpp" />
     <ClCompile Include="src\Source\steamrichpresence.cpp" />
-    <ClCompile Include="src\Source\Utility\client_steam_context.cpp" />
     <ClCompile Include="src\Source\Utility\config.cpp" />
     <ClCompile Include="src\Source\Utility\httpclient.cpp" />
     <ClCompile Include="src\Source\Utility\liblrc.cpp" />
-    <ClCompile Include="src\Source\Utility\MetaRenderer.cpp" />
     <ClCompile Include="src\Source\Utility\mymathlib.cpp" />
     <ClCompile Include="src\Source\Utility\NeteaseApiWrapper.cpp" />
     <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp" />
@@ -453,7 +452,8 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\core\events\hudevents.h" />
     <ClInclude Include="src\core\events\networkmessage.h" />
     <ClInclude Include="src\core\events\playerinfo.h" />
-    <ClInclude Include="src\core\MetaRendererCallbacks.h" />
+    <ClInclude Include="src\core\metahook\MetaRenderer.h" />
+    <ClInclude Include="src\core\metahook\MetaRendererCallbacks.h" />
     <ClInclude Include="src\core\resource\playerresource.h" />
     <ClInclude Include="src\core\resource\spriteresource.h" />
     <ClInclude Include="src\core\resource\teamresource.h" />
@@ -466,12 +466,10 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\Header\plugins.h" />
     <ClInclude Include="src\Header\soundengine.h" />
     <ClInclude Include="src\Header\steamrichpresence.h" />
-    <ClInclude Include="src\Header\Utility\client_steam_context.h" />
     <ClInclude Include="src\Header\Utility\config.h" />
     <ClInclude Include="src\Header\Utility\crypto.h" />
     <ClInclude Include="src\Header\Utility\httpclient.h" />
     <ClInclude Include="src\Header\Utility\liblrc.h" />
-    <ClInclude Include="src\Header\Utility\MetaRenderer.h" />
     <ClInclude Include="src\Header\Utility\mymathlib.h" />
     <ClInclude Include="src\Header\Utility\NeteaseApi.h" />
     <ClInclude Include="src\Header\Utility\opengl\gl_def.h" />

@@ -26,7 +26,7 @@
 #include "core/events/command.h"
 #include "core/events/hudevents.h"
 
-#include "core/MetaRendererCallbacks.h"
+#include "core/metahook/MetaRendererCallbacks.h"
 //GL
 #include "glew.h"
 //Base HUD
