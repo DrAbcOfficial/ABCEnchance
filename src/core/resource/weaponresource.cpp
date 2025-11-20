@@ -22,7 +22,6 @@
 #undef max
 #undef min
 
-static cvar_t* s_pFastSwich = nullptr;
 // CWeaponData 实现
 Weapon* WeaponList::operator[](size_t iId) const {
     auto it = m_dicWeaponIds.find(iId);
@@ -101,8 +100,6 @@ void WeaponList::RemoveAll() {
 WeaponList::WeaponList() = default;
 
 void WeaponsResource::Init() {
-    if(!s_pFastSwich)
-        s_pFastSwich = CVAR_GET_POINTER("hud_fastswitch");
     g_EventAmmoX.append([&](int index, int count) {
         this->SetAmmo(index, count);
     });
@@ -237,9 +234,9 @@ void WeaponsResource::LoadAllWeaponSprites() {
 }
 
 void WeaponsResource::SetSelectWeapon(Weapon* wp, bool bWheel) {
-    if (!wp) return;
-
-    if (s_pFastSwich && s_pFastSwich->value > 0) {
+    if (!wp) 
+        return;
+    if (CVAR_GET_FLOAT("hud_fastswitch") > 0) {
         ServerCmd(wp->szName);
     }
     Viewport_ChooseWeapon(wp);

@@ -259,7 +259,6 @@ void CWeaponChoosePanel::ReloadWeaponSpr(){
 	}
 }
 bool CWeaponChoosePanel::ShouldDraw(){
-	
 	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
 		return false;
 	if (GetBaseViewPort()->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
@@ -267,6 +266,8 @@ bool CWeaponChoosePanel::ShouldDraw(){
 	if (!GetBaseViewPort()->HasSuit())
 		return false;
 	if (gClientData->health <= 0)
+		return false;
+	if (CVAR_GET_FLOAT("hud_fastswitch") > 0)
 		return false;
 	return true;
 }
