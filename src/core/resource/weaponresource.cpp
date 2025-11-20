@@ -125,9 +125,11 @@ void WeaponsResource::Init() {
             }
             Weapon* pWeapon = this->GetWeapon(id);
             this->m_pCurWeapon = pWeapon;
-            pWeapon->iClip = clip;
-            pWeapon->iClip2 = clip2;
-            pWeapon->iState = state;
+            if (pWeapon) {
+                pWeapon->iClip = clip;
+                pWeapon->iClip2 = clip2;
+                pWeapon->iState = state;
+            }
         }
         else {
             switch (id) {
