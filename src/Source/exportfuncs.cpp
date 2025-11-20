@@ -13,14 +13,20 @@
 #include "vguilocal.h"
 #include "exportfuncs.h"
 #include "usercmd.h"
-#include "extraprecache.h"
 #include "pm_defs.h"
 #include "entity_types.h"
-#include "autofunc.h"
+#include "ClientParticleMan.h"
+
+#include "core/module/extraprecache.h"
+#include "core/module/autofunc.h"
+#include "core/module/config.h"
+#include "core/module/playertrace.h"
+#include "core/module/efxenchance.h"
+#include "core/module/viewmodellag.h"
+#include "core/module/voice_status.h"
 
 #include "vgui_controls/Controls.h"
-#include "config.h"
-#include "playertrace.h"
+
 #include "core/events/networkmessage.h"
 #include "core/events/command.h"
 #include "core/events/hudevents.h"
@@ -31,11 +37,7 @@
 //Base HUD
 #include "local.h"
 #include "hud/Viewport.h"
-//efx
-#include "efxenchance.h"
-#include "viewmodellag.h"
-#include <voice_status.h>
-#include <ClientParticleMan.h>
+
 
 void GL_ShaderInit();
 void GL_FreeShaders();

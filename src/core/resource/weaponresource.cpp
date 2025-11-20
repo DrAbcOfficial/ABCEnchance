@@ -9,7 +9,6 @@
 
 #pragma region TODO: remove these mess
 #include "local.h"
-#include "autofunc.h"
 #include "vguilocal.h"
 #pragma endregion
 
@@ -17,6 +16,9 @@
 #include "core/events/networkmessage.h"
 #include "core/events/command.h"
 #include "core/events/hudevents.h"
+
+#include "core/module/autofunc.h"
+
 #include "weaponresource.h"
 
 

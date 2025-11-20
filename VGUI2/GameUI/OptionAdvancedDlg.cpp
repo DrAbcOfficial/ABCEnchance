@@ -3,7 +3,7 @@
 #include <atomic>
 
 #include "core/library/Task.h"
-#include "config.h"
+#include "core/module/config.h"
 
 #include "interface.h"
 #include "IFileSystem.h"

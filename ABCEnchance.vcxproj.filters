@@ -117,6 +117,9 @@
     <Filter Include="Public\core\library">
       <UniqueIdentifier>{90a1c0de-6c7b-4e3f-9840-95599f169778}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Public\core\module">
+      <UniqueIdentifier>{36a13248-1d8c-4650-96c6-90986703ddbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SourceSDK\filesystem_helpers.cpp">
@@ -227,28 +230,13 @@
     <ClCompile Include="src\Source\Utility\steamid.cpp">
       <Filter>Public\Source\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Var\extraprecache.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\Var\local.cpp">
       <Filter>Public\Source\Var</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\Var\vguilocal.cpp">
       <Filter>Public\Source\Var</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Var\voice_banmgr.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Var\voice_status.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
     <ClCompile Include="src\Source\exportfuncs.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\efxenchance.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\viewmodellag.cpp">
       <Filter>Public\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Source\plugins.cpp">
@@ -542,9 +530,6 @@
     <ClCompile Include="VGUI2\GameUI\GameConsole.cpp">
       <Filter>vgui2</Filter>
     </ClCompile>
-    <ClCompile Include="src\Source\Utility\config.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="src\thirdparty\wadlib\texture.cpp">
       <Filter>Public\Thirdparty\wadlib</Filter>
     </ClCompile>
@@ -553,12 +538,6 @@
     </ClCompile>
     <ClCompile Include="SourceSDK\filesystem.cpp">
       <Filter>SourceSDK</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\autofunc.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\playertrace.cpp">
-      <Filter>Public\Source</Filter>
     </ClCompile>
     <ClCompile Include="vgui2\GameUI\VoteMenuDialog.cpp">
       <Filter>vgui2\gameui</Filter>
@@ -694,6 +673,30 @@
     </ClCompile>
     <ClCompile Include="src\core\library\win32helper.cpp">
       <Filter>Public\core\library</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\module\autofunc.cpp">
+      <Filter>Public\core\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\module\config.cpp">
+      <Filter>Public\core\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\module\efxenchance.cpp">
+      <Filter>Public\core\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\module\extraprecache.cpp">
+      <Filter>Public\core\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\module\playertrace.cpp">
+      <Filter>Public\core\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\module\viewmodellag.cpp">
+      <Filter>Public\core\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\module\voice_banmgr.cpp">
+      <Filter>Public\core\module</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\module\voice_status.cpp">
+      <Filter>Public\core\module</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -946,9 +949,6 @@
     <ClInclude Include="src\Header\Var\enginedef.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Var\extraprecache.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\Var\local.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
@@ -958,22 +958,10 @@
     <ClInclude Include="src\Header\Var\vguilocal.h">
       <Filter>Public\Header\Var</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Var\voice_status.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\voice_banmgr.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\efxenchance.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
     <ClInclude Include="src\Header\exportfuncs.h">
       <Filter>Public\Header</Filter>
     </ClInclude>
     <ClInclude Include="src\Header\plugins.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\viewmodellag.h">
       <Filter>Public\Header</Filter>
     </ClInclude>
     <ClInclude Include="src\Particleman\pman_triangleffect.h">
@@ -1291,9 +1279,6 @@
     <ClInclude Include="src\Header\Utility\win32helper.h">
       <Filter>Public\Header\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Utility\config.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="src\thirdparty\Fmod\fmod.h">
       <Filter>Public\Thirdparty\FMod</Filter>
     </ClInclude>
@@ -1339,14 +1324,8 @@
     <ClInclude Include="SourceSDK\filesystem.h">
       <Filter>SourceSDK</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\autofunc.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
     <ClInclude Include="vgui2\interface\ISystemABC.h">
       <Filter>vgui2\interface</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\playertrace.h">
-      <Filter>Public\Header</Filter>
     </ClInclude>
     <ClInclude Include="vgui2\GameUI\VoteMenuDialog.h">
       <Filter>vgui2\gameui</Filter>
@@ -1476,6 +1455,30 @@
     </ClInclude>
     <ClInclude Include="src\core\library\win32helper.h">
       <Filter>Public\core\library</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\module\autofunc.h">
+      <Filter>Public\core\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\module\config.h">
+      <Filter>Public\core\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\module\efxenchance.h">
+      <Filter>Public\core\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\module\extraprecache.h">
+      <Filter>Public\core\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\module\playertrace.h">
+      <Filter>Public\core\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\module\viewmodellag.h">
+      <Filter>Public\core\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\module\voice_banmgr.h">
+      <Filter>Public\core\module</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\module\voice_status.h">
+      <Filter>Public\core\module</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

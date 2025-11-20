@@ -29,7 +29,7 @@
 #include "avatar_image.h"
 
 //VoiceShit
-#include "voice_status.h"
+#include "core/module/voice_status.h"
 
 #include "hud/Viewport.h"
 

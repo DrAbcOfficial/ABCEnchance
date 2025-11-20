@@ -1,27 +1,21 @@
 ﻿#pragma once
 #include <metahook.h>
 
-#include "event_api.h"
-#include "triangleapi.h"
-#include <pm_defs.h>
+#include "exportfuncs.h"
 
-#include "ammobar.h"
-#include <vgui/ILocalize.h>
-#include <vgui/ISurface.h>
-#include <vgui/ISystem.h>
-#include <vgui_controls/AnimationController.h>
 #include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/spr_image.h>
 
 #include "core/resource/playerresource.h"
+#include "core/module/playertrace.h"
 
 #include "local.h"
 #include "vguilocal.h"
+
+#include "hud/vgui/ammobar.h"
 #include "hud/Viewport.h"
-#include "playertrace.h"
 
 #include "crosshair.h"
-#include <exportfuncs.h>
 
 #define VIEWPORT_CROSSHAIR_NAME "CrosshairPanel"
 
