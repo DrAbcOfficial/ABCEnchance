@@ -12,8 +12,8 @@
 #include <vgui_controls/Controls.h>
 #include <vgui_controls/AnimationController.h>
 
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 
 #include "core/events/playerinfo.h"
 #include "core/events/networkmessage.h"

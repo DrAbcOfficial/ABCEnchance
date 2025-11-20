@@ -6,8 +6,8 @@
 #include "event_api.h"
 #include "cl_entity.h"
 #include "com_model.h"
-#include "palette.h"
-#include "local.h"
+#include "utility/palette.h"
+#include "utility/util.h"
 
 #include "core/library/mymathlib.h"
 #include "extraprecache.h"

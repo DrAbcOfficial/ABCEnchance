@@ -6,7 +6,6 @@
 //===========================================================================//
 
 #include <metahook.h>
-#include <local.h>
 #include "cvardef.h"
 
 #include <utlstring.h>
@@ -25,8 +24,6 @@
 #include "KeyValues.h"
 #include <IFileSystem.h>
 
-#include <vguilocal.h>
-
 #include "vgui_controls/Button.h"
 #include "vgui2/KeyCode.h"
 #include "vgui_controls/Menu.h"
@@ -34,6 +31,9 @@
 #include "vgui_controls/RichText.h"
 #include "vgui_controls/ScrollBar.h"
 #include "vgui_controls/GaussianBlurPanel.h"
+
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 
 #include <stdlib.h>
 

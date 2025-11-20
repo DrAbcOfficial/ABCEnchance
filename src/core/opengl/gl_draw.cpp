@@ -1,7 +1,7 @@
 #include <metahook.h>
-#include "vguilocal.h"
+#include "utility/vgui_util.h"
 #include "gl_common.h"
-#include "local.h"
+#include "utility/util.h"
 #include "vgui_controls/Controls.h"
 
 #include <IMetaRenderer.h>
@@ -201,7 +201,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 		bHorzCenter = true;
 
 	if (y == -1)
-		y = (gScreenInfo.iHeight - vgui::surface()->GetFontTall(m_hFont)) / 2;
+		y = (ScreenHeight() - vgui::surface()->GetFontTall(m_hFont)) / 2;
 
 	for (int i = 0; i < iTotalLines; i++) {
 		wchar_t line[1024];
@@ -227,7 +227,7 @@ int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui:
 		GetStringSize(line, &iWidth, &iHeight, m_hFont);
 
 		if (bHorzCenter)
-			x = (gScreenInfo.iWidth - iWidth) / 2;
+			x = (ScreenWidth() - iWidth) / 2;
 		else
 			x = iOriginalX;
 

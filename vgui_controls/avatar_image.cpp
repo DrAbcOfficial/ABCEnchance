@@ -6,7 +6,7 @@
 #pragma once
 #include <metahook.h>
 #include <string>
-#include "vguilocal.h"
+#include "utility/vgui_util.h"
 #include "steam_api.h"
 
 #include "vgui_controls/Panel.h"

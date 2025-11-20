@@ -7,9 +7,9 @@
 
 
 
-#include "local.h"
+#include "utility/util.h"
 
-#include "vguilocal.h"
+#include "utility/vgui_util.h"
 
 
 #include "vgui_controls/ImagePanel.h"

@@ -7,7 +7,7 @@
 
 #include "usercmd.h"
 #include "cvardef.h"
-#include "local.h"
+#include "utility/util.h"
 #include "config.h"
 #include "core/events/networkmessage.h"
 #include "core/events/hudevents.h"

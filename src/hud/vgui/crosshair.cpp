@@ -9,8 +9,8 @@
 #include "core/resource/playerresource.h"
 #include "core/module/playertrace.h"
 
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 
 #include "hud/vgui/ammobar.h"
 #include "hud/Viewport.h"

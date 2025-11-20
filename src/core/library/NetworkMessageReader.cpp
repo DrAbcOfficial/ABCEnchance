@@ -1,3 +1,5 @@
+#include "metahook.h"
+#include "utility/util.h"
 #include "NetworkMessageReader.h"
 
 NetworkMessageReader::NetworkMessageReader(const void* buf, size_t size)
@@ -8,26 +10,29 @@ NetworkMessageReader::NetworkMessageReader(const void* buf, size_t size)
     }
 }
 
-std::optional<int8_t> NetworkMessageReader::readChar() {
+int8_t NetworkMessageReader::readChar() {
     if (m_readPos + 1 > m_bufferSize) {
         m_hasError = true;
-        return std::nullopt;
+		DebugLog("try read char from %d, but size is %d\n", m_readPos, m_bufferSize);
+        return 0;
     }
     return static_cast<int8_t>(m_buffer[m_readPos++]);
 }
 
-std::optional<uint8_t> NetworkMessageReader::readByte() {
+uint8_t NetworkMessageReader::readByte() {
     if (m_readPos + 1 > m_bufferSize) {
         m_hasError = true;
-        return std::nullopt;
+        DebugLog("try read byte from %d, but size is %d\n", m_readPos, m_bufferSize);
+        return 0;
     }
     return m_buffer[m_readPos++];
 }
 
-std::optional<int16_t> NetworkMessageReader::readShort() {
+int16_t NetworkMessageReader::readShort() {
     if (m_readPos + 2 > m_bufferSize) {
         m_hasError = true;
-        return std::nullopt;
+        DebugLog("try read short from %d, but size is %d\n", m_readPos, m_bufferSize);
+        return 0;
     }
     int16_t val = static_cast<int16_t>(
         m_buffer[m_readPos] |
@@ -37,10 +42,11 @@ std::optional<int16_t> NetworkMessageReader::readShort() {
     return val;
 }
 
-std::optional<int32_t> NetworkMessageReader::readLong() {
+int32_t NetworkMessageReader::readLong() {
     if (m_readPos + 4 > m_bufferSize) {
         m_hasError = true;
-        return std::nullopt;
+        DebugLog("try read long from %d, but size is %d\n", m_readPos, m_bufferSize);
+        return 0;
     }
     int32_t val = m_buffer[m_readPos] |
         (m_buffer[m_readPos + 1] << 8) |
@@ -50,10 +56,11 @@ std::optional<int32_t> NetworkMessageReader::readLong() {
     return val;
 }
 
-std::optional<float> NetworkMessageReader::readFloat() {
+float NetworkMessageReader::readFloat() {
     if (m_readPos + 4 > m_bufferSize) {
         m_hasError = true;
-        return std::nullopt;
+        DebugLog("try read float from %d, but size is %d\n", m_readPos, m_bufferSize);
+        return 0;
     }
     uint32_t bytes = static_cast<uint32_t>(
         m_buffer[m_readPos] |
@@ -69,35 +76,38 @@ std::string NetworkMessageReader::readString() {
     std::string result;
     while (m_readPos < m_bufferSize) {
         auto c = readChar();
-        if (!c || *c == '\0') {
+        if (!c || c == '\0') {
             break;
         }
-        result += static_cast<char>(*c);
+        result += static_cast<char>(c);
     }
     return result;
 }
 
-std::optional<float> NetworkMessageReader::readCoord() {
+float NetworkMessageReader::readCoord() {
     //GoldSrc should be readShort()
     auto val = readLong();
     if (!val) {
-        return std::nullopt;
+        DebugLog("try read coord from %d, but size is %d\n", m_readPos, m_bufferSize);
+        return NAN;
     }
-    return static_cast<float>(*val) * (1.0f / 8.0f);
+    return static_cast<float>(val) * (1.0f / 8.0f);
 }
 
-std::optional<float> NetworkMessageReader::readAngle() {
+float NetworkMessageReader::readAngle() {
     auto c = readChar();
     if (!c) {
-        return std::nullopt;
+        DebugLog("try read angle from %d, but size is %d\n", m_readPos, m_bufferSize);
+        return NAN;
     }
-    return static_cast<float>(*c) * (360.0f / 256.0f);
+    return static_cast<float>(c) * (360.0f / 256.0f);
 }
 
-std::optional<float> NetworkMessageReader::readHiresAngle() {
+float NetworkMessageReader::readHiresAngle() {
     auto s = readShort();
     if (!s) {
-        return std::nullopt;
+        DebugLog("try read hires angle from %d, but size is %d\n", m_readPos, m_bufferSize);
+        return NAN;
     }
-    return static_cast<float>(*s) * (360.0f / 65536.0f);
+    return static_cast<float>(s) * (360.0f / 65536.0f);
 }

@@ -2,8 +2,8 @@
 
 #include <utility>
 
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 #include "triangleapi.h"
 
 cl_refHookfunc_t gHookFuncs;

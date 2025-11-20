@@ -19,7 +19,6 @@
 #include <KeyValues.h>
 
 #include "VGUI2/KeyCode.h"
-#include <vguilocal.h>
 
 #include <vgui_controls/SectionedListPanel.h>
 #include <vgui_controls/Button.h>
@@ -28,6 +27,8 @@
 #include <vgui_controls/ScrollBar.h>
 #include <vgui_controls/TextImage.h>
 #include <vgui_controls/ImageList.h>
+
+#include "utility/vgui_util.h"
 
 #include "utlvector.h"
 

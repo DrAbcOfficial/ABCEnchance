@@ -1,16 +1,18 @@
 #include <metahook.h>
 
-#include"local.h"
-
-#include <vguilocal.h>
 #include <map>
 #include <string>
+
 #include "cvardef.h"
 
 #include "vgui_controls/spr_image.h"
 #include "vgui_controls/ImageSprPanel.h"
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/AnimationController.h"
+
+#include "utility/util.h"
+#include "utility/vgui_util.h"
+
 #include "core/resource/playerresource.h"
 
 #include "hud/Viewport.h"

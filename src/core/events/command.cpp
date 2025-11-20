@@ -1,5 +1,5 @@
 #include "metahook.h"
-#include "local.h"
+#include "utility/util.h"
 #include "command.h"
 #define DEFINE_USERCMD_HOOK(name) \
 	void(*pfnUserCmd_##name)(); \

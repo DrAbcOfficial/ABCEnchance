@@ -1,5 +1,6 @@
 #include <metahook.h>
-#include <vguilocal.h>
+
+#include "utility/vgui_util.h"
 #include "vgui_controls/ImageSprPanel.h"
 #include "itemstack.h"
 

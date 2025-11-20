@@ -1,11 +1,11 @@
 #include <metahook.h>
 
-#include <vguilocal.h>
 #include <map>
 #include <string>
 #include "cvardef.h"
 #include "weaponinfo.h"
-typedef int HSPRITE;
+
+#include "utility/vgui_util.h"
 #include "core/resource/weaponresource.h"
 
 #include "vgui_controls/ImageSprPanel.h"

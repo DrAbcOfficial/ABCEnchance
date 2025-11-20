@@ -7,10 +7,10 @@
 
 #include "GaussianBlurPanel.h"
 #include <glew.h>
-#include <gl_draw.h>
-#include <gl_shader.h>
-#include <gl_def.h>
-#include <gl_common.h>
+#include <core/opengl/gl_draw.h>
+#include <core/opengl/gl_shader.h>
+#include <core/opengl/gl_def.h>
+#include <core/opengl/gl_common.h>
 
 extern size_t ScreenWidth();
 extern size_t ScreenHeight();

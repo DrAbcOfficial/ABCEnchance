@@ -6,7 +6,7 @@
 #include <vgui_controls/EditablePanel.h>
 #include <vgui_controls/ImagePanel.h>
 #include "IViewportPanel.h"
-#include "gl_common.h"
+#include "core/opengl/gl_common.h"
 
 namespace vgui {
 	class CAvatarImagePanel;

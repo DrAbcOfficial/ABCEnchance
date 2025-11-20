@@ -7,10 +7,10 @@
 
 #include "core/library/mymathlib.h"
 
-#include "vguilocal.h"
-#include "local.h"
+#include "utility/vgui_util.h"
+#include "utility/util.h"
 
-#include "gl_draw.h"
+#include "core/opengl/gl_draw.h"
 #include "indicator.h"
 #undef max
 

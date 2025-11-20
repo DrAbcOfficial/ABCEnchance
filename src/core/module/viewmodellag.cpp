@@ -7,7 +7,7 @@
 
 #include "core/library/mymathlib.h"
 
-#include "local.h"
+#include "utility/util.h"
 #include "exportfuncs.h"
 #include "viewmodellag.h"
 

@@ -11,8 +11,8 @@
 #include "cvardef.h"
 #include "exportfuncs.h"
 
-#include "vguilocal.h"
-#include "local.h"
+#include "utility/vgui_util.h"
+#include "utility/util.h"
 
 #include "core/library/mymathlib.h"
 #include "core/module/extraprecache.h"

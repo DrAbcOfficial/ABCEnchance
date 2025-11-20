@@ -6,7 +6,7 @@
 #include <Controls.h>
 
 #include <GameUI/BasePanel.h>
-#include "vguilocal.h"
+#include "utility/vgui_util.h"
 
 #include <IBaseUI.h>
 #include <IEngineSurface.h>

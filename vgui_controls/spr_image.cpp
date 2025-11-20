@@ -3,7 +3,7 @@
 
 #include "vgui_controls/Panel.h"
 
-#include "local.h"
+#include "utility/util.h"
 #include "spr_image.h"
 
 using namespace vgui;

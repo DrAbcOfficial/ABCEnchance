@@ -8,7 +8,7 @@
 #include <VGUI_controls/Frame.h>
 
 #include <IClientVGUI.h>
-#include "vguilocal.h"
+#include "utility/vgui_util.h"
 #include "steam_api.h"
 #include "hud/Viewport.h"
 #include "exportfuncs.h"
@@ -28,8 +28,8 @@ public:
 		vgui::HScheme iScheme = vgui::scheme()->LoadSchemeFromFile("abcenchance\\ABCEnchance.res", "ABCEnchance");
 		int iPluginVersion = 0;
 		if (iScheme != 0) {
-			pSchemeData = vgui::scheme()->GetIScheme(vgui::scheme()->GetScheme("ABCEnchance"));
-			iPluginVersion = atoi(pSchemeData->GetResourceString("Version"));
+			auto baseSetting = vgui::scheme()->GetIScheme(vgui::scheme()->GetScheme("ABCEnchance"));
+			iPluginVersion = atoi(baseSetting->GetResourceString("Version"));
 		}
 		else{
 			SYS_ERROR("Could not load \"abcenchance\\ABCEnchance.res\"!\nHave you installed it correctly?\n");

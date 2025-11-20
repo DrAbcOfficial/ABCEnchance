@@ -3,18 +3,13 @@
 #define VGUICUSTOMLOCAL_H
 
 #include "Color.h" 
-#include "vgui/IScheme.h"
 
-void VGUI_CREATE_NEWTGA_TEXTURE(int tex, const char* path);
-size_t GET_SCREEN_PIXEL(bool h, const char* str);
+extern void VGUI_CREATE_NEWTGA_TEXTURE(int tex, const char* path);
 
 using ScreenInfo_t = struct ScreenInfo_s{
 	int iWidth;
 	int iHeight;
 };
-extern vgui::IScheme* pSchemeData;
-extern ScreenInfo_t gScreenInfo;
-extern Color gDefaultColor;
 
 // ScreenHeight returns the height of the screen, in pixels
 extern size_t ScreenHeight();

@@ -11,8 +11,8 @@
 #else
 #include <metahook.h>
 #include <SteamSDK/steamclientpublic.h>
-#include <vguilocal.h>
-#include <local.h>
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 #endif
 
 //-----------------------------------------------------------------------------

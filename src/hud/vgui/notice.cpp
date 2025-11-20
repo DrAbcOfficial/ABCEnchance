@@ -6,8 +6,8 @@
 #include <vgui/ILocalize.h>
 #include <vgui_controls/Label.h>
 
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 
 #include "notice.h"
 

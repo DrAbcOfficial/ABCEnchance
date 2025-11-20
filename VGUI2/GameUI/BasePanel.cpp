@@ -4,8 +4,8 @@
 
 #include "plugins.h"
 
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 
 #include "Controls.h"
 #include "vgui_controls/ImagePanel.h"

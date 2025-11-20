@@ -7,8 +7,8 @@
 #include <vgui_controls/Label.h>
 #include <vgui_controls/ImagePanel.h>
 
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 #include "hud/Viewport.h"
 
 #include "core/resource/playerresource.h"

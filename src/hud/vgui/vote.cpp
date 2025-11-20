@@ -11,8 +11,8 @@
 #include <vgui_controls/Label.h>
 #include <vgui_controls/ImagePanel.h>
 
-#include "vguilocal.h"
-#include "local.h"
+#include "utility/vgui_util.h"
+#include "utility/util.h"
 
 #include "hud/Viewport.h"
 

@@ -4,26 +4,6 @@
     <Filter Include="Public">
       <UniqueIdentifier>{a00ccf2e-82d6-4977-823a-a4730d517f3f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Public\Header">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Public\Header\Utility">
-      <UniqueIdentifier>{f37789c1-daa3-4088-96af-71554c4e4a7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\Header\Var">
-      <UniqueIdentifier>{0153e17f-72d4-4031-a82a-f004930f8c37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\Source">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Public\Source\Utility">
-      <UniqueIdentifier>{a51af813-27e9-4365-a9ed-bdddee0a49b8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\Source\Var">
-      <UniqueIdentifier>{1b849300-8959-4731-81fa-425e9d5ae52e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SourceSDK">
       <UniqueIdentifier>{cacd344c-43c1-49b9-9503-15cce45ddbaa}</UniqueIdentifier>
     </Filter>
@@ -47,12 +27,6 @@
     </Filter>
     <Filter Include="SourceSDK\vstdlib">
       <UniqueIdentifier>{d217d160-6b96-4e48-95f4-cc8d170da775}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\Header\Utility\opengl">
-      <UniqueIdentifier>{1fe854bc-38cf-404f-ab0b-c8eda68d0197}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\Source\Utility\opengl">
-      <UniqueIdentifier>{04cb55bb-c613-4621-97c5-5f4b5c35c237}</UniqueIdentifier>
     </Filter>
     <Filter Include="Public\Particleman">
       <UniqueIdentifier>{022c55ca-987d-47f3-bc42-d90dcab1b592}</UniqueIdentifier>
@@ -78,9 +52,6 @@
     <Filter Include="vgui_controls\base">
       <UniqueIdentifier>{d6358a88-bc48-463b-9218-d2fcf8a74a7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Public\Source\LIb">
-      <UniqueIdentifier>{e12ea5e1-0aa6-43da-a112-d3b27347411f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Public\Thirdparty">
       <UniqueIdentifier>{1652df7d-1a5f-42da-8c3e-7cbebd65bfe3}</UniqueIdentifier>
     </Filter>
@@ -92,9 +63,6 @@
     </Filter>
     <Filter Include="vgui2\interface">
       <UniqueIdentifier>{31c8abc4-ccdf-48c3-9926-a4c81fec055b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Public\Source\HLSDK">
-      <UniqueIdentifier>{5153a3bf-a45c-4055-a914-6e4d54f6f61e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Public\core">
       <UniqueIdentifier>{77b75e01-9a2b-421b-aae3-77421ffc0dcf}</UniqueIdentifier>
@@ -119,6 +87,12 @@
     </Filter>
     <Filter Include="Public\core\module">
       <UniqueIdentifier>{36a13248-1d8c-4650-96c6-90986703ddbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\core\opengl">
+      <UniqueIdentifier>{d1522ecc-661e-4e08-84e2-0f6e7f0d4b74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public\utility">
+      <UniqueIdentifier>{2badfe96-5b12-43bd-8d8b-6a9796c22096}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -217,27 +191,6 @@
     </ClCompile>
     <ClCompile Include="VGUI2\Border.cpp">
       <Filter>vgui2</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\opengl\gl_def.cpp">
-      <Filter>Public\Source\Utility\opengl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\opengl\gl_draw.cpp">
-      <Filter>Public\Source\Utility\opengl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\steamid.cpp">
-      <Filter>Public\Source\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Var\local.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Var\vguilocal.cpp">
-      <Filter>Public\Source\Var</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\exportfuncs.cpp">
-      <Filter>Public\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\plugins.cpp">
-      <Filter>Public\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Particleman\ClientParticleMan.cpp">
       <Filter>Public\Particleman</Filter>
@@ -539,15 +492,6 @@
     <ClCompile Include="vgui2\GameUI\VoteMenuDialog.cpp">
       <Filter>vgui2\gameui</Filter>
     </ClCompile>
-    <ClCompile Include="thirdparty\MetaHookSv\include\HLSDK\common\interface.cpp">
-      <Filter>Public\Source\HLSDK</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\NeteaseApiWrapper.cpp">
-      <Filter>Public\Source\LIb</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Source\Utility\qrcodegen.cpp">
-      <Filter>Public\Thirdparty</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\resource\playerresource.cpp">
       <Filter>Public\core\resource</Filter>
     </ClCompile>
@@ -697,6 +641,36 @@
     </ClCompile>
     <ClCompile Include="src\core\library\NetworkMessageReader.cpp">
       <Filter>Public\core\library</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\opengl\gl_def.cpp">
+      <Filter>Public\core\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\opengl\gl_draw.cpp">
+      <Filter>Public\core\opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thirdparty\qrcodegen.cpp">
+      <Filter>Public\Thirdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="src\exportfuncs.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
+    <ClCompile Include="src\plugins.cpp">
+      <Filter>Public</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\util.cpp">
+      <Filter>Public\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\NeteaseApiWrapper.cpp">
+      <Filter>Public\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\steamid.cpp">
+      <Filter>Public\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utility\vgui_util.cpp">
+      <Filter>Public\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\MetaHookSv\include\HLSDK\common\interface.cpp">
+      <Filter>Public</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -933,33 +907,6 @@
     </ClInclude>
     <ClInclude Include="SourceSDK\tier1\UtlSortVector.h">
       <Filter>SourceSDK\tier1</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\opengl\gl_def.h">
-      <Filter>Public\Header\Utility\opengl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\opengl\gl_draw.h">
-      <Filter>Public\Header\Utility\opengl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Utility\opengl\gl_shader.h">
-      <Filter>Public\Header\Utility\opengl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\enginedef.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\local.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\palette.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\Var\vguilocal.h">
-      <Filter>Public\Header\Var</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\exportfuncs.h">
-      <Filter>Public\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Header\plugins.h">
-      <Filter>Public\Header</Filter>
     </ClInclude>
     <ClInclude Include="src\Particleman\pman_triangleffect.h">
       <Filter>Public\Particleman</Filter>
@@ -1273,9 +1220,6 @@
     <ClInclude Include="vgui2\VGUI2ExtensionImport.h">
       <Filter>vgui2</Filter>
     </ClInclude>
-    <ClInclude Include="src\Header\Utility\win32helper.h">
-      <Filter>Public\Header\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="src\thirdparty\Fmod\fmod.h">
       <Filter>Public\Thirdparty\FMod</Filter>
     </ClInclude>
@@ -1479,6 +1423,33 @@
     </ClInclude>
     <ClInclude Include="src\core\library\NetworkMessageReader.h">
       <Filter>Public\core\library</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\opengl\gl_common.h">
+      <Filter>Public\core\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\opengl\gl_def.h">
+      <Filter>Public\core\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\opengl\gl_draw.h">
+      <Filter>Public\core\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\opengl\gl_shader.h">
+      <Filter>Public\core\opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exportfuncs.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="src\plugins.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utility\util.h">
+      <Filter>Public\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utility\palette.h">
+      <Filter>Public\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utility\vgui_util.h">
+      <Filter>Public\utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

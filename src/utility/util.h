@@ -22,6 +22,7 @@ extern float ClientTime();
 
 //Lazy Dizzy Short Marco
 #define V_snprintf sprintf_s
+#define DebugLog (*gEngfuncs.Con_DPrintf)
 #define SPR_Load (*gEngfuncs.pfnSPR_Load)
 #define SPR_Set (*gEngfuncs.pfnSPR_Set)
 #define SPR_Frames (*gEngfuncs.pfnSPR_Frames)

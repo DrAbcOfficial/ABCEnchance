@@ -10,7 +10,7 @@
 #include "core/library/Task.h"
 #include "core/library/mymathlib.h"
 //Def
-#include "vguilocal.h"
+#include "utility/vgui_util.h"
 #include "exportfuncs.h"
 #include "usercmd.h"
 #include "pm_defs.h"
@@ -35,7 +35,7 @@
 //GL
 #include "glew.h"
 //Base HUD
-#include "local.h"
+#include "utility/util.h"
 #include "hud/Viewport.h"
 
 
@@ -276,6 +276,7 @@ void GL_Init(void)
 {
 	//Load interface from Renderer.dll
 	MetaRenderer_Init();
+	extern ScreenInfo_t gScreenInfo;
 	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
 	if (GLEW_OK != err) {

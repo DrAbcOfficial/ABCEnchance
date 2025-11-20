@@ -11,8 +11,8 @@
 #include <vgui_controls/AnimationController.h>
 #include "core/resource/playerresource.h"
 
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 
 #include "steamclientpublic.h"
 #include "hud/Viewport.h"

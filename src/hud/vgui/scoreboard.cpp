@@ -15,8 +15,8 @@
 #include <vgui_controls/Menu.h>
 #include <vgui_controls/MemoryBitmap.h>
 
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 
 #include "core/resource/playerresource.h"
 

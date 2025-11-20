@@ -3,11 +3,9 @@
 #include "Controls.h"
 #include "core/library/mymathlib.h"
 
-#include "vguilocal.h"
+#include "utility/vgui_util.h"
 
-vgui::IScheme* pSchemeData;
 ScreenInfo_t gScreenInfo;
-Color gDefaultColor = Color(245, 230, 195, 255);
 
 Color g_aryVGUIColorCode[] = {
 	Color(255,255,255,255),		//��
@@ -25,10 +23,6 @@ Color g_aryVGUIColorCode[] = {
 void VGUI_CREATE_NEWTGA_TEXTURE(int tex, const char* path){
 	tex = vgui::surface()->CreateNewTextureID(); 
 	vgui::surface()->DrawSetTextureFile(tex, path, true, false);
-}
-
-size_t GET_SCREEN_PIXEL(bool h, const char* str){
-	return  CMathlib::GetScreenPixel(h ? ScreenHeight() : ScreenWidth(), atof(pSchemeData->GetResourceString(str)));
 }
 
 size_t ScreenHeight(){

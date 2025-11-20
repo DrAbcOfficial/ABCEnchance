@@ -8,8 +8,8 @@
 #pragma endregion
 
 #pragma region TODO: remove these mess
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 #pragma endregion
 
 #include "hud/Viewport.h"

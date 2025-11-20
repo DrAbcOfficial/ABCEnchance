@@ -1,11 +1,11 @@
 #include <metahook.h>
 
-#include <vguilocal.h>
 #include <wrect.h>
 
 #include <map>
 #include <string>
 #include "cvardef.h"
+#include "utility/vgui_util.h"
 #include "core/resource/weaponresource.h"
 
 #include "vgui_controls/ImageSprPanel.h"

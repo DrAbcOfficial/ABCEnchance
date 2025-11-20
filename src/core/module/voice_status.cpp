@@ -2,7 +2,7 @@
 #include <assert.h>
 
 #include "cvardef.h"
-#include "local.h"
+#include "utility/util.h"
 
 #include "core/resource/playerresource.h"
 #include "core/library/NetworkMessageReader.h"
@@ -184,8 +184,8 @@ void CVoiceStatus::UpdateServerState(bool bForce){
 
 void CVoiceStatus::HandleVoiceMaskMsg(int iSize, void *pbuf){
 	NetworkMessageReader msg( pbuf, iSize );
-	unsigned long audiable = static_cast<unsigned long>(msg.readLong().value());
-	unsigned long serverbanned = static_cast<unsigned long>(msg.readLong().value());
+	unsigned long audiable = static_cast<unsigned long>(msg.readLong());
+	unsigned long serverbanned = static_cast<unsigned long>(msg.readLong());
 	m_AudiblePlayers = CPlayerBitVec(audiable);
 	m_ServerBannedPlayers = CPlayerBitVec(serverbanned);
 	if(CVAR_GET_FLOAT("voice_clientdebug")){
@@ -196,7 +196,7 @@ void CVoiceStatus::HandleVoiceMaskMsg(int iSize, void *pbuf){
 		sprintf(str, "    - m_ServerBannedPlayers = %s\n", m_ServerBannedPlayers.to_string().c_str());
 		gEngfuncs.pfnConsolePrint(str);
 	}
-	m_bServerModEnable = msg.readByte().value();
+	m_bServerModEnable = msg.readByte();
 }
 void CVoiceStatus::HandleReqStateMsg(int iSize, void *pbuf){
 	if(CVAR_GET_FLOAT("voice_clientdebug"))

@@ -11,8 +11,8 @@
 #include "vgui_controls/TextImage.h"
 #include <vgui_controls/AnimationController.h>
 
-#include "local.h"
-#include "vguilocal.h"
+#include "utility/util.h"
+#include "utility/vgui_util.h"
 #include "hud/Viewport.h"
 
 #include "deadmsg.h"
