@@ -1,20 +1,11 @@
-#include <vector>
-#include <string>
-
 #include "plugins.h"
 
 #include <VGUI_controls/Controls.h>
 #include <VGUI_controls/Panel.h>
-#include <VGUI_controls/Frame.h>
-
-#include <IClientVGUI.h>
-#include "utility/vgui_util.h"
-#include "steam_api.h"
 #include "hud/Viewport.h"
 #include "exportfuncs.h"
 
 #include <vgui.h>
-#include "ClientVGUI.h"
 #include <IVGUI2Extension.h>
 
 namespace vgui{
@@ -95,8 +86,6 @@ void ClientVGUI_InitLocalize() {
 }
 
 //vgui2
-bool g_bIMEComposing = false;
-double g_flImeComposingTime = 0;
 //fuck me
 bool IsOSX(){
 	return false;

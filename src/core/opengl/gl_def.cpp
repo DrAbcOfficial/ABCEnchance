@@ -1,4 +1,3 @@
-#include "glew.h"
 #include "gl_shader.h"
 #include "gl_def.h"
 

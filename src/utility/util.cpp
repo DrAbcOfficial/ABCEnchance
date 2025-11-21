@@ -1,7 +1,5 @@
 #include <metahook.h>
-
-#include <utility>
-
+#include <algorithm>
 #include "utility/util.h"
 #include "utility/vgui_util.h"
 #include "triangleapi.h"

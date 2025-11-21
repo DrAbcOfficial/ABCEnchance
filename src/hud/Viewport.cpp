@@ -8,7 +8,6 @@
 #include <vgui/VGUI.h>
 #include <vgui/IScheme.h>
 #include <vgui/ILocalize.h>
-#include <vgui/IEngineVGui.h>
 #include <vgui_controls/Controls.h>
 #include <vgui_controls/AnimationController.h>
 

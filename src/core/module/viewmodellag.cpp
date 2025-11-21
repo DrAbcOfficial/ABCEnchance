@@ -8,7 +8,6 @@
 #include "core/library/mymathlib.h"
 
 #include "utility/util.h"
-#include "exportfuncs.h"
 #include "viewmodellag.h"
 
 //copied and edited from here: https://github.com/SNMetamorph/PrimeXT/blob/master/client/r_view.cpp#L266

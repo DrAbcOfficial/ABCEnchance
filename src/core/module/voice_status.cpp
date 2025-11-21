@@ -1,7 +1,4 @@
 ﻿#include <metahook.h>
-#include <assert.h>
-
-#include "cvardef.h"
 #include "utility/util.h"
 
 #include "core/resource/playerresource.h"

@@ -1,7 +1,6 @@
 #include <metahook.h>
 
 #include "Controls.h"
-#include "core/library/mymathlib.h"
 
 #include "utility/vgui_util.h"
 

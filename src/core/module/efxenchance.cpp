@@ -15,9 +15,6 @@
 
 #include "playertrace.h"
 
-#include "exportfuncs.h"
-#include "efxenchance.h"
-
 #define GAUSS_WAVE_LENGTH 48
 #define GAUSS_LASER_P_WIDTH 2
 #define GAUSS_LASER_S_WIDTH 4

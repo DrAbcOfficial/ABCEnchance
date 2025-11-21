@@ -4,8 +4,6 @@
 
 #include "mathlib/vector.h"
 #include "core/library/mymathlib.h"
-
-#include "utility/vgui_util.h"
 #include "hud/Viewport.h"
 
 #include "playertrace.h"

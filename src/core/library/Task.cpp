@@ -29,7 +29,7 @@ void CTaskManager::CheckAll(){
 	for (auto iter = m_aryList.begin(); iter != m_aryList.end();) {
 		auto item = *iter;
 		if (item->IsReady()) {
-			//×ªÒÆËùÓĞÈ¨£¬·ÀÖ¹Õ»±»¸ÉÀÃ
+			//×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½Ö¹Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			auto caller = std::move(item->GetCaller());
 			delete item;
 			iter = m_aryList.erase(iter);
