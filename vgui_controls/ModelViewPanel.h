@@ -11,8 +11,8 @@
 #endif
 
 #include "Panel.h"
+#include "core/opengl/gl_common.h"
 
-class IStudioModel;
 namespace vgui
 {
 //-----------------------------------------------------------------------------
@@ -25,20 +25,19 @@ public:
 	ModelViewPanel(Panel *parent, const char *name);
 	~ModelViewPanel();
 
-	void SetupTexBuffer();
 	void LoadModel(const char* model);
 	void ChangeModel(const char* model);
-	void Render();
+
 	void SetModelPos(float x, float y, float z);
 	void SetModelRotate(float pitch, float yaw, float roll);
 
 	void GetModelPos(float& x, float& y, float& z);
 	void GetModelRotate(float& pitch, float& yaw, float& roll);
 
-	float GetFOV();
+	float GetFOV() const;
 	void SetFOV(float fov);
 
-	bool GetAnimate();
+	bool GetAnimate() const;
 	void SetAnimate(bool state);
 
 	int GetFrame();
@@ -53,18 +52,17 @@ public:
 	int GetSkin();
 	void SetSkin(int skin);
 
-	int GetGroup();
-	int GetBody();
-	void SetBodygroup(int group, int body);
+	int GetBodygroup();
+	void SetBodygroup(int bodygroup);
 
-	float GetBlend(int blend);
-	void SetBlend(int blend, float value);
+	float GetBlend(size_t blend);
+	void SetBlend(size_t blend, float value);
 
-	float GetController(int idx);
-	void SetController(int idx, float value);
+	float GetController(size_t idx);
+	void SetController(size_t idx, float value);
 
-	int GetMouth();
-	void SetMouth(int mouth);
+	byte GetMouth();
+	void SetMouth(byte mouth);
 
 	void SetAmbientLight(int light);
 	void SetShadeLight(int light);
@@ -74,35 +72,12 @@ protected:
 	virtual void Paint() override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
 private:
-	float m_aryOrigin[3] = {0,0,0};
-	float m_aryRotate[3] = {0,0,0};
+	FBO_Container_t m_ModelFBO{ };
 	float m_flFov = 90;
 	bool m_bAnimate = false;
-	float m_flFrameRate = 1;
-	int m_iFrame = 0;
-	int m_iSequence = 0;
-	int m_iSkin = 0;
-	int m_iGroup = 0;
-	int m_iBody = 0;
-	int m_iMouth = 0;
 	char m_szModel[MAX_PATH] = {};
-	typedef struct blendinfo_s{
-		int m_iIdx = 0;
-		float m_flValue = 0;
-	}blendinto_t;
-	blendinto_t m_aryBlend[2] = {};
-	blendinto_t m_aryController[4] = {};
 
-	float m_flPrevAnimeTime = 0;
-
-	IStudioModel* m_Renderer = nullptr;
-
-	uint m_hBufferTex = 0;
-	uint m_hBufferFBO = 0;
-	uint m_hBufferRBO = 0;
-	uint m_iFboWidth = 0;
-	uint m_iFboHeight = 0;
-	int m_oldFrameBuffer = 0;
+	struct cl_entity_s* m_pModelEntity = nullptr;
 };
 
 } // namespace vgui

@@ -118,7 +118,6 @@ COptionsAdvanceSubMultiPlay::COptionsAdvanceSubMultiPlay(Panel* parent) : BaseCl
 	LoadControlSettings("abcenchance/res/gameui/OptionsAdvanceSubMultiPlay.res");
 
 	float y, r;
-	m_pModelViewer->SetupTexBuffer();
 	m_pModelViewer->GetModelRotate(r, y, r);
 
 	m_pModelController->SetRange(0, 360);

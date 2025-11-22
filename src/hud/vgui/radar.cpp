@@ -335,6 +335,8 @@ void CRadarPanel::SetParent(vgui::VPANEL parent)
 
 void CRadarPanel::RenderRadar()
 {
+	if (gCVars.pRadar->value <= 0)
+		return;
 	if (MetaRenderer())
 	{
 		MetaRenderer()->BeginDebugGroup("CRadarPanel::RenderRadar");
