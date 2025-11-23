@@ -1,8 +1,4 @@
 #include <algorithm>
-#include <filesystem>
-#include <atomic>
-
-#include "core/library/Task.h"
 #include "core/module/config.h"
 
 #include "interface.h"
@@ -24,7 +20,6 @@
 #include "vgui_controls/ImagePanel.h"
 #include "vgui_controls/FileOpenDialog.h"
 #include "vgui_controls/Menu.h"
-#include "vgui_controls/MenuItem.h"
 #include "vgui_controls/MemoryBitmap.h"
 #include "vgui_controls/GroupBox.h"
 #include "vgui_controls/MessageBox.h"

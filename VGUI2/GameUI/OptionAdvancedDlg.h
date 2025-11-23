@@ -3,7 +3,7 @@
 
 #pragma once
 #include <string>
-#include <unordered_map>
+#include <map>
 
 #include "vgui_controls/PropertyPage.h"
 #include "vgui_controls/PropertyDialog.h"
@@ -54,7 +54,7 @@ private:
 	void GetValidateSparySize(size_t& ow, size_t& oh);
 	void SetSparyPixel(unsigned char* pixels, size_t wide, size_t height);
 
-	std::unordered_map<std::string, bool> m_aryModelList;
+	std::map<std::string, bool> m_aryModelList;
 
 	ModelViewPanel* m_pModelViewer = nullptr;
 	Slider* m_pModelController = nullptr;
