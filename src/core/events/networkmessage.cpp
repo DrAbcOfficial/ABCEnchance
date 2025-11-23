@@ -190,14 +190,14 @@ DEFINE_NETMESSAGE_HOOK(TimeEnd, int)
 	g_EventTimeEnd(time);
 	return m_pfnTimeEnd(pszName, iSize, pbuf);
 }
-DEFINE_NETMESSAGE_HOOK(ShowMenu, int, int, int, const char*)
+DEFINE_NETMESSAGE_HOOK(ShowMenu, int, int, int, std::string)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int slot = msg.readShort();
 	int time = msg.readChar();
 	int bits = msg.readByte();
 	auto message = msg.readString();
-	g_EventShowMenu(slot, time, bits, message.c_str());
+	g_EventShowMenu(slot, time, bits, message);
 	//block hahahaha
 	return 1;
 }

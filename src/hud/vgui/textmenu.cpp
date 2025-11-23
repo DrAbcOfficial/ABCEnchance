@@ -91,7 +91,7 @@ void CTextMenu::SelectMenuItem(int slot){
 	}
 }
 
-bool CTextMenu::MsgShowMenu(int slot, int time, int bits, const char* message) {
+bool CTextMenu::MsgShowMenu(int slot, int time, int bits, std::string message) {
 	if (!m_bWaitingForMore)
 		m_szMenuString.clear();
 	m_bitsValidSlots = slot;
