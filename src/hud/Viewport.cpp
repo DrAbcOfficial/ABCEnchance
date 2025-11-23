@@ -181,7 +181,7 @@ void CViewport::Start(void){
 		this->m_iTimeEnd = time;
 		this->m_pScorePanel->UpdateTimeEnd();
 		});
-	g_EventShowMenu.append([&](int slot, int time, int bits, const char* message) {
+	g_EventShowMenu.append([&](int slot, int time, int bits, std::string message) {
 		this->m_pTextMenu->MsgShowMenu(slot, time, bits, message);
 		});
 	g_EventVoteMenu.append([&](int type, const char* content, const char* yes, const char* no) {
