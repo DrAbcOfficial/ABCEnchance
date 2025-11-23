@@ -138,8 +138,6 @@ using cl_cvars_t = struct{
 	cvar_t* pRadarAvatar;
 	cvar_t* pRadarAvatarSize;
 	cvar_t* pRadarAvatarScale;
-	cvar_t* pRadarZMin;
-	cvar_t* pRadarZMax;
 
 	cvar_t* pCVarDevOverview;
 	cvar_t* pCVarDrawEntities;

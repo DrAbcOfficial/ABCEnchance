@@ -21,8 +21,6 @@
 #include "hud/Viewport.h"
 #include "radar.h"
 
-
-
 #undef clamp
 
 class CRadarMapImage : public vgui::IImage_HL25
@@ -43,7 +41,6 @@ public:
 		if (MetaRenderer())
 		{
 			vec4_t vColor4f = { m_DrawColor.r() / 255.0f, m_DrawColor.g() / 255.0f ,m_DrawColor.b() / 255.0f ,m_DrawColor.a() / 255.0f };
-
 			MetaRenderer()->DrawTexturedQuadMask(
 				m_BaseTexture,
 				m_MaskTexture,
@@ -53,7 +50,8 @@ public:
 				m_iY + 0,
 				vColor4f,
 				DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED | DRAW_TEXTURED_RECT_MASK_TEXTURE_ENABLED,
-				"CRadarMapImage::Paint");
+				"CRadarMapImage::Paint"
+			);
 		}
 	}
 
@@ -124,10 +122,7 @@ CRadarPanel::CRadarPanel()
 
 	gCVars.pRadar = CREATE_CVAR("hud_radar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
 		GetBaseViewPort()->GetRadarPanel()->ShowPanel(cvar->value);
-		});
-
-	gCVars.pRadarZMin = CREATE_CVAR("hud_radar_zmin", "256", FCVAR_VALUE, nullptr);
-	gCVars.pRadarZMax = CREATE_CVAR("hud_radar_zmax", "20", FCVAR_VALUE, nullptr);
+	});
 	gCVars.pRadarZoom = CREATE_CVAR("hud_radar_zoom", "2.5", FCVAR_VALUE, nullptr);
 
 	gCVars.pRadarAvatar = CREATE_CVAR("hud_radar_avatar", "1", FCVAR_VALUE, [](cvar_t* cvar) {
@@ -139,7 +134,6 @@ CRadarPanel::CRadarPanel()
 	m_pBackground = new vgui::ImagePanel(this, "Background");
 	m_pRoundBackground = new vgui::ImagePanel(this, "RoundBackground");
 	m_pMapground = new vgui::ImagePanel(this, "Mapground");
-	m_pUpground = new vgui::ImagePanel(this, "Upground");
 	m_pNorthground = new vgui::ImagePanel(this, "Northground");
 	m_pViewangleground = new vgui::ImagePanel(this, "Viewangleground");
 	for (size_t i = 0; i < 32; i++) {
@@ -149,17 +143,13 @@ CRadarPanel::CRadarPanel()
 	}
 	LoadControlSettings(VGUI2_ROOT_DIR "RadarPanel.res");
 
-	m_iRadarRoundBackgroundTextureId = vgui::surface()->CreateNewTextureID();
-	vgui::surface()->DrawSetTextureFile(m_iRadarRoundBackgroundTextureId, "abcenchance/tga/radar_background", true, false);
+	m_iRadarMaskId = vgui::surface()->CreateNewTextureID();
+	vgui::surface()->DrawSetTextureFile(m_iRadarMaskId, "abcenchance/tga/radar_mask", true, false);
+	m_iRadarRoundMaskId = vgui::surface()->CreateNewTextureID();
+	vgui::surface()->DrawSetTextureFile(m_iRadarRoundMaskId, "abcenchance/tga/radar_roundmask", true, false);
 
 	m_pRadarImage = new CRadarMapImage();
 	m_pRadarImage->SetBaseTexture(m_RadarFBO.s_hBackBufferTex);
-	m_pRadarImage->SetMaskTexture(m_iRadarRoundBackgroundTextureId);
-
-	int w{}, h{};
-	m_pMapground->GetSize(w, h);
-	m_pRadarImage->SetSize(w, h);
-
 	m_pMapground->SetImage(m_pRadarImage);
 }
 
@@ -171,10 +161,16 @@ CRadarPanel::~CRadarPanel() {
 		m_pRadarImage = nullptr;
 	}
 
-	if (m_iRadarRoundBackgroundTextureId)
+	if (m_iRadarMaskId)
 	{
-		vgui::surface()->DeleteTextureByID(m_iRadarRoundBackgroundTextureId);
-		m_iRadarRoundBackgroundTextureId = 0;
+		vgui::surface()->DeleteTextureByID(m_iRadarMaskId);
+		m_iRadarMaskId = 0;
+	}
+
+	if (m_iRadarRoundMaskId)
+	{
+		vgui::surface()->DeleteTextureByID(m_iRadarRoundMaskId);
+		m_iRadarRoundMaskId = 0;
 	}
 
 	if (MetaRenderer() && m_RadarFBO.s_hBackBufferFBO)
@@ -190,11 +186,10 @@ void CRadarPanel::PerformLayout()
 	GetSize(w, h);
 	m_pBackground->SetSize(w, h);
 	m_pRoundBackground->SetSize(w, h);
-	m_pMapground->SetSize(w - 4, h - 4);
-	m_pUpground->SetSize(w, h);
-	int vw, vh;
-	m_pViewangleground->GetSize(vw, vh);
-	m_pViewangleground->SetPos((w - vw) / 2, (h - vh) / 2);
+	int gw = w * 0.01f;
+	int gh = h * 0.01f;
+	m_pMapground->SetSize(w - gw, h - gh);
+	m_pMapground->SetPos(gw / 2, gh / 2);
 }
 
 void CRadarPanel::Paint()
@@ -271,6 +266,10 @@ void CRadarPanel::Paint()
 			}
 		}
 	}
+	if(gCVars.pRadar->value > 1)
+		m_pRadarImage->SetMaskTexture(m_iRadarRoundMaskId);
+	else
+		m_pRadarImage->SetMaskTexture(m_iRadarMaskId);
 	BaseClass::Paint();
 }
 
@@ -278,8 +277,6 @@ void CRadarPanel::ApplySettings(KeyValues* inResourceData)
 {
 	BaseClass::ApplySettings(inResourceData);
 	GetSize(m_iStartWidth, m_iStartTall);
-
-	m_flRoundRadius = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetFloat("radar_roundradius", 100.0f));
 	m_iScaledWidth = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_wide", 300));
 	m_iScaledTall = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_tall", 300));
 }
@@ -287,8 +284,8 @@ void CRadarPanel::ApplySettings(KeyValues* inResourceData)
 void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 {
 	BaseClass::ApplySchemeSettings(pScheme);
-	m_cOutline = GetSchemeColor("Radar.OutlineColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme);
-	m_cMap = GetSchemeColor("Radar.MapColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme);
+	auto color = GetSchemeColor("Radar.MapColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme);
+	m_pRadarImage->SetColor(color);
 	SetFgColor(GetSchemeColor("Radar.FgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
 	SetBgColor(GetSchemeColor("Radar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 }
@@ -301,13 +298,6 @@ const char* CRadarPanel::GetName()
 void CRadarPanel::Reset()
 {
 	SetScale(false);
-	cvar_t* pCvarDevC = CVAR_GET_POINTER("dev_overview_color");
-	if (pCvarDevC && MetaRenderer()) {
-		sscanf_s(pCvarDevC->string, "%d %d %d", &iOverviewR, &iOverviewG, &iOverviewB);
-		iOverviewR /= 255;
-		iOverviewG /= 255;
-		iOverviewB /= 255;
-	}
 }
 
 void CRadarPanel::ShowPanel(bool state)
@@ -413,7 +403,7 @@ void CRadarPanel::RenderRadar()
 
 		vec4_t vClearColor = { 0, 0, 0, 1 };
 		MetaRenderer()->ClearColorDepthStencil(vClearColor, 1, 0, STENCIL_MASK_ALL);
-
+		
 		MetaRenderer()->RenderScene();
 
 		MetaRenderer()->SetDrawClassify(oldDrawClassify);

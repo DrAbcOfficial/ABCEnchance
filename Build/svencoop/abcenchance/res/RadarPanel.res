@@ -57,21 +57,6 @@
 		"scaleImage"		"1"
 		"drawColor"		"255 255 255 255"
 	}
-	
-	"Upground"
-	{
-		"ControlName"		"ImagePanel"
-		"fieldName"		"Upground"
-		"xpos"		"0"
-		"ypos"		"0"
-		"wide"		"100"
-		"tall"		"100"
-		"visible"		"1"
-		"scaleImage"		"1"
-		"image"			"abcenchance/tga/radar_upground"
-		"drawColor"		"255 255 255 255"
-	}
-	
 	"Northground"
 	{
 		"ControlName"		"ImagePanel"

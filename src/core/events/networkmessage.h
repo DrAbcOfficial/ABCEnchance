@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "eventpp/callbacklist.h"
 
 #define DEFINE_NETMESSAGE_EVENT(name, ...) eventpp::CallbackList<void(__VA_ARGS__)> g_Event##name
@@ -23,7 +24,7 @@ extern DEFINE_NETMESSAGE_EVENT(Spectator, int, bool);
 extern DEFINE_NETMESSAGE_EVENT(ServerName, const char*);
 extern DEFINE_NETMESSAGE_EVENT(NextMap, const char*);
 extern DEFINE_NETMESSAGE_EVENT(TimeEnd, int);
-extern DEFINE_NETMESSAGE_EVENT(ShowMenu, int, int, int, std::string);
+extern DEFINE_NETMESSAGE_EVENT(ShowMenu, int, int, int, std::string&);
 extern DEFINE_NETMESSAGE_EVENT(VoteMenu, int, const char*, const char*, const char*);
 extern DEFINE_NETMESSAGE_EVENT(EndVote);
 extern DEFINE_NETMESSAGE_EVENT(MOTD, int, const char*);

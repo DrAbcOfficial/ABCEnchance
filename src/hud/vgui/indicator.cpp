@@ -249,7 +249,7 @@ void CIndicatorPanel::SetHitIndicator(int damage, int armor, const float vecFrom
         img->SetHitFrom(vecFrom);
         if (!panel->IsVisible())
             panel->SetVisible(true);
-        vgui::GetAnimationController()->CancelAnimationsForPanel(panel);
+        //vgui::GetAnimationController()->CancelAnimationsForPanel(panel);
 		panel->SetAlpha(255);
         vgui::GetAnimationController()->RunAnimationCommand(panel, "alpha", 0, m_flKeepTime, m_flFadeTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
     }
