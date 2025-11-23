@@ -4,6 +4,7 @@
 #include "IMetaRenderer.h"
 
 #include "exportfuncs.h"
+#include "utility/vgui_util.h"
 
 #include "ModelViewPanel.h"
 
@@ -17,8 +18,7 @@ using namespace vgui;
 ModelViewPanel::ModelViewPanel(Panel *parent, const char *name) : BaseClass(parent, name){
 	m_pModelEntity = new cl_entity_t();
 	m_pModelEntity->baseline.entityType = ENTITY_NORMAL;
-	SetModelPos(0, 0, 0);
-	SetModelRotate(0, 0, 0);
+	//m_pModelEntity->player = TRUE;
 }
 
 vgui::ModelViewPanel::~ModelViewPanel(){
@@ -32,14 +32,6 @@ vgui::ModelViewPanel::~ModelViewPanel(){
 
 void vgui::ModelViewPanel::LoadModel(const char* model){
 	ChangeModel(model);
-	SetSequnce(0);
-	SetController(0, 0.0);
-	SetController(1, 0.0);
-	SetController(2, 0.0);
-	SetController(3, 0.0);
-	SetMouth(0);
-	SetBlend(0, 0.0);
-	SetBlend(0, 0.0);
 }
 
 void vgui::ModelViewPanel::ChangeModel(const char* model){
@@ -246,88 +238,26 @@ void vgui::ModelViewPanel::SetLightOrigin(float x, float y, float z){
 void ModelViewPanel::Paint(){
 	if (MetaRenderer())
 	{
-		MetaRenderer()->BeginDebugGroup("ModelViewPanel::Paint");
-		auto CurrentRenderingFBO = MetaRenderer()->GetCurrentRenderingFBO();
-		MetaRenderer()->BindFrameBuffer(&m_ModelFBO);
-		MetaRenderer()->SetCurrentSceneFBO(&m_ModelFBO);
-		MetaRenderer()->PushProjectionMatrix();
-		MetaRenderer()->PushWorldMatrix();
-
-		int w, h;
-		GetSize(w, h);
-		//MetaRenderer()->SetViewport(0, 0, w, h);
-		MetaRenderer()->SetCurrentEntity(m_pModelEntity);
-		MetaRenderer()->DrawCurrentEntity(false);
-
-		MetaRenderer()->PopProjectionMatrix();
-		MetaRenderer()->PopWorldMatrix();
-		MetaRenderer()->SetCurrentSceneFBO(CurrentRenderingFBO);
-		MetaRenderer()->BindFrameBuffer(CurrentRenderingFBO);
-		MetaRenderer()->EndDebugGroup();
-
-		int absX{}, absY{};
-		ipanel()->GetAbsPos(GetVPanel(), absX, absY);
-
-		int screenW{}, screenH{};
-		screenW = CurrentRenderingFBO->iWidth;
-		screenH = CurrentRenderingFBO->iHeight;
-
-		// 计算纹理坐标，只采样Panel所遮挡的区域
-		float u0 = (float)absX / (float)screenW;
-		float u1 = (float)(absX + w) / (float)screenW;
-		// OpenGL纹理坐标原点在左下角，需要翻转v坐标
-		float v0 = 1.0f - (float)absY / (float)screenH;
-		float v1 = 1.0f - (float)(absY + h) / (float)screenH;
-
-		Color BgColor = GetBgColor();
-		vec4_t vColor4 = { BgColor.r() / 255.0f, BgColor.g() / 255.0f, BgColor.b() / 255.0f, BgColor.a() / 255.0f };
-
-		// 使用DrawTexturedRect手动指定纹理坐标
-		texturedrectvertex_t vertices[4];
-
-		// 左下角 (屏幕坐标: 0, h)
-		vertices[0].pos[0] = 0;
-		vertices[0].pos[1] = h;
-		vertices[0].texcoord[0] = u0;
-		vertices[0].texcoord[1] = v1;  // 屏幕下方对应纹理的下方
-		vertices[0].col[0] = vColor4[0];
-		vertices[0].col[1] = vColor4[1];
-		vertices[0].col[2] = vColor4[2];
-		vertices[0].col[3] = vColor4[3];
-
-		// 右下角 (屏幕坐标: w, h)
-		vertices[1].pos[0] = w;
-		vertices[1].pos[1] = h;
-		vertices[1].texcoord[0] = u1;
-		vertices[1].texcoord[1] = v1;  // 屏幕下方对应纹理的下方
-		vertices[1].col[0] = vColor4[0];
-		vertices[1].col[1] = vColor4[1];
-		vertices[1].col[2] = vColor4[2];
-		vertices[1].col[3] = vColor4[3];
-
-		// 右上角 (屏幕坐标: w, 0)
-		vertices[2].pos[0] = w;
-		vertices[2].pos[1] = 0;
-		vertices[2].texcoord[0] = u1;
-		vertices[2].texcoord[1] = v0;  // 屏幕上方对应纹理的上方
-		vertices[2].col[0] = vColor4[0];
-		vertices[2].col[1] = vColor4[1];
-		vertices[2].col[2] = vColor4[2];
-		vertices[2].col[3] = vColor4[3];
-
-		// 左上角 (屏幕坐标: 0, 0)
-		vertices[3].pos[0] = 0;
-		vertices[3].pos[1] = 0;
-		vertices[3].texcoord[0] = u0;
-		vertices[3].texcoord[1] = v0;  // 屏幕上方对应纹理的上方
-		vertices[3].col[0] = vColor4[0];
-		vertices[3].col[1] = vColor4[1];
-		vertices[3].col[2] = vColor4[2];
-		vertices[3].col[3] = vColor4[3];
-
-		const uint32_t indices[] = { 0, 1, 2, 2, 3, 0 };
-
-		MetaRenderer()->DrawTexturedRect(m_ModelFBO.s_hBackBufferTex, vertices, 4, indices, 6, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "ModelViewPanel::PaintBackground");
+		//MetaRenderer()->BeginDebugGroup("ModelViewPanel::Paint");
+		//auto oldFbo = MetaRenderer()->GetCurrentRenderingFBO();
+		//int oldW = oldFbo->iWidth;
+		//int oldH = oldFbo->iHeight;
+		//
+		//MetaRenderer()->BindFrameBuffer(&m_ModelFBO);
+		//MetaRenderer()->SetCurrentSceneFBO(&m_ModelFBO);
+		//
+		//MetaRenderer()->SetViewport(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+		//MetaRenderer()->SetCurrentEntity(m_pModelEntity);
+		//MetaRenderer()->DrawCurrentEntity(false);
+		//MetaRenderer()->SetViewport(0, 0, oldW, oldH);
+		//
+		//MetaRenderer()->SetCurrentSceneFBO(oldFbo);
+		//MetaRenderer()->BindFrameBuffer(oldFbo);
+		//
+		//MetaRenderer()->EndDebugGroup();
+		//
+		//surface()->DrawSetTexture(m_ModelFBO.s_hBackBufferTex);
+		//surface()->DrawFilledRect(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
 	}
 }
 
