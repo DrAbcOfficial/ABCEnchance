@@ -449,6 +449,10 @@ int HUD_VidInit(void)
 	gCVars.pCVarShadow = CVAR_GET_POINTER("r_shadow");
 	gCVars.pCVarDeferredLighting = CVAR_GET_POINTER("r_deferred_lighting");
 	gCVars.pCVarGammaBlend = CVAR_GET_POINTER("r_gamma_blend");
+	gCVars.pCVarGamma = CVAR_GET_POINTER("gamma");
+	gCVars.pCVarBrightness = CVAR_GET_POINTER("brightness");
+	gCVars.pCVarTexGamma = CVAR_GET_POINTER("texgamma");
+	gCVars.pCVarLightGamma = CVAR_GET_POINTER("lightgamma");
 
 	int result = gExportfuncs.HUD_VidInit();
 	GetBaseViewPort()->VidInit();
