@@ -131,6 +131,11 @@ CRadarPanel::CRadarPanel()
 	gCVars.pRadarAvatarSize = CREATE_CVAR("hud_radar_avatarsize", "20", FCVAR_VALUE, nullptr);
 	gCVars.pRadarAvatarScale = CREATE_CVAR("hud_radar_avatarscale", "0.2", FCVAR_VALUE, nullptr);
 
+	gCVars.pRadarGamma = CREATE_CVAR("hud_radar_gamma", "1", FCVAR_VALUE, nullptr);
+	gCVars.pRadarBrightness = CREATE_CVAR("hud_radar_brightness", "1", FCVAR_VALUE, nullptr);
+	gCVars.pRadarTexGamma = CREATE_CVAR("hud_radar_texgamma", "1", FCVAR_VALUE, nullptr);
+	gCVars.pRadarLightGamma = CREATE_CVAR("hud_radar_lightgamma", "1", FCVAR_VALUE, nullptr);
+
 	m_pBackground = new vgui::ImagePanel(this, "Background");
 	m_pRoundBackground = new vgui::ImagePanel(this, "RoundBackground");
 	m_pMapground = new vgui::ImagePanel(this, "Mapground");
@@ -350,10 +355,18 @@ void CRadarPanel::RenderRadar()
 			gCVars.pCVarShadow ? gCVars.pCVarShadow->value : 0.0f,
 			gCVars.pCVarDeferredLighting ? gCVars.pCVarDeferredLighting->value : 0.0f,
 			gCVars.pCVarGammaBlend ? gCVars.pCVarGammaBlend->value : 0.0f,
+			gCVars.pCVarGamma->value,
+			gCVars.pCVarBrightness->value,
+			gCVars.pCVarTexGamma->value,
+			gCVars.pCVarLightGamma->value
 		};
 		gCVars.pCVarDrawEntities->value = 0;
 		gCVars.pCVarDrawViewModel->value = 0;
 		gCVars.pCVarDrawDynamic->value = 0;
+		gCVars.pCVarGamma->value = gCVars.pRadarGamma->value;
+		gCVars.pCVarBrightness->value = gCVars.pRadarBrightness->value;
+		gCVars.pCVarTexGamma->value = gCVars.pRadarTexGamma->value;
+		gCVars.pCVarLightGamma->value = gCVars.pRadarLightGamma->value;
 		if (gCVars.pCVarFXAA)
 			gCVars.pCVarFXAA->value = 0;
 		if (gCVars.pCVarWater)
@@ -364,6 +377,7 @@ void CRadarPanel::RenderRadar()
 			gCVars.pCVarDeferredLighting->value = 0;
 		if (gCVars.pCVarGammaBlend)
 			gCVars.pCVarGammaBlend->value = 1;
+		//TODO: mask out map void to remove dark background entirely
 
 		MetaRenderer()->PushRefDef();
 
@@ -425,6 +439,10 @@ void CRadarPanel::RenderRadar()
 			gCVars.pCVarDeferredLighting->value = arySaveCvars[6];
 		if (gCVars.pCVarGammaBlend)
 			gCVars.pCVarGammaBlend->value = arySaveCvars[7];
+		gCVars.pCVarGamma->value = arySaveCvars[8];
+		gCVars.pCVarBrightness->value = arySaveCvars[9];
+		gCVars.pCVarTexGamma->value = arySaveCvars[10];
+		gCVars.pCVarLightGamma->value = arySaveCvars[11];
 
 		MetaRenderer()->EndDebugGroup();
 	}

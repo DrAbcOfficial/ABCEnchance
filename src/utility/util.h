@@ -139,6 +139,11 @@ using cl_cvars_t = struct{
 	cvar_t* pRadarAvatarSize;
 	cvar_t* pRadarAvatarScale;
 
+	cvar_t* pRadarGamma;
+	cvar_t* pRadarBrightness;
+	cvar_t* pRadarTexGamma;
+	cvar_t* pRadarLightGamma;
+
 	cvar_t* pCVarDevOverview;
 	cvar_t* pCVarDrawEntities;
 	cvar_t* pCVarDrawViewModel;
@@ -148,6 +153,10 @@ using cl_cvars_t = struct{
 	cvar_t* pCVarShadow;
 	cvar_t* pCVarDeferredLighting;
 	cvar_t* pCVarGammaBlend;
+	cvar_t* pCVarGamma;
+	cvar_t* pCVarBrightness;
+	cvar_t* pCVarTexGamma;
+	cvar_t* pCVarLightGamma;
 
 	cvar_t* pCVarAutoBunnyJump;
 #ifdef _DEBUG
