@@ -151,6 +151,11 @@ CRadarPanel::CRadarPanel()
 	m_pRadarImage = new CRadarMapImage();
 	m_pRadarImage->SetBaseTexture(m_RadarFBO.s_hBackBufferTex);
 	m_pMapground->SetImage(m_pRadarImage);
+	
+	m_vClearColor[0] = 0.0f;
+	m_vClearColor[1] = 0.0f;
+	m_vClearColor[2] = 0.0f;
+	m_vClearColor[3] = 1.0f;
 }
 
 CRadarPanel::~CRadarPanel() {
@@ -288,6 +293,12 @@ void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 	m_pRadarImage->SetColor(color);
 	SetFgColor(GetSchemeColor("Radar.FgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
 	SetBgColor(GetSchemeColor("Radar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
+	
+	auto clearColor = GetSchemeColor("Radar.ClearColor", Color(0, 0, 0, 255), pScheme);
+	m_vClearColor[0] = clearColor.r() / 255.0f;
+	m_vClearColor[1] = clearColor.g() / 255.0f;
+	m_vClearColor[2] = clearColor.b() / 255.0f;
+	m_vClearColor[3] = clearColor.a() / 255.0f;
 }
 
 const char* CRadarPanel::GetName()
@@ -345,7 +356,6 @@ void CRadarPanel::RenderRadar()
 			gCVars.pCVarDrawEntities->value,
 			gCVars.pCVarDrawViewModel->value,
 			gCVars.pCVarDrawDynamic->value,
-			gCVars.pCVarFXAA ? gCVars.pCVarFXAA->value : 0.0f,
 			gCVars.pCVarWater ? gCVars.pCVarWater->value : 0.0f,
 			gCVars.pCVarShadow ? gCVars.pCVarShadow->value : 0.0f,
 			gCVars.pCVarDeferredLighting ? gCVars.pCVarDeferredLighting->value : 0.0f,
@@ -354,8 +364,6 @@ void CRadarPanel::RenderRadar()
 		gCVars.pCVarDrawEntities->value = 0;
 		gCVars.pCVarDrawViewModel->value = 0;
 		gCVars.pCVarDrawDynamic->value = 0;
-		if (gCVars.pCVarFXAA)
-			gCVars.pCVarFXAA->value = 0;
 		if (gCVars.pCVarWater)
 			gCVars.pCVarWater->value = 0;
 		if (gCVars.pCVarShadow)
@@ -401,8 +409,7 @@ void CRadarPanel::RenderRadar()
 
 		MetaRenderer()->UploadCameraUBOData(&CameraUBO);
 
-		vec4_t vClearColor = { 0, 0, 0, 1 };
-		MetaRenderer()->ClearColorDepthStencil(vClearColor, 1, 0, STENCIL_MASK_ALL);
+		MetaRenderer()->ClearColorDepthStencil(m_vClearColor, 1, 0, STENCIL_MASK_ALL);
 		
 		MetaRenderer()->RenderScene();
 
@@ -415,16 +422,6 @@ void CRadarPanel::RenderRadar()
 		gCVars.pCVarDrawEntities->value = arySaveCvars[0];
 		gCVars.pCVarDrawViewModel->value = arySaveCvars[1];
 		gCVars.pCVarDrawDynamic->value = arySaveCvars[2];
-		if (gCVars.pCVarFXAA)
-			gCVars.pCVarFXAA->value = arySaveCvars[3];
-		if (gCVars.pCVarWater)
-			gCVars.pCVarWater->value = arySaveCvars[4];
-		if (gCVars.pCVarShadow)
-			gCVars.pCVarShadow->value = arySaveCvars[5];
-		if (gCVars.pCVarDeferredLighting)
-			gCVars.pCVarDeferredLighting->value = arySaveCvars[6];
-		if (gCVars.pCVarGammaBlend)
-			gCVars.pCVarGammaBlend->value = arySaveCvars[7];
 
 		MetaRenderer()->EndDebugGroup();
 	}

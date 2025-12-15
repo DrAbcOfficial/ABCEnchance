@@ -56,5 +56,7 @@ private:
 
 	vec3_t m_vecOverViewOrigin{};
 	vec3_t m_vecOverViewAngles{};
+	
+	vec4_t m_vClearColor{};
 };
 #endif

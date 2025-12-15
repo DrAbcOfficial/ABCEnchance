@@ -440,15 +440,12 @@ int HUD_VidInit(void)
 
 	//Fillup Default CVars
 	gCVars.pCvarDefaultFOV = CVAR_GET_POINTER("default_fov");
-	gCVars.pCVarDevOverview = CVAR_GET_POINTER("dev_overview");
 	gCVars.pCVarDrawEntities = CVAR_GET_POINTER("r_drawentities");
 	gCVars.pCVarDrawViewModel = CVAR_GET_POINTER("r_drawviewmodel");
 	gCVars.pCVarDrawDynamic = CVAR_GET_POINTER("r_dynamic");
-	gCVars.pCVarFXAA = CVAR_GET_POINTER("r_fxaa");
 	gCVars.pCVarWater = CVAR_GET_POINTER("r_water");
 	gCVars.pCVarShadow = CVAR_GET_POINTER("r_shadow");
 	gCVars.pCVarDeferredLighting = CVAR_GET_POINTER("r_deferred_lighting");
-	gCVars.pCVarGammaBlend = CVAR_GET_POINTER("r_gamma_blend");
 
 	int result = gExportfuncs.HUD_VidInit();
 	GetBaseViewPort()->VidInit();
