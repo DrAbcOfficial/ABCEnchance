@@ -63,15 +63,24 @@ void WeaponList::Add(Weapon* wp) {
     if (!wp) 
         return;
 
-    // 避免重复添加
-    if (m_dicWeaponIds.count(wp->iId)) 
+    // 避免重复添加 - 如果已存在相同ID的武器，直接返回
+    if (m_dicWeaponIds.count(wp->iId)) {
+        // 如果传入的是不同的指针但ID相同，这可能是一个错误
+        // 为了安全起见，我们不添加重复的武器
         return;
+    }
+
+    // 检查武器名称是否已存在
+    if (m_dicWeaponNames.count(wp->szName)) {
+        // 如果名称已存在但ID不同，这可能是配置错误
+        // 为了避免冲突，我们仍然添加但会在名称映射中覆盖
+    }
 
     m_dicWeaponIds[wp->iId] = wp;
     m_dicWeaponNames[wp->szName] = wp;
 
     auto& slot = m_slots[wp->iSlot];
-    // 处理位置冲突
+    // 处理位置冲突 - 如果位置被占用，寻找下一个可用位置
     while (slot.positions.count(wp->iSlotPos)) {
         wp->iSlotPos++;
     }
@@ -107,15 +116,21 @@ void WeaponsResource::Init() {
         this->SetAmmo(index, count);
     });
     g_EventWeaponList.append([&](Weapon* recived) {
+        if (!recived) 
+            return;
+        
         Weapon* wp = gWR.GetWeapon(recived->iId);
         if (!wp) {
+            // 创建新武器 - 只有在不存在时才创建
             Weapon* new_weapon = new Weapon();
             memcpy(new_weapon, recived, sizeof(Weapon));
             new_weapon->iClip = 0;
             this->AddWeapon(new_weapon);
         }
-        else
+        else {
+            // 更新现有武器数据
             this->UpdateWeapon(recived);
+        }
     });
     g_EventCustWeapon.append([&](int id, const char* name) {
         this->LoadWeaponSprites(id, name);
@@ -478,19 +493,28 @@ bool WeaponsResource::UpdateWeapon(const Weapon* newWeaponData) {
 
     size_t originalSlot = existingWeapon->iSlot;
     size_t originalPos = existingWeapon->iSlotPos;
+    
+    // 检查是否在拥有的武器列表中
+    bool wasOwned = m_pOwnedWeaponData.Has(originalSlot, originalPos);
+    bool wasAvailable = m_pAviliableWeaponData.Has(originalSlot, originalPos);
 
-    *existingWeapon = *newWeaponData;
-
+    // 先从所有列表中移除
     m_pWeaponData.Remove(existingWeapon);
-    if (m_pOwnedWeaponData.Has(originalSlot, originalPos)) {
+    if (wasOwned) {
         m_pOwnedWeaponData.Remove(existingWeapon);
     }
-    if (m_pAviliableWeaponData.Has(originalSlot, originalPos)) {
+    if (wasAvailable) {
         m_pAviliableWeaponData.Remove(existingWeapon);
     }
 
+    // 更新武器数据
+    *existingWeapon = *newWeaponData;
+
+    // 重新添加到主列表
     m_pWeaponData.Add(existingWeapon);
-    if (HasWeapon(originalSlot, originalPos)) {
+    
+    // 如果之前拥有该武器，重新添加到拥有列表
+    if (wasOwned) {
         m_pOwnedWeaponData.Add(existingWeapon);
     }
 
