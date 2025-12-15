@@ -1,5 +1,5 @@
 #include <metahook.h>
-#include <triangleapi.h>
+#include <algorithm>
 
 #include "vgui_controls/Panel.h"
 
@@ -7,6 +7,8 @@
 #include "spr_image.h"
 
 using namespace vgui;
+
+#undef clamp
 
 CSPRImage::CSPRImage() {
 
@@ -24,7 +26,7 @@ void CSPRImage::SetTextureID(int id) {
 	if (m_nRight <= 0)
 		m_nRight = gEngfuncs.pfnSPR_Width(m_iTextureID, 0);
 	if (m_nBottom <= 0)
-		m_nBottom = gEngfuncs.pfnSPR_Width(m_iTextureID, 0);
+		m_nBottom = gEngfuncs.pfnSPR_Height(m_iTextureID, 0);
 }
 void CSPRImage::LoadSprImage(const char *pFilePath){
 	m_szPath = pFilePath;
@@ -62,12 +64,17 @@ void CSPRImage::Animate(){
 		if (m_bSequenceLoop)
 			m_flFrame -= (int)(m_flFrame / m_iAllFrames) * m_iAllFrames;
 		else
-			m_flFrame = (m_flFrame < 0) ? 0.0f : 255.0f;
+			m_flFrame = (m_flFrame < 0) ? 0.0f : (float)(m_iAllFrames - 1);
 	}
 }
 
 void CSPRImage::SetFrame(float flFrame){
-	m_flFrame = flFrame;
+	if (flFrame < 0.0f)
+		m_flFrame = 0.0f;
+	else if (m_iAllFrames > 0 && flFrame >= m_iAllFrames)
+		m_flFrame = (float)(m_iAllFrames - 1);
+	else
+		m_flFrame = flFrame;
 }
 
 void CSPRImage::SetRect(int l, int r, int t, int b){
@@ -86,6 +93,7 @@ void CSPRImage::SetRenderMode(int mode){
 }
 
 void CSPRImage::Paint(){
+	Animate();
 	if (m_iTextureID != -1){
 		float h = (float)gEngfuncs.pfnSPR_Height(m_iTextureID, (int)m_flFrame);
 		float w = (float)gEngfuncs.pfnSPR_Width(m_iTextureID, (int)m_flFrame);
@@ -96,11 +104,13 @@ void CSPRImage::Paint(){
 		float flBottom = static_cast<float>(rect.bottom) / h;
 		int r, g, b, a;
 		m_Color.GetColor(r, g, b, a);
-		a *= surface()->DrawGetAlphaMultiplier();
+		float fa = static_cast<float>(a);
+		fa *= surface()->DrawGetAlphaMultiplier();
+		fa = std::clamp(fa, 0.0f, 255.0f);
 
 		extern void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom,
 			unsigned char r, unsigned char g, unsigned char b, unsigned char a, int frame);
-		DrawSPRIconRect(m_iTextureID, m_iRenderMode, m_nX, m_nY, m_wide, m_tall, flLeft, flRight, flTop, flBottom, r, g, b, a, m_flFrame);
+		DrawSPRIconRect(m_iTextureID, m_iRenderMode, m_nX, m_nY, m_wide, m_tall, flLeft, flRight, flTop, flBottom, r, g, b, static_cast<byte>(fa), m_flFrame);
 	}
 }
 
