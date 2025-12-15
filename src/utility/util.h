@@ -68,9 +68,6 @@ using cl_refHookfunc_t = struct{
 	void (*R_NewMap)					();
 	model_t* (*CL_GetModelByIndex)		(int index);
 #pragma endregion
-#pragma region GameUI
-void* (__fastcall* CBasePanel_ctor)(void* pthis, int dummy);
-#pragma endregion
 };
 
 //CVars
