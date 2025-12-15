@@ -140,7 +140,6 @@ CRadarPanel::CRadarPanel()
 		GetBaseViewPort()->GetRadarPanel()->SetAvatarVisible(cvar->value);
 		});
 	gCVars.pRadarAvatarSize = CREATE_CVAR("hud_radar_avatarsize", "20", FCVAR_VALUE, nullptr);
-	gCVars.pRadarAvatarScale = CREATE_CVAR("hud_radar_avatarscale", "0.2", FCVAR_VALUE, nullptr);
 
 	m_pBackground = new vgui::ImagePanel(this, "Background");
 	m_pRoundBackground = new vgui::ImagePanel(this, "RoundBackground");
@@ -229,6 +228,7 @@ void CRadarPanel::Paint()
 
 		int size = GetWide();
 
+		// Position north indicator
 		int nw, nh;
 		m_pNorthground->GetSize(nw, nh);
 		int len = GetWide() - nw;
@@ -265,27 +265,64 @@ void CRadarPanel::Paint()
 			iter->SetPlayer(i + 1, vgui::k_EAvatarSize32x32);
 			iter->SetVisible(true);
 
-			float size = GetWide();
-			float Length = size / 2;
-			float ww = gCVars.pRadarAvatarSize->value;
-			float w = ww / 2;
-			Vector vecLength = entity->curstate.origin;
-			vecLength -= local->curstate.origin;
-			Vector vecAngle;
-			CMathlib::VectorAngles(vecLength, vecAngle);
-			float nyaw = CMathlib::Q_DEG2RAD(vecAngle[CMathlib::Q_YAW] - local->curstate.angles[CMathlib::Q_YAW] + 90);
-
-			std::swap(vecLength.x, vecLength.y);
-			vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
-			vecLength.z = 0;
-			float vlen = vecLength.Length();
-			int ale = GetWide() - ww;
-			int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : sqrt(2 * pow(vlen, 2)) / 2;
-			int atx = std::clamp((Length - w + ahh * cos(nyaw)), 0.0f, static_cast<float>(ale));
-			int aty = std::clamp((Length - w + ahh * sin(nyaw)), 0.0f, static_cast<float>(ale));
-			aty = ale - aty;
-			iter->SetPos(atx, aty);
-			iter->SetSize(ww, ww);
+			// Calculate position on radar
+			float radarSize = GetWide();
+			float radarCenter = radarSize / 2.0f;
+			float avatarSize = gCVars.pRadarAvatarSize->value;
+			float avatarHalf = avatarSize / 2.0f;
+			
+			// Get relative position vector
+			Vector relativePos = entity->curstate.origin;
+			relativePos -= local->curstate.origin;
+			
+			// Apply radar scale - this should match the radar rendering scale
+			float zoom = gCVars.pRadarZoom->value;
+			float worldSize = 4096.0f / zoom;
+			float radarScale = radarSize / (2.0f * worldSize);
+			
+			// Convert world coordinates to radar coordinates
+			// In Half-Life: X is forward/back, Y is left/right, Z is up/down
+			// For radar: X should be left/right, Y should be forward/back (top-down view)
+			float radarX = relativePos.y;   // World Y (left/right) becomes radar X
+			float radarY = relativePos.x;   // World X (forward/back) becomes radar Y
+			
+			// Rotate based on local player's yaw angle
+			// We need to rotate the relative position so that "forward" is always up on the radar
+			float localYaw = CMathlib::Q_DEG2RAD(-local->curstate.angles[CMathlib::Q_YAW]);
+			float cosYaw = cos(localYaw);
+			float sinYaw = sin(localYaw);
+			
+			// Apply rotation matrix to align with player's view direction
+			float rotatedX = radarX * cosYaw - radarY * sinYaw;
+			float rotatedY = radarX * sinYaw + radarY * cosYaw;
+			
+			// Convert to screen coordinates (center of radar + offset)
+			// Note: Screen Y axis points down, so we invert rotatedY
+			float screenX = radarCenter + rotatedX - avatarHalf;
+			float screenY = radarCenter - rotatedY - avatarHalf;
+			
+			// Clamp to radar bounds
+			float maxPos = radarSize - avatarSize;
+			screenX = std::clamp(screenX, 0.0f, maxPos);
+			screenY = std::clamp(screenY, 0.0f, maxPos);
+			
+			// Handle circular radar clipping
+			if (gCVars.pRadar->value > 1) {
+				float dx = screenX + avatarHalf - radarCenter;
+				float dy = screenY + avatarHalf - radarCenter;
+				float distance = sqrt(dx * dx + dy * dy);
+				float maxRadius = radarCenter - avatarHalf;
+				
+				if (distance > maxRadius) {
+					// Scale position to fit within circle
+					float ratio = maxRadius / distance;
+					screenX = radarCenter + dx * ratio - avatarHalf;
+					screenY = radarCenter + dy * ratio - avatarHalf;
+				}
+			}
+			
+			iter->SetPos(static_cast<int>(screenX), static_cast<int>(screenY));
+			iter->SetSize(avatarSize, avatarSize);
 		}
 	}
 	if(gCVars.pRadar->value > 1)
@@ -371,8 +408,8 @@ void CRadarPanel::RenderRadar()
 		m_vecOverViewOrigin[2] += 72;
 
 		VectorCopy(local->curstate.angles, m_vecOverViewAngles);
-		m_vecOverViewAngles[0] = 90;
-		m_vecOverViewAngles[2] = 0;
+		m_vecOverViewAngles[0] = 90;  // Look straight down
+		m_vecOverViewAngles[2] = 0;   // No roll
 
 		float arySaveCvars[] = {
 			gCVars.pCVarDrawEntities->value,
@@ -407,12 +444,13 @@ void CRadarPanel::RenderRadar()
 		MetaRenderer()->LoadIdentityForProjectionMatrix();
 		//MetaRenderer()->SetupOrthoProjectionMatrix(-1024 / 2, 1024 / 2, -1024 / 2, 1024 / 2, 2048, -2048, true);
 
-		float scale = gCVars.pRadarZoom->value;
+		float zoom = gCVars.pRadarZoom->value;
+		float worldSize = 4096.0f / zoom;
 		MetaRenderer()->SetupOrthoProjectionMatrix(
-			-(4096.0 / scale),
-			(4096.0 / scale),
-			-(4096.0 / scale),
-			(4096.0 / scale),
+			-worldSize,
+			worldSize,
+			-worldSize,
+			worldSize,
 			2048, 
 			-2048,
 			true);
