@@ -22,6 +22,7 @@
 #include "radar.h"
 
 #undef clamp
+#undef max
 
 class CRadarMapImage : public vgui::IImage_HL25
 {
@@ -40,7 +41,12 @@ public:
 	{
 		if (MetaRenderer())
 		{
-			vec4_t vColor4f = { m_DrawColor.r() / 255.0f, m_DrawColor.g() / 255.0f ,m_DrawColor.b() / 255.0f ,m_DrawColor.a() / 255.0f };
+			vec4_t vColor4f = { 
+				(m_DrawColor.r() / 255.0f) * m_flBrightness, 
+				(m_DrawColor.g() / 255.0f) * m_flBrightness, 
+				(m_DrawColor.b() / 255.0f) * m_flBrightness, 
+				m_DrawColor.a() / 255.0f 
+			};
 			MetaRenderer()->DrawTexturedQuadMask(
 				m_BaseTexture,
 				m_MaskTexture,
@@ -86,6 +92,10 @@ public:
 		m_MaskTexture = tex;
 	}
 
+	void SetBrightness(float brightness) {
+		m_flBrightness = std::max(0.0f, brightness);
+	}
+
 private:
 	int m_iX = 0, m_iY = 0;
 	int m_iWide = 0, m_iTall = 0;
@@ -94,6 +104,7 @@ private:
 	uint m_MaskTexture{};
 
 	Color m_DrawColor = Color(255, 255, 255, 255);
+	float m_flBrightness = 1.0f;
 };
 
 constexpr auto VIEWPORT_RADAR_NAME = "RadarPanel";
@@ -150,6 +161,7 @@ CRadarPanel::CRadarPanel()
 
 	m_pRadarImage = new CRadarMapImage();
 	m_pRadarImage->SetBaseTexture(m_RadarFBO.s_hBackBufferTex);
+	m_pRadarImage->SetBrightness(m_flBrightness);
 	m_pMapground->SetImage(m_pRadarImage);
 	
 	m_vClearColor[0] = 0.0f;
@@ -285,6 +297,9 @@ void CRadarPanel::ApplySettings(KeyValues* inResourceData)
 	m_iScaledWidth = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_wide", 300));
 	m_iScaledTall = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_tall", 300));
 	m_flBrightness = inResourceData->GetFloat("radar_brightness", 1.0f);
+	if (m_pRadarImage) {
+		m_pRadarImage->SetBrightness(m_flBrightness);
+	}
 }
 
 void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
@@ -292,6 +307,7 @@ void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
 	BaseClass::ApplySchemeSettings(pScheme);
 	auto color = GetSchemeColor("Radar.MapColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme);
 	m_pRadarImage->SetColor(color);
+	m_pRadarImage->SetBrightness(m_flBrightness);
 	SetFgColor(GetSchemeColor("Radar.FgColor", GetSchemeColor("Panel.FgColor", pScheme), pScheme));
 	SetBgColor(GetSchemeColor("Radar.BgColor", GetSchemeColor("Panel.BgColor", pScheme), pScheme));
 	

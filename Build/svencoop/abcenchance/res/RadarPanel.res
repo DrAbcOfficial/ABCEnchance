@@ -15,6 +15,7 @@
 		"radar_roundradius"		"100.0"
 		"scaled_wide"	"300"
 		"scaled_tall"	"300"
+		"radar_brightness" "1"
 	}
 	
 	"Background"
