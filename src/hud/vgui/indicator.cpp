@@ -224,6 +224,16 @@ void CIndicatorPanel::Reset() {
 	memset(m_vecHitFrom, 0, sizeof(m_vecHitFrom));
 	m_iDamage = 0;
 	m_iArmor = 0;
+	
+	// 重置所有动画时间和面板状态
+	for (size_t i = 0; i < m_aryImagePanels.size(); ++i) {
+		m_flAnimationStartTime[i] = 0.0f;
+		if (m_aryImagePanels[i]) {
+			vgui::GetAnimationController()->CancelAnimationsForPanel(m_aryImagePanels[i]);
+			m_aryImagePanels[i]->SetAlpha(0);
+			m_aryImagePanels[i]->SetVisible(false);
+		}
+	}
 }
 void CIndicatorPanel::ShowPanel(bool state) {
 	if (state == IsVisible())
@@ -240,6 +250,30 @@ void CIndicatorPanel::SetParent(vgui::VPANEL parent) {
 	BaseClass::SetParent(parent);
 }
 
+void CIndicatorPanel::OnThink() {
+    BaseClass::OnThink();
+    
+    // 检查每个面板的动画状态
+    if (!gEngfuncs.GetClientTime)
+        return;
+        
+    float currentTime = gEngfuncs.GetClientTime();
+    for (size_t i = 0; i < m_aryImagePanels.size(); ++i) {
+        auto panel = m_aryImagePanels[i];
+        if (panel && panel->IsVisible() && m_flAnimationStartTime[i] > 0.0f) {
+            float elapsedTime = currentTime - m_flAnimationStartTime[i];
+            float totalAnimationTime = m_flKeepTime + m_flFadeTime;
+            
+            // 如果动画已完成，确保alpha值设置为0并隐藏面板
+            if (elapsedTime >= totalAnimationTime) {
+                panel->SetAlpha(0);
+                panel->SetVisible(false);
+                m_flAnimationStartTime[i] = 0.0f; // 重置动画时间
+            }
+        }
+    }
+}
+
 void CIndicatorPanel::SetHitIndicator(int damage, int armor, const float vecFrom[3]){
     m_iDamage = damage;
     m_iArmor = armor;
@@ -247,11 +281,20 @@ void CIndicatorPanel::SetHitIndicator(int damage, int armor, const float vecFrom
     auto img = reinterpret_cast<IndicatorImage*>(panel->GetImage());
     if (panel && img) {
         img->SetHitFrom(vecFrom);
+        
+        // 确保面板可见并取消之前的动画
         if (!panel->IsVisible())
             panel->SetVisible(true);
-        //vgui::GetAnimationController()->CancelAnimationsForPanel(panel);
-		panel->SetAlpha(255);
-        vgui::GetAnimationController()->RunAnimationCommand(panel, "alpha", 0, m_flKeepTime, m_flFadeTime, vgui::AnimationController::INTERPOLATOR_LINEAR);
+        vgui::GetAnimationController()->CancelAnimationsForPanel(panel);
+        
+        // 设置初始alpha值并启动淡出动画
+        panel->SetAlpha(255);
+        vgui::GetAnimationController()->RunAnimationCommand(panel, "alpha", 0, m_flKeepTime, m_flFadeTime, 
+            vgui::AnimationController::INTERPOLATOR_LINEAR);
+        
+        // 记录动画开始时间，用于后续检查
+        if (gEngfuncs.GetClientTime)
+            m_flAnimationStartTime[m_iIndex] = gEngfuncs.GetClientTime();
     }
     m_iIndex++;
     if (m_iIndex >= m_aryImagePanels.size())

@@ -27,8 +27,10 @@ public:
 	virtual void SetParent(vgui::VPANEL parent) override;
 
 	void SetHitIndicator(int damage, int armor, const float vecFrom[3]);
+	virtual void OnThink() override;
 private:
 	std::array<vgui::ImagePanel*, 4> m_aryImagePanels;
+	std::array<float, 4> m_flAnimationStartTime{};
 	size_t m_iIndex = 0;
 	int m_iTex;
 	float m_flFadeTime = 1.0f;
