@@ -284,6 +284,7 @@ void CRadarPanel::ApplySettings(KeyValues* inResourceData)
 	GetSize(m_iStartWidth, m_iStartTall);
 	m_iScaledWidth = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_wide", 300));
 	m_iScaledTall = vgui::scheme()->GetProportionalScaledValue(inResourceData->GetInt("scaled_tall", 300));
+	m_flBrightness = inResourceData->GetFloat("radar_brightness", 1.0f);
 }
 
 void CRadarPanel::ApplySchemeSettings(vgui::IScheme* pScheme)
@@ -359,7 +360,6 @@ void CRadarPanel::RenderRadar()
 			gCVars.pCVarWater ? gCVars.pCVarWater->value : 0.0f,
 			gCVars.pCVarShadow ? gCVars.pCVarShadow->value : 0.0f,
 			gCVars.pCVarDeferredLighting ? gCVars.pCVarDeferredLighting->value : 0.0f,
-			gCVars.pCVarGammaBlend ? gCVars.pCVarGammaBlend->value : 0.0f,
 		};
 		gCVars.pCVarDrawEntities->value = 0;
 		gCVars.pCVarDrawViewModel->value = 0;
@@ -370,8 +370,6 @@ void CRadarPanel::RenderRadar()
 			gCVars.pCVarShadow->value = 0;
 		if (gCVars.pCVarDeferredLighting)
 			gCVars.pCVarDeferredLighting->value = 0;
-		if (gCVars.pCVarGammaBlend)
-			gCVars.pCVarGammaBlend->value = 1;
 
 		MetaRenderer()->PushRefDef();
 
@@ -422,6 +420,9 @@ void CRadarPanel::RenderRadar()
 		gCVars.pCVarDrawEntities->value = arySaveCvars[0];
 		gCVars.pCVarDrawViewModel->value = arySaveCvars[1];
 		gCVars.pCVarDrawDynamic->value = arySaveCvars[2];
+		gCVars.pCVarWater->value = arySaveCvars[3];
+		gCVars.pCVarShadow->value = arySaveCvars[4];
+		gCVars.pCVarDeferredLighting->value = arySaveCvars[5];
 
 		MetaRenderer()->EndDebugGroup();
 	}

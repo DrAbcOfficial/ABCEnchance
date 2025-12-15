@@ -58,5 +58,7 @@ private:
 	vec3_t m_vecOverViewAngles{};
 	
 	vec4_t m_vClearColor{};
+
+	float m_flBrightness{};
 };
 #endif
