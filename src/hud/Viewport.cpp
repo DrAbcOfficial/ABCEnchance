@@ -103,6 +103,9 @@ void CViewport::Start(void){
 #pragma region MyRegion
 	g_EventPlayerInfoChanged.append([&](PlayerInfo* info) {
 		this->m_pScorePanel->UpdateOnPlayerInfo(info->m_iIndex);
+		if (this->m_pRadar) {
+			this->m_pRadar->RefreshAvatars();
+		}
 		});
 	g_EventAmmoX.append([&](int, int) {
 		this->m_pAmmoPanel->RefreshAmmo();

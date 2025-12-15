@@ -35,6 +35,7 @@ public:
 	void RenderRadar();
 	void SetScale(bool state);
 	void SetAvatarVisible(bool state);
+	void RefreshAvatars();
 private:
 	vgui::ImagePanel* m_pBackground{};
 	vgui::ImagePanel* m_pRoundBackground{};

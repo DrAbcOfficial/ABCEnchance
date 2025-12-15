@@ -149,7 +149,7 @@ CRadarPanel::CRadarPanel()
 	m_pViewangleground = new vgui::ImagePanel(this, "Viewangleground");
 	for (size_t i = 0; i < 32; i++) {
 		m_aryPlayerAvatars[i] = new vgui::CAvatarImagePanel(this, "Avatar");
-		m_aryPlayerAvatars[i]->SetVisible(true);
+		m_aryPlayerAvatars[i]->SetVisible(false);
 		m_aryPlayerAvatars[i]->SetShouldScaleImage(true);
 	}
 	LoadControlSettings(VGUI2_ROOT_DIR "RadarPanel.res");
@@ -238,49 +238,54 @@ void CRadarPanel::Paint()
 		int sty = std::clamp(((size / 2.0f) + hh * sin(rotate)), 0.0f, (float)len);
 		m_pNorthground->SetPos(stx, sty);
 
-		if (gCVars.pRadarAvatar->value > 0) {
+		// Handle avatar display
+		for (size_t i = 0; i < 32; i++) {
+			auto iter = m_aryPlayerAvatars[i];
+			if (gCVars.pRadarAvatar->value <= 0) {
+				iter->SetVisible(false);
+				continue;
+			}
+			
+			PlayerInfo* pi = gPlayerRes.GetPlayerInfo(i + 1);
+			if (!pi->IsValid()) {
+				iter->SetVisible(false);
+				continue;
+			}
+			PlayerInfo* lpi = gPlayerRes.GetLocalPlayerInfo();
+			if (pi->m_iTeamNumber != lpi->m_iTeamNumber) {
+				iter->SetVisible(false);
+				continue;
+			}
+			
+			cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i + 1);
+			if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->player || !entity->model || local == entity) {
+				iter->SetVisible(false);
+				continue;
+			}
+			iter->SetPlayer(i + 1, vgui::k_EAvatarSize32x32);
+			iter->SetVisible(true);
+
 			float size = GetWide();
 			float Length = size / 2;
 			float ww = gCVars.pRadarAvatarSize->value;
 			float w = ww / 2;
-			for (size_t i = 0; i < 32; i++) {
-				auto iter = m_aryPlayerAvatars[i];
-				PlayerInfo* pi = gPlayerRes.GetPlayerInfo(i + 1);
-				if (!pi->IsValid()) {
-					iter->SetVisible(false);
-					continue;
-				}
-				PlayerInfo* lpi = gPlayerRes.GetLocalPlayerInfo();
-				if (pi->m_iTeamNumber != lpi->m_iTeamNumber) {
-					iter->SetVisible(false);
-					continue;
-				}
-				//Avatar
-				cl_entity_t* entity = gEngfuncs.GetEntityByIndex(i + 1);
-				if (!entity || entity->curstate.messagenum != local->curstate.messagenum || !entity->player || !entity->model || local == entity) {
-					iter->SetVisible(false);
-					continue;
-				}
-				iter->SetVisible(true);
+			Vector vecLength = entity->curstate.origin;
+			vecLength -= local->curstate.origin;
+			Vector vecAngle;
+			CMathlib::VectorAngles(vecLength, vecAngle);
+			float nyaw = CMathlib::Q_DEG2RAD(vecAngle[CMathlib::Q_YAW] - local->curstate.angles[CMathlib::Q_YAW] + 90);
 
-				Vector vecLength = entity->curstate.origin;
-				vecLength -= local->curstate.origin;
-				Vector vecAngle;
-				CMathlib::VectorAngles(vecLength, vecAngle);
-				float nyaw = CMathlib::Q_DEG2RAD(vecAngle[CMathlib::Q_YAW] - local->curstate.angles[CMathlib::Q_YAW] + 90);
-
-				std::swap(vecLength.x, vecLength.y);
-				vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
-				vecLength.z = 0;
-				float vlen = vecLength.Length();
-				int ale = GetWide() - ww;
-				int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : sqrt(2 * pow(vlen, 2)) / 2;
-				int atx = std::clamp((Length - w + ahh * cos(nyaw)), 0.0f, static_cast<float>(ale));
-				int aty = std::clamp((Length - w + ahh * sin(nyaw)), 0.0f, static_cast<float>(ale));
-				aty = ale - aty;
-				iter->SetPos(atx, aty);
-				iter->SetSize(ww, ww);
-			}
+			std::swap(vecLength.x, vecLength.y);
+			vecLength *= (-1.0f * gCVars.pRadarAvatarScale->value);
+			vecLength.z = 0;
+			float vlen = vecLength.Length();
+			int ale = GetWide() - ww;
+			int ahh = gCVars.pRadar->value > 1 ? vlen / 2 : sqrt(2 * pow(vlen, 2)) / 2;
+			int atx = std::clamp((Length - w + ahh * cos(nyaw)), 0.0f, static_cast<float>(ale));
+			int aty = std::clamp((Length - w + ahh * sin(nyaw)), 0.0f, static_cast<float>(ale));
+			aty = ale - aty;
+			iter->SetPos(atx, aty);
+			iter->SetSize(ww, ww);
 		}
 	}
 	if(gCVars.pRadar->value > 1)
@@ -456,6 +461,15 @@ void CRadarPanel::SetScale(bool state)
 void CRadarPanel::SetAvatarVisible(bool state)
 {
 	for (auto iter = m_aryPlayerAvatars.begin(); iter != m_aryPlayerAvatars.end(); iter++) {
-		(*iter)->SetVisible(state);
+		if (!state) {
+			(*iter)->SetVisible(false);
+		}
+	}
+}
+
+void CRadarPanel::RefreshAvatars()
+{
+	for (auto iter = m_aryPlayerAvatars.begin(); iter != m_aryPlayerAvatars.end(); iter++) {
+		(*iter)->ClearAvatar();
 	}
 }

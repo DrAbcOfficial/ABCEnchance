@@ -129,6 +129,12 @@ void CAvatarImage::LoadAvatarImage()
 	// attempt to retrieve the avatar image from Steam
 	if (m_bLoadPending && gEngfuncs.GetClientTime() >= m_fNextLoadTime)
 	{
+		// Check if Steam is available
+		if (!SteamFriends() || !SteamUtils()) {
+			m_fNextLoadTime = gEngfuncs.GetClientTime() + 5.0f; // Retry in 5 seconds
+			return;
+		}
+		
 		if (!SteamFriends()->RequestUserInformation(m_SteamID, false))
 		{
 			int iAvatar = 0;
@@ -145,7 +151,7 @@ void CAvatarImage::LoadAvatarImage()
 				break;
 			}
 
-			//Msg( "Got avatar %d for SteamID %llud (%s)\n", iAvatar, m_SteamID.ConvertToUint64(), SteamFriends()->GetFriendPersonaName( m_SteamID ) );
+			//gEngfuncs.Con_Printf("Loading avatar %d for SteamID %llu\n", iAvatar, m_SteamID.ConvertToUint64());
 
 			if (iAvatar > 0) // if its zero, user doesn't have an avatar.  If -1, Steam is telling us that it's fetching it
 			{
@@ -158,6 +164,10 @@ void CAvatarImage::LoadAvatarImage()
 						InitFromRGBA(iAvatar, rgbDest, wide, tall);
 					delete[] rgbDest;
 				}
+			}
+			else if (iAvatar == 0) {
+				// User has no avatar, stop trying to load
+				m_bLoadPending = false;
 			}
 		}
 
@@ -299,12 +309,20 @@ CAvatarImagePanel::CAvatarImagePanel(vgui::Panel *parent, const char *name)
 //-----------------------------------------------------------------------------
 void CAvatarImagePanel::SetPlayer(int entindex, EAvatarSize avatarSize)
 {
-	if (!entindex)
+	if (!entindex) {
 		m_pImage->ClearAvatarSteamID();
-	auto info = gPlayerRes.GetPlayerInfo(entindex);
-	if (!info->IsValid())
 		return;
-	uint64 steamID64 = info->Update()->m_pSteamId.ConvertToUint64();
+	}
+	
+	auto info = gPlayerRes.GetPlayerInfo(entindex);
+	if (!info->IsValid()) {
+		m_pImage->ClearAvatarSteamID();
+		return;
+	}
+	
+	// Update player info to ensure we have the latest Steam ID
+	info->Update();
+	uint64 steamID64 = info->m_pSteamId.ConvertToUint64();
 
 	if (steamID64 && SteamUtils())
 	{
