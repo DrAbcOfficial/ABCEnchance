@@ -79,10 +79,6 @@ static int __fastcall R_CrossHair_ReDraw(void* pthis, int dummy, int param_1) {
 		return 0;
 	return gHookFuncs.R_CrossHair_ReDraw(pthis, dummy, param_1);
 }
-static void __fastcall TFV_ShowScoreBoard(void* pthis) {
-	return;
-	//gHookFuncs.TFV_ShowScoreBoard(pthis);
-}
 static void __fastcall TFV_ShowVGUIMenu(void* pthis, int dummy, int iVguiMenu) {
 	switch (iVguiMenu) {
 		//MissionBrief
@@ -151,8 +147,6 @@ void FillEngineAddress() {
 		Fill_Sig(R_NEWMAP_SIG, g_dwEngineBase, g_dwEngineSize, R_NewMap);
 #define CL_FINDMODELBYINDEX_SIG "\x83\xEC\x08\x56\x57\x8B\x7C\x24\x14\x8B\x34\xBD\x2A\x2A\x2A\x2A\x85\xF6\x75\x08\x5F\x33\xC0\x5E\x83\xC4\x08\xC3"
 		Fill_Sig(CL_FINDMODELBYINDEX_SIG, g_dwEngineBase, g_dwEngineSize, CL_GetModelByIndex);
-#define CEngineClient_RenderView_SIG "\xFF\x74\x24\x04\x2A\x2A\x2A\x2A\x2A\x83\xC4\x04\x2A\x2A\x2A\x2A\x2A\x80\x7C\x24\x08\x00\xD9\xEE\x2A\x2A\x83\xEC\x10\xD9\x54\x24\x0C\xD9"
-		Fill_Sig(CEngineClient_RenderView_SIG, g_dwEngineBase, g_dwEngineSize, CEngineClient_RenderView);
 #define R_GetSpriteFrame_SIG "\x56\x8B\x2A\x2A\x2A\x2A\x33\xFF\x85\xF6\x75\x12\x68"
 		Fill_Sig(R_GetSpriteFrame_SIG, g_dwEngineBase, g_dwEngineSize, R_GetSpriteFrame);
 		DWORD addr;
@@ -187,8 +181,6 @@ void FillAddress() {
 		Fill_Sig(R_EVVECTORSCALE_SIG, g_dwClientBase, g_dwClientSize, EVVectorScale);
 #define R_CROSSHAIR_REDRAW_SIG "\x8B\x51\x14\x85\xD2\x0F\x84\x8B\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\xF3\x0F\x2C\x40\x0C\x85\xC0\x7E\x2A\x83\x3D\x2A\x2A\x2A\x2A\x00\x53\x56\x57\x74\x2A\x80\x3D\x2A\x2A\x2A\x2A\x00\x75\x2A\xF3\x0F\x2C\x79\x34\xF3\x0F\x2C\x59\x38\xEB\x2A"
 		Fill_Sig(R_CROSSHAIR_REDRAW_SIG, g_dwClientBase, g_dwClientSize, R_CrossHair_ReDraw);
-#define TFV_SHOWSCOREBOARD_SIG "\x56\x8B\xF1\x8B\x8E\x2C\x2A\x00\x00\x85\xC9\x74\x0D\xE8\x2A\x2A\xFF\xFF\x8B\xCE\x5E\xE9\x2A\x2A\xFF\xFF\x5E\xC3\xCC\xCC\xCC\xCC"
-		Fill_Sig(TFV_SHOWSCOREBOARD_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowScoreBoard);
 #define TFV_SHOWVGUIMENU_SHIT_SIG "\xA1\x2A\x2A\x2A\x2A\x57\x8B\xF9\x8B\x40\x04\xFF\xD0\x85\xC0\x0F\x85\x2A\x2A\x2A\x2A\x55\x8B\x6C\x24\x0C\x39\x05"
 		Fill_Sig(TFV_SHOWVGUIMENU_SHIT_SIG, g_dwClientBase, g_dwClientSize, TFV_ShowVGUIMenu);
 #define Client_SoundEngine_Initialize_SIG "\x81\xEC\x8C\x00\x00\x00\xA1\x2A\x2A\x2A\x2A\x33\xC4\x89\x84\x24\x88\x00\x00\x00\x53\x57\x6A\x00"
@@ -245,7 +237,6 @@ void InstallClientHook() {
 	Install_InlineHook(CClient_SoundEngine_PlayFMODSound);
 	Install_InlineHook(CClient_SoundEngine_Initialize);
 	Install_InlineHook(R_CrossHair_ReDraw);
-	Install_InlineHook(TFV_ShowScoreBoard);
 	Install_InlineHook(TFV_ShowVGUIMenu);
 }
 void UninstallEngineHook() {
