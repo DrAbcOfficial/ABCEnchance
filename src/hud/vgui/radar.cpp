@@ -283,8 +283,9 @@ void CRadarPanel::Paint()
 			// Convert world coordinates to radar coordinates
 			// In Half-Life: X is forward/back, Y is left/right, Z is up/down
 			// For radar: X should be left/right, Y should be forward/back (top-down view)
-			float radarX = relativePos.y;   // World Y (left/right) becomes radar X
-			float radarY = relativePos.x;   // World X (forward/back) becomes radar Y
+			// We invert radarY to fix north/south direction
+			float radarX = -relativePos.y;   // World Y (left/right) becomes radar X
+			float radarY = relativePos.x;  // World X (forward/back) becomes radar Y (inverted for correct north/south)
 			
 			// Rotate based on local player's yaw angle
 			// We need to rotate the relative position so that "forward" is always up on the radar
@@ -296,10 +297,14 @@ void CRadarPanel::Paint()
 			float rotatedX = radarX * cosYaw - radarY * sinYaw;
 			float rotatedY = radarX * sinYaw + radarY * cosYaw;
 			
+			// Apply radar scale to match the radar rendering scale
+			float scaledX = rotatedX * radarScale;
+			float scaledY = rotatedY * radarScale;
+			
 			// Convert to screen coordinates (center of radar + offset)
 			// Note: Screen Y axis points down, so we invert rotatedY
-			float screenX = radarCenter + rotatedX - avatarHalf;
-			float screenY = radarCenter - rotatedY - avatarHalf;
+			float screenX = radarCenter + scaledX - avatarHalf;
+			float screenY = radarCenter - scaledY - avatarHalf;
 			
 			// Clamp to radar bounds
 			float maxPos = radarSize - avatarSize;
