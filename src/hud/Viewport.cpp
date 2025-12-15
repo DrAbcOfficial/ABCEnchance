@@ -317,8 +317,12 @@ void CViewport::Start(void){
 		}
 		}
 		});
-	g_EventCmdSlot.append([&](int) {
-		return this->IsTextMenuOpen();
+	g_EventCmdSlot.append([&](int slot) {
+		if (this->IsTextMenuOpen()) {
+			this->SelectMenuItem(slot + 1);
+			return false;
+		}
+		return true;
 		});
 	g_EventCmdMissionBrief.append([&]() {
 		this->ShowMOTD();

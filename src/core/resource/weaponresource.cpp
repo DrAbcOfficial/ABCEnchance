@@ -1,4 +1,4 @@
-﻿
+
 #include <metahook.h>
 #include <string>
 #include <algorithm>
@@ -166,6 +166,11 @@ void WeaponsResource::Init() {
         }
     });
     g_EventCmdSlot.append([&](int slot) {
+        // 如果TextMenu打开，不处理武器选择
+        if (GetBaseViewPort()->IsTextMenuOpen()) {
+            return false; // 阻止原始命令执行
+        }
+        // 处理武器选择
         this->SelectSlot(slot, 1, false);
         return true;
     });
@@ -260,6 +265,12 @@ void WeaponsResource::LoadAllWeaponSprites() {
 void WeaponsResource::SetSelectWeapon(Weapon* wp, bool bWheel) {
     if (!wp) 
         return;
+    
+    // 如果TextMenu打开，不处理武器选择UI和声音
+    if (GetBaseViewPort()->IsTextMenuOpen()) {
+        return;
+    }
+    
     if (CVAR_GET_FLOAT("hud_fastswitch") > 0) {
         ServerCmd(wp->szName);
     }
