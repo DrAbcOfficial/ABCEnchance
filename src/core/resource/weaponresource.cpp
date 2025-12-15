@@ -330,9 +330,12 @@ void WeaponsResource::LoadWeaponSprites(Weapon* pWeapon, const char* cust) {
         if (!pList) return;
     }
 
+    int screen_w, screen_h;
+    vgui::surface()->GetScreenSize(screen_w, screen_h);
+
     auto loadSprite = [&](const char* szType, HSPRITE* spr, wrect_t* rc,
         HSPRITE* dspr = nullptr, wrect_t* drc = nullptr) {
-            const int iRes = ScreenWidth() < 640 ? 320 : 640;
+            const int iRes = screen_w < 640 ? 320 : 640;
             if (auto* p = GetSpriteList(pList, szType, iRes, i)) {
                 sprintf_s(sz, "sprites/%s.spr", p->szSprite);
                 *spr = SPR_Load(sz);

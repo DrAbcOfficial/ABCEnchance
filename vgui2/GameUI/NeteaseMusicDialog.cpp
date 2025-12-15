@@ -288,10 +288,10 @@ void CreateNeteaseMusicDialogCmd() {
 		if (!s_pNeteaseDialog)
 			s_pNeteaseDialog = new CNeteaseMusicDialog(reinterpret_cast<Panel*>(BasePanel()));
 		int w, h;
-		extern size_t ScreenWidth();
-		extern size_t ScreenHeight();
+		int screen_w, screen_h;
+		vgui::surface()->GetScreenSize(screen_w, screen_h);
 		s_pNeteaseDialog->GetSize(w, h);
-		s_pNeteaseDialog->SetPos((ScreenWidth() - w) / 2, (ScreenHeight() - h) / 2);
+		s_pNeteaseDialog->SetPos((screen_w - w) / 2, (screen_h - h) / 2);
 		s_pNeteaseDialog->MakePopup();
 		s_pNeteaseDialog->Activate();
 	});

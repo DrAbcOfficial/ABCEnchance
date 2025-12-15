@@ -5,16 +5,6 @@
 #include "Color.h" 
 
 extern void VGUI_CREATE_NEWTGA_TEXTURE(int tex, const char* path);
-
-using ScreenInfo_t = struct ScreenInfo_s{
-	int iWidth;
-	int iHeight;
-};
-
-// ScreenHeight returns the height of the screen, in pixels
-extern size_t ScreenHeight();
-// ScreenWidth returns the width of the screen, in pixels
-extern size_t ScreenWidth();
 //VGUI2
 #define VGUI2_ROOT_DIR "abcenchance/res/"
 constexpr auto SC_MAX_STEAMID = 32; // 0:0:4294967295, STEAM_ID_PENDING

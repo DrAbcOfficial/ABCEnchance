@@ -33,7 +33,9 @@ void CNoticePanel::ShowMessage(const char* message){
 	if (m_bKeepCenter) {
 		int x, y;
 		GetPos(x, y);
-		SetPos((ScreenWidth() - w) / 2, y);
+		int screen_w, screen_h;
+		vgui::surface()->GetScreenSize(screen_w, screen_h);
+		SetPos((screen_w - w) / 2, y);
 	}
 	SetTall(h);
 	m_pMessage->SetTall(h);

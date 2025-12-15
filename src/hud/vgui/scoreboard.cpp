@@ -1246,7 +1246,9 @@ int CScorePanel::GetLineSpacingForCompact()
 {
 	if (hud_scoreboard_spacing_compact->value > 0)
 		return hud_scoreboard_spacing_compact->value;
-	return GetLineSpacingForHeight(ScreenHeight());
+	int screen_w, screen_h;
+	surface()->GetScreenSize(screen_w, screen_h);
+	return GetLineSpacingForHeight(screen_h);
 }
 
 void CScorePanel::RestoreSize()
@@ -1260,6 +1262,9 @@ void CScorePanel::RestoreSize()
 void CScorePanel::Resize()
 {
 	SizeMode mode = GetSizeMode();
+
+	int screen_w, screen_h;
+	surface()->GetScreenSize(screen_w, screen_h);
 
 	// Returns true if scrollbar was enabled
 	auto fnUpdateSize = [&](int& height) {
@@ -1275,10 +1280,10 @@ void CScorePanel::Resize()
 		listHeight = max(m_iMinHeight, tall);
 		height += listHeight;
 
-		if ((int)ScreenHeight() - height < m_iVerticalMargin * 2)
+		if (screen_h - height < m_iVerticalMargin * 2)
 		{
 			// It didn't fit
-			height = (int)ScreenHeight() - m_iVerticalMargin * 2;
+			height = screen_h - m_iVerticalMargin * 2;
 			listHeight = height - addHeight;
 			m_pPlayerList->SetVerticalScrollbar(true);
 			bIsOverflowed = true;
@@ -1316,7 +1321,7 @@ void CScorePanel::Resize()
 
 	// Move to center
 	GetPos(x, y);
-	y = (ScreenHeight() - height) / 2;
+	y = (screen_h - height) / 2;
 	SetPos(x, y);
 }
 

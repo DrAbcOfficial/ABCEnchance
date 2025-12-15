@@ -1,14 +1,17 @@
 #include <metahook.h>
 
 #include "utility/util.h"
-#include "utility/vgui_util.h"
 
 #include "spriteresource.h"
+#include <Controls.h>
 
 SpriteResource gSpriteRes;
 
 void SpriteResource::VidInit() {
-	int iResSize = ScreenWidth() < 640 ? 320 : 640;
+	int screen_w, screen_h;
+	vgui::surface()->GetScreenSize(screen_w, screen_h);
+
+	int iResSize = screen_w < 640 ? 320 : 640;
 	if (m_arySprites.size() == 0) {
 		int size;
 		client_sprite_t* arySpritelist = SPR_GetList("sprites/hud.txt", &size);

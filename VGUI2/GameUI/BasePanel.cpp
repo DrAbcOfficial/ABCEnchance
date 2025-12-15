@@ -124,11 +124,11 @@ static void HTMLReopenBackground() {
 static void SetBasePanelState(bool state) {
 	if (state) {
 		if (!s_bInited) {
-			int w = ScreenWidth();
-			int h = ScreenHeight();
+			int screen_w, screen_h;
+			vgui::surface()->GetScreenSize(screen_w, screen_h);
 			if (!s_hBasePanelWarpper) {
 				s_hBasePanelWarpper = new TransWarpper(s_pBasePanel->GetPanel(), "Warpper");
-				s_hBasePanelWarpper->SetSize(w, h);
+				s_hBasePanelWarpper->SetSize(screen_w, screen_h);
 			}
 			if (!s_hHTMLBackground) {
 				s_hHTMLBackground = new BackGroundHTML(s_hBasePanelWarpper);

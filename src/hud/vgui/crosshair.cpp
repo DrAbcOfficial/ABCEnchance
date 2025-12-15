@@ -10,7 +10,6 @@
 #include "core/module/playertrace.h"
 
 #include "utility/util.h"
-#include "utility/vgui_util.h"
 
 #include "hud/vgui/ammobar.h"
 #include "hud/Viewport.h"
@@ -51,7 +50,9 @@ CCrosshairPanel::CCrosshairPanel()
 
 	pCvarDefaultCrosshair = CVAR_GET_POINTER("crosshair");
 
-	SetSize(ScreenWidth(), ScreenHeight());
+	int screen_w, screen_h;
+	vgui::surface()->GetScreenSize(screen_w, screen_h);
+	SetSize(screen_w, screen_h);
 
 	m_aryCrosshairBorder = {
 		new vgui::Panel(this, "center"),
@@ -126,8 +127,10 @@ void CCrosshairPanel::OnThink() {
 		m_iCenterY = vecHUD.y;
 	}
 	else {
-		m_iCenterX = ScreenWidth() / 2;
-		m_iCenterY = ScreenHeight() / 2;
+		int screen_w, screen_h;
+		vgui::surface()->GetScreenSize(screen_w, screen_h);
+		m_iCenterX =screen_w / 2;
+		m_iCenterY = screen_h / 2;
 	}
 	int iOffset = pDynamicCrossHairO->value;
 	int iDrift = fabs(GetBaseViewPort()->m_vecClientEVPunch[0]) + fabs(GetBaseViewPort()->m_vecClientEVPunch[1]);

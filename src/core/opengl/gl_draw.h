@@ -6,6 +6,4 @@ extern void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, 
 extern void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 extern void DrawTexturePos(int tex, int mode, float p1[2], float p2[2], float p3[2], float p4[2], unsigned char r, unsigned char g, unsigned b, unsigned a);
 extern void GetStringSize(const wchar_t* string, int* width, int* height, vgui::HFont m_hFont);
-extern int DrawVGUI2String(wchar_t* msg, int x, int y, int r, int g, int b, vgui::HFont m_hFont, bool add = false);
-extern int DrawVGUI2String(wchar_t* msg, int x, int y, float r, float g, float b, vgui::HFont m_hFont, bool add = false);
 extern void ScaleColors(int& r, int& g, int& b, int a);

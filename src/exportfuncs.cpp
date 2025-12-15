@@ -276,8 +276,6 @@ void GL_Init(void)
 {
 	//Load interface from Renderer.dll
 	MetaRenderer_Init();
-	extern ScreenInfo_t gScreenInfo;
-	g_pMetaHookAPI->GetVideoMode(&gScreenInfo.iWidth, &gScreenInfo.iHeight, nullptr, nullptr);
 	auto err = glewInit();
 	if (GLEW_OK != err) {
 		SYS_ERROR("glewInit failed, %s", glewGetErrorString(err));
