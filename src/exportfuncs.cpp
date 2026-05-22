@@ -32,8 +32,6 @@
 #include "core/events/hudevents.h"
 
 #include "core/metahook/MetaRendererCallbacks.h"
-//GL
-#include "glew.h"
 //Base HUD
 #include "utility/util.h"
 #include "hud/Viewport.h"
@@ -267,11 +265,6 @@ void GL_Init(void)
 {
 	//Load interface from Renderer.dll
 	MetaRenderer_Init();
-	auto err = glewInit();
-	if (GLEW_OK != err) {
-		SYS_ERROR("glewInit failed, %s", glewGetErrorString(err));
-		return;
-	}
 	GL_ShaderInit();
 	if (MetaRenderer())
 	{

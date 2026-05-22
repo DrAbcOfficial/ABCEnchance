@@ -5,9 +5,21 @@
 #ifndef GL_COMMON_H
 #define GL_COMMON_H
 
-#include <glew.h>
 #include <stdint.h>
 #include <metahook.h>
+
+// Minimal GL types (no GLEW dependency)
+typedef unsigned int GLuint;
+typedef unsigned int GLenum;
+typedef int GLint;
+typedef unsigned char GLboolean;
+
+// Minimal GL constants used by this project
+#define GL_RGBA8                0x8058
+#define GL_RGBA16F              0x881A
+#define GL_RGB16F               0x881B
+#define GL_RGB8                 0x8051
+#define GL_DEPTH24_STENCIL8     0x88F0
 
 #include "core/library/mymathlib.h"
 

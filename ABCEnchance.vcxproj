@@ -71,8 +71,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\AIGCJson\include;$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_ITERATOR_DEBUG_LEVEL=0;GLEW_STATIC;VGUI_USE_SURFACE2;VGUI_USE_SCHEME2;VGUI_USE_INPUT2;NO_MALLOC_OVERRIDE;NO_TIER0_MINIDUMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\AIGCJson\include;$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_ITERATOR_DEBUG_LEVEL=0;VGUI_USE_SURFACE2;VGUI_USE_SCHEME2;VGUI_USE_INPUT2;NO_MALLOC_OVERRIDE;NO_TIER0_MINIDUMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
@@ -85,22 +85,21 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory);$(MetaHookBaseDir)include\SteamSDK</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FreeImageLibrariesDirectory);$(MetaHookBaseDir)include\SteamSDK</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Bcrypt.lib;$(FreeImageLibraryFiles);steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>$(PluginPostBuildCommand2)</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(GLEWCheckRequirements)
-$(FreeImageCheckRequirements)
+      <Command>$(FreeImageCheckRequirements)
 $(RapidJsonCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;VGUI_USE_SURFACE2;VGUI_USE_SCHEME2;VGUI_USE_INPUT2;NO_MALLOC_OVERRIDE;NO_TIER0_MINIDUMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;VGUI_USE_SURFACE2;VGUI_USE_SCHEME2;VGUI_USE_INPUT2;NO_MALLOC_OVERRIDE;NO_TIER0_MINIDUMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
@@ -111,15 +110,15 @@ $(RapidJsonCheckRequirements)</Command>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\AIGCJson\include;$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\AIGCJson\include;$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory);$(MetaHookBaseDir)include\SteamSDK</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FreeImageLibrariesDirectory);$(MetaHookBaseDir)include\SteamSDK</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Bcrypt.lib;$(FreeImageLibraryFiles);steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
@@ -128,14 +127,13 @@ $(RapidJsonCheckRequirements)</Command>
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(GLEWCheckRequirements)
-$(FreeImageCheckRequirements)
+      <Command>$(FreeImageCheckRequirements)
 $(RapidJsonCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_AVX2|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;GLEW_STATIC;VGUI_USE_SURFACE2;VGUI_USE_SCHEME2;VGUI_USE_INPUT2;NO_MALLOC_OVERRIDE;NO_TIER0_MINIDUMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;VGUI_USE_SURFACE2;VGUI_USE_SCHEME2;VGUI_USE_INPUT2;NO_MALLOC_OVERRIDE;NO_TIER0_MINIDUMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -147,15 +145,15 @@ $(RapidJsonCheckRequirements)</Command>
       <Optimization>MinSpace</Optimization>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\AIGCJson\include;$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(GLEWIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)thirdparty\AIGCJson\include;$(ProjectDir)thirdparty\eventpp\include;$(ProjectDir);$(ProjectDir)vgui_controls;$(ProjectDir)SourceSDK;$(ProjectDir)VGUI2;$(ProjectDir)VGUI2\interface;$(ProjectDir)SourceSDK\tier0;$(ProjectDir)SourceSDK\tier1;$(MetaHookBaseDir)include;$(MetaHookBaseDir)include\Interface;$(MetaHookBaseDir)include\Interface\VGUI;$(ProjectDir)SourceSDK\vstdlib;$(MetaHookBaseDir)include\HLSDK\utils;$(MetaHookBaseDir)include\HLSDK\public;$(MetaHookBaseDir)include\HLSDK\pm_shared;$(MetaHookBaseDir)include\HLSDK\engine;$(MetaHookBaseDir)include\HLSDK\dlls;$(MetaHookBaseDir)include\HLSDK\common;$(MetaHookBaseDir)include\HLSDK\cl_dll;$(MetaHookBaseDir)include\VGUI;$(MetaHookBaseDir)include\SteamSDK;$(MetaHookBaseDir)include\vgui_controls;$(ProjectDir)src\Header;$(ProjectDir)src\Header\Var;$(ProjectDir)src\Header\Utility;$(ProjectDir)src\Header\Utility\opengl;$(ProjectDir)src\Header\HUD;$(ProjectDir)src\Header\HUD\vgui;$(ProjectDir)src\thirdparty;$(ProjectDir)src\Particleman;$(ProjectDir)src;$(MetaHookBaseDir)thirdparty\rapidjson\include;$(CapstoneIncludeDirectory);$(FreeImageIncludeDirectory);$(ScopeExitIncludeDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(GLEWLibrariesDirectory);$(FreeImageLibrariesDirectory);$(MetaHookBaseDir)include\SteamSDK</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;Bcrypt.lib;$(GLEWLibraryFiles);$(FreeImageLibraryFiles);steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FreeImageLibrariesDirectory);$(MetaHookBaseDir)include\SteamSDK</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Bcrypt.lib;$(FreeImageLibraryFiles);steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
@@ -164,8 +162,7 @@ $(RapidJsonCheckRequirements)</Command>
 copy "$(OutDir)$(TargetName)$(TargetExt)" "$(OutDir)..\Build\$(TargetName)_AVX2$(TargetExt)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(GLEWCheckRequirements)
-$(FreeImageCheckRequirements)
+      <Command>$(FreeImageCheckRequirements)
 $(RapidJsonCheckRequirements)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -466,7 +463,6 @@ $(RapidJsonCheckRequirements)</Command>
     <ClInclude Include="src\core\opengl\gl_common.h" />
     <ClInclude Include="src\core\opengl\gl_def.h" />
     <ClInclude Include="src\core\opengl\gl_draw.h" />
-    <ClInclude Include="src\core\opengl\gl_shader.h" />
     <ClInclude Include="src\core\resource\playerresource.h" />
     <ClInclude Include="src\core\resource\spriteresource.h" />
     <ClInclude Include="src\core\resource\teamresource.h" />
