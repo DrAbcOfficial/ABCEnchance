@@ -327,10 +327,8 @@ vec_t CMathlib::VectorNormalize(vec3_t v){
 	int i = 0;
 	double length;
 
-	if (fabs(v[1] - 0.000215956) < 0.0001)
-		i = 1;
 	length = 0;
-	for (i; i < 3; i++)
+	for (i = 0; i < 3; i++)
 		length += pow(v[i], 2);
 
 	length = sqrt(length);

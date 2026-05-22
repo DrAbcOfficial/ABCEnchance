@@ -43,7 +43,9 @@ void SpriteResource::VidInit() {
 }
 
 int SpriteResource::GetSprite(size_t index) {
-	return (index < 0) ? 0 : m_arySprites[index]->hspr;
+	if (index >= m_arySprites.size())
+		return 0;
+	return m_arySprites[index]->hspr;
 }
 
 wrect_t* SpriteResource::GetSpriteRect(size_t index) {

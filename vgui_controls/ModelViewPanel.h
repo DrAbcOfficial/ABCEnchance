@@ -77,6 +77,11 @@ private:
 	bool m_bAnimate = false;
 	char m_szModel[MAX_PATH] = {};
 
+	int m_iAmbientLight = 32;
+	int m_iShadeLight = 192;
+	int m_iLightColor[3] = {255, 255, 255};
+	float m_flLightOrigin[3] = {0, 0, 0};
+
 	struct cl_entity_s* m_pModelEntity = nullptr;
 };
 

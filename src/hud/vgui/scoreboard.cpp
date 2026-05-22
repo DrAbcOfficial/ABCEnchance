@@ -320,14 +320,14 @@ private:
 	int m_iWide = 0, m_iTall = 0;
 	Color m_DrawColor = Color(255, 255, 255, 255);
 
-	bool m_bDrawFriend;
+	bool m_bDrawFriend = false;
 
 	bool m_bIsAnimate = false;
 	bool m_bRequestedAnimatedAvatars = false;
 	std::optional<CHttpClientItem*> m_pRequest = nullptr;
 
 	std::vector<IImage_HL25*> m_aryAnimatedAvatars;
-	size_t m_iCurrentImage;
+	size_t m_iCurrentImage = 0;
 	long m_flAnimateTime = 0;
 	long m_flNextAnimateTime = 0;
 
@@ -506,7 +506,10 @@ void CScorePanel::UpdateOnPlayerInfo(int client)
 
 void CScorePanel::DeathMsg(int killer, int victim)
 {
-	if (victim == gPlayerRes.GetLocalPlayerInfo()->m_iIndex)
+	auto* lpInfo = gPlayerRes.GetLocalPlayerInfo();
+	if (!lpInfo)
+		return;
+	if (victim == lpInfo->m_iIndex)
 	{
 		// if we were the one killed, set the scoreboard to indicate killer
 		m_flKillerHighlightStart = gEngfuncs.GetClientTime();

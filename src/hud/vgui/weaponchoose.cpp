@@ -298,6 +298,7 @@ void CWeaponChoosePanel::ChooseWeapon(Weapon* weapon){
 	if (!weapon || !gWR.HasWeapon(weapon)) {
 		if (m_pHandledWeapon)
 			reinterpret_cast<CWeaponChooseItem*>(m_pHandledWeapon.Get())->SetActivate(false);
+		m_pHandledWeapon = nullptr;
 		m_pSelectBucket->SetVisible(false);
 		InvalidateLayout();
 		return;

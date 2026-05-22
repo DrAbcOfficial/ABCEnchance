@@ -62,6 +62,7 @@ void CTextMenu::SetParent(vgui::VPANEL parent) {
 
 void CTextMenu::SetContent(const char* szMenu){
 	m_pMenu->SetText(szMenu);
+	m_pMenu->GetTextImage()->ResizeImageToContent();
 	int w, h;
 	m_pMenu->GetTextImage()->GetContentSize(w, h);
 	SetSize(w * 1.1f, h * 1.1f);

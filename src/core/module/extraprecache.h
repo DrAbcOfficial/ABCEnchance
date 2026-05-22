@@ -6,7 +6,7 @@
 #define NL_CLIENT 3
 
 #define MAX_EXTRA_PRECACHENUM 255
-#define EXTRPRECACHE_INDEX_BASE 2500000
+#define EXTRAPRECACHE_INDEX_BASE 2500000
 
 model_t* GetExtraModelByModelIndex(int index);
 int GetExtraModelIndex(const char* path);

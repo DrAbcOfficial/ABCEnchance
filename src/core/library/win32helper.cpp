@@ -71,6 +71,10 @@ BITMAP Win32GetBitmapInfo(HICON hIcon) {
 	ICONINFO iconInfo;
 	GetIconInfo(hIcon, &iconInfo);
 	GetObject(iconInfo.hbmColor, sizeof(BITMAP), &bmp);
+	if (iconInfo.hbmColor)
+		DeleteObject(iconInfo.hbmColor);
+	if (iconInfo.hbmMask)
+		DeleteObject(iconInfo.hbmMask);
 	return bmp;
 }
 std::vector<unsigned char> Win32ConvertHICONToRGBA(HICON hIcon, size_t& ww, size_t& hh) {
@@ -101,6 +105,7 @@ std::vector<unsigned char> Win32ConvertHICONToRGBA(HICON hIcon, size_t& ww, size
 	}
 	DeleteObject(hBmp);
 	DeleteDC(hdc);
+	delete[] bits;
 	return rgba;
 }
 void Sys_GetRegKeyValueUnderRoot(HKEY rootKey, const char* pszSubKey, const char* pszElement, char* pszReturnString, int nReturnLength, const char* pszDefaultValue){

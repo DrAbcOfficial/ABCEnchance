@@ -65,8 +65,8 @@ void vgui::ModelViewPanel::SetModelRotate(float pitch, float yaw, float roll){
 	if (m_pModelEntity)
 	{
 		m_pModelEntity->angles[PITCH] = pitch;
-		m_pModelEntity->origin[YAW] = yaw;
-		m_pModelEntity->origin[ROLL] = roll;
+		m_pModelEntity->angles[YAW] = yaw;
+		m_pModelEntity->angles[ROLL] = roll;
 	}
 }
 
@@ -83,8 +83,8 @@ void vgui::ModelViewPanel::GetModelRotate(float& pitch, float& yaw, float& roll)
 	if (m_pModelEntity)
 	{
 		pitch = m_pModelEntity->angles[PITCH];
-		yaw = m_pModelEntity->origin[YAW];
-		roll = m_pModelEntity->origin[ROLL];
+		yaw = m_pModelEntity->angles[YAW];
+		roll = m_pModelEntity->angles[ROLL];
 	}
 }
 
@@ -217,48 +217,79 @@ void vgui::ModelViewPanel::SetMouth(byte mouth){
 }
 
 void vgui::ModelViewPanel::SetAmbientLight(int light){
-
+	m_iAmbientLight = light;
 }
 
 void vgui::ModelViewPanel::SetShadeLight(int light){
-
+	m_iShadeLight = light;
 }
 
 void vgui::ModelViewPanel::SetLightColor(int r, int g, int b){
-
+	m_iLightColor[0] = r;
+	m_iLightColor[1] = g;
+	m_iLightColor[2] = b;
 }
 
 void vgui::ModelViewPanel::SetLightOrigin(float x, float y, float z){
-
+	m_flLightOrigin[0] = x;
+	m_flLightOrigin[1] = y;
+	m_flLightOrigin[2] = z;
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: draws the graph
 //-----------------------------------------------------------------------------
 void ModelViewPanel::Paint(){
-	if (MetaRenderer())
-	{
-		//MetaRenderer()->BeginDebugGroup("ModelViewPanel::Paint");
-		//auto oldFbo = MetaRenderer()->GetCurrentRenderingFBO();
-		//int oldW = oldFbo->iWidth;
-		//int oldH = oldFbo->iHeight;
-		//
-		//MetaRenderer()->BindFrameBuffer(&m_ModelFBO);
-		//MetaRenderer()->SetCurrentSceneFBO(&m_ModelFBO);
-		//
-		//MetaRenderer()->SetViewport(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
-		//MetaRenderer()->SetCurrentEntity(m_pModelEntity);
-		//MetaRenderer()->DrawCurrentEntity(false);
-		//MetaRenderer()->SetViewport(0, 0, oldW, oldH);
-		//
-		//MetaRenderer()->SetCurrentSceneFBO(oldFbo);
-		//MetaRenderer()->BindFrameBuffer(oldFbo);
-		//
-		//MetaRenderer()->EndDebugGroup();
-		//
-		//surface()->DrawSetTexture(m_ModelFBO.s_hBackBufferTex);
-		//surface()->DrawFilledRect(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+	IMetaRenderer* pRenderer = MetaRenderer();
+	if (!pRenderer || !m_pModelEntity || !m_pModelEntity->model)
+		return;
+	if (m_ModelFBO.iWidth <= 0 || m_ModelFBO.iHeight <= 0)
+		return;
+
+	pRenderer->BeginDebugGroup("ModelViewPanel::Paint");
+
+	auto* oldSceneFBO = pRenderer->GetCurrentSceneFBO();
+	auto* oldRenderingFBO = pRenderer->GetCurrentRenderingFBO();
+	int oldW = 0, oldH = 0;
+	if (oldRenderingFBO) {
+		oldW = oldRenderingFBO->iWidth;
+		oldH = oldRenderingFBO->iHeight;
 	}
+
+	pRenderer->BindFrameBuffer(&m_ModelFBO);
+	pRenderer->SetCurrentSceneFBO(&m_ModelFBO);
+	pRenderer->SetViewport(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+	pRenderer->ClearFBO(true, true, true);
+
+	pRenderer->PushRefDef();
+
+	vec3_t viewOrigin;
+	viewOrigin[0] = m_pModelEntity->origin[0];
+	viewOrigin[1] = m_pModelEntity->origin[1] - 100;
+	viewOrigin[2] = m_pModelEntity->origin[2] + 30;
+
+	vec3_t viewAngles = {0, 0, 0};
+	pRenderer->SetRefDefViewOrigin(viewOrigin);
+	pRenderer->SetRefDefViewAngles(viewAngles);
+	pRenderer->SetupPerspective(m_flFov,
+		(float)m_ModelFBO.iWidth / (float)m_ModelFBO.iHeight,
+		1.0f, 4096.0f);
+	pRenderer->SetupFrustumProjectionMatrix();
+
+	pRenderer->SetCurrentEntity(m_pModelEntity);
+	pRenderer->DrawCurrentEntity(false);
+
+	pRenderer->PopRefDef();
+	pRenderer->SetCurrentSceneFBO(oldSceneFBO);
+	pRenderer->BindFrameBuffer(oldRenderingFBO);
+	if (oldRenderingFBO) {
+		pRenderer->SetViewport(0, 0, oldW, oldH);
+	}
+
+	surface()->DrawSetTexture(m_ModelFBO.s_hBackBufferTex);
+	surface()->DrawFilledRect(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+
+	pRenderer->EndDebugGroup();
 }
 
 void vgui::ModelViewPanel::ApplySettings(KeyValues* inResourceData){

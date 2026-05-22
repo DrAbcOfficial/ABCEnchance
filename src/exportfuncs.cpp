@@ -586,6 +586,10 @@ int HUD_AddEntity(int type, struct cl_entity_s* ent, const char* modelname)
 
 int HUD_KeyEvent(int eventcode, int keynum, const char* pszCurrentBinding)
 {
+	if (pszCurrentBinding && !strcmp(pszCurrentBinding, "cancelselect")) {
+		if (eventcode && (keynum == ',' || keynum == '.'))
+			return 0;
+	}
 	return GetBaseViewPort()->KeyInput(eventcode, keynum, pszCurrentBinding) ?
 		gExportfuncs.HUD_Key_Event(eventcode, keynum, pszCurrentBinding) : 0;
 }

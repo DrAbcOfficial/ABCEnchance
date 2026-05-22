@@ -81,7 +81,8 @@ bool PlayerInfo::IsValid() const {
 	return m_bIsConnected && m_szName.size() > 0;
 }
 bool PlayerInfo::IsThisPlayer() const {
-	return m_iIndex == gEngfuncs.GetLocalPlayer()->index;
+	auto* lp = gEngfuncs.GetLocalPlayer();
+	return lp ? (m_iIndex == lp->index) : false;
 }
 
 void PlayerInfo::UpdatePing() {
@@ -105,7 +106,8 @@ PlayerInfo* PlayerInfo::Update() {
 	if (bIsConnected) {
 		if (!m_pSteamId.IsValid() || info->m_nSteamID != m_pSteamId.ConvertToUint64()) {
 			// Player has no SteamID or not the past guy, update it
-			if (m_iIndex == gEngfuncs.GetLocalPlayer()->index)
+			auto* lp = gEngfuncs.GetLocalPlayer();
+			if (lp && m_iIndex == lp->index)
 				m_pSteamId = SteamUser()->GetSteamID();
 			else
 				m_pSteamId = CSteamID(info->m_nSteamID);

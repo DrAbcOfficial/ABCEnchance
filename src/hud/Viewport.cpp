@@ -92,7 +92,7 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 
 CViewport::~CViewport(void){
 	for (auto panel : m_Panels) {
-		panel->~IViewportPanel();
+		delete panel;
 	}
 }
 
@@ -169,6 +169,11 @@ void CViewport::Start(void){
 		this->m_pHealthPanel->SetArmor(armor);
 		});
 	g_EventHealth.append([&](int health) {
+		if (health <= 0) {
+			auto* lpInfo = gPlayerRes.GetLocalPlayerInfo();
+			if (lpInfo && lpInfo->m_bIsConnected && !gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
+				health = 1;
+		}
 		this->m_pEffectPanel->SetHealth(health);
 		this->m_pHealthPanel->SetHealth(health);
 		});

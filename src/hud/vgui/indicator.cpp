@@ -125,7 +125,7 @@ public:
 		m_vecHitFrom.z = org[2];
     }
 
-    int m_iTexture = 0;
+    int m_iTexture = -1;
 private:
     int m_iX = 0, m_iY = 0;
     int m_iOffX = 0, m_iOffY = 0;
@@ -165,7 +165,7 @@ CIndicatorPanel::CIndicatorPanel()
         new IndicatorImagePanel(this, "IndicatorImage3"),
         new IndicatorImagePanel(this, "IndicatorImage4")
     };
-    m_iTex = surface()->CreateNewTextureID();
+    m_iTex = -1;
 
 	LoadControlSettings(VGUI2_ROOT_DIR "IndicatorPanel.res");
 
@@ -177,7 +177,7 @@ CIndicatorPanel::CIndicatorPanel()
 
 CIndicatorPanel::~CIndicatorPanel()
 {
-    if (m_iTex)
+    if (m_iTex >= 0)
         surface()->DeleteTextureByID(m_iTex);
 }
 
@@ -205,11 +205,14 @@ void CIndicatorPanel::ApplySettings(KeyValues* inResourceData)
 {
     BaseClass::ApplySettings(inResourceData);
     auto texture = inResourceData->GetString("image", "");
-    vgui::surface()->DrawSetTextureFile(m_iTex, texture, true, false);
-    for (auto& panel : m_aryImagePanels) {
-        auto img = new IndicatorImage();
-        img->m_iTexture = m_iTex;
-        panel->SetImage(img);
+    if (texture && texture[0] != '\0') {
+        m_iTex = surface()->CreateNewTextureID();
+        vgui::surface()->DrawSetTextureFile(m_iTex, texture, true, false);
+        for (auto& panel : m_aryImagePanels) {
+            auto img = new IndicatorImage();
+            img->m_iTexture = m_iTex;
+            panel->SetImage(img);
+        }
     }
     m_flFadeTime = inResourceData->GetFloat("fade_time", 1.0f);
     m_flKeepTime = inResourceData->GetFloat("keep_time", 2.0f);

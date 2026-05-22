@@ -108,7 +108,7 @@ void CDeathMsgPanel::PerformLayout(){
 		return;
 	int w, h;
 	GetSize(w, h);
-	int itemh = h / m_pDeathMsgCount->value;
+	int itemh = h / max(1, (int)m_pDeathMsgCount->value);
 	int y = h - itemh;
 	for (auto iter = m_aryDeath.rbegin(); iter != m_aryDeath.rend(); iter++) {
 		if ((*iter)->IsVisible()) {

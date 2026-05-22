@@ -34,7 +34,7 @@ namespace mathlib {
 }
 
 struct mplane_s;
-#define AngleIVectors CCMathlib::AngleVectorsTranspose
+#define AngleIVectors CMathlib::AngleVectorsTranspose
 
 class CMathlib {
 public:
