@@ -6,7 +6,6 @@
 //=============================================================================//
 
 #include "GaussianBlurPanel.h"
-#include <glew.h>
 #include "core/opengl/gl_common.h"
 
 using namespace vgui;
@@ -73,10 +72,7 @@ void GaussianBlurPanel::PaintBackground()
 		MetaRenderer()->PopProjectionMatrix();
 		MetaRenderer()->PopWorldMatrix();
 
-		//Note that BlurPass will modify the state of GL_DEPTH_TEST and GL_CULL_FACE, so we need to revert them
-		glViewport(0, 0, CurrentRenderingFBO->iWidth, CurrentRenderingFBO->iHeight);
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
+		MetaRenderer()->SetViewport(0, 0, (float)CurrentRenderingFBO->iWidth, (float)CurrentRenderingFBO->iHeight);
 
 		int w{}, h{};
 		GetSize(w, h);

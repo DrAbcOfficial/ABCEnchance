@@ -55,19 +55,6 @@ void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h
 
 	float color4v[4]{ r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
 	
-	/*
-	It was:
-	glBegin(GL_QUADS);
-	glTexCoord2f(left, top);
-	glVertex2f(x, y);
-	glTexCoord2f(left, bottom);
-	glVertex2f(x, y + h);
-	glTexCoord2f(right, bottom);
-	glVertex2f(x + w, y + h);
-	glTexCoord2f(right, top);
-	glVertex2f(x + w, y);
-	glEnd();
-	*/
 	if (MetaRenderer())
 	{
 		// ʹ�� DrawTexturedRect ����ȷ������������
