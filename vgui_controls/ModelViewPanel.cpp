@@ -259,7 +259,7 @@ void ModelViewPanel::Paint(){
 	pRenderer->BindFrameBuffer(&m_ModelFBO);
 	pRenderer->SetCurrentSceneFBO(&m_ModelFBO);
 	pRenderer->SetViewport(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
-	pRenderer->ClearFBO(true, true, true);
+	pRenderer->ClearFBO(&m_ModelFBO);
 
 	pRenderer->PushRefDef();
 
@@ -274,7 +274,6 @@ void ModelViewPanel::Paint(){
 	pRenderer->SetupPerspective(m_flFov,
 		(float)m_ModelFBO.iWidth / (float)m_ModelFBO.iHeight,
 		1.0f, 4096.0f);
-	pRenderer->SetupFrustumProjectionMatrix();
 
 	pRenderer->SetCurrentEntity(m_pModelEntity);
 	pRenderer->DrawCurrentEntity(false);
