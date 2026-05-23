@@ -625,25 +625,29 @@ void ModelViewPanel::Paint(){
 		pRenderer->DrawFilledRect(debugVerts.data(), 3, debugIdx.data(), 3, 0, "debug_tri");
 	}
 
-	pRenderer->SetCurrentSceneFBO(oldSceneFBO);
 	pRenderer->BindFrameBuffer(oldRenderingFBO);
-	if (oldRenderingFBO) {
-		pRenderer->SetViewport(0, 0, oldW, oldH);
+	pRenderer->SetCurrentSceneFBO(oldRenderingFBO);
+	pRenderer->SetViewport(0, 0, oldW, oldH);
+
+	pRenderer->BeginDebugGroup("ModelViewPanel::MainDraw");
+
+	{
+		texturedrectvertex_t vv[4];
+		float green[4] = {0.0f, 1.0f, 0.0f, 1.0f};
+		int sx, sy;
+		ipanel()->GetAbsPos(GetVPanel(), sx, sy);
+		vv[0].pos[0] = (float)sx;       vv[0].pos[1] = (float)sy;
+		vv[1].pos[0] = (float)(sx + 200); vv[1].pos[1] = (float)sy;
+		vv[2].pos[0] = (float)(sx + 200); vv[2].pos[1] = (float)(sy + 200);
+		vv[3].pos[0] = (float)sx;       vv[3].pos[1] = (float)(sy + 200);
+		for (int k = 0; k < 4; k++) {
+			vv[k].col[0] = green[0]; vv[k].col[1] = green[1];
+			vv[k].col[2] = green[2]; vv[k].col[3] = green[3];
+			vv[k].texcoord[0] = 0; vv[k].texcoord[1] = 0;
+		}
+		uint32_t ix[6] = {0,1,2, 0,2,3};
+		pRenderer->DrawTexturedRect(0, vv, 4, ix, 6, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "MAIN_debug_green");
 	}
-
-	int px = 0, py = 0;
-	ipanel()->GetAbsPos(GetVPanel(), px, py);
-	int pw = GetWide(), ph = GetTall();
-	float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-	pRenderer->DrawTexturedQuad(m_ModelFBO.s_hBackBufferTex,
-		px, py, px + pw, py + ph,
-		white, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED,
-		"ModelViewPanel_blit");
-
-	surface()->DrawSetColor(255, 0, 0, 255);
-	surface()->DrawFilledRect(0, 0, 10, 10);
-	surface()->DrawSetColor(0, 255, 0, 255);
-	surface()->DrawFilledRect(10, 0, 20, 10);
 
 	pRenderer->EndDebugGroup();
 }
