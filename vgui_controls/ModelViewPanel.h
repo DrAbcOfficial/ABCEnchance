@@ -86,6 +86,7 @@ private:
 
 	struct cl_entity_s* m_pModelEntity = nullptr;
 	void* m_pImage = nullptr;
+	class ImagePanel* m_pImagePanel = nullptr;
 };
 
 extern ModelViewPanel* g_pModelViewPanel;

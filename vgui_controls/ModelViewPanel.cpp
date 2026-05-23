@@ -11,6 +11,7 @@
 #include "utility/vgui_util.h"
 
 #include "ModelViewPanel.h"
+#include <vgui_controls/ImagePanel.h>
 
 #undef clamp
 
@@ -72,6 +73,11 @@ ModelViewPanel::ModelViewPanel(Panel *parent, const char *name) : BaseClass(pare
 	m_pModelEntity->baseline.entityType = ENTITY_NORMAL;
 	m_pImage = new CModelViewImage();
 	((CModelViewImage*)m_pImage)->SetPanel(this);
+
+	m_pImagePanel = new ImagePanel(this, "ModelViewImage");
+	m_pImagePanel->SetShouldScaleImage(false);
+	m_pImagePanel->SetImage((IImage*)m_pImage);
+
 	g_pModelViewPanel = this;
 }
 
@@ -348,8 +354,10 @@ void ModelViewPanel::Paint(){
 		auto* img = (CModelViewImage*)m_pImage;
 		img->SetFBO(&m_ModelFBO);
 		img->SetSize(m_ModelFBO.iWidth, m_ModelFBO.iHeight);
-		img->Paint();
+		m_pImagePanel->SetSize(m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+		m_pImagePanel->SetPos(0, 0);
 	}
+	BaseClass::Paint();
 }
 
 void ModelViewPanel::RenderModel(){
