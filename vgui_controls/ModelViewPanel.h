@@ -85,6 +85,7 @@ private:
 	float m_flLightOrigin[3] = {0, 0, 0};
 
 	struct cl_entity_s* m_pModelEntity = nullptr;
+	void* m_pImage = nullptr;
 };
 
 extern ModelViewPanel* g_pModelViewPanel;

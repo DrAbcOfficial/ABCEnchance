@@ -20,13 +20,58 @@ namespace vgui {
 	ModelViewPanel* g_pModelViewPanel = nullptr;
 }
 
+class CModelViewImage : public vgui::IImage_HL25
+{
+public:
+	void SetFBO(const FBO_Container_t* fbo) { m_pFBO = fbo; }
+	void SetPanel(vgui::Panel* panel) { m_pPanel = panel; }
+
+	void Paint() override
+	{
+		if (!MetaRenderer() || !m_pFBO || !m_pPanel)
+			return;
+		if (m_pFBO->iWidth <= 0 || m_pFBO->iHeight <= 0)
+			return;
+
+		int px = 0, py = 0;
+		if (m_pPanel)
+			vgui::ipanel()->GetAbsPos(m_pPanel->GetVPanel(), px, py);
+		int pw = m_pFBO->iWidth;
+		int ph = m_pFBO->iHeight;
+
+		float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+		MetaRenderer()->DrawTexturedQuad(
+			m_pFBO->s_hBackBufferTex,
+			px, py, px + pw, py + ph,
+			white,
+			DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED,
+			"ModelViewImage::Paint"
+		);
+	}
+	void Destroy() override { delete this; }
+	void SetAdditive(bool) override {}
+	void SetPos(int x, int y) override { m_iX = x; m_iY = y; }
+	void GetContentSize(int& w, int& h) override { w = m_iWide; h = m_iTall; }
+	void GetSize(int& w, int& h) override { GetContentSize(w, h); }
+	void SetSize(int w, int h) override { m_iWide = w; m_iTall = h; }
+	void SetColor(Color c) override { m_DrawColor = c; }
+
+private:
+	const FBO_Container_t* m_pFBO = nullptr;
+	vgui::Panel* m_pPanel = nullptr;
+	int m_iX = 0, m_iY = 0;
+	int m_iWide = 0, m_iTall = 0;
+	Color m_DrawColor = Color(255, 255, 255, 255);
+};
+
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
 ModelViewPanel::ModelViewPanel(Panel *parent, const char *name) : BaseClass(parent, name){
 	m_pModelEntity = new cl_entity_t();
 	m_pModelEntity->baseline.entityType = ENTITY_NORMAL;
-	//m_pModelEntity->player = TRUE;
+	m_pImage = new CModelViewImage();
+	((CModelViewImage*)m_pImage)->SetPanel(this);
 	g_pModelViewPanel = this;
 }
 
@@ -298,6 +343,13 @@ static void TransformVec3ByMat4(vec3_t out, const vec3_t v, const float m[4][4])
 }
 
 void ModelViewPanel::Paint(){
+	if (m_pImage && m_ModelFBO.iWidth > 0)
+	{
+		auto* img = (CModelViewImage*)m_pImage;
+		img->SetFBO(&m_ModelFBO);
+		img->SetSize(m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+		img->Paint();
+	}
 }
 
 void ModelViewPanel::RenderModel(){
