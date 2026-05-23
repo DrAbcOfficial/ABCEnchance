@@ -34,16 +34,10 @@ public:
 		if (m_pFBO->iWidth <= 0 || m_pFBO->iHeight <= 0)
 			return;
 
-		int px = 0, py = 0;
-		if (m_pPanel)
-			vgui::ipanel()->GetAbsPos(m_pPanel->GetVPanel(), px, py);
-		int pw = m_pFBO->iWidth;
-		int ph = m_pFBO->iHeight;
-
 		float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 		MetaRenderer()->DrawTexturedQuad(
 			m_pFBO->s_hBackBufferTex,
-			px, py, px + pw, py + ph,
+			0, m_pFBO->iHeight, m_pFBO->iWidth, 0,
 			white,
 			DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED,
 			"ModelViewImage::Paint"
@@ -364,46 +358,157 @@ void ModelViewPanel::RenderModel(){
 	IMetaRenderer* pRenderer = MetaRenderer();
 	if (!pRenderer || !m_pModelEntity || !m_pModelEntity->model)
 		return;
+	if (m_ModelFBO.iWidth <= 0 || m_ModelFBO.iHeight <= 0)
+		return;
 
 	auto* studiohdr = (studiohdr_t*)gEngineStudio.Mod_Extradata(m_pModelEntity->model);
 	if (!studiohdr || studiohdr->id != 0x54534449)
 		return;
 
-	static bool s_bDebugOnce = true;
-	if (s_bDebugOnce) {
-		s_bDebugOnce = false;
-		gEngfuncs.Con_Printf("[ModelView] RenderModel called, model=%s\n", m_pModelEntity->model->name);
-	}
+	float aspect = (float)m_ModelFBO.iWidth / (float)m_ModelFBO.iHeight;
 
-	int screenW, screenH;
-	vgui::surface()->GetScreenSize(screenW, screenH);
-	int px, py;
-	ipanel()->GetAbsPos(GetVPanel(), px, py);
+	float modelMatrix[4][4];
+	CMathlib::Matrix4x4_CreateFromEntity(modelMatrix, mathlib::vecZero,
+		m_pModelEntity->origin, 1.0f);
+	modelMatrix[3][0] = modelMatrix[3][1] = modelMatrix[3][2] = 0.0f;
+	modelMatrix[3][3] = 1.0f;
 
-	pRenderer->PushWorldMatrix();
-	pRenderer->PushProjectionMatrix();
-	pRenderer->SetupOrthoProjectionMatrix(0, (float)screenW, (float)screenH, 0, -1.0f, 1.0f, false);
-	pRenderer->LoadIdentityForWorldMatrix();
+	float dist = 120.0f;
+	float camYaw = CMathlib::Q_DEG2RAD(m_pModelEntity->angles[YAW]);
+	float camPitch = CMathlib::Q_DEG2RAD(-15.0f);
+	vec3_t viewOrigin;
+	viewOrigin[0] = m_pModelEntity->origin[0] + dist * cosf(camPitch) * sinf(camYaw);
+	viewOrigin[1] = m_pModelEntity->origin[1] - dist * cosf(camPitch) * cosf(camYaw);
+	viewOrigin[2] = m_pModelEntity->origin[2] + dist * sinf(camPitch);
 
+	vec3_t viewTarget;
+	CMathlib::VectorSubtract(m_pModelEntity->origin, viewOrigin, viewTarget);
+	vec3_t viewAngles;
+	CMathlib::VectorAngles(viewTarget, viewAngles);
+
+	float viewMatrix[4][4];
+	CMathlib::Matrix4x4_CreateFromEntity(viewMatrix, viewAngles, viewOrigin, 1.0f);
+	viewMatrix[3][0] = viewMatrix[3][1] = viewMatrix[3][2] = 0.0f;
+	viewMatrix[3][3] = 1.0f;
+	CMathlib::InvertMatrix((float*)viewMatrix, (float*)viewMatrix);
+
+	float projMatrix[4][4];
+	BuildProjMatrix(projMatrix, m_flFov, aspect, 1.0f, 4096.0f);
+
+	float mvpTemp[4][4], mvpFinal[4][4];
+	Mat4x4_Mul(mvpTemp, viewMatrix, modelMatrix);
+	Mat4x4_Mul(mvpFinal, projMatrix, mvpTemp);
+
+	auto ptexture = (mstudiotexture_t*)((byte*)studiohdr + studiohdr->textureindex);
+	auto pskinref = (short*)((byte*)studiohdr + studiohdr->skinindex);
+	float hw = (float)m_ModelFBO.iWidth * 0.5f;
+	float hh = (float)m_ModelFBO.iHeight * 0.5f;
+
+	float**** pbonetransform = gEngineStudio.StudioGetBoneTransform ?
+		gEngineStudio.StudioGetBoneTransform() : nullptr;
+
+	auto* oldSceneFBO = pRenderer->GetCurrentSceneFBO();
+	auto* oldFBO = pRenderer->GetCurrentRenderingFBO();
+
+	pRenderer->BindFrameBuffer(&m_ModelFBO);
+	pRenderer->SetCurrentSceneFBO(&m_ModelFBO);
+	pRenderer->SetViewport(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+
+	float clearColor[4] = {0.15f, 0.15f, 0.15f, 1.0f};
+	pRenderer->ClearColor(clearColor);
+
+	for (int i = 0; i < studiohdr->numbodyparts; i++)
 	{
-		texturedrectvertex_t testV[4];
-		float cyan[4] = {0.0f, 1.0f, 1.0f, 1.0f};
-		int size = 100;
-		testV[0].pos[0] = (float)px; testV[0].pos[1] = (float)py;
-		testV[1].pos[0] = (float)(px + size); testV[1].pos[1] = (float)py;
-		testV[2].pos[0] = (float)(px + size); testV[2].pos[1] = (float)(py + size);
-		testV[3].pos[0] = (float)px; testV[3].pos[1] = (float)(py + size);
-		for (int k = 0; k < 4; k++) {
-			testV[k].col[0] = cyan[0]; testV[k].col[1] = cyan[1];
-			testV[k].col[2] = cyan[2]; testV[k].col[3] = cyan[3];
-			testV[k].texcoord[0] = 0; testV[k].texcoord[1] = 0;
+		auto bodypart = (mstudiobodyparts_t*)((byte*)studiohdr + studiohdr->bodypartindex) + i;
+		if (!bodypart->modelindex || !bodypart->nummodels) continue;
+		for (int j = 0; j < bodypart->nummodels; j++)
+		{
+			auto submodel = (mstudiomodel_t*)((byte*)studiohdr + bodypart->modelindex) + j;
+			auto pverts = (const vec3_t*)((byte*)studiohdr + submodel->vertindex);
+			auto pvertbone = ((byte*)studiohdr + submodel->vertinfoindex);
+
+			for (int k = 0; k < submodel->nummesh; k++)
+			{
+				auto pmesh = (mstudiomesh_t*)((byte*)studiohdr + submodel->meshindex) + k;
+				int texIndex = pskinref[pmesh->skinref];
+				int texid = ptexture[texIndex].index;
+				if (texid <= 0) continue;
+				float texW = (float)ptexture[texIndex].width;
+				float texH = (float)ptexture[texIndex].height;
+				if (texW <= 0.0f) texW = 1.0f;
+				if (texH <= 0.0f) texH = 1.0f;
+
+				auto ptricmds = (short*)((byte*)studiohdr + pmesh->triindex);
+				std::vector<texturedrectvertex_t> verts;
+				std::vector<uint32_t> indices;
+
+				while (int trisLeft = *ptricmds++)
+				{
+					if (trisLeft < 0)
+					{
+						trisLeft = -trisLeft;
+						for (int t = 0; t < trisLeft; t++)
+						{
+							auto idx = (uint32_t)verts.size();
+							verts.push_back({});
+							verts.back().texcoord[0] = (float)ptricmds[2] / texW;
+							verts.back().texcoord[1] = (float)ptricmds[3] / texH;
+							for (int c = 0; c < 4; c++) verts.back().col[c] = 1.0f;
+							vec3_t bonedPos;
+							int bone = pvertbone[ptricmds[0]];
+							if (pbonetransform && (*pbonetransform) && (*pbonetransform)[bone]) {
+								auto bm = (*pbonetransform)[bone];
+								bonedPos[0] = pverts[ptricmds[0]][0]*bm[0][0]+pverts[ptricmds[0]][1]*bm[0][1]+pverts[ptricmds[0]][2]*bm[0][2]+bm[0][3];
+								bonedPos[1] = pverts[ptricmds[0]][0]*bm[1][0]+pverts[ptricmds[0]][1]*bm[1][1]+pverts[ptricmds[0]][2]*bm[1][2]+bm[1][3];
+								bonedPos[2] = pverts[ptricmds[0]][0]*bm[2][0]+pverts[ptricmds[0]][1]*bm[2][1]+pverts[ptricmds[0]][2]*bm[2][2]+bm[2][3];
+							} else CMathlib::VectorCopy(pverts[ptricmds[0]], bonedPos);
+							vec3_t wp; TransformVec3ByMat4(wp, bonedPos, mvpFinal);
+							verts.back().pos[0] = (wp[0]+1.0f)*hw;
+							verts.back().pos[1] = (1.0f-wp[1])*hh;
+							ptricmds += 4;
+							if (t >= 2) { indices.push_back(idx-2); indices.push_back(idx-1); indices.push_back(idx); }
+						}
+					}
+					else
+					{
+						for (int t = 0; t < trisLeft; t++)
+						{
+							auto idx = (uint32_t)verts.size();
+							verts.push_back({});
+							verts.back().texcoord[0] = (float)ptricmds[2] / texW;
+							verts.back().texcoord[1] = (float)ptricmds[3] / texH;
+							for (int c = 0; c < 4; c++) verts.back().col[c] = 1.0f;
+							vec3_t bonedPos;
+							int bone = pvertbone[ptricmds[0]];
+							if (pbonetransform && (*pbonetransform) && (*pbonetransform)[bone]) {
+								auto bm = (*pbonetransform)[bone];
+								bonedPos[0] = pverts[ptricmds[0]][0]*bm[0][0]+pverts[ptricmds[0]][1]*bm[0][1]+pverts[ptricmds[0]][2]*bm[0][2]+bm[0][3];
+								bonedPos[1] = pverts[ptricmds[0]][0]*bm[1][0]+pverts[ptricmds[0]][1]*bm[1][1]+pverts[ptricmds[0]][2]*bm[1][2]+bm[1][3];
+								bonedPos[2] = pverts[ptricmds[0]][0]*bm[2][0]+pverts[ptricmds[0]][1]*bm[2][1]+pverts[ptricmds[0]][2]*bm[2][2]+bm[2][3];
+							} else CMathlib::VectorCopy(pverts[ptricmds[0]], bonedPos);
+							vec3_t wp; TransformVec3ByMat4(wp, bonedPos, mvpFinal);
+							verts.back().pos[0] = (wp[0]+1.0f)*hw;
+							verts.back().pos[1] = (1.0f-wp[1])*hh;
+							ptricmds += 4;
+							if (t >= 2) {
+								uint32_t a = idx-2, b = idx-1, c = idx;
+								if ((t-2)%2==0) { indices.push_back(a); indices.push_back(b); }
+								else { indices.push_back(b); indices.push_back(a); }
+								indices.push_back(c);
+							}
+						}
+					}
+					if (ptricmds[0] == 0) break;
+				}
+				if (!verts.empty() && !indices.empty())
+					pRenderer->DrawTexturedRect(texid, verts.data(), verts.size(), indices.data(), indices.size(),
+						DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "ModelViewPanel");
+			}
 		}
-		uint32_t ti[6] = {0,1,2, 0,2,3};
-		pRenderer->DrawTexturedRect(0, testV, 4, ti, 6, 0, "test_cyan");
 	}
 
-	pRenderer->PopProjectionMatrix();
-	pRenderer->PopWorldMatrix();
+	pRenderer->SetCurrentSceneFBO(oldSceneFBO);
+	pRenderer->BindFrameBuffer(oldFBO);
 }
 
 void vgui::ModelViewPanel::ApplySettings(KeyValues* inResourceData){
