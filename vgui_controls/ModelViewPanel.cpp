@@ -246,6 +246,8 @@ void ModelViewPanel::Paint(){
 	if (m_ModelFBO.iWidth <= 0 || m_ModelFBO.iHeight <= 0)
 		return;
 
+	m_pModelEntity->prevstate = m_pModelEntity->curstate;
+
 	pRenderer->BeginDebugGroup("ModelViewPanel::Paint");
 
 	auto* oldSceneFBO = pRenderer->GetCurrentSceneFBO();
@@ -275,8 +277,12 @@ void ModelViewPanel::Paint(){
 		(float)m_ModelFBO.iWidth / (float)m_ModelFBO.iHeight,
 		1.0f, 4096.0f);
 
-	pRenderer->SetCurrentEntity(m_pModelEntity);
-	pRenderer->DrawCurrentEntity(false);
+	__try {
+		pRenderer->SetCurrentEntity(m_pModelEntity);
+		pRenderer->DrawCurrentEntity(false);
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER) {
+	}
 
 	pRenderer->PopRefDef();
 	pRenderer->SetCurrentSceneFBO(oldSceneFBO);
