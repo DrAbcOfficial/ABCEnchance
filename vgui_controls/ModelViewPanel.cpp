@@ -344,6 +344,9 @@ void ModelViewPanel::Paint(){
 	auto ptexture = (mstudiotexture_t*)((byte*)studiohdr + studiohdr->textureindex);
 	auto pskinref = (short*)((byte*)studiohdr + studiohdr->skinindex);
 
+	float hw = (float)m_ModelFBO.iWidth * 0.5f;
+	float hh = (float)m_ModelFBO.iHeight * 0.5f;
+
 	float**** pbonetransform = gEngineStudio.StudioGetBoneTransform ?
 		gEngineStudio.StudioGetBoneTransform() : nullptr;
 
@@ -363,6 +366,12 @@ void ModelViewPanel::Paint(){
 
 	float clearColor[4] = {0.15f, 0.15f, 0.15f, 1.0f};
 	pRenderer->ClearColor(clearColor);
+
+	{
+		float red[4] = {1.0f, 0.0f, 0.0f, 1.0f};
+		pRenderer->DrawFilledQuad(0, 0, 100, 100, red, 0, "debug_fbo_red");
+		pRenderer->DrawTexturedQuad(0, 100, 0, 200, 100, clearColor, 0, "debug_grey");
+	}
 
 	int totalTris = 0;
 	bool bAnyDraw = false;
@@ -434,8 +443,6 @@ void ModelViewPanel::Paint(){
 							vec3_t worldPos;
 							TransformVec3ByMat4(worldPos, bonedPos, mvpFinal);
 
-							float hw = (float)m_ModelFBO.iWidth * 0.5f;
-							float hh = (float)m_ModelFBO.iHeight * 0.5f;
 							verts.back().pos[0] = (worldPos[0] + 1.0f) * hw;
 							verts.back().pos[1] = (1.0f - worldPos[1]) * hh;
 
@@ -480,8 +487,6 @@ void ModelViewPanel::Paint(){
 							vec3_t worldPos;
 							TransformVec3ByMat4(worldPos, bonedPos, mvpFinal);
 
-							float hw = (float)m_ModelFBO.iWidth * 0.5f;
-							float hh = (float)m_ModelFBO.iHeight * 0.5f;
 							verts.back().pos[0] = (worldPos[0] + 1.0f) * hw;
 							verts.back().pos[1] = (1.0f - worldPos[1]) * hh;
 
@@ -524,30 +529,44 @@ void ModelViewPanel::Paint(){
 	if (s_bDebugOnce)
 	{
 		s_bDebugOnce = false;
-		gEngfuncs.Con_Printf("[ModelView] Model Matrix:\n");
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", modelMatrix[0][0],modelMatrix[0][1],modelMatrix[0][2],modelMatrix[0][3]);
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", modelMatrix[1][0],modelMatrix[1][1],modelMatrix[1][2],modelMatrix[1][3]);
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", modelMatrix[2][0],modelMatrix[2][1],modelMatrix[2][2],modelMatrix[2][3]);
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", modelMatrix[3][0],modelMatrix[3][1],modelMatrix[3][2],modelMatrix[3][3]);
-		gEngfuncs.Con_Printf("[ModelView] Proj Matrix:\n");
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", projMatrix[0][0],projMatrix[0][1],projMatrix[0][2],projMatrix[0][3]);
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", projMatrix[1][0],projMatrix[1][1],projMatrix[1][2],projMatrix[1][3]);
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", projMatrix[2][0],projMatrix[2][1],projMatrix[2][2],projMatrix[2][3]);
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", projMatrix[3][0],projMatrix[3][1],projMatrix[3][2],projMatrix[3][3]);
-		gEngfuncs.Con_Printf("[ModelView] MVP Final:\n");
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", mvpFinal[0][0],mvpFinal[0][1],mvpFinal[0][2],mvpFinal[0][3]);
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", mvpFinal[1][0],mvpFinal[1][1],mvpFinal[1][2],mvpFinal[1][3]);
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", mvpFinal[2][0],mvpFinal[2][1],mvpFinal[2][2],mvpFinal[2][3]);
-		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", mvpFinal[3][0],mvpFinal[3][1],mvpFinal[3][2],mvpFinal[3][3]);
+		gEngfuncs.Con_Printf("[ModelView] FBO: %dx%d  FOV: %.1f\n", m_ModelFBO.iWidth, m_ModelFBO.iHeight, m_flFov);
+		gEngfuncs.Con_Printf("[ModelView] Model: %s  bodyparts:%d  textures:%d  bones:%d\n",
+			m_pModelEntity->model->name, studiohdr->numbodyparts, studiohdr->numtextures, studiohdr->numbones);
+		gEngfuncs.Con_Printf("[ModelView] CamPos: (%.1f,%.1f,%.1f)  CamAng: (%.1f,%.1f,%.1f)\n",
+			viewOrigin[0], viewOrigin[1], viewOrigin[2], viewAngles[0], viewAngles[1], viewAngles[2]);
+		gEngfuncs.Con_Printf("[ModelView] Bonetransform: %s\n", pbonetransform ? "VALID" : "NULL");
+
+		vec3_t pMin = {99999, 99999, 99999}, pMax = {-99999, -99999, -99999};
+		for (int i = 0; i < studiohdr->numbodyparts; i++)
+		{
+			auto bp = (mstudiobodyparts_t*)((byte*)studiohdr + studiohdr->bodypartindex) + i;
+			if (!bp->modelindex || !bp->nummodels) continue;
+			for (int j = 0; j < bp->nummodels; j++)
+			{
+				auto sm = (mstudiomodel_t*)((byte*)studiohdr + bp->modelindex) + j;
+				auto pv = (const vec3_t*)((byte*)studiohdr + sm->vertindex);
+				for (int v = 0; v < sm->numverts; v++)
+				{
+					vec3_t ws;
+					TransformVec3ByMat4(ws, pv[v], mvpFinal);
+					for (int c = 0; c < 3; c++) {
+						if (ws[c] < pMin[c]) pMin[c] = ws[c];
+						if (ws[c] > pMax[c]) pMax[c] = ws[c];
+					}
+				}
+				break;
+			}
+			break;
+		}
+		gEngfuncs.Con_Printf("[ModelView] VertClipRange: (%.2f,%.2f,%.2f)-(%.2f,%.2f,%.2f)\n",
+			pMin[0], pMin[1], pMin[2], pMax[0], pMax[1], pMax[2]);
+		gEngfuncs.Con_Printf("[ModelView] VertScreenRange: (%.0f,%.0f)-(%.0f,%.0f) [FBO:%dx%d]\n",
+			(pMin[0] + 1.0f) * hw, (1.0f - pMin[1]) * hh,
+			(pMax[0] + 1.0f) * hw, (1.0f - pMax[1]) * hh,
+			m_ModelFBO.iWidth, m_ModelFBO.iHeight);
 		gEngfuncs.Con_Printf("[ModelView] DrawCalls: %s  TotalTris: %d\n",
 			bAnyDraw ? "YES" : "NO", totalTris);
 		gEngfuncs.Con_Printf("[ModelView] FBO tex id: %d\n", m_ModelFBO.s_hBackBufferTex);
-		for (int t = 0; t < studiohdr->numtextures && t < 4; t++)
-		{
-			gEngfuncs.Con_Printf("[ModelView]   Tex[%d]: %s id=%d %dx%d\n",
-				t, ptexture[t].name, ptexture[t].index,
-				ptexture[t].width, ptexture[t].height);
-		}
 		vec3_t testModelPos = {0, 30, -15};
 		vec3_t testScreen;
 		TransformVec3ByMat4(testScreen, testModelPos, mvpFinal);
@@ -575,8 +594,6 @@ void ModelViewPanel::Paint(){
 		TransformVec3ByMat4(s1, p1, mvpFinal);
 		TransformVec3ByMat4(s2, p2, mvpFinal);
 
-		float hw = (float)m_ModelFBO.iWidth * 0.5f;
-		float hh = (float)m_ModelFBO.iHeight * 0.5f;
 		debugVerts[0].pos[0] = (s0[0] + 1.0f) * hw; debugVerts[0].pos[1] = (1.0f - s0[1]) * hh;
 		debugVerts[1].pos[0] = (s1[0] + 1.0f) * hw; debugVerts[1].pos[1] = (1.0f - s1[1]) * hh;
 		debugVerts[2].pos[0] = (s2[0] + 1.0f) * hw; debugVerts[2].pos[1] = (1.0f - s2[1]) * hh;
