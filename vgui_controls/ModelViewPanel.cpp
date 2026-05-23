@@ -243,9 +243,17 @@ void vgui::ModelViewPanel::SetLightOrigin(float x, float y, float z){
 //-----------------------------------------------------------------------------
 // Purpose: draws the graph
 //-----------------------------------------------------------------------------
-static void BuildModelMatrix(float out[4][4], const vec3_t origin, const vec3_t angles)
+static void Mat4x4_Mul(float out[4][4], const float a[4][4], const float b[4][4])
 {
-	CMathlib::Matrix4x4_CreateFromEntity(out, angles, origin, 1.0f);
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			out[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j] + a[i][3] * b[3][j];
+}
+
+static void Mat4x4_Identity(float out[4][4])
+{
+	memset(out, 0, sizeof(float) * 16);
+	out[0][0] = out[1][1] = out[2][2] = out[3][3] = 1.0f;
 }
 
 static void BuildViewMatrix(float out[4][4], const vec3_t viewOrigin, const vec3_t viewAngles)
@@ -315,36 +323,29 @@ void ModelViewPanel::Paint(){
 	float modelMatrix[4][4];
 	CMathlib::Matrix4x4_CreateFromEntity(modelMatrix, mathlib::vecZero,
 		m_pModelEntity->origin, 1.0f);
+	modelMatrix[3][0] = modelMatrix[3][1] = modelMatrix[3][2] = 0.0f;
+	modelMatrix[3][3] = 1.0f;
+
+	float viewMatrix[4][4];
+	CMathlib::Matrix4x4_CreateFromEntity(viewMatrix, viewAngles, viewOrigin, 1.0f);
+	viewMatrix[3][0] = viewMatrix[3][1] = viewMatrix[3][2] = 0.0f;
+	viewMatrix[3][3] = 1.0f;
+
+	CMathlib::InvertMatrix((float*)viewMatrix, (float*)viewMatrix);
+
+	float projMatrix[4][4];
+	BuildProjMatrix(projMatrix, m_flFov, aspect, 1.0f, 4096.0f);
+
+	float mvpTemp[4][4];
+	Mat4x4_Mul(mvpTemp, viewMatrix, modelMatrix);
+	float mvpFinal[4][4];
+	Mat4x4_Mul(mvpFinal, projMatrix, mvpTemp);
 
 	auto ptexture = (mstudiotexture_t*)((byte*)studiohdr + studiohdr->textureindex);
 	auto pskinref = (short*)((byte*)studiohdr + studiohdr->skinindex);
 
 	float**** pbonetransform = gEngineStudio.StudioGetBoneTransform ?
 		gEngineStudio.StudioGetBoneTransform() : nullptr;
-
-	if (s_bDebugOnce)
-	{
-		gEngfuncs.Con_Printf("[ModelView] FBO: %dx%d  FOV: %.1f\n", m_ModelFBO.iWidth, m_ModelFBO.iHeight, m_flFov);
-		gEngfuncs.Con_Printf("[ModelView] Model: %s  bodyparts:%d  textures:%d  bones:%d\n",
-			m_pModelEntity->model->name, studiohdr->numbodyparts, studiohdr->numtextures, studiohdr->numbones);
-		gEngfuncs.Con_Printf("[ModelView] Origin: (%.1f,%.1f,%.1f)  Angles: (%.1f,%.1f,%.1f)\n",
-			m_pModelEntity->origin[0], m_pModelEntity->origin[1], m_pModelEntity->origin[2],
-			m_pModelEntity->angles[0], m_pModelEntity->angles[1], m_pModelEntity->angles[2]);
-		gEngfuncs.Con_Printf("[ModelView] CamPos: (%.1f,%.1f,%.1f)  CamAng: (%.1f,%.1f,%.1f)\n",
-			viewOrigin[0], viewOrigin[1], viewOrigin[2], viewAngles[0], viewAngles[1], viewAngles[2]);
-		gEngfuncs.Con_Printf("[ModelView] Bonetransform: %s\n", pbonetransform ? "VALID" : "NULL");
-	}
-
-	float viewMatrix[4][4];
-	BuildViewMatrix(viewMatrix, viewOrigin, viewAngles);
-
-	float projMatrix[4][4];
-	BuildProjMatrix(projMatrix, m_flFov, aspect, 1.0f, 4096.0f);
-
-	float mvp[4][4];
-	CMathlib::Matrix4x4_ConcatTransforms(mvp, viewMatrix, modelMatrix);
-	float mvpFinal[4][4];
-	CMathlib::Matrix4x4_ConcatTransforms(mvpFinal, projMatrix, mvp);
 
 	pRenderer->BeginDebugGroup("ModelViewPanel::Paint");
 
