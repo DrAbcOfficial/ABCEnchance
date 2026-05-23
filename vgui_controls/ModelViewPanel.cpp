@@ -631,13 +631,14 @@ void ModelViewPanel::Paint(){
 		pRenderer->SetViewport(0, 0, oldW, oldH);
 	}
 
-	surface()->DrawSetColor(255, 0, 255, 255);
-	surface()->DrawFilledRect(0, 0, 30, 30);
-	surface()->DrawSetColor(0, 255, 255, 255);
-	surface()->DrawFilledRect(35, 0, 65, 30);
-
-	surface()->DrawSetTexture(m_ModelFBO.s_hBackBufferTex);
-	surface()->DrawTexturedRect(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+	int px = 0, py = 0;
+	ipanel()->GetAbsPos(GetVPanel(), px, py);
+	int pw = GetWide(), ph = GetTall();
+	float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+	pRenderer->DrawTexturedQuad(m_ModelFBO.s_hBackBufferTex,
+		px, py, px + pw, py + ph,
+		white, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED,
+		"ModelViewPanel_blit");
 
 	surface()->DrawSetColor(255, 0, 0, 255);
 	surface()->DrawFilledRect(0, 0, 10, 10);
