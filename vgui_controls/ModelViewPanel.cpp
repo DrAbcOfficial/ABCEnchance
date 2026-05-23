@@ -368,9 +368,19 @@ void ModelViewPanel::Paint(){
 	pRenderer->ClearColor(clearColor);
 
 	{
-		float red[4] = {1.0f, 0.0f, 0.0f, 1.0f};
-		pRenderer->DrawFilledQuad(0, 0, 100, 100, red, 0, "debug_fbo_red");
-		pRenderer->DrawTexturedQuad(0, 100, 0, 200, 100, clearColor, 0, "debug_grey");
+		texturedrectvertex_t v[4];
+		float purple[4] = {1.0f, 0.0f, 1.0f, 1.0f};
+		v[0].pos[0] = 0; v[0].pos[1] = 0;
+		v[1].pos[0] = 200; v[1].pos[1] = 0;
+		v[2].pos[0] = 200; v[2].pos[1] = 200;
+		v[3].pos[0] = 0; v[3].pos[1] = 200;
+		for (int k = 0; k < 4; k++) {
+			v[k].col[0] = purple[0]; v[k].col[1] = purple[1];
+			v[k].col[2] = purple[2]; v[k].col[3] = purple[3];
+			v[k].texcoord[0] = 0; v[k].texcoord[1] = 0;
+		}
+		uint32_t idx[6] = {0,1,2, 0,2,3};
+		pRenderer->DrawTexturedRect(0, v, 4, idx, 6, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "debug_fbo");
 	}
 
 	int totalTris = 0;
