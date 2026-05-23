@@ -520,13 +520,27 @@ void ModelViewPanel::Paint(){
 		s_bDebugOnce = false;
 		gEngfuncs.Con_Printf("[ModelView] DrawCalls: %s  TotalTris: %d\n",
 			bAnyDraw ? "YES" : "NO", totalTris);
+		gEngfuncs.Con_Printf("[ModelView] FBO tex id: %d\n", m_ModelFBO.s_hBackBufferTex);
 		for (int t = 0; t < studiohdr->numtextures && t < 4; t++)
 		{
 			gEngfuncs.Con_Printf("[ModelView]   Tex[%d]: %s id=%d %dx%d\n",
 				t, ptexture[t].name, ptexture[t].index,
 				ptexture[t].width, ptexture[t].height);
 		}
+		vec3_t testModelPos = {0, 30, -15};
+		vec3_t testScreen;
+		TransformVec3ByMat4(testScreen, testModelPos, mvpFinal);
+		gEngfuncs.Con_Printf("[ModelView] Model(0,30,-15) -> clip: (%.2f,%.2f,%.2f)\n",
+			testScreen[0], testScreen[1], testScreen[2]);
+		float hw = (float)m_ModelFBO.iWidth * 0.5f;
+		float hh = (float)m_ModelFBO.iHeight * 0.5f;
+		gEngfuncs.Con_Printf("[ModelView] Model -> screen: (%.0f,%.0f) [FBO: %dx%d]\n",
+			(testScreen[0] + 1.0f) * hw, (1.0f - testScreen[1]) * hh,
+			m_ModelFBO.iWidth, m_ModelFBO.iHeight);
 	}
+
+	pRenderer->DrawFilledQuad(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight,
+		clearColor, 0, "debug_bg");
 
 	pRenderer->SetCurrentSceneFBO(oldSceneFBO);
 	pRenderer->BindFrameBuffer(oldRenderingFBO);
@@ -536,6 +550,11 @@ void ModelViewPanel::Paint(){
 
 	surface()->DrawSetTexture(m_ModelFBO.s_hBackBufferTex);
 	surface()->DrawFilledRect(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+
+	surface()->DrawSetColor(255, 0, 0, 255);
+	surface()->DrawFilledRect(0, 0, 10, 10);
+	surface()->DrawSetColor(0, 255, 0, 255);
+	surface()->DrawFilledRect(10, 0, 20, 10);
 
 	pRenderer->EndDebugGroup();
 }
