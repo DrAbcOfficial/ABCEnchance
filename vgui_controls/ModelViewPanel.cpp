@@ -304,7 +304,10 @@ void ModelViewPanel::Paint(){
 	viewOrigin[1] = m_pModelEntity->origin[1] - 100;
 	viewOrigin[2] = m_pModelEntity->origin[2] + 30;
 
-	vec3_t viewAngles = {0, 0, 0};
+	vec3_t viewTarget;
+	CMathlib::VectorSubtract(m_pModelEntity->origin, viewOrigin, viewTarget);
+	vec3_t viewAngles;
+	CMathlib::VectorAngles(viewTarget, viewAngles);
 
 	float viewMatrix[4][4];
 	BuildViewMatrix(viewMatrix, viewOrigin, viewAngles);
@@ -335,6 +338,10 @@ void ModelViewPanel::Paint(){
 	pRenderer->ClearColor(clearColor);
 
 	auto ptexture = (mstudiotexture_t*)((byte*)studiohdr + studiohdr->textureindex);
+	auto pskinref = (short*)((byte*)studiohdr + studiohdr->skinindex);
+
+	float**** pbonetransform = gEngineStudio.StudioGetBoneTransform ?
+		gEngineStudio.StudioGetBoneTransform() : nullptr;
 
 	for (int i = 0; i < studiohdr->numbodyparts; i++)
 	{
@@ -348,14 +355,21 @@ void ModelViewPanel::Paint(){
 
 			auto pverts = (const vec3_t*)((byte*)studiohdr + submodel->vertindex);
 			auto pnorms = (const vec3_t*)((byte*)studiohdr + submodel->normindex);
+			auto pvertbone = ((byte*)studiohdr + submodel->vertinfoindex);
 
 			for (int k = 0; k < submodel->nummesh; k++)
 			{
 				auto pmesh = (mstudiomesh_t*)((byte*)studiohdr + submodel->meshindex) + k;
 
-				int texid = ptexture[pmesh->skinref].index;
+				int texIndex = pskinref[pmesh->skinref];
+				int texid = ptexture[texIndex].index;
 				if (texid <= 0)
 					continue;
+
+				float texW = (float)ptexture[texIndex].width;
+				float texH = (float)ptexture[texIndex].height;
+				if (texW <= 0.0f) texW = 1.0f;
+				if (texH <= 0.0f) texH = 1.0f;
 
 				auto ptricmds = (short*)((byte*)studiohdr + pmesh->triindex);
 
@@ -372,15 +386,29 @@ void ModelViewPanel::Paint(){
 							auto idx = (uint32_t)verts.size();
 							verts.push_back({});
 
-							verts.back().texcoord[0] = (float)ptricmds[2];
-							verts.back().texcoord[1] = (float)ptricmds[3];
+							verts.back().texcoord[0] = (float)ptricmds[2] / texW;
+							verts.back().texcoord[1] = (float)ptricmds[3] / texH;
 							verts.back().col[0] = 1.0f;
 							verts.back().col[1] = 1.0f;
 							verts.back().col[2] = 1.0f;
 							verts.back().col[3] = 1.0f;
 
+							vec3_t bonedPos;
+							int bone = pvertbone[ptricmds[0]];
+							if (pbonetransform && (*pbonetransform) && (*pbonetransform)[bone])
+							{
+								auto boneMat = (*pbonetransform)[bone];
+								bonedPos[0] = pverts[ptricmds[0]][0] * boneMat[0][0] + pverts[ptricmds[0]][1] * boneMat[0][1] + pverts[ptricmds[0]][2] * boneMat[0][2] + boneMat[0][3];
+								bonedPos[1] = pverts[ptricmds[0]][0] * boneMat[1][0] + pverts[ptricmds[0]][1] * boneMat[1][1] + pverts[ptricmds[0]][2] * boneMat[1][2] + boneMat[1][3];
+								bonedPos[2] = pverts[ptricmds[0]][0] * boneMat[2][0] + pverts[ptricmds[0]][1] * boneMat[2][1] + pverts[ptricmds[0]][2] * boneMat[2][2] + boneMat[2][3];
+							}
+							else
+							{
+								CMathlib::VectorCopy(pverts[ptricmds[0]], bonedPos);
+							}
+
 							vec3_t worldPos;
-							TransformVec3ByMat4(worldPos, pverts[ptricmds[0]], mvpFinal);
+							TransformVec3ByMat4(worldPos, bonedPos, mvpFinal);
 
 							float hw = (float)m_ModelFBO.iWidth * 0.5f;
 							float hh = (float)m_ModelFBO.iHeight * 0.5f;
@@ -404,15 +432,29 @@ void ModelViewPanel::Paint(){
 							auto idx = (uint32_t)verts.size();
 							verts.push_back({});
 
-							verts.back().texcoord[0] = (float)ptricmds[2];
-							verts.back().texcoord[1] = (float)ptricmds[3];
+							verts.back().texcoord[0] = (float)ptricmds[2] / texW;
+							verts.back().texcoord[1] = (float)ptricmds[3] / texH;
 							verts.back().col[0] = 1.0f;
 							verts.back().col[1] = 1.0f;
 							verts.back().col[2] = 1.0f;
 							verts.back().col[3] = 1.0f;
 
+							vec3_t bonedPos;
+							int bone = pvertbone[ptricmds[0]];
+							if (pbonetransform && (*pbonetransform) && (*pbonetransform)[bone])
+							{
+								auto boneMat = (*pbonetransform)[bone];
+								bonedPos[0] = pverts[ptricmds[0]][0] * boneMat[0][0] + pverts[ptricmds[0]][1] * boneMat[0][1] + pverts[ptricmds[0]][2] * boneMat[0][2] + boneMat[0][3];
+								bonedPos[1] = pverts[ptricmds[0]][0] * boneMat[1][0] + pverts[ptricmds[0]][1] * boneMat[1][1] + pverts[ptricmds[0]][2] * boneMat[1][2] + boneMat[1][3];
+								bonedPos[2] = pverts[ptricmds[0]][0] * boneMat[2][0] + pverts[ptricmds[0]][1] * boneMat[2][1] + pverts[ptricmds[0]][2] * boneMat[2][2] + boneMat[2][3];
+							}
+							else
+							{
+								CMathlib::VectorCopy(pverts[ptricmds[0]], bonedPos);
+							}
+
 							vec3_t worldPos;
-							TransformVec3ByMat4(worldPos, pverts[ptricmds[0]], mvpFinal);
+							TransformVec3ByMat4(worldPos, bonedPos, mvpFinal);
 
 							float hw = (float)m_ModelFBO.iWidth * 0.5f;
 							float hh = (float)m_ModelFBO.iHeight * 0.5f;
