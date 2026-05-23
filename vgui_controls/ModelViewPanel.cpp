@@ -1,9 +1,12 @@
 #include <metahook.h>
 
 #include <algorithm>
+#include <vector>
 #include "IMetaRenderer.h"
 #include "com_model.h"
+#include "studio.h"
 
+#include "core/library/mymathlib.h"
 #include "exportfuncs.h"
 #include "utility/vgui_util.h"
 
@@ -240,20 +243,79 @@ void vgui::ModelViewPanel::SetLightOrigin(float x, float y, float z){
 //-----------------------------------------------------------------------------
 // Purpose: draws the graph
 //-----------------------------------------------------------------------------
+static void BuildModelMatrix(float out[4][4], const vec3_t origin, const vec3_t angles)
+{
+	CMathlib::Matrix4x4_CreateFromEntity(out, angles, origin, 1.0f);
+}
+
+static void BuildViewMatrix(float out[4][4], const vec3_t viewOrigin, const vec3_t viewAngles)
+{
+	float viewMatrix[4][4];
+	float invViewMatrix[4][4];
+	CMathlib::Matrix4x4_CreateFromEntity(viewMatrix, viewAngles, viewOrigin, 1.0f);
+	CMathlib::InvertMatrix((float*)viewMatrix, (float*)out);
+}
+
+static void BuildProjMatrix(float out[4][4], float fov, float aspect, float zNear, float zFar)
+{
+	memset(out, 0, sizeof(float) * 16);
+	float f = 1.0f / tanf(fov * 0.5f * (mathlib::Q_PI / 180.0f));
+	out[0][0] = f / aspect;
+	out[1][1] = f;
+	out[2][2] = (zFar + zNear) / (zNear - zFar);
+	out[2][3] = (2.0f * zFar * zNear) / (zNear - zFar);
+	out[3][2] = -1.0f;
+}
+
+static void TransformVec3ByMat4(vec3_t out, const vec3_t v, const float m[4][4])
+{
+	float x = v[0] * m[0][0] + v[1] * m[1][0] + v[2] * m[2][0] + m[3][0];
+	float y = v[0] * m[0][1] + v[1] * m[1][1] + v[2] * m[2][1] + m[3][1];
+	float z = v[0] * m[0][2] + v[1] * m[1][2] + v[2] * m[2][2] + m[3][2];
+	float w = v[0] * m[0][3] + v[1] * m[1][3] + v[2] * m[2][3] + m[3][3];
+	out[0] = x;
+	out[1] = y;
+	out[2] = z;
+	if (w != 0.0f) {
+		out[0] /= w;
+		out[1] /= w;
+		out[2] /= w;
+	}
+}
+
 void ModelViewPanel::Paint(){
 	IMetaRenderer* pRenderer = MetaRenderer();
 	if (!pRenderer || !m_pModelEntity || !m_pModelEntity->model)
 		return;
 	if (m_ModelFBO.iWidth <= 0 || m_ModelFBO.iHeight <= 0)
 		return;
-	if (!g_pStudioInterface || !(*g_pStudioInterface))
+
+	auto* studiohdr = (studiohdr_t*)gEngineStudio.Mod_Extradata(m_pModelEntity->model);
+	if (!studiohdr || studiohdr->id != 0x54534449)
 		return;
 
-	auto* lp = gEngfuncs.GetLocalPlayer();
-	if (!lp || !gEngfuncs.GetMaxClients())
-		return;
+	float aspect = (float)m_ModelFBO.iWidth / (float)m_ModelFBO.iHeight;
 
-	m_pModelEntity->prevstate = m_pModelEntity->curstate;
+	float modelMatrix[4][4];
+	BuildModelMatrix(modelMatrix, m_pModelEntity->origin, m_pModelEntity->angles);
+
+	vec3_t viewOrigin;
+	viewOrigin[0] = m_pModelEntity->origin[0];
+	viewOrigin[1] = m_pModelEntity->origin[1] - 100;
+	viewOrigin[2] = m_pModelEntity->origin[2] + 30;
+
+	vec3_t viewAngles = {0, 0, 0};
+
+	float viewMatrix[4][4];
+	BuildViewMatrix(viewMatrix, viewOrigin, viewAngles);
+
+	float projMatrix[4][4];
+	BuildProjMatrix(projMatrix, m_flFov, aspect, 1.0f, 4096.0f);
+
+	float mvp[4][4];
+	CMathlib::Matrix4x4_ConcatTransforms(mvp, viewMatrix, modelMatrix);
+	float mvpFinal[4][4];
+	CMathlib::Matrix4x4_ConcatTransforms(mvpFinal, projMatrix, mvp);
 
 	pRenderer->BeginDebugGroup("ModelViewPanel::Paint");
 
@@ -268,45 +330,129 @@ void ModelViewPanel::Paint(){
 	pRenderer->BindFrameBuffer(&m_ModelFBO);
 	pRenderer->SetCurrentSceneFBO(&m_ModelFBO);
 	pRenderer->SetViewport(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
-	pRenderer->ClearFBO(&m_ModelFBO);
 
-	pRenderer->PushRefDef();
+	float clearColor[4] = {0.15f, 0.15f, 0.15f, 1.0f};
+	pRenderer->ClearColor(clearColor);
 
-	vec3_t viewOrigin;
-	viewOrigin[0] = m_pModelEntity->origin[0];
-	viewOrigin[1] = m_pModelEntity->origin[1] - 100;
-	viewOrigin[2] = m_pModelEntity->origin[2] + 30;
+	auto ptexture = (mstudiotexture_t*)((byte*)studiohdr + studiohdr->textureindex);
 
-	vec3_t viewAngles = {0, 0, 0};
-	pRenderer->SetRefDefViewOrigin(viewOrigin);
-	pRenderer->SetRefDefViewAngles(viewAngles);
-	pRenderer->SetupPerspective(m_flFov,
-		(float)m_ModelFBO.iWidth / (float)m_ModelFBO.iHeight,
-		1.0f, 4096.0f);
+	for (int i = 0; i < studiohdr->numbodyparts; i++)
+	{
+		auto bodypart = (mstudiobodyparts_t*)((byte*)studiohdr + studiohdr->bodypartindex) + i;
+		if (!bodypart->modelindex || !bodypart->nummodels)
+			continue;
 
-	__try {
-		gEngineStudio.SetRenderModel(m_pModelEntity->model);
-		gEngineStudio.StudioSetHeader(gEngineStudio.Mod_Extradata(m_pModelEntity->model));
+		for (int j = 0; j < bodypart->nummodels; j++)
+		{
+			auto submodel = (mstudiomodel_t*)((byte*)studiohdr + bodypart->modelindex) + j;
 
-		void* ppbodypart = nullptr;
-		void* ppsubmodel = nullptr;
-		gEngineStudio.StudioSetupModel(0, &ppbodypart, &ppsubmodel);
+			auto pverts = (const vec3_t*)((byte*)studiohdr + submodel->vertindex);
+			auto pnorms = (const vec3_t*)((byte*)studiohdr + submodel->normindex);
 
-		alight_s lighting;
-		memset(&lighting, 0, sizeof(lighting));
-		lighting.ambientlight = m_iAmbientLight;
-		lighting.shadelight = m_iShadeLight;
-		lighting.plightvec = m_flLightOrigin;
-		gEngineStudio.StudioEntityLight(&lighting);
-		gEngineStudio.StudioSetupLighting(&lighting);
+			for (int k = 0; k < submodel->nummesh; k++)
+			{
+				auto pmesh = (mstudiomesh_t*)((byte*)studiohdr + submodel->meshindex) + k;
 
-		pRenderer->SetCurrentEntity(m_pModelEntity);
-		(*g_pStudioInterface)->StudioDrawModel(STUDIO_RENDER);
+				int texid = ptexture[pmesh->skinref].index;
+				if (texid <= 0)
+					continue;
+
+				auto ptricmds = (short*)((byte*)studiohdr + pmesh->triindex);
+
+				std::vector<texturedrectvertex_t> verts;
+				std::vector<uint32_t> indices;
+
+				while (int trisLeft = *ptricmds++)
+				{
+					if (trisLeft < 0)
+					{
+						trisLeft = -trisLeft;
+						for (int t = 0; t < trisLeft; t++)
+						{
+							auto idx = (uint32_t)verts.size();
+							verts.push_back({});
+
+							verts.back().texcoord[0] = (float)ptricmds[2];
+							verts.back().texcoord[1] = (float)ptricmds[3];
+							verts.back().col[0] = 1.0f;
+							verts.back().col[1] = 1.0f;
+							verts.back().col[2] = 1.0f;
+							verts.back().col[3] = 1.0f;
+
+							vec3_t worldPos;
+							TransformVec3ByMat4(worldPos, pverts[ptricmds[0]], mvpFinal);
+
+							float hw = (float)m_ModelFBO.iWidth * 0.5f;
+							float hh = (float)m_ModelFBO.iHeight * 0.5f;
+							verts.back().pos[0] = (worldPos[0] + 1.0f) * hw;
+							verts.back().pos[1] = (1.0f - worldPos[1]) * hh;
+
+							ptricmds += 4;
+
+							if (t >= 2)
+							{
+								indices.push_back(idx - 2);
+								indices.push_back(idx - 1);
+								indices.push_back(idx);
+							}
+						}
+					}
+					else
+					{
+						for (int t = 0; t < trisLeft; t++)
+						{
+							auto idx = (uint32_t)verts.size();
+							verts.push_back({});
+
+							verts.back().texcoord[0] = (float)ptricmds[2];
+							verts.back().texcoord[1] = (float)ptricmds[3];
+							verts.back().col[0] = 1.0f;
+							verts.back().col[1] = 1.0f;
+							verts.back().col[2] = 1.0f;
+							verts.back().col[3] = 1.0f;
+
+							vec3_t worldPos;
+							TransformVec3ByMat4(worldPos, pverts[ptricmds[0]], mvpFinal);
+
+							float hw = (float)m_ModelFBO.iWidth * 0.5f;
+							float hh = (float)m_ModelFBO.iHeight * 0.5f;
+							verts.back().pos[0] = (worldPos[0] + 1.0f) * hw;
+							verts.back().pos[1] = (1.0f - worldPos[1]) * hh;
+
+							ptricmds += 4;
+
+							if (t >= 2)
+							{
+								uint32_t a = idx - 2, b = idx - 1, c = idx;
+								if ((t - 2) % 2 == 0)
+								{
+									indices.push_back(a);
+									indices.push_back(b);
+								}
+								else
+								{
+									indices.push_back(b);
+									indices.push_back(a);
+								}
+								indices.push_back(c);
+							}
+						}
+					}
+					if (ptricmds[0] == 0)
+						break;
+				}
+
+				if (!verts.empty() && !indices.empty())
+				{
+					pRenderer->DrawTexturedRect(texid, verts.data(), verts.size(),
+						indices.data(), indices.size(),
+						DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED,
+						"ModelViewPanel");
+				}
+			}
+		}
 	}
-	__except (EXCEPTION_EXECUTE_HANDLER) {
-	}
 
-	pRenderer->PopRefDef();
 	pRenderer->SetCurrentSceneFBO(oldSceneFBO);
 	pRenderer->BindFrameBuffer(oldRenderingFBO);
 	if (oldRenderingFBO) {
