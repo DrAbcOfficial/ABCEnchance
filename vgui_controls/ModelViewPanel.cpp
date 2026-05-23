@@ -594,7 +594,7 @@ void ModelViewPanel::Paint(){
 	}
 
 	surface()->DrawSetTexture(m_ModelFBO.s_hBackBufferTex);
-	surface()->DrawFilledRect(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
+	surface()->DrawTexturedRect(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
 
 	surface()->DrawSetColor(255, 0, 0, 255);
 	surface()->DrawFilledRect(0, 0, 10, 10);
