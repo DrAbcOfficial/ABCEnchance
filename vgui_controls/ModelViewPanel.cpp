@@ -380,7 +380,18 @@ void ModelViewPanel::Paint(){
 			v[k].texcoord[0] = 0; v[k].texcoord[1] = 0;
 		}
 		uint32_t idx[6] = {0,1,2, 0,2,3};
-		pRenderer->DrawTexturedRect(0, v, 4, idx, 6, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "debug_fbo");
+		pRenderer->DrawTexturedRect(0, v, 4, idx, 6, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "debug");
+
+		texturedrectvertex_t v2[4];
+		float cyan[4] = {0.0f, 1.0f, 1.0f, 1.0f};
+		for (int k = 0; k < 4; k++) {
+			v2[k].pos[0] = v[k].pos[0] + 210;
+			v2[k].pos[1] = v[k].pos[1];
+			v2[k].col[0] = cyan[0]; v2[k].col[1] = cyan[1];
+			v2[k].col[2] = cyan[2]; v2[k].col[3] = cyan[3];
+			v2[k].texcoord[0] = 0; v2[k].texcoord[1] = 0;
+		}
+		pRenderer->DrawTexturedRect(0, v2, 4, idx, 6, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "debug2");
 	}
 
 	int totalTris = 0;
@@ -619,6 +630,11 @@ void ModelViewPanel::Paint(){
 	if (oldRenderingFBO) {
 		pRenderer->SetViewport(0, 0, oldW, oldH);
 	}
+
+	surface()->DrawSetColor(255, 0, 255, 255);
+	surface()->DrawFilledRect(0, 0, 30, 30);
+	surface()->DrawSetColor(0, 255, 255, 255);
+	surface()->DrawFilledRect(35, 0, 65, 30);
 
 	surface()->DrawSetTexture(m_ModelFBO.s_hBackBufferTex);
 	surface()->DrawTexturedRect(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight);
