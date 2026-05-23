@@ -50,6 +50,8 @@ void CMetaRendererCallbacks::OnGenerateFrameBuffers()
 void CMetaRendererCallbacks::OnPreRenderView()
 {
 	GetBaseViewPort()->GetRadarPanel()->RenderRadar();
+	if (vgui::g_pModelViewPanel)
+		vgui::g_pModelViewPanel->RenderModel();
 }
 
 /*
@@ -81,6 +83,4 @@ void CMetaRendererCallbacks::OnPostRenderViewPost()
 */
 void CMetaRendererCallbacks::OnRenderEndFrame()
 {
-	if (vgui::g_pModelViewPanel)
-		vgui::g_pModelViewPanel->RenderModel();
 }
