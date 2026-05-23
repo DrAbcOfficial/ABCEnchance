@@ -627,28 +627,28 @@ void ModelViewPanel::Paint(){
 
 	pRenderer->BindFrameBuffer(oldRenderingFBO);
 	pRenderer->SetCurrentSceneFBO(oldRenderingFBO);
-	pRenderer->SetViewport(0, 0, oldW, oldH);
+
+	int screenW = 0, screenH = 0;
+	vgui::surface()->GetScreenSize(screenW, screenH);
+	pRenderer->SetViewport(0, 0, screenW, screenH);
 
 	pRenderer->PushWorldMatrix();
 	pRenderer->LoadIdentityForWorldMatrix();
 	pRenderer->PushProjectionMatrix();
+	pRenderer->SetupOrthoProjectionMatrix(0, (float)screenW, (float)screenH, 0, -1.0f, 1.0f, false);
 
 	{
-		texturedrectvertex_t vv[4];
-		int sx, sy;
-		ipanel()->GetAbsPos(GetVPanel(), sx, sy);
-		vv[0].pos[0] = (float)sx;       vv[0].pos[1] = (float)sy;
-		vv[1].pos[0] = (float)(sx + 200); vv[1].pos[1] = (float)sy;
-		vv[2].pos[0] = (float)(sx + 200); vv[2].pos[1] = (float)(sy + 200);
-		vv[3].pos[0] = (float)sx;       vv[3].pos[1] = (float)(sy + 200);
-		float green[4] = {0.0f, 1.0f, 0.0f, 1.0f};
-		for (int k = 0; k < 4; k++) {
-			vv[k].col[0] = green[0]; vv[k].col[1] = green[1];
-			vv[k].col[2] = green[2]; vv[k].col[3] = green[3];
-			vv[k].texcoord[0] = 0; vv[k].texcoord[1] = 0;
-		}
-		uint32_t ix[6] = {0,1,2, 0,2,3};
-		pRenderer->DrawTexturedRect(0, vv, 4, ix, 6, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "MAIN_debug_green");
+		int px, py;
+		ipanel()->GetAbsPos(GetVPanel(), px, py);
+		int pw = GetWide(), ph = GetTall();
+		float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+		pRenderer->DrawTexturedQuad(m_ModelFBO.s_hBackBufferTex,
+			px, py, px + pw, py + ph,
+			white, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED,
+			"ModelViewPanel_blit");
+
+		float cyan[4] = {0.0f, 1.0f, 1.0f, 1.0f};
+		pRenderer->DrawFilledQuad(px, py, px + 30, py + 30, cyan, 0, "test_cyan");
 	}
 
 	pRenderer->PopProjectionMatrix();
