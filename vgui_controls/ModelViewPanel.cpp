@@ -249,6 +249,10 @@ void ModelViewPanel::Paint(){
 	if (!g_pStudioInterface || !(*g_pStudioInterface))
 		return;
 
+	auto* lp = gEngfuncs.GetLocalPlayer();
+	if (!lp || !gEngfuncs.GetMaxClients())
+		return;
+
 	m_pModelEntity->prevstate = m_pModelEntity->curstate;
 
 	pRenderer->BeginDebugGroup("ModelViewPanel::Paint");
