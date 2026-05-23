@@ -294,6 +294,8 @@ void ModelViewPanel::Paint(){
 	if (!studiohdr || studiohdr->id != 0x54534449)
 		return;
 
+	static bool s_bDebugOnce = true;
+
 	float aspect = (float)m_ModelFBO.iWidth / (float)m_ModelFBO.iHeight;
 
 	float modelMatrix[4][4];
@@ -308,6 +310,25 @@ void ModelViewPanel::Paint(){
 	CMathlib::VectorSubtract(m_pModelEntity->origin, viewOrigin, viewTarget);
 	vec3_t viewAngles;
 	CMathlib::VectorAngles(viewTarget, viewAngles);
+
+	auto ptexture = (mstudiotexture_t*)((byte*)studiohdr + studiohdr->textureindex);
+	auto pskinref = (short*)((byte*)studiohdr + studiohdr->skinindex);
+
+	float**** pbonetransform = gEngineStudio.StudioGetBoneTransform ?
+		gEngineStudio.StudioGetBoneTransform() : nullptr;
+
+	if (s_bDebugOnce)
+	{
+		gEngfuncs.Con_Printf("[ModelView] FBO: %dx%d  FOV: %.1f\n", m_ModelFBO.iWidth, m_ModelFBO.iHeight, m_flFov);
+		gEngfuncs.Con_Printf("[ModelView] Model: %s  bodyparts:%d  textures:%d  bones:%d\n",
+			m_pModelEntity->model->name, studiohdr->numbodyparts, studiohdr->numtextures, studiohdr->numbones);
+		gEngfuncs.Con_Printf("[ModelView] Origin: (%.1f,%.1f,%.1f)  Angles: (%.1f,%.1f,%.1f)\n",
+			m_pModelEntity->origin[0], m_pModelEntity->origin[1], m_pModelEntity->origin[2],
+			m_pModelEntity->angles[0], m_pModelEntity->angles[1], m_pModelEntity->angles[2]);
+		gEngfuncs.Con_Printf("[ModelView] CamPos: (%.1f,%.1f,%.1f)  CamAng: (%.1f,%.1f,%.1f)\n",
+			viewOrigin[0], viewOrigin[1], viewOrigin[2], viewAngles[0], viewAngles[1], viewAngles[2]);
+		gEngfuncs.Con_Printf("[ModelView] Bonetransform: %s\n", pbonetransform ? "VALID" : "NULL");
+	}
 
 	float viewMatrix[4][4];
 	BuildViewMatrix(viewMatrix, viewOrigin, viewAngles);
@@ -337,11 +358,8 @@ void ModelViewPanel::Paint(){
 	float clearColor[4] = {0.15f, 0.15f, 0.15f, 1.0f};
 	pRenderer->ClearColor(clearColor);
 
-	auto ptexture = (mstudiotexture_t*)((byte*)studiohdr + studiohdr->textureindex);
-	auto pskinref = (short*)((byte*)studiohdr + studiohdr->skinindex);
-
-	float**** pbonetransform = gEngineStudio.StudioGetBoneTransform ?
-		gEngineStudio.StudioGetBoneTransform() : nullptr;
+	int totalTris = 0;
+	bool bAnyDraw = false;
 
 	for (int i = 0; i < studiohdr->numbodyparts; i++)
 	{
@@ -486,12 +504,27 @@ void ModelViewPanel::Paint(){
 
 				if (!verts.empty() && !indices.empty())
 				{
+					totalTris += (int)indices.size() / 3;
+					bAnyDraw = true;
 					pRenderer->DrawTexturedRect(texid, verts.data(), verts.size(),
 						indices.data(), indices.size(),
 						DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED,
 						"ModelViewPanel");
 				}
 			}
+		}
+	}
+
+	if (s_bDebugOnce)
+	{
+		s_bDebugOnce = false;
+		gEngfuncs.Con_Printf("[ModelView] DrawCalls: %s  TotalTris: %d\n",
+			bAnyDraw ? "YES" : "NO", totalTris);
+		for (int t = 0; t < studiohdr->numtextures && t < 4; t++)
+		{
+			gEngfuncs.Con_Printf("[ModelView]   Tex[%d]: %s id=%d %dx%d\n",
+				t, ptexture[t].name, ptexture[t].index,
+				ptexture[t].width, ptexture[t].height);
 		}
 	}
 
