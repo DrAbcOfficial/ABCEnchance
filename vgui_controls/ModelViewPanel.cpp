@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include "IMetaRenderer.h"
+#include "com_model.h"
 
 #include "exportfuncs.h"
 #include "utility/vgui_util.h"
@@ -245,6 +246,8 @@ void ModelViewPanel::Paint(){
 		return;
 	if (m_ModelFBO.iWidth <= 0 || m_ModelFBO.iHeight <= 0)
 		return;
+	if (!g_pStudioInterface || !(*g_pStudioInterface))
+		return;
 
 	m_pModelEntity->prevstate = m_pModelEntity->curstate;
 
@@ -278,8 +281,23 @@ void ModelViewPanel::Paint(){
 		1.0f, 4096.0f);
 
 	__try {
+		gEngineStudio.SetRenderModel(m_pModelEntity->model);
+		gEngineStudio.StudioSetHeader(gEngineStudio.Mod_Extradata(m_pModelEntity->model));
+
+		void* ppbodypart = nullptr;
+		void* ppsubmodel = nullptr;
+		gEngineStudio.StudioSetupModel(0, &ppbodypart, &ppsubmodel);
+
+		alight_s lighting;
+		memset(&lighting, 0, sizeof(lighting));
+		lighting.ambientlight = m_iAmbientLight;
+		lighting.shadelight = m_iShadeLight;
+		lighting.plightvec = m_flLightOrigin;
+		gEngineStudio.StudioEntityLight(&lighting);
+		gEngineStudio.StudioSetupLighting(&lighting);
+
 		pRenderer->SetCurrentEntity(m_pModelEntity);
-		pRenderer->DrawCurrentEntity(false);
+		(*g_pStudioInterface)->StudioDrawModel(STUDIO_RENDER);
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER) {
 	}

@@ -5,6 +5,7 @@
 extern cl_enginefunc_t gEngfuncs;
 extern cl_exportfuncs_t gExportfuncs;
 extern engine_studio_api_t gEngineStudio;
+extern r_studio_interface_t** g_pStudioInterface;
 extern const clientdata_t* gClientData;
 
 using hudpanel_info_t = struct hudpanel_info_s {

@@ -356,9 +356,12 @@ void HUD_Init(void)
 	AutoFunc::Init();
 }
 
+r_studio_interface_t** g_pStudioInterface = nullptr;
+
 int HUD_GetStudioModelInterface(int version, struct r_studio_interface_s** ppinterface, struct engine_studio_api_s* pstudio)
 {
 	memcpy(&gEngineStudio, pstudio, sizeof(gEngineStudio));
+	g_pStudioInterface = ppinterface;
 	return gExportfuncs.HUD_GetStudioModelInterface(version, ppinterface, pstudio);
 }
 
