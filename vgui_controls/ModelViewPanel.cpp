@@ -523,6 +523,21 @@ void ModelViewPanel::Paint(){
 	if (s_bDebugOnce)
 	{
 		s_bDebugOnce = false;
+		gEngfuncs.Con_Printf("[ModelView] Model Matrix:\n");
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", modelMatrix[0][0],modelMatrix[0][1],modelMatrix[0][2],modelMatrix[0][3]);
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", modelMatrix[1][0],modelMatrix[1][1],modelMatrix[1][2],modelMatrix[1][3]);
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", modelMatrix[2][0],modelMatrix[2][1],modelMatrix[2][2],modelMatrix[2][3]);
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", modelMatrix[3][0],modelMatrix[3][1],modelMatrix[3][2],modelMatrix[3][3]);
+		gEngfuncs.Con_Printf("[ModelView] Proj Matrix:\n");
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", projMatrix[0][0],projMatrix[0][1],projMatrix[0][2],projMatrix[0][3]);
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", projMatrix[1][0],projMatrix[1][1],projMatrix[1][2],projMatrix[1][3]);
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", projMatrix[2][0],projMatrix[2][1],projMatrix[2][2],projMatrix[2][3]);
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", projMatrix[3][0],projMatrix[3][1],projMatrix[3][2],projMatrix[3][3]);
+		gEngfuncs.Con_Printf("[ModelView] MVP Final:\n");
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", mvpFinal[0][0],mvpFinal[0][1],mvpFinal[0][2],mvpFinal[0][3]);
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", mvpFinal[1][0],mvpFinal[1][1],mvpFinal[1][2],mvpFinal[1][3]);
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", mvpFinal[2][0],mvpFinal[2][1],mvpFinal[2][2],mvpFinal[2][3]);
+		gEngfuncs.Con_Printf("[ModelView]   [%.2f %.2f %.2f %.2f]\n", mvpFinal[3][0],mvpFinal[3][1],mvpFinal[3][2],mvpFinal[3][3]);
 		gEngfuncs.Con_Printf("[ModelView] DrawCalls: %s  TotalTris: %d\n",
 			bAnyDraw ? "YES" : "NO", totalTris);
 		gEngfuncs.Con_Printf("[ModelView] FBO tex id: %d\n", m_ModelFBO.s_hBackBufferTex);
