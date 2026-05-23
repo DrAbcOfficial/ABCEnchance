@@ -68,6 +68,8 @@ public:
 	void SetShadeLight(int light);
 	void SetLightColor(int r, int g, int b);
 	void SetLightOrigin(float x, float y, float z);
+
+	void RenderModel();
 protected:
 	virtual void Paint() override;
 	virtual void ApplySettings(KeyValues* inResourceData) override;
@@ -84,6 +86,8 @@ private:
 
 	struct cl_entity_s* m_pModelEntity = nullptr;
 };
+
+extern ModelViewPanel* g_pModelViewPanel;
 
 } // namespace vgui
 

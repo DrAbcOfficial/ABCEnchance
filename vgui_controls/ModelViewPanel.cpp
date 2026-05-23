@@ -16,6 +16,10 @@
 
 using namespace vgui;
 
+namespace vgui {
+	ModelViewPanel* g_pModelViewPanel = nullptr;
+}
+
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
 //-----------------------------------------------------------------------------
@@ -23,9 +27,11 @@ ModelViewPanel::ModelViewPanel(Panel *parent, const char *name) : BaseClass(pare
 	m_pModelEntity = new cl_entity_t();
 	m_pModelEntity->baseline.entityType = ENTITY_NORMAL;
 	//m_pModelEntity->player = TRUE;
+	g_pModelViewPanel = this;
 }
 
 vgui::ModelViewPanel::~ModelViewPanel(){
+	g_pModelViewPanel = nullptr;
 	if (m_pModelEntity)
 		delete m_pModelEntity;
 	if (MetaRenderer())
@@ -292,10 +298,13 @@ static void TransformVec3ByMat4(vec3_t out, const vec3_t v, const float m[4][4])
 }
 
 void ModelViewPanel::Paint(){
+}
+
+void ModelViewPanel::RenderModel(){
 	IMetaRenderer* pRenderer = MetaRenderer();
 	if (!pRenderer || !m_pModelEntity || !m_pModelEntity->model)
 		return;
-	if (m_ModelFBO.iWidth <= 0 || m_ModelFBO.iHeight <= 0)
+	if (!g_pStudioInterface || !(*g_pStudioInterface))
 		return;
 
 	auto* studiohdr = (studiohdr_t*)gEngineStudio.Mod_Extradata(m_pModelEntity->model);
@@ -627,38 +636,34 @@ void ModelViewPanel::Paint(){
 
 	pRenderer->BindFrameBuffer(oldRenderingFBO);
 	pRenderer->SetCurrentSceneFBO(oldSceneFBO);
-
+	if (!oldRenderingFBO) {
 	auto* mainFBO = pRenderer->GetBackBufferFBO3();
-	if (!oldRenderingFBO)
+	if (!oldRenderingFBO) {
 		pRenderer->BindFrameBuffer(mainFBO);
-	if (!oldSceneFBO)
 		pRenderer->SetCurrentSceneFBO(mainFBO);
+	}
 
 	int screenW = mainFBO ? mainFBO->iWidth : 1920;
 	int screenH = mainFBO ? mainFBO->iHeight : 1080;
 	pRenderer->SetViewport(0, 0, screenW, screenH);
-
 	pRenderer->PushWorldMatrix();
 	pRenderer->LoadIdentityForWorldMatrix();
 	pRenderer->PushProjectionMatrix();
 	pRenderer->SetupOrthoProjectionMatrix(0, (float)screenW, (float)screenH, 0, -1.0f, 1.0f, false);
 
-	{
-		int px, py;
-		ipanel()->GetAbsPos(GetVPanel(), px, py);
-		int pw = GetWide(), ph = GetTall();
-		float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-		pRenderer->DrawTexturedQuad(m_ModelFBO.s_hBackBufferTex,
-			px, py, px + pw, py + ph,
-			white, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED,
-			"ModelViewPanel_blit");
-
-		float cyan[4] = {0.0f, 1.0f, 1.0f, 1.0f};
-		pRenderer->DrawFilledQuad(px, py, px + 30, py + 30, cyan, 0, "test_cyan");
-	}
+	int px = 0, py = 0;
+	ipanel()->GetAbsPos(GetVPanel(), px, py);
+	float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+	pRenderer->DrawTexturedQuad(m_ModelFBO.s_hBackBufferTex,
+		px, py, px + m_ModelFBO.iWidth, py + m_ModelFBO.iHeight,
+		white, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED,
+		"ModelViewPanel_blit");
 
 	pRenderer->PopProjectionMatrix();
 	pRenderer->PopWorldMatrix();
+
+	pRenderer->EndDebugGroup();
+}
 
 	pRenderer->EndDebugGroup();
 }
