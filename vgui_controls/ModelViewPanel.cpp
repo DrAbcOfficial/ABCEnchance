@@ -626,10 +626,16 @@ void ModelViewPanel::Paint(){
 	}
 
 	pRenderer->BindFrameBuffer(oldRenderingFBO);
-	pRenderer->SetCurrentSceneFBO(oldRenderingFBO);
+	pRenderer->SetCurrentSceneFBO(oldSceneFBO);
 
-	int screenW = 0, screenH = 0;
-	vgui::surface()->GetScreenSize(screenW, screenH);
+	auto* mainFBO = pRenderer->GetBackBufferFBO3();
+	if (!oldRenderingFBO)
+		pRenderer->BindFrameBuffer(mainFBO);
+	if (!oldSceneFBO)
+		pRenderer->SetCurrentSceneFBO(mainFBO);
+
+	int screenW = mainFBO ? mainFBO->iWidth : 1920;
+	int screenH = mainFBO ? mainFBO->iHeight : 1080;
 	pRenderer->SetViewport(0, 0, screenW, screenH);
 
 	pRenderer->PushWorldMatrix();
