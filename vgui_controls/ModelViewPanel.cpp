@@ -629,17 +629,19 @@ void ModelViewPanel::Paint(){
 	pRenderer->SetCurrentSceneFBO(oldRenderingFBO);
 	pRenderer->SetViewport(0, 0, oldW, oldH);
 
-	pRenderer->BeginDebugGroup("ModelViewPanel::MainDraw");
+	pRenderer->PushWorldMatrix();
+	pRenderer->LoadIdentityForWorldMatrix();
+	pRenderer->PushProjectionMatrix();
 
 	{
 		texturedrectvertex_t vv[4];
-		float green[4] = {0.0f, 1.0f, 0.0f, 1.0f};
 		int sx, sy;
 		ipanel()->GetAbsPos(GetVPanel(), sx, sy);
 		vv[0].pos[0] = (float)sx;       vv[0].pos[1] = (float)sy;
 		vv[1].pos[0] = (float)(sx + 200); vv[1].pos[1] = (float)sy;
 		vv[2].pos[0] = (float)(sx + 200); vv[2].pos[1] = (float)(sy + 200);
 		vv[3].pos[0] = (float)sx;       vv[3].pos[1] = (float)(sy + 200);
+		float green[4] = {0.0f, 1.0f, 0.0f, 1.0f};
 		for (int k = 0; k < 4; k++) {
 			vv[k].col[0] = green[0]; vv[k].col[1] = green[1];
 			vv[k].col[2] = green[2]; vv[k].col[3] = green[3];
@@ -648,6 +650,9 @@ void ModelViewPanel::Paint(){
 		uint32_t ix[6] = {0,1,2, 0,2,3};
 		pRenderer->DrawTexturedRect(0, vv, 4, ix, 6, DRAW_TEXTURED_RECT_ALPHA_BLEND_ENABLED, "MAIN_debug_green");
 	}
+
+	pRenderer->PopProjectionMatrix();
+	pRenderer->PopWorldMatrix();
 
 	pRenderer->EndDebugGroup();
 }
