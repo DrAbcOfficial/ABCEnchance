@@ -547,6 +547,30 @@ void ModelViewPanel::Paint(){
 	pRenderer->DrawFilledQuad(0, 0, m_ModelFBO.iWidth, m_ModelFBO.iHeight,
 		clearColor, 0, "debug_bg");
 
+	{
+		std::vector<filledrectvertex_t> debugVerts(3);
+		std::vector<uint32_t> debugIdx = {0, 1, 2};
+
+		vec3_t p0 = {0, 0, 50};
+		vec3_t p1 = {50, 0, 0};
+		vec3_t p2 = {0, 50, 0};
+		vec3_t s0, s1, s2;
+		TransformVec3ByMat4(s0, p0, mvpFinal);
+		TransformVec3ByMat4(s1, p1, mvpFinal);
+		TransformVec3ByMat4(s2, p2, mvpFinal);
+
+		float hw = (float)m_ModelFBO.iWidth * 0.5f;
+		float hh = (float)m_ModelFBO.iHeight * 0.5f;
+		debugVerts[0].pos[0] = (s0[0] + 1.0f) * hw; debugVerts[0].pos[1] = (1.0f - s0[1]) * hh;
+		debugVerts[1].pos[0] = (s1[0] + 1.0f) * hw; debugVerts[1].pos[1] = (1.0f - s1[1]) * hh;
+		debugVerts[2].pos[0] = (s2[0] + 1.0f) * hw; debugVerts[2].pos[1] = (1.0f - s2[1]) * hh;
+		debugVerts[0].col[0] = debugVerts[0].col[1] = 1.0f; debugVerts[0].col[2] = 0.0f; debugVerts[0].col[3] = 1.0f;
+		debugVerts[1].col[0] = debugVerts[1].col[1] = 1.0f; debugVerts[1].col[2] = 0.0f; debugVerts[1].col[3] = 1.0f;
+		debugVerts[2].col[0] = debugVerts[2].col[1] = 1.0f; debugVerts[2].col[2] = 0.0f; debugVerts[2].col[3] = 1.0f;
+
+		pRenderer->DrawFilledRect(debugVerts.data(), 3, debugIdx.data(), 3, 0, "debug_tri");
+	}
+
 	pRenderer->SetCurrentSceneFBO(oldSceneFBO);
 	pRenderer->BindFrameBuffer(oldRenderingFBO);
 	if (oldRenderingFBO) {
