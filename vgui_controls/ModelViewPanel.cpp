@@ -298,18 +298,23 @@ void ModelViewPanel::Paint(){
 
 	float aspect = (float)m_ModelFBO.iWidth / (float)m_ModelFBO.iHeight;
 
-	float modelMatrix[4][4];
-	BuildModelMatrix(modelMatrix, m_pModelEntity->origin, m_pModelEntity->angles);
+	float dist = 120.0f;
+	float camYaw = CMathlib::Q_DEG2RAD(m_pModelEntity->angles[YAW]);
+	float camPitch = CMathlib::Q_DEG2RAD(-15.0f);
 
 	vec3_t viewOrigin;
-	viewOrigin[0] = m_pModelEntity->origin[0];
-	viewOrigin[1] = m_pModelEntity->origin[1] - 100;
-	viewOrigin[2] = m_pModelEntity->origin[2] + 30;
+	viewOrigin[0] = m_pModelEntity->origin[0] + dist * cosf(camPitch) * sinf(camYaw);
+	viewOrigin[1] = m_pModelEntity->origin[1] - dist * cosf(camPitch) * cosf(camYaw);
+	viewOrigin[2] = m_pModelEntity->origin[2] + dist * sinf(camPitch);
 
 	vec3_t viewTarget;
 	CMathlib::VectorSubtract(m_pModelEntity->origin, viewOrigin, viewTarget);
 	vec3_t viewAngles;
 	CMathlib::VectorAngles(viewTarget, viewAngles);
+
+	float modelMatrix[4][4];
+	CMathlib::Matrix4x4_CreateFromEntity(modelMatrix, m_pModelEntity->origin,
+		mathlib::vecZero, 1.0f);
 
 	auto ptexture = (mstudiotexture_t*)((byte*)studiohdr + studiohdr->textureindex);
 	auto pskinref = (short*)((byte*)studiohdr + studiohdr->skinindex);
