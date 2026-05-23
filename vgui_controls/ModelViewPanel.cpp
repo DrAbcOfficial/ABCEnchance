@@ -313,8 +313,8 @@ void ModelViewPanel::Paint(){
 	CMathlib::VectorAngles(viewTarget, viewAngles);
 
 	float modelMatrix[4][4];
-	CMathlib::Matrix4x4_CreateFromEntity(modelMatrix, m_pModelEntity->origin,
-		mathlib::vecZero, 1.0f);
+	CMathlib::Matrix4x4_CreateFromEntity(modelMatrix, mathlib::vecZero,
+		m_pModelEntity->origin, 1.0f);
 
 	auto ptexture = (mstudiotexture_t*)((byte*)studiohdr + studiohdr->textureindex);
 	auto pskinref = (short*)((byte*)studiohdr + studiohdr->skinindex);
