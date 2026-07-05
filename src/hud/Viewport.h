@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <optional>
+#include <functional>
+#include <utility>
 #include "vgui_controls/Panel.h"
 
 #ifndef VGUI_IVIEWPORTPANEL_H
@@ -66,6 +68,11 @@ public:
 	void Paint(void);
 	void SetParent(vgui::VPANEL vPanel);
 	void AddNewPanel(IViewportPanel* panel);
+	template <typename CallbackList, typename Callback>
+	void AddEventCallback(CallbackList& list, Callback&& callback) {
+		auto handle = list.append(std::forward<Callback>(callback));
+		m_EventCleanups.emplace_back([&list, handle]() { list.remove(handle); });
+	}
 	void ActivateClientUI(void);
 	void HideClientUI(void);
 	bool KeyInput(int down, int keynum, const char* pszCurrentBinding);
@@ -140,9 +147,10 @@ public:
 	vec2_t m_vecThirdPersonCrosshairPos;
 private:
 	std::vector<IViewportPanel*> m_Panels;
+	std::vector<std::function<void()>> m_EventCleanups;
 	CScorePanel* m_pScorePanel = nullptr;
 	CVotePanel* m_pVotePanel = nullptr;
-	CPlayerInfoPanel* m_pPlayerInfoPanels[32];
+	CPlayerInfoPanel* m_pPlayerInfoPanels[32]{};
 	CMotdPanel* m_pMOTDPanel = nullptr;
 	CSidePanel* m_pSidePanel = nullptr;
 	CTextMenu* m_pTextMenu = nullptr;
@@ -167,7 +175,7 @@ private:
 	vgui::HScheme m_hBaseScheme = 0;
 	int m_iInterMission = 0;
 	int m_bitsHideHUDDisplay = 0;
-	bool m_bInScore;
+	bool m_bInScore = false;
 	std::optional<int> m_bitsWeaponBits = 0;
 
 	char m_szServerName[MAX_SERVERNAME_LENGTH] = "<ERROR>";

@@ -44,7 +44,6 @@ public:
 	}
 	//start task
 	virtual CTaskItem* Start() override {
-		m_pThread.detach();
 		return this;
 	}
 	//is ready

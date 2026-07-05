@@ -142,6 +142,8 @@ public:
 						GetTaskManager()->Add<std::shared_ptr<std::vector<gif*>>>([](std::string data) {
 							std::shared_ptr<std::vector<gif*>> pgif = std::make_shared<std::vector<gif*>>();
 							FIMEMORY* mem = FreeImage_OpenMemory(reinterpret_cast<BYTE*>(data.data()), data.size());
+							if (!mem)
+								return pgif;
 							FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
 							if (format == FIF_GIF) {
 								FIMULTIBITMAP* multiBitmap = FreeImage_LoadMultiBitmapFromMemory(format, mem, GIF_PLAYBACK);
@@ -157,6 +159,10 @@ public:
 										size_t width = FreeImage_GetWidth(dib);
 										size_t height = FreeImage_GetHeight(dib);
 										FITAG* tag = nullptr;
+										if (!bits || width == 0 || height == 0 || width > 512 || height > 512) {
+											FreeImage_UnlockPage(multiBitmap, dib, false);
+											continue;
+										}
 
 										gif* image = new gif();
 										image->bgra = new byte[width * height * 4];
@@ -188,8 +194,14 @@ public:
 							FreeImage_CloseMemory(mem);
 							return pgif;
 						}, std::move(payloadCopy))->ContinueWith([](std::shared_ptr<std::vector<gif*>> gifdata, CPlayerImage* pthis, std::shared_ptr<bool> alive, std::shared_ptr<unsigned int> generation, unsigned int requestGeneration) {
-							if (!*alive || *generation != requestGeneration)
+							if (!*alive || *generation != requestGeneration) {
+								for (size_t i = 0; i < gifdata->size(); i++) {
+									gif* image = gifdata->at(i);
+									delete[] image->bgra;
+									delete image;
+								}
 								return;
+							}
 							for (size_t i = 0; i < gifdata->size(); i++) {
 								gif* image = gifdata->at(i);
 								pthis->SetFrameTime(image->frametime);
@@ -549,7 +561,7 @@ void CScorePanel::ApplySchemeSettings(IScheme* pScheme)
 }
 
 void CScorePanel::OnThink(){
-	if (m_iKillerIndex != 0 && m_PlayerData[m_iKillerIndex].nItemID != -1)
+	if (m_iKillerIndex > 0 && m_iKillerIndex <= SC_MAX_PLAYERS && m_PlayerData[m_iKillerIndex].nItemID != -1)
 		UpdateClientInfo(m_iKillerIndex);
 	if (m_flLastUpdateTime + UPDATE_PERIOD <= gEngfuncs.GetAbsoluteTime())
 		UpdateAllClients();

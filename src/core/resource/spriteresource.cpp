@@ -7,6 +7,13 @@
 
 SpriteResource gSpriteRes;
 
+SpriteResource::~SpriteResource() {
+	for (auto item : m_arySprites) {
+		delete item;
+	}
+	m_arySprites.clear();
+}
+
 void SpriteResource::VidInit() {
 	int screen_w, screen_h;
 	vgui::surface()->GetScreenSize(screen_w, screen_h);
@@ -49,7 +56,7 @@ int SpriteResource::GetSprite(size_t index) {
 }
 
 wrect_t* SpriteResource::GetSpriteRect(size_t index) {
-	if (index >= 0 && index < m_arySprites.size())
+	if (index < m_arySprites.size())
 		return &m_arySprites[index]->rc;
 	return nullptr;
 }

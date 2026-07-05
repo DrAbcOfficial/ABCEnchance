@@ -13,6 +13,7 @@
 
 class SpriteResource {
 public:
+	~SpriteResource();
 	void VidInit();
 	int GetSprite(size_t index);
 	wrect_t* GetSpriteRect(size_t index);

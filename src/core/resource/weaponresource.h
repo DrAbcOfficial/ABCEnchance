@@ -129,15 +129,15 @@ public:
 
     auto Begin() const { return m_dicWeaponIds.begin(); }
     auto End() const { return m_dicWeaponIds.end(); }
-    auto PosBegin(size_t iSlot) const { return m_slots[iSlot].positions.begin(); }
-    auto PosEnd(size_t iSlot) const { return m_slots[iSlot].positions.end(); }
-    auto RPosBegin(size_t iSlot) const { return m_slots[iSlot].positions.rbegin(); }
-    auto RPosEnd(size_t iSlot) const { return m_slots[iSlot].positions.rend(); }
+    auto PosBegin(size_t iSlot) const { return iSlot < MAX_WEAPON_SLOT ? m_slots[iSlot].positions.begin() : m_emptySlot.positions.begin(); }
+    auto PosEnd(size_t iSlot) const { return iSlot < MAX_WEAPON_SLOT ? m_slots[iSlot].positions.end() : m_emptySlot.positions.end(); }
+    auto RPosBegin(size_t iSlot) const { return iSlot < MAX_WEAPON_SLOT ? m_slots[iSlot].positions.rbegin() : m_emptySlot.positions.rbegin(); }
+    auto RPosEnd(size_t iSlot) const { return iSlot < MAX_WEAPON_SLOT ? m_slots[iSlot].positions.rend() : m_emptySlot.positions.rend(); }
 
-    size_t GetMaxPos(size_t iSlot) const { return m_slots[iSlot].max_pos; }
-    size_t GetMinPos(size_t iSlot) const { return m_slots[iSlot].min_pos; }
+    size_t GetMaxPos(size_t iSlot) const { return iSlot < MAX_WEAPON_SLOT ? m_slots[iSlot].max_pos : 0; }
+    size_t GetMinPos(size_t iSlot) const { return iSlot < MAX_WEAPON_SLOT ? m_slots[iSlot].min_pos : 0; }
     size_t Size() const { return m_dicWeaponIds.size(); }
-    size_t Size(size_t iSlot) const { return m_slots[iSlot].positions.size(); }
+    size_t Size(size_t iSlot) const { return iSlot < MAX_WEAPON_SLOT ? m_slots[iSlot].positions.size() : 0; }
 
     WeaponList();
     WeaponList(const WeaponList&) = delete;
@@ -147,6 +147,7 @@ private:
     std::unordered_map<size_t, Weapon*> m_dicWeaponIds;
     std::unordered_map<std::string, Weapon*> m_dicWeaponNames;
     WeaponSlotData m_slots[MAX_WEAPON_SLOT]{};
+    WeaponSlotData m_emptySlot{};
 };
 
 class WeaponsResource {

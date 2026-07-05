@@ -32,6 +32,8 @@ Weapon* WeaponList::operator[](size_t iId) const {
 }
 
 Weapon* WeaponList::operator[](std::pair<size_t, size_t> slotPos) const {
+	if (slotPos.first >= MAX_WEAPON_SLOT)
+		return nullptr;
     const auto& slot = m_slots[slotPos.first];
     auto it = slot.positions.find(slotPos.second);
     return it != slot.positions.end() ? it->second : nullptr;
@@ -93,6 +95,8 @@ void WeaponList::Add(Weapon* wp) {
 void WeaponList::Remove(Weapon* wp) {
     if (!wp) 
         return;
+	if (wp->iSlot >= MAX_WEAPON_SLOT)
+		return;
 
     m_dicWeaponIds.erase(wp->iId);
     m_dicWeaponNames.erase(wp->szName);
@@ -205,7 +209,9 @@ void WeaponsResource::VidInit() {
 }
 
 void WeaponsResource::SyncWeapon(const WeaponData* wd) {
-    for (auto it = m_pWeaponData.Begin(); it != m_pWeaponData.End(); ++it) {
+	if (!wd)
+		return;
+	for (auto it = m_pWeaponData.Begin(); it != m_pWeaponData.End(); ++it) {
         auto* weapon = it->second;
         if (!weapon) continue;
         const auto* wp = wd + weapon->iId;

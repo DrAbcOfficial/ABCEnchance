@@ -74,7 +74,7 @@ namespace netease_fmt
 				break;
 			}
 			ss << format_str.substr(start, pos - start);
-			if (format_str[pos + 1] == '{') {
+			if (pos + 1 < format_str.size() && format_str[pos + 1] == '{') {
 				ss << '{';
 				start = pos + 2;
 				continue;
@@ -168,6 +168,8 @@ public:
 	int GetWide() const { return m_wide; }
 	int GetTall() const { return m_tall; }
 	virtual void InitFromRGBA(const byte* rgba, int width, int height) {
+		if (!rgba || width <= 0 || height <= 0)
+			return;
 		if(m_iTextureID <= 0)
 			m_iTextureID = vgui::surface()->CreateNewTextureID(true);
 		vgui::surface()->DrawSetTextureRGBA(m_iTextureID, rgba, width, height, true, false);
@@ -409,11 +411,7 @@ static CCloudMusicCmdItem s_CloudMusicRoot = CCloudMusicCmdItem(
 
 CNeteasePanel::~CNeteasePanel()
 {
-	if (s_pBuf)
-	{
-		delete[]s_pBuf;
-		s_pBuf = nullptr;
-	}
+	*m_pAlive = false;
 }
 
 CNeteasePanel::CNeteasePanel()
@@ -437,6 +435,7 @@ CNeteasePanel::CNeteasePanel()
 
 	m_pAlbumPanel = new vgui::ImagePanel(this, "Album");
 	m_pLoginPanel = new vgui::CQRLoginPanel(this->GetParent(), VIEWPORT_NETEASEMUSICQR_NAME);
+	m_pLoginPanel->SetMusicPanel(this);
 	s_pAlbumImage = new CAlbumImage();
 
 	m_pQuality = CREATE_CVAR("cl_netease_quality", "0", FCVAR_VALUE, [](cvar_t* cvar) {
@@ -579,8 +578,12 @@ static std::vector<byte> DownLoad(const std::string& url) {
 	std::vector<byte> retdata;
 	auto rep = GetHttpClient()->Fetch(url.c_str(), UtilHTTPMethod::Get, false)->
 	StartSync();
+	if (!rep || !rep->GetPayload())
+		return retdata;
 	const char* bytes = rep->GetPayload()->GetBytes();
 	size_t len = rep->GetPayload()->GetLength();
+	if (!bytes || len == 0)
+		return retdata;
 	std::copy(bytes, bytes + len, std::back_inserter(retdata));
 	return retdata;
 }
@@ -623,38 +626,48 @@ void CNeteasePanel::PlayDj(netease::neteaseid_t  id) {
 void CNeteasePanel::PlayRadio(netease::neteaseid_t id){
 	SetPlayerState(PLAYSTATE::NORMAL);
 	m_aryPlayList.clear();
+	auto alive = m_pAlive;
 	GetTaskManager()->Add<std::vector<std::shared_ptr<netease::CDjMusic>>>([](netease::neteaseid_t id) {
 		return s_pNeteaseApi.load()->GetRadioSongs(id);
-	}, id)->ContinueWith([](std::vector<std::shared_ptr<netease::CDjMusic>> list, CNeteasePanel* panel) {
+	}, id)->ContinueWith([](std::vector<std::shared_ptr<netease::CDjMusic>> list, CNeteasePanel* panel, std::shared_ptr<bool> alive) {
+		if (!*alive)
+			return;
 		for (auto iter = list.begin(); iter != list.end(); iter++) {
 			panel->AddToList((*iter)->id, CNeteasePanel::DJ);
 		}
 		panel->PlayListMusic();
-	}, this)->Start();
+	}, this, alive)->Start();
 }
 void CNeteasePanel::PlayAlbum(netease::neteaseid_t id){
 	SetPlayerState(PLAYSTATE::NORMAL);
 	m_aryPlayList.clear();
+	auto alive = m_pAlive;
 	GetTaskManager()->Add<std::vector<std::shared_ptr<netease::CMusic>>>([](netease::neteaseid_t id) {
 		return s_pNeteaseApi.load()->GetAlbumSongs(id);
-	}, id)->ContinueWith([](std::vector<std::shared_ptr<netease::CMusic>> list, CNeteasePanel* panel) {
+	}, id)->ContinueWith([](std::vector<std::shared_ptr<netease::CMusic>> list, CNeteasePanel* panel, std::shared_ptr<bool> alive) {
+		if (!*alive)
+			return;
 		for (auto iter = list.begin(); iter != list.end(); iter++) {
-			panel->AddToList(iter->get()->id);
+			if (*iter)
+				panel->AddToList(iter->get()->id);
 		}
 		panel->PlayListMusic();
-	}, this)->Start();
+	}, this, alive)->Start();
 }
 void CNeteasePanel::PlayList(netease::neteaseid_t id){
 	SetPlayerState(PLAYSTATE::NORMAL);
 	m_aryPlayList.clear();
+	auto alive = m_pAlive;
 	GetTaskManager()->Add<std::shared_ptr<netease::CPlayList>>([](netease::neteaseid_t id){
 		return s_pNeteaseApi.load()->GetPlayList(id);
-	}, id)->ContinueWith([](std::shared_ptr<netease::CPlayList> list, CNeteasePanel* panel) {
+	}, id)->ContinueWith([](std::shared_ptr<netease::CPlayList> list, CNeteasePanel* panel, std::shared_ptr<bool> alive) {
+		if (!*alive || !list)
+			return;
 		for (auto iter = list->mucics.begin(); iter != list->mucics.end(); iter++) {
 			panel->AddToList(*iter);
 		}
 		panel->PlayListMusic();
-	}, this)->Start();
+	}, this, alive)->Start();
 }
 void CNeteasePanel::PlayRecommendMusic(){
 	if (m_pLogined == nullptr) {
@@ -684,16 +697,21 @@ void CNeteasePanel::PlayFM(){
 }
 void CNeteasePanel::RenewFM(bool play){
 	m_bRenewingFM = true;
+	auto alive = m_pAlive;
 	GetTaskManager()->Add<std::vector<netease::neteaseid_t>>([](std::shared_ptr<netease::CMy> my){
+		if (!my)
+			return std::vector<netease::neteaseid_t>{};
 		return my->GetFM();
-	}, m_pLogined)->ContinueWith([](std::vector<netease::neteaseid_t> list, CNeteasePanel* panel, bool play) {
+	}, m_pLogined)->ContinueWith([](std::vector<netease::neteaseid_t> list, CNeteasePanel* panel, bool play, std::shared_ptr<bool> alive) {
+		if (!*alive)
+			return;
 		for (auto iter = list.begin(); iter != list.end(); iter++) {
 			panel->AddToList(*iter);
 		}
 		if(play)
 			panel->PlayListMusic();
 		panel->m_bRenewingFM = false;
-	}, this, play)->Start();
+	}, this, play, alive)->Start();
 }
 
 void CNeteasePanel::StopMusic(){
@@ -758,14 +776,13 @@ struct music_obj {
 	std::shared_ptr<netease::CLyric> lyric;
 	int id;
 	std::vector<byte> musicData;
-	byte* album;
+	std::vector<byte> album;
 	size_t album_h;
 	size_t album_w;
 };
 void CNeteasePanel::PlayListMusic(){
 	if (m_bPendingMusic)
 		return;
-	m_bPendingMusic = true;
 	//Clear lyric
 	m_pLyricLable->SetText("");
 	m_pLyricLableHighlight->SetText("");
@@ -774,12 +791,14 @@ void CNeteasePanel::PlayListMusic(){
 
 	if (m_aryPlayList.size() == 0)
 		return;
+	m_bPendingMusic = true;
 	if (m_pPlaying != nullptr)
 		StopMusic();
 	auto& item = *m_aryPlayList.begin();
 	m_aryPlayList.pop_front();
-	GetTaskManager()->Add<music_obj*>([this](std::shared_ptr<PlayItem> playitem, size_t quality) -> music_obj* {
-		static music_obj obj;
+	auto alive = m_pAlive;
+	GetTaskManager()->Add<std::shared_ptr<music_obj>>([](std::shared_ptr<PlayItem> playitem, size_t quality) -> std::shared_ptr<music_obj> {
+		auto obj = std::make_shared<music_obj>();
 		//Load Music
 		std::shared_ptr <netease::CMusic> music;
 		switch (playitem->type){
@@ -798,12 +817,22 @@ void CNeteasePanel::PlayListMusic(){
 		auto result = music->GetPlayUrl(g_aryMusicQuality[quality], "flac");
 		if (result == std::nullopt)
 			return nullptr;
-		obj.musicData = DownLoad(*result);
+		obj->musicData = DownLoad(*result);
+		if (obj->musicData.empty())
+			return nullptr;
 		//Load Album
+		if (!music->al)
+			return nullptr;
 		std::vector<byte> imageData = DownLoad(music->al->picUrl + "?param=130y130");
 		FIMEMORY* mem = FreeImage_OpenMemory(imageData.data(), imageData.size());
+		if (!mem)
+			return nullptr;
 		FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(mem);
 		FIBITMAP* bitmap = FreeImage_LoadFromMemory(format, mem);
+		if (!bitmap) {
+			FreeImage_CloseMemory(mem);
+			return nullptr;
+		}
 		byte* pixels = (byte*)FreeImage_GetBits(bitmap);
 		auto width = FreeImage_GetWidth(bitmap);
 		auto height = FreeImage_GetHeight(bitmap);
@@ -811,11 +840,12 @@ void CNeteasePanel::PlayListMusic(){
 		auto bpp = FreeImage_GetBPP(bitmap);
 		auto bitnum = bpp / 8;
 
-		if (s_iBufSize < width * height * 4) {
-			s_iBufSize = width * height * 4;
-			delete[] s_pBuf;
-			s_pBuf = new byte[s_iBufSize];
+		if (!pixels || width == 0 || height == 0 || width > 1024 || height > 1024 || bitnum == 0) {
+			FreeImage_Unload(bitmap);
+			FreeImage_CloseMemory(mem);
+			return nullptr;
 		}
+		obj->album.resize(width * height * 4);
 		size_t c = 0;
 		pixels += pitch * (height - 1);
 		for (size_t y = 0; y < height; y++) {
@@ -825,35 +855,35 @@ void CNeteasePanel::PlayListMusic(){
 					//8bpp
 					case 1: {
 						BYTE grey = pixel[0];
-						s_pBuf[c * 4 + 0] = grey;
-						s_pBuf[c * 4 + 1] = grey;
-						s_pBuf[c * 4 + 2] = grey;
-						s_pBuf[c * 4 + 3] = 255;
+						obj->album[c * 4 + 0] = grey;
+						obj->album[c * 4 + 1] = grey;
+						obj->album[c * 4 + 2] = grey;
+						obj->album[c * 4 + 3] = 255;
 						break;
 					}
 					//16bpp
 					case 2: {
 						int code = (pixel[1] << 8) + pixel[0];
-						s_pBuf[c * 4 + 0] = code & 0x1F;
-						s_pBuf[c * 4 + 1] = (code & 0x7E0) >> 5;
-						s_pBuf[c * 4 + 2] = (code & 0xF800) >> 11;
-						s_pBuf[c * 4 + 3] = 255;
+						obj->album[c * 4 + 0] = code & 0x1F;
+						obj->album[c * 4 + 1] = (code & 0x7E0) >> 5;
+						obj->album[c * 4 + 2] = (code & 0xF800) >> 11;
+						obj->album[c * 4 + 3] = 255;
 						break;
 					}
 					//24bpp
 					case 3: {
-						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
-						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
-						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
-						s_pBuf[c * 4 + 3] = 255;
+						obj->album[c * 4 + 0] = pixel[FI_RGBA_RED];
+						obj->album[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+						obj->album[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+						obj->album[c * 4 + 3] = 255;
 						break;
 					}
 					//32bpp
 					case 4: {
-						s_pBuf[c * 4 + 0] = pixel[FI_RGBA_RED];
-						s_pBuf[c * 4 + 1] = pixel[FI_RGBA_GREEN];
-						s_pBuf[c * 4 + 2] = pixel[FI_RGBA_BLUE];
-						s_pBuf[c * 4 + 3] = pixel[FI_RGBA_ALPHA];
+						obj->album[c * 4 + 0] = pixel[FI_RGBA_RED];
+						obj->album[c * 4 + 1] = pixel[FI_RGBA_GREEN];
+						obj->album[c * 4 + 2] = pixel[FI_RGBA_BLUE];
+						obj->album[c * 4 + 3] = pixel[FI_RGBA_ALPHA];
 						break;
 					}
 					//cnmdwy
@@ -867,17 +897,19 @@ void CNeteasePanel::PlayListMusic(){
 		FreeImage_Unload(bitmap);
 		FreeImage_CloseMemory(mem);
 		if (playitem->type == CNeteasePanel::PLAYTYPE::MUSIC)
-			obj.lyric = s_pNeteaseApi.load()->GetLyric(playitem->id);
+			obj->lyric = s_pNeteaseApi.load()->GetLyric(playitem->id);
 		else
-			obj.lyric = nullptr;
-		obj.music = music;
-		obj.album = s_pBuf;
-		obj.album_h = height;
-		obj.album_w = width;
-		return &obj;
-	}, item, static_cast<size_t>(m_pQuality->value))->ContinueWith([](music_obj* obj, CNeteasePanel* panel) {
+			obj->lyric = nullptr;
+		obj->music = music;
+		obj->album_h = height;
+		obj->album_w = width;
+		return obj;
+	}, item, static_cast<size_t>(std::clamp<int>(m_pQuality->value, 0, 4)))->ContinueWith([](std::shared_ptr<music_obj> obj, CNeteasePanel* panel, std::shared_ptr<bool> alive) {
+		if (!*alive)
+			return;
 		if (obj == nullptr) {
 			PrintF("#Netease_CannotPlay", false);
+			panel->m_bPendingMusic = false;
 			return;
 		}
 		if ((obj->music->copyright < 2) || (panel->m_pLogined != nullptr && panel->m_pLogined->vip > 0)) {
@@ -892,7 +924,7 @@ void CNeteasePanel::PlayListMusic(){
 				panel->m_pChannel.SetPosition(panel->m_uiStartPlayOffset, FMOD_TIMEUNIT_MS);
 				panel->m_uiStartPlayOffset = 0;
 				//Album
-				s_pAlbumImage->InitFromRGBA(obj->album, obj->album_w, obj->album_h);
+				s_pAlbumImage->InitFromRGBA(obj->album.data(), obj->album_w, obj->album_h);
 				panel->m_pAlbumPanel->SetImage(s_pAlbumImage);
 				//Set Lyric
 				if (obj->lyric != nullptr) {
@@ -901,9 +933,10 @@ void CNeteasePanel::PlayListMusic(){
 				}
 				//Text
 				panel->m_pMusicNameLable->SetText(obj->music->name.c_str());
-				std::string buf = obj->music->ar[0]->name.c_str();
+				std::string buf = (!obj->music->ar.empty() && obj->music->ar[0]) ? obj->music->ar[0]->name.c_str() : "";
 				buf += " - ";
-				buf += obj->music->al->name;
+				if (obj->music->al)
+					buf += obj->music->al->name;
 				panel->m_pArtistNameLable->SetText(buf.c_str());
 
 				size_t len = obj->music->duration / 1000;
@@ -916,7 +949,7 @@ void CNeteasePanel::PlayListMusic(){
 		else
 			PrintF("#Netease_VIPCannotPlay", false);
 		panel->m_bPendingMusic = false;
-	}, this)->Start();
+	}, this, alive)->Start();
 }
 void CNeteasePanel::AddToList(netease::neteaseid_t id, CNeteasePanel::PLAYTYPE type){
 	auto playitem = std::make_shared<CNeteasePanel::PlayItem>();
@@ -963,14 +996,17 @@ void CNeteasePanel::QRLogin() {
 	m_pLoginPanel->Login();
 }
 void CNeteasePanel::EmailLogin(const char* mail, const char* passwd){
+	auto alive = m_pAlive;
 	GetTaskManager()->Add<netease::neteasecode_t>([](std::string mail, std::string passwd){
 		return s_pNeteaseApi.load()->GetUser()->EMail(mail, passwd);
-	}, std::string(mail), std::string(passwd))->ContinueWith([](netease::neteasecode_t code, CNeteasePanel* panel) {
+	}, std::string(mail), std::string(passwd))->ContinueWith([](netease::neteasecode_t code, CNeteasePanel* panel, std::shared_ptr<bool> alive) {
+		if (!*alive)
+			return;
 		if (code == 200)
 			panel->GetMyInfo(false);
 		else
 			PrintF("#Netease_NotLogin", false);
-	}, this)->Start();
+	}, this, alive)->Start();
 }
 void CNeteasePanel::SendSMS(const char* phone, int country){
 	char* end;
@@ -983,36 +1019,45 @@ void CNeteasePanel::SendSMS(const char* phone, int country){
 }
 void CNeteasePanel::SMSLogin(const char* phone, const char* captcha, int country){
 	char* end;
+	auto alive = m_pAlive;
 	GetTaskManager()->Add<netease::neteasecode_t>([](netease::neteaseid_t phone, int captcha, int country){
 		return s_pNeteaseApi.load()->GetUser()->CellPhone(phone, captcha, country);
-	}, std::strtoull(phone, &end, 10), std::strtoull(captcha, &end, 10), country)->ContinueWith([](netease::neteasecode_t code, CNeteasePanel* panel) {
+	}, std::strtoull(phone, &end, 10), std::strtoull(captcha, &end, 10), country)->ContinueWith([](netease::neteasecode_t code, CNeteasePanel* panel, std::shared_ptr<bool> alive) {
+		if (!*alive)
+			return;
 		if (code == 200)
 			panel->GetMyInfo(false);
 		else
 			PrintF("#Netease_NotLogin", false);
-	}, this)->Start();
+	}, this, alive)->Start();
 }
 void CNeteasePanel::PhoneLogin(const char* phone, const char* passwd, int country){
 	char* end;
+	auto alive = m_pAlive;
 	GetTaskManager()->Add<netease::neteasecode_t>([](netease::neteaseid_t phone, std::string captcha, int country){
 		return s_pNeteaseApi.load()->GetUser()->CellPhone(phone, captcha, country);
-	}, std::strtoull(phone, &end, 10), std::string(passwd), country)->ContinueWith([](netease::neteasecode_t code, CNeteasePanel* panel) {
+	}, std::strtoull(phone, &end, 10), std::string(passwd), country)->ContinueWith([](netease::neteasecode_t code, CNeteasePanel* panel, std::shared_ptr<bool> alive) {
+		if (!*alive)
+			return;
 		if (code == 200)
 			panel->GetMyInfo(false);
 		else
 			PrintF("#Netease_NotLogin", false);
-	}, this)->Start();
+	}, this, alive)->Start();
 }
 void CNeteasePanel::GetMyInfo(bool silence){
+	auto alive = m_pAlive;
 	GetTaskManager()->Add<std::shared_ptr<netease::CMy>>([](){
 		return s_pNeteaseApi.load()->GetMyself();
-	})->ContinueWith([](std::shared_ptr<netease::CMy> info, bool silence){
+	})->ContinueWith([](std::shared_ptr<netease::CMy> info, bool silence, std::shared_ptr<bool> alive){
+		if (!*alive)
+			return;
 		if (info != nullptr)
 			PrintF("#Netease_MyInfo", silence, info->name.c_str(), info->signature.c_str(), info->vip ? "Yes" : "No");
 		else
 			PrintF("#Netease_NotLogin", silence);
 		GetBaseViewPort()->GetMusicPanel()->SetMyInfo(info);
-	}, silence)->Start();
+	}, silence, alive)->Start();
 }
 void CNeteasePanel::SetMyInfo(std::shared_ptr<netease::CMy> info){
 	m_pLogined = std::move(info);
@@ -1024,6 +1069,8 @@ void CNeteasePanel::SetMyInfo(std::shared_ptr<netease::CMy> info){
 class CQRImage : public CAlbumImage {
 public:
 	virtual void InitFromRGBA(const byte* rgba, int width, int height) override {
+		if (!rgba || width <= 0 || height <= 0)
+			return;
 		if (m_iTextureID <= 0)
 			m_iTextureID = vgui::surface()->CreateNewTextureID(true);
 		vgui::surface()->DrawSetTextureRGBA(m_iTextureID, rgba, width, height, false, false);
@@ -1056,14 +1103,16 @@ vgui::CQRLoginPanel::CQRLoginPanel(Panel* parent, const char* name)
 	SetMoveable(false);
 }
 struct loginshare_obj {
-	byte* qrimagebyte;
+	std::vector<byte> qrimagebyte;
 	size_t size;
 	std::string qrkey;
 };
-static void QRCheck(vgui::CQRLoginPanel* panel, std::string& qrkey) {
+static void QRCheck(vgui::CQRLoginPanel* panel, std::string qrkey, std::shared_ptr<bool> alive) {
 	GetTaskManager()->Add<netease::CLocalUser::QRStatue>([](std::string unikey) {
 		return s_pNeteaseApi.load()->GetUser()->QRCheck(unikey);
-	}, qrkey)->ContinueWith([](netease::CLocalUser::QRStatue result, vgui::CQRLoginPanel* panel, std::string& qrkey) {
+	}, qrkey)->ContinueWith([](netease::CLocalUser::QRStatue result, vgui::CQRLoginPanel* panel, std::string qrkey, std::shared_ptr<bool> alive) {
+		if (!*alive)
+			return;
 		switch (result) {
 			default:
 			case netease::CLocalUser::QRStatue::INVALID: {
@@ -1073,7 +1122,7 @@ static void QRCheck(vgui::CQRLoginPanel* panel, std::string& qrkey) {
 			}
 			case netease::CLocalUser::QRStatue::WAITINGSCAN:
 			case netease::CLocalUser::QRStatue::AUTHORIZING: {
-				QRCheck(panel, qrkey);
+				QRCheck(panel, qrkey, alive);
 				break;
 			}
 			case netease::CLocalUser::QRStatue::OK: {
@@ -1082,58 +1131,55 @@ static void QRCheck(vgui::CQRLoginPanel* panel, std::string& qrkey) {
 				break;
 			}
 		}
-	}, panel, qrkey)->Start();
+	}, panel, qrkey, alive)->Start();
 }
 void vgui::CQRLoginPanel::Login(){
-	GetTaskManager()->Add<loginshare_obj*>([]() -> loginshare_obj* {
-		static loginshare_obj obj;
-		obj.qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
-		std::string url = "https://music.163.com/login?codekey=" + obj.qrkey;
+	auto alive = m_pAlive;
+	GetTaskManager()->Add<std::shared_ptr<loginshare_obj>>([]() -> std::shared_ptr<loginshare_obj> {
+		auto obj = std::make_shared<loginshare_obj>();
+		obj->qrkey = s_pNeteaseApi.load()->GetUser()->RequestQRKey();
+		std::string url = "https://music.163.com/login?codekey=" + obj->qrkey;
 		qrcodegen::QrCode qrcode = qrcodegen::QrCode::encodeText(url.c_str(), qrcodegen::QrCode::Ecc::HIGH);
-		static byte* s_qrbyte;
-		static int s_size;
 
 		int qrsize = qrcode.getSize();
 		int newSize = qrsize + 4;
-		if (newSize > s_size) {
-			s_size = newSize;
-			delete[] s_qrbyte;
-			s_qrbyte = new byte[s_size * s_size * 4];
-		}
+		obj->qrimagebyte.resize(newSize * newSize * 4);
 		size_t c = 0;
 		for (int x = 0; x < newSize; x++) {
 			for (int y = 0; y < newSize; y++) {
 				if (x < 2 || x >= newSize - 2 || y < 2 || y >= newSize - 2) {
-					s_qrbyte[c * 4 + 0] = 255;
-					s_qrbyte[c * 4 + 1] = 255;
-					s_qrbyte[c * 4 + 2] = 255;
-					s_qrbyte[c * 4 + 3] = 255;
+					obj->qrimagebyte[c * 4 + 0] = 255;
+					obj->qrimagebyte[c * 4 + 1] = 255;
+					obj->qrimagebyte[c * 4 + 2] = 255;
+					obj->qrimagebyte[c * 4 + 3] = 255;
 				}
 				else {
 					bool p = qrcode.getModule(x - 2, y - 2);
-					s_qrbyte[c * 4 + 0] = p ? 0 : 255;
-					s_qrbyte[c * 4 + 1] = p ? 0 : 255;
-					s_qrbyte[c * 4 + 2] = p ? 0 : 255;
-					s_qrbyte[c * 4 + 3] = 255;
+					obj->qrimagebyte[c * 4 + 0] = p ? 0 : 255;
+					obj->qrimagebyte[c * 4 + 1] = p ? 0 : 255;
+					obj->qrimagebyte[c * 4 + 2] = p ? 0 : 255;
+					obj->qrimagebyte[c * 4 + 3] = 255;
 				}
 				c++;
 			}
 		}
-		obj.qrimagebyte = s_qrbyte;
-		obj.size = newSize;
-		return &obj;
-		})->ContinueWith([](loginshare_obj* obj, CQRLoginPanel* panel) {
-			s_pQRCodeImage->InitFromRGBA(obj->qrimagebyte, obj->size, obj->size);
+		obj->size = newSize;
+		return obj;
+		})->ContinueWith([](std::shared_ptr<loginshare_obj> obj, CQRLoginPanel* panel, std::shared_ptr<bool> alive) {
+			if (!*alive || !obj)
+				return;
+			s_pQRCodeImage->InitFromRGBA(obj->qrimagebyte.data(), obj->size, obj->size);
 			panel->m_pQRImagePanel->SetImage(s_pQRCodeImage);
 			panel->SetVisible(true);
-			QRCheck(panel, obj->qrkey);
-			}, this)->Start();
+			QRCheck(panel, obj->qrkey, alive);
+			}, this, alive)->Start();
 }
 void vgui::CQRLoginPanel::ResetText(){
 	m_pNotice->SetText("#Netease_QRNoticeText");
 }
 void vgui::CQRLoginPanel::SendMyInfo(){
-	m_pMusicPanel->GetMyInfo();
+	if (m_pMusicPanel)
+		m_pMusicPanel->GetMyInfo();
 }
 
 std::atomic<netease::CNeteaseMusicAPI*> GetNeteaseApi() {

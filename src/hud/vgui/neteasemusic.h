@@ -26,14 +26,17 @@ namespace vgui {
 	public:
 		DECLARE_CLASS_SIMPLE(CQRLoginPanel, Frame);
 		CQRLoginPanel(Panel* parent, const char* name);
+		~CQRLoginPanel() { *m_pAlive = false; }
 		void Login();
 		void ResetText();
 		void SendMyInfo();
+		void SetMusicPanel(CNeteasePanel* panel) { m_pMusicPanel = panel; }
 	private:
 		ImagePanel* m_pQRImagePanel = nullptr;
 		Label* m_pNotice = nullptr;
 		Panel* m_pBlurPanel = nullptr;
 		CNeteasePanel* m_pMusicPanel = nullptr;
+		std::shared_ptr<bool> m_pAlive = std::make_shared<bool>(true);
 	};
 }
 class CNeteasePanel : public vgui::EditablePanel, public IViewportPanel{
@@ -149,8 +152,7 @@ private:
 	};
 	std::list<std::shared_ptr<PlayItem>> m_aryPlayList;
 
-	size_t s_iBufSize = 0;
-	byte* s_pBuf = nullptr;
+	std::shared_ptr<bool> m_pAlive = std::make_shared<bool>(true);
 };
 #endif
 #endif // __HAS_NETEASE_API

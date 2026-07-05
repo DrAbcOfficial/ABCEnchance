@@ -23,11 +23,15 @@ void LoadParticleMan()
 	ParticleManCreateInterface = Sys_GetFactory(g_hParticleman);
 	if (!ParticleManCreateInterface)
 	{
+		Sys_FreeModule(g_hParticleman);
+		g_hParticleman = nullptr;
 		SYS_ERROR("Could not get factory from particleman.dll!");
 		return;
 	}
 	g_pParticleMan = (IParticleMan*)ParticleManCreateInterface(PARTICLEMAN_INTERFACE, nullptr);
 	if (!g_pParticleMan) {
+		Sys_FreeModule(g_hParticleman);
+		g_hParticleman = nullptr;
 		SYS_ERROR("Could not get interface \"" PARTICLEMAN_INTERFACE "\" from particleman.dll!");
 		return;
 	}
@@ -43,5 +47,8 @@ void LoadParticleMan()
 
 void FreeParticleMan()
 {
-	Sys_FreeModule(g_hParticleman);
+	if (g_hParticleman)
+		Sys_FreeModule(g_hParticleman);
+	g_hParticleman = nullptr;
+	g_pParticleMan = nullptr;
 }

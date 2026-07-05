@@ -26,6 +26,7 @@ public:
 
 	DECLARE_CLASS_SIMPLE(CItemHighLightPanel, vgui::EditablePanel);
 	CItemHighLightPanel();
+	~CItemHighLightPanel();
 	virtual void OnThink() override;
 
 	// IViewportPanel overrides

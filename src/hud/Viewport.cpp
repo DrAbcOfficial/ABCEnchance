@@ -91,6 +91,10 @@ CViewport::CViewport(void) : Panel(nullptr, "ABCEnchanceViewport"){
 }
 
 CViewport::~CViewport(void){
+	for (auto& cleanup : m_EventCleanups) {
+		cleanup();
+	}
+	m_EventCleanups.clear();
 	for (auto panel : m_Panels) {
 		delete panel;
 	}
@@ -101,20 +105,20 @@ void CViewport::Start(void){
 	gTeamRes.Init();
 	gWR.Init();
 #pragma region MyRegion
-	g_EventPlayerInfoChanged.append([&](PlayerInfo* info) {
+	AddEventCallback(g_EventPlayerInfoChanged, [&](PlayerInfo* info) {
 		this->m_pScorePanel->UpdateOnPlayerInfo(info->m_iIndex);
 		if (this->m_pRadar) {
 			this->m_pRadar->RefreshAvatars();
 		}
 		});
-	g_EventAmmoX.append([&](int, int) {
+	AddEventCallback(g_EventAmmoX, [&](int, int) {
 		this->m_pAmmoPanel->RefreshAmmo();
 		});
-	g_EventCustWeapon.append([&](int, const char*) {
+	AddEventCallback(g_EventCustWeapon, [&](int, const char*) {
 		this->m_pWeaponChoose->ReloadWeaponSpr();
 		this->m_pWeaponStack->ReloadWeaponSpr();
 		});
-	g_EventCurWeapon.append([&](int state, int id, int, int) {
+	AddEventCallback(g_EventCurWeapon, [&](int state, int id, int, int) {
 		if (state > 0) {
 			Weapon* pWeapon = gWR.GetWeapon(id);
 			this->m_pAmmoPanel->SetWeapon(pWeapon);
@@ -136,69 +140,72 @@ void CViewport::Start(void){
 			this->m_pAmmoPanel->ShowPanel(!bitSet.test(static_cast<size_t>(HUDHIDE_BIT::HIDEWEAPONS)));
 		}
 		};
-	g_EventHideHUD.append(hudhideCallback);
-	g_EventHideWeapon.append(hudhideCallback);
-	g_EventWeaponSpr.append([&](int id, const char* name) {
+	AddEventCallback(g_EventHideHUD, hudhideCallback);
+	AddEventCallback(g_EventHideWeapon, hudhideCallback);
+	AddEventCallback(g_EventWeaponSpr, [&](int id, const char* name) {
 		Weapon* wp = gWR.GetWeapon(id);
 		if (wp && wp->iId > 0) {
 			this->m_pWeaponChoose->ReloadWeaponSpr();
 			this->m_pWeaponStack->ReloadWeaponSpr();
 		}
 		});
-	g_EventWeapPickup.append([&](int index) {
+	AddEventCallback(g_EventWeapPickup, [&](int index) {
 		this->m_pWeaponStack->AddItemPickup(index);
 		});
-	g_EventAmmoPickup.append([&](int index, int count) {
+	AddEventCallback(g_EventAmmoPickup, [&](int index, int count) {
 		this->m_pAmmoStack->AddAmmoPickup(index, count);
 		});
-	g_EventItemPickup.append([&](const char* name) {
+	AddEventCallback(g_EventItemPickup, [&](const char* name) {
 		auto index = gSpriteRes.GetSpriteIndex(name);
 		if (!index.has_value())
 			return;
 		HSPRITE spr = gSpriteRes.GetSprite(index.value());
 		wrect_t* rect = gSpriteRes.GetSpriteRect(index.value());
+		if (!rect)
+			return;
 		this->m_pItemStack->AddItemPickup(spr, rect->left, rect->right, rect->top, rect->bottom);
 		});
-	g_EventDamage.append([&](int armor, int damage, int tiles, float* from) {
+	AddEventCallback(g_EventDamage, [&](int armor, int damage, int tiles, float* from) {
 		this->UpdateTiles(tiles);
 		if (!this->m_pIndicator->IsVisible())
 			this->m_pIndicator->SetVisible(true);
 		this->m_pIndicator->SetHitIndicator(damage, armor, from);
 		});
-	g_EventBattery.append([&](int armor) {
+	AddEventCallback(g_EventBattery, [&](int armor) {
 		this->m_pHealthPanel->SetArmor(armor);
 		});
-	g_EventHealth.append([&](int health) {
+	AddEventCallback(g_EventHealth, [&](int health) {
 		if (health <= 0) {
 			auto* lpInfo = gPlayerRes.GetLocalPlayerInfo();
-			if (lpInfo && lpInfo->m_bIsConnected && !gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
+			auto* local = gEngfuncs.GetLocalPlayer();
+			if (lpInfo && local && lpInfo->m_bIsConnected && !gPlayerRes.IsInSpectate(local->index))
 				health = 1;
 		}
 		this->m_pEffectPanel->SetHealth(health);
 		this->m_pHealthPanel->SetHealth(health);
 		});
-	g_EventServerName.append([&](const char* name) {
+	AddEventCallback(g_EventServerName, [&](const char* name) {
 		strncpy_s(this->m_szServerName, name, MAX_SERVERNAME_LENGTH - 1);
 		this->m_pScorePanel->UpdateServerName();
 		});
-	g_EventNextMap.append([&](const char* map) {
+	AddEventCallback(g_EventNextMap, [&](const char* map) {
 		strncpy_s(m_szNextMapName, map, MAX_SERVERNAME_LENGTH - 1);
 		this->m_pScorePanel->UpdateNextMap();
 		});
-	g_EventTimeEnd.append([&](int time) {
+	AddEventCallback(g_EventTimeEnd, [&](int time) {
 		this->m_iTimeEnd = time;
 		this->m_pScorePanel->UpdateTimeEnd();
 		});
-	g_EventShowMenu.append([&](int slot, int time, int bits, std::string message) {
+	AddEventCallback(g_EventShowMenu, [&](int slot, int time, int bits, std::string message) {
 		this->m_pTextMenu->MsgShowMenu(slot, time, bits, message);
 		});
-	g_EventVoteMenu.append([&](int type, const char* content, const char* yes, const char* no) {
+	AddEventCallback(g_EventVoteMenu, [&](int type, const char* content, const char* yes, const char* no) {
 		this->m_pVotePanel->StartVote(content, yes, no, type);
 		});
-	g_EventEndVote.append([&]() {
+	AddEventCallback(g_EventEndVote, [&]() {
 		this->m_pVotePanel->EndVote();
 		});
-	g_EventMOTD.append([&](int code, const char* msg) {
+	AddEventCallback(g_EventMOTD, [&](int code, const char* msg) {
 		if (strlen(msg) > 0)
 			this->m_pMOTDPanel->AppendMotd(msg);
 		else
@@ -206,13 +213,13 @@ void CViewport::Start(void){
 		if (code > 0)
 			this->m_pMOTDPanel->FinishSendMOTD();
 		});
-	g_EventFlashBat.append([&](int flash) {
+	AddEventCallback(g_EventFlashBat, [&](int flash) {
 		this->m_pFlashLight->SetFlashBattery(flash);
 		});
-	g_EventFlashlight.append([&](bool on, int flash) {
+	AddEventCallback(g_EventFlashlight, [&](bool on, int flash) {
 		this->m_pFlashLight->SetFlashLight(on, flash);
 		});
-	g_EventTextMsg.append([&](int target, const char* msg, const char* sstr1, const char* sstr2, const char* sstr3, const char* sstr4) {
+	AddEventCallback(g_EventTextMsg, [&](int target, const char* msg, const char* sstr1, const char* sstr2, const char* sstr3, const char* sstr4) {
 		const static std::wregex parttenSuicide(L" committed suicide.");
 		const static std::wregex parttenKilled(L" was killed by a ");
 		const static std::wregex parttenPlayer(L" : (.*) : ");
@@ -294,7 +301,9 @@ void CViewport::Start(void){
 		}
 		return true;
 		});
-	g_EventMetaHook.append([&](int type, mh_package_t* package) {
+	AddEventCallback(g_EventMetaHook, [&](int type, mh_package_t* package) {
+		if (!package)
+			return;
 		switch (package->subtype) {
 		case ABCCustomMsg::POPNUMBER: {
 			if (this->m_pPopNumber->value <= 0)
@@ -322,40 +331,43 @@ void CViewport::Start(void){
 		}
 		}
 		});
-	g_EventCmdSlot.append([&](int slot) {
+	AddEventCallback(g_EventCmdSlot, [&](int slot) {
 		if (this->IsTextMenuOpen()) {
 			this->SelectMenuItem(slot + 1);
 			return false;
 		}
 		return true;
 		});
-	g_EventCmdMissionBrief.append([&]() {
+	AddEventCallback(g_EventCmdMissionBrief, [&]() {
 		this->ShowMOTD();
 		return false;
 		});
-	g_EventCmdOpenScoreboard.append([&]() {
+	AddEventCallback(g_EventCmdOpenScoreboard, [&]() {
 		this->m_bInScore = true;
 		if (this && !this->m_iInterMission)
 			this->ShowScoreBoard();
 		return false;
 		});
-	g_EventCmdCloseScoreboard.append([&]() {
+	AddEventCallback(g_EventCmdCloseScoreboard, [&]() {
 		this->m_bInScore = false;
 		if (this && !this->m_iInterMission)
 			this->HideScoreBoard();
 		return false;
 		});
-	g_EventCmdVoteMenu.append([&]() {
+	AddEventCallback(g_EventCmdVoteMenu, [&]() {
 		extern void OpenVoteMenuDialog();
 		OpenVoteMenuDialog();
 		return false;
 		});
-	g_EventCmdAttack1.append([&]() {
+	AddEventCallback(g_EventCmdAttack1, [&]() {
 		return !this->m_pWeaponChoose->BlockAttackOnce();
 		});
-	g_EventHudUpdateClientData.append([&](client_data_t* cdata, float time) {
+	AddEventCallback(g_EventHudUpdateClientData, [&](client_data_t* cdata, float time) {
+		auto* local = gEngfuncs.GetLocalPlayer();
+		if (!local || !cdata)
+			return;
 		//check spectate
-		float newuser = gEngfuncs.GetLocalPlayer()->curstate.iuser1;
+		float newuser = local->curstate.iuser1;
 		static float iuser;
 		if (iuser != newuser) {
 			this->SetSpectate(newuser > 0);
@@ -381,7 +393,7 @@ void CViewport::Start(void){
 			lj = nlj;
 		}
 	});
-	g_EventHudMousePressed.append([&](int code) {
+	AddEventCallback(g_EventHudMousePressed, [&](int code) {
 		switch (code) {
 		case vgui::MouseCode::MOUSE_LEFT: {
 			this->GetWeaponChoosePanel()->SelectWeapon();

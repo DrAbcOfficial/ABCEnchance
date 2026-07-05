@@ -26,7 +26,11 @@ void DrawSPRIcon(int SprHandle, int mode, float x, float y, float w, float h, un
 {
 	SPR_Set(SprHandle, r, g, b);
 	extern /* (msprite_s**) */ void* gpSprite;
+	if (!gpSprite || !gHookFuncs.R_GetSpriteFrame)
+		return;
 	void* spr = *(void**)gpSprite;
+	if (!spr)
+		return;
 	mspriteframe_t* memsprite = static_cast<mspriteframe_t*>(gHookFuncs.R_GetSpriteFrame(spr, frame));
 	if (!memsprite)
 		return;
@@ -43,7 +47,11 @@ extern /* (msprite_s**) */ void* gpSprite;
 void DrawSPRIconRect(int SprHandle, int mode, float x, float y, float w, float h, float left, float right, float top, float bottom, unsigned char r, unsigned char g, unsigned char b, unsigned char a, int frame)
 {
 	SPR_Set(SprHandle, r, g, b);
+	if (!gpSprite || !gHookFuncs.R_GetSpriteFrame)
+		return;
 	void* spr = *(void**)gpSprite;
+	if (!spr)
+		return;
 	mspriteframe_t* memsprite = static_cast<mspriteframe_t*>(gHookFuncs.R_GetSpriteFrame(spr, frame));
 	if (!memsprite)
 		return;
@@ -136,7 +144,11 @@ void DrawTexturePos(int tex, int mode, float p1[2], float p2[2], float p3[2], fl
 void DrawSPRIconPos(int SprHandle, int mode, float p1[2], float p2[2], float p3[2], float p4[2], unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
 	SPR_Set(SprHandle, r, g, b);
+	if (!gpSprite || !gHookFuncs.R_GetSpriteFrame)
+		return;
 	void* spr = *(void**)gpSprite;
+	if (!spr)
+		return;
 	mspriteframe_t* memsprite = static_cast<mspriteframe_t*>(gHookFuncs.R_GetSpriteFrame(spr, 0));
 	if (!memsprite)
 		return;

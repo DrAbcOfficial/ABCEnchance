@@ -50,7 +50,7 @@ void CHttpClient::ShutDown(){
 void CHttpClient::CheckAll(){
 	for (auto iter = m_aryItems.begin(); iter != m_aryItems.end();) {
 		auto item = *iter;
-		if (item->GetState() == HTTPCLIENT_STATE::DESTORYED) {
+		if (item->GetState() == HTTPCLIENT_STATE::DESTORYED || item->GetState() == HTTPCLIENT_STATE::EXCEPTIONED) {
 			delete item;
 			iter = m_aryItems.erase(iter);
 		}
@@ -99,6 +99,10 @@ bool CHttpClient::Interrupt(CHttpClientItem* pDestory){
 }
 
 CHttpClientItem::CHttpClientItem(httpContext_s* ctx) : IUtilHTTPCallbacks(){
+	if (!ctx || !g_pUtilHTTPClient) {
+		m_iStatue = HTTPCLIENT_STATE::EXCEPTIONED;
+		return;
+	}
 	m_hContext.url = ctx->url;
 	m_hContext.method = ctx->method;
 	m_pCookieJar = ctx->cookie;
@@ -108,6 +112,10 @@ CHttpClientItem::CHttpClientItem(httpContext_s* ctx) : IUtilHTTPCallbacks(){
 		m_pRequest = g_pUtilHTTPClient->CreateAsyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
 	else
 		m_pRequest = g_pUtilHTTPClient->CreateSyncRequest(m_hContext.url.c_str(), m_hContext.method, this);
+	if (!m_pRequest) {
+		m_iStatue = HTTPCLIENT_STATE::EXCEPTIONED;
+		return;
+	}
 	if (m_pCookieJar)
 		m_pRequest->SetField("Cookie", m_pCookieJar->Get().c_str());
 	m_pRequest->SetAutoDestroyOnFinish(true);
@@ -124,7 +132,7 @@ CHttpClientItem* CHttpClientItem::Start(){
 	return nullptr;
 }
 IUtilHTTPResponse* CHttpClientItem::StartSync(){
-	if (!m_bAsync) {
+	if (!m_bAsync && m_pRequest) {
 		if (m_pCookieJar)
 			m_pRequest->SetField("Cookie", m_pCookieJar->Get().c_str());
 		m_pRequest->Send();
@@ -172,6 +180,8 @@ HTTPCLIENT_STATE CHttpClientItem::GetState() const{
 	return m_iStatue;
 }
 bool CHttpClientItem::Interrupt(){
+	if (!m_pRequest)
+		return false;
 	m_pRequest->Destroy();
 	return true;
 }

@@ -201,6 +201,19 @@ CItemHighLightPanel::CItemHighLightPanel() : BaseClass(nullptr, VIEWPORT_ITEMHIG
 	reinterpret_cast<CItemPickupPanel*>(m_pPickupPanel)->GetTemplateText();
 	LoadItemList();
 }
+
+CItemHighLightPanel::~CItemHighLightPanel() {
+	for (auto panel : m_aryLookatPanels) {
+		if (panel)
+			panel->DeletePanel();
+	}
+	m_aryLookatPanels.clear();
+	for (auto item : m_aryHighLightTable) {
+		delete item;
+	}
+	m_aryHighLightTable.clear();
+}
+
 void CItemHighLightPanel::OnThink(){
 	if (gCVars.pItemHighLightName->value <= 0 && gCVars.pItemHighLightPickup->value <= 0)
 		return;
@@ -209,6 +222,8 @@ void CItemHighLightPanel::OnThink(){
 	cl_entity_t* maxdotent = nullptr;
 	size_t highlightindex = 0;
 	auto local = gEngfuncs.GetLocalPlayer();
+	if (!local)
+		return;
 	Vector vecView;
 	gEngfuncs.GetViewAngles(vecView);
 	CMathlib::AngleVectors(vecView, vecView, nullptr, nullptr);
@@ -312,7 +327,8 @@ void CItemHighLightPanel::AddEntity(int type, cl_entity_s* ent, const char* mode
 }
 void CItemHighLightPanel::LoadItemList() {
 	char szItemPraseBuf[256];
-	const char* pfile = const_cast<const char*>(reinterpret_cast<char*>(gEngfuncs.COM_LoadFile(ITEM_LIST_PATH, 5, nullptr)));
+	const char* pfileBase = const_cast<const char*>(reinterpret_cast<char*>(gEngfuncs.COM_LoadFile(ITEM_LIST_PATH, 5, nullptr)));
+	const char* pfile = pfileBase;
 	int i = 0;
 	cl_highlight_s* pItem = nullptr;
 	if (!pfile){
@@ -348,7 +364,7 @@ void CItemHighLightPanel::LoadItemList() {
 	}
 	if (i != 0)
 		SYS_ERROR("Error in parsing file:%s\nBuf is not end with even.", ITEM_LIST_PATH);
-	gEngfuncs.COM_FreeFile(const_cast<void*>(reinterpret_cast<const void*>(pfile)));
+	gEngfuncs.COM_FreeFile(const_cast<void*>(reinterpret_cast<const void*>(pfileBase)));
 }
 const char* CItemHighLightPanel::GetName() {
 	return VIEWPORT_ITEMHIGHLIGHT_NAME;
