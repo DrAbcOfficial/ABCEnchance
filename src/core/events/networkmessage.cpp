@@ -11,12 +11,14 @@
 	static pfnUserMsgHook m_pfn##name; \
 	static int __MsgFunc_##name(const char* pszName, int iSize, void* pbuf)
 #define ADD_HOOK(name) m_pfn##name = HOOK_MESSAGE(name)
+#define CHECK_MSG_OK(name) if (!msg.readOK()) return m_pfn##name(pszName, iSize, pbuf)
 
 DEFINE_NETMESSAGE_HOOK(AmmoX, int, int)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int iIndex = msg.readByte();
 	int iCount = msg.readLong();
+	CHECK_MSG_OK(AmmoX);
 	g_EventAmmoX(iIndex, iCount);
 	return m_pfnAmmoX(pszName, iSize, pbuf);
 }
@@ -45,7 +47,8 @@ DEFINE_NETMESSAGE_HOOK(WeaponList, Weapon*)
 	recived_weapon.iSlotPos = msg.readChar();
 	recived_weapon.iId = msg.readShort();
 	recived_weapon.iFlags = msg.readByte();
-	if (recived_weapon.iId > 0 && recived_weapon.iSlot < MAX_WEAPON_SLOT)
+	CHECK_MSG_OK(WeaponList);
+	if (recived_weapon.iId > 0 && recived_weapon.iSlot >= 0 && recived_weapon.iSlot < MAX_WEAPON_SLOT)
 		g_EventWeaponList(&recived_weapon);
 	return m_pfnWeaponList(pszName, iSize, pbuf);
 }
@@ -59,6 +62,7 @@ DEFINE_NETMESSAGE_HOOK(CustWeapon, int, const char*)
 	NetworkMessageReader msg(pbuf, iSize);
 	int id = msg.readShort();
 	std::string name = msg.readString();
+	CHECK_MSG_OK(CustWeapon);
 	if (name.size() != 0) {
 		g_EventCustWeapon(id, name.c_str());
 	}
@@ -71,6 +75,7 @@ DEFINE_NETMESSAGE_HOOK(CurWeapon, int, int, int, int)
 	int iId = msg.readShort();
 	int iClip = msg.readLong();
 	int iClip2 = msg.readLong();
+	CHECK_MSG_OK(CurWeapon);
 	g_EventCurWeapon(iState, iId, iClip, iClip2);
 	return m_pfnCurWeapon(pszName, iSize, pbuf);
 }
@@ -78,6 +83,7 @@ DEFINE_NETMESSAGE_HOOK(HideWeapon, int)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int token = msg.readByte();
+	CHECK_MSG_OK(HideWeapon);
 	g_EventHideWeapon(token);
 	return m_pfnHideWeapon(pszName, iSize, pbuf);
 }
@@ -85,6 +91,7 @@ DEFINE_NETMESSAGE_HOOK(HideHUD, int)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int token = msg.readByte();
+	CHECK_MSG_OK(HideHUD);
 	g_EventHideHUD(token);
 	return m_pfnHideHUD(pszName, iSize, pbuf);
 }
@@ -93,6 +100,7 @@ DEFINE_NETMESSAGE_HOOK(WeaponSpr, int, const char*)
 	NetworkMessageReader msg(pbuf, iSize);
 	int id = msg.readShort();
 	std::string name = msg.readString();
+	CHECK_MSG_OK(WeaponSpr);
 	if (name.size() > 0)
 		g_EventWeaponSpr(id, name.c_str());
 	return m_pfnWeaponSpr(pszName, iSize, pbuf);
@@ -101,6 +109,7 @@ DEFINE_NETMESSAGE_HOOK(WeapPickup, int)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int iIndex = msg.readShort();
+	CHECK_MSG_OK(WeapPickup);
 	g_EventWeapPickup(iIndex);
 	return m_pfnWeapPickup(pszName, iSize, pbuf);
 }
@@ -109,6 +118,7 @@ DEFINE_NETMESSAGE_HOOK(AmmoPickup, int, int)
 	NetworkMessageReader msg(pbuf, iSize);
 	int iIndex = msg.readByte();
 	int iCount = msg.readLong();
+	CHECK_MSG_OK(AmmoPickup);
 	g_EventAmmoPickup(iIndex, iCount);
 	return m_pfnAmmoPickup(pszName, iSize, pbuf);
 }
@@ -116,6 +126,7 @@ DEFINE_NETMESSAGE_HOOK(ItemPickup, const char*)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	auto szName = msg.readString();
+	CHECK_MSG_OK(ItemPickup);
 	g_EventItemPickup(szName.c_str());
 	return m_pfnItemPickup(pszName, iSize, pbuf);
 }
@@ -125,12 +136,14 @@ DEFINE_NETMESSAGE_HOOK(Damage, int, int, int, float[3])
 	int armor = msg.readByte();
 	int damageTaken = msg.readByte();
 	int tiles = msg.readLong();
+	CHECK_MSG_OK(Damage);
 	if (armor + damageTaken + tiles == 0)
 		return m_pfnDamage(pszName, iSize, pbuf);
 	vec3_t vecFrom{};
 	for (size_t i = 0; i < 3; i++) {
 		vecFrom[i] = msg.readCoord();
 	}
+	CHECK_MSG_OK(Damage);
 	g_EventDamage(armor, damageTaken, tiles, vecFrom);
 	return m_pfnDamage(pszName, iSize, pbuf);
 }
@@ -138,6 +151,7 @@ DEFINE_NETMESSAGE_HOOK(Battery, int)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int battery = msg.readShort();
+	CHECK_MSG_OK(Battery);
 	g_EventBattery(battery);
 	return m_pfnBattery(pszName, iSize, pbuf);
 }
@@ -145,6 +159,7 @@ DEFINE_NETMESSAGE_HOOK(Health, int)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int health = msg.readLong();
+	CHECK_MSG_OK(Health);
 	g_EventHealth(health);
 	return m_pfnHealth(pszName, iSize, pbuf);
 }
@@ -152,8 +167,9 @@ DEFINE_NETMESSAGE_HOOK(ScoreInfo, int, float, int, float, float, int, int, int)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int clientIndex = msg.readByte();
+	CHECK_MSG_OK(ScoreInfo);
 	//wtf is not this shit
-	if (clientIndex >= 1 && clientIndex <= 33) {
+	if (clientIndex >= 1 && clientIndex <= 32) {
 		float flFrags = msg.readFloat();
 		int iDeath = msg.readLong();
 		float flHealth = msg.readFloat();
@@ -161,6 +177,7 @@ DEFINE_NETMESSAGE_HOOK(ScoreInfo, int, float, int, float, float, int, int, int)
 		int iTeamNumber = msg.readByte();
 		int iHideExtra = msg.readByte();
 		int iAdmin = msg.readByte();
+		CHECK_MSG_OK(ScoreInfo);
 		g_EventScoreInfo(clientIndex, flFrags, iDeath, flHealth, flArmor, iTeamNumber, iHideExtra, iAdmin);
 	}
 	return m_pfnScoreInfo(pszName, iSize, pbuf);
@@ -169,8 +186,10 @@ DEFINE_NETMESSAGE_HOOK(Spectator, int, bool)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int clientIndex = msg.readByte();
+	CHECK_MSG_OK(Spectator);
 	if (clientIndex > 0 && clientIndex <= 32) {
 		int beSpectator = msg.readByte();
+		CHECK_MSG_OK(Spectator);
 		g_EventSpectator(clientIndex, beSpectator != 0);
 	}
 	return m_pfnSpectator(pszName, iSize, pbuf);
@@ -179,6 +198,7 @@ DEFINE_NETMESSAGE_HOOK(ServerName, const char*)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	auto name = msg.readString();
+	CHECK_MSG_OK(ServerName);
 	g_EventServerName(name.c_str());
 	return m_pfnServerName(pszName, iSize, pbuf);
 }
@@ -186,6 +206,7 @@ DEFINE_NETMESSAGE_HOOK(NextMap, const char*)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	auto map = msg.readString();
+	CHECK_MSG_OK(NextMap);
 	g_EventNextMap(map.c_str());
 	return m_pfnNextMap(pszName, iSize, pbuf);
 }
@@ -193,6 +214,7 @@ DEFINE_NETMESSAGE_HOOK(TimeEnd, int)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int time = msg.readLong();
+	CHECK_MSG_OK(TimeEnd);
 	g_EventTimeEnd(time);
 	return m_pfnTimeEnd(pszName, iSize, pbuf);
 }
@@ -203,6 +225,7 @@ DEFINE_NETMESSAGE_HOOK(ShowMenu, int, int, int, std::string&)
 	int time = msg.readChar();
 	int bits = msg.readByte();
 	auto message = msg.readString();
+	CHECK_MSG_OK(ShowMenu);
 	g_EventShowMenu(slot, time, bits, message);
 	//block hahahaha
 	return 1;
@@ -217,6 +240,7 @@ DEFINE_NETMESSAGE_HOOK(VoteMenu, int, const char*, const char*, const char*)
 	auto content = msg.readString();
 	auto yes = msg.readString();
 	auto no = msg.readString();
+	CHECK_MSG_OK(VoteMenu);
 	g_EventVoteMenu(iVoteType, content.c_str(), yes.c_str(), no.c_str());
 	return 1;
 }
@@ -230,6 +254,7 @@ DEFINE_NETMESSAGE_HOOK(MOTD, int ,const char*)
 	NetworkMessageReader msg(pbuf, iSize);
 	int code = msg.readByte();
 	auto info = msg.readString();
+	CHECK_MSG_OK(MOTD);
 	g_EventMOTD(code, info.c_str());
 	return m_pfnMOTD(pszName, iSize, pbuf);
 }
@@ -237,6 +262,7 @@ DEFINE_NETMESSAGE_HOOK(FlashBat, int)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int flash = msg.readByte();
+	CHECK_MSG_OK(FlashBat);
 	g_EventFlashBat(flash);
 	return m_pfnFlashBat(pszName, iSize, pbuf);
 }
@@ -245,6 +271,7 @@ DEFINE_NETMESSAGE_HOOK(Flashlight, bool, int)
 	NetworkMessageReader msg(pbuf, iSize);
 	int on = msg.readByte();
 	int battery = msg.readByte();
+	CHECK_MSG_OK(Flashlight);
 	g_EventFlashlight(on > 0, battery);
 	return m_pfnFlashlight(pszName, iSize, pbuf);
 }
@@ -259,6 +286,8 @@ static int __MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
 	std::string sstr2 = msg.readString();
 	std::string sstr3 = msg.readString();
 	std::string sstr4 = msg.readString();
+	if (!msg.readOK())
+		return m_pfnTextMsg(pszName, iSize, pbuf);
 	bool ret = true;
 	g_EventTextMsg.forEach([&](const eventpp::CallbackList<bool(int, const char*, const char*, const char*, const char*, const char*)>::Handle& handle, 
 		const eventpp::CallbackList<bool(int, const char*, const char*, const char*, const char*, const char*)>::Callback& callback) {
@@ -296,17 +325,21 @@ DEFINE_NETMESSAGE_HOOK(MapList, int, int, int, const char**)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int clearall = msg.readByte();
+	CHECK_MSG_OK(MapList);
 	if (clearall == 0) {
 		int all_count = msg.readShort();
+		CHECK_MSG_OK(MapList);
 		g_EventMapList(clearall, all_count, 0, nullptr);
 	}
 	else {
 		int start = msg.readShort();
 		int end = msg.readShort();
+		CHECK_MSG_OK(MapList);
 		std::vector<std::string> maps{};
 		for (int i = start; i < end; i++) {
 			maps.push_back(msg.readString());
 		}
+		CHECK_MSG_OK(MapList);
 		std::vector<const char*> cstrVec;
 		cstrVec.reserve(maps.size());
 		for (const auto& s : maps) {
@@ -320,9 +353,13 @@ DEFINE_NETMESSAGE_HOOK(MetaHook, int, mh_package_t*)
 {
 	NetworkMessageReader msg(pbuf, iSize);
 	int type = msg.readByte();
+	if (!msg.readOK())
+		return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 	switch (type) {
 		case MetaHookMsgType::MHSV_CMD_ABC_CUSTOM: {
 			ABCCustomMsg sstype = static_cast<ABCCustomMsg>(msg.readByte());
+			if (!msg.readOK())
+				return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 			switch (sstype) {
 				case ABCCustomMsg::POPNUMBER: {
 					mh_package_t package{
@@ -333,6 +370,8 @@ DEFINE_NETMESSAGE_HOOK(MetaHook, int, mh_package_t*)
 							msg.readByte(), msg.readByte() , msg.readByte() ,msg.readByte()
 						}
 					};
+					if (!msg.readOK())
+						return m_pfnMetaHook ? m_pfnMetaHook(pszName, iSize, pbuf) : 0;
 					g_EventMetaHook(type, &package);
 					break;
 				}

@@ -87,7 +87,7 @@ std::string NetworkMessageReader::readString() {
 float NetworkMessageReader::readCoord() {
     //GoldSrc should be readShort()
     auto val = readLong();
-    if (!val) {
+    if (!readOK()) {
         DebugLog("try read coord from %d, but size is %d\n", m_readPos, m_bufferSize);
         return NAN;
     }
@@ -96,7 +96,7 @@ float NetworkMessageReader::readCoord() {
 
 float NetworkMessageReader::readAngle() {
     auto c = readChar();
-    if (!c) {
+    if (!readOK()) {
         DebugLog("try read angle from %d, but size is %d\n", m_readPos, m_bufferSize);
         return NAN;
     }
@@ -105,7 +105,7 @@ float NetworkMessageReader::readAngle() {
 
 float NetworkMessageReader::readHiresAngle() {
     auto s = readShort();
-    if (!s) {
+    if (!readOK()) {
         DebugLog("try read hires angle from %d, but size is %d\n", m_readPos, m_bufferSize);
         return NAN;
     }

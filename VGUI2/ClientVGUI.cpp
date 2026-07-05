@@ -35,6 +35,8 @@ public:
 	}
 	virtual void Start(void) override {
 		extern vgui::CViewport* g_pViewPort;
+		if (g_pViewPort)
+			return;
 		g_pViewPort = new vgui::CViewport();
 		g_pViewPort->Start();
 		g_pViewPort->SetVisible(false);

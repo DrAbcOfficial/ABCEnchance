@@ -231,8 +231,9 @@ void CHttpClientItem::OnUpdateState(IUtilHTTPRequest* RequestInstance, IUtilHTTP
 
 void CHttpClientItem::OnReceiveData(IUtilHTTPRequest* RequestInstance, IUtilHTTPResponse* ResponseInstance, const void* pData, size_t cbSize)
 {
-	m_aryReciveData.resize(cbSize);
-	std::memcpy(m_aryReciveData.data(), pData, cbSize);
+	auto oldSize = m_aryReciveData.size();
+	m_aryReciveData.resize(oldSize + cbSize);
+	std::memcpy(m_aryReciveData.data() + oldSize, pData, cbSize);
 }
 
 CHttpClient* GetHttpClient(){

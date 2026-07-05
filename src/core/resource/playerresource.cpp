@@ -25,6 +25,8 @@ void PlayerResource::Init() {
 	}
 	g_EventScoreInfo.append([&](int index, float frag, int death, float health, float armor, int team, int extra, int admin) {
 		auto infos = this->GetPlayerInfo(index);
+		if (!infos)
+			return;
 		infos->m_iFrags = frag;
 		infos->m_iDeaths = death;
 		infos->m_iHealth = health;
@@ -37,6 +39,8 @@ void PlayerResource::Init() {
 	});
 	g_EventSpectator.append([&](int index, bool spectate) {
 		auto pi = this->GetPlayerInfo(index);
+		if (!pi)
+			return;
 		pi->m_bIsSpectate = spectate;
 	});
 	g_EventClExtrasInfo.append([&]() {
@@ -58,6 +62,8 @@ void PlayerResource::UpdateAll(){
 
 //Entindex
 PlayerInfo* PlayerResource::GetPlayerInfo(int idx) {
+	if (idx < 0 || idx > SC_MAX_PLAYERS)
+		return nullptr;
 	return &m_aryPlayerInfos[idx];
 }
 
@@ -87,6 +93,11 @@ bool PlayerInfo::IsThisPlayer() const {
 
 void PlayerInfo::UpdatePing() {
 	auto info = gEngineStudio.PlayerInfo(m_iIndex - 1);
+	if (!info) {
+		m_iPing = 0;
+		m_iLoss = 0;
+		return;
+	}
 	m_iPing = info->ping;
 	m_iLoss = info->packet_loss;
 }
@@ -124,7 +135,7 @@ PlayerInfo* PlayerInfo::Update() {
 		m_szName = info->name;
 		m_szModel = info->model;
 
-		m_eDonor = m_eHideExtra != HIDE_EXTRA::NO ?
+		m_eDonor = (m_eHideExtra != HIDE_EXTRA::NO && g_aryNativeHUDPanelInfo) ?
 			static_cast<DONOR>(g_aryNativeHUDPanelInfo[m_iIndex - 1].donor) :
 			DONOR::NONE;
 	}

@@ -41,6 +41,7 @@
 
 # Debug ang Release
 /.vs
+/.codegraph
 /Build/*.dll
 /Debug
 /Debug-Netease

@@ -24,6 +24,10 @@ void abcconfig::LoadJson(){
 
 void abcconfig::SaveJson(){
 	FileHandle_t file = vgui::filesystem()->Open(g_szConfigPath, "w");
+	if (!file) {
+		ConsoleWarnMessage("Couldn't write config file %s\n", g_szConfigPath);
+		return;
+	}
 	std::string json = "";
 	aigc::JsonHelper::ObjectToJson(s_cfg, json);
 	vgui::filesystem()->Write(json.c_str(), json.size(), file);

@@ -247,11 +247,15 @@ void CRadarPanel::Paint()
 			}
 			
 			PlayerInfo* pi = gPlayerRes.GetPlayerInfo(i + 1);
-			if (!pi->IsValid()) {
+			if (!pi || !pi->IsValid()) {
 				iter->SetVisible(false);
 				continue;
 			}
 			PlayerInfo* lpi = gPlayerRes.GetLocalPlayerInfo();
+			if (!lpi) {
+				iter->SetVisible(false);
+				continue;
+			}
 			if (pi->m_iTeamNumber != lpi->m_iTeamNumber) {
 				iter->SetVisible(false);
 				continue;

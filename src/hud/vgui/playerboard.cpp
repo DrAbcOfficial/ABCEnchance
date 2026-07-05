@@ -141,8 +141,9 @@ void CPlayerInfoPanel::SetParent(vgui::VPANEL parent)
 
 void CPlayerInfoPanel::UpdateClientInfo(){
 	PlayerInfo* pi = gPlayerRes.GetPlayerInfo(m_iPlayerIndex);
-	if (pi->IsValid()) {
-		if (pi->m_bIsSpectate || pi->m_iTeamNumber != gPlayerRes.GetLocalPlayerInfo()->m_iTeamNumber) {
+	auto localInfo = gPlayerRes.GetLocalPlayerInfo();
+	if (pi && localInfo && pi->IsValid()) {
+		if (pi->m_bIsSpectate || pi->m_iTeamNumber != localInfo->m_iTeamNumber) {
 			ShowPanel(false);
 			return;
 		}	

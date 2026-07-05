@@ -85,7 +85,8 @@ void CSidePanel::OnThink() {
 			return subject;
 	};
 	std::string szTemp = m_szTeplate;
-	szTemp = ReplaceAll(szTemp, "{SCORE}", std::to_string(gPlayerRes.GetLocalPlayerInfo()->m_iFrags));
+	auto localInfo = gPlayerRes.GetLocalPlayerInfo();
+	szTemp = ReplaceAll(szTemp, "{SCORE}", std::to_string(localInfo ? localInfo->m_iFrags : 0));
 	szTemp = ReplaceAll(szTemp, "{MAXSPEED}", std::to_string(static_cast<int>(m_flMaxSpeed)));
 	szTemp = ReplaceAll(szTemp, "{SPEED}", std::to_string(static_cast<int>(flPlayerSpeed)));
 

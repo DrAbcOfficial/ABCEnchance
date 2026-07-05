@@ -152,6 +152,8 @@ void FillEngineAddress() {
 		{
 			addr = (ULONG_PTR)Search_Pattern(GPSRITE_SIG);
 			Sig_AddrNotFound(gpSprite);
+			if (!addr)
+				return;
 			gpSprite = (decltype(gpSprite))(*(ULONG_PTR*)(addr + 11));
 		}
 	}
@@ -190,6 +192,10 @@ void FillAddress() {
 #pragma region HUDList
 		if (1) {
 			PUCHAR addr = (PUCHAR)g_pMetaHookAPI->SearchPattern(g_pMetaSave->pExportFuncs->HUD_VidInit, 0x10, "\xB9", 1);
+			if (!addr) {
+				Sig_NotFound(HUDList);
+				return;
+			}
 			g_dwHUDListAddr = *(DWORD*)(addr + 0x1);
 		}
 #pragma endregion
@@ -209,6 +215,10 @@ void FillAddress() {
 			*/
 			constexpr char pattern[] = "\xC6\x85\x8F\xFE\xFF\xFF\x01\x66\x89\x90";
 			PUCHAR addr = (PUCHAR)Search_Pattern_From_Size(g_dwClientBase, g_dwClientSize, pattern);
+			if (!addr) {
+				Sig_NotFound(NativeHUDPanelInfo);
+				return;
+			}
 			g_aryNativeHUDPanelInfo = reinterpret_cast<hudpanel_info_t*> (*(DWORD*)(addr + 10) + 8);
 		}
 #pragma endregion
@@ -405,16 +415,17 @@ int HUD_VidInit(void)
 	};
 	if (g_dwHUDListAddr) {
 		s_aryVanillianHud.clear();
-		hudlist_t* pHudList = reinterpret_cast<hudlist_t*>((*(DWORD*)(g_dwHUDListAddr)));
-		for (size_t i = 0; i <= 0x4; i++) {
-			switch (i) {
-				case 0x4:
-				case 0x2:
-				case 0x1:
-				case 0x0: {
-					s_aryVanillianHud.push_back(pHudList->p);
-					break;
-				}
+			hudlist_t* pHudList = reinterpret_cast<hudlist_t*>((*(DWORD*)(g_dwHUDListAddr)));
+			for (size_t i = 0; i <= 0x4 && pHudList; i++) {
+				switch (i) {
+					case 0x4:
+					case 0x2:
+					case 0x1:
+					case 0x0: {
+						if (pHudList->p)
+							s_aryVanillianHud.push_back(pHudList->p);
+						break;
+					}
 				default:break;
 			}
 			pHudList = pHudList->pNext;

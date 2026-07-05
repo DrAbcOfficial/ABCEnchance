@@ -134,7 +134,7 @@ void CDeathMsgPanel::AddItem(const wchar_t* victim, const wchar_t* attacker, con
 	Q_UnicodeToUTF8(attacker, ck, sizeof(ck));
 	char buffer[256 * 4];
 	Q_snprintf(buffer, cl, cv, ck[0] == '\0' ? "Something" : ck, ce);
-	gEngfuncs.Con_Printf(buffer);
+	gEngfuncs.Con_Printf("%s", buffer);
 	InvalidateLayout();
 }
 void CDeathMsgPanel::ShowPanel(bool state){

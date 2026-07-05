@@ -739,9 +739,9 @@ void CNeteasePanel::PrintF(const char* str, bool dev, const Args&& ...args){
 	format = netease_fmt::format(format, args...);
 	format = "[NeteaseApi] " + format + "\n";
 	if(dev)
-		gEngfuncs.Con_DPrintf(format.c_str());
+		gEngfuncs.Con_DPrintf("%s", format.c_str());
 	else
-		gEngfuncs.Con_Printf(format.c_str());
+		gEngfuncs.Con_Printf("%s", format.c_str());
 }
 netease::CMusic* CNeteasePanel::GetNowPlaying(){
 	return m_pPlaying.get();

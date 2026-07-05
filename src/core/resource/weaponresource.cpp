@@ -60,8 +60,10 @@ bool WeaponList::Has(size_t iSlot, size_t iPos) const {
 }
 
 void WeaponList::Add(Weapon* wp) {
-    if (!wp) 
-        return;
+	if (!wp) 
+		return;
+	if (wp->iSlot < 0 || wp->iSlot >= MAX_WEAPON_SLOT)
+		return;
 
     // 避免重复添加 - 如果已存在相同ID的武器，直接返回
     if (m_dicWeaponIds.count(wp->iId)) {

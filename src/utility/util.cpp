@@ -15,7 +15,7 @@ void ADD_COMMAND(const char* cmd, void (*pfnEngSrc_function)(void)) {
 	gEngfuncs.pfnAddCommand(cmd, pfnEngSrc_function);
 }
 void ConsoleWriteline(const char* x) {
-	gEngfuncs.Con_Printf(x);
+	gEngfuncs.Con_Printf("%s", x);
 }
 cvar_t* CVAR_GET_POINTER(const char* x) {
 	return gEngfuncs.pfnGetCvarPointer(x);

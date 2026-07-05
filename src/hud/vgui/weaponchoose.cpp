@@ -260,13 +260,17 @@ void CWeaponChoosePanel::ReloadWeaponSpr(){
 	}
 }
 bool CWeaponChoosePanel::ShouldDraw(){
-	if (gPlayerRes.IsInSpectate(gEngfuncs.GetLocalPlayer()->index))
+	auto local = gEngfuncs.GetLocalPlayer();
+	if (!local)
+		return false;
+	if (gPlayerRes.IsInSpectate(local->index))
 		return false;
 	if (GetBaseViewPort()->IsHudHide(HUD_HIDEALL | HUD_HIDEWEAPONS))
 		return false;
 	if (!GetBaseViewPort()->HasSuit())
 		return false;
-	if (gPlayerRes.GetLocalPlayerInfo()->m_iHealth <= 0)
+	auto localInfo = gPlayerRes.GetLocalPlayerInfo();
+	if (!localInfo || localInfo->m_iHealth <= 0)
 		return false;
 	if (CVAR_GET_FLOAT("hud_fastswitch") > 0)
 		return false;

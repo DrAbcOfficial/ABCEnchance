@@ -51,7 +51,7 @@ void TeamResource::ResetAll() {
 void TeamResource::UpdateAllTeams() {
 	for (int i = 1; i <= SC_MAX_PLAYERS; i++) {
 		PlayerInfo* pi = gPlayerRes.GetPlayerInfo(i);
-		if (!pi->IsValid())
+		if (!pi || !pi->IsValid())
 			continue;
 		if (pi->m_iTeamNumber < TEAM_ID::NONE)
 			continue;
@@ -71,6 +71,8 @@ TeamInfo* TeamResource::GetTeamInfo(TEAM_ID id){
 	return GetTeamInfo(idx);
 }
 TeamInfo* TeamResource::GetTeamInfo(int index) {
+	if (index < 0 || index >= static_cast<int>(m_aryTeamInfo.size()))
+		return nullptr;
 	return &m_aryTeamInfo[index];
 }
 
