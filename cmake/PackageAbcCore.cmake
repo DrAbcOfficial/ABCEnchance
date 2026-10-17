@@ -16,40 +16,28 @@ if(NOT ABC_CORE_VERSION)
     set(ABC_CORE_VERSION "0.0.0")
 endif()
 
-set(ABC_CORE_LIB "${ABC_CORE_BUILD_DIR}/${ABC_CORE_CONFIG}/abc_core.lib")
-if(NOT EXISTS "${ABC_CORE_LIB}")
-    set(ABC_CORE_LIB "${ABC_CORE_BUILD_DIR}/abc_core.lib")
+set(ABC_CORE_DLL "${ABC_CORE_BUILD_DIR}/${ABC_CORE_CONFIG}/AbcCore.dll")
+if(NOT EXISTS "${ABC_CORE_DLL}")
+    set(ABC_CORE_DLL "${ABC_CORE_BUILD_DIR}/AbcCore.dll")
 endif()
-if(NOT EXISTS "${ABC_CORE_LIB}")
-    message(FATAL_ERROR "PackageAbcCore.cmake: abc_core.lib not found under ${ABC_CORE_BUILD_DIR}")
+if(NOT EXISTS "${ABC_CORE_DLL}")
+    message(FATAL_ERROR "PackageAbcCore.cmake: AbcCore.dll not found under ${ABC_CORE_BUILD_DIR}")
 endif()
 
 file(MAKE_DIRECTORY "${ABC_CORE_OUTPUT_DIR}")
 set(ABC_CORE_STAGE "${ABC_CORE_OUTPUT_DIR}/.stage/AbcCore-${ABC_CORE_VERSION}")
 file(REMOVE_RECURSE "${ABC_CORE_STAGE}")
-file(MAKE_DIRECTORY "${ABC_CORE_STAGE}/lib")
-file(COPY "${ABC_CORE_SOURCE_DIR}/include" DESTINATION "${ABC_CORE_STAGE}")
-file(COPY "${ABC_CORE_SOURCE_DIR}/cmake" DESTINATION "${ABC_CORE_STAGE}")
+file(MAKE_DIRECTORY "${ABC_CORE_STAGE}/svencoop/metahook/dlls/AbcCore")
+file(COPY "${ABC_CORE_DLL}" DESTINATION "${ABC_CORE_STAGE}/svencoop/metahook/dlls/AbcCore")
 file(COPY "${ABC_CORE_SOURCE_DIR}/README.md" "${ABC_CORE_SOURCE_DIR}/LICENSE"
     DESTINATION "${ABC_CORE_STAGE}")
-file(COPY "${ABC_CORE_LIB}" DESTINATION "${ABC_CORE_STAGE}/lib")
-file(WRITE "${ABC_CORE_STAGE}/SDK.md" [=[
-# AbcCore SDK
-
-This package contains the AbcCore public headers (`include/abc`), the Win32/x86
-static library (`lib/abc_core.lib`, static CRT) and the shared CMake helpers.
-
-The public headers also need the pinned MetaHook, eventpp, AIGCJson and SteamSDK
-headers from the AbcCore repository's `thirdparty` submodules. Add those include
-directories when compiling a consumer; `README.md` lists the upstream pins.
-]=])
 
 execute_process(
-    COMMAND "${CMAKE_COMMAND}" -E chdir "${ABC_CORE_OUTPUT_DIR}/.stage"
+    COMMAND "${CMAKE_COMMAND}" -E chdir "${ABC_CORE_STAGE}"
             "${CMAKE_COMMAND}" -E tar cf
             "${ABC_CORE_OUTPUT_DIR}/AbcCore-${ABC_CORE_VERSION}.zip"
             --format=zip
-            "AbcCore-${ABC_CORE_VERSION}"
+            -- svencoop README.md LICENSE
     RESULT_VARIABLE ABC_CORE_ARCHIVE_RESULT)
 if(NOT ABC_CORE_ARCHIVE_RESULT EQUAL 0)
     message(FATAL_ERROR "Failed to create AbcCore-${ABC_CORE_VERSION}.zip")

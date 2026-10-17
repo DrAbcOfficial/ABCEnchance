@@ -92,8 +92,10 @@ jobs:
         run: |
           $game = "build/ci/game-package"
           New-Item -ItemType Directory -Force -Path $game | Out-Null
+          $core = (Get-ChildItem "build/ci/dist/AbcCore-*.zip" | Select-Object -First 1).FullName
           $ui = (Get-ChildItem "build/ci/dist/AbcUi-*.zip" | Select-Object -First 1).FullName
           $essential = (Get-ChildItem "build/ci/dist/AbcEssential-*.zip" | Select-Object -First 1).FullName
+          Expand-Archive -Path $core -DestinationPath $game -Force
           Expand-Archive -Path $ui -DestinationPath $game -Force
           Expand-Archive -Path $essential -DestinationPath $game -Force
           Copy-Item README.md "$game/README.md" -Force

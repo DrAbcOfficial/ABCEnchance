@@ -8,11 +8,11 @@ on the `legacy` branch (last legacy commit `598f924`) and in the old tags.
 
 | Path | Upstream | Release package |
 |---|---|---|
-| `AbcCore/` | https://github.com/DrAbcOfficial/AbcCore | `AbcCore-<version>.zip` — development SDK (headers, static library, CMake helpers) |
+| `AbcCore/` | https://github.com/DrAbcOfficial/AbcCore | `AbcCore-<version>.zip` — direct-extract `AbcCore.dll` runtime |
 | `AbcEssential/` | https://github.com/DrAbcOfficial/AbcEssential | `AbcEssential-<version>.zip` — direct-extract game package |
 | `AbcUi/` | https://github.com/DrAbcOfficial/AbcUi | `AbcUi-<version>.zip` — direct-extract game package |
 
-`AbcCore` is the shared static library. `AbcEssential` is the non-UI utility
+`AbcCore` is the shared core DLL. `AbcEssential` is the non-UI utility
 plugin. `AbcUi` owns the renderer bridge and the RmlUi interface. The aggregate
 repository is the single owner of the AbcCore checkout: AbcUi and AbcEssential
 consume it through `ABC_CORE_DIR` and no longer carry their own AbcCore
@@ -32,7 +32,7 @@ Sven Co-op/
 │   │   ├── mdl/
 │   │   └── spr/
 │   └── metahook/
-│       ├── dlls/
+│       ├── dlls/AbcCore/AbcCore.dll
 │       ├── gamedata/abc/
 │       └── plugins/
 │           ├── AbcEssential.dll
@@ -53,8 +53,10 @@ AbcUi.dll
 ```
 
 The individual `AbcUi-<version>.zip` and `AbcEssential-<version>.zip` assets use
-the same root-level `svencoop/` layout. `AbcCore-<version>.zip` is a development
-SDK, not a game package.
+the same root-level `svencoop/` layout. `AbcCore-<version>.zip` contains the
+runtime `AbcCore.dll` for `metahook/dlls/AbcCore/`. The merged
+`ABCEnchance-<tag>.zip` includes all three; the individual plugin packages need
+the matching AbcCore runtime separately.
 
 ## Clone
 
@@ -107,8 +109,8 @@ GitHub Release containing:
 - `AbcUi-<version>.zip`
 - `AbcEssential-<version>.zip`
 - `AbcCore-<version>.zip`
-- `ABCEnchance-<tag>.zip` (merged AbcUi + AbcEssential game package with
-  `svencoop/` at the archive root)
+- `ABCEnchance-<tag>.zip` (merged AbcUi + AbcEssential + AbcCore game package
+  with `svencoop/` at the archive root)
 
 Push and pull-request builds upload the three module packages plus the merged
 `ABCEnchance-game.zip` as workflow artifacts without creating a GitHub Release.
