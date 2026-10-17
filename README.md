@@ -6,7 +6,7 @@ on the `legacy` branch (last legacy commit `598f924`) and in the old tags.
 
 ## Modules
 
-| Path | Upstream | Release package |
+| Path | Upstream | Package artifact |
 |---|---|---|
 | `AbcCore/` | https://github.com/DrAbcOfficial/AbcCore | `AbcCore-<version>.zip` — `AbcCore.dll` + shared gamedata |
 | `AbcEssential/` | https://github.com/DrAbcOfficial/AbcEssential | `AbcEssential-<version>.zip` — direct-extract game package |
@@ -108,17 +108,16 @@ cmake --build --preset win32-release
 
 `.github/workflows/aggregate-release.yml` configures the root CMake project and
 builds `Debug` and `Release` for all three modules. A `v*` tag publishes one
-GitHub Release containing:
+GitHub Release with exactly one asset:
 
-- `AbcUi-<version>.zip`
-- `AbcEssential-<version>.zip`
-- `AbcCore-<version>.zip`
 - `ABCEnchance-<tag>.zip` (merged AbcUi + AbcEssential + AbcCore game package
   with `svencoop/` at the archive root)
 
 Push and pull-request builds upload the three module packages plus the merged
 `ABCEnchance-game.zip` as workflow artifacts without creating a GitHub Release.
-The tag release renames that merged package to `ABCEnchance-<tag>.zip`.
+The module zips stay available as CI artifacts for diagnostics; the tag release
+renames only the merged package to `ABCEnchance-<tag>.zip` and attaches that
+single file.
 
 Each module retains its own CI in its upstream repository; this repository is
 the single aggregate build and release entry point.
