@@ -41,7 +41,8 @@ Sven Co-op/
 ```
 
 MetahookSV, `VGUI2Extension.dll` and `Renderer.dll` are prerequisites and are
-installed separately. Add the plugins to
+installed separately. `FreeImage.dll` and `Mile.FFmpeg.dll` are provided by
+MetaHookSV/Renderer and are not part of this package. Add the plugins to
 `svencoop/metahook/configs/plugins.lst` in this order:
 
 ```text
