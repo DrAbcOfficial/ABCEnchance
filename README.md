@@ -28,13 +28,12 @@ Sven Co-op/
 ├── svencoop/
 │   ├── abc/
 │   │   ├── abcessential/
-│   │   └── abcui/
-│   ├── abcenchance/
+│   │   ├── abcui/
 │   │   ├── mdl/
 │   │   └── spr/
 │   └── metahook/
 │       ├── dlls/
-│       ├── gamedata/
+│       ├── gamedata/abc/
 │       └── plugins/
 │           ├── AbcEssential.dll
 │           └── AbcUi.dll
