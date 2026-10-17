@@ -1,0 +1,9 @@
+[submodule "AbcCore"]
+	path = AbcCore
+	url = https://github.com/DrAbcOfficial/AbcCore.git
+[submodule "AbcEssential"]
+	path = AbcEssential
+	url = https://github.com/DrAbcOfficial/AbcEssential.git
+[submodule "AbcUi"]
+	path = AbcUi
+	url = https://github.com/DrAbcOfficial/AbcUi.git

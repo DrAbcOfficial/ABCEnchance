@@ -1,0 +1,141 @@
+name: Aggregate Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aggregate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    name: ${{ matrix.config }}
+    runs-on: windows-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Debug, Release]
+    steps:
+      # AbcUi pins a Renderer commit that is only published in this fork.
+      - name: Route Renderer through the fork
+        shell: pwsh
+        run: |
+          git config --global url."https://github.com/DrAbcOfficial/Renderer".insteadOf "https://github.com/MetaHookSv/Renderer"
+
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          token: ${{ secrets.SUBMODULE_TOKEN || github.token }}
+          submodules: recursive
+
+      # The runner image ships an older CMake than the projects require; the
+      # newest release number is resolved at run time through the GitHub CLI.
+      - name: Install the latest CMake
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = gh api repos/Kitware/CMake/releases/latest --jq .tag_name
+          if (-not $tag) { throw 'Could not resolve the latest CMake release' }
+          $version = $tag.TrimStart('v')
+          $url = "https://github.com/Kitware/CMake/releases/download/$tag/cmake-$version-windows-x86_64.zip"
+          Write-Host "Installing CMake $version from $url"
+          Invoke-WebRequest -Uri $url -OutFile "$env:RUNNER_TEMP\cmake.zip"
+          Expand-Archive -Path "$env:RUNNER_TEMP\cmake.zip" -DestinationPath "$env:RUNNER_TEMP\cmake" -Force
+          "$env:RUNNER_TEMP\cmake\cmake-$version-windows-x86_64\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+      - name: Configure aggregate build
+        shell: pwsh
+        run: |
+          cmake --version
+          $generator = 'Visual Studio 17 2022'
+          $instance = $null
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          if (Test-Path $vswhere) {
+            $instances = & $vswhere -all -prerelease -products * -format json | ConvertFrom-Json
+            $latest = $instances | Sort-Object { [int]($_.installationVersion.Split('.')[0]) } -Descending | Select-Object -First 1
+            if ($latest) {
+              $instance = $latest.installationPath
+              $major = [int]$latest.installationVersion.Split('.')[0]
+              if ($major -ge 18) { $generator = 'Visual Studio 18 2026' } else { $generator = 'Visual Studio 17 2022' }
+            }
+          }
+          Write-Host "Generating with '$generator' (instance: '$instance')"
+          if ($instance) {
+            cmake -S . -B build/ci -G $generator -A Win32 -DCMAKE_GENERATOR_INSTANCE="$instance"
+          } else {
+            cmake -S . -B build/ci -G $generator -A Win32
+          }
+
+      - name: Build (${{ matrix.config }})
+        if: matrix.config == 'Debug'
+        shell: pwsh
+        run: cmake --build build/ci --config Debug --parallel 1
+
+      - name: Package Release
+        if: matrix.config == 'Release'
+        shell: pwsh
+        run: cmake --build build/ci --config Release --target dist --parallel 1
+
+      - name: Create aggregate game package
+        if: matrix.config == 'Release'
+        shell: pwsh
+        run: |
+          $game = "build/ci/game-package"
+          New-Item -ItemType Directory -Force -Path $game | Out-Null
+          $ui = (Get-ChildItem "build/ci/dist/AbcUi-*.zip" | Select-Object -First 1).FullName
+          $essential = (Get-ChildItem "build/ci/dist/AbcEssential-*.zip" | Select-Object -First 1).FullName
+          Expand-Archive -Path $ui -DestinationPath $game -Force
+          Expand-Archive -Path $essential -DestinationPath $game -Force
+          Copy-Item README.md "$game/README.md" -Force
+          $zip = Join-Path $PWD "build/ci/dist/ABCEnchance-game.zip"
+          cmake -E chdir $game cmake -E tar cf $zip --format=zip -- svencoop README.md
+          Get-ChildItem "build/ci/dist" | Select-Object Name, Length
+
+      - name: Upload packages
+        if: matrix.config == 'Release'
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: ABCEnchance-packages
+          path: build/ci/dist/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Publish aggregate release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v8.0.2
+        with:
+          name: ABCEnchance-packages
+          path: dist
+
+      - name: Rename aggregate game package
+        shell: bash
+        run: |
+          set -euo pipefail
+          ls -l dist
+          tag="${GITHUB_REF_NAME//\//-}"
+          mv dist/ABCEnchance-game.zip "dist/ABCEnchance-${tag}.zip"
+          unzip -l "dist/ABCEnchance-${tag}.zip" | head -40
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3.0.3
+        with:
+          name: ABCEnchance ${{ github.ref_name }}
+          generate_release_notes: true
+          files: dist/*.zip
+          fail_on_unmatched_files: true

@@ -1,0 +1,15 @@
+# CMake / Visual Studio build output
+build/
+out/
+dist/
+artifacts/
+.vs/
+*.user
+*.aps
+
+# Python bytecode from the gamedata tooling
+__pycache__/
+*.pyc
+
+# Local CMake overrides
+CMakeUserPresets.json
