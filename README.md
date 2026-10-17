@@ -52,6 +52,9 @@ AbcEssential.dll
 AbcUi.dll
 ```
 
+The VC++ 2015-2022 x86 runtime is required: AbcCore.dll and both plugins use
+the dynamic CRT so STL objects can cross the shared DLL boundary safely.
+
 The individual `AbcUi-<version>.zip` and `AbcEssential-<version>.zip` assets use
 the same root-level `svencoop/` layout. `AbcCore-<version>.zip` contains the
 runtime `AbcCore.dll` for `metahook/dlls/AbcCore/`. The merged
