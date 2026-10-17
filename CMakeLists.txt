@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 4.2)
 project(ABCEnchance LANGUAGES CXX)
 
 include(ExternalProject)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 if(CMAKE_GENERATOR_PLATFORM AND NOT CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")
     message(FATAL_ERROR "The ABC modules are Win32/x86 only; configure with -A Win32")
@@ -89,6 +90,18 @@ abc_add_module(AbcCore)
 abc_add_module(AbcEssential)
 abc_add_module(AbcUi)
 
+set(ABC_SHARED_GAMEDATA_DIR "${CMAKE_BINARY_DIR}/assets/svencoop/metahook/gamedata/abc")
+add_custom_target(SharedGameData
+    COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/scripts/build-shared-gamedata.py"
+        --core-dir "${CMAKE_CURRENT_SOURCE_DIR}/AbcCore"
+        --manifest "${CMAKE_CURRENT_SOURCE_DIR}/scripts/manifests/abc.json"
+        --layout-dir "${CMAKE_CURRENT_SOURCE_DIR}/AbcUi/assets/gamedata/abcui-layout"
+        --output "${ABC_SHARED_GAMEDATA_DIR}"
+        --temp-root "${CMAKE_BINARY_DIR}/gamedata-sync"
+    COMMENT "Building the shared ABC gamedata catalog"
+    VERBATIM)
+
 add_custom_target(ABCEnchance ALL
     DEPENDS AbcCore AbcEssential AbcUi
     COMMENT "Building AbcCore, AbcEssential and AbcUi")
@@ -103,6 +116,7 @@ add_custom_target(dist
         "-DABC_CORE_BUILD_DIR=${ABC_MODULE_BUILD_DIR}/AbcCore"
         "-DABC_CORE_CONFIG=${ABC_MODULE_CONFIG}"
         "-DABC_CORE_OUTPUT_DIR=${CMAKE_BINARY_DIR}/dist"
+        "-DABC_CORE_SHARED_GAMEDATA_DIR=${ABC_SHARED_GAMEDATA_DIR}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PackageAbcCore.cmake"
     COMMAND "${CMAKE_COMMAND}"
         --build "${ABC_MODULE_BUILD_DIR}/AbcEssential"
@@ -116,6 +130,6 @@ add_custom_target(dist
         "-DABC_MODULE_BUILD_DIR=${ABC_MODULE_BUILD_DIR}"
         "-DABC_OUTPUT_DIR=${CMAKE_BINARY_DIR}/dist"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CollectPackages.cmake"
-    DEPENDS AbcCore AbcEssential AbcUi
+    DEPENDS AbcCore AbcEssential AbcUi SharedGameData
     COMMENT "Packaging AbcCore, AbcEssential and AbcUi"
     VERBATIM)

@@ -2,7 +2,8 @@ foreach(required_var
         ABC_CORE_SOURCE_DIR
         ABC_CORE_BUILD_DIR
         ABC_CORE_CONFIG
-        ABC_CORE_OUTPUT_DIR)
+        ABC_CORE_OUTPUT_DIR
+        ABC_CORE_SHARED_GAMEDATA_DIR)
     if(NOT DEFINED ${required_var} OR "${${required_var}}" STREQUAL "")
         message(FATAL_ERROR "PackageAbcCore.cmake: missing ${required_var}")
     endif()
@@ -29,6 +30,8 @@ set(ABC_CORE_STAGE "${ABC_CORE_OUTPUT_DIR}/.stage/AbcCore-${ABC_CORE_VERSION}")
 file(REMOVE_RECURSE "${ABC_CORE_STAGE}")
 file(MAKE_DIRECTORY "${ABC_CORE_STAGE}/svencoop/metahook/dlls/AbcCore")
 file(COPY "${ABC_CORE_DLL}" DESTINATION "${ABC_CORE_STAGE}/svencoop/metahook/dlls/AbcCore")
+file(COPY "${ABC_CORE_SHARED_GAMEDATA_DIR}"
+    DESTINATION "${ABC_CORE_STAGE}/svencoop/metahook/gamedata")
 file(COPY "${ABC_CORE_SOURCE_DIR}/README.md" "${ABC_CORE_SOURCE_DIR}/LICENSE"
     DESTINATION "${ABC_CORE_STAGE}")
 

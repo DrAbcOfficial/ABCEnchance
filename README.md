@@ -8,7 +8,7 @@ on the `legacy` branch (last legacy commit `598f924`) and in the old tags.
 
 | Path | Upstream | Release package |
 |---|---|---|
-| `AbcCore/` | https://github.com/DrAbcOfficial/AbcCore | `AbcCore-<version>.zip` — direct-extract `AbcCore.dll` runtime |
+| `AbcCore/` | https://github.com/DrAbcOfficial/AbcCore | `AbcCore-<version>.zip` — `AbcCore.dll` + shared gamedata |
 | `AbcEssential/` | https://github.com/DrAbcOfficial/AbcEssential | `AbcEssential-<version>.zip` — direct-extract game package |
 | `AbcUi/` | https://github.com/DrAbcOfficial/AbcUi | `AbcUi-<version>.zip` — direct-extract game package |
 
@@ -57,9 +57,10 @@ the dynamic CRT so STL objects can cross the shared DLL boundary safely.
 
 The individual `AbcUi-<version>.zip` and `AbcEssential-<version>.zip` assets use
 the same root-level `svencoop/` layout. `AbcCore-<version>.zip` contains the
-runtime `AbcCore.dll` for `metahook/dlls/AbcCore/`. The merged
-`ABCEnchance-<tag>.zip` includes all three; the individual plugin packages need
-the matching AbcCore runtime separately.
+runtime `AbcCore.dll` for `metahook/dlls/AbcCore/` and the single shared
+`metahook/gamedata/abc/` catalog. The merged `ABCEnchance-<tag>.zip` includes
+all three; the individual plugin packages need the matching AbcCore runtime and
+shared gamedata separately.
 
 ## Clone
 

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "name": "abc",
+  "indexUrl": "https://hlnd2t.github.io/GoldSrc_VibeSignatures/gamesymbols/index.json",
+  "gameVersions": [
+    "svencoop-10257",
+    "svencoop-8948"
+  ],
+  "symbols": {
+    "engine": {
+      "R_NewMap": "function",
+      "CL_GetModelByIndex": "function"
+    },
+    "client": {
+      "gHUD": "global",
+      "GetClientColor": "function",
+      "g_PlayerExtraInfo": "global",
+      "TeamFortressViewport_ShowVGUIMenu": "function",
+      "V_PunchAxis": "function",
+      "CClient_SoundEngine_Initialize": "function",
+      "CClient_SoundEngine_PlayFMODSound": "function"
+    }
+  }
+}
