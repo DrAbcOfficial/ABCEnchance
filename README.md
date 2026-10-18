@@ -12,8 +12,9 @@ on the `legacy` branch (last legacy commit `598f924`) and in the old tags.
 | `AbcEssential/` | https://github.com/DrAbcOfficial/AbcEssential | `AbcEssential-<version>.zip` — direct-extract game package |
 | `AbcUi/` | https://github.com/DrAbcOfficial/AbcUi | `AbcUi-<version>.zip` — direct-extract game package |
 
-`AbcCore` is the shared core DLL. `AbcEssential` is the non-UI utility
-plugin. `AbcUi` owns the renderer bridge and the RmlUi interface. The aggregate
+`AbcCore` is the shared core DLL and exports only the versioned
+`AbcCore_CreateInterface` C ABI table (`AbcCore_API_002`). `AbcEssential` is the
+non-UI utility plugin. `AbcUi` owns the renderer bridge and the RmlUi interface. The aggregate
 repository is the single owner of the AbcCore checkout: AbcUi and AbcEssential
 consume it through `ABC_CORE_DIR` and no longer carry their own AbcCore
 submodule.
@@ -53,8 +54,8 @@ AbcUi.dll
 ```
 
 The VC++ 2015-2022 x86 runtime is required: AbcCore.dll and both plugins use
-the dynamic CRT. The plugin-facing AbcCore contract is the versioned
-`AbcCore_CreateInterface` C ABI table, not exported C++ objects.
+the dynamic CRT. AbcCore.dll has no C++ exports; the plugin-facing contract is
+the versioned `AbcCore_CreateInterface` C ABI table.
 
 The individual `AbcUi-<version>.zip` and `AbcEssential-<version>.zip` assets use
 the same root-level `svencoop/` layout. `AbcCore-<version>.zip` contains the
