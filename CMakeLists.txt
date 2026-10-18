@@ -171,6 +171,9 @@ if(ABC_GAME_DIR)
             "${ABC_UI_SOURCE_DIR}/assets/abc/abcui"
             "${ABC_DEPLOY_GAME_DIR}/svencoop/abc/abcui"
         COMMAND "${CMAKE_COMMAND}" -E copy_directory
+            "${ABC_ESSENTIAL_SOURCE_DIR}/assets/svencoop/abc"
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/abc"
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory
             "${ABC_SHARED_GAMEDATA_DIR}"
             "${ABC_DEPLOY_GAME_DIR}/svencoop/metahook/gamedata/abc"
         COMMENT "Deploying AbcCore.dll, AbcEssential.dll, AbcUi.dll and assets to ${ABC_GAME_DIR}"
