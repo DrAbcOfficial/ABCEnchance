@@ -13,11 +13,23 @@ if(CMAKE_SIZEOF_VOID_P AND NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
     message(FATAL_ERROR "The ABC modules are Win32/x86 only")
 endif()
 
-# AbcUi and AbcEssential are standalone CMake projects, and each one vendors its
-# own pinned AbcCore checkout under thirdparty/AbcCore. Adding all three with
-# add_subdirectory() would define the abc_core target more than once. Build every
-# module in an isolated binary directory instead, then expose one aggregate
-# target for the whole family.
+# AbcCore, AbcUi and AbcEssential are standalone CMake projects. Build every
+# module in an isolated binary directory, then expose one aggregate target for
+# the whole family. The source directories default to the submodules but can be
+# overridden with -DABC_*_SOURCE_DIR for local, unpushed checkouts.
+set(ABC_CORE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/AbcCore" CACHE PATH
+    "AbcCore source tree")
+set(ABC_ESSENTIAL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/AbcEssential" CACHE PATH
+    "AbcEssential source tree")
+set(ABC_UI_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/AbcUi" CACHE PATH
+    "AbcUi source tree")
+foreach(source_var ABC_CORE_SOURCE_DIR ABC_ESSENTIAL_SOURCE_DIR ABC_UI_SOURCE_DIR)
+    if(NOT EXISTS "${${source_var}}/CMakeLists.txt")
+        message(FATAL_ERROR
+            "${source_var} does not contain a CMake project: ${${source_var}}")
+    endif()
+endforeach()
+
 set(ABC_MODULE_BUILD_DIR "${CMAKE_BINARY_DIR}/modules")
 
 set(ABC_MODULE_GENERATOR_ARGS)
@@ -38,7 +50,7 @@ endif()
 
 set(ABC_MODULE_CMAKE_ARGS ${ABC_MODULE_GENERATOR_ARGS})
 list(APPEND ABC_MODULE_CMAKE_ARGS
-    "-DABC_CORE_DIR:PATH=${CMAKE_CURRENT_SOURCE_DIR}/AbcCore")
+    "-DABC_CORE_DIR:PATH=${ABC_CORE_SOURCE_DIR}")
 if(DEFINED ABC_GAME_DIR AND NOT ABC_GAME_DIR STREQUAL "")
     file(TO_CMAKE_PATH "${ABC_GAME_DIR}" ABC_MODULE_GAME_DIR)
     list(APPEND ABC_MODULE_CMAKE_ARGS "-DABC_GAME_DIR:STRING=${ABC_MODULE_GAME_DIR}")
@@ -56,8 +68,8 @@ else()
     list(APPEND ABC_MODULE_CMAKE_ARGS "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}")
 endif()
 
-function(abc_add_module module)
-    set(module_source "${CMAKE_CURRENT_SOURCE_DIR}/${module}")
+function(abc_add_module module source_dir)
+    set(module_source "${source_dir}")
     set(module_binary "${ABC_MODULE_BUILD_DIR}/${module}")
 
     ExternalProject_Add(${module}
@@ -86,17 +98,17 @@ function(abc_add_module module)
     )
 endfunction()
 
-abc_add_module(AbcCore)
-abc_add_module(AbcEssential)
-abc_add_module(AbcUi)
+abc_add_module(AbcCore "${ABC_CORE_SOURCE_DIR}")
+abc_add_module(AbcEssential "${ABC_ESSENTIAL_SOURCE_DIR}")
+abc_add_module(AbcUi "${ABC_UI_SOURCE_DIR}")
 
 set(ABC_SHARED_GAMEDATA_DIR "${CMAKE_BINARY_DIR}/assets/svencoop/metahook/gamedata/abc")
 add_custom_target(SharedGameData
     COMMAND "${Python3_EXECUTABLE}"
         "${CMAKE_CURRENT_SOURCE_DIR}/scripts/build-shared-gamedata.py"
-        --core-dir "${CMAKE_CURRENT_SOURCE_DIR}/AbcCore"
+        --core-dir "${ABC_CORE_SOURCE_DIR}"
         --manifest "${CMAKE_CURRENT_SOURCE_DIR}/scripts/manifests/abc.json"
-        --layout-dir "${CMAKE_CURRENT_SOURCE_DIR}/AbcUi/assets/gamedata/abcui-layout"
+        --layout-dir "${ABC_UI_SOURCE_DIR}/assets/gamedata/abcui-layout"
         --output "${ABC_SHARED_GAMEDATA_DIR}"
         --temp-root "${CMAKE_BINARY_DIR}/gamedata-sync"
     COMMENT "Building the shared ABC gamedata catalog"
@@ -112,7 +124,7 @@ add_custom_target(ABCEnchance ALL
 #   AbcUi-<version>.zip
 add_custom_target(dist
     COMMAND "${CMAKE_COMMAND}"
-        "-DABC_CORE_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/AbcCore"
+        "-DABC_CORE_SOURCE_DIR=${ABC_CORE_SOURCE_DIR}"
         "-DABC_CORE_BUILD_DIR=${ABC_MODULE_BUILD_DIR}/AbcCore"
         "-DABC_CORE_CONFIG=${ABC_MODULE_CONFIG}"
         "-DABC_CORE_OUTPUT_DIR=${CMAKE_BINARY_DIR}/dist"
@@ -133,3 +145,34 @@ add_custom_target(dist
     DEPENDS AbcCore AbcEssential AbcUi SharedGameData
     COMMENT "Packaging AbcCore, AbcEssential and AbcUi"
     VERBATIM)
+
+# Deploy the built family into the game root. The individual module install
+# targets are not used here because ExternalProject builds have their own
+# install prefixes; this target copies the exact build outputs.
+if(ABC_GAME_DIR)
+    file(TO_CMAKE_PATH "${ABC_GAME_DIR}" ABC_DEPLOY_GAME_DIR)
+    add_custom_target(deploy
+        DEPENDS AbcCore AbcEssential AbcUi SharedGameData
+        COMMAND "${CMAKE_COMMAND}" -E make_directory
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/metahook/dlls/AbcCore"
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/metahook/plugins"
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/metahook/gamedata/abc"
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/abc"
+        COMMAND "${CMAKE_COMMAND}" -E copy
+            "${ABC_MODULE_BUILD_DIR}/AbcCore/${ABC_MODULE_CONFIG}/AbcCore.dll"
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/metahook/dlls/AbcCore/"
+        COMMAND "${CMAKE_COMMAND}" -E copy
+            "${ABC_MODULE_BUILD_DIR}/AbcEssential/${ABC_MODULE_CONFIG}/AbcEssential.dll"
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/metahook/plugins/"
+        COMMAND "${CMAKE_COMMAND}" -E copy
+            "${ABC_MODULE_BUILD_DIR}/AbcUi/${ABC_MODULE_CONFIG}/AbcUi.dll"
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/metahook/plugins/"
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory
+            "${ABC_UI_SOURCE_DIR}/assets/abc/abcui"
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/abc/abcui"
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory
+            "${ABC_SHARED_GAMEDATA_DIR}"
+            "${ABC_DEPLOY_GAME_DIR}/svencoop/metahook/gamedata/abc"
+        COMMENT "Deploying AbcCore.dll, AbcEssential.dll, AbcUi.dll and assets to ${ABC_GAME_DIR}"
+        VERBATIM)
+endif()

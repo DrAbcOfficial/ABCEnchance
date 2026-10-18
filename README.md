@@ -53,7 +53,8 @@ AbcUi.dll
 ```
 
 The VC++ 2015-2022 x86 runtime is required: AbcCore.dll and both plugins use
-the dynamic CRT so STL objects can cross the shared DLL boundary safely.
+the dynamic CRT. The plugin-facing AbcCore contract is the versioned
+`AbcCore_CreateInterface` C ABI table, not exported C++ objects.
 
 The individual `AbcUi-<version>.zip` and `AbcEssential-<version>.zip` assets use
 the same root-level `svencoop/` layout. `AbcCore-<version>.zip` contains the
@@ -81,8 +82,7 @@ git submodule update --init --recursive
 
 The root `CMakeLists.txt` is the aggregate build entry point. Each module keeps
 its own CMake project and presets; the root uses `ExternalProject` to build them
-in isolated binary directories, because `AbcUi` and `AbcEssential` each vendor a
-pinned `AbcCore` and would otherwise define the same CMake target twice.
+in isolated binary directories against one shared AbcCore checkout.
 
 Win32 x86 only:
 
@@ -90,6 +90,21 @@ Win32 x86 only:
 cmake -S . -B build/ci -G "Visual Studio 18 2026" -A Win32
 cmake --build build/ci --config Release --parallel
 cmake --build build/ci --config Release --target dist
+```
+
+To build local, unpushed module checkouts instead of the submodules, override
+the source directories:
+
+```bash
+cmake -S . -B build/local -G "Visual Studio 18 2026" -A Win32   -DABC_CORE_SOURCE_DIR=<path>/AbcCore   -DABC_ESSENTIAL_SOURCE_DIR=<path>/AbcEssential   -DABC_UI_SOURCE_DIR=<path>/AbcUi
+```
+
+Set `ABC_GAME_DIR` (or pass `-DABC_GAME_DIR=<game root>`) at configure time to
+enable the aggregate deploy target. It copies the built `AbcCore.dll`, both
+plugins, the AbcUi assets and the shared gamedata catalog into the game tree:
+
+```bash
+cmake --build build/local --config Release --target deploy
 ```
 
 The aggregate `dist` target writes `AbcCore-<version>.zip`,
