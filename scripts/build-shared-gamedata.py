@@ -64,7 +64,14 @@ def merge_records(base, extra, game_version):
     merged = []
     seen = {}
     for record in list(base) + list(extra):
-        key = (record.get("module"), record.get("symbolName"))
+        # The same symbol legitimately has one record per platform; only an
+        # identical platform is a duplicate and only a differing payload is a
+        # conflict.
+        key = (
+            record.get("module"),
+            record.get("symbolName"),
+            record.get("platform", ""),
+        )
         if not key[0] or not key[1]:
             raise SystemExit(f"gamedata record without module/name in {game_version}")
         previous = seen.get(key)
