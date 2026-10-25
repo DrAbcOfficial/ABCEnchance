@@ -91,6 +91,7 @@ jobs:
         shell: pwsh
         run: |
           $game = "build/ci/game-package"
+          Remove-Item -Recurse -Force $game -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Force -Path $game | Out-Null
           $core = (Get-ChildItem "build/ci/dist/AbcCore-*.zip" | Select-Object -First 1).FullName
           $ui = (Get-ChildItem "build/ci/dist/AbcUi-*.zip" | Select-Object -First 1).FullName
@@ -99,6 +100,24 @@ jobs:
           Expand-Archive -Path $ui -DestinationPath $game -Force
           Expand-Archive -Path $essential -DestinationPath $game -Force
           Copy-Item README.md "$game/README.md" -Force
+          # Every module archive puts svencoop/ at its root and is merged by
+          # extracting all three into one directory. Verify the merged tree
+          # before zipping so an incomplete release fails here instead of
+          # shipping a package that misses a plugin.
+          $required = @(
+            "svencoop/metahook/dlls/AbcCore/AbcCore.dll",
+            "svencoop/metahook/plugins/AbcEssential.dll",
+            "svencoop/metahook/plugins/AbcUi.dll",
+            "svencoop/metahook/gamedata/abc/index.json",
+            "svencoop/abc/abcui/modules",
+            "svencoop/abc/mdl",
+            "svencoop/abc/spr"
+          )
+          foreach ($path in $required) {
+            if (-not (Test-Path (Join-Path $game $path))) {
+              throw "Merged package is missing $path"
+            }
+          }
           $zip = Join-Path $PWD "build/ci/dist/ABCEnchance-game.zip"
           cmake -E chdir $game cmake -E tar cf $zip --format=zip -- svencoop README.md
           Get-ChildItem "build/ci/dist" | Select-Object Name, Length
