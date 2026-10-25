@@ -1,34 +1,31 @@
 # ABCEnchance
 
-Aggregation and release repository for the ABC plugin family. This branch is a
-fresh aggregate history. The retired monolithic ABCEnchance plugin is preserved
-on the `legacy` branch (last legacy commit `598f924`) and in the old tags.
+Complete release package of the ABC plugins for Sven Co-op: AbcCore, AbcEssential and AbcUi in one archive, already laid out for the game folder.
 
-## Modules
+## Contents
 
-| Path | Upstream | Package artifact |
-|---|---|---|
-| `AbcCore/` | https://github.com/DrAbcOfficial/AbcCore | `AbcCore-<version>.zip` — `AbcCore.dll` + shared gamedata |
-| `AbcEssential/` | https://github.com/DrAbcOfficial/AbcEssential | `AbcEssential-<version>.zip` — direct-extract game package |
-| `AbcUi/` | https://github.com/DrAbcOfficial/AbcUi | `AbcUi-<version>.zip` — direct-extract game package |
+| Package | What it adds |
+|---|---|
+| AbcCore | Shared library used by both plugins. No interface or settings of its own. |
+| AbcEssential | Console search, player models, movement helpers, viewmodel and camera tweaks, effect enhancements. |
+| AbcUi | New HUD, chat and menus, including settings, server browser and character preview. |
 
-`AbcCore` is the shared core DLL and exports only the versioned
-`AbcCore_CreateInterface` C ABI table (`AbcCore_API_002`). `AbcEssential` is the
-non-UI utility plugin. `AbcUi` owns the renderer bridge and the RmlUi interface. The aggregate
-repository is the single owner of the AbcCore checkout: AbcUi and AbcEssential
-consume it through `ABC_CORE_DIR` and no longer carry their own AbcCore
-submodule.
+Each package documents its own features in its README.
 
-## Install (release package)
+## Requirements
 
-Extract `ABCEnchance-<tag>.zip` directly into the Sven Co-op root. The archive
-contains `svencoop/` at its root, so there is no extra version folder to copy:
+- Sven Co-op
+- MetaHookSV with VGUI2Extension and Renderer
+- Microsoft Visual C++ 2015-2022 Redistributable, x86
+
+## Install
+
+Download `ABCEnchance-<tag>.zip` from the releases page and extract it into the Sven Co-op folder. The archive contains `svencoop` at its root, so there is no extra folder to copy:
 
 ```text
 Sven Co-op/
 ├── svencoop/
 │   ├── abc/
-│   │   ├── abcessential/
 │   │   ├── abcui/
 │   │   ├── mdl/
 │   │   └── spr/
@@ -41,10 +38,7 @@ Sven Co-op/
 └── svencoop.exe
 ```
 
-MetahookSV, `VGUI2Extension.dll` and `Renderer.dll` are prerequisites and are
-installed separately. `FreeImage.dll` and `Mile.FFmpeg.dll` are provided by
-MetaHookSV/Renderer and are not part of this package. Add the plugins to
-`svencoop/metahook/configs/plugins.lst` in this order:
+Then add the plugins to `svencoop/metahook/configs/plugins.lst` in this order:
 
 ```text
 VGUI2Extension.dll
@@ -53,92 +47,27 @@ AbcEssential.dll
 AbcUi.dll
 ```
 
-The VC++ 2015-2022 x86 runtime is required: AbcCore.dll and both plugins use
-the dynamic CRT. AbcCore.dll has no C++ exports; the plugin-facing contract is
-the versioned `AbcCore_CreateInterface` C ABI table.
+AbcCore.dll is a shared library, not a plugin, so it is not listed in `plugins.lst`; the package already puts it in `svencoop/metahook/dlls/AbcCore/`.
 
-The individual `AbcUi-<version>.zip` and `AbcEssential-<version>.zip` assets use
-the same root-level `svencoop/` layout. `AbcCore-<version>.zip` contains the
-runtime `AbcCore.dll` for `metahook/dlls/AbcCore/` and the single shared
-`metahook/gamedata/abc/` catalog. The merged `ABCEnchance-<tag>.zip` includes
-all three; the individual plugin packages need the matching AbcCore runtime and
-shared gamedata separately.
+## Build the dist package
 
-## Clone
-
-```bash
-git clone --recursive https://github.com/DrAbcOfficial/ABCEnchance.git
-```
-
-`AbcUi` pins a `Renderer` commit that currently lives in the
-`DrAbcOfficial/Renderer` fork. If the recursive clone cannot find it, configure
-the URL rewrite before fetching submodules:
+Requires Windows, Visual Studio with the C++ workload, CMake 4.2 or newer and Python 3.
 
 ```bash
 git config --global url."https://github.com/DrAbcOfficial/Renderer".insteadOf "https://github.com/MetaHookSv/Renderer"
-git submodule update --init --recursive
-```
-
-## Build
-
-The root `CMakeLists.txt` is the aggregate build entry point. Each module keeps
-its own CMake project and presets; the root uses `ExternalProject` to build them
-in isolated binary directories against one shared AbcCore checkout.
-
-Win32 x86 only:
-
-```bash
+git clone --recursive https://github.com/DrAbcOfficial/ABCEnchance.git
+cd ABCEnchance
 cmake -S . -B build/ci -G "Visual Studio 18 2026" -A Win32
 cmake --build build/ci --config Release --parallel
 cmake --build build/ci --config Release --target dist
 ```
 
-To build local, unpushed module checkouts instead of the submodules, override
-the source directories:
+The `dist` target writes `AbcCore-<version>.zip`, `AbcEssential-<version>.zip` and `AbcUi-<version>.zip` to `build/ci/dist`. The AbcCore package contains the library and the data both plugins need, and each plugin package needs the matching AbcCore package.
 
-```bash
-cmake -S . -B build/local -G "Visual Studio 18 2026" -A Win32   -DABC_CORE_SOURCE_DIR=<path>/AbcCore   -DABC_ESSENTIAL_SOURCE_DIR=<path>/AbcEssential   -DABC_UI_SOURCE_DIR=<path>/AbcUi
-```
+With Visual Studio 2022, use `-G "Visual Studio 17 2022"` instead. The Renderer redirect is needed because AbcUi uses a Renderer version from the DrAbcOfficial fork.
 
-Set `ABC_GAME_DIR` (or pass `-DABC_GAME_DIR=<game root>`) at configure time to
-enable the aggregate deploy target. It copies the built `AbcCore.dll`, both
-plugins, the AbcUi assets and the shared gamedata catalog into the game tree:
-
-```bash
-cmake --build build/local --config Release --target deploy
-```
-
-The aggregate `dist` target writes `AbcCore-<version>.zip`,
-`AbcEssential-<version>.zip` and `AbcUi-<version>.zip` to `build/ci/dist/`.
-With Visual Studio 2022, use `-G "Visual Studio 17 2022"`.
-
-You can still build a single module directly with its own presets:
-
-```bash
-cd AbcUi
-cmake --preset win32-release
-cmake --build --preset win32-release
-```
-
-## CI and releases
-
-`.github/workflows/aggregate-release.yml` configures the root CMake project and
-builds `Debug` and `Release` for all three modules. A `v*` tag publishes one
-GitHub Release with exactly one asset:
-
-- `ABCEnchance-<tag>.zip` (merged AbcUi + AbcEssential + AbcCore game package
-  with `svencoop/` at the archive root)
-
-Push and pull-request builds upload the three module packages plus the merged
-`ABCEnchance-game.zip` as workflow artifacts without creating a GitHub Release.
-The module zips stay available as CI artifacts for diagnostics; the tag release
-renames only the merged package to `ABCEnchance-<tag>.zip` and attaches that
-single file.
-
-Each module retains its own CI in its upstream repository; this repository is
-the single aggregate build and release entry point.
+Tagged releases publish a single merged `ABCEnchance-<tag>.zip` that contains all three packages.
 
 ## License
 
-The modules are distributed under the BSD 3-Clause License; each upstream
-repository and its dependencies keep their own license files.
+Licensed under the [BSD 3-Clause License](LICENSE).
