@@ -2,6 +2,20 @@
 
 Complete release package of the ABC plugins for Sven Co-op: AbcCore, AbcEssential and AbcUi in one archive, already laid out for the game folder.
 
+## Screenshots
+
+![Main menu](docs/screenshots/main-menu.png)
+
+*Main menu*
+
+![Chat emoji and the division HUD](docs/screenshots/emoji-and-division.png)
+
+*Chat emoji and the division HUD*
+
+![Classic HUD](docs/screenshots/classic-hud.png)
+
+*Classic HUD*
+
 ## Contents
 
 | Package | What it adds |
