@@ -23,6 +23,12 @@ set(ABC_ESSENTIAL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/AbcEssential" CACHE PA
     "AbcEssential source tree")
 set(ABC_UI_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/AbcUi" CACHE PATH
     "AbcUi source tree")
+# AbcUi packs exactly one HUD group per archive: the classic readouts or the
+# third-person division group. Distribute them as separate archives rather
+# than shipping both module sets in one package.
+set(ABC_UI_HUD_GROUP "classic" CACHE STRING
+    "AbcUi HUD group to pack (classic or division)")
+set_property(CACHE ABC_UI_HUD_GROUP PROPERTY STRINGS classic division)
 foreach(source_var ABC_CORE_SOURCE_DIR ABC_ESSENTIAL_SOURCE_DIR ABC_UI_SOURCE_DIR)
     if(NOT EXISTS "${${source_var}}/CMakeLists.txt")
         message(FATAL_ERROR
@@ -49,8 +55,11 @@ if(CMAKE_GENERATOR_INSTANCE)
 endif()
 
 set(ABC_MODULE_CMAKE_ARGS ${ABC_MODULE_GENERATOR_ARGS})
+# Only AbcUi consumes the HUD group; the other modules ignore the cache
+# entry, so one argument list still configures every ExternalProject.
 list(APPEND ABC_MODULE_CMAKE_ARGS
-    "-DABC_CORE_DIR:PATH=${ABC_CORE_SOURCE_DIR}")
+    "-DABC_CORE_DIR:PATH=${ABC_CORE_SOURCE_DIR}"
+    "-DABCUI_HUD_GROUP:STRING=${ABC_UI_HUD_GROUP}")
 if(DEFINED ABC_GAME_DIR AND NOT ABC_GAME_DIR STREQUAL "")
     file(TO_CMAKE_PATH "${ABC_GAME_DIR}" ABC_MODULE_GAME_DIR)
     list(APPEND ABC_MODULE_CMAKE_ARGS "-DABC_GAME_DIR:STRING=${ABC_MODULE_GAME_DIR}")
