@@ -23,12 +23,12 @@ set(ABC_ESSENTIAL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/AbcEssential" CACHE PA
     "AbcEssential source tree")
 set(ABC_UI_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/AbcUi" CACHE PATH
     "AbcUi source tree")
-# AbcUi packs exactly one HUD group per archive: the classic readouts or the
-# third-person division group. Distribute them as separate archives rather
-# than shipping both module sets in one package.
-set(ABC_UI_HUD_GROUP "classic" CACHE STRING
-    "AbcUi HUD group to pack (classic or division)")
-set_property(CACHE ABC_UI_HUD_GROUP PROPERTY STRINGS classic division)
+# The aggregate release ships one archive with both HUD groups; the Modules
+# page switches the active readout set at runtime. Set it to classic or
+# division to build a single-group package instead.
+set(ABC_UI_HUD_GROUP "all" CACHE STRING
+    "AbcUi HUD group to pack (classic, division or all)")
+set_property(CACHE ABC_UI_HUD_GROUP PROPERTY STRINGS classic division all)
 foreach(source_var ABC_CORE_SOURCE_DIR ABC_ESSENTIAL_SOURCE_DIR ABC_UI_SOURCE_DIR)
     if(NOT EXISTS "${${source_var}}/CMakeLists.txt")
         message(FATAL_ERROR

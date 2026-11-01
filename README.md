@@ -12,7 +12,7 @@ Complete release package of the ABC plugins for Sven Co-op: AbcCore, AbcEssentia
 
 Each package documents its own features in its README.
 
-Releases come in two archives: `ABCEnchance-<tag>.zip` ships the classic HUD, and `ABCEnchance-division-<tag>.zip` ships the third-person HUD, which replaces the classic health, ammo and flashlight readouts. Install one of the two, not both.
+Releases ship both HUD groups in one archive. The classic health, ammo and flashlight readouts and the third-person division group are both installed; enable the set you want in Settings > Modules.
 
 ## Requirements
 
@@ -22,7 +22,7 @@ Releases come in two archives: `ABCEnchance-<tag>.zip` ships the classic HUD, an
 
 ## Install
 
-Download `ABCEnchance-<tag>.zip` or `ABCEnchance-division-<tag>.zip` from the releases page and extract it into the Sven Co-op folder. The archive contains `svencoop` at its root, so there is no extra folder to copy:
+Download `ABCEnchance-<tag>.zip` from the releases page and extract it into the Sven Co-op folder. The archive contains `svencoop` at its root, so there is no extra folder to copy:
 
 ```text
 Sven Co-op/
@@ -64,11 +64,11 @@ cmake --build build/ci --config Release --parallel
 cmake --build build/ci --config Release --target dist
 ```
 
-The `dist` target writes `AbcCore-<version>.zip`, `AbcEssential-<version>.zip` and `AbcUi-<version>.zip` to `build/ci/dist`. The AbcCore package contains the library and the data both plugins need, and each plugin package needs the matching AbcCore package. Configure with `-DABC_UI_HUD_GROUP=division` to build the third-person HUD package instead of the classic one.
+The `dist` target writes `AbcCore-<version>.zip`, `AbcEssential-<version>.zip` and `AbcUi-<version>.zip` to `build/ci/dist`. The AbcCore package contains the library and the data both plugins need, and each plugin package needs the matching AbcCore package. The default `-DABC_UI_HUD_GROUP=all` ships both HUD groups; use `classic` or `division` to build a single-group package.
 
 With Visual Studio 2022, use `-G "Visual Studio 17 2022"` instead. The Renderer redirect is needed because AbcUi uses a Renderer version from the DrAbcOfficial fork.
 
-Tagged releases publish both merged archives, `ABCEnchance-<tag>.zip` and `ABCEnchance-division-<tag>.zip`, each containing all three packages.
+Tagged releases publish one merged `ABCEnchance-<tag>.zip` containing all three packages and both HUD groups.
 
 ## License
 
