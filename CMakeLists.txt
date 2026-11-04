@@ -23,12 +23,6 @@ set(ABC_ESSENTIAL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/AbcEssential" CACHE PA
     "AbcEssential source tree")
 set(ABC_UI_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/AbcUi" CACHE PATH
     "AbcUi source tree")
-# The aggregate release ships one archive with both HUD groups; the Modules
-# page switches the active readout set at runtime. Set it to classic or
-# division to build a single-group package instead.
-set(ABC_UI_HUD_GROUP "all" CACHE STRING
-    "AbcUi HUD group to pack (classic, division or all)")
-set_property(CACHE ABC_UI_HUD_GROUP PROPERTY STRINGS classic division all)
 foreach(source_var ABC_CORE_SOURCE_DIR ABC_ESSENTIAL_SOURCE_DIR ABC_UI_SOURCE_DIR)
     if(NOT EXISTS "${${source_var}}/CMakeLists.txt")
         message(FATAL_ERROR
@@ -55,11 +49,8 @@ if(CMAKE_GENERATOR_INSTANCE)
 endif()
 
 set(ABC_MODULE_CMAKE_ARGS ${ABC_MODULE_GENERATOR_ARGS})
-# Only AbcUi consumes the HUD group; the other modules ignore the cache
-# entry, so one argument list still configures every ExternalProject.
 list(APPEND ABC_MODULE_CMAKE_ARGS
-    "-DABC_CORE_DIR:PATH=${ABC_CORE_SOURCE_DIR}"
-    "-DABCUI_HUD_GROUP:STRING=${ABC_UI_HUD_GROUP}")
+    "-DABC_CORE_DIR:PATH=${ABC_CORE_SOURCE_DIR}")
 if(DEFINED ABC_GAME_DIR AND NOT ABC_GAME_DIR STREQUAL "")
     file(TO_CMAKE_PATH "${ABC_GAME_DIR}" ABC_MODULE_GAME_DIR)
     list(APPEND ABC_MODULE_CMAKE_ARGS "-DABC_GAME_DIR:STRING=${ABC_MODULE_GAME_DIR}")
@@ -111,6 +102,11 @@ abc_add_module(AbcCore "${ABC_CORE_SOURCE_DIR}")
 abc_add_module(AbcEssential "${ABC_ESSENTIAL_SOURCE_DIR}")
 abc_add_module(AbcUi "${ABC_UI_SOURCE_DIR}")
 
+# Plugin modules contribute one package each to the aggregate dist. The list
+# drives package collection so a new plugin joins the release without adding
+# its archive name to CMake or the workflow.
+set(ABC_PLUGIN_MODULES AbcEssential AbcUi)
+
 set(ABC_SHARED_GAMEDATA_DIR "${CMAKE_BINARY_DIR}/assets/svencoop/metahook/gamedata/abc")
 add_custom_target(SharedGameData
     COMMAND "${Python3_EXECUTABLE}"
@@ -132,6 +128,7 @@ add_custom_target(ABCEnchance ALL
 #   AbcEssential-<version>.zip
 #   AbcUi-<version>.zip
 add_custom_target(dist
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "${CMAKE_BINARY_DIR}/dist"
     COMMAND "${CMAKE_COMMAND}"
         "-DABC_CORE_SOURCE_DIR=${ABC_CORE_SOURCE_DIR}"
         "-DABC_CORE_BUILD_DIR=${ABC_MODULE_BUILD_DIR}/AbcCore"
@@ -149,10 +146,25 @@ add_custom_target(dist
         --target dist
     COMMAND "${CMAKE_COMMAND}"
         "-DABC_MODULE_BUILD_DIR=${ABC_MODULE_BUILD_DIR}"
+        "-DABC_PLUGIN_MODULES=${ABC_PLUGIN_MODULES}"
         "-DABC_OUTPUT_DIR=${CMAKE_BINARY_DIR}/dist"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CollectPackages.cmake"
     DEPENDS AbcCore AbcEssential AbcUi SharedGameData
     COMMENT "Packaging AbcCore, AbcEssential and AbcUi"
+    VERBATIM)
+
+# Merge every package the dist target produced into one game archive. The
+# merge discovers the archives and validates the merged tree, so a new plugin
+# or module package is picked up without editing this target or the workflow.
+add_custom_target(bundle
+    COMMAND "${CMAKE_COMMAND}"
+        "-DABC_OUTPUT_DIR=${CMAKE_BINARY_DIR}/dist"
+        "-DABC_README=${CMAKE_CURRENT_SOURCE_DIR}/README.md"
+        "-DABC_PLUGIN_MODULES=${ABC_PLUGIN_MODULES}"
+        "-DABC_BUNDLE_ARCHIVE=${CMAKE_BINARY_DIR}/dist/ABCEnchance-game.zip"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/BundlePackages.cmake"
+    DEPENDS dist
+    COMMENT "Bundling the packages into ABCEnchance-game.zip"
     VERBATIM)
 
 # Deploy the built family into the game root. The individual module install

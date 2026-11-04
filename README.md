@@ -26,7 +26,7 @@ Complete release package of the ABC plugins for Sven Co-op: AbcCore, AbcEssentia
 
 Each package documents its own features in its README.
 
-Releases ship both HUD groups in one archive. The classic health, ammo and flashlight readouts and the third-person division group are both installed; enable the set you want in Settings > Modules.
+Releases ship both HUD groups in one archive. The classic health, ammo and flashlight readouts are enabled; the third-person division group is installed disabled, and turning it on in Settings > Modules turns the classic readouts off.
 
 ## Requirements
 
@@ -75,10 +75,10 @@ git clone --recursive https://github.com/DrAbcOfficial/ABCEnchance.git
 cd ABCEnchance
 cmake -S . -B build/ci -G "Visual Studio 18 2026" -A Win32
 cmake --build build/ci --config Release --parallel
-cmake --build build/ci --config Release --target dist
+cmake --build build/ci --config Release --target bundle
 ```
 
-The `dist` target writes `AbcCore-<version>.zip`, `AbcEssential-<version>.zip` and `AbcUi-<version>.zip` to `build/ci/dist`. The AbcCore package contains the library and the data both plugins need, and each plugin package needs the matching AbcCore package. The default `-DABC_UI_HUD_GROUP=all` ships both HUD groups; use `classic` or `division` to build a single-group package.
+The `dist` target writes `AbcCore-<version>.zip`, `AbcEssential-<version>.zip` and `AbcUi-<version>.zip` to `build/ci/dist`, and `bundle` merges every package found there into `ABCEnchance-game.zip`. The AbcCore package contains the library and the data both plugins need, and each plugin package needs the matching AbcCore package.
 
 With Visual Studio 2022, use `-G "Visual Studio 17 2022"` instead. The Renderer redirect is needed because AbcUi uses a Renderer version from the DrAbcOfficial fork.
 

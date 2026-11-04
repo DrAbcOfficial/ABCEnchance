@@ -71,9 +71,9 @@ jobs:
           }
           Write-Host "Generating with '$generator' (instance: '$instance')"
           if ($instance) {
-            cmake -S . -B build/ci -G $generator -A Win32 -DCMAKE_GENERATOR_INSTANCE="$instance" -DABC_UI_HUD_GROUP=all
+            cmake -S . -B build/ci -G $generator -A Win32 -DCMAKE_GENERATOR_INSTANCE="$instance"
           } else {
-            cmake -S . -B build/ci -G $generator -A Win32 -DABC_UI_HUD_GROUP=all
+            cmake -S . -B build/ci -G $generator -A Win32
           }
 
       - name: Build (${{ matrix.config }})
@@ -84,50 +84,15 @@ jobs:
       - name: Package Release
         if: matrix.config == 'Release'
         shell: pwsh
-        run: cmake --build build/ci --config Release --target dist --parallel 1
+        run: cmake --build build/ci --config Release --target bundle --parallel 1
 
-      - name: Create aggregate game package
+      - name: Show release package
         if: matrix.config == 'Release'
         shell: pwsh
         run: |
-          $game = "build/ci/game-package"
-          Remove-Item -Recurse -Force $game -ErrorAction SilentlyContinue
-          New-Item -ItemType Directory -Force -Path $game | Out-Null
-          $core = (Get-ChildItem "build/ci/dist/AbcCore-*.zip" | Select-Object -First 1).FullName
-          $ui = (Get-ChildItem "build/ci/dist/AbcUi-*.zip" | Select-Object -First 1).FullName
-          $essential = (Get-ChildItem "build/ci/dist/AbcEssential-*.zip" | Select-Object -First 1).FullName
-          Expand-Archive -Path $core -DestinationPath $game -Force
-          Expand-Archive -Path $ui -DestinationPath $game -Force
-          Expand-Archive -Path $essential -DestinationPath $game -Force
-          Copy-Item README.md "$game/README.md" -Force
-          # Every module archive puts svencoop/ at its root and is merged by
-          # extracting all three into one directory. Verify the merged tree
-          # before zipping so an incomplete release fails here instead of
-          # shipping a package that misses a plugin.
-          $required = @(
-            "svencoop/metahook/dlls/AbcCore/AbcCore.dll",
-            "svencoop/metahook/plugins/AbcEssential.dll",
-            "svencoop/metahook/plugins/AbcUi.dll",
-            "svencoop/metahook/gamedata/abc/index.json",
-            "svencoop/abc/abcui/modules",
-            "svencoop/abc/mdl",
-            "svencoop/abc/spr"
-          )
-          foreach ($path in $required) {
-            if (-not (Test-Path (Join-Path $game $path))) {
-              throw "Merged package is missing $path"
-            }
+          if (-not (Test-Path "build/ci/dist/ABCEnchance-game.zip")) {
+            throw "The bundle target did not produce ABCEnchance-game.zip"
           }
-          # One archive ships both HUD groups; the Modules page lets the player
-          # choose which readout set is active.
-          $modules = Join-Path $game "svencoop/abc/abcui/modules"
-          foreach ($name in @("abcui.division-*.zip", "abcui.health-*.zip", "abcui.ammo-*.zip", "abcui.flashlight-*.zip")) {
-            if (-not (Get-ChildItem $modules -Filter $name -ErrorAction SilentlyContinue)) {
-              throw "Merged package is missing $name"
-            }
-          }
-          $zip = Join-Path $PWD "build/ci/dist/ABCEnchance-game.zip"
-          cmake -E chdir $game cmake -E tar cf $zip --format=zip -- svencoop README.md
           Get-ChildItem "build/ci/dist" | Select-Object Name, Length
 
       - name: Upload packages

@@ -22,15 +22,15 @@ Guidance for AI/automation collaborators working in this repository. Read `READM
 
 ## Build
 
-Win32 x86 only. The root project builds the three modules through ExternalProject and exposes one `dist` target:
+Win32 x86 only. The root project builds the modules through ExternalProject and exposes `dist` (per-package archives) and `bundle` (the merged game archive):
 
 ```bash
 cmake -S . -B build/ci -G "Visual Studio 18 2026" -A Win32
 cmake --build build/ci --config Release --parallel
-cmake --build build/ci --config Release --target dist
+cmake --build build/ci --config Release --target bundle
 ```
 
-`dist` writes `AbcCore-<version>.zip`, `AbcEssential-<version>.zip` and `AbcUi-<version>.zip` to `build/ci/dist`. The release workflow merges them into `ABCEnchance-<tag>.zip`; keep its required-file list in sync when a package gains or loses files.
+`dist` writes `AbcCore-<version>.zip`, `AbcEssential-<version>.zip` and `AbcUi-<version>.zip` to `build/ci/dist`; every module in `ABC_PLUGIN_MODULES` must produce a package. `bundle` extracts every package archive in that directory, validates the merged tree structurally (plugin and shared DLLs, gamedata catalog, and every UI module package's manifest and entry), and writes `ABCEnchance-game.zip`. Do not reintroduce fixed package or module name lists in the workflow or the bundle script; discovery is the extension point for a new package.
 
 ## Conventions
 
