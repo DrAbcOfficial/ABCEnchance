@@ -63,6 +63,17 @@ AbcEssential.dll
 AbcUi.dll
 ```
 
+If CaptionMod is installed, `plugins.lst` must list it after `AbcUi.dll` and `StandaloneView.dll` before `VGUI2Extension.dll`, in exactly this order:
+
+```text
+StandaloneView.dll
+VGUI2Extension.dll
+Renderer.dll
+AbcEssential.dll
+AbcUi.dll
+CaptionMod.dll
+```
+
 AbcCore.dll is a shared library, not a plugin, so it is not listed in `plugins.lst`; the package already puts it in `svencoop/metahook/dlls/AbcCore/`.
 
 ## Build the dist package
