@@ -4,17 +4,16 @@ Complete release package of the ABC plugins for Sven Co-op: AbcCore, AbcEssentia
 
 ## Screenshots
 
-![Main menu](docs/screenshots/main-menu.png)
-
-*Main menu*
-
-![Chat emoji and the division HUD](docs/screenshots/emoji-and-division.png)
-
-*Chat emoji and the division HUD*
-
-![Classic HUD](docs/screenshots/classic-hud.png)
-
-*Classic HUD*
+<table cellpadding="4" cellspacing="4">
+  <tr>
+    <td align="center"><img src="docs/screenshots/main-menu.png" width="400" alt="Main menu"><br><sub>Main menu</sub></td>
+    <td align="center"><img src="docs/screenshots/emoji-and-division.png" width="400" alt="Chat emoji and the division HUD"><br><sub>Chat emoji and the division HUD</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/classic-hud.png" width="400" alt="Classic HUD"><br><sub>Classic HUD</sub></td>
+    <td align="center"><img src="docs/screenshots/ip-block.png" width="400" alt="Server browser: block a server by IP"><br><sub>Server browser: block a server by IP</sub></td>
+  </tr>
+</table>
 
 ## Contents
 
